@@ -9,7 +9,8 @@ import { LPDetail } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
 import { getTemplateById } from '@/lib/templates';
 import TemplateSelector from '@/components/TemplateSelector';
-import BlockEditor from '@/components/BlockEditor';
+import DraggableBlockEditor from '@/components/DraggableBlockEditor';
+import PropertyPanel from '@/components/PropertyPanel';
 // UUID生成のヘルパー関数
 function generateId() {
   return `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -35,6 +36,8 @@ export default function EditLPNewPage() {
   const [error, setError] = useState('');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'edit' | 'split' | 'preview'>('split');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -98,6 +101,18 @@ export default function EditLPNewPage() {
 
   const handleDeleteBlock = (blockId: string) => {
     setBlocks(blocks.filter(block => block.id !== blockId));
+    if (selectedBlockId === blockId) {
+      setSelectedBlockId(null);
+    }
+  };
+
+  const handleReorderBlocks = (reorderedBlocks: LPBlock[]) => {
+    setBlocks(reorderedBlocks);
+  };
+
+  const handleUpdateSelectedBlock = (field: string, value: any) => {
+    if (!selectedBlockId) return;
+    handleUpdateBlock(selectedBlockId, field, value);
   };
 
   const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
@@ -179,17 +194,39 @@ export default function EditLPNewPage() {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* 編集/プレビュー切替 */}
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  isEditing
-                    ? 'bg-gray-700 text-white'
-                    : 'bg-blue-600 text-white'
-                }`}
-              >
-                {isEditing ? '✏️ 編集モード' : '👁️ プレビューモード'}
-              </button>
+              {/* ビューモード切替 */}
+              <div className="flex gap-2 bg-gray-900 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('edit')}
+                  className={`px-3 py-1.5 rounded font-medium text-sm transition-colors ${
+                    viewMode === 'edit'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  ✏️ 編集
+                </button>
+                <button
+                  onClick={() => setViewMode('split')}
+                  className={`px-3 py-1.5 rounded font-medium text-sm transition-colors ${
+                    viewMode === 'split'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  ⚡ 分割
+                </button>
+                <button
+                  onClick={() => setViewMode('preview')}
+                  className={`px-3 py-1.5 rounded font-medium text-sm transition-colors ${
+                    viewMode === 'preview'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  👁️ プレビュー
+                </button>
+              </div>
 
               {/* ステータス */}
               <span className={`px-3 py-1 text-sm rounded-full ${
@@ -232,57 +269,105 @@ export default function EditLPNewPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className={`${viewMode === 'split' ? 'h-[calc(100vh-80px)]' : ''}`}>
         {error && (
-          <div className="mb-4 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
+          <div className="mb-4 mx-4 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
-        {/* ツールバー */}
-        {isEditing && (
-          <div className="mb-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-white font-semibold text-lg">ブロック編集</h2>
-              <button
-                onClick={() => setShowTemplateSelector(true)}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50"
-              >
-                + ブロック追加
-              </button>
+        {/* 分割ビュー */}
+        {viewMode === 'split' ? (
+          <div className="flex h-full">
+            {/* 左側: エディタ */}
+            <div className="w-1/2 border-r border-gray-700 overflow-y-auto p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-white font-semibold text-lg">エディタ</h2>
+                <button
+                  onClick={() => setShowTemplateSelector(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm"
+                >
+                  + ブロック追加
+                </button>
+              </div>
+              <DraggableBlockEditor
+                blocks={blocks}
+                onUpdateBlock={handleUpdateBlock}
+                onDeleteBlock={handleDeleteBlock}
+                onReorderBlocks={handleReorderBlocks}
+                isEditing={true}
+                onSelectBlock={setSelectedBlockId}
+                selectedBlockId={selectedBlockId}
+              />
             </div>
-            <p className="text-gray-400 text-sm mt-2">
-              ブロックをクリックして編集 | 左側のボタンで並び替え・削除
-            </p>
-          </div>
-        )}
 
-        {/* ブロックエディタ */}
-        <div className={`${isEditing ? 'max-w-7xl mx-auto' : 'max-w-full'}`}>
-          <BlockEditor
-            blocks={blocks}
-            onUpdateBlock={handleUpdateBlock}
-            onDeleteBlock={handleDeleteBlock}
-            onMoveBlock={handleMoveBlock}
-            isEditing={isEditing}
-          />
-        </div>
+            {/* 右側: プレビュー & プロパティ */}
+            <div className="w-1/2 overflow-y-auto">
+              {/* プロパティパネル */}
+              {selectedBlockId && (
+                <div className="sticky top-0 z-10 p-4 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700">
+                  <PropertyPanel
+                    block={blocks.find(b => b.id === selectedBlockId) || null}
+                    onUpdateContent={handleUpdateSelectedBlock}
+                    onClose={() => setSelectedBlockId(null)}
+                  />
+                </div>
+              )}
 
-        {/* ヒント */}
-        {isEditing && blocks.length > 0 && (
-          <div className="mt-8 bg-blue-500/10 border border-blue-500/50 rounded-lg p-4">
-            <div className="flex items-start">
-              <div className="text-2xl mr-3">💡</div>
-              <div>
-                <h3 className="text-blue-400 font-semibold mb-1">編集のヒント</h3>
-                <ul className="text-gray-400 text-sm space-y-1">
-                  <li>• テキストをクリックして直接編集できます</li>
-                  <li>• 左側のボタンでブロックを並び替えたり削除したりできます</li>
-                  <li>• プレビューモードで実際の表示を確認できます</li>
-                  <li>• 保存を忘れずに！</li>
-                </ul>
+              {/* プレビュー */}
+              <div className="bg-white">
+                <DraggableBlockEditor
+                  blocks={blocks}
+                  onUpdateBlock={() => {}}
+                  onDeleteBlock={() => {}}
+                  onReorderBlocks={() => {}}
+                  isEditing={false}
+                />
               </div>
             </div>
+          </div>
+        ) : (
+          /* 単一ビュー（編集 or プレビュー） */
+          <div className="container mx-auto px-4 py-8">
+            {viewMode === 'edit' && (
+              <div className="mb-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white font-semibold text-lg">ブロック編集</h2>
+                  <button
+                    onClick={() => setShowTemplateSelector(true)}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50"
+                  >
+                    + ブロック追加
+                  </button>
+                </div>
+                <p className="text-gray-400 text-sm mt-2">
+                  ドラッグして並び替え | ブロックをクリックして選択
+                </p>
+              </div>
+            )}
+
+            <div className={`${viewMode === 'edit' ? 'max-w-7xl mx-auto' : 'max-w-full bg-white'}`}>
+              <DraggableBlockEditor
+                blocks={blocks}
+                onUpdateBlock={handleUpdateBlock}
+                onDeleteBlock={handleDeleteBlock}
+                onReorderBlocks={handleReorderBlocks}
+                isEditing={viewMode === 'edit'}
+                onSelectBlock={setSelectedBlockId}
+                selectedBlockId={selectedBlockId}
+              />
+            </div>
+
+            {/* プロパティパネル（編集モード時） */}
+            {viewMode === 'edit' && selectedBlockId && (
+              <div className="fixed right-4 top-24 w-80 max-h-[calc(100vh-120px)] overflow-y-auto">
+                <PropertyPanel
+                  block={blocks.find(b => b.id === selectedBlockId) || null}
+                  onUpdateContent={handleUpdateSelectedBlock}
+                  onClose={() => setSelectedBlockId(null)}
+                />
+              </div>
+            )}
           </div>
         )}
       </main>
