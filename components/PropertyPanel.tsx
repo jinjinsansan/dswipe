@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent } from '@/types/templates';
+import { mediaApi } from '@/lib/api';
 
 interface PropertyPanelProps {
   block: {
@@ -17,6 +18,24 @@ interface PropertyPanelProps {
 
 export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI }: PropertyPanelProps) {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const response = await mediaApi.upload(file);
+      const imageUrl = response.data.url;
+      onUpdateContent('imageUrl', imageUrl);
+    } catch (error) {
+      console.error('画像アップロードエラー:', error);
+      alert('画像のアップロードに失敗しました');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   if (!block) {
     return (
@@ -248,6 +267,61 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <option value="3">3カラム</option>
               <option value="4">4カラム</option>
             </select>
+          </div>
+        )}
+
+        {/* 画像アップロード */}
+        {('imageUrl' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              画像
+            </label>
+            {(content as any).imageUrl ? (
+              <div className="space-y-2">
+                <div className="relative w-full h-32 bg-gray-900 rounded-lg overflow-hidden border border-gray-700">
+                  <img 
+                    src={(content as any).imageUrl} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <label className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium text-center cursor-pointer">
+                    {isUploading ? '📤 アップロード中...' : '🔄 画像を変更'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    onClick={() => onUpdateContent('imageUrl', '')}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                  >
+                    🗑️ 削除
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <label className="block w-full px-4 py-8 bg-gray-900 border-2 border-dashed border-gray-700 rounded-lg hover:border-gray-600 transition-colors cursor-pointer text-center">
+                <div className="text-4xl mb-2">📸</div>
+                <div className="text-gray-400 text-sm mb-1">
+                  {isUploading ? 'アップロード中...' : 'クリックして画像をアップロード'}
+                </div>
+                <div className="text-gray-500 text-xs">
+                  PNG, JPG, GIF (最大5MB)
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
         )}
 
