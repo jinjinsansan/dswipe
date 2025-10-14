@@ -186,34 +186,47 @@ export default function MediaPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-light text-white mb-1">メディア</h1>
-                <p className="text-gray-400 text-sm font-light">画像をアップロードして管理</p>
-              </div>
-              <div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light disabled:opacity-50"
-                >
-                  {isUploading ? 'アップロード中...' : '+ 画像をアップロード'}
-                </button>
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Navigation Bar */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Left: Page Title & Description */}
+            <div>
+              <h1 className="text-xl font-light text-white mb-0.5">メディア</h1>
+              <p className="text-gray-400 text-xs font-light">画像をアップロードして管理</p>
+            </div>
+            
+            {/* Right: Actions & User Info */}
+            <div className="flex items-center space-x-4">
+              {/* Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept="image/*"
+                multiple
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light disabled:opacity-50"
+              >
+                {isUploading ? 'アップロード中...' : '+ 画像をアップロード'}
+              </button>
+              
+              {/* User Avatar */}
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6">
 
           {/* Media Grid */}
           {media.length === 0 ? (
@@ -290,6 +303,7 @@ export default function MediaPage() {
               </div>
             </div>
           )}
+        </div>
         </div>
       </main>
     </div>

@@ -9,31 +9,41 @@ export default function DSwipeLogo({
   size = 'medium',
   showFullName = true 
 }: DSwipeLogoProps) {
-  const sizeClasses = {
-    small: 'text-lg',
-    medium: 'text-xl',
-    large: 'text-2xl'
+  const dimensions = {
+    small: { circle: 24, text: 'text-sm' },
+    medium: { circle: 32, text: 'text-base' },
+    large: { circle: 48, text: 'text-xl' }
   };
 
+  const textSize = {
+    small: 'text-sm',
+    medium: 'text-base',
+    large: 'text-xl'
+  };
+
+  const dim = dimensions[size];
+
   return (
-    <div className="flex items-center space-x-1">
-      {/* D Logo */}
-      <span 
-        className={`${sizeClasses[size]} font-black text-[#c0c0c0]`}
+    <div className="flex items-center space-x-2">
+      {/* D Logo - Yellow Circle with Black D */}
+      <div 
+        className="rounded-full flex items-center justify-center font-black"
         style={{
-          filter: 'drop-shadow(0 0 12px rgba(192, 192, 192, 0.6))',
-          textShadow: '0 0 20px rgba(192, 192, 192, 0.4)',
-          fontWeight: 900,
+          width: `${dim.circle}px`,
+          height: `${dim.circle}px`,
+          backgroundColor: '#FDB91A', // Yellow/Gold
+          color: '#000000', // Black
+          fontSize: dim.circle * 0.55 + 'px',
           lineHeight: '1',
           userSelect: 'none',
         }}
       >
         D
-      </span>
+      </div>
       
       {/* -swipe text */}
       {showFullName && (
-        <span className={`${sizeClasses[size]} font-light text-white`}>
+        <span className={`${textSize[size]} font-light text-white`}>
           -swipe
         </span>
       )}

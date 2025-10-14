@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
+import DSwipeLogo from '@/components/DSwipeLogo';
 
 const POINT_PACKAGES = [
   { points: 1000, price: 1000, bonus: 0 },
@@ -80,47 +81,109 @@ export default function PointPurchasePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Header */}
-      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="text-2xl font-bold text-white">
-              SwipeLaunch
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors">
-                ダッシュボード
-              </Link>
-              <Link href="/products" className="text-gray-300 hover:text-white transition-colors">
-                商品管理
-              </Link>
-              <Link href="/points/purchase" className="text-white font-semibold">
-                ポイント購入
-              </Link>
-              <div className="flex items-center space-x-4 border-l border-gray-700 pl-6">
-                <div className="text-right">
-                  <div className="text-gray-300 text-sm">{user?.username || 'ユーザー'}</div>
-                  <div className="text-blue-400 font-semibold">{pointBalance.toLocaleString()} P</div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="text-red-400 hover:text-red-300 transition-colors"
-                >
-                  ログアウト
-                </button>
-              </div>
-            </nav>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
+      {/* Sidebar */}
+      <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
+        <div className="p-4 border-b border-gray-700">
+          <Link href="/dashboard" className="block">
+            <DSwipeLogo size="medium" showFullName={true} />
+          </Link>
         </div>
-      </header>
+
+        <nav className="flex-1 p-3">
+          <div className="space-y-0.5">
+            <Link
+              href="/dashboard"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">📊</span>
+              <span>ダッシュボード</span>
+            </Link>
+            
+            <Link
+              href="/lp/create"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">➕</span>
+              <span>新規LP作成</span>
+            </Link>
+            
+            <Link
+              href="/products"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">📦</span>
+              <span>商品管理</span>
+            </Link>
+            
+            <Link
+              href="/points/purchase"
+              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
+            >
+              <span className="text-base">💰</span>
+              <span>ポイント購入</span>
+            </Link>
+            
+            <Link
+              href="/media"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">🖼️</span>
+              <span>メディア</span>
+            </Link>
+          </div>
+        </nav>
+
+        <div className="p-3 border-t border-gray-700">
+          <div className="flex items-center space-x-2 mb-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+              {user?.username?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-white text-sm font-light truncate">{user?.username}</div>
+              <div className="text-gray-400 text-xs">{user?.user_type}</div>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+          >
+            ログアウト
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">ポイント購入</h1>
-          <p className="text-gray-400">ポイントを購入して商品を手に入れましょう</p>
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Navigation Bar */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Left: Page Title & Description */}
+            <div>
+              <h1 className="text-xl font-light text-white mb-0.5">ポイント購入</h1>
+              <p className="text-gray-400 text-xs font-light">ポイントを購入して商品を手に入れましょう</p>
+            </div>
+            
+            {/* Right: Point Balance & User Info */}
+            <div className="flex items-center space-x-4">
+              {/* Point Balance */}
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-900/50 rounded border border-gray-700">
+                <span className="text-gray-400 text-xs font-light">ポイント残高</span>
+                <span className="text-white text-sm font-light">{pointBalance.toLocaleString()} P</span>
+              </div>
+              
+              {/* User Avatar */}
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6">
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Purchase */}
@@ -284,6 +347,7 @@ export default function PointPurchasePage() {
               </ul>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>

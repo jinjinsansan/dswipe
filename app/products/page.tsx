@@ -235,22 +235,38 @@ export default function ProductsPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-light text-white mb-1">商品管理</h1>
-                <p className="text-gray-400 text-sm font-light">LPに紐付ける商品を管理します（ポイント決済）</p>
-              </div>
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Navigation Bar */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Left: Page Title & Description */}
+            <div>
+              <h1 className="text-xl font-light text-white mb-0.5">商品管理</h1>
+              <p className="text-gray-400 text-xs font-light">LPに紐付ける商品を管理します（ポイント決済）</p>
+            </div>
+            
+            {/* Right: Actions & User Info */}
+            <div className="flex items-center space-x-4">
+              {/* Create Button */}
               <button
                 onClick={handleOpenCreate}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
               >
                 + 商品を作成
               </button>
+              
+              {/* User Avatar */}
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6">
 
         {/* 商品一覧 */}
         {products.length === 0 ? (
