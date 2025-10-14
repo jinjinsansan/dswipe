@@ -39,7 +39,6 @@ export default function DashboardPage() {
         ? lpsResponse.data 
         : [];
       
-      console.log('📋 Loaded LPs:', lpsData.length, lpsData);
       setLps(lpsData);
       setPointBalance(pointsResponse.data.point_balance);
     } catch (error) {

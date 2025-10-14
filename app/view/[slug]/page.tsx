@@ -43,13 +43,7 @@ export default function LPViewerPage() {
 
   const fetchLP = async () => {
     try {
-      console.log('🔍 Fetching LP:', slug);
       const response = await publicApi.getLP(slug);
-      console.log('✅ LP fetched:', response.data);
-      console.log('📦 Steps count:', response.data.steps?.length);
-      if (response.data.steps?.length > 0) {
-        console.log('📋 First step:', response.data.steps[0]);
-      }
       setLp(response.data);
       // LPに紐付いた商品を取得
       if (response.data.id) {
@@ -57,7 +51,6 @@ export default function LPViewerPage() {
       }
     } catch (err: any) {
       console.error('❌ Failed to fetch LP:', err);
-      console.error('Error details:', err.response?.data);
       setError('LPが見つかりませんでした');
     } finally {
       setIsLoading(false);
@@ -66,34 +59,48 @@ export default function LPViewerPage() {
 
   const fetchProducts = async (lpId: string) => {
     try {
+      console.log('📦 Fetching products for LP:', lpId);
       const response = await productApi.list({ lp_id: lpId });
       const productsData = Array.isArray(response.data?.data) 
         ? response.data.data 
         : Array.isArray(response.data) 
         ? response.data 
         : [];
-      setProducts(productsData.filter((p: any) => p.is_available));
+      const availableProducts = productsData.filter((p: any) => p.is_available);
+      console.log('✅ Found products:', availableProducts.length, availableProducts);
+      setProducts(availableProducts);
     } catch (error) {
-      console.error('Failed to fetch products:', error);
+      console.error('❌ Failed to fetch products:', error);
     }
   };
 
   const fetchPointBalance = async () => {
     try {
+      console.log('💰 Fetching point balance...');
       const response = await pointsApi.getBalance();
-      setPointBalance(response.data.point_balance || 0);
+      const balance = response.data.point_balance || 0;
+      console.log('✅ Point balance:', balance);
+      setPointBalance(balance);
     } catch (error) {
-      console.error('Failed to fetch point balance:', error);
+      console.error('❌ Failed to fetch point balance:', error);
     }
   };
 
   const handleOpenPurchaseModal = (product: any) => {
+    console.log('🛍️ Opening purchase modal for product:', product);
+    
     if (!isAuthenticated) {
+      console.log('⚠️ User not authenticated, redirecting to login');
       if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
         router.push('/login');
       }
       return;
     }
+    
+    console.log('✅ User authenticated, showing modal');
+    console.log('Current point balance:', pointBalance);
+    console.log('Product price:', product.price_in_points);
+    
     setSelectedProduct(product);
     setPurchaseQuantity(1);
     setShowPurchaseModal(true);
@@ -291,27 +298,18 @@ export default function LPViewerPage() {
         >
           {lp.steps.sort((a, b) => a.step_order - b.step_order).map((step, index) => {
             const stepCtas = getCurrentStepCtas(index);
-            console.log(`🎨 Rendering step ${index}:`, { 
-              block_type: step.block_type, 
-              has_content_data: !!step.content_data,
-              image_url: step.image_url 
-            });
             
             return (
               <SwiperSlide key={step.id} className="relative bg-white overflow-y-auto">
                 {/* ブロックレンダリング */}
                 {step.block_type && step.content_data ? (
-                  <>
-                    {console.log('✅ Rendering block:', step.block_type)}
-                    <BlockRenderer
-                      blockType={step.block_type}
-                      content={step.content_data}
-                      isEditing={false}
-                    />
-                  </>
+                  <BlockRenderer
+                    blockType={step.block_type}
+                    content={step.content_data}
+                    isEditing={false}
+                  />
                 ) : (
                   <>
-                    {console.log('⚠️ Using legacy image mode')}
                     {/* 旧式の画像ベース */}
                     <div
                       className="absolute inset-0 bg-cover bg-center"
