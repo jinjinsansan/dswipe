@@ -81,7 +81,14 @@ export default function CreateLPPage() {
     try {
       const response = await lpApi.create(formData);
       const lpId = response.data.id;
-      router.push(`/lp/${lpId}/edit`);
+      
+      // AI提案がある場合は、クエリパラメータで渡す
+      if (aiSuggestion) {
+        const aiData = encodeURIComponent(JSON.stringify(aiSuggestion));
+        router.push(`/lp/${lpId}/edit?ai=${aiData}`);
+      } else {
+        router.push(`/lp/${lpId}/edit`);
+      }
     } catch (err: any) {
       setError(getErrorMessage(err));
     } finally {

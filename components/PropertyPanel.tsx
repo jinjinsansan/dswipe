@@ -12,9 +12,10 @@ interface PropertyPanelProps {
   } | null;
   onUpdateContent: (field: string, value: any) => void;
   onClose: () => void;
+  onGenerateAI?: (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => void;
 }
 
-export default function PropertyPanel({ block, onUpdateContent, onClose }: PropertyPanelProps) {
+export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI }: PropertyPanelProps) {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
 
   if (!block) {
@@ -49,6 +50,47 @@ export default function PropertyPanel({ block, onUpdateContent, onClose }: Prope
 
       {/* プロパティ */}
       <div className="p-4 space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
+        {/* AI生成セクション */}
+        {onGenerateAI && (
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+            <h4 className="text-blue-400 font-semibold text-sm mb-2">🤖 AI生成</h4>
+            <div className="space-y-2">
+              {('title' in content) && (
+                <button
+                  onClick={() => onGenerateAI('headline', 'title')}
+                  className="w-full px-3 py-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm font-medium"
+                >
+                  ✨ タイトルを生成
+                </button>
+              )}
+              {('subtitle' in content) && (
+                <button
+                  onClick={() => onGenerateAI('subtitle', 'subtitle')}
+                  className="w-full px-3 py-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm font-medium"
+                >
+                  ✨ サブタイトルを生成
+                </button>
+              )}
+              {('text' in content) && (
+                <button
+                  onClick={() => onGenerateAI('description', 'text')}
+                  className="w-full px-3 py-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm font-medium"
+                >
+                  ✨ 説明文を生成
+                </button>
+              )}
+              {('buttonText' in content) && (
+                <button
+                  onClick={() => onGenerateAI('cta', 'buttonText')}
+                  className="w-full px-3 py-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm font-medium"
+                >
+                  ✨ ボタン文言を生成
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* 背景色 */}
         {content.backgroundColor !== undefined && (
           <div>

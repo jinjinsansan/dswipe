@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -11,6 +11,8 @@ import { getTemplateById } from '@/lib/templates';
 import TemplateSelector from '@/components/TemplateSelector';
 import DraggableBlockEditor from '@/components/DraggableBlockEditor';
 import PropertyPanel from '@/components/PropertyPanel';
+import AITextGenerator from '@/components/AITextGenerator';
+import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 // UUID生成のヘルパー関数
 function generateId() {
   return `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -26,6 +28,7 @@ interface LPBlock {
 export default function EditLPNewPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const lpId = params.id as string;
   const { isAuthenticated } = useAuthStore();
   
@@ -38,6 +41,8 @@ export default function EditLPNewPage() {
   const [isEditing, setIsEditing] = useState(true);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'edit' | 'split' | 'preview'>('split');
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
+  const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,6 +56,21 @@ export default function EditLPNewPage() {
     try {
       const response = await lpApi.get(lpId);
       setLp(response.data);
+      
+      // AI提案がクエリパラメータにある場合は、それをブロックに変換
+      const aiParam = searchParams.get('ai');
+      if (aiParam && response.data.steps.length === 0) {
+        try {
+          const aiResult = JSON.parse(decodeURIComponent(aiParam));
+          const aiBlocks = convertAIResultToBlocks(aiResult);
+          setBlocks(aiBlocks);
+          // URLからAIパラメータを削除
+          router.replace(`/lp/${lpId}/edit`);
+          return;
+        } catch (e) {
+          console.error('AI結果のパースエラー:', e);
+        }
+      }
       
       // ステップデータをブロックに変換
       // TODO: バックエンドAPIがcontent_dataをサポートしたら、そこから読み込む
@@ -113,6 +133,30 @@ export default function EditLPNewPage() {
   const handleUpdateSelectedBlock = (field: string, value: any) => {
     if (!selectedBlockId) return;
     handleUpdateBlock(selectedBlockId, field, value);
+  };
+
+  const handleGenerateAI = (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => {
+    if (!selectedBlockId) return;
+    
+    const block = blocks.find(b => b.id === selectedBlockId);
+    if (!block) return;
+
+    // AI生成のコンテキストを作成
+    const context = {
+      product: lp?.title,
+      headline: 'title' in block.content ? (block.content as any).title : undefined,
+      business: 'LP作成',
+      target: '一般ユーザー',
+      goal: 'コンバージョン',
+    };
+
+    setAiGeneratorConfig({ type, field, context });
+    setShowAIGenerator(true);
+  };
+
+  const handleAITextSelect = (text: string) => {
+    if (!selectedBlockId || !aiGeneratorConfig) return;
+    handleUpdateBlock(selectedBlockId, aiGeneratorConfig.field, text);
   };
 
   const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
@@ -310,6 +354,7 @@ export default function EditLPNewPage() {
                     block={blocks.find(b => b.id === selectedBlockId) || null}
                     onUpdateContent={handleUpdateSelectedBlock}
                     onClose={() => setSelectedBlockId(null)}
+                    onGenerateAI={handleGenerateAI}
                   />
                 </div>
               )}
@@ -365,6 +410,7 @@ export default function EditLPNewPage() {
                   block={blocks.find(b => b.id === selectedBlockId) || null}
                   onUpdateContent={handleUpdateSelectedBlock}
                   onClose={() => setSelectedBlockId(null)}
+                  onGenerateAI={handleGenerateAI}
                 />
               </div>
             )}
@@ -377,6 +423,19 @@ export default function EditLPNewPage() {
         <TemplateSelector
           onSelectTemplate={handleAddTemplate}
           onClose={() => setShowTemplateSelector(false)}
+        />
+      )}
+
+      {/* AI文章生成モーダル */}
+      {showAIGenerator && aiGeneratorConfig && (
+        <AITextGenerator
+          type={aiGeneratorConfig.type}
+          context={aiGeneratorConfig.context}
+          onSelect={handleAITextSelect}
+          onClose={() => {
+            setShowAIGenerator(false);
+            setAiGeneratorConfig(null);
+          }}
         />
       )}
     </div>
