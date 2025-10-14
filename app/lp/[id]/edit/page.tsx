@@ -75,18 +75,29 @@ export default function EditLPNewPage() {
       }
       
       // ステップデータをブロックに変換
-      // TODO: バックエンドAPIがcontent_dataをサポートしたら、そこから読み込む
-      const convertedBlocks: LPBlock[] = response.data.steps.map((step: any, index: number) => ({
-        id: step.id,
-        blockType: 'hero-1' as BlockType, // デフォルト
-        content: {
-          title: 'タイトル',
-          subtitle: 'サブタイトル',
-          backgroundColor: '#000000',
-          textColor: '#FFFFFF',
-        },
-        order: index,
-      }));
+      const convertedBlocks: LPBlock[] = response.data.steps.map((step: any) => {
+        // content_dataが存在すれば使用、なければデフォルト
+        let content: BlockContent;
+        if (step.content_data && Object.keys(step.content_data).length > 0) {
+          content = step.content_data as BlockContent;
+        } else {
+          // 旧形式（image_urlのみ）の場合のフォールバック
+          content = {
+            title: 'タイトルを入力',
+            subtitle: 'サブタイトルを入力',
+            backgroundColor: '#000000',
+            textColor: '#FFFFFF',
+            imageUrl: step.image_url,
+          } as any;
+        }
+
+        return {
+          id: step.id,
+          blockType: (step.block_type || 'hero-1') as BlockType,
+          content,
+          order: step.step_order,
+        };
+      });
       
       setBlocks(convertedBlocks);
     } catch (err) {
@@ -183,17 +194,34 @@ export default function EditLPNewPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
+    setError('');
+    
     try {
-      // TODO: バックエンドAPIにcontent_dataを送信
-      // await lpApi.updateSteps(lpId, blocks.map(b => ({
-      //   block_type: b.blockType,
-      //   content_data: b.content,
-      //   order: b.order
-      // })));
+      // 既存のステップを更新 + 新規ステップを作成
+      for (const block of blocks) {
+        const stepData = {
+          step_order: block.order,
+          image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
+          block_type: block.blockType,
+          content_data: block.content as unknown as Record<string, unknown>,
+        };
+
+        if (block.id.startsWith('ai-block-') || block.id.startsWith('block-')) {
+          // 新規ブロック（まだDBに保存されていない）
+          await lpApi.addStep(lpId, stepData);
+        } else {
+          // 既存ブロック（DBに保存済み）
+          await lpApi.updateStep(lpId, block.id, stepData);
+        }
+      }
       
-      alert('保存しました！（デモ）');
+      alert('保存しました！');
+      // ページを再読み込みして最新データを取得
+      fetchLP();
     } catch (err: any) {
-      alert(err.response?.data?.detail || '保存に失敗しました');
+      const errorMessage = err.response?.data?.detail || '保存に失敗しました';
+      setError(errorMessage);
+      alert(errorMessage);
     } finally {
       setIsSaving(false);
     }

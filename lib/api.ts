@@ -80,14 +80,18 @@ export const lpApi = {
     api.post(`/lp/${id}/publish`),
   
   // ステップ管理
-  addStep: (lpId: string, data: any) =>
+  addStep: (lpId: string, data: { step_order: number; image_url: string; block_type?: string; content_data?: Record<string, unknown> }) =>
     api.post(`/lp/${lpId}/steps`, data),
   
-  updateStep: (lpId: string, stepId: string, data: any) =>
+  updateStep: (lpId: string, stepId: string, data: { step_order?: number; image_url?: string; block_type?: string; content_data?: Record<string, unknown> }) =>
     api.put(`/lp/${lpId}/steps/${stepId}`, data),
   
   deleteStep: (lpId: string, stepId: string) =>
     api.delete(`/lp/${lpId}/steps/${stepId}`),
+  
+  // ブロック一括更新（テンプレートシステム用）
+  updateBlocks: (lpId: string, blocks: Array<{ id?: string; block_type: string; content_data: Record<string, unknown>; order: number }>) =>
+    api.post(`/lp/${lpId}/blocks`, { blocks }),
   
   // CTA管理
   addCta: (lpId: string, data: any) =>
