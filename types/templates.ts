@@ -1,0 +1,278 @@
+/**
+ * テンプレートブロックの型定義
+ */
+
+// ブロックタイプ
+export type BlockType = 
+  | 'hero-1'       // センター配置ヒーロー
+  | 'hero-2'       // 左右分割ヒーロー
+  | 'hero-3'       // フルスクリーン画像 + オーバーレイテキスト
+  | 'text-img-1'   // 左テキスト右画像
+  | 'text-img-2'   // 右テキスト左画像
+  | 'text-img-3'   // 上テキスト下画像
+  | 'pricing-1'    // 3カラム価格表
+  | 'pricing-2'    // 2カラム価格表（対比型）
+  | 'pricing-3'    // シングルカラム価格表
+  | 'testimonial-1' // カード型お客様の声
+  | 'testimonial-2' // スライダー型お客様の声
+  | 'testimonial-3' // グリッド型お客様の声
+  | 'faq-1'        // アコーディオン型FAQ
+  | 'faq-2'        // 2カラムFAQ
+  | 'features-1'   // アイコン付き3カラム特徴
+  | 'features-2'   // 横並び特徴リスト
+  | 'cta-1'        // シンプルCTA
+  | 'cta-2'        // 2ボタンCTA
+  | 'cta-3'        // カウントダウン付きCTA
+  | 'gallery-1'    // グリッドギャラリー
+  | 'gallery-2'    // マソンリーギャラリー
+  | 'video-1'      // 埋め込み動画
+  | 'video-2'      // 動画 + テキスト説明
+  | 'form-1'       // シンプルフォーム
+  | 'form-2'       // 多項目フォーム
+  | 'stats-1'      // 統計数値表示
+  | 'timeline-1'   // タイムライン
+  | 'team-1'       // チームメンバー紹介
+  | 'logo-grid-1'  // ロゴグリッド（取引先等）
+  | 'comparison-1'; // 比較表
+
+// カテゴリ
+export type BlockCategory =
+  | 'header'        // ヒーロー系
+  | 'content'       // コンテンツ系
+  | 'conversion'    // コンバージョン系
+  | 'social-proof'  // 社会的証明
+  | 'media'         // メディア系
+  | 'form';         // フォーム系
+
+// 共通のブロックコンテンツ
+export interface BaseBlockContent {
+  backgroundColor?: string;
+  textColor?: string;
+  padding?: string;
+  margin?: string;
+}
+
+// ヒーローブロックコンテンツ
+export interface HeroBlockContent extends BaseBlockContent {
+  title: string;
+  subtitle?: string;
+  imageUrl?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  buttonColor?: string;
+  alignment?: 'left' | 'center' | 'right';
+}
+
+// テキスト+画像ブロックコンテンツ
+export interface TextImageBlockContent extends BaseBlockContent {
+  title: string;
+  text: string;
+  imageUrl?: string;
+  imagePosition?: 'left' | 'right' | 'top' | 'bottom';
+  imageWidth?: string;
+}
+
+// 価格表ブロックコンテンツ
+export interface PricingBlockContent extends BaseBlockContent {
+  plans: {
+    name: string;
+    price: string;
+    period?: string;
+    description?: string;
+    features: string[];
+    buttonText?: string;
+    buttonUrl?: string;
+    highlighted?: boolean;
+  }[];
+  columns?: 2 | 3;
+}
+
+// お客様の声ブロックコンテンツ
+export interface TestimonialBlockContent extends BaseBlockContent {
+  testimonials: {
+    name: string;
+    role?: string;
+    text: string;
+    imageUrl?: string;
+    rating?: number;
+    company?: string;
+  }[];
+  layout?: 'card' | 'slider' | 'grid';
+}
+
+// FAQブロックコンテンツ
+export interface FAQBlockContent extends BaseBlockContent {
+  title?: string;
+  faqs: {
+    question: string;
+    answer: string;
+  }[];
+  layout?: 'accordion' | 'grid';
+}
+
+// 特徴ブロックコンテンツ
+export interface FeaturesBlockContent extends BaseBlockContent {
+  title?: string;
+  features: {
+    icon?: string;
+    title: string;
+    description: string;
+  }[];
+  columns?: 2 | 3 | 4;
+}
+
+// CTAブロックコンテンツ
+export interface CTABlockContent extends BaseBlockContent {
+  title: string;
+  subtitle?: string;
+  buttonText: string;
+  buttonUrl?: string;
+  buttonColor?: string;
+  secondaryButtonText?: string;
+  secondaryButtonUrl?: string;
+  countdown?: {
+    endDate: string;
+  };
+}
+
+// ギャラリーブロックコンテンツ
+export interface GalleryBlockContent extends BaseBlockContent {
+  images: {
+    url: string;
+    alt?: string;
+    caption?: string;
+  }[];
+  layout?: 'grid' | 'masonry';
+  columns?: 2 | 3 | 4;
+}
+
+// 動画ブロックコンテンツ
+export interface VideoBlockContent extends BaseBlockContent {
+  videoUrl: string;
+  title?: string;
+  description?: string;
+  thumbnail?: string;
+  autoplay?: boolean;
+}
+
+// フォームブロックコンテンツ
+export interface FormBlockContent extends BaseBlockContent {
+  title?: string;
+  fields: {
+    name: string;
+    label: string;
+    type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
+    placeholder?: string;
+    required?: boolean;
+    options?: string[]; // selectの場合
+  }[];
+  submitButtonText?: string;
+  submitUrl?: string;
+}
+
+// 統計ブロックコンテンツ
+export interface StatsBlockContent extends BaseBlockContent {
+  stats: {
+    value: string;
+    label: string;
+    icon?: string;
+  }[];
+  columns?: 2 | 3 | 4;
+}
+
+// タイムラインブロックコンテンツ
+export interface TimelineBlockContent extends BaseBlockContent {
+  title?: string;
+  items: {
+    date: string;
+    title: string;
+    description: string;
+  }[];
+}
+
+// チームブロックコンテンツ
+export interface TeamBlockContent extends BaseBlockContent {
+  title?: string;
+  members: {
+    name: string;
+    role: string;
+    imageUrl?: string;
+    bio?: string;
+    social?: {
+      twitter?: string;
+      linkedin?: string;
+      github?: string;
+    };
+  }[];
+  columns?: 2 | 3 | 4;
+}
+
+// ロゴグリッドブロックコンテンツ
+export interface LogoGridBlockContent extends BaseBlockContent {
+  title?: string;
+  logos: {
+    url: string;
+    alt: string;
+    link?: string;
+  }[];
+  columns?: 3 | 4 | 5 | 6;
+}
+
+// 比較表ブロックコンテンツ
+export interface ComparisonBlockContent extends BaseBlockContent {
+  title?: string;
+  products: {
+    name: string;
+    features: {
+      [key: string]: boolean | string;
+    };
+  }[];
+}
+
+// ブロックコンテンツの型（Union型）
+export type BlockContent =
+  | HeroBlockContent
+  | TextImageBlockContent
+  | PricingBlockContent
+  | TestimonialBlockContent
+  | FAQBlockContent
+  | FeaturesBlockContent
+  | CTABlockContent
+  | GalleryBlockContent
+  | VideoBlockContent
+  | FormBlockContent
+  | StatsBlockContent
+  | TimelineBlockContent
+  | TeamBlockContent
+  | LogoGridBlockContent
+  | ComparisonBlockContent;
+
+// テンプレートブロック定義
+export interface TemplateBlock {
+  id: string;
+  templateId: BlockType;
+  name: string;
+  category: BlockCategory;
+  description: string;
+  thumbnailUrl?: string;
+  defaultContent: BlockContent;
+  previewImageUrl?: string;
+}
+
+// LPステップ（content_data使用）
+export interface LPStepWithTemplate {
+  id: string;
+  lp_id: string;
+  step_order: number;
+  image_url?: string; // 旧形式との互換性
+  video_url?: string;
+  animation_type?: string;
+  content_data: {
+    blockType: BlockType;
+    templateId?: string;
+    content: BlockContent;
+  };
+  step_views: number;
+  step_exits: number;
+  created_at: string;
+}

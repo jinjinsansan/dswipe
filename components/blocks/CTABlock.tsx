@@ -1,0 +1,70 @@
+import React from 'react';
+
+interface CTABlockProps {
+  content: {
+    title: string;
+    subtitle?: string;
+    buttonText: string;
+    buttonColor: string;
+    backgroundColor: string;
+    textColor: string;
+  };
+  isEditing?: boolean;
+  onEdit?: (field: string, value: string) => void;
+}
+
+export default function CTABlock({ content, isEditing, onEdit }: CTABlockProps) {
+  const style = {
+    backgroundColor: content.backgroundColor,
+    color: content.textColor,
+  };
+
+  return (
+    <div className="py-20 px-8" style={style}>
+      <div className="max-w-4xl mx-auto text-center">
+        {isEditing ? (
+          <>
+            <input
+              type="text"
+              value={content.title}
+              onChange={(e) => onEdit?.('title', e.target.value)}
+              className="w-full text-4xl md:text-5xl font-bold mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              placeholder="CTAタイトルを入力"
+            />
+            <input
+              type="text"
+              value={content.subtitle || ''}
+              onChange={(e) => onEdit?.('subtitle', e.target.value)}
+              className="w-full text-xl mb-8 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              placeholder="サブタイトル（オプション）"
+            />
+            <input
+              type="text"
+              value={content.buttonText}
+              onChange={(e) => onEdit?.('buttonText', e.target.value)}
+              className="w-full text-lg bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              placeholder="ボタンテキスト"
+            />
+          </>
+        ) : (
+          <>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {content.title || 'さあ、始めましょう'}
+            </h2>
+            {content.subtitle && (
+              <p className="text-xl mb-8">
+                {content.subtitle}
+              </p>
+            )}
+            <button
+              className="px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
+              style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
+            >
+              {content.buttonText || '今すぐ始める'}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
