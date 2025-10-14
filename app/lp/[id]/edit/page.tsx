@@ -32,7 +32,7 @@ export default function EditLPNewPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const lpId = params.id as string;
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isInitialized } = useAuthStore();
   
   const [lp, setLp] = useState<LPDetail | null>(null);
   const [blocks, setBlocks] = useState<LPBlock[]>([]);
@@ -47,12 +47,15 @@ export default function EditLPNewPage() {
   const [showAIImprovement, setShowAIImprovement] = useState(false);
 
   useEffect(() => {
+    // 初期化が完了するまで待つ
+    if (!isInitialized) return;
+    
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
     fetchLP();
-  }, [isAuthenticated, lpId]);
+  }, [isAuthenticated, isInitialized, lpId]);
 
   const fetchLP = async () => {
     try {

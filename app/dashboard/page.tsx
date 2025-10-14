@@ -8,19 +8,22 @@ import { lpApi, pointsApi } from '@/lib/api';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
   const [lps, setLps] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // 初期化が完了するまで待つ
+    if (!isInitialized) return;
+    
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
 
     fetchData();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isInitialized]);
 
   const fetchData = async () => {
     try {
@@ -29,8 +32,14 @@ export default function DashboardPage() {
         pointsApi.getBalance(),
       ]);
 
-      // APIレスポンスが配列かどうかを確認
-      const lpsData = Array.isArray(lpsResponse.data) ? lpsResponse.data : [];
+      // APIレスポンスの構造に対応 (LPListResponse.data)
+      const lpsData = Array.isArray(lpsResponse.data?.data) 
+        ? lpsResponse.data.data 
+        : Array.isArray(lpsResponse.data) 
+        ? lpsResponse.data 
+        : [];
+      
+      console.log('📋 Loaded LPs:', lpsData.length, lpsData);
       setLps(lpsData);
       setPointBalance(pointsResponse.data.point_balance);
     } catch (error) {

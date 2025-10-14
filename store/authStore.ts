@@ -5,6 +5,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -15,6 +16,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
   isAuthenticated: false,
+  isInitialized: false,
   
   setUser: (user) => set({ user, isAuthenticated: !!user }),
   
@@ -41,12 +43,15 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (token && userStr) {
         try {
           const user = JSON.parse(userStr);
-          set({ user, token, isAuthenticated: true });
+          set({ user, token, isAuthenticated: true, isInitialized: true });
         } catch (error) {
           console.error('Failed to parse user data:', error);
           localStorage.removeItem('access_token');
           localStorage.removeItem('user');
+          set({ isInitialized: true });
         }
+      } else {
+        set({ isInitialized: true });
       }
     }
   },
