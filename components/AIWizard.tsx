@@ -78,11 +78,19 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   const handleGenerateLP = async () => {
     setIsLoading(true);
     try {
+      console.log('🚀 Sending to AI:', formData);
       const response = await api.post('/ai/wizard', formData);
+      console.log('🎉 AI Response:', response.data);
+      
+      if (!response.data || !response.data.structure) {
+        throw new Error('AI結果にstructureがありません');
+      }
+      
       onComplete(response.data);
-    } catch (error) {
-      console.error('AI生成エラー:', error);
-      alert('AI生成に失敗しました。スキップして手動で作成してください。');
+    } catch (error: any) {
+      console.error('❌ AI生成エラー:', error);
+      console.error('エラー詳細:', error.response?.data);
+      alert(`AI生成に失敗しました: ${error.message || 'Unknown error'}\nスキップして手動で作成してください。`);
     } finally {
       setIsLoading(false);
     }

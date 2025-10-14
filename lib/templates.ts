@@ -198,7 +198,7 @@ export const TEMPLATE_CATEGORIES = [
 ];
 
 // ===== 情報商材特化ブロック =====
-const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
+export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
   // カウントダウンタイマー
   {
     id: 'countdown-1',
