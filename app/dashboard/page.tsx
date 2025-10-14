@@ -98,6 +98,9 @@ export default function DashboardPage() {
                 <Link href="/products" className="text-gray-300 hover:text-white transition-colors">
                   商品管理
                 </Link>
+                <Link href="/points/purchase" className="text-gray-300 hover:text-white transition-colors">
+                  ポイント購入
+                </Link>
               </nav>
             </div>
             

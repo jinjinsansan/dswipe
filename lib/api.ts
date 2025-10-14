@@ -168,6 +168,15 @@ export const pointsApi = {
     api.get('/points/transactions', { params }),
 };
 
+// 管理者API
+export const adminApi = {
+  grantPoints: (data: { user_id: string; amount: number; description?: string }) =>
+    api.post('/admin/points/grant', data),
+  
+  searchUsers: (params?: { query?: string; user_type?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/users/search', { params }),
+};
+
 // AI API
 export const aiApi = {
   wizard: (data: AIWizardRequest) =>
