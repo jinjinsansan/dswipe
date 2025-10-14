@@ -62,11 +62,21 @@ export default function EditLPNewPage() {
       const response = await lpApi.get(lpId);
       setLp(response.data);
       
-      // AI提案がクエリパラメータにある場合は、それをブロックに変換
+      // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
-      if (aiParam && response.data.steps.length === 0) {
+      if (aiParam === 'true' && response.data.steps.length === 0) {
         try {
-          const aiResult = JSON.parse(decodeURIComponent(aiParam));
+          const aiDataStr = sessionStorage.getItem('aiSuggestion');
+          if (!aiDataStr) {
+            console.error('❌ AI提案データがsessionStorageにありません');
+            setIsLoading(false);
+            return;
+          }
+          
+          const aiResult = JSON.parse(aiDataStr);
+          // 使用後は削除
+          sessionStorage.removeItem('aiSuggestion');
+          
           console.log('🤖 AI提案を適用中...');
           const aiBlocks = convertAIResultToBlocks(aiResult);
           console.log('📦 Converted to blocks:', aiBlocks);

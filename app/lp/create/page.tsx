@@ -82,10 +82,10 @@ export default function CreateLPPage() {
       const response = await lpApi.create(formData);
       const lpId = response.data.id;
       
-      // AI提案がある場合は、クエリパラメータで渡す
+      // AI提案がある場合は、sessionStorageで渡す（URLエンコーディングエラー回避）
       if (aiSuggestion) {
-        const aiData = encodeURIComponent(JSON.stringify(aiSuggestion));
-        router.push(`/lp/${lpId}/edit?ai=${aiData}`);
+        sessionStorage.setItem('aiSuggestion', JSON.stringify(aiSuggestion));
+        router.push(`/lp/${lpId}/edit?ai=true`);
       } else {
         router.push(`/lp/${lpId}/edit`);
       }

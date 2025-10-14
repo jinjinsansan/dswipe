@@ -11,12 +11,43 @@ interface AIWizardProps {
 export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [formData, setFormData] = useState({
     business: '',
     target: '',
     goal: '',
     description: '',
   });
+
+  // タイマーとプログレスバー
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    let progressTimer: NodeJS.Timeout;
+    
+    if (isLoading) {
+      setElapsedTime(0);
+      setProgress(0);
+      
+      // 秒数カウント
+      timer = setInterval(() => {
+        setElapsedTime(prev => prev + 1);
+      }, 1000);
+      
+      // プログレスバー（推定30秒で100%）
+      progressTimer = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) return 95; // 95%で止める
+          return prev + (100 / 30); // 30秒で100%
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      clearInterval(timer);
+      clearInterval(progressTimer);
+    };
+  }, [isLoading]);
 
   const questions = [
     {
@@ -85,6 +116,10 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       if (!response.data || !response.data.structure) {
         throw new Error('AI結果にstructureがありません');
       }
+      
+      // 完了時にプログレスを100%に
+      setProgress(100);
+      await new Promise(resolve => setTimeout(resolve, 300)); // 0.3秒待つ
       
       onComplete(response.data);
     } catch (error: any) {
@@ -166,23 +201,39 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               >
                 ← 戻る
               </button>
-              <button
-                onClick={handleGenerateLP}
-                disabled={isLoading}
-                className="flex-1 px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    生成中...
-                  </span>
-                ) : (
-                  'AI構成を生成'
+              <div className="flex-1">
+                <button
+                  onClick={handleGenerateLP}
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      生成中... {elapsedTime}秒
+                    </span>
+                  ) : (
+                    'AI構成を生成'
+                  )}
+                </button>
+                {isLoading && (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-light text-gray-500">進行状況</span>
+                      <span className="text-xs font-light text-gray-500">{Math.round(progress)}%</span>
+                    </div>
+                    <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-              </button>
+              </div>
             </div>
           </div>
         )}
