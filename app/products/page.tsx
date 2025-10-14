@@ -161,90 +161,132 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Header */}
-      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="text-2xl font-bold text-white">
-              SwipeLaunch
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors">
-                ダッシュボード
-              </Link>
-              <Link href="/products" className="text-white font-semibold">
-                商品管理
-              </Link>
-              <div className="flex items-center space-x-4 border-l border-gray-700 pl-6">
-                <span className="text-gray-300">
-                  {user?.username || 'ユーザー'}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="text-red-400 hover:text-red-300 transition-colors"
-                >
-                  ログアウト
-                </button>
-              </div>
-            </nav>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
+      {/* Sidebar */}
+      <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
+        <div className="p-4 border-b border-gray-700">
+          <Link href="/dashboard" className="text-xl font-light text-white">
+            SwipeLaunch
+          </Link>
         </div>
-      </header>
+
+        <nav className="flex-1 p-3">
+          <div className="space-y-0.5">
+            <Link
+              href="/dashboard"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">📊</span>
+              <span>ダッシュボード</span>
+            </Link>
+            
+            <Link
+              href="/lp/create"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">➕</span>
+              <span>新規LP作成</span>
+            </Link>
+            
+            <Link
+              href="/products"
+              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
+            >
+              <span className="text-base">📦</span>
+              <span>商品管理</span>
+            </Link>
+            
+            <Link
+              href="/points/purchase"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">💰</span>
+              <span>ポイント購入</span>
+            </Link>
+            
+            <Link
+              href="/media"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">🖼️</span>
+              <span>メディア</span>
+            </Link>
+          </div>
+        </nav>
+
+        <div className="p-3 border-t border-gray-700">
+          <div className="flex items-center space-x-2 mb-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+              {user?.username?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-white text-sm font-light truncate">{user?.username}</div>
+              <div className="text-gray-400 text-xs">{user?.user_type}</div>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+          >
+            ログアウト
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">商品管理</h1>
-              <p className="text-gray-400">LPに紐付ける商品を管理します（ポイント決済）</p>
+      <main className="flex-1 overflow-auto">
+        <div className="p-6">
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-light text-white mb-1">商品管理</h1>
+                <p className="text-gray-400 text-sm font-light">LPに紐付ける商品を管理します（ポイント決済）</p>
+              </div>
+              <button
+                onClick={handleOpenCreate}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+              >
+                + 商品を作成
+              </button>
             </div>
-            <button
-              onClick={handleOpenCreate}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50"
-            >
-              + 商品を作成
-            </button>
           </div>
-        </div>
 
         {/* 商品一覧 */}
         {products.length === 0 ? (
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-12 text-center">
-            <div className="text-6xl mb-4">📦</div>
-            <h2 className="text-2xl font-bold text-white mb-2">商品がありません</h2>
-            <p className="text-gray-400 mb-6">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-12 text-center">
+            <div className="text-5xl mb-3">📦</div>
+            <h2 className="text-xl font-light text-white mb-2">商品がありません</h2>
+            <p className="text-gray-400 text-sm font-light mb-4">
               最初の商品を作成して、LPに紐付けましょう
             </p>
             <button
               onClick={handleOpenCreate}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
             >
               商品を作成
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
             {products.map((product) => {
               const linkedLP = lps.find(lp => lp.id === product.lp_id);
               
               return (
                 <div
                   key={product.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 hover:border-gray-600 transition-colors"
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2">{product.title}</h3>
+                      <h3 className="text-lg font-light text-white mb-1">{product.title}</h3>
                       {product.description && (
-                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                        <p className="text-gray-400 text-xs font-light mb-2 line-clamp-2">
                           {product.description}
                         </p>
                       )}
                     </div>
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${
+                      className={`px-2 py-0.5 text-[10px] rounded-full flex-shrink-0 ml-2 ${
                         product.is_available
                           ? 'bg-green-500/20 text-green-400'
                           : 'bg-red-500/20 text-red-400'
@@ -254,27 +296,27 @@ export default function ProductsPage() {
                     </span>
                   </div>
 
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-1.5 mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">価格</span>
-                      <span className="text-white font-bold">{product.price_in_points.toLocaleString()} P</span>
+                      <span className="text-gray-400 text-xs font-light">価格</span>
+                      <span className="text-white text-sm font-light">{product.price_in_points.toLocaleString()} P</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">在庫</span>
-                      <span className="text-white">
+                      <span className="text-gray-400 text-xs font-light">在庫</span>
+                      <span className="text-white text-sm font-light">
                         {product.stock_quantity === null ? '無制限' : `${product.stock_quantity}個`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">販売数</span>
-                      <span className="text-white">{product.total_sales}件</span>
+                      <span className="text-gray-400 text-xs font-light">販売数</span>
+                      <span className="text-white text-sm font-light">{product.total_sales}件</span>
                     </div>
                     {linkedLP && (
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-                        <span className="text-gray-400 text-sm">紐付けLP</span>
+                      <div className="flex items-center justify-between pt-1.5 border-t border-gray-700">
+                        <span className="text-gray-400 text-xs font-light">紐付けLP</span>
                         <Link
                           href={`/lp/${linkedLP.id}/edit`}
-                          className="text-blue-400 hover:text-blue-300 text-sm"
+                          className="text-blue-400 hover:text-blue-300 text-xs font-light"
                         >
                           {linkedLP.title}
                         </Link>
@@ -285,13 +327,13 @@ export default function ProductsPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleOpenEdit(product)}
-                      className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                      className="flex-1 px-3 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs font-light"
                     >
                       編集
                     </button>
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                      className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs font-light"
                     >
                       削除
                     </button>
@@ -301,20 +343,21 @@ export default function ProductsPage() {
             })}
           </div>
         )}
+        </div>
       </main>
 
       {/* 作成/編集モーダル */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4">
-          <div className="bg-gray-800 rounded-xl p-8 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-light text-white mb-4">
               {editingProduct ? '商品を編集' : '商品を作成'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               {/* 商品名 */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-xs font-light text-gray-300 mb-1">
                   商品名 <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -322,28 +365,28 @@ export default function ProductsPage() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   placeholder="例: プレミアム会員プラン"
                 />
               </div>
 
               {/* 説明 */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-xs font-light text-gray-300 mb-1">
                   説明
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={4}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
                   placeholder="商品の説明を入力..."
                 />
               </div>
 
               {/* 価格 */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-xs font-light text-gray-300 mb-1">
                   価格（ポイント） <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -352,16 +395,16 @@ export default function ProductsPage() {
                   onChange={(e) => setFormData({ ...formData, price_in_points: parseInt(e.target.value) })}
                   required
                   min="0"
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                 />
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-xs font-light text-gray-500">
                   1ポイント = 1円相当として設定してください
                 </p>
               </div>
 
               {/* 在庫 */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-xs font-light text-gray-300 mb-1">
                   在庫数
                 </label>
                 <input
@@ -369,20 +412,20 @@ export default function ProductsPage() {
                   value={formData.stock_quantity || ''}
                   onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value ? parseInt(e.target.value) : null })}
                   min="0"
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   placeholder="空欄で無制限"
                 />
               </div>
 
               {/* LP紐付け */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-xs font-light text-gray-300 mb-1">
                   紐付けLP（オプション）
                 </label>
                 <select
                   value={formData.lp_id}
                   onChange={(e) => setFormData({ ...formData, lp_id: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
                 >
                   <option value="">紐付けない</option>
                   {lps.map((lp) => (
@@ -394,15 +437,15 @@ export default function ProductsPage() {
               </div>
 
               {/* 購入完了後の設定 */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                <h3 className="text-white font-semibold mb-3">購入完了後の設定</h3>
-                <p className="text-gray-400 text-sm mb-4">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                <h3 className="text-white text-sm font-light mb-2">購入完了後の設定</h3>
+                <p className="text-gray-400 text-xs font-light mb-3">
                   購入完了後にユーザーをどこに誘導するか設定できます
                 </p>
 
                 {/* 外部URLリダイレクト */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-xs font-light text-gray-300 mb-1">
                     外部URLにリダイレクト（オプション）
                   </label>
                   <input
@@ -410,22 +453,22 @@ export default function ProductsPage() {
                     value={formData.redirect_url}
                     onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
                     placeholder="https://example.com/thank-you"
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   />
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-xs font-light text-gray-500">
                     会員サイトやダウンロードページのURL
                   </p>
                 </div>
 
                 {/* サンクスページLP選択 */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-xs font-light text-gray-300 mb-1">
                     または、サイト内のLPをサンクスページに設定
                   </label>
                   <select
                     value={formData.thanks_lp_id}
                     onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
                     disabled={!!formData.redirect_url}
                   >
                     <option value="">設定しない</option>
@@ -435,7 +478,7 @@ export default function ProductsPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-xs font-light text-gray-500">
                     どちらも設定しない場合は、シンプルな完了メッセージを表示
                   </p>
                 </div>
@@ -449,23 +492,23 @@ export default function ProductsPage() {
                   onChange={(e) => setFormData({ ...formData, is_available: e.target.checked })}
                   className="w-4 h-4 bg-gray-900 border-gray-700 rounded focus:ring-blue-500 focus:ring-2"
                 />
-                <label className="ml-2 text-sm text-gray-300">
+                <label className="ml-2 text-xs font-light text-gray-300">
                   販売可能にする
                 </label>
               </div>
 
               {/* ボタン */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-2 pt-3">
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
                 >
                   {editingProduct ? '更新' : '作成'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-sm font-light"
                 >
                   キャンセル
                 </button>
