@@ -96,7 +96,7 @@ export default function DashboardPage() {
       {/* Sidebar */}
       <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
         {/* Logo */}
-        <div className="px-4 py-3 border-b border-gray-700">
+        <div className="px-6 h-16 border-b border-gray-700 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
           </Link>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 py-3">
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 h-16">
           <div className="flex items-center justify-between">
             {/* Left: Page Title & Breadcrumb */}
             <div>

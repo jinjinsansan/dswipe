@@ -41,10 +41,10 @@ export default function DSwipeLogo({
         D
       </div>
       
-      {/* -swipe text */}
+      {/* swipe text */}
       {showFullName && (
         <span className={`${textSize[size]} font-light text-white`}>
-          -swipe
+          swipe
         </span>
       )}
     </div>
