@@ -313,14 +313,40 @@ export default function EditLPNewPage() {
                 🤖 AI改善
               </button>
 
-              {/* ステータス */}
-              <span className={`px-3 py-1 text-sm rounded-full ${
-                lp.status === 'published'
-                  ? 'bg-green-500/20 text-green-400'
-                  : 'bg-gray-500/20 text-gray-400'
-              }`}>
-                {lp.status === 'published' ? '公開中' : '下書き'}
-              </span>
+              {/* ステータスと公開URL */}
+              <div className="flex items-center gap-3">
+                <span className={`px-3 py-1 text-sm rounded-full ${
+                  lp.status === 'published'
+                    ? 'bg-green-500/20 text-green-400'
+                    : 'bg-gray-500/20 text-gray-400'
+                }`}>
+                  {lp.status === 'published' ? '公開中' : '下書き'}
+                </span>
+                
+                {lp.status === 'published' && (
+                  <div className="flex items-center gap-2 bg-gray-800 px-3 py-1 rounded-lg border border-gray-700">
+                    <a
+                      href={`/view/${lp.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+                    >
+                      🔗 公開URL
+                    </a>
+                    <button
+                      onClick={() => {
+                        const url = `${window.location.origin}/view/${lp.slug}`;
+                        navigator.clipboard.writeText(url);
+                        alert('URLをコピーしました！');
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors text-sm"
+                      title="URLをコピー"
+                    >
+                      📋
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* 保存ボタン */}
               <button
