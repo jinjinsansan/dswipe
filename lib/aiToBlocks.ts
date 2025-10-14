@@ -74,32 +74,71 @@ function convertAIBlockContent(aiBlock: any, blockType: BlockType): Partial<Bloc
   if (aiBlock.buttonText) content.buttonText = aiBlock.buttonText;
   if (aiBlock.buttonUrl) content.buttonUrl = aiBlock.buttonUrl;
 
-  // ブロックタイプ別の特殊処理
-  if (blockType.startsWith('pricing')) {
-    // 価格表ブロック
-    if (aiBlock.plans) {
-      content.plans = aiBlock.plans;
-    }
+  // 情報商材特化ブロック
+  if (blockType === 'countdown-1') {
+    // targetDateがない場合は24時間後をデフォルトに設定
+    content.targetDate = aiBlock.targetDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    if (aiBlock.urgencyText) content.urgencyText = aiBlock.urgencyText;
+    if (aiBlock.showDays !== undefined) content.showDays = aiBlock.showDays;
+    if (aiBlock.showHours !== undefined) content.showHours = aiBlock.showHours;
+    if (aiBlock.showMinutes !== undefined) content.showMinutes = aiBlock.showMinutes;
+    if (aiBlock.showSeconds !== undefined) content.showSeconds = aiBlock.showSeconds;
+  } else if (blockType === 'problem-1') {
+    if (aiBlock.problems) content.problems = aiBlock.problems;
+    if (aiBlock.checkIcon) content.checkIcon = aiBlock.checkIcon;
+  } else if (blockType === 'special-price-1') {
+    if (aiBlock.originalPrice) content.originalPrice = aiBlock.originalPrice;
+    if (aiBlock.specialPrice) content.specialPrice = aiBlock.specialPrice;
+    if (aiBlock.discountBadge) content.discountBadge = aiBlock.discountBadge;
+    if (aiBlock.currency) content.currency = aiBlock.currency;
+    if (aiBlock.period) content.period = aiBlock.period;
+    if (aiBlock.features) content.features = aiBlock.features;
+  } else if (blockType === 'bonus-list-1') {
+    if (aiBlock.bonuses) content.bonuses = aiBlock.bonuses;
+    if (aiBlock.totalValue) content.totalValue = aiBlock.totalValue;
+  } else if (blockType === 'guarantee-1') {
+    if (aiBlock.guaranteeType) content.guaranteeType = aiBlock.guaranteeType;
+    if (aiBlock.description) content.description = aiBlock.description;
+    if (aiBlock.badgeText) content.badgeText = aiBlock.badgeText;
+    if (aiBlock.features) content.features = aiBlock.features;
+  } else if (blockType === 'before-after-1') {
+    if (aiBlock.beforeTitle) content.beforeTitle = aiBlock.beforeTitle;
+    if (aiBlock.beforeText) content.beforeText = aiBlock.beforeText;
+    if (aiBlock.beforeImage) content.beforeImage = aiBlock.beforeImage;
+    if (aiBlock.afterTitle) content.afterTitle = aiBlock.afterTitle;
+    if (aiBlock.afterText) content.afterText = aiBlock.afterText;
+    if (aiBlock.afterImage) content.afterImage = aiBlock.afterImage;
+    if (aiBlock.arrowIcon) content.arrowIcon = aiBlock.arrowIcon;
+  } else if (blockType === 'author-profile-1') {
+    if (aiBlock.name) content.name = aiBlock.name;
+    if (aiBlock.imageUrl) content.imageUrl = aiBlock.imageUrl;
+    if (aiBlock.bio) content.bio = aiBlock.bio;
+    if (aiBlock.achievements) content.achievements = aiBlock.achievements;
+    if (aiBlock.mediaLogos) content.mediaLogos = aiBlock.mediaLogos;
+  } else if (blockType === 'urgency-1') {
+    if (aiBlock.message) content.message = aiBlock.message;
+    if (aiBlock.icon) content.icon = aiBlock.icon;
+    if (aiBlock.highlightColor) content.highlightColor = aiBlock.highlightColor;
+  } else if (blockType === 'scarcity-1') {
+    if (aiBlock.remainingCount !== undefined) content.remainingCount = aiBlock.remainingCount;
+    if (aiBlock.totalCount !== undefined) content.totalCount = aiBlock.totalCount;
+    if (aiBlock.message) content.message = aiBlock.message;
+    if (aiBlock.progressColor) content.progressColor = aiBlock.progressColor;
+  } else if (blockType === 'sticky-cta-1') {
+    if (aiBlock.subText) content.subText = aiBlock.subText;
+    if (aiBlock.position) content.position = aiBlock.position;
+  }
+  // 既存ブロック
+  else if (blockType.startsWith('pricing')) {
+    if (aiBlock.plans) content.plans = aiBlock.plans;
   } else if (blockType.startsWith('testimonial')) {
-    // お客様の声ブロック
-    if (aiBlock.testimonials) {
-      content.testimonials = aiBlock.testimonials;
-    }
+    if (aiBlock.testimonials) content.testimonials = aiBlock.testimonials;
   } else if (blockType.startsWith('faq')) {
-    // FAQブロック
-    if (aiBlock.faqs) {
-      content.faqs = aiBlock.faqs;
-    }
+    if (aiBlock.faqs) content.faqs = aiBlock.faqs;
   } else if (blockType.startsWith('features')) {
-    // 特徴ブロック
-    if (aiBlock.features) {
-      content.features = aiBlock.features;
-    }
+    if (aiBlock.features) content.features = aiBlock.features;
   } else if (blockType.startsWith('form')) {
-    // フォームブロック
-    if (aiBlock.fields) {
-      content.fields = aiBlock.fields;
-    }
+    if (aiBlock.fields) content.fields = aiBlock.fields;
   }
 
   return content;
