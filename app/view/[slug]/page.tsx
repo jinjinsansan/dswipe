@@ -31,9 +31,17 @@ export default function LPViewerPage() {
 
   const fetchLP = async () => {
     try {
+      console.log('🔍 Fetching LP:', slug);
       const response = await publicApi.getLP(slug);
+      console.log('✅ LP fetched:', response.data);
+      console.log('📦 Steps count:', response.data.steps?.length);
+      if (response.data.steps?.length > 0) {
+        console.log('📋 First step:', response.data.steps[0]);
+      }
       setLp(response.data);
-    } catch (err) {
+    } catch (err: any) {
+      console.error('❌ Failed to fetch LP:', err);
+      console.error('Error details:', err.response?.data);
       setError('LPが見つかりませんでした');
     } finally {
       setIsLoading(false);
@@ -193,22 +201,33 @@ export default function LPViewerPage() {
         >
           {lp.steps.sort((a, b) => a.step_order - b.step_order).map((step, index) => {
             const stepCtas = getCurrentStepCtas(index);
+            console.log(`🎨 Rendering step ${index}:`, { 
+              block_type: step.block_type, 
+              has_content_data: !!step.content_data,
+              image_url: step.image_url 
+            });
             
             return (
               <SwiperSlide key={step.id} className="relative bg-white overflow-y-auto">
                 {/* ブロックレンダリング */}
                 {step.block_type && step.content_data ? (
-                  <BlockRenderer
-                    blockType={step.block_type}
-                    content={step.content_data}
-                    isEditing={false}
-                  />
+                  <>
+                    {console.log('✅ Rendering block:', step.block_type)}
+                    <BlockRenderer
+                      blockType={step.block_type}
+                      content={step.content_data}
+                      isEditing={false}
+                    />
+                  </>
                 ) : (
-                  /* 旧式の画像ベース */
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${step.image_url})` }}
-                  />
+                  <>
+                    {console.log('⚠️ Using legacy image mode')}
+                    {/* 旧式の画像ベース */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${step.image_url})` }}
+                    />
+                  </>
                 )}
                 
                 {/* CTAボタン */}

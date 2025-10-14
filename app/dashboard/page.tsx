@@ -54,6 +54,22 @@ export default function DashboardPage() {
     router.push('/');
   };
 
+  const handleDeleteLP = async (lpId: string) => {
+    if (!confirm('本当にこのLPを削除しますか？この操作は取り消せません。')) {
+      return;
+    }
+
+    try {
+      await lpApi.delete(lpId);
+      // 削除成功後、リストを再取得
+      await fetchData();
+      alert('LPを削除しました');
+    } catch (error: any) {
+      console.error('Failed to delete LP:', error);
+      alert(error.response?.data?.detail || 'LPの削除に失敗しました');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
@@ -193,6 +209,12 @@ export default function DashboardPage() {
                       >
                         分析
                       </Link>
+                      <button
+                        onClick={() => handleDeleteLP(lp.id)}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        削除
+                      </button>
                     </div>
                   </div>
                   
