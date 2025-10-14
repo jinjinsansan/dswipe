@@ -33,7 +33,18 @@ export type BlockType =
   | 'timeline-1'   // タイムライン
   | 'team-1'       // チームメンバー紹介
   | 'logo-grid-1'  // ロゴグリッド（取引先等）
-  | 'comparison-1'; // 比較表
+  | 'comparison-1' // 比較表
+  // 情報商材特化ブロック
+  | 'countdown-1'  // カウントダウンタイマー
+  | 'special-price-1' // 特別価格（打ち消し線）
+  | 'bonus-list-1' // ボーナス特典リスト
+  | 'guarantee-1'  // 保証セクション
+  | 'problem-1'    // 問題提起（チェックリスト）
+  | 'before-after-1' // ビフォーアフター
+  | 'author-profile-1' // 著者プロフィール
+  | 'urgency-1'    // 緊急性訴求
+  | 'scarcity-1'   // 限定性訴求
+  | 'sticky-cta-1'; // スティッキーCTA
 
 // カテゴリ
 export type BlockCategory =
@@ -229,6 +240,109 @@ export interface ComparisonBlockContent extends BaseBlockContent {
   }[];
 }
 
+// 情報商材特化ブロックコンテンツ
+// カウントダウンタイマー
+export interface CountdownBlockContent extends BaseBlockContent {
+  title?: string;
+  targetDate: string; // ISO日時
+  urgencyText?: string;
+  showDays?: boolean;
+  showHours?: boolean;
+  showMinutes?: boolean;
+  showSeconds?: boolean;
+}
+
+// 特別価格ブロック
+export interface SpecialPriceBlockContent extends BaseBlockContent {
+  title?: string;
+  originalPrice: string;
+  specialPrice: string;
+  discountBadge?: string;
+  currency?: string;
+  period?: string;
+  features?: string[];
+  buttonText?: string;
+  buttonColor?: string;
+}
+
+// ボーナス特典リスト
+export interface BonusListBlockContent extends BaseBlockContent {
+  title?: string;
+  subtitle?: string;
+  bonuses: {
+    title: string;
+    value?: string;
+    description?: string;
+    icon?: string;
+  }[];
+  totalValue?: string;
+}
+
+// 保証セクション
+export interface GuaranteeBlockContent extends BaseBlockContent {
+  title?: string;
+  subtitle?: string;
+  guaranteeType?: string;
+  description?: string;
+  badgeText?: string;
+  features?: string[];
+}
+
+// 問題提起ブロック
+export interface ProblemBlockContent extends BaseBlockContent {
+  title?: string;
+  subtitle?: string;
+  problems: string[];
+  checkIcon?: string;
+}
+
+// ビフォーアフター
+export interface BeforeAfterBlockContent extends BaseBlockContent {
+  title?: string;
+  beforeTitle?: string;
+  beforeText?: string;
+  beforeImage?: string;
+  afterTitle?: string;
+  afterText?: string;
+  afterImage?: string;
+  arrowIcon?: string;
+}
+
+// 著者プロフィール
+export interface AuthorProfileBlockContent extends BaseBlockContent {
+  name: string;
+  title?: string;
+  imageUrl?: string;
+  bio?: string;
+  achievements?: string[];
+  mediaLogos?: string[];
+}
+
+// 緊急性訴求
+export interface UrgencyBlockContent extends BaseBlockContent {
+  title?: string;
+  message: string;
+  icon?: string;
+  highlightColor?: string;
+}
+
+// 限定性訴求
+export interface ScarcityBlockContent extends BaseBlockContent {
+  title?: string;
+  remainingCount?: number;
+  totalCount?: number;
+  message?: string;
+  progressColor?: string;
+}
+
+// スティッキーCTA
+export interface StickyCTABlockContent extends BaseBlockContent {
+  buttonText: string;
+  buttonColor?: string;
+  subText?: string;
+  position?: 'top' | 'bottom';
+}
+
 // ブロックコンテンツの型（Union型）
 export type BlockContent =
   | HeroBlockContent
@@ -245,7 +359,17 @@ export type BlockContent =
   | TimelineBlockContent
   | TeamBlockContent
   | LogoGridBlockContent
-  | ComparisonBlockContent;
+  | ComparisonBlockContent
+  | CountdownBlockContent
+  | SpecialPriceBlockContent
+  | BonusListBlockContent
+  | GuaranteeBlockContent
+  | ProblemBlockContent
+  | BeforeAfterBlockContent
+  | AuthorProfileBlockContent
+  | UrgencyBlockContent
+  | ScarcityBlockContent
+  | StickyCTABlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

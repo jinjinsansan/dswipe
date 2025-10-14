@@ -15,6 +15,10 @@ import {
   TeamBlockContent,
   LogoGridBlockContent,
   ComparisonBlockContent,
+  CountdownBlockContent,
+  SpecialPriceBlockContent,
+  BonusListBlockContent,
+  GuaranteeBlockContent,
 } from '@/types/templates';
 
 /**
@@ -667,7 +671,15 @@ export function getTemplatesByCategory(category: string) {
  * テンプレートIDでテンプレートを取得
  */
 export function getTemplateById(templateId: string) {
-  return TEMPLATE_LIBRARY.find((template) => template.templateId === templateId);
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  return allTemplates.find((template) => template.templateId === templateId);
+}
+
+/**
+ * すべてのテンプレートを取得（情報商材ブロック含む）
+ */
+export function getAllTemplates() {
+  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
 }
 
 /**
@@ -680,4 +692,123 @@ export const TEMPLATE_CATEGORIES = [
   { id: 'social-proof', name: '社会的証明', icon: '⭐' },
   { id: 'media', name: 'メディア', icon: '🎬' },
   { id: 'form', name: 'フォーム', icon: '📋' },
+  { id: 'info-product', name: '情報商材特化', icon: '🔥' },
+];
+
+// ===== 情報商材特化ブロック =====
+const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
+  // カウントダウンタイマー
+  {
+    id: 'countdown-1',
+    templateId: 'countdown-1',
+    name: 'カウントダウンタイマー',
+    category: 'conversion',
+    description: '緊急性を訴求するタイマー',
+    defaultContent: {
+      title: '⏰ 特別価格は残りわずか！',
+      targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      urgencyText: '今すぐ申し込まないと、この価格では二度と手に入りません',
+      showDays: true,
+      showHours: true,
+      showMinutes: true,
+      showSeconds: true,
+      backgroundColor: '#EF4444',
+      textColor: '#FFFFFF',
+    } as CountdownBlockContent,
+  },
+
+  // 特別価格ブロック
+  {
+    id: 'special-price-1',
+    templateId: 'special-price-1',
+    name: '特別価格（打ち消し線）',
+    category: 'conversion',
+    description: '通常価格を打ち消して特別価格を強調',
+    defaultContent: {
+      title: '🔥 今だけ特別価格 🔥',
+      originalPrice: '298,000',
+      specialPrice: '98,000',
+      discountBadge: '67% OFF',
+      currency: '¥',
+      period: '一括',
+      features: [
+        '✓ 全コンテンツ永久アクセス',
+        '✓ 個別サポート6ヶ月',
+        '✓ 限定コミュニティ参加権',
+        '✓ 実践テンプレート30種',
+        '✓ 月1回のグループコンサル',
+      ],
+      buttonText: '今すぐ特別価格で申し込む',
+      buttonColor: '#EF4444',
+      backgroundColor: '#111827',
+      textColor: '#FFFFFF',
+    } as SpecialPriceBlockContent,
+  },
+
+  // ボーナス特典リスト
+  {
+    id: 'bonus-list-1',
+    templateId: 'bonus-list-1',
+    name: 'ボーナス特典リスト',
+    category: 'conversion',
+    description: '無料特典を一覧表示',
+    defaultContent: {
+      title: '🎁 今だけ豪華特典プレゼント 🎁',
+      subtitle: '本編に加えて、以下の特典が全て無料でついてきます',
+      bonuses: [
+        {
+          title: '実践ワークシート集',
+          value: '29,800円',
+          description: 'そのまま使える実践テンプレート50種',
+          icon: '📋',
+        },
+        {
+          title: '個別コンサルティング（60分）',
+          value: '50,000円',
+          description: 'あなた専用の戦略を一緒に作ります',
+          icon: '👨‍💼',
+        },
+        {
+          title: '限定コミュニティ参加権',
+          value: '月額9,800円',
+          description: '成功者たちと繋がれる秘密のグループ',
+          icon: '👥',
+        },
+        {
+          title: '最新情報アップデート（永久）',
+          value: 'プライスレス',
+          description: '常に最新のノウハウが手に入る',
+          icon: '🔄',
+        },
+      ],
+      totalValue: '189,600円',
+      backgroundColor: '#1F2937',
+      textColor: '#FFFFFF',
+    } as BonusListBlockContent,
+  },
+
+  // 保証セクション
+  {
+    id: 'guarantee-1',
+    templateId: 'guarantee-1',
+    name: '100%返金保証',
+    category: 'conversion',
+    description: 'リスクフリーを訴求',
+    defaultContent: {
+      title: '100%満足保証',
+      subtitle: 'あなたのリスクはゼロです',
+      guaranteeType: '90日間 全額返金保証',
+      description: '万が一、90日間実践しても結果が出なかった場合は、理由を問わず全額返金いたします。メール一本で対応可能。面倒な手続きは一切ありません。',
+      badgeText: '完全リスクフリー',
+      features: [
+        '90日間じっくり試せる',
+        '理由不要で全額返金',
+        'メール一本で手続き完了',
+        '返品不要（デジタル商品）',
+        '購入後すぐ実践可能',
+      ],
+      backgroundColor: '#0F172A',
+      textColor: '#FFFFFF',
+    } as GuaranteeBlockContent,
+  },
 ];

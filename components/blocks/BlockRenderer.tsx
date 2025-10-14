@@ -7,6 +7,10 @@ import FAQBlock from './FAQBlock';
 import TestimonialBlock from './TestimonialBlock';
 import FeaturesBlock from './FeaturesBlock';
 import FormBlock from './FormBlock';
+import CountdownBlock from './CountdownBlock';
+import SpecialPriceBlock from './SpecialPriceBlock';
+import BonusListBlock from './BonusListBlock';
+import GuaranteeBlock from './GuaranteeBlock';
 
 interface BlockRendererProps {
   blockType: string;
@@ -70,6 +74,19 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit }:
     case 'cta-2':
     case 'cta-3':
       return <CTABlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+    
+    // 情報商材特化ブロック
+    case 'countdown-1':
+      return <CountdownBlock content={content} />;
+    
+    case 'special-price-1':
+      return <SpecialPriceBlock content={content} />;
+    
+    case 'bonus-list-1':
+      return <BonusListBlock content={content} />;
+    
+    case 'guarantee-1':
+      return <GuaranteeBlock content={content} />;
     
     default:
       return (
