@@ -7,6 +7,7 @@ import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import { publicApi } from '@/lib/api';
 import { LPDetail, CTA, RequiredActionsStatus } from '@/types';
+import BlockRenderer from '@/components/blocks/BlockRenderer';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -194,17 +195,26 @@ export default function LPViewerPage() {
             const stepCtas = getCurrentStepCtas(index);
             
             return (
-              <SwiperSlide key={step.id} className="relative">
-                {/* 背景画像 */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${step.image_url})` }}
-                />
+              <SwiperSlide key={step.id} className="relative bg-white overflow-y-auto">
+                {/* ブロックレンダリング */}
+                {step.block_type && step.content_data ? (
+                  <BlockRenderer
+                    blockType={step.block_type}
+                    content={step.content_data}
+                    isEditing={false}
+                  />
+                ) : (
+                  /* 旧式の画像ベース */
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${step.image_url})` }}
+                  />
+                )}
                 
                 {/* CTAボタン */}
                 {stepCtas.length > 0 && (
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
-                    <div className="space-y-4">
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
+                    <div className="space-y-4 pointer-events-auto">
                       {stepCtas.map((cta) => (
                         <button
                           key={cta.id}
@@ -228,7 +238,7 @@ export default function LPViewerPage() {
 
                 {/* スワイプヒント */}
                 {index === 0 && (
-                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white/70 text-center animate-bounce">
+                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-gray-700 text-center animate-bounce z-20">
                     <div className="text-3xl mb-2">
                       {lp.swipe_direction === 'vertical' ? '↓' : '→'}
                     </div>
