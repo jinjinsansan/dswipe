@@ -1,6 +1,8 @@
 // API レスポンス型定義
 // Note: 既存のtypes/index.tsの型を使用することを推奨
 
+import type { LandingPage } from './index';
+
 export type {
   User,
   AuthResponse,
@@ -80,7 +82,7 @@ export interface UpdateLPRequest {
 
 // LP一覧レスポンス
 export interface LPListResponse {
-  data: LP[];
+  data: LandingPage[];
   total: number;
   limit: number;
   offset: number;
