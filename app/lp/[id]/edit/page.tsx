@@ -14,6 +14,7 @@ import PropertyPanel from '@/components/PropertyPanel';
 import AITextGenerator from '@/components/AITextGenerator';
 import RealtimeHints from '@/components/RealtimeHints';
 import AIImprovementPanel from '@/components/AIImprovementPanel';
+import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 // UUID生成のヘルパー関数
 function generateId() {
@@ -213,11 +214,7 @@ export default function EditLPNewPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">読み込み中...</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!lp) {

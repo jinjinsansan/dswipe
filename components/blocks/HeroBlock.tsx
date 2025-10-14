@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface HeroBlockProps {
   content: {
@@ -22,23 +23,23 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center px-8 py-16"
+      className="min-h-screen flex items-center justify-center px-4 md:px-8 py-12 md:py-16"
       style={style}
     >
-      <div className="max-w-4xl w-full text-center">
+      <div className="max-w-4xl w-full text-center px-4">
         {isEditing ? (
           <>
             <input
               type="text"
               value={content.title}
               onChange={(e) => onEdit?.('title', e.target.value)}
-              className="w-full text-5xl md:text-6xl font-bold mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              className="w-full text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
               placeholder="見出しを入力"
             />
             <textarea
               value={content.subtitle}
               onChange={(e) => onEdit?.('subtitle', e.target.value)}
-              className="w-full text-xl md:text-2xl mb-12 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded resize-none"
+              className="w-full text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded resize-none"
               rows={2}
               placeholder="サブタイトルを入力"
             />
@@ -55,18 +56,21 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
         )}
 
         {content.imageUrl && (
-          <div className="mb-12">
-            <img 
+          <div className="mb-8 md:mb-12 relative w-full max-w-2xl mx-auto aspect-video">
+            <Image 
               src={content.imageUrl} 
               alt="Hero" 
-              className="w-full max-w-2xl mx-auto rounded-xl shadow-2xl"
+              fill
+              className="rounded-lg md:rounded-xl shadow-2xl object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
+              priority
             />
           </div>
         )}
 
         {content.buttonText && (
           <button
-            className="px-10 py-4 rounded-lg font-bold text-xl shadow-lg hover:scale-105 transition-transform"
+            className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
             style={{ backgroundColor: content.buttonColor }}
           >
             {content.buttonText}

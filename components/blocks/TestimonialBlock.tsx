@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { TestimonialBlockContent } from '@/types/templates';
 
 interface TestimonialBlockProps {
@@ -87,11 +88,15 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
             <div key={index} className="bg-white rounded-xl p-8 shadow-lg">
               {/* 画像 */}
               {testimonial.imageUrl && (
-                <img
-                  src={testimonial.imageUrl}
-                  alt={testimonial.name}
-                  className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
-                />
+                <div className="relative w-16 h-16 mx-auto mb-4">
+                  <Image
+                    src={testimonial.imageUrl}
+                    alt={testimonial.name}
+                    fill
+                    className="rounded-full object-cover"
+                    sizes="64px"
+                  />
+                </div>
               )}
 
               {/* 評価 */}

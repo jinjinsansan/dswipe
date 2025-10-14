@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface TextImageBlockProps {
   content: {
@@ -56,11 +57,15 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
 
         <div className={imageOnRight ? 'order-2' : 'order-1'}>
           {content.imageUrl ? (
-            <img 
-              src={content.imageUrl} 
-              alt={content.title} 
-              className="w-full rounded-xl shadow-lg"
-            />
+            <div className="relative w-full aspect-video">
+              <Image 
+                src={content.imageUrl} 
+                alt={content.title} 
+                fill
+                className="rounded-xl shadow-lg object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
           ) : (
             <div className="w-full aspect-video bg-gray-200 rounded-xl flex items-center justify-center">
               <span className="text-gray-400">画像をアップロード</span>

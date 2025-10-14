@@ -10,15 +10,15 @@ interface PricingBlockProps {
 export default function PricingBlock({ content, isEditing, onEdit }: PricingBlockProps) {
   const { plans, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
 
-  const gridCols = columns === 2 ? 'md:grid-cols-2' : columns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-1';
+  const gridCols = columns === 2 ? 'sm:grid-cols-2' : columns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-1';
 
   return (
     <section
-      className="py-16 px-8"
+      className="py-12 md:py-16 px-4 md:px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className={`grid grid-cols-1 ${gridCols} gap-8`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-4 md:gap-6 lg:gap-8`}>
           {plans.map((plan, index) => (
             <div
               key={index}
