@@ -38,6 +38,8 @@ export interface LPStep {
   image_url: string;
   video_url?: string;
   animation_type?: string;
+  block_type?: string;
+  content_data?: Record<string, any>;
   step_views: number;
   step_exits: number;
   created_at: string;
