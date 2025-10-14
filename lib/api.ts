@@ -1,4 +1,16 @@
 import axios from 'axios';
+import type {
+  AuthResponse,
+  LP,
+  LPDetail,
+  CreateLPRequest,
+  UpdateLPRequest,
+  PointsBalance,
+  AIWizardRequest,
+  AITextGenerationRequest,
+  AIImprovementRequest,
+  AIImprovementResponse,
+} from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -49,17 +61,17 @@ export const authApi = {
 
 // LP管理API
 export const lpApi = {
-  create: (data: any) =>
-    api.post('/lp', data),
+  create: (data: CreateLPRequest) =>
+    api.post<LP>('/lp', data),
   
-  list: (params?: any) =>
-    api.get('/lp', { params }),
+  list: (params?: Record<string, unknown>) =>
+    api.get<LP[]>('/lp', { params }),
   
   get: (id: string) =>
-    api.get(`/lp/${id}`),
+    api.get<LPDetail>(`/lp/${id}`),
   
-  update: (id: string, data: any) =>
-    api.put(`/lp/${id}`, data),
+  update: (id: string, data: UpdateLPRequest) =>
+    api.put<LP>(`/lp/${id}`, data),
   
   delete: (id: string) =>
     api.delete(`/lp/${id}`),
@@ -145,22 +157,22 @@ export const pointsApi = {
     api.post('/points/purchase', { amount }),
   
   getBalance: () =>
-    api.get('/points/balance'),
+    api.get<PointsBalance>('/points/balance'),
   
-  getTransactions: (params?: any) =>
+  getTransactions: (params?: Record<string, unknown>) =>
     api.get('/points/transactions', { params }),
 };
 
 // AI API
 export const aiApi = {
-  wizard: (data: any) =>
+  wizard: (data: AIWizardRequest) =>
     api.post('/ai/wizard', data),
   
-  generateText: (data: { type: string; context: any; options?: any }) =>
-    api.post('/ai/generate-text', data),
+  generateText: (data: AITextGenerationRequest) =>
+    api.post<{ generated_text: string[] }>('/ai/generate-text', data),
   
-  improve: (data: { lp_id: string; analytics_data: any }) =>
-    api.post('/ai/improve', data),
+  improve: (data: AIImprovementRequest) =>
+    api.post<AIImprovementResponse>('/ai/improve', data),
   
   getTemplates: () =>
     api.get('/ai/templates'),

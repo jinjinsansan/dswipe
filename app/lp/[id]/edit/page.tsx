@@ -7,7 +7,6 @@ import { lpApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPDetail } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
-import { getTemplateById } from '@/lib/templates';
 import TemplateSelector from '@/components/TemplateSelector';
 import DraggableBlockEditor from '@/components/DraggableBlockEditor';
 import PropertyPanel from '@/components/PropertyPanel';
@@ -41,7 +40,6 @@ export default function EditLPNewPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [isEditing, setIsEditing] = useState(true);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'edit' | 'split' | 'preview'>('split');
   const [showAIGenerator, setShowAIGenerator] = useState(false);

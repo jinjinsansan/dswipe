@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CTA_STYLES, CTA_CATEGORIES, CTAStyle, getStylesByCategory } from '@/lib/ctaStyles';
+import { CTA_CATEGORIES, CTAStyle, getStylesByCategory } from '@/lib/ctaStyles';
 
 interface CTAStyleSelectorProps {
   onSelectStyle: (style: CTAStyle) => void;
@@ -10,8 +10,7 @@ interface CTAStyleSelectorProps {
 
 export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSelectorProps) {
   const [selectedCategory, setSelectedCategory] = useState<CTAStyle['category']>('primary');
-  const [hoveredStyle, setHoveredStyle] = useState<string | null>(null);
-
+  
   const filteredStyles = getStylesByCategory(selectedCategory);
 
   return (
@@ -58,8 +57,6 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
                   onSelectStyle(style);
                   onClose();
                 }}
-                onMouseEnter={() => setHoveredStyle(style.id)}
-                onMouseLeave={() => setHoveredStyle(null)}
                 className="bg-gray-800 rounded-xl border-2 border-gray-700 hover:border-blue-500 transition-all p-6 text-left group"
               >
                 {/* プレビュー */}
