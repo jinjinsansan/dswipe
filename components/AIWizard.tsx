@@ -97,25 +97,25 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4">
-      <div className="bg-gray-900 rounded-2xl p-8 max-w-2xl w-full border border-gray-700">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+      <div className="bg-gray-900/95 rounded-lg p-6 max-w-2xl w-full border border-gray-700/50 shadow-2xl">
         {/* ヘッダー */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-3xl font-bold text-white">🤖 AIアシスタント</h2>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-light text-white/90">AIアシスタント</h2>
             <button
               onClick={onSkip}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-400 transition-colors text-sm font-light"
             >
-              スキップ
+              スキップ →
             </button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
-                className={`h-2 flex-1 rounded-full transition-all ${
-                  s <= step ? 'bg-blue-500' : 'bg-gray-700'
+                className={`h-1 flex-1 rounded-full transition-all ${
+                  s <= step ? 'bg-blue-500/80' : 'bg-gray-800'
                 }`}
               />
             ))}
@@ -125,62 +125,62 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
         {/* 質問 */}
         {step <= 3 ? (
           <div>
-            <h3 className="text-2xl font-semibold text-white mb-8">
+            <h3 className="text-base font-light text-white/95 mb-5">
               {currentQuestion.question}
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {currentQuestion.options.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleOptionClick(option.value)}
-                  className={`p-6 rounded-xl border-2 transition-all hover:scale-105 ${
+                  className={`p-4 rounded-lg border transition-all text-left ${
                     formData[currentQuestion.field as keyof typeof formData] === option.value
-                      ? 'border-blue-500 bg-blue-500/20'
-                      : 'border-gray-700 hover:border-gray-600'
+                      ? 'border-blue-500/50 bg-blue-500/5'
+                      : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <div className="text-4xl mb-2">{option.icon}</div>
-                  <div className="text-white font-semibold">{option.label.replace(option.icon, '').trim()}</div>
+                  <div className="text-xl mb-1.5">{option.icon}</div>
+                  <div className="text-white/90 text-sm font-light">{option.label.replace(option.icon, '').trim()}</div>
                 </button>
               ))}
             </div>
           </div>
         ) : (
           <div>
-            <h3 className="text-2xl font-semibold text-white mb-4">
+            <h3 className="text-base font-light text-white/95 mb-2">
               商品・サービスについて教えてください
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-500 text-xs font-light mb-4">
               簡単に説明してください。AIが魅力的な見出しや構成を提案します。
             </p>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full h-32 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full h-28 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
               placeholder="例：30代女性向けのアンチエイジング美容液。天然成分100%で肌に優しく、シワやたるみに効果的です。"
             />
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={() => setStep(3)}
-                className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="px-4 py-2 bg-gray-800/50 text-white/90 text-sm font-light rounded-lg hover:bg-gray-800 transition-colors"
               >
-                戻る
+                ← 戻る
               </button>
               <button
                 onClick={handleGenerateLP}
                 disabled={isLoading}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    AI生成中...
+                    生成中...
                   </span>
                 ) : (
-                  '🚀 AIにLP構成を提案してもらう'
+                  'AI構成を生成'
                 )}
               </button>
             </div>
@@ -189,10 +189,10 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
         {/* ナビゲーション */}
         {step <= 3 && step > 1 && (
-          <div className="mt-8">
+          <div className="mt-5">
             <button
               onClick={() => setStep(step - 1)}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-400 transition-colors text-sm font-light"
             >
               ← 前の質問に戻る
             </button>
