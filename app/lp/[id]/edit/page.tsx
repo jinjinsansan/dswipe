@@ -76,25 +76,39 @@ export default function EditLPNewPage() {
           
           // AI提案から生成したブロックをDBに保存
           console.log('💾 Saving AI-generated blocks to database...');
+          let savedCount = 0;
+          let failedCount = 0;
+          
           for (const block of aiBlocks) {
-            const stepData = {
-              step_order: block.order,
-              image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
-              block_type: block.blockType,
-              content_data: block.content as unknown as Record<string, unknown>,
-            };
-            await lpApi.addStep(lpId, stepData);
+            try {
+              const stepData = {
+                step_order: block.order,
+                image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
+                block_type: block.blockType,
+                content_data: block.content as unknown as Record<string, unknown>,
+              };
+              await lpApi.addStep(lpId, stepData);
+              savedCount++;
+              console.log(`✅ Saved block ${savedCount}/${aiBlocks.length}:`, block.blockType);
+            } catch (blockError: any) {
+              failedCount++;
+              console.error(`❌ Failed to save block ${block.blockType}:`, blockError.response?.data || blockError.message);
+            }
           }
-          console.log('✅ AI blocks saved successfully');
+          
+          console.log(`✅ AI blocks saved: ${savedCount} succeeded, ${failedCount} failed`);
           
           // URLからAIパラメータを削除して再読み込み
           router.replace(`/lp/${lpId}/edit`);
           // 保存したブロックを再読み込み
           setTimeout(() => fetchLP(), 100);
           return;
-        } catch (e) {
+        } catch (e: any) {
           console.error('❌ AI結果の処理エラー:', e);
-          setError('AI提案の適用に失敗しました');
+          console.error('エラー詳細:', e.message, e.stack);
+          const errorMsg = e.response?.data?.detail || e.message || 'AI提案の適用に失敗しました';
+          setError(errorMsg);
+          alert(`エラー: ${errorMsg}\n\n一部のブロックがスキップされた可能性があります。続行しますか？`);
         }
       }
       

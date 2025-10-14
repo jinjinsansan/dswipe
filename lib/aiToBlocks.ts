@@ -34,9 +34,9 @@ export function convertAIResultToBlocks(aiResult: any): Array<{
     const template = getTemplateById(blockType);
 
     if (!template) {
-      console.error(`❌ Unknown block type: ${blockType}`);
+      console.warn(`⚠️ Skipping unknown block type: ${blockType}`);
       console.log('Available block types:', ['countdown-1', 'problem-1', 'before-after-1', 'special-price-1', 'bonus-list-1', 'guarantee-1', 'author-profile-1', 'scarcity-1', 'urgency-1', 'sticky-cta-1']);
-      return;
+      return; // スキップして次のブロックへ
     }
     
     console.log(`✅ Found template for ${blockType}:`, template.name);
