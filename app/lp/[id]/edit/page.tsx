@@ -63,9 +63,12 @@ export default function EditLPNewPage() {
       const aiParam = searchParams.get('ai');
       console.log('🔍 Debug: aiParam exists?', !!aiParam, 'steps count:', response.data.steps.length);
       if (aiParam && response.data.steps.length === 0) {
+        console.log('✅ Condition met, starting AI block conversion...');
         try {
+          console.log('📝 Step 1: Parsing AI param...');
           const aiResult = JSON.parse(decodeURIComponent(aiParam));
           console.log('🤖 Received AI result:', aiResult);
+          console.log('📝 Step 2: Converting to blocks...');
           const aiBlocks = convertAIResultToBlocks(aiResult);
           console.log('📦 Converted to blocks:', aiBlocks);
           
