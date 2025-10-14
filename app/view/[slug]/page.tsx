@@ -102,9 +102,17 @@ export default function LPViewerPage() {
   const handlePurchase = async () => {
     if (!selectedProduct) return;
 
+    console.log('🛒 Starting purchase:', {
+      productId: selectedProduct.id,
+      quantity: purchaseQuantity,
+      totalPoints: selectedProduct.price_in_points * purchaseQuantity,
+      currentBalance: pointBalance,
+    });
+
     setIsPurchasing(true);
     try {
-      await productApi.purchase(selectedProduct.id, { quantity: purchaseQuantity });
+      const response = await productApi.purchase(selectedProduct.id, { quantity: purchaseQuantity });
+      console.log('✅ Purchase success:', response.data);
       alert('購入が完了しました！');
       setShowPurchaseModal(false);
       // ポイント残高を再取得
@@ -114,7 +122,17 @@ export default function LPViewerPage() {
         await fetchProducts(lp.id);
       }
     } catch (error: any) {
-      alert(error.response?.data?.detail || '購入に失敗しました');
+      console.error('❌ Purchase error:', error);
+      console.error('Error details:', {
+        response: error.response?.data,
+        status: error.response?.status,
+        message: error.message,
+      });
+      
+      const errorMessage = error.response?.data?.detail 
+        || error.message 
+        || '購入に失敗しました。もう一度お試しください。';
+      alert(errorMessage);
     } finally {
       setIsPurchasing(false);
     }
