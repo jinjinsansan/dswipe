@@ -64,13 +64,37 @@ export default function EditLPNewPage() {
       if (aiParam && response.data.steps.length === 0) {
         try {
           const aiResult = JSON.parse(decodeURIComponent(aiParam));
+          console.log('🤖 Received AI result:', aiResult);
           const aiBlocks = convertAIResultToBlocks(aiResult);
-          setBlocks(aiBlocks);
-          // URLからAIパラメータを削除
+          console.log('📦 Converted to blocks:', aiBlocks);
+          
+          if (aiBlocks.length === 0) {
+            console.error('❌ No blocks generated from AI result');
+            setIsLoading(false);
+            return;
+          }
+          
+          // AI提案から生成したブロックをDBに保存
+          console.log('💾 Saving AI-generated blocks to database...');
+          for (const block of aiBlocks) {
+            const stepData = {
+              step_order: block.order,
+              image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
+              block_type: block.blockType,
+              content_data: block.content as unknown as Record<string, unknown>,
+            };
+            await lpApi.addStep(lpId, stepData);
+          }
+          console.log('✅ AI blocks saved successfully');
+          
+          // URLからAIパラメータを削除して再読み込み
           router.replace(`/lp/${lpId}/edit`);
+          // 保存したブロックを再読み込み
+          setTimeout(() => fetchLP(), 100);
           return;
         } catch (e) {
-          console.error('AI結果のパースエラー:', e);
+          console.error('❌ AI結果の処理エラー:', e);
+          setError('AI提案の適用に失敗しました');
         }
       }
       

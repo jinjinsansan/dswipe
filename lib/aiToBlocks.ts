@@ -10,6 +10,8 @@ export function convertAIResultToBlocks(aiResult: any): Array<{
   content: BlockContent;
   order: number;
 }> {
+  console.log('🤖 AI Result:', aiResult);
+  
   const blocks: Array<{
     id: string;
     blockType: BlockType;
@@ -18,18 +20,26 @@ export function convertAIResultToBlocks(aiResult: any): Array<{
   }> = [];
 
   if (!aiResult || !aiResult.structure) {
+    console.error('❌ AI Result missing structure:', aiResult);
     return blocks;
   }
+
+  console.log('📦 AI Structure:', aiResult.structure);
 
   // AIが推奨したブロックを順番に変換
   aiResult.structure.forEach((aiBlock: any, index: number) => {
     const blockType = aiBlock.block as BlockType;
+    console.log(`🔍 Processing block ${index}:`, blockType, aiBlock);
+    
     const template = getTemplateById(blockType);
 
     if (!template) {
-      console.warn(`Unknown block type: ${blockType}`);
+      console.error(`❌ Unknown block type: ${blockType}`);
+      console.log('Available block types:', ['countdown-1', 'problem-1', 'before-after-1', 'special-price-1', 'bonus-list-1', 'guarantee-1', 'author-profile-1', 'scarcity-1', 'urgency-1', 'sticky-cta-1']);
       return;
     }
+    
+    console.log(`✅ Found template for ${blockType}:`, template.name);
 
     // テンプレートのデフォルトコンテンツをベースに、AIが生成した内容で上書き
     const content = {
@@ -50,14 +60,18 @@ export function convertAIResultToBlocks(aiResult: any): Array<{
       }
     }
 
-    blocks.push({
+    const newBlock = {
       id: `ai-block-${index}-${Date.now()}`,
       blockType,
       content: content as BlockContent,
       order: index,
-    });
+    };
+    
+    console.log(`✅ Created block ${index}:`, newBlock);
+    blocks.push(newBlock);
   });
 
+  console.log(`🎉 Total blocks created: ${blocks.length}`, blocks);
   return blocks;
 }
 
