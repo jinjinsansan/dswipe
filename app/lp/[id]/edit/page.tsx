@@ -373,7 +373,7 @@ export default function EditLPNewPage() {
                 onReorderBlocks={handleReorderBlocks}
                 isEditing={true}
                 onSelectBlock={setSelectedBlockId}
-                selectedBlockId={selectedBlockId}
+                selectedBlockId={selectedBlockId || undefined}
               />
             </div>
 
@@ -431,7 +431,7 @@ export default function EditLPNewPage() {
                 onReorderBlocks={handleReorderBlocks}
                 isEditing={viewMode === 'edit'}
                 onSelectBlock={setSelectedBlockId}
-                selectedBlockId={selectedBlockId}
+                selectedBlockId={selectedBlockId || undefined}
               />
             </div>
 

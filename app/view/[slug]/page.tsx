@@ -47,7 +47,7 @@ export default function LPViewerPage() {
       // メールゲートが必要かチェック
       if (!response.data.all_completed) {
         const emailAction = response.data.required_actions.find(
-          (a) => a.action_type === 'email' && !response.data.completed_actions.includes(a.id)
+          (a: any) => a.action_type === 'email' && !response.data.completed_actions.includes(a.id)
         );
         if (emailAction) {
           setShowEmailGate(true);

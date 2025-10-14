@@ -21,7 +21,7 @@ interface RealtimeHintsProps {
     content: BlockContent;
     order: number;
   }>;
-  selectedBlockId: string | null;
+  selectedBlockId: string | null | undefined;
   lpData?: any;
   onApplyHint?: (hintId: string) => void;
 }
@@ -38,7 +38,7 @@ export default function RealtimeHints({ blocks, selectedBlockId, lpData, onApply
 
   const generateHints = (
     blocks: Array<{ id: string; blockType: BlockType; content: BlockContent; order: number }>,
-    selectedBlockId: string | null,
+    selectedBlockId: string | null | undefined,
     lpData?: any
   ): Hint[] => {
     const hints: Hint[] = [];

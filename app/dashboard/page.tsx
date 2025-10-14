@@ -9,9 +9,9 @@ import { lpApi, pointsApi } from '@/lib/api';
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuthStore();
-  const [lps, setLps] = useState([]);
-  const [pointBalance, setPointBalance] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [lps, setLps] = useState<any[]>([]);
+  const [pointBalance, setPointBalance] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isAuthenticated) {

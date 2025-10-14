@@ -53,7 +53,7 @@ export function convertAIResultToBlocks(aiResult: any): Array<{
     blocks.push({
       id: `ai-block-${index}-${Date.now()}`,
       blockType,
-      content,
+      content: content as BlockContent,
       order: index,
     });
   });
