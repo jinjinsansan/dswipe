@@ -11,6 +11,12 @@ import CountdownBlock from './CountdownBlock';
 import SpecialPriceBlock from './SpecialPriceBlock';
 import BonusListBlock from './BonusListBlock';
 import GuaranteeBlock from './GuaranteeBlock';
+import ProblemBlock from './ProblemBlock';
+import BeforeAfterBlock from './BeforeAfterBlock';
+import AuthorProfileBlock from './AuthorProfileBlock';
+import UrgencyBlock from './UrgencyBlock';
+import ScarcityBlock from './ScarcityBlock';
+import StickyCTABlock from './StickyCTABlock';
 
 interface BlockRendererProps {
   blockType: string;
@@ -87,6 +93,24 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit }:
     
     case 'guarantee-1':
       return <GuaranteeBlock content={content} />;
+    
+    case 'problem-1':
+      return <ProblemBlock content={content} />;
+    
+    case 'before-after-1':
+      return <BeforeAfterBlock content={content} />;
+    
+    case 'author-profile-1':
+      return <AuthorProfileBlock content={content} />;
+    
+    case 'urgency-1':
+      return <UrgencyBlock content={content} />;
+    
+    case 'scarcity-1':
+      return <ScarcityBlock content={content} />;
+    
+    case 'sticky-cta-1':
+      return <StickyCTABlock content={content} />;
     
     default:
       return (

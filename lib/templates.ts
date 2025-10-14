@@ -19,6 +19,12 @@ import {
   SpecialPriceBlockContent,
   BonusListBlockContent,
   GuaranteeBlockContent,
+  ProblemBlockContent,
+  BeforeAfterBlockContent,
+  AuthorProfileBlockContent,
+  UrgencyBlockContent,
+  ScarcityBlockContent,
+  StickyCTABlockContent,
 } from '@/types/templates';
 
 /**
@@ -810,5 +816,126 @@ const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       backgroundColor: '#0F172A',
       textColor: '#FFFFFF',
     } as GuaranteeBlockContent,
+  },
+
+  // 問題提起ブロック
+  {
+    id: 'problem-1',
+    templateId: 'problem-1',
+    name: '問題提起リスト',
+    category: 'conversion',
+    description: 'ターゲットの悩みをチェックリスト形式で訴求',
+    defaultContent: {
+      title: 'こんなお悩みありませんか？',
+      subtitle: '1つでも当てはまる方は、このまま読み進めてください',
+      problems: [
+        '何をやっても結果が出ない...',
+        '自己流でやってきたけど限界を感じている',
+        '正しいやり方が分からず、時間だけが過ぎていく',
+        '周りは成功しているのに、自分だけ取り残されている',
+        'もっと効率的な方法があるはずなのに見つからない',
+      ],
+      checkIcon: '❌',
+      backgroundColor: '#1F2937',
+      textColor: '#FFFFFF',
+    } as ProblemBlockContent,
+  },
+
+  // ビフォーアフターブロック
+  {
+    id: 'before-after-1',
+    templateId: 'before-after-1',
+    name: 'ビフォーアフター比較',
+    category: 'social-proof',
+    description: '実践前後の変化を視覚的に表示',
+    defaultContent: {
+      title: '🎯 驚きの変化をご覧ください',
+      beforeTitle: 'BEFORE',
+      beforeText: '収入が不安定で将来が心配\n副業を始めても全く稼げない\n何から手をつければいいか分からない',
+      beforeImage: '',
+      afterTitle: 'AFTER',
+      afterText: '月収50万円を安定して達成\n自動化の仕組みで時間に余裕\n好きなことで収入を得られる喜び',
+      afterImage: '',
+      arrowIcon: '➡️',
+      backgroundColor: '#111827',
+      textColor: '#FFFFFF',
+    } as BeforeAfterBlockContent,
+  },
+
+  // 著者プロフィールブロック
+  {
+    id: 'author-profile-1',
+    templateId: 'author-profile-1',
+    name: '著者プロフィール',
+    category: 'social-proof',
+    description: '権威性と信頼性を訴求',
+    defaultContent: {
+      name: '山田太郎',
+      title: 'オンラインビジネスコンサルタント',
+      imageUrl: '',
+      bio: '20年以上のビジネス経験を持ち、3000名以上の起業家・経営者を成功に導いてきました。独自のメソッドで初心者でも最短3ヶ月で月収100万円を達成させることに成功。',
+      achievements: [
+        '累計3000名以上の指導実績',
+        'ビジネス書籍5冊出版（累計50万部突破）',
+        '主要メディア（日経、東洋経済）で特集',
+        '年商10億円企業を3社創業',
+        'オンラインスクール卒業生の95%が収益化',
+      ],
+      mediaLogos: [],
+      backgroundColor: '#0F172A',
+      textColor: '#FFFFFF',
+    } as AuthorProfileBlockContent,
+  },
+
+  // 緊急性訴求ブロック
+  {
+    id: 'urgency-1',
+    templateId: 'urgency-1',
+    name: '緊急性バナー',
+    category: 'conversion',
+    description: '今すぐ行動を促す緊急メッセージ',
+    defaultContent: {
+      title: '⚠️ 重要なお知らせ',
+      message: 'このページは24時間限定公開です！今すぐお申し込みください',
+      icon: '⚠️',
+      highlightColor: '#DC2626',
+      backgroundColor: '#DC2626',
+      textColor: '#FFFFFF',
+    } as UrgencyBlockContent,
+  },
+
+  // 限定性訴求ブロック
+  {
+    id: 'scarcity-1',
+    templateId: 'scarcity-1',
+    name: '限定枠表示',
+    category: 'conversion',
+    description: '残り枠数を視覚的に表示して希少性を訴求',
+    defaultContent: {
+      title: '🔥 募集枠残りわずか 🔥',
+      remainingCount: 3,
+      totalCount: 50,
+      message: '定員に達し次第、募集終了となります',
+      progressColor: '#EF4444',
+      backgroundColor: '#991B1B',
+      textColor: '#FFFFFF',
+    } as ScarcityBlockContent,
+  },
+
+  // スティッキーCTAブロック
+  {
+    id: 'sticky-cta-1',
+    templateId: 'sticky-cta-1',
+    name: '固定CTAバー',
+    category: 'conversion',
+    description: '画面に常に表示される行動喚起ボタン',
+    defaultContent: {
+      buttonText: '今すぐ申し込む',
+      buttonColor: '#EF4444',
+      subText: '🔥 残り3名で募集終了',
+      position: 'bottom',
+      backgroundColor: '#111827',
+      textColor: '#FFFFFF',
+    } as StickyCTABlockContent,
   },
 ];
