@@ -63,7 +63,8 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   const handleOptionClick = (value: string) => {
     setFormData({ ...formData, [currentQuestion.field]: value });
     
-    if (step < 3) {
+    // 自動的に次のステップに進む（step 4まで）
+    if (step < 4) {
       setTimeout(() => setStep(step + 1), 300);
     }
   };
