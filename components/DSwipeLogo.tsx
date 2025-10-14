@@ -25,14 +25,14 @@ export default function DSwipeLogo({
 
   return (
     <div className="flex items-center space-x-2">
-      {/* D Logo - Yellow Circle with Black D */}
+      {/* D Logo - Blue Rounded Square with White D */}
       <div 
-        className="rounded-full flex items-center justify-center font-black"
+        className="rounded-lg flex items-center justify-center font-black"
         style={{
           width: `${dim.circle}px`,
           height: `${dim.circle}px`,
-          backgroundColor: '#FDB91A', // Yellow/Gold
-          color: '#000000', // Black
+          backgroundColor: '#3B82F6', // Blue
+          color: '#FFFFFF', // White
           fontSize: dim.circle * 0.55 + 'px',
           lineHeight: '1',
           userSelect: 'none',

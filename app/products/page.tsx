@@ -165,7 +165,7 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
       {/* Sidebar */}
       <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
-        <div className="p-4 border-b border-gray-700">
+        <div className="px-4 py-3 border-b border-gray-700">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
           </Link>
