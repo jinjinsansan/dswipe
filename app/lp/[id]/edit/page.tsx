@@ -12,6 +12,8 @@ import TemplateSelector from '@/components/TemplateSelector';
 import DraggableBlockEditor from '@/components/DraggableBlockEditor';
 import PropertyPanel from '@/components/PropertyPanel';
 import AITextGenerator from '@/components/AITextGenerator';
+import RealtimeHints from '@/components/RealtimeHints';
+import AIImprovementPanel from '@/components/AIImprovementPanel';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 // UUID生成のヘルパー関数
 function generateId() {
@@ -43,6 +45,7 @@ export default function EditLPNewPage() {
   const [viewMode, setViewMode] = useState<'edit' | 'split' | 'preview'>('split');
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
+  const [showAIImprovement, setShowAIImprovement] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -272,6 +275,18 @@ export default function EditLPNewPage() {
                 </button>
               </div>
 
+              {/* AI改善パネル切替 */}
+              <button
+                onClick={() => setShowAIImprovement(!showAIImprovement)}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  showAIImprovement
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/50'
+                    : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                🤖 AI改善
+              </button>
+
               {/* ステータス */}
               <span className={`px-3 py-1 text-sm rounded-full ${
                 lp.status === 'published'
@@ -334,6 +349,23 @@ export default function EditLPNewPage() {
                   + ブロック追加
                 </button>
               </div>
+
+              {/* リアルタイムヒント */}
+              <div className="mb-4">
+                <RealtimeHints
+                  blocks={blocks}
+                  selectedBlockId={selectedBlockId}
+                  lpData={lp}
+                />
+              </div>
+
+              {/* AI改善パネル */}
+              {showAIImprovement && (
+                <div className="mb-4">
+                  <AIImprovementPanel lpId={lpId} />
+                </div>
+              )}
+
               <DraggableBlockEditor
                 blocks={blocks}
                 onUpdateBlock={handleUpdateBlock}
