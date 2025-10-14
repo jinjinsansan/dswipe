@@ -186,8 +186,11 @@ export default function EditLPNewPage() {
     setIsSaving(true);
     try {
       // TODO: バックエンドAPIにcontent_dataを送信
-      // 現在は仮のロジック
-      console.log('Saving blocks:', blocks);
+      // await lpApi.updateSteps(lpId, blocks.map(b => ({
+      //   block_type: b.blockType,
+      //   content_data: b.content,
+      //   order: b.order
+      // })));
       
       alert('保存しました！（デモ）');
     } catch (err: any) {

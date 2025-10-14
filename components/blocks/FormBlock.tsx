@@ -20,7 +20,7 @@ export default function FormBlock({ content, isEditing, onEdit }: FormBlockProps
 
     setIsSubmitting(true);
     // TODO: フォーム送信処理（バックエンドAPI連携）
-    console.log('Form submitted:', formData);
+    // await api.post('/form-submit', formData);
     
     setTimeout(() => {
       alert('送信しました！');
