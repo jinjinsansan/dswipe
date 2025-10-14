@@ -69,6 +69,82 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
       {/* プロパティ */}
       <div className="p-4 space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
+        {/* テキストコンテンツ */}
+        {('title' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              タイトル
+            </label>
+            <input
+              type="text"
+              value={(content as any).title || ''}
+              onChange={(e) => onUpdateContent('title', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="タイトルを入力"
+            />
+          </div>
+        )}
+
+        {('subtitle' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              サブタイトル
+            </label>
+            <input
+              type="text"
+              value={(content as any).subtitle || ''}
+              onChange={(e) => onUpdateContent('subtitle', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="サブタイトルを入力"
+            />
+          </div>
+        )}
+
+        {('text' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              説明文
+            </label>
+            <textarea
+              value={(content as any).text || ''}
+              onChange={(e) => onUpdateContent('text', e.target.value)}
+              rows={4}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              placeholder="説明文を入力"
+            />
+          </div>
+        )}
+
+        {('buttonText' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              ボタンテキスト
+            </label>
+            <input
+              type="text"
+              value={(content as any).buttonText || ''}
+              onChange={(e) => onUpdateContent('buttonText', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="ボタンテキストを入力"
+            />
+          </div>
+        )}
+
+        {('urgencyText' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              緊急性テキスト
+            </label>
+            <input
+              type="text"
+              value={(content as any).urgencyText || ''}
+              onChange={(e) => onUpdateContent('urgencyText', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="緊急性テキストを入力"
+            />
+          </div>
+        )}
+
         {/* AI生成セクション */}
         {onGenerateAI && (
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
