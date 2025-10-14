@@ -135,6 +135,14 @@ export default function DashboardPage() {
               <span className="text-base">💰</span>
               <span>ポイント購入</span>
             </Link>
+            
+            <Link
+              href="/media"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+            >
+              <span className="text-base">🖼️</span>
+              <span>メディア</span>
+            </Link>
           </div>
         </nav>
 
