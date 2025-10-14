@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { mediaApi } from '@/lib/api';
+import DSwipeLogo from '@/components/DSwipeLogo';
 
 interface MediaItem {
   url: string;
@@ -116,8 +117,8 @@ export default function MediaPage() {
       {/* Sidebar */}
       <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
         <div className="p-4 border-b border-gray-700">
-          <Link href="/dashboard" className="text-xl font-light text-white">
-            SwipeLaunch
+          <Link href="/dashboard" className="block">
+            <DSwipeLogo size="medium" showFullName={true} />
           </Link>
         </div>
 

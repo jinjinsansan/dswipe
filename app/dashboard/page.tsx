@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi } from '@/lib/api';
+import DSwipeLogo from '@/components/DSwipeLogo';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -96,8 +97,8 @@ export default function DashboardPage() {
       <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
         {/* Logo */}
         <div className="p-4 border-b border-gray-700">
-          <Link href="/dashboard" className="text-xl font-light text-white">
-            SwipeLaunch
+          <Link href="/dashboard" className="block">
+            <DSwipeLogo size="medium" showFullName={true} />
           </Link>
         </div>
 
