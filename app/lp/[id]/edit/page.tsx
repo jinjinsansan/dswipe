@@ -61,6 +61,7 @@ export default function EditLPNewPage() {
       
       // AI提案がクエリパラメータにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
+      console.log('🔍 Debug: aiParam exists?', !!aiParam, 'steps count:', response.data.steps.length);
       if (aiParam && response.data.steps.length === 0) {
         try {
           const aiResult = JSON.parse(decodeURIComponent(aiParam));
