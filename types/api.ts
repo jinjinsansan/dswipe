@@ -78,6 +78,14 @@ export interface UpdateLPRequest {
   status?: 'draft' | 'published';
 }
 
+// LP一覧レスポンス
+export interface LPListResponse {
+  data: LP[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 // API エラーレスポンス
 export interface APIError {
   detail: string;

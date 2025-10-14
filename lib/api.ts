@@ -10,6 +10,7 @@ import type {
   AITextGenerationRequest,
   AIImprovementRequest,
   AIImprovementResponse,
+  LPListResponse,
 } from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -65,7 +66,7 @@ export const lpApi = {
     api.post<LP>('/lp', data),
   
   list: (params?: Record<string, unknown>) =>
-    api.get<LP[]>('/lp', { params }),
+    api.get<LPListResponse>('/lp', { params }),
   
   get: (id: string) =>
     api.get<LPDetail>(`/lp/${id}`),
