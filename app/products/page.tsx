@@ -37,6 +37,8 @@ export default function ProductsPage() {
     stock_quantity: null as number | null,
     is_available: true,
     lp_id: '',
+    redirect_url: '',
+    thanks_lp_id: '',
   });
 
   useEffect(() => {
@@ -91,6 +93,8 @@ export default function ProductsPage() {
       stock_quantity: null,
       is_available: true,
       lp_id: '',
+      redirect_url: '',
+      thanks_lp_id: '',
     });
     setEditingProduct(null);
     setShowCreateModal(true);
@@ -104,6 +108,8 @@ export default function ProductsPage() {
       stock_quantity: product.stock_quantity || null,
       is_available: product.is_available,
       lp_id: product.lp_id || '',
+      redirect_url: (product as any).redirect_url || '',
+      thanks_lp_id: (product as any).thanks_lp_id || '',
     });
     setEditingProduct(product);
     setShowCreateModal(true);
@@ -116,6 +122,8 @@ export default function ProductsPage() {
       const data = {
         ...formData,
         lp_id: formData.lp_id || undefined,
+        redirect_url: formData.redirect_url || undefined,
+        thanks_lp_id: formData.thanks_lp_id || undefined,
       };
 
       if (editingProduct) {
@@ -383,6 +391,54 @@ export default function ProductsPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* 購入完了後の設定 */}
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                <h3 className="text-white font-semibold mb-3">購入完了後の設定</h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  購入完了後にユーザーをどこに誘導するか設定できます
+                </p>
+
+                {/* 外部URLリダイレクト */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    外部URLにリダイレクト（オプション）
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.redirect_url}
+                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
+                    placeholder="https://example.com/thank-you"
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="mt-1 text-sm text-gray-500">
+                    会員サイトやダウンロードページのURL
+                  </p>
+                </div>
+
+                {/* サンクスページLP選択 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    または、サイト内のLPをサンクスページに設定
+                  </label>
+                  <select
+                    value={formData.thanks_lp_id}
+                    onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                    disabled={!!formData.redirect_url}
+                  >
+                    <option value="">設定しない</option>
+                    {lps.map((lp) => (
+                      <option key={lp.id} value={lp.id}>
+                        {lp.title}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-sm text-gray-500">
+                    どちらも設定しない場合は、シンプルな完了メッセージを表示
+                  </p>
+                </div>
               </div>
 
               {/* 販売状態 */}

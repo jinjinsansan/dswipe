@@ -120,8 +120,25 @@ export default function LPViewerPage() {
     try {
       const response = await productApi.purchase(selectedProduct.id, { quantity: purchaseQuantity });
       console.log('✅ Purchase success:', response.data);
-      alert('購入が完了しました！');
+      
       setShowPurchaseModal(false);
+      
+      // 購入完了後のリダイレクト処理
+      const { redirect_url, thanks_lp_slug } = response.data;
+      
+      if (redirect_url) {
+        // 外部URLにリダイレクト
+        alert('購入が完了しました！\nサンクスページに移動します。');
+        window.location.href = redirect_url;
+      } else if (thanks_lp_slug) {
+        // サイト内のサンクスページLPにリダイレクト
+        alert('購入が完了しました！\nサンクスページに移動します。');
+        router.push(`/view/${thanks_lp_slug}`);
+      } else {
+        // デフォルト：購入完了メッセージ
+        alert('購入が完了しました！\nありがとうございます。');
+      }
+      
       // ポイント残高を再取得
       await fetchPointBalance();
       // 商品情報を再取得（在庫更新のため）
