@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { StickyCTABlockContent } from '@/types/templates';
+import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 
 interface StickyCTABlockProps {
   content: StickyCTABlockContent;
@@ -10,17 +11,20 @@ interface StickyCTABlockProps {
 
 export default function StickyCTABlock({ content, withinEditor }: StickyCTABlockProps) {
   const position = content.position || 'bottom';
-  const baseColor = content.backgroundColor || '#0F172A';
-  const accentColor = content.buttonColor || '#EF4444';
-  const gradientBackground = `linear-gradient(135deg, ${baseColor}, rgba(15, 23, 42, 0.92))`;
-  const textColor = content.textColor || '#FFFFFF';
+  const themeKey: ColorThemeKey = (content.themeKey as ColorThemeKey) ?? 'power_blue';
+  const theme = COLOR_THEMES[themeKey] ?? COLOR_THEMES.power_blue;
+  const baseColor = content.backgroundColor || theme.background;
+  const accentColor = content.buttonColor || theme.primary;
+  const glowAccent = content.accentColor || theme.accent;
+  const textColor = content.textColor || theme.text;
+  const gradientBackground = `linear-gradient(135deg, ${glowAccent}19, ${baseColor})`;
 
   if (withinEditor) {
     return (
       <div className="relative w-full pointer-events-none" style={{ color: textColor }}>
         <div className="w-full px-0 pb-4">
           <div
-            className="relative overflow-hidden w-full border border-white/10 bg-gray-900/70 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)] rounded-2xl"
+            className="relative overflow-hidden w-full border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)] rounded-2xl"
             style={{
               backgroundImage: gradientBackground,
               borderTop: `3px solid ${accentColor}`,
@@ -29,7 +33,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             <div
               className="pointer-events-none absolute inset-0"
               style={{
-                background: 'radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)',
+                background: `radial-gradient(circle at top right, ${glowAccent}1a, transparent 55%)`,
               }}
             />
             <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
@@ -45,7 +49,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
                 <div
                   className="w-full py-4 px-8 rounded-lg text-xl font-bold text-center shadow-2xl"
                   style={{
-                    backgroundColor: content.buttonColor || '#EF4444',
+                    background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
                     color: '#FFFFFF',
                   }}
                 >
@@ -84,7 +88,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
           <div
             className="pointer-events-none absolute inset-0"
             style={{
-              background: `radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)`,
+              background: `radial-gradient(circle at top right, ${glowAccent}1a, transparent 55%)`,
             }}
           />
           <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
@@ -101,7 +105,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
           <button
             className="flex-1 md:flex-none md:min-w-[300px] py-4 px-8 rounded-xl text-xl font-bold transition-transform hover:scale-105 shadow-2xl animate-pulse"
             style={{
-              backgroundColor: content.buttonColor || '#EF4444',
+              background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
               color: '#FFFFFF',
             }}
           >

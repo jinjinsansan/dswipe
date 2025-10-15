@@ -1,5 +1,6 @@
 import { Section, SurfaceCard, GradientHeading } from "@/components/ui";
 import type { FeaturesBlockContent } from "@/types/templates";
+import { COLOR_THEMES, ColorThemeKey } from "@/lib/templates";
 
 interface FeatureAuroraBlockProps {
   content: FeaturesBlockContent;
@@ -9,16 +10,37 @@ interface FeatureAuroraBlockProps {
 
 export default function FeatureAuroraBlock({ content, isEditing, onEdit }: FeatureAuroraBlockProps) {
   const {
+    themeKey,
     tagline,
     title,
     highlightText,
     features = [],
+    backgroundColor,
+    textColor,
+    accentColor,
   } = content;
 
+  const resolvedTheme: ColorThemeKey = (themeKey as ColorThemeKey) ?? "power_blue";
+  const theme = COLOR_THEMES[resolvedTheme] ?? COLOR_THEMES.power_blue;
+  const surface = backgroundColor ?? "rgba(15, 23, 42, 0.82)";
+  const bodyColor = textColor ?? "#E5E7EB";
+  const accent = accentColor ?? theme.accent;
+  const secondary = theme.secondary ?? theme.primary;
+
+  const headingToneMap: Record<ColorThemeKey, Parameters<typeof GradientHeading>[0]["tone"]> = {
+    urgent_red: "magenta",
+    energy_orange: "magenta",
+    gold_premium: "gold",
+    power_blue: "aqua",
+    passion_pink: "magenta",
+  } as const;
+
+  const headingTone = headingToneMap[resolvedTheme] ?? "primary";
+
   return (
-    <Section tone="alt" padding="default" className="overflow-hidden">
-      <div className="absolute inset-x-[-20%] top-[-40%] h-80 bg-gradient-primary/40 blur-[120px]" />
-      <div className="relative space-y-12">
+    <Section tone="alt" padding="default" className="overflow-hidden" >
+      <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
+      <div className="relative space-y-12" style={{ color: bodyColor }}>
         <div className="max-w-3xl space-y-4">
           {isEditing ? (
             <div className="space-y-3">
@@ -45,13 +67,16 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
           ) : (
             <>
               {tagline && (
-                <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.4em] text-blue-200/90">
+                <span
+                  className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-medium uppercase tracking-[0.4em]"
+                  style={{ backgroundColor: `${accent}18`, color: `${accent}D0`, borderColor: `${accent}33` }}
+                >
                   {tagline}
                 </span>
               )}
-              <GradientHeading>{title || "AIとクリエイティブが融合する4つのコア"}</GradientHeading>
+              <GradientHeading tone={headingTone}>{title || "AIとクリエイティブが融合する4つのコア"}</GradientHeading>
               {highlightText && (
-                <p className="text-sm uppercase tracking-[0.35em] text-blue-200/80">{highlightText}</p>
+                <p className="text-sm uppercase tracking-[0.35em]" style={{ color: `${accent}CC` }}>{highlightText}</p>
               )}
             </>
           )}
@@ -59,7 +84,13 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
 
         <div className="grid gap-6 md:grid-cols-2">
           {features.map((feature, index) => (
-            <SurfaceCard key={index} variant="glass" glow className="h-full p-6">
+            <SurfaceCard
+              key={index}
+              variant="glass"
+              glow
+              className="h-full p-6"
+              style={{ backgroundColor: surface, borderColor: `${accent}1a` }}
+            >
               <div className="space-y-4">
                 {isEditing ? (
                   <>
@@ -86,7 +117,10 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                 ) : (
                   <>
                     {feature.icon && (
-                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-2xl shadow-soft">
+                      <div
+                        className="inline-flex h-12 w-12 items-center justify-center rounded-xl text-2xl shadow-soft"
+                        style={{ backgroundColor: `${accent}1f`, color: accent }}
+                      >
                         {feature.icon}
                       </div>
                     )}
@@ -94,7 +128,7 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                       <h3 className="text-lg font-semibold text-white/90">
                         {feature.title || '機能タイトル'}
                       </h3>
-                      <p className="text-sm leading-relaxed text-blue-100/85">
+                      <p className="text-sm leading-relaxed" style={{ color: `${bodyColor}CC` }}>
                         {feature.description || '詳細説明を入力してください。'}
                       </p>
                     </div>

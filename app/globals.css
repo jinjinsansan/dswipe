@@ -18,8 +18,8 @@
   --space-section-lg: 7.5rem;
   --radius-card: 1.5rem;
   --radius-button: 0.75rem;
-  --font-body: var(--font-noto-sans-jp), "Inter", system-ui, sans-serif;
-  --font-display: var(--font-plus-jakarta), var(--font-noto-sans-jp), system-ui, sans-serif;
+  --font-body: var(--font-noto-sans-jp), "Noto Sans JP", system-ui, sans-serif;
+  --font-display: var(--font-noto-sans-jp), "Noto Sans JP", system-ui, sans-serif;
 }
 
 @theme inline {
@@ -72,6 +72,9 @@ body {
   .bg-gradient-primary { background-image: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent)); }
   .bg-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); }
   .bg-gradient-aqua { background-image: linear-gradient(135deg, #38bdf8, #6366f1); }
+  .bg-gradient-gold { background-image: linear-gradient(135deg, #fbbf24, #f59e0b); }
+  .bg-gradient-emerald { background-image: linear-gradient(135deg, #34d399, #10b981); }
+  .bg-gradient-crimson { background-image: linear-gradient(135deg, #f43f5e, #ef4444); }
   .text-gradient-primary { background-image: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent)); color: transparent; background-clip: text; }
   .text-gradient-aqua { background-image: linear-gradient(135deg, #38bdf8, #6366f1); color: transparent; background-clip: text; }
   .text-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); color: transparent; background-clip: text; }

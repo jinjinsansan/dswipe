@@ -59,12 +59,20 @@ export type BlockCategory =
   | 'form'         // フォーム系
   | 'image';       // 画像ブロック
 
+export type TemplateThemeKey =
+  | 'urgent_red'
+  | 'energy_orange'
+  | 'gold_premium'
+  | 'power_blue'
+  | 'passion_pink';
+
 // 共通のブロックコンテンツ
 export interface BaseBlockContent {
   backgroundColor?: string;
   textColor?: string;
   padding?: string;
   margin?: string;
+  accentColor?: string;
 }
 
 // ヒーローブロックコンテンツ
@@ -84,6 +92,7 @@ export interface HeroBlockContent extends BaseBlockContent {
     label: string;
     value: string;
   }[];
+  themeKey?: TemplateThemeKey;
 }
 
 // テキスト+画像ブロックコンテンツ
@@ -108,6 +117,7 @@ export interface PricingBlockContent extends BaseBlockContent {
     highlighted?: boolean;
   }[];
   columns?: 2 | 3;
+  themeKey?: TemplateThemeKey;
 }
 
 // お客様の声ブロックコンテンツ
@@ -121,6 +131,7 @@ export interface TestimonialBlockContent extends BaseBlockContent {
     company?: string;
   }[];
   layout?: 'card' | 'slider' | 'grid';
+  themeKey?: TemplateThemeKey;
 }
 
 // FAQブロックコンテンツ
@@ -131,6 +142,7 @@ export interface FAQBlockContent extends BaseBlockContent {
     answer: string;
   }[];
   layout?: 'accordion' | 'grid';
+  themeKey?: TemplateThemeKey;
 }
 
 // 特徴ブロックコンテンツ
@@ -144,6 +156,7 @@ export interface FeaturesBlockContent extends BaseBlockContent {
     description: string;
   }[];
   columns?: 2 | 3 | 4;
+  themeKey?: TemplateThemeKey;
 }
 
 // CTAブロックコンテンツ
@@ -158,6 +171,7 @@ export interface CTABlockContent extends BaseBlockContent {
   countdown?: {
     endDate: string;
   };
+  themeKey?: TemplateThemeKey;
 }
 
 // ギャラリーブロックコンテンツ
@@ -364,6 +378,7 @@ export interface StickyCTABlockContent extends BaseBlockContent {
   buttonColor?: string;
   subText?: string;
   position?: 'top' | 'bottom';
+  themeKey?: TemplateThemeKey;
 }
 
 // ブロックコンテンツの型（Union型）

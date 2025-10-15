@@ -1,12 +1,15 @@
 import { ElementType, ReactNode, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils";
 
-type GradientTone = "primary" | "magenta" | "aqua";
+type GradientTone = "primary" | "magenta" | "aqua" | "gold" | "emerald" | "crimson";
 
 const toneClassMap: Record<GradientTone, string> = {
   primary: "bg-gradient-primary",
   magenta: "bg-gradient-magenta",
   aqua: "bg-gradient-aqua",
+  gold: "bg-gradient-gold",
+  emerald: "bg-gradient-emerald",
+  crimson: "bg-gradient-crimson",
 };
 
 type GradientHeadingProps<T extends ElementType> = {

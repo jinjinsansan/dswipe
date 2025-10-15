@@ -1,29 +1,30 @@
 import React from 'react';
 import Link from 'next/link';
+import type { CTABlockContent } from '@/types/templates';
+import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 
 interface CTABlockProps {
-  content: {
-    title: string;
-    subtitle?: string;
-    buttonText: string;
-    buttonColor: string;
-    backgroundColor: string;
-    textColor: string;
-  };
+  content: CTABlockContent;
   isEditing?: boolean;
-  onEdit?: (field: string, value: string) => void;
+  onEdit?: (field: string, value: any) => void;
   productId?: string;
   fullWidth?: boolean;
 }
 
 export default function CTABlock({ content, isEditing, onEdit, productId, fullWidth }: CTABlockProps) {
-  const style = {
-    backgroundColor: content.backgroundColor,
-    color: content.textColor,
-  };
+  const themeKey: ColorThemeKey = (content.themeKey as ColorThemeKey) ?? 'urgent_red';
+  const theme = COLOR_THEMES[themeKey] ?? COLOR_THEMES.urgent_red;
+  const background = content.backgroundColor || theme.background;
+  const textColor = content.textColor || theme.text;
+  const accent = content.accentColor || theme.accent;
+  const buttonColor = content.buttonColor || theme.primary;
+  const secondaryColor = theme.secondary ?? theme.primary;
 
   return (
-    <div className={fullWidth ? 'py-10 px-6 sm:px-10' : 'py-12 px-8'} style={style}>
+    <div
+      className={fullWidth ? 'py-10 px-6 sm:px-10' : 'py-12 px-8'}
+      style={{ background, color: textColor, backgroundImage: `radial-gradient(circle at top right, ${accent}18, transparent 55%)` }}
+    >
       <div
         className={fullWidth ? 'w-full text-center' : 'max-w-4xl mx-auto text-center'}
         style={fullWidth ? { maxWidth: '100%' } : undefined}
@@ -58,34 +59,62 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
               {content.title || 'さあ、始めましょう'}
             </h2>
             {content.subtitle && (
-              <p className="text-xl mb-8">
+              <p className="text-xl mb-8" style={{ color: `${textColor}CC` }}>
                 {content.subtitle}
               </p>
             )}
-            {productId ? (
-              <Link
-                href={`/points/purchase?product_id=${productId}`}
-                className={
-                  fullWidth
-                    ? 'block w-full max-w-xl mx-auto px-10 py-5 rounded-none sm:rounded-lg font-bold text-xl shadow-2xl hover:scale-[1.015] transition-transform'
-                    : 'inline-block px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform'
-                }
-                style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
-              >
-                {content.buttonText || '今すぐ始める'}
-              </Link>
-            ) : (
-              <button
-                className={
-                  fullWidth
-                    ? 'w-full max-w-xl mx-auto px-10 py-5 rounded-none sm:rounded-lg font-bold text-xl shadow-2xl hover:scale-[1.015] transition-transform'
-                    : 'px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform'
-                }
-                style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
-              >
-                {content.buttonText || '今すぐ始める'}
-              </button>
-            )}
+            <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:gap-4">
+              {productId ? (
+                <Link
+                  href={`/points/purchase?product_id=${productId}`}
+                  className={
+                    fullWidth
+                      ? 'block w-full max-w-xl px-10 py-5 rounded-lg font-bold text-lg shadow-2xl hover:scale-[1.015] transition-transform'
+                      : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
+                  }
+                  style={{
+                    backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
+                    color: '#FFFFFF',
+                    boxShadow: `0 24px 60px -28px ${buttonColor}80`,
+                  }}
+                >
+                  {content.buttonText || '今すぐ始める'}
+                </Link>
+              ) : (
+                <button
+                  className={
+                    fullWidth
+                      ? 'w-full max-w-xl px-10 py-5 rounded-lg font-bold text-lg shadow-2xl hover:scale-[1.015] transition-transform'
+                      : 'px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
+                  }
+                  style={{
+                    backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
+                    color: '#FFFFFF',
+                    boxShadow: `0 24px 60px -28px ${buttonColor}80`,
+                  }}
+                >
+                  {content.buttonText || '今すぐ始める'}
+                </button>
+              )}
+
+              {content.secondaryButtonText && (
+                <Link
+                  href={content.secondaryButtonUrl || '#'}
+                  className={
+                    fullWidth
+                      ? 'w-full max-w-xl px-10 py-5 rounded-lg font-semibold text-lg transition-transform border'
+                      : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg transition-transform border'
+                  }
+                  style={{
+                    color: textColor,
+                    borderColor: `${accent}66`,
+                    backgroundColor: `${accent}12`,
+                  }}
+                >
+                  {content.secondaryButtonText}
+                </Link>
+              )}
+            </div>
           </>
         )}
       </div>

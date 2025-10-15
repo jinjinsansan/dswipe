@@ -1,6 +1,6 @@
 import type { AIGenerationResponse } from '@/types/api';
 import { BlockType, BlockContent } from '@/types/templates';
-import { getTemplateById } from './templates';
+import { getTemplateById, ColorThemeKey } from './templates';
 
 /**
  * AIウィザードの結果をブロック構造に変換
@@ -59,6 +59,16 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
       }
       if ('buttonColor' in content) {
         content.buttonColor = palette.primary;
+      }
+      if ('accentColor' in content || 'accentColor' in defaultContent) {
+        content.accentColor = palette.accent;
+      }
+    }
+
+    if ('themeKey' in defaultContent || 'themeKey' in content) {
+      const themeKey = (aiResult.theme as ColorThemeKey | undefined) ?? (content.themeKey as ColorThemeKey | undefined);
+      if (themeKey) {
+        content.themeKey = themeKey;
       }
     }
 

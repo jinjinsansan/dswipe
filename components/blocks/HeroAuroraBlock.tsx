@@ -2,6 +2,7 @@ import Image from "next/image";
 import { GradientHeading, GlowButton, GlowHighlight, Section, SurfaceCard } from "@/components/ui";
 import type { HeroBlockContent } from "@/types/templates";
 import { cn } from "@/lib/utils";
+import { COLOR_THEMES, ColorThemeKey } from "@/lib/templates";
 
 interface HeroAuroraBlockProps {
   content: HeroBlockContent;
@@ -11,6 +12,7 @@ interface HeroAuroraBlockProps {
 
 export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuroraBlockProps) {
   const {
+    themeKey,
     tagline,
     title,
     subtitle,
@@ -21,7 +23,57 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     secondaryButtonText,
     secondaryButtonUrl,
     stats = [],
+    backgroundColor,
+    textColor,
+    buttonColor,
+    accentColor,
   } = content;
+
+  const resolvedThemeKey: ColorThemeKey = (themeKey as ColorThemeKey) ?? "power_blue";
+  const theme = COLOR_THEMES[resolvedThemeKey] ?? COLOR_THEMES.power_blue;
+
+  const surfaceColor = backgroundColor ?? "rgba(11, 17, 32, 0.96)";
+  const bodyTextColor = textColor ?? "#E2E8F0";
+  const primaryButtonColor = buttonColor ?? theme.primary;
+  const accent = accentColor ?? theme.accent;
+  const secondaryTone = theme.secondary ?? theme.primary;
+
+  const gradientToneMap: Record<ColorThemeKey, Parameters<typeof GradientHeading>[0]["tone"]> = {
+    urgent_red: "magenta",
+    energy_orange: "magenta",
+    gold_premium: "gold",
+    power_blue: "aqua",
+    passion_pink: "magenta",
+  } as const;
+
+  const headingTone = gradientToneMap[resolvedThemeKey] ?? "primary";
+
+  const primaryButtonStyle = {
+    backgroundImage: `linear-gradient(135deg, ${secondaryTone}, ${primaryButtonColor})`,
+    boxShadow: `0 28px 60px -30px ${primaryButtonColor}80`,
+  } as const;
+
+  const highlightStyle = {
+    color: `${accent}CC`,
+  } as const;
+
+  const pillStyle = {
+    backgroundColor: `${accent}1f`,
+    color: `${accent}CC`,
+    borderColor: `${accent}33`,
+  } as const;
+
+  const statsValueStyle = {
+    color: accent,
+  } as const;
+
+  const blurOverlayStyle = {
+    background: `radial-gradient(140% 140% at 50% 120%, ${secondaryTone}22 0%, rgba(8,11,25,0) 70%)`,
+  } as const;
+
+  const topOverlayStyle = {
+    background: `linear-gradient(180deg, rgba(8,11,25,0.7), rgba(8,11,25,0))`,
+  } as const;
 
   const renderInput = (field: string, value: string, placeholder: string, type: "input" | "textarea" = "input") => {
     if (!isEditing) return null;
@@ -53,12 +105,12 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
 
   return (
     <Section tone="tint" padding="extended" className="overflow-hidden">
-      <div className="absolute inset-0 opacity-90">
-        <div className="absolute inset-x-[-20%] bottom-[-40%] h-[160%] bg-gradient-aqua blur-[160px]" />
-        <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
+      <div className="absolute inset-0 opacity-95 pointer-events-none" style={blurOverlayStyle}>
+        <div className="absolute inset-x-[-20%] bottom-[-40%] h-[160%] blur-[160px]" style={blurOverlayStyle} />
+        <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div className="relative grid items-center gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-        <div className="space-y-6">
+        <div className="space-y-6" style={{ color: bodyTextColor }}>
           {isEditing ? (
             <div className="space-y-3">
               {renderInput("tagline", tagline ?? "", "タグライン (例: NEXT WAVE)")}
@@ -68,17 +120,20 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
           ) : (
             <div className="space-y-4">
               {tagline && (
-                <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.3em] text-blue-200/90">
+                <span
+                  className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-medium uppercase tracking-[0.3em]"
+                  style={pillStyle}
+                >
                   {tagline}
                 </span>
               )}
-              <GradientHeading as="h1" className="text-4xl leading-tight md:text-5xl lg:text-6xl">
+              <GradientHeading tone={headingTone} as="h1" className="text-4xl leading-tight md:text-5xl lg:text-6xl">
                 {title || "AIが導く、高速ランディングページ体験"}
               </GradientHeading>
               {highlightText && !isEditing && (
-                <p className="text-sm uppercase tracking-[0.4em] text-blue-200/80">{highlightText}</p>
+                <p className="text-sm uppercase tracking-[0.4em]" style={highlightStyle}>{highlightText}</p>
               )}
-              <p className="max-w-xl text-base text-blue-100/90 md:text-lg">
+              <p className="max-w-xl text-base md:text-lg" style={{ color: `${bodyTextColor}CC` }}>
                 {subtitle || "ブランドとコンバージョンを両立するプレミアムデザインを、AIの力で最短24時間で構築。"}
               </p>
             </div>
@@ -97,12 +152,20 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             ) : (
               <>
                 {buttonText && (
-                  <GlowButton href={buttonUrl || "#"}>
+                  <GlowButton
+                    href={buttonUrl || "#"}
+                    style={primaryButtonStyle}
+                  >
                     {buttonText}
                   </GlowButton>
                 )}
                 {secondaryButtonText && (
-                  <GlowButton href={secondaryButtonUrl || "#"} variant="secondary">
+                  <GlowButton
+                    href={secondaryButtonUrl || "#"}
+                    variant="secondary"
+                    className="border-white/20 bg-white/10 text-white/85 hover:text-white"
+                    style={{ boxShadow: `0 20px 40px -30px ${accent}80` }}
+                  >
                     {secondaryButtonText}
                   </GlowButton>
                 )}
@@ -114,8 +177,8 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             <div className="mt-6 grid gap-6 text-sm text-blue-100/80 sm:grid-cols-3">
               {stats.map((item, index) => (
                 <div key={index} className="space-y-1">
-                  <div className="text-gradient-aqua text-lg font-semibold">{item.value}</div>
-                  <div className="text-xs uppercase tracking-[0.4em] text-blue-200/70">{item.label}</div>
+                  <div className="text-lg font-semibold" style={statsValueStyle}>{item.value}</div>
+                  <div className="text-xs uppercase tracking-[0.4em]" style={{ color: `${bodyTextColor}99` }}>{item.label}</div>
                 </div>
               ))}
             </div>
@@ -128,12 +191,20 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             glow
             className={cn(
               "relative overflow-hidden px-8 pb-10 pt-12",
-              "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:bg-gradient-primary after:opacity-60 after:blur-3xl",
+              "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:opacity-60 after:blur-3xl"
             )}
+            style={{ backgroundColor: surfaceColor }}
           >
-            <GlowHighlight className="top-[-20%] h-2/3 opacity-70" intensity="strong" />
+            <GlowHighlight
+              className="top-[-20%] h-2/3 opacity-70"
+              intensity="strong"
+              style={{ background: `linear-gradient(135deg, ${accent}20, ${primaryButtonColor}10)` }}
+            />
             <div className="relative flex flex-col items-center gap-6">
-              <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-blue-100/80">
+              <span
+                className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                style={{ ...pillStyle, borderColor: `${accent}26` }}
+              >
                 {highlightText || "AI Launch Accelerator"}
               </span>
               <div className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft bg-black/60 shadow-glow">
@@ -149,9 +220,9 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   <div className="aspect-[4/3] bg-gradient-aqua" />
                 )}
               </div>
-              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.45em] text-blue-100/60">
+              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.45em]" style={{ color: `${bodyTextColor}80` }}>
                 <span>Launch</span>
-                <span className="h-px w-8 bg-blue-100/30" />
+                <span className="h-px w-8" style={{ backgroundColor: `${bodyTextColor}40` }} />
                 <span>in 24h</span>
               </div>
             </div>

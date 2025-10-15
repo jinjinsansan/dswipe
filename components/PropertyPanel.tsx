@@ -4,7 +4,13 @@ import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
+import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 import MediaLibraryModal from './MediaLibraryModal';
+
+const THEME_ENTRIES = Object.entries(COLOR_THEMES) as Array<[
+  ColorThemeKey,
+  (typeof COLOR_THEMES)[ColorThemeKey]
+]>;
 
 interface PropertyPanelProps {
   block: {
@@ -44,6 +50,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   }
 
   const content = block.content;
+  const supportsThemeSelection = ['hero-aurora', 'features-aurora', 'sticky-cta-1', 'cta-1', 'cta-2', 'cta-3'].includes(block.blockType);
+  const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
 
   return (
     <div className="h-full flex flex-col">
@@ -64,6 +72,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       {/* プロパティ */}
       <div className="p-4 space-y-4 overflow-y-auto flex-1">
         {/* テキストコンテンツ */}
+        {('tagline' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              タグライン
+            </label>
+            <input
+              type="text"
+              value={(content as any).tagline || ''}
+              onChange={(e) => onUpdateContent('tagline', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="タグラインを入力"
+            />
+          </div>
+        )}
+
         {('title' in content) && (
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -109,6 +132,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('highlightText' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              ハイライトテキスト
+            </label>
+            <input
+              type="text"
+              value={(content as any).highlightText || ''}
+              onChange={(e) => onUpdateContent('highlightText', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="ハイライトテキストを入力"
+            />
+          </div>
+        )}
+
         {('buttonText' in content) && (
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -120,6 +158,58 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               onChange={(e) => onUpdateContent('buttonText', e.target.value)}
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
               placeholder="ボタンテキストを入力"
+            />
+          </div>
+        )}
+
+        {('buttonUrl' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              ボタンURL
+            </label>
+            <input
+              type="text"
+              value={(content as any).buttonUrl || ''}
+              onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="https://..."
+            />
+          </div>
+        )}
+
+        {('secondaryButtonText' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              セカンダリーボタン
+            </label>
+            <input
+              type="text"
+              value={(content as any).secondaryButtonText || ''}
+              onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 mb-2"
+              placeholder="セカンダリーボタンの文言"
+            />
+            <input
+              type="text"
+              value={(content as any).secondaryButtonUrl || ''}
+              onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="セカンダリーボタンのURL"
+            />
+          </div>
+        )}
+
+        {('subText' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              サブテキスト
+            </label>
+            <textarea
+              value={(content as any).subText || ''}
+              onChange={(e) => onUpdateContent('subText', e.target.value)}
+              rows={3}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              placeholder="CTAの補足説明"
             />
           </div>
         )}
@@ -151,6 +241,22 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
               placeholder="緊急性テキストを入力"
             />
+          </div>
+        )}
+
+        {('position' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              表示位置
+            </label>
+            <select
+              value={(content as any).position || 'bottom'}
+              onChange={(e) => onUpdateContent('position', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="top">上部固定</option>
+              <option value="bottom">下部固定</option>
+            </select>
           </div>
         )}
 
@@ -192,6 +298,131 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 </button>
               )}
             </div>
+          </div>
+        )}
+
+        {(supportsThemeSelection || currentThemeKey) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">カラーテーマ</label>
+            <select
+              value={currentThemeKey ?? ''}
+              onChange={(e) => onUpdateContent('themeKey', e.target.value as ColorThemeKey)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="">デフォルト</option>
+              {THEME_ENTRIES.map(([key, value]) => (
+                <option key={key} value={key}>{value.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {Array.isArray((content as any).stats) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">実績・統計</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const stats = Array.isArray((content as any).stats) ? [...(content as any).stats] : [];
+                  stats.push({ value: '', label: '' });
+                  onUpdateContent('stats', stats);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + 追加
+              </button>
+            </div>
+            {((content as any).stats as Array<{ value: string; label: string }>).map((stat, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>項目 {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const stats = [...((content as any).stats as Array<{ value: string; label: string }>)]
+                        .filter((_, idx) => idx !== index);
+                      onUpdateContent('stats', stats);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={stat.value || ''}
+                  onChange={(e) => onUpdateContent(`stats.${index}.value`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="表示値 (例: 87%)"
+                />
+                <input
+                  type="text"
+                  value={stat.label || ''}
+                  onChange={(e) => onUpdateContent(`stats.${index}.label`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="ラベル (例: CVR改善率)"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {Array.isArray((content as any).features) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">特徴カード</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const features = Array.isArray((content as any).features) ? [...(content as any).features] : [];
+                  features.push({ icon: '', title: '', description: '' });
+                  onUpdateContent('features', features);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + 追加
+              </button>
+            </div>
+            {((content as any).features as Array<{ icon?: string; title: string; description: string }>).map((feature, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>カード {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const features = [...((content as any).features as Array<{ icon?: string; title: string; description: string }>)]
+                        .filter((_, idx) => idx !== index);
+                      onUpdateContent('features', features);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={feature.icon || ''}
+                  onChange={(e) => onUpdateContent(`features.${index}.icon`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="アイコン (例: ⚡️)"
+                />
+                <input
+                  type="text"
+                  value={feature.title || ''}
+                  onChange={(e) => onUpdateContent(`features.${index}.title`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="特徴タイトル"
+                />
+                <textarea
+                  value={feature.description || ''}
+                  onChange={(e) => onUpdateContent(`features.${index}.description`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={3}
+                  placeholder="詳細説明"
+                />
+              </div>
+            ))}
           </div>
         )}
 
@@ -290,6 +521,41 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   <HexColorPicker
                     color={(content as any).buttonColor || '#3B82F6'}
                     onChange={(color) => onUpdateContent('buttonColor', color)}
+                  />
+                  <button
+                    onClick={() => setShowColorPicker(null)}
+                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    完了
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {('accentColor' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              アクセントカラー
+            </label>
+            <div className="relative">
+              <button
+                onClick={() => setShowColorPicker(showColorPicker === 'accent' ? null : 'accent')}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600"
+              >
+                <span>{(content as any).accentColor || '#ffffff'}</span>
+                <div
+                  className="w-8 h-8 rounded border-2 border-gray-600"
+                  style={{ backgroundColor: (content as any).accentColor || '#ffffff' }}
+                />
+              </button>
+
+              {showColorPicker === 'accent' && (
+                <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
+                  <HexColorPicker
+                    color={(content as any).accentColor || '#ffffff'}
+                    onChange={(color) => onUpdateContent('accentColor', color)}
                   />
                   <button
                     onClick={() => setShowColorPicker(null)}
