@@ -41,6 +41,11 @@ export default function EditLPNewPage() {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
+  const [lpSettings, setLpSettings] = useState({
+    showSwipeHint: false,
+    fullscreenMedia: false,
+    floatingCta: false,
+  });
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -57,6 +62,11 @@ export default function EditLPNewPage() {
     try {
       const response = await lpApi.get(lpId);
       setLp(response.data);
+      setLpSettings({
+        showSwipeHint: Boolean(response.data.show_swipe_hint),
+        fullscreenMedia: Boolean(response.data.fullscreen_media),
+        floatingCta: Boolean(response.data.floating_cta),
+      });
       
       // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
@@ -249,6 +259,20 @@ export default function EditLPNewPage() {
     setError('');
     
     try {
+      const lpUpdateResponse = await lpApi.update(lpId, {
+        show_swipe_hint: lpSettings.showSwipeHint,
+        fullscreen_media: lpSettings.fullscreenMedia,
+        floating_cta: lpSettings.floatingCta,
+      });
+      setLp((prev) =>
+        prev
+          ? {
+              ...prev,
+              ...lpUpdateResponse.data,
+            }
+          : prev
+      );
+
       // 既存のステップを更新 + 新規ステップを作成
       for (const block of blocks) {
         const stepData = {
@@ -395,6 +419,55 @@ export default function EditLPNewPage() {
             >
               + ブロック追加
             </button>
+          </div>
+
+          <div className="px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20">
+            <h4 className="text-xs font-semibold text-gray-400 tracking-wide">LP設定</h4>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                checked={lpSettings.showSwipeHint}
+                onChange={(e) =>
+                  setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
+                }
+              />
+              <div>
+                <p className="text-sm text-white/90 font-light">スワイプアニメーション</p>
+                <p className="text-xs text-gray-500">1枚目に指アイコンでスワイプを促します</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                checked={lpSettings.fullscreenMedia}
+                onChange={(e) =>
+                  setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
+                }
+              />
+              <div>
+                <p className="text-sm text-white/90 font-light">メディアの全画面表示</p>
+                <p className="text-xs text-gray-500">画像やHTMLをブラウザ全体に広げます</p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                checked={lpSettings.floatingCta}
+                onChange={(e) =>
+                  setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
+                }
+              />
+              <div>
+                <p className="text-sm text-white/90 font-light">CTAフローティング</p>
+                <p className="text-xs text-gray-500">CTAを画面下部に固定し全幅表示します</p>
+              </div>
+            </label>
           </div>
 
           {/* Block List */}

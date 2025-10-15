@@ -24,6 +24,9 @@ export interface LandingPage {
   status: 'draft' | 'published' | 'archived';
   swipe_direction: 'vertical' | 'horizontal';
   is_fullscreen: boolean;
+  show_swipe_hint: boolean;
+  fullscreen_media: boolean;
+  floating_cta: boolean;
   total_views: number;
   total_cta_clicks: number;
   product_id?: string;

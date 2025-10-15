@@ -72,12 +72,22 @@ export interface CreateLPRequest {
   description?: string;
   swipe_direction: 'vertical' | 'horizontal';
   is_fullscreen: boolean;
+  show_swipe_hint?: boolean;
+  fullscreen_media?: boolean;
+  floating_cta?: boolean;
+  product_id?: string | null;
 }
 
 export interface UpdateLPRequest {
   title?: string;
   description?: string;
   status?: 'draft' | 'published';
+  swipe_direction?: 'vertical' | 'horizontal';
+  is_fullscreen?: boolean;
+  show_swipe_hint?: boolean;
+  fullscreen_media?: boolean;
+  floating_cta?: boolean;
+  product_id?: string | null;
 }
 
 // LP一覧レスポンス

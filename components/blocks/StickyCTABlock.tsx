@@ -19,11 +19,11 @@ export default function StickyCTABlock({ content }: StickyCTABlockProps) {
       style={{ color: content.textColor || '#FFFFFF' }}
     >
       <div
-        className="max-w-7xl mx-auto px-4 pb-4"
+        className="w-full px-0 pb-4 sm:px-6"
         style={{ paddingTop: position === 'top' ? '1rem' : '1.75rem' }}
       >
         <div
-          className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+          className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)] sm:rounded-2xl"
           style={{
             backgroundImage: gradientBackground,
             borderTop: `3px solid ${accentColor}`,

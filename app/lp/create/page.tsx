@@ -20,6 +20,9 @@ export default function CreateLPPage() {
     swipe_direction: 'vertical' as 'vertical' | 'horizontal',
     is_fullscreen: true,
     product_id: '',
+    show_swipe_hint: false,
+    fullscreen_media: false,
+    floating_cta: false,
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

@@ -392,35 +392,56 @@ export default function LPViewerPage() {
           {lp.steps.map((step, index) => {
             const stepCtas = getCurrentStepCtas(index);
             const slideBackground = getStepBackgroundStyle(step);
+            const slideClass = lp.fullscreen_media
+              ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
+              : 'relative overflow-y-auto no-scrollbar';
             
             return (
               <SwiperSlide
                 key={step.id}
-                className="relative overflow-y-auto no-scrollbar"
+                className={slideClass}
                 style={slideBackground ? { background: slideBackground } : undefined}
               >
                 {/* ブロックレンダリング */}
-                {step.block_type && step.content_data ? (
-                  <BlockRenderer
-                    blockType={step.block_type}
-                    content={step.content_data}
-                    isEditing={false}
-                    productId={lp.product_id}
-                  />
-                ) : step.image_url ? (
-                  <>
-                    {/* 旧式の画像ベース */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url(${step.image_url})` }}
-                    />
-                  </>
-                ) : (
-                  // 空のスライドの場合はデフォルト背景
-                  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                    <p className="text-gray-500 text-lg">コンテンツがありません</p>
-                  </div>
-                )}
+                {(() => {
+                  const renderBlock = () => {
+                    if (step.block_type && step.content_data) {
+                      return (
+                        <BlockRenderer
+                          blockType={step.block_type}
+                          content={step.content_data}
+                          isEditing={false}
+                          productId={lp.product_id}
+                        />
+                      );
+                    }
+
+                    if (step.image_url) {
+                      return (
+                        <div
+                          className="absolute inset-0 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${step.image_url})` }}
+                        />
+                      );
+                    }
+
+                    return (
+                      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                        <p className="text-gray-500 text-lg">コンテンツがありません</p>
+                      </div>
+                    );
+                  };
+
+                  if (lp.fullscreen_media) {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center">
+                        {renderBlock()}
+                      </div>
+                    );
+                  }
+
+                  return renderBlock();
+                })()}
                 
                 {/* CTAボタン */}
                 {stepCtas.length > 0 && (
@@ -448,12 +469,14 @@ export default function LPViewerPage() {
                 )}
 
                 {/* スワイプヒント */}
-                {index === 0 && (
-                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-gray-700 text-center animate-bounce z-20">
-                    <div className="text-3xl mb-2">
-                      {lp.swipe_direction === 'vertical' ? '↓' : '→'}
-                    </div>
-                    <div className="text-sm">スワイプして続きを見る</div>
+                {index === 0 && lp.show_swipe_hint && (
+                  <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 gap-1 animate-bounce z-20">
+                    <span className="text-4xl">
+                      {lp.swipe_direction === 'vertical' ? '👇' : '👉'}
+                    </span>
+                    <span className="text-sm tracking-wide">
+                      {lp.swipe_direction === 'vertical' ? '下にスワイプ' : '横にスワイプ'}
+                    </span>
                   </div>
                 )}
               </SwiperSlide>
@@ -463,14 +486,14 @@ export default function LPViewerPage() {
       </div>
 
       {/* 固定CTAフッター */}
-      {fixedCta && (
+      {lp.floating_cta && fixedCta && (
         <div className="fixed bottom-0 left-0 right-0 z-40">
           {(() => {
             const { accent, background } = getFixedCtaDecoration();
             return (
-              <div className="max-w-4xl mx-auto px-4 pb-4" style={{ paddingTop: '1.5rem' }}>
+              <div className="w-full px-0 pb-4 sm:px-4" style={{ paddingTop: '1.5rem' }}>
                 <div
-                  className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+                  className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
                   style={{
                     background,
                     borderTop: `3px solid ${accent}`,
@@ -498,7 +521,7 @@ export default function LPViewerPage() {
       )}
 
       {/* スティッキーCTAブロック */}
-      {stickyCtaStep && (
+      {lp.floating_cta && stickyCtaStep && (
         <BlockRenderer
           blockType={stickyCtaStep.block_type}
           content={stickyCtaStep.content_data}
