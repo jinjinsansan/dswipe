@@ -279,7 +279,7 @@ export default function EditLPNewPage() {
           : prev
       );
 
-      const existingStepIds = new Set(lp?.steps?.map((step) => step.id) ?? []);
+      const existingStepIds = new Set((await lpApi.get(lpId))?.data?.steps?.map((step) => step.id) ?? []);
       const persistedBlockIds = new Set(
         orderedBlocks
           .map((block) => block.id)
