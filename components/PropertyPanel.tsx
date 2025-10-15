@@ -40,37 +40,29 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   };
 
   if (!block) {
-    return (
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6 text-center">
-        <div className="text-4xl mb-4">🎨</div>
-        <h3 className="text-white font-semibold mb-2">プロパティパネル</h3>
-        <p className="text-gray-400 text-sm">
-          ブロックを選択すると、プロパティを編集できます
-        </p>
-      </div>
-    );
+    return null;
   }
 
   const content = block.content;
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700">
+    <div className="h-full flex flex-col">
       {/* ヘッダー */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-gray-800 flex-shrink-0">
         <div>
-          <h3 className="text-white font-semibold">プロパティ</h3>
-          <p className="text-gray-400 text-sm">{block.blockType}</p>
+          <h3 className="text-white text-sm font-light">プロパティ</h3>
+          <p className="text-gray-500 text-xs mt-0.5">{block.blockType}</p>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-white transition-colors"
+          className="text-gray-500 hover:text-white transition-colors text-sm"
         >
           ×
         </button>
       </div>
 
       {/* プロパティ */}
-      <div className="p-4 space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
+      <div className="p-4 space-y-4 overflow-y-auto flex-1">
         {/* テキストコンテンツ */}
         {('title' in content) && (
           <div>
