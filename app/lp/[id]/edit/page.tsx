@@ -259,6 +259,12 @@ export default function EditLPNewPage() {
     setError('');
     
     try {
+      const orderedBlocks = blocks.map((block, index) => ({
+        ...block,
+        order: index,
+      }));
+
+      // LP本体の表示設定を更新
       const lpUpdateResponse = await lpApi.update(lpId, {
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
@@ -273,8 +279,24 @@ export default function EditLPNewPage() {
           : prev
       );
 
+      const existingStepIds = new Set(lp?.steps?.map((step) => step.id) ?? []);
+      const persistedBlockIds = new Set(
+        orderedBlocks
+          .map((block) => block.id)
+          .filter((id) => existingStepIds.has(id))
+      );
+
+      // 削除されたステップをバックエンドから削除
+      if (lp?.steps) {
+        for (const step of lp.steps) {
+          if (!persistedBlockIds.has(step.id)) {
+            await lpApi.deleteStep(lpId, step.id);
+          }
+        }
+      }
+
       // 既存のステップを更新 + 新規ステップを作成
-      for (const block of blocks) {
+      for (const block of orderedBlocks) {
         const stepData = {
           step_order: block.order,
           image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
@@ -282,7 +304,7 @@ export default function EditLPNewPage() {
           content_data: block.content as unknown as Record<string, unknown>,
         };
 
-        if (block.id.startsWith('ai-block-') || block.id.startsWith('block-')) {
+        if (!existingStepIds.has(block.id)) {
           // 新規ブロック（まだDBに保存されていない）
           await lpApi.addStep(lpId, stepData);
         } else {
@@ -292,6 +314,7 @@ export default function EditLPNewPage() {
       }
       
       alert('保存しました！');
+      setBlocks(orderedBlocks);
       // ページを再読み込みして最新データを取得
       fetchLP();
     } catch (err: any) {
