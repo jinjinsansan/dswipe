@@ -66,6 +66,66 @@ export interface AIImprovementResponse {
   reasoning: string;
 }
 
+export interface AIGenerationRequest {
+  theme?: string;
+  outline?: string[];
+  product: {
+    name: string;
+    description?: string;
+    category?: string;
+    pricePoint?: string;
+    keyBenefits?: string[];
+  };
+  audience?: {
+    persona?: string;
+    painPoints?: string[];
+    desiredOutcome?: string;
+  };
+  goals?: string[];
+  requiredBlocks?: Array<{ type: string; mustInclude?: boolean }>;
+}
+
+export interface AIGenerationResponse {
+  theme: string;
+  palette: {
+    primary: string;
+    accent: string;
+    secondary?: string;
+    background: string;
+    surface: string;
+    text: string;
+  };
+  outline: string[];
+  blocks: Array<{
+    blockType: string;
+    content: Record<string, unknown>;
+    reason?: string;
+  }>;
+}
+
+export interface AIReviewRequest {
+  theme?: string;
+  blocks: Array<{
+    blockType: string;
+    content: Record<string, unknown>;
+  }>;
+}
+
+export interface AIReviewIssue {
+  severity: 'info' | 'warn' | 'error';
+  message: string;
+  target: {
+    blockIndex: number;
+    field?: string;
+  };
+}
+
+export interface AIReviewResponse {
+  score: number;
+  issues: AIReviewIssue[];
+  suggestions: string[];
+}
+
 export interface CreateLPRequest {
   title: string;
   slug: string;

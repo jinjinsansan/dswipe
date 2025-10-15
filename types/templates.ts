@@ -407,6 +407,39 @@ export interface TemplateBlock {
   previewImageUrl?: string;
 }
 
+export interface TemplateThemePalette {
+  primary: string;
+  accent: string;
+  secondary?: string;
+  background: string;
+  surface: string;
+  text: string;
+}
+
+export interface TemplateTheme {
+  id: string;
+  name: string;
+  description?: string;
+  palette: TemplateThemePalette;
+  typography?: {
+    display: string;
+    body: string;
+  };
+}
+
+export interface GeneratedBlock {
+  blockType: BlockType;
+  content: BlockContent;
+  theme?: string;
+  reason?: string;
+}
+
+export interface GeneratedTemplate {
+  theme: string;
+  outline: string[];
+  blocks: GeneratedBlock[];
+}
+
 // LPステップ（content_data使用）
 export interface LPStepWithTemplate {
   id: string;
