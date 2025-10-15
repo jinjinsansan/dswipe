@@ -296,6 +296,8 @@ export default function EditLPNewPage() {
       }
 
       // 既存のステップを更新 + 新規ステップを作成
+      const updatedBlocksAfterSave: LPBlock[] = [];
+
       for (const block of orderedBlocks) {
         const stepData = {
           step_order: block.order,
@@ -306,17 +308,24 @@ export default function EditLPNewPage() {
 
         if (!existingStepIds.has(block.id)) {
           // 新規ブロック（まだDBに保存されていない）
-          await lpApi.addStep(lpId, stepData);
+          const response = await lpApi.addStep(lpId, stepData);
+          const createdStep = response?.data;
+          updatedBlocksAfterSave.push({
+            ...block,
+            id: createdStep?.id ?? block.id,
+            order: stepData.step_order,
+          });
         } else {
           // 既存ブロック（DBに保存済み）
           await lpApi.updateStep(lpId, block.id, stepData);
+          updatedBlocksAfterSave.push(block);
         }
       }
       
       alert('保存しました！');
-      setBlocks(orderedBlocks);
+      setBlocks(updatedBlocksAfterSave);
       // ページを再読み込みして最新データを取得
-      fetchLP();
+      await fetchLP();
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || '保存に失敗しました';
       setError(errorMessage);
