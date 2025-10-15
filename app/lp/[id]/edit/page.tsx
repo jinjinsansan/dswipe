@@ -13,6 +13,7 @@ import PropertyPanel from '@/components/PropertyPanel';
 import AITextGenerator from '@/components/AITextGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
+import type { AIGenerationResponse } from '@/types/api';
 // UUID生成のヘルパー関数
 function generateId() {
   return `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -79,7 +80,7 @@ export default function EditLPNewPage() {
             return;
           }
           
-          const aiResult = JSON.parse(aiDataStr);
+          const aiResult = JSON.parse(aiDataStr) as AIGenerationResponse;
           // 使用後は削除
           sessionStorage.removeItem('aiSuggestion');
           

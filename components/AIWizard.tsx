@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
-import { api } from '@/lib/api';
+import React, { useMemo, useState } from 'react';
+import type { AIGenerationRequest, AIGenerationResponse } from '@/types/api';
+
+type ThemeKey =
+  | 'urgent_red'
+  | 'energy_orange'
+  | 'gold_premium'
+  | 'power_blue'
+  | 'passion_pink';
 
 interface AIWizardProps {
-  onComplete: (result: any) => void;
+  onComplete: (result: AIGenerationResponse) => void;
   onSkip: () => void;
 }
 
@@ -14,6 +21,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
   const [formData, setFormData] = useState({
+    productName: '',
     business: '',
     target: '',
     goal: '',
@@ -97,35 +105,86 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
   const currentQuestion = questions[step - 1];
 
+  const themeKey = useMemo<ThemeKey>(() => {
+    switch (formData.business) {
+      case '投資・FX・仮想通貨':
+      case '副業・ビジネス':
+      case 'SNS・集客・マーケティング':
+      case '転売・物販・せどり':
+        return 'urgent_red';
+      case 'ダイエット・筋トレ':
+        return 'energy_orange';
+      case '英語・資格学習':
+      case 'ライティング・Webスキル':
+        return 'power_blue';
+      case '恋愛・モテ術':
+        return 'passion_pink';
+      case '自己啓発・コーチング':
+        return 'gold_premium';
+      default:
+        return 'urgent_red';
+    }
+  }, [formData.business]);
+
   const handleOptionClick = (value: string) => {
-    setFormData({ ...formData, [currentQuestion.field]: value });
-    
-    // 自動的に次のステップに進む（step 4まで）
+    setFormData((prev) => ({ ...prev, [currentQuestion.field]: value }));
+
     if (step < 4) {
-      setTimeout(() => setStep(step + 1), 300);
+      setTimeout(() => setStep((prev) => Math.min(prev + 1, 4)), 300);
     }
   };
 
   const handleGenerateLP = async () => {
     setIsLoading(true);
     try {
-      console.log('🚀 Sending to AI:', formData);
-      const response = await api.post('/ai/wizard', formData);
-      console.log('🎉 AI Response:', response.data);
+      const keyBenefits = formData.description
+        .split(/[\n\r。.、・\.]/)
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+        .slice(0, 6);
+
+      const payload: AIGenerationRequest = {
+        theme: themeKey,
+        product: {
+          name: formData.productName || formData.business || 'AIランディングページ',
+          description: formData.description,
+          category: formData.business || undefined,
+          keyBenefits: keyBenefits.length ? keyBenefits : undefined,
+        },
+        audience: {
+          persona: formData.target || undefined,
+          desiredOutcome: formData.goal || undefined,
+        },
+        goals: formData.goal ? [formData.goal] : undefined,
+      };
+
+      const response = await fetch('/api/ai/generate-lp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.detail || 'AI生成に失敗しました');
+      }
+
+      const data = (await response.json()) as AIGenerationResponse;
+      console.log('🎉 AI Response:', data);
       
-      if (!response.data || !response.data.structure) {
-        throw new Error('AI結果にstructureがありません');
+      if (!data.blocks || data.blocks.length === 0) {
+        throw new Error('AI生成でブロックが生成されませんでした');
       }
       
       // 完了時にプログレスを100%に
       setProgress(100);
       await new Promise(resolve => setTimeout(resolve, 300)); // 0.3秒待つ
       
-      onComplete(response.data);
+      onComplete(data);
     } catch (error: any) {
       console.error('❌ AI生成エラー:', error);
-      console.error('エラー詳細:', error.response?.data);
-      alert(`AI生成に失敗しました: ${error.message || 'Unknown error'}\nスキップして手動で作成してください。`);
+      const message = error?.message || 'Unknown error';
+      alert(`AI生成に失敗しました: ${message}\nスキップして手動で作成してください。`);
     } finally {
       setIsLoading(false);
     }
@@ -188,12 +247,19 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
             <p className="text-gray-500 text-xs font-light mb-4">
               簡単に説明してください。AIが魅力的な見出しや構成を提案します。
             </p>
+            <input
+              value={formData.productName}
+              onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
+              className="mb-3 w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+              placeholder="例：AIローンチ加速プログラム"
+            />
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full h-28 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
               placeholder="例：30代女性向けのアンチエイジング美容液。天然成分100%で肌に優しく、シワやたるみに効果的です。"
             />
+            <p className="text-xs text-gray-500 mb-3">選択テーマ: <span className="text-gray-300">{themeKey}</span></p>
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => setStep(3)}

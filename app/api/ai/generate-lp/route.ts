@@ -4,13 +4,11 @@ import type { AIGenerationRequest, AIGenerationResponse } from "@/types/api";
 import type { BlockType, GeneratedBlock } from "@/types/templates";
 
 type ThemeKey = keyof typeof COLOR_THEMES;
+type Palette = (typeof COLOR_THEMES)[ThemeKey];
 
 const DEFAULT_SEQUENCE: BlockType[] = [
   "hero-aurora",
   "features-aurora",
-  "problem-1",
-  "bonus-list-1",
-  "guarantee-1",
   "sticky-cta-1",
 ];
 
@@ -39,11 +37,17 @@ function applyProductContext(
     if (product?.name) {
       next["title"] = `${product.name}で、${audience?.desiredOutcome ?? "成果"}を最短で実現`;
     }
+    if (product?.category) {
+      next["tagline"] = product.category;
+    }
     if (product?.description) {
       next["subtitle"] = product.description;
     }
     if (product?.keyBenefits?.length) {
       next["highlightText"] = product.keyBenefits[0];
+    }
+    if (!next["buttonText"]) {
+      next["buttonText"] = "無料で体験する";
     }
   }
 
@@ -55,16 +59,13 @@ function applyProductContext(
     }));
   }
 
-  if (blockType === "problem-1" && audience?.painPoints?.length) {
-    next["problems"] = audience.painPoints;
-  }
-
-  if (blockType === "bonus-list-1" && product?.keyBenefits?.length) {
-    const bonuses = Array.isArray(next["bonuses"]) ? (next["bonuses"] as unknown[]) : [];
-    next["bonuses"] = bonuses.map((bonus, index) => ({
-      ...(bonus as Record<string, unknown>),
-      title: product.keyBenefits?.[index] ?? (bonus as Record<string, unknown>).title,
-    }));
+  if (blockType === "sticky-cta-1") {
+    if (product?.name) {
+      next["buttonText"] = `${product.name}を今すぐ始める`;
+    }
+    if (audience?.desiredOutcome) {
+      next["subText"] = `${audience.desiredOutcome}を今すぐ体験`;
+    }
   }
 
   return next;
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
     const themeKey = (body.theme && body.theme in COLOR_THEMES
       ? (body.theme as ThemeKey)
       : FALLBACK_THEME);
-    const palette = COLOR_THEMES[themeKey];
+    const palette: Palette = COLOR_THEMES[themeKey];
 
     const sequence = DEFAULT_SEQUENCE;
 

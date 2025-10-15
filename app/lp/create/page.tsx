@@ -1,18 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
+import { getTemplateById } from '@/lib/templates';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
 import AIWizard from '@/components/AIWizard';
+import type { AIGenerationResponse } from '@/types/api';
 
 export default function CreateLPPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
   const [showWizard, setShowWizard] = useState(true);
-  const [aiSuggestion, setAiSuggestion] = useState<any>(null);
+  const [aiSuggestion, setAiSuggestion] = useState<AIGenerationResponse | null>(null);
+  const outlinePreview = useMemo(() => {
+    if (!aiSuggestion) return [] as string[];
+    if (aiSuggestion.outline?.length) {
+      return aiSuggestion.outline;
+    }
+    return aiSuggestion.blocks.map((block) => getTemplateById(block.blockType)?.name ?? block.blockType);
+  }, [aiSuggestion]);
   const [products, setProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -66,18 +75,19 @@ export default function CreateLPPage() {
     });
   };
 
-  const handleWizardComplete = (result: any) => {
+  const handleWizardComplete = (result: AIGenerationResponse) => {
     // AI提案を保存
     setAiSuggestion(result);
     setShowWizard(false);
     
     // 提案されたタイトルをフォームに自動入力
-    if (result.structure && result.structure[0]) {
-      const heroBlock = result.structure[0];
+    const heroBlock = result.blocks?.[0];
+    const heroTitle = typeof heroBlock?.content?.title === 'string' ? heroBlock.content.title : '';
+    if (heroTitle) {
       setFormData({
         ...formData,
-        title: heroBlock.title || formData.title,
-        slug: (heroBlock.title || formData.title)
+        title: heroTitle,
+        slug: heroTitle
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-|-$/g, ''),
@@ -285,23 +295,23 @@ export default function CreateLPPage() {
 
         {/* ヒント - AI提案がある場合 */}
         {aiSuggestion && (
-          <div className="mt-8 bg-green-500/10 border border-green-500/50 rounded-lg p-6">
+          <div className="mt-8 rounded-lg border border-green-500/40 bg-green-500/10 p-6">
             <div className="flex items-start mb-4">
               <div className="text-2xl mr-3">🤖</div>
               <div>
                 <h3 className="text-green-400 font-semibold mb-1">AI提案</h3>
-                <p className="text-gray-400 text-sm">{aiSuggestion.reasoning}</p>
+                <p className="text-gray-400 text-sm">
+                  テーマ: <span className="text-green-300">{aiSuggestion.theme}</span>
+                </p>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <h4 className="text-white font-semibold">推奨構成:</h4>
-              <div className="flex flex-wrap gap-2">
-                {aiSuggestion.recommended_blocks?.map((block: string, index: number) => (
-                  <span key={index} className="px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm">
-                    {block}
-                  </span>
+              <ol className="list-decimal list-inside space-y-1 text-sm text-gray-300">
+                {outlinePreview.map((entry, index) => (
+                  <li key={index}>{entry}</li>
                 ))}
-              </div>
+              </ol>
             </div>
           </div>
         )}
