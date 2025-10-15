@@ -9,7 +9,7 @@ interface TemplateSelectorProps {
   onClose: () => void;
 }
 
-const iconClass = 'h-5 w-5';
+const iconClass = 'h-4 w-4';
 
 const CATEGORY_META: Record<string, { name: string; icon: React.ReactNode }> = {
   header: {
@@ -93,34 +93,34 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
   const templates = React.useMemo(() => getAllTemplates(), []);
 
   return (
-    <div className="fixed inset-0 bg-black/75 backdrop-blur-2xl z-50 flex items-center justify-center p-4 sm:p-6">
-      <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-3xl border border-white/10 bg-[#0a0f1d]/95 shadow-[0_48px_140px_-60px_rgba(56,189,248,0.65)]">
-        <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-36 -right-20 h-80 w-80 rounded-full bg-purple-500/20 blur-3xl" />
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+      <div className="relative w-full max-w-6xl max-h-[88vh] overflow-hidden rounded-2xl border border-white/10 bg-[#070b16]/95 shadow-[0_36px_120px_-60px_rgba(56,189,248,0.6)]">
+        <div className="pointer-events-none absolute -top-24 -left-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
 
-        <div className="relative flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 border-b border-white/10">
+        <div className="relative flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-white/10">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.45em] text-blue-300/70 mb-2">Template Library</p>
-            <h2 className="text-2xl font-semibold text-white">テンプレートを選択</h2>
-            <p className="text-sm text-gray-400 mt-1">用途に合わせたブロックをすばやく追加できます。</p>
+            <p className="text-[10px] uppercase tracking-[0.32em] text-blue-200/80 mb-1">Template Library</p>
+            <h2 className="text-xl font-semibold text-white">テンプレートを選択</h2>
+            <p className="text-xs text-gray-400 mt-1">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
           </div>
           <button
             onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition"
             aria-label="閉じる"
           >
             ×
           </button>
         </div>
 
-        <div className="relative flex-1 overflow-y-auto px-6 sm:px-8 py-6 sm:py-8">
+        <div className="relative flex-1 overflow-y-auto px-5 sm:px-6 py-5 sm:py-6">
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
               <span className="text-4xl">🗂️</span>
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {templates.map((template) => {
                 const meta = CATEGORY_META[template.category] || { name: template.category, icon: '📄' };
                 return (
@@ -130,29 +130,29 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                       onSelectTemplate(template);
                       onClose();
                     }}
-                    className="group relative overflow-hidden rounded-[20px] border border-white/10 bg-white/[0.025] px-4 pt-5 pb-5 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.06] hover:shadow-[0_28px_60px_-35px_rgba(59,130,246,0.75)]"
+                    className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] px-4 pt-4 pb-4 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.05] hover:shadow-[0_20px_45px_-35px_rgba(59,130,246,0.65)]"
                   >
-                    <div className="absolute inset-x-0 -top-36 h-40 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
+                    <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
 
                     <div className="relative flex items-center justify-between gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/15 text-blue-100">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/20 text-blue-100">
                         {meta.icon}
                       </span>
-                      <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-blue-100/80">
+                      <span className="rounded-full border border-white/10 bg-white/10 px-3 py-0.5 text-[11px] font-medium text-blue-100/80">
                         {meta.name}
                       </span>
                     </div>
 
-                    <div className="relative mt-4 space-y-2">
-                      <h3 className="text-[15px] font-semibold text-white">{template.name}</h3>
-                      <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
+                    <div className="relative mt-3 space-y-1.5">
+                      <h3 className="text-sm font-semibold text-white">{template.name}</h3>
+                      <p className="text-[11px] text-gray-400 leading-relaxed line-clamp-2">
                         {template.description}
                       </p>
                     </div>
 
-                    <div className="relative mt-5 flex items-center gap-2 text-xs font-medium text-blue-300">
+                    <div className="relative mt-4 flex items-center gap-1.5 text-[11px] font-medium text-blue-300">
                       追加する
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -163,7 +163,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           )}
         </div>
 
-        <div className="relative border-t border-white/10 bg-white/5 px-6 sm:px-8 py-4 text-center text-xs sm:text-sm text-gray-400">
+        <div className="relative border-t border-white/10 bg-white/5 px-5 sm:px-6 py-3.5 text-center text-[11px] sm:text-xs text-gray-400">
           <span className="font-medium text-white/80">ヒント:</span> 追加後はプロパティパネルで色やコンテンツを自由に編集できます。
         </div>
       </div>
