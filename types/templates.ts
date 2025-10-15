@@ -21,6 +21,7 @@ export type BlockType =
   | 'faq-2'        // 2カラムFAQ
   | 'features-1'   // アイコン付き3カラム特徴
   | 'features-2'   // 横並び特徴リスト
+  | 'features-aurora' // プレミアム特徴セクション
   | 'cta-1'        // シンプルCTA
   | 'cta-2'        // 2ボタンCTA
   | 'cta-3'        // カウントダウン付きCTA
@@ -135,6 +136,8 @@ export interface FAQBlockContent extends BaseBlockContent {
 // 特徴ブロックコンテンツ
 export interface FeaturesBlockContent extends BaseBlockContent {
   title?: string;
+  tagline?: string;
+  highlightText?: string;
   features: {
     icon?: string;
     title: string;

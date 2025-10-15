@@ -228,6 +228,40 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       ],
     } as HeroBlockContent,
   },
+  {
+    id: 'features-aurora-1',
+    templateId: 'features-aurora',
+    name: 'プレミアム特徴セクション',
+    category: 'content',
+    description: 'ガラスモーフィズムカードで価値訴求を行うモダンな特徴セクション',
+    defaultContent: {
+      tagline: 'VALUE STACK',
+      title: 'AI自動化とプロのクリエイティブで、ローンチを最短化',
+      highlightText: 'KEY FEATURES',
+      features: [
+        {
+          icon: '⚡️',
+          title: 'AI Strategy Engine',
+          description: 'ハイコンバージョンの構成とコピーをAIが瞬時に生成。訴求軸に合わせた最適なブロックを自動提案。',
+        },
+        {
+          icon: '🎨',
+          title: 'Premium Theme Library',
+          description: '100以上のハイエンドデザインテンプレートから選択。ブランドカラーやフォントも即時反映。',
+        },
+        {
+          icon: '📈',
+          title: 'Launch Analytics',
+          description: 'ヒートマップやコンバージョン動線を自動分析。改善提案をAIがレコメンド。',
+        },
+        {
+          icon: '🤝',
+          title: 'Collaborative Workflow',
+          description: 'チームメンバーとリアルタイム編集。承認フローやコメント機能で制作プロセスを効率化。',
+        },
+      ],
+    } as FeaturesBlockContent,
+  },
   // フル幅画像ブロック
   {
     id: 'image-standalone-1',

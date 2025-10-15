@@ -6,6 +6,7 @@ import PricingBlock from './PricingBlock';
 import FAQBlock from './FAQBlock';
 import TestimonialBlock from './TestimonialBlock';
 import FeaturesBlock from './FeaturesBlock';
+import FeatureAuroraBlock from './FeatureAuroraBlock';
 import FormBlock from './FormBlock';
 import CountdownBlock from './CountdownBlock';
 import SpecialPriceBlock from './SpecialPriceBlock';
@@ -82,6 +83,8 @@ export default function BlockRenderer({
     case 'features-1':
     case 'features-2':
       return <FeaturesBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+    case 'features-aurora':
+      return <FeatureAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
     
     // フォーム系
     case 'form':

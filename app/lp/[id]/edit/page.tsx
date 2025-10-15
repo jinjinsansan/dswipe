@@ -175,18 +175,55 @@ export default function EditLPNewPage() {
   };
 
   const handleUpdateBlock = (blockId: string, field: string, value: any) => {
-    setBlocks(blocks.map(block => {
-      if (block.id === blockId) {
+    const setNestedValue = (content: BlockContent, path: string, newValue: any): BlockContent => {
+      if (!path.includes('.')) {
         return {
-          ...block,
-          content: {
-            ...block.content,
-            [field]: value,
-          },
+          ...content,
+          [path]: newValue,
         };
       }
-      return block;
-    }));
+
+      const segments = path.split('.');
+      const cloned = structuredClone(content) as Record<string, any>;
+      let cursor: any = cloned;
+
+      for (let i = 0; i < segments.length - 1; i++) {
+        const key = segments[i];
+        const nextKey = segments[i + 1];
+
+        if (Array.isArray(cursor)) {
+          const index = Number(key);
+          if (!cursor[index]) {
+            cursor[index] = /^\d+$/.test(nextKey) ? [] : {};
+          }
+          cursor = cursor[index];
+        } else {
+          if (!(key in cursor) || cursor[key] == null) {
+            cursor[key] = /^\d+$/.test(nextKey) ? [] : {};
+          }
+          cursor = cursor[key];
+        }
+      }
+
+      const lastKey = segments[segments.length - 1];
+      if (Array.isArray(cursor)) {
+        cursor[Number(lastKey)] = newValue;
+      } else {
+        cursor[lastKey] = newValue;
+      }
+
+      return cloned as BlockContent;
+    };
+
+    setBlocks((prev) =>
+      prev.map((block) => {
+        if (block.id !== blockId) return block;
+        return {
+          ...block,
+          content: setNestedValue(block.content, field, value),
+        };
+      }),
+    );
   };
 
   const handleDeleteBlock = (blockId: string) => {
