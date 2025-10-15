@@ -7,6 +7,7 @@ export type BlockType =
   | 'hero-1'       // センター配置ヒーロー
   | 'hero-2'       // 左右分割ヒーロー
   | 'hero-3'       // フルスクリーン画像 + オーバーレイテキスト
+  | 'hero-aurora'  // グラデーションヒーロー
   | 'text-img-1'   // 左テキスト右画像
   | 'text-img-2'   // 右テキスト左画像
   | 'text-img-3'   // 上テキスト下画像
@@ -74,6 +75,14 @@ export interface HeroBlockContent extends BaseBlockContent {
   buttonUrl?: string;
   buttonColor?: string;
   alignment?: 'left' | 'center' | 'right';
+  tagline?: string;
+  highlightText?: string;
+  secondaryButtonText?: string;
+  secondaryButtonUrl?: string;
+  stats?: {
+    label: string;
+    value: string;
+  }[];
 }
 
 // テキスト+画像ブロックコンテンツ

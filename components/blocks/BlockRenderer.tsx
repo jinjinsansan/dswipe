@@ -18,6 +18,7 @@ import UrgencyBlock from './UrgencyBlock';
 import ScarcityBlock from './ScarcityBlock';
 import StickyCTABlock from './StickyCTABlock';
 import ImageBlock from './ImageBlock';
+import HeroAuroraBlock from './HeroAuroraBlock';
 
 interface BlockRendererProps {
   blockType: string;
@@ -46,6 +47,8 @@ export default function BlockRenderer({
     case 'hero-2':
     case 'hero-3':
       return <HeroBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+    case 'hero-aurora':
+      return <HeroAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
     
     // テキスト+画像系
     case 'text-image':

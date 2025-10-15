@@ -205,6 +205,29 @@ export const TEMPLATE_CATEGORIES = [
 
 // ===== 情報商材特化ブロック =====
 export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
+  {
+    id: 'hero-aurora-1',
+    templateId: 'hero-aurora',
+    name: 'オーロラヒーロー',
+    category: 'header',
+    description: 'グラデーションとガラスモーフィズムを活かしたプレミアムヒーローセクション',
+    defaultContent: {
+      tagline: 'NEXT WAVE',
+      title: 'AIが導く、24時間で完成するローンチ体験',
+      subtitle: 'ブランドとコンバージョンを両立するハイエンドLPを、AIワークフローで最短1日で公開。UI設計からコピーワークまで自動化。',
+      highlightText: 'AI LAUNCH ACCELERATOR',
+      buttonText: '無料で試してみる',
+      buttonUrl: '/register',
+      secondaryButtonText: 'デモを見る',
+      secondaryButtonUrl: '/demo',
+      imageUrl: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=960&q=80',
+      stats: [
+        { value: '12h', label: '初稿生成' },
+        { value: '87%', label: 'CVR改善率' },
+        { value: '200+', label: '導入ブランド' },
+      ],
+    } as HeroBlockContent,
+  },
   // フル幅画像ブロック
   {
     id: 'image-standalone-1',
