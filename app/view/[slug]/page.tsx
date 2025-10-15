@@ -374,7 +374,7 @@ export default function LPViewerPage() {
             return (
               <SwiperSlide
                 key={step.id}
-                className="relative overflow-y-auto"
+                className="relative overflow-y-auto no-scrollbar"
                 style={slideBackground ? { background: slideBackground } : undefined}
               >
                 {/* ブロックレンダリング */}
