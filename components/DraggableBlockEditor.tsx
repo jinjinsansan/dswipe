@@ -73,8 +73,8 @@ function SortableBlock({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative group mb-4 ${
-        isEditing ? 'cursor-move' : ''
+      className={`relative group ${
+        isEditing ? 'mb-4 cursor-move' : ''
       } ${isDragging ? 'z-50' : ''}`}
     >
       {/* ドラッグハンドル & コントロール（編集モード時のみ） */}

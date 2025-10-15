@@ -31,6 +31,7 @@ export default function LPViewerPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [fixedCta, setFixedCta] = useState<any>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
   useEffect(() => {
@@ -45,6 +46,23 @@ export default function LPViewerPage() {
     try {
       const response = await publicApi.getLP(slug);
       setLp(response.data);
+      
+      // CTAブロックを検索して固定フッター用に保存
+      const ctaBlock = response.data.steps
+        .sort((a: any, b: any) => b.step_order - a.step_order) // 逆順で最後のCTAを優先
+        .find((step: any) => 
+          step.block_type && 
+          (step.block_type.startsWith('cta') || step.block_type === 'form')
+        );
+      
+      if (ctaBlock) {
+        setFixedCta({
+          blockType: ctaBlock.block_type,
+          content: ctaBlock.content_data,
+          productId: response.data.product_id
+        });
+      }
+      
       // LPに紐付いた商品を取得
       if (response.data.id) {
         fetchProducts(response.data.id);
@@ -375,6 +393,20 @@ export default function LPViewerPage() {
           })}
         </Swiper>
       </div>
+
+      {/* 固定CTAフッター */}
+      {fixedCta && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl">
+          <div className="max-w-4xl mx-auto">
+            <BlockRenderer
+              blockType={fixedCta.blockType}
+              content={fixedCta.content}
+              isEditing={false}
+              productId={fixedCta.productId}
+            />
+          </div>
+        </div>
+      )}
 
       {/* 商品購入セクション */}
       {products.length > 0 && (

@@ -187,7 +187,12 @@ export default function EditLPNewPage() {
   };
 
   const handleReorderBlocks = (reorderedBlocks: LPBlock[]) => {
-    setBlocks(reorderedBlocks);
+    // orderプロパティを再計算
+    const updatedBlocks = reorderedBlocks.map((block, index) => ({
+      ...block,
+      order: index
+    }));
+    setBlocks(updatedBlocks);
   };
 
   const handleUpdateSelectedBlock = (field: string, value: any) => {
