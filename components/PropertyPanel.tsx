@@ -426,6 +426,313 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {Array.isArray((content as any).plans) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">価格プラン</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const plans = Array.isArray((content as any).plans) ? [...(content as any).plans] : [];
+                  plans.push({ name: '', price: '', period: '', description: '', features: [] });
+                  onUpdateContent('plans', plans);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + プラン追加
+              </button>
+            </div>
+            {((content as any).plans as Array<Record<string, any>>).map((plan, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>プラン {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const plans = [...((content as any).plans as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
+                      onUpdateContent('plans', plans);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={plan.name || ''}
+                  onChange={(e) => onUpdateContent(`plans.${index}.name`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="プラン名"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={plan.price || ''}
+                    onChange={(e) => onUpdateContent(`plans.${index}.price`, e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="価格"
+                  />
+                  <input
+                    type="text"
+                    value={plan.period || ''}
+                    onChange={(e) => onUpdateContent(`plans.${index}.period`, e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="期間 / バッジ"
+                  />
+                </div>
+                <textarea
+                  value={plan.description || ''}
+                  onChange={(e) => onUpdateContent(`plans.${index}.description`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={2}
+                  placeholder="説明"
+                />
+                <textarea
+                  value={Array.isArray(plan.features) ? plan.features.join('\n') : ''}
+                  onChange={(e) => onUpdateContent(`plans.${index}.features`, e.target.value.split('\n').filter(Boolean))}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={3}
+                  placeholder="機能リスト（1行につき1項目）"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={plan.buttonText || ''}
+                    onChange={(e) => onUpdateContent(`plans.${index}.buttonText`, e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="ボタン文言"
+                  />
+                  <input
+                    type="text"
+                    value={plan.buttonUrl || ''}
+                    onChange={(e) => onUpdateContent(`plans.${index}.buttonUrl`, e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="ボタンURL"
+                  />
+                </div>
+                <label className="flex items-center justify-between gap-3 bg-gray-900 border border-gray-700 rounded px-3 py-2 text-xs text-gray-300">
+                  <span>おすすめ表示（ハイライト）</span>
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                    checked={Boolean(plan.highlighted)}
+                    onChange={(e) => onUpdateContent(`plans.${index}.highlighted`, e.target.checked)}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {Array.isArray((content as any).faqs) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">よくある質問</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const faqs = Array.isArray((content as any).faqs) ? [...(content as any).faqs] : [];
+                  faqs.push({ question: '', answer: '' });
+                  onUpdateContent('faqs', faqs);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + 追加
+              </button>
+            </div>
+            {((content as any).faqs as Array<Record<string, any>>).map((faq, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>FAQ {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const faqs = [...((content as any).faqs as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
+                      onUpdateContent('faqs', faqs);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={faq.question || ''}
+                  onChange={(e) => onUpdateContent(`faqs.${index}.question`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="質問"
+                />
+                <textarea
+                  value={faq.answer || ''}
+                  onChange={(e) => onUpdateContent(`faqs.${index}.answer`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={3}
+                  placeholder="回答"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {Array.isArray((content as any).testimonials) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">導入事例・お客様の声</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const testimonials = Array.isArray((content as any).testimonials) ? [...(content as any).testimonials] : [];
+                  testimonials.push({ name: '', text: '', role: '', rating: 5, company: '' });
+                  onUpdateContent('testimonials', testimonials);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + 追加
+              </button>
+            </div>
+            {((content as any).testimonials as Array<Record<string, any>>).map((testimonial, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>事例 {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const testimonials = [...((content as any).testimonials as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
+                      onUpdateContent('testimonials', testimonials);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={testimonial.name || ''}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.name`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="氏名 / 社名等"
+                />
+                <input
+                  type="text"
+                  value={testimonial.role || ''}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.role`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="肩書き"
+                />
+                <textarea
+                  value={testimonial.text || ''}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.text`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={3}
+                  placeholder="コメント"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={testimonial.company || ''}
+                    onChange={(e) => onUpdateContent(`testimonials.${index}.company`, e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="会社名等（任意）"
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={testimonial.rating ?? 5}
+                    onChange={(e) => onUpdateContent(`testimonials.${index}.rating`, Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="評価 (1-5)"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={testimonial.imageUrl || ''}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.imageUrl`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="画像URL (任意)"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {Array.isArray((content as any).bonuses) && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">特典リスト</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const bonuses = Array.isArray((content as any).bonuses) ? [...(content as any).bonuses] : [];
+                  bonuses.push({ title: '', description: '', value: '', icon: '' });
+                  onUpdateContent('bonuses', bonuses);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                + 追加
+              </button>
+            </div>
+            {((content as any).bonuses as Array<Record<string, any>>).map((bonus, index) => (
+              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>特典 {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const bonuses = [...((content as any).bonuses as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
+                      onUpdateContent('bonuses', bonuses);
+                    }}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={bonus.title || ''}
+                  onChange={(e) => onUpdateContent(`bonuses.${index}.title`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="特典タイトル"
+                />
+                <input
+                  type="text"
+                  value={bonus.value || ''}
+                  onChange={(e) => onUpdateContent(`bonuses.${index}.value`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="金額・価値など"
+                />
+                <textarea
+                  value={bonus.description || ''}
+                  onChange={(e) => onUpdateContent(`bonuses.${index}.description`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  rows={2}
+                  placeholder="詳細説明"
+                />
+                <input
+                  type="text"
+                  value={bonus.icon || ''}
+                  onChange={(e) => onUpdateContent(`bonuses.${index}.icon`, e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="アイコン / 絵文字"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {Array.isArray((content as any).problems) && (
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-300">問題提起リスト</label>
+            <textarea
+              value={Array.isArray((content as any).problems) ? (content as any).problems.join('\n') : ''}
+              onChange={(e) => onUpdateContent('problems', e.target.value.split('\n').filter(Boolean))}
+              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+              rows={6}
+              placeholder="問題提起を1行につき1つ入力"
+            />
+          </div>
+        )}
+
         {/* 背景色 */}
         {content.backgroundColor !== undefined && (
           <div>
