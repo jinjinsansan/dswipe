@@ -32,7 +32,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     // グリッドレイアウト
     return (
       <section
-        className="py-16 px-8"
+        className="px-8"
         style={{ backgroundColor, color: textColor }}
       >
         <div className="max-w-7xl mx-auto">
@@ -79,7 +79,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   // カードレイアウト（デフォルト）
   return (
     <section
-      className="py-16 px-8"
+      className="px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">

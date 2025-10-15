@@ -44,7 +44,7 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
 
   return (
     <section
-      className="py-16 px-8"
+      className="px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-2xl mx-auto">

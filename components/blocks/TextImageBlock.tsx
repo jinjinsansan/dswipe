@@ -23,7 +23,7 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
   const imageOnRight = content.imagePosition !== 'left';
 
   return (
-    <div className="py-16 px-8" style={style}>
+    <div className="px-8" style={style}>
       <div className={`max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center ${!imageOnRight ? 'md:flex-row-reverse' : ''}`}>
         <div className={imageOnRight ? 'order-1' : 'order-2'}>
           {isEditing ? (

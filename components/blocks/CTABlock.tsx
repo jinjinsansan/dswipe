@@ -22,7 +22,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId }: CTAB
   };
 
   return (
-    <div className="py-20 px-8" style={style}>
+    <div className="px-8" style={style}>
       <div className="max-w-4xl mx-auto text-center">
         {isEditing ? (
           <>

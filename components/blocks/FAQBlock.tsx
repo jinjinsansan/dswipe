@@ -21,7 +21,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
     // 2カラムレイアウト
     return (
       <section
-        className="py-16 px-8"
+        className="px-8"
         style={{ backgroundColor, color: textColor }}
       >
         <div className="max-w-7xl mx-auto">
@@ -82,7 +82,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
   // アコーディオンレイアウト（デフォルト）
   return (
     <section
-      className="py-16 px-8"
+      className="px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-4xl mx-auto">

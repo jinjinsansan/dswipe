@@ -304,7 +304,7 @@ export default function EditLPNewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
       {/* Header - Simplified */}
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 h-14 flex-shrink-0">
         <div className="h-full px-4 flex items-center justify-between">
@@ -379,7 +379,7 @@ export default function EditLPNewPage() {
       </header>
 
       {/* Main Content - 3 Column Layout */}
-      <main className="flex-1 flex h-[calc(100vh-56px)] overflow-hidden">
+      <main className="flex-1 flex overflow-hidden">
         {error && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
             {error}

@@ -10,7 +10,7 @@ interface GuaranteeBlockProps {
 export default function GuaranteeBlock({ content }: GuaranteeBlockProps) {
   return (
     <div
-      className="py-16 px-4"
+      className="px-4"
       style={{
         backgroundColor: content.backgroundColor || '#0F172A',
         color: content.textColor || '#FFFFFF',

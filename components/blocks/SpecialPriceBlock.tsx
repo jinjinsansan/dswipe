@@ -10,7 +10,7 @@ interface SpecialPriceBlockProps {
 export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
   return (
     <div
-      className="py-16 px-4"
+      className="px-4"
       style={{
         backgroundColor: content.backgroundColor || '#111827',
         color: content.textColor || '#FFFFFF',
