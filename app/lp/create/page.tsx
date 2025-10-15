@@ -98,7 +98,13 @@ export default function CreateLPPage() {
     setIsLoading(true);
 
     try {
-      const response = await lpApi.create(formData);
+      // 空文字列のproduct_idはnullに変換
+      const payload = {
+        ...formData,
+        product_id: formData.product_id || null
+      };
+      
+      const response = await lpApi.create(payload);
       const lpId = response.data.id;
       
       // AI提案がある場合は、sessionStorageで渡す（URLエンコーディングエラー回避）
