@@ -166,7 +166,12 @@ export const INDUSTRY_PRESETS = {
  * カテゴリ別にテンプレートを取得
  */
 export function getTemplatesByCategory(category: string) {
-  return TEMPLATE_LIBRARY.filter((template) => template.category === category);
+  if (category === 'info-product') {
+    return INFO_PRODUCT_BLOCKS;
+  }
+
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  return allTemplates.filter((template) => template.category === category);
 }
 
 /**

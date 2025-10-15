@@ -10,7 +10,14 @@ interface TemplateSelectorProps {
 }
 
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('header');
+  const initialCategory = React.useMemo(() => {
+    const firstWithTemplates = TEMPLATE_CATEGORIES.find(
+      (category) => getTemplatesByCategory(category.id).length > 0
+    );
+    return firstWithTemplates?.id || TEMPLATE_CATEGORIES[0]?.id || 'info-product';
+  }, []);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
 
   const filteredTemplates = getTemplatesByCategory(selectedCategory);
 
@@ -95,6 +102,7 @@ function getCategoryIcon(category: string): string {
     'social-proof': '⭐',
     media: '🎬',
     form: '📋',
+    'info-product': '🔥',
   };
   return icons[category] || '📄';
 }
@@ -107,6 +115,7 @@ function getCategoryName(category: string): string {
     'social-proof': '社会的証明',
     media: 'メディア',
     form: 'フォーム',
+    'info-product': '情報商材特化',
   };
   return names[category] || category;
 }
