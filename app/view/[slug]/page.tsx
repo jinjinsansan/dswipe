@@ -32,6 +32,7 @@ export default function LPViewerPage() {
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [fixedCta, setFixedCta] = useState<any>(null);
+  const [stickyCtaStep, setStickyCtaStep] = useState<any>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
   useEffect(() => {
@@ -45,24 +46,36 @@ export default function LPViewerPage() {
   const fetchLP = async () => {
     try {
       const response = await publicApi.getLP(slug);
-      setLp(response.data);
-      
-      // CTAブロックを検索して固定フッター用に保存
-      const ctaBlock = response.data.steps
-        .sort((a: any, b: any) => b.step_order - a.step_order) // 逆順で最後のCTAを優先
-        .find((step: any) => 
-          step.block_type && 
+      const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
+      const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
+
+      const stickySteps = sortedSteps.filter((step) => step.block_type === 'sticky-cta-1');
+      setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
+
+      const displaySteps = sortedSteps.filter((step) => step.block_type !== 'sticky-cta-1');
+
+      const ctaBlock = [...sortedSteps]
+        .reverse()
+        .find((step: any) =>
+          step.block_type &&
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
-      
+
       if (ctaBlock) {
         setFixedCta({
           blockType: ctaBlock.block_type,
           content: ctaBlock.content_data,
           productId: response.data.product_id
         });
+      } else {
+        setFixedCta(null);
       }
-      
+
+      setLp({
+        ...response.data,
+        steps: displaySteps,
+      });
+
       // LPに紐付いた商品を取得
       if (response.data.id) {
         fetchProducts(response.data.id);
@@ -271,6 +284,29 @@ export default function LPViewerPage() {
     return lp.ctas.filter(cta => !cta.step_id || cta.step_id === currentStep.id);
   };
 
+  const getStepBackgroundStyle = (step: any) => {
+    if (!step?.content_data || typeof step.content_data !== 'object') {
+      return undefined;
+    }
+
+    const content = step.content_data as Record<string, any>;
+    const candidates = [
+      content.background,
+      content.backgroundColor,
+      content.background_color,
+      content.bgColor,
+      content.sectionBackgroundColor,
+      content.sectionBgColor,
+      content.blockBackgroundColor,
+      typeof content.background === 'object' ? content.background?.color : undefined,
+      typeof content.background === 'object' ? content.background?.gradient : undefined,
+    ];
+
+    return candidates.find(
+      (value): value is string => typeof value === 'string' && value.trim().length > 0,
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
@@ -331,11 +367,16 @@ export default function LPViewerPage() {
           onSlideChange={handleSlideChange}
           className="h-full"
         >
-          {lp.steps.sort((a, b) => a.step_order - b.step_order).map((step, index) => {
+          {lp.steps.map((step, index) => {
             const stepCtas = getCurrentStepCtas(index);
+            const slideBackground = getStepBackgroundStyle(step);
             
             return (
-              <SwiperSlide key={step.id} className="relative overflow-y-auto">
+              <SwiperSlide
+                key={step.id}
+                className="relative overflow-y-auto"
+                style={slideBackground ? { background: slideBackground } : undefined}
+              >
                 {/* ブロックレンダリング */}
                 {step.block_type && step.content_data ? (
                   <BlockRenderer
@@ -411,6 +452,16 @@ export default function LPViewerPage() {
             />
           </div>
         </div>
+      )}
+
+      {/* スティッキーCTAブロック */}
+      {stickyCtaStep && (
+        <BlockRenderer
+          blockType={stickyCtaStep.block_type}
+          content={stickyCtaStep.content_data}
+          isEditing={false}
+          productId={lp.product_id}
+        />
       )}
 
       {/* 商品購入セクション */}
