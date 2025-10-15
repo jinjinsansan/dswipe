@@ -7,6 +7,7 @@ import {
   FAQBlockContent,
   CTABlockContent,
   PricingBlockContent,
+  ImageBlockContent,
   TemplateThemeKey,
 } from "@/types/templates";
 
@@ -414,6 +415,23 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       subText: "💞 今だけ初月0円 / 残席3名",
       position: "bottom",
     } as StickyCTABlockContent,
+  },
+  {
+    id: "image-aurora-1",
+    templateId: "image-1",
+    name: "ビジュアルギャラリー（ダーク）",
+    category: "image",
+    description: "AI生成結果に任意のキービジュアルを差し込めるフル幅イメージブロック",
+    defaultContent: {
+      backgroundColor: "#050814",
+      textColor: "#E2E8F0",
+      shadow: true,
+      padding: "48px 24px",
+      maxWidth: "960px",
+      borderRadius: "28px",
+      caption: "ビジュアルに合わせてキャプションを編集できます",
+      imageUrl: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1280&q=80",
+    } as ImageBlockContent,
   },
 ];
 

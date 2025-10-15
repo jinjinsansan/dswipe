@@ -319,25 +319,15 @@ export default function EditLPNewPage() {
 
       const latestStepsResponse = await lpApi.get(lpId);
       const latestSteps = latestStepsResponse.data?.steps ?? [];
-      const existingStepIds = new Set(latestSteps.map((step) => step.id));
-      const persistedBlockIds = new Set(
-        orderedBlocks
-          .map((block) => block.id)
-          .filter((id) => existingStepIds.has(id))
-      );
 
-      // 削除されたステップをバックエンドから削除
+      // 既存ステップを一度全削除してから最新順序で再作成
       if (latestSteps.length > 0) {
         for (const step of latestSteps) {
-          if (!persistedBlockIds.has(step.id)) {
-            await lpApi.deleteStep(lpId, step.id);
-          }
+          await lpApi.deleteStep(lpId, step.id);
         }
       }
 
-      // 既存のステップを更新 + 新規ステップを作成
-      const pendingNewBlocks: LPBlock[] = [];
-
+      const recreatedBlocks: LPBlock[] = [];
       for (const block of orderedBlocks) {
         const stepData = {
           step_order: block.order,
@@ -346,42 +336,17 @@ export default function EditLPNewPage() {
           content_data: block.content as unknown as Record<string, unknown>,
         };
 
-        if (!existingStepIds.has(block.id)) {
-          pendingNewBlocks.push({ ...block, content: stepData.content_data as BlockContent, order: stepData.step_order });
-        } else {
-          // 既存ブロック（DBに保存済み）
-          await lpApi.updateStep(lpId, block.id, stepData);
-        }
-      }
-
-      const newBlockIdMap = new Map<string, LPBlock>();
-
-      for (const block of pendingNewBlocks) {
-        const stepData = {
-          step_order: block.order,
-          image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
-          block_type: block.blockType,
-          content_data: block.content as unknown as Record<string, unknown>,
-        };
         const response = await lpApi.addStep(lpId, stepData);
         const createdStep = response?.data;
-        const savedBlock: LPBlock = {
+        recreatedBlocks.push({
           ...block,
           id: createdStep?.id ?? block.id,
           order: stepData.step_order,
-        };
-        newBlockIdMap.set(block.id, savedBlock);
+        });
       }
-
-      const finalBlocks = orderedBlocks.map((block) => {
-        if (existingStepIds.has(block.id)) {
-          return block;
-        }
-        return newBlockIdMap.get(block.id) ?? block;
-      });
       
       alert('保存しました！');
-      setBlocks(finalBlocks);
+      setBlocks(recreatedBlocks);
       // ページを再読み込みして最新データを取得
       await fetchLP();
     } catch (err: any) {
