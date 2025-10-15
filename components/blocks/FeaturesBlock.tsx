@@ -17,7 +17,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
 
   return (
     <section
-      className="px-8"
+      className="py-12 px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">

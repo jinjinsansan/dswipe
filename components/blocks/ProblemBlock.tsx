@@ -10,7 +10,7 @@ interface ProblemBlockProps {
 export default function ProblemBlock({ content }: ProblemBlockProps) {
   return (
     <div
-      className="px-4"
+      className="py-12 px-4"
       style={{
         backgroundColor: content.backgroundColor || '#1F2937',
         color: content.textColor || '#FFFFFF',

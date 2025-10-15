@@ -14,7 +14,7 @@ export default function ScarcityBlock({ content }: ScarcityBlockProps) {
 
   return (
     <div
-      className="px-4"
+      className="py-12 px-4"
       style={{
         backgroundColor: content.backgroundColor || '#991B1B',
         color: content.textColor || '#FFFFFF',

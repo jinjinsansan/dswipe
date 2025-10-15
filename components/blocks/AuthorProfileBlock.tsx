@@ -10,7 +10,7 @@ interface AuthorProfileBlockProps {
 export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps) {
   return (
     <div
-      className="px-4"
+      className="py-12 px-4"
       style={{
         backgroundColor: content.backgroundColor || '#0F172A',
         color: content.textColor || '#FFFFFF',

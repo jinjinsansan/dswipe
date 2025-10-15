@@ -10,7 +10,7 @@ interface UrgencyBlockProps {
 export default function UrgencyBlock({ content }: UrgencyBlockProps) {
   return (
     <div
-      className="px-4"
+      className="py-12 px-4"
       style={{
         backgroundColor: content.backgroundColor || content.highlightColor || '#DC2626',
         color: content.textColor || '#FFFFFF',
