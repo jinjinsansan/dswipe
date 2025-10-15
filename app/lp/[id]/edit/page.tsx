@@ -411,7 +411,7 @@ export default function EditLPNewPage() {
         )}
 
         {/* Left: Block List */}
-        <div className="w-64 bg-gray-800/30 border-r border-gray-800 overflow-hidden flex-shrink-0 flex flex-col">
+        <div className="w-64 bg-gray-800/30 border-r border-gray-800 overflow-hidden flex-shrink-0 flex flex-col min-h-0">
           <div className="p-4 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
@@ -471,7 +471,7 @@ export default function EditLPNewPage() {
           </div>
 
           {/* Block List */}
-          <div className="p-2 flex-1 overflow-y-auto">
+          <div className="p-2 flex-1 overflow-y-auto min-h-0">
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-500 text-sm font-light">
                 ブロックを追加してください

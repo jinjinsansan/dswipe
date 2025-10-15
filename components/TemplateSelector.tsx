@@ -1,121 +1,102 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TEMPLATE_LIBRARY, TEMPLATE_CATEGORIES, getTemplatesByCategory } from '@/lib/templates';
-import { TemplateBlock } from '@/types/templates';
+import React from 'react';
+import { getAllTemplates } from '@/lib/templates';
+import type { TemplateBlock } from '@/types/templates';
 
 interface TemplateSelectorProps {
   onSelectTemplate: (template: TemplateBlock) => void;
   onClose: () => void;
 }
 
+const CATEGORY_META: Record<string, { name: string; icon: string }> = {
+  header: { name: 'ヒーロー', icon: '🎯' },
+  content: { name: 'コンテンツ', icon: '📝' },
+  conversion: { name: 'コンバージョン', icon: '🚀' },
+  'social-proof': { name: '社会的証明', icon: '⭐' },
+  media: { name: 'メディア', icon: '🎬' },
+  form: { name: 'フォーム', icon: '📋' },
+  'info-product': { name: '情報商材特化', icon: '🔥' },
+};
+
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {
-  const initialCategory = React.useMemo(() => {
-    const firstWithTemplates = TEMPLATE_CATEGORIES.find(
-      (category) => getTemplatesByCategory(category.id).length > 0
-    );
-    return firstWithTemplates?.id || TEMPLATE_CATEGORIES[0]?.id || 'info-product';
-  }, []);
-
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-
-  const filteredTemplates = getTemplatesByCategory(selectedCategory);
+  const templates = React.useMemo(() => getAllTemplates(), []);
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-gray-700 flex flex-col">
-        {/* ヘッダー */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-white">テンプレートを選択</h2>
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-2xl z-50 flex items-center justify-center p-6">
+      <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-3xl border border-white/10 bg-[#0a0f1d]/95 shadow-[0_48px_140px_-60px_rgba(56,189,248,0.65)]">
+        <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-36 -right-20 h-80 w-80 rounded-full bg-purple-500/20 blur-3xl" />
+
+        <div className="relative flex items-center justify-between px-8 py-6 border-b border-white/10">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.45em] text-blue-300/70 mb-2">Template Library</p>
+            <h2 className="text-2xl font-semibold text-white">テンプレートを選択</h2>
+            <p className="text-sm text-gray-400 mt-1">用途に合わせたブロックをすばやく追加できます。</p>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors text-2xl"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition"
+            aria-label="閉じる"
           >
             ×
           </button>
         </div>
 
-        {/* カテゴリタブ */}
-        <div className="flex gap-2 p-4 border-b border-gray-700 overflow-x-auto">
-          {TEMPLATE_CATEGORIES.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all ${
-                selectedCategory === category.id
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                  : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              {category.icon} {category.name}
-            </button>
-          ))}
+        <div className="relative flex-1 overflow-y-auto px-8 py-8 space-y-6">
+          {templates.length === 0 ? (
+            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
+              <span className="text-4xl">🗂️</span>
+              <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {templates.map((template) => {
+                const meta = CATEGORY_META[template.category] || { name: template.category, icon: '📄' };
+                return (
+                  <button
+                    key={template.id}
+                    onClick={() => {
+                      onSelectTemplate(template);
+                      onClose();
+                    }}
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] px-5 pt-6 pb-7 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.06] hover:shadow-[0_28px_60px_-35px_rgba(59,130,246,0.75)]"
+                  >
+                    <div className="absolute inset-x-0 -top-36 h-40 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
+
+                    <div className="relative flex items-center justify-between gap-3">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/20 text-2xl">
+                        {meta.icon}
+                      </span>
+                      <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-blue-100/80">
+                        {meta.name}
+                      </span>
+                    </div>
+
+                    <div className="relative mt-5 space-y-3">
+                      <h3 className="text-lg font-semibold text-white">{template.name}</h3>
+                      <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
+                        {template.description}
+                      </p>
+                    </div>
+
+                    <div className="relative mt-6 flex items-center gap-2 text-sm font-medium text-blue-300">
+                      追加する
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* テンプレートグリッド */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTemplates.map((template) => (
-              <button
-                key={template.id}
-                onClick={() => {
-                  onSelectTemplate(template);
-                  onClose();
-                }}
-                className="bg-gray-800 rounded-xl border-2 border-gray-700 hover:border-blue-500 transition-all p-4 text-left group"
-              >
-                {/* サムネイル（プレースホルダー） */}
-                <div className="bg-gray-700 rounded-lg mb-4 h-48 flex items-center justify-center group-hover:bg-gray-600 transition-colors">
-                  <span className="text-6xl">{getCategoryIcon(template.category)}</span>
-                </div>
-
-                {/* テンプレート情報 */}
-                <h3 className="text-white font-semibold text-lg mb-2">{template.name}</h3>
-                <p className="text-gray-400 text-sm mb-4">{template.description}</p>
-
-                {/* カテゴリバッジ */}
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
-                  {getCategoryName(template.category)}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* フッター */}
-        <div className="p-4 border-t border-gray-700 bg-gray-800/50">
-          <p className="text-gray-400 text-sm text-center">
-            テンプレートを選択すると、LP編集エリアに追加されます
-          </p>
+        <div className="relative border-t border-white/10 bg-white/5 px-8 py-5 text-center text-sm text-gray-400">
+          <span className="font-medium text-white/80">ヒント:</span> 追加後はプロパティパネルで色やコンテンツを自由に編集できます。
         </div>
       </div>
     </div>
   );
-}
-
-// ヘルパー関数
-function getCategoryIcon(category: string): string {
-  const icons: { [key: string]: string } = {
-    header: '🎯',
-    content: '📝',
-    conversion: '🚀',
-    'social-proof': '⭐',
-    media: '🎬',
-    form: '📋',
-    'info-product': '🔥',
-  };
-  return icons[category] || '📄';
-}
-
-function getCategoryName(category: string): string {
-  const names: { [key: string]: string } = {
-    header: 'ヒーロー',
-    content: 'コンテンツ',
-    conversion: 'コンバージョン',
-    'social-proof': '社会的証明',
-    media: 'メディア',
-    form: 'フォーム',
-    'info-product': '情報商材特化',
-  };
-  return names[category] || category;
 }
