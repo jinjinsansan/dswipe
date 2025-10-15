@@ -13,17 +13,21 @@ interface CTABlockProps {
   isEditing?: boolean;
   onEdit?: (field: string, value: string) => void;
   productId?: string;
+  fullWidth?: boolean;
 }
 
-export default function CTABlock({ content, isEditing, onEdit, productId }: CTABlockProps) {
+export default function CTABlock({ content, isEditing, onEdit, productId, fullWidth }: CTABlockProps) {
   const style = {
     backgroundColor: content.backgroundColor,
     color: content.textColor,
   };
 
   return (
-    <div className="py-12 px-8" style={style}>
-      <div className="max-w-4xl mx-auto text-center">
+    <div className={fullWidth ? 'py-10 px-6 sm:px-10' : 'py-12 px-8'} style={style}>
+      <div
+        className={fullWidth ? 'w-full text-center' : 'max-w-4xl mx-auto text-center'}
+        style={fullWidth ? { maxWidth: '100%' } : undefined}
+      >
         {isEditing ? (
           <>
             <input
@@ -61,14 +65,22 @@ export default function CTABlock({ content, isEditing, onEdit, productId }: CTAB
             {productId ? (
               <Link
                 href={`/points/purchase?product_id=${productId}`}
-                className="inline-block px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
+                className={
+                  fullWidth
+                    ? 'block w-full max-w-xl mx-auto px-10 py-5 rounded-none sm:rounded-lg font-bold text-xl shadow-2xl hover:scale-[1.015] transition-transform'
+                    : 'inline-block px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform'
+                }
                 style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
               >
                 {content.buttonText || '今すぐ始める'}
               </Link>
             ) : (
               <button
-                className="px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
+                className={
+                  fullWidth
+                    ? 'w-full max-w-xl mx-auto px-10 py-5 rounded-none sm:rounded-lg font-bold text-xl shadow-2xl hover:scale-[1.015] transition-transform'
+                    : 'px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform'
+                }
                 style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
               >
                 {content.buttonText || '今すぐ始める'}

@@ -491,7 +491,7 @@ export default function LPViewerPage() {
           {(() => {
             const { accent, background } = getFixedCtaDecoration();
             return (
-              <div className="w-full px-0 pb-4 sm:px-4" style={{ paddingTop: '1.5rem' }}>
+              <div className="w-full px-0 pb-4" style={{ paddingTop: '1.5rem' }}>
                 <div
                   className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
                   style={{
@@ -511,6 +511,7 @@ export default function LPViewerPage() {
                       content={fixedCta.content}
                       isEditing={false}
                       productId={fixedCta.productId}
+                      fullWidth
                     />
                   </div>
                 </div>
