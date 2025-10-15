@@ -115,7 +115,7 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit, p
     
     default:
       return (
-        <div className="py-16 px-8 bg-gray-100 text-center">
+        <div className="px-8 bg-gray-100 text-center">
           <p className="text-gray-500">未対応のブロックタイプ: {blockType}</p>
           <p className="text-sm text-gray-400 mt-2">サポートされているブロックを選択してください</p>
         </div>

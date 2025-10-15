@@ -14,7 +14,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
 
   return (
     <section
-      className="py-12 md:py-16 px-4 md:px-8"
+      className="px-4 md:px-8"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">

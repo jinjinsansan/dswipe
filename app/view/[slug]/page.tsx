@@ -335,7 +335,7 @@ export default function LPViewerPage() {
             const stepCtas = getCurrentStepCtas(index);
             
             return (
-              <SwiperSlide key={step.id} className="relative bg-white overflow-y-auto">
+              <SwiperSlide key={step.id} className="relative overflow-y-auto">
                 {/* ブロックレンダリング */}
                 {step.block_type && step.content_data ? (
                   <BlockRenderer
@@ -344,7 +344,7 @@ export default function LPViewerPage() {
                     isEditing={false}
                     productId={lp.product_id}
                   />
-                ) : (
+                ) : step.image_url ? (
                   <>
                     {/* 旧式の画像ベース */}
                     <div
@@ -352,6 +352,11 @@ export default function LPViewerPage() {
                       style={{ backgroundImage: `url(${step.image_url})` }}
                     />
                   </>
+                ) : (
+                  // 空のスライドの場合はデフォルト背景
+                  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                    <p className="text-gray-500 text-lg">コンテンツがありません</p>
+                  </div>
                 )}
                 
                 {/* CTAボタン */}

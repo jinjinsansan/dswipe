@@ -23,7 +23,7 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center px-4 md:px-8 py-12 md:py-16"
+      className="min-h-screen flex items-center justify-center px-4 md:px-8"
       style={style}
     >
       <div className="max-w-4xl w-full text-center px-4">

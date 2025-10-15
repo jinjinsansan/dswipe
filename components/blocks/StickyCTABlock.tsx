@@ -18,7 +18,7 @@ export default function StickyCTABlock({ content }: StickyCTABlockProps) {
         color: content.textColor || '#FFFFFF',
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* サブテキスト */}
           {content.subText && (
