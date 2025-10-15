@@ -17,6 +17,7 @@ import AuthorProfileBlock from './AuthorProfileBlock';
 import UrgencyBlock from './UrgencyBlock';
 import ScarcityBlock from './ScarcityBlock';
 import StickyCTABlock from './StickyCTABlock';
+import ImageBlock from './ImageBlock';
 
 interface BlockRendererProps {
   blockType: string;
@@ -25,9 +26,18 @@ interface BlockRendererProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   fullWidth?: boolean;
+  withinEditor?: boolean;
 }
 
-export default function BlockRenderer({ blockType, content, isEditing, onEdit, productId, fullWidth }: BlockRendererProps) {
+export default function BlockRenderer({
+  blockType,
+  content,
+  isEditing,
+  onEdit,
+  productId,
+  fullWidth,
+  withinEditor,
+}: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   switch (blockType) {
     // ヒーロー系
@@ -90,6 +100,9 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit, p
           fullWidth={fullWidth}
         />
       );
+
+    case 'image-1':
+      return <ImageBlock content={content} isEditing={isEditing} />;
     
     // 情報商材特化ブロック
     case 'countdown-1':
@@ -120,7 +133,7 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit, p
       return <ScarcityBlock content={content} />;
     
     case 'sticky-cta-1':
-      return <StickyCTABlock content={content} />;
+      return <StickyCTABlock content={content} withinEditor={withinEditor} />;
     
     default:
       return (

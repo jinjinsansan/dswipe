@@ -36,6 +36,7 @@ interface DraggableBlockEditorProps {
   isEditing: boolean;
   onSelectBlock?: (blockId: string) => void;
   selectedBlockId?: string;
+  withinEditor?: boolean;
 }
 
 // ドラッグ可能なブロックアイテム
@@ -46,6 +47,7 @@ function SortableBlock({
   onUpdateBlock,
   onDeleteBlock,
   onSelect,
+  withinEditor,
 }: {
   block: Block;
   isEditing: boolean;
@@ -53,6 +55,7 @@ function SortableBlock({
   onUpdateBlock: (field: string, value: any) => void;
   onDeleteBlock: () => void;
   onSelect: () => void;
+  withinEditor?: boolean;
 }) {
   const {
     attributes,
@@ -134,6 +137,7 @@ function SortableBlock({
           content={block.content}
           isEditing={isEditing}
           onEdit={onUpdateBlock}
+          withinEditor={withinEditor}
         />
       </div>
     </div>
@@ -148,6 +152,7 @@ export default function DraggableBlockEditor({
   isEditing,
   onSelectBlock,
   selectedBlockId,
+  withinEditor,
 }: DraggableBlockEditorProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -213,6 +218,7 @@ export default function DraggableBlockEditor({
               onUpdateBlock={(field, value) => onUpdateBlock(block.id, field, value)}
               onDeleteBlock={() => onDeleteBlock(block.id)}
               onSelect={() => onSelectBlock?.(block.id)}
+              withinEditor={withinEditor}
             />
           ))}
         </div>

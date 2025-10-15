@@ -124,6 +124,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('caption' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              キャプション
+            </label>
+            <input
+              type="text"
+              value={(content as any).caption || ''}
+              onChange={(e) => onUpdateContent('caption', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              placeholder="画像下に表示するテキスト"
+            />
+          </div>
+        )}
+
         {('urgencyText' in content) && (
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -302,6 +317,51 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
             />
           </div>
+        )}
+
+        {('borderRadius' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              角丸
+            </label>
+            <input
+              type="text"
+              value={(content as any).borderRadius || ''}
+              onChange={(e) => onUpdateContent('borderRadius', e.target.value)}
+              placeholder="例: 20px"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        )}
+
+        {('maxWidth' in content) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              最大幅
+            </label>
+            <input
+              type="text"
+              value={(content as any).maxWidth || ''}
+              onChange={(e) => onUpdateContent('maxWidth', e.target.value)}
+              placeholder="例: 960px"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        )}
+
+        {('shadow' in content) && (
+          <label className="flex items-center justify-between gap-3 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3">
+            <div>
+              <p className="text-sm text-gray-200">シャドウを表示</p>
+              <p className="text-xs text-gray-500">画像の立体感を強調します</p>
+            </div>
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+              checked={Boolean((content as any).shadow)}
+              onChange={(e) => onUpdateContent('shadow', e.target.checked)}
+            />
+          </label>
         )}
 
         {/* 配置（ヒーローブロック等） */}

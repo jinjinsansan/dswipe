@@ -23,6 +23,7 @@ export type BlockType =
   | 'cta-1'        // シンプルCTA
   | 'cta-2'        // 2ボタンCTA
   | 'cta-3'        // カウントダウン付きCTA
+  | 'image-1'      // フル幅画像ブロック
   | 'gallery-1'    // グリッドギャラリー
   | 'gallery-2'    // マソンリーギャラリー
   | 'video-1'      // 埋め込み動画
@@ -53,7 +54,8 @@ export type BlockCategory =
   | 'conversion'    // コンバージョン系
   | 'social-proof'  // 社会的証明
   | 'media'         // メディア系
-  | 'form';         // フォーム系
+  | 'form'         // フォーム系
+  | 'image';       // 画像ブロック
 
 // 共通のブロックコンテンツ
 export interface BaseBlockContent {
@@ -179,6 +181,15 @@ export interface FormBlockContent extends BaseBlockContent {
   }[];
   submitButtonText?: string;
   submitUrl?: string;
+}
+
+// 画像ブロックコンテンツ
+export interface ImageBlockContent extends BaseBlockContent {
+  imageUrl?: string;
+  caption?: string;
+  borderRadius?: string;
+  shadow?: boolean;
+  maxWidth?: string;
 }
 
 // 統計ブロックコンテンツ
@@ -352,6 +363,7 @@ export type BlockContent =
   | FAQBlockContent
   | FeaturesBlockContent
   | CTABlockContent
+  | ImageBlockContent
   | GalleryBlockContent
   | VideoBlockContent
   | FormBlockContent

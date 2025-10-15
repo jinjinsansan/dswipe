@@ -25,6 +25,7 @@ import {
   UrgencyBlockContent,
   ScarcityBlockContent,
   StickyCTABlockContent,
+  ImageBlockContent,
 } from '@/types/templates';
 
 // ===== 配色バリエーション（情報商材特化） =====
@@ -204,6 +205,25 @@ export const TEMPLATE_CATEGORIES = [
 
 // ===== 情報商材特化ブロック =====
 export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
+  // フル幅画像ブロック
+  {
+    id: 'image-standalone-1',
+    templateId: 'image-1',
+    name: 'フル幅画像',
+    category: 'image',
+    description: '用意した画像を印象的に表示するシンプルなビジュアルブロック',
+    defaultContent: {
+      imageUrl: '',
+      caption: '',
+      backgroundColor: '#0B1120',
+      textColor: '#FFFFFF',
+      padding: '40px 0',
+      borderRadius: '20px',
+      shadow: true,
+      maxWidth: '960px',
+    } as ImageBlockContent,
+  },
+
   // カウントダウンタイマー
   {
     id: 'countdown-1',

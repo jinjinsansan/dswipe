@@ -544,6 +544,7 @@ export default function EditLPNewPage() {
             isEditing={false}
             onSelectBlock={setSelectedBlockId}
             selectedBlockId={selectedBlockId || undefined}
+            withinEditor
           />
         </div>
 
