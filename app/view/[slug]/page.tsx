@@ -324,6 +324,7 @@ export default function LPViewerPage() {
                     blockType={step.block_type}
                     content={step.content_data}
                     isEditing={false}
+                    productId={lp.product_id}
                   />
                 ) : (
                   <>

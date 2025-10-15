@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { lpApi } from '@/lib/api';
+import { lpApi, productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
 import AIWizard from '@/components/AIWizard';
@@ -13,14 +13,33 @@ export default function CreateLPPage() {
   const { isAuthenticated } = useAuthStore();
   const [showWizard, setShowWizard] = useState(true);
   const [aiSuggestion, setAiSuggestion] = useState<any>(null);
+  const [products, setProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     swipe_direction: 'vertical' as 'vertical' | 'horizontal',
     is_fullscreen: true,
+    product_id: '',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // 商品一覧取得
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productApi.list();
+        const productsData = response.data?.products || response.data || [];
+        setProducts(Array.isArray(productsData) ? productsData : []);
+      } catch (error) {
+        console.error('商品一覧取得エラー:', error);
+      }
+    };
+    
+    if (isAuthenticated) {
+      fetchProducts();
+    }
+  }, [isAuthenticated]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -176,6 +195,30 @@ export default function CreateLPPage() {
               />
               <p className="mt-1 text-sm text-gray-500">
                 公開URL: https://swipelaunch.com/lp/<span className="text-blue-400">{formData.slug || 'your-slug'}</span>
+              </p>
+            </div>
+
+            {/* 商品選択 */}
+            <div>
+              <label htmlFor="product_id" className="block text-sm font-medium text-gray-300 mb-2">
+                紐づける商品
+              </label>
+              <select
+                id="product_id"
+                name="product_id"
+                value={formData.product_id}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">選択しない（後で設定可能）</option>
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.title} - {product.price}円
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-sm text-gray-500">
+                CTAボタンから購入ページへ自動リンクされます
               </p>
             </div>
 

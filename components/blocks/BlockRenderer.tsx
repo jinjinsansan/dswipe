@@ -23,9 +23,10 @@ interface BlockRendererProps {
   content: any;
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
+  productId?: string;
 }
 
-export default function BlockRenderer({ blockType, content, isEditing, onEdit }: BlockRendererProps) {
+export default function BlockRenderer({ blockType, content, isEditing, onEdit, productId }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   switch (blockType) {
     // ヒーロー系
@@ -72,14 +73,14 @@ export default function BlockRenderer({ blockType, content, isEditing, onEdit }:
     case 'form':
     case 'form-1':
     case 'form-2':
-      return <FormBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      return <FormBlock content={content} isEditing={isEditing} onEdit={onEdit} productId={productId} />;
     
     // CTA系
     case 'cta':
     case 'cta-1':
     case 'cta-2':
     case 'cta-3':
-      return <CTABlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      return <CTABlock content={content} isEditing={isEditing} onEdit={onEdit} productId={productId} />;
     
     // 情報商材特化ブロック
     case 'countdown-1':

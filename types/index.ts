@@ -26,6 +26,7 @@ export interface LandingPage {
   is_fullscreen: boolean;
   total_views: number;
   total_cta_clicks: number;
+  product_id?: string;
   created_at: string;
   updated_at: string;
 }

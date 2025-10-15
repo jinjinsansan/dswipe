@@ -326,17 +326,33 @@ export default function EditLPNewPage() {
               {lp.status === 'published' ? '公開中' : '下書き'}
             </span>
 
-            {/* Publish/Preview */}
-            {lp.status === 'published' ? (
-              <a
-                href={`/view/${lp.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 text-xs font-light text-gray-400 hover:text-white border border-gray-800 rounded transition-colors"
-              >
-                プレビュー
-              </a>
-            ) : (
+            {/* Public URL (if published) */}
+            {lp.status === 'published' && (
+              <>
+                <a
+                  href={`/view/${lp.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 text-xs font-light text-blue-400 hover:text-blue-300 border border-gray-800 rounded transition-colors"
+                >
+                  プレビュー
+                </a>
+                <button
+                  onClick={() => {
+                    const url = `${window.location.origin}/view/${lp.slug}`;
+                    navigator.clipboard.writeText(url);
+                    alert('URLをコピーしました！');
+                  }}
+                  className="px-3 py-1.5 text-xs font-light text-gray-400 hover:text-white border border-gray-800 rounded transition-colors"
+                  title="公開URLをコピー"
+                >
+                  URLコピー
+                </button>
+              </>
+            )}
+
+            {/* Publish Button (if draft) */}
+            {lp.status === 'draft' && (
               <button
                 onClick={handlePublish}
                 className="px-3 py-1.5 text-xs font-light bg-green-600/90 text-white rounded hover:bg-green-600 transition-colors"
@@ -366,7 +382,7 @@ export default function EditLPNewPage() {
         )}
 
         {/* Left: Block List */}
-        <div className="w-64 bg-gray-900/50 border-r border-gray-800 overflow-y-auto flex-shrink-0">
+        <div className="w-64 bg-gray-800/30 border-r border-gray-800 overflow-hidden flex-shrink-0 flex flex-col">
           <div className="p-4 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
@@ -377,7 +393,7 @@ export default function EditLPNewPage() {
           </div>
 
           {/* Block List */}
-          <div className="p-2">
+          <div className="p-2 flex-1 overflow-y-auto">
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-500 text-sm font-light">
                 ブロックを追加してください
@@ -387,8 +403,34 @@ export default function EditLPNewPage() {
                 {blocks.map((block, index) => (
                   <div
                     key={block.id}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/html', block.id);
+                      (e.target as HTMLElement).style.opacity = '0.5';
+                    }}
+                    onDragEnd={(e) => {
+                      (e.target as HTMLElement).style.opacity = '1';
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = 'move';
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const draggedId = e.dataTransfer.getData('text/html');
+                      const draggedIndex = blocks.findIndex(b => b.id === draggedId);
+                      const targetIndex = index;
+                      
+                      if (draggedIndex !== targetIndex) {
+                        const newBlocks = [...blocks];
+                        const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
+                        newBlocks.splice(targetIndex, 0, draggedBlock);
+                        handleReorderBlocks(newBlocks);
+                      }
+                    }}
                     onClick={() => setSelectedBlockId(block.id)}
-                    className={`p-3 rounded cursor-pointer transition-colors ${
+                    className={`p-3 rounded cursor-move transition-colors ${
                       selectedBlockId === block.id
                         ? 'bg-blue-600/20 border border-blue-600/50'
                         : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-800'
@@ -428,7 +470,7 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Right: Properties Panel */}
-        <div className="w-96 bg-gray-900/50 border-l border-gray-800 overflow-y-auto flex-shrink-0">
+        <div className="w-96 bg-gray-800/30 border-l border-gray-800 overflow-hidden flex-shrink-0">
           {selectedBlockId ? (
             <PropertyPanel
               block={blocks.find(b => b.id === selectedBlockId) || null}

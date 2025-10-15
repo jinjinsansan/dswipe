@@ -1,15 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FormBlockContent } from '@/types/templates';
 
 interface FormBlockProps {
   content: FormBlockContent;
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
+  productId?: string;
 }
 
-export default function FormBlock({ content, isEditing, onEdit }: FormBlockProps) {
+export default function FormBlock({ content, isEditing, onEdit, productId }: FormBlockProps) {
+  const router = useRouter();
   const { title, fields, submitButtonText = '送信', backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,9 +26,15 @@ export default function FormBlock({ content, isEditing, onEdit }: FormBlockProps
     // await api.post('/form-submit', formData);
     
     setTimeout(() => {
-      alert('送信しました！');
       setIsSubmitting(false);
       setFormData({});
+      
+      // 商品が紐づいている場合は購入ページへリダイレクト
+      if (productId) {
+        router.push(`/points/purchase?product_id=${productId}`);
+      } else {
+        alert('送信しました！');
+      }
     }, 1000);
   };
 
