@@ -307,6 +307,28 @@ export default function LPViewerPage() {
     );
   };
 
+  const getFixedCtaDecoration = () => {
+    if (!fixedCta?.content) {
+      return {
+        accent: '#3B82F6',
+        background: 'linear-gradient(135deg, rgba(15,23,42,0.96), rgba(8,14,35,0.94))',
+      };
+    }
+
+    const content = fixedCta.content as Record<string, any>;
+    const baseBackground = typeof content.backgroundColor === 'string' && content.backgroundColor.trim().length > 0
+      ? content.backgroundColor
+      : 'rgba(15,23,42,0.96)';
+    const accent = typeof content.buttonColor === 'string' && content.buttonColor.trim().length > 0
+      ? content.buttonColor
+      : '#F97316';
+
+    return {
+      accent,
+      background: `linear-gradient(135deg, ${baseBackground}, rgba(8,14,35,0.94))`,
+    };
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
@@ -442,15 +464,36 @@ export default function LPViewerPage() {
 
       {/* 固定CTAフッター */}
       {fixedCta && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl">
-          <div className="max-w-4xl mx-auto">
-            <BlockRenderer
-              blockType={fixedCta.blockType}
-              content={fixedCta.content}
-              isEditing={false}
-              productId={fixedCta.productId}
-            />
-          </div>
+        <div className="fixed bottom-0 left-0 right-0 z-40">
+          {(() => {
+            const { accent, background } = getFixedCtaDecoration();
+            return (
+              <div className="max-w-4xl mx-auto px-4 pb-4" style={{ paddingTop: '1.5rem' }}>
+                <div
+                  className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+                  style={{
+                    background,
+                    borderTop: `3px solid ${accent}`,
+                  }}
+                >
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: 'radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)',
+                    }}
+                  />
+                  <div className="relative z-[1] p-4">
+                    <BlockRenderer
+                      blockType={fixedCta.blockType}
+                      content={fixedCta.content}
+                      isEditing={false}
+                      productId={fixedCta.productId}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 

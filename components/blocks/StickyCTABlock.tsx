@@ -9,17 +9,33 @@ interface StickyCTABlockProps {
 
 export default function StickyCTABlock({ content }: StickyCTABlockProps) {
   const position = content.position || 'bottom';
+  const baseColor = content.backgroundColor || '#0F172A';
+  const accentColor = content.buttonColor || '#EF4444';
+  const gradientBackground = `linear-gradient(135deg, ${baseColor}, rgba(15, 23, 42, 0.92))`;
 
   return (
     <div
-      className={`fixed ${position === 'top' ? 'top-0' : 'bottom-0'} left-0 right-0 z-50 shadow-2xl`}
-      style={{
-        backgroundColor: content.backgroundColor || '#111827',
-        color: content.textColor || '#FFFFFF',
-      }}
+      className={`fixed ${position === 'top' ? 'top-0' : 'bottom-0'} left-0 right-0 z-50`}
+      style={{ color: content.textColor || '#FFFFFF' }}
     >
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div
+        className="max-w-7xl mx-auto px-4 pb-4"
+        style={{ paddingTop: position === 'top' ? '1rem' : '1.75rem' }}
+      >
+        <div
+          className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+          style={{
+            backgroundImage: gradientBackground,
+            borderTop: `3px solid ${accentColor}`,
+          }}
+        >
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)`,
+            }}
+          />
+          <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
           {/* サブテキスト */}
           {content.subText && (
             <div className="hidden md:block">
@@ -46,6 +62,7 @@ export default function StickyCTABlock({ content }: StickyCTABlockProps) {
               {content.subText}
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
