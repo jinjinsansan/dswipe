@@ -107,7 +107,7 @@ export default function DashboardPage() {
           <div className="space-y-0.5">
             <Link
               href="/dashboard"
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
+              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-semibold"
             >
               <span className="text-base">📊</span>
               <span>ダッシュボード</span>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
             
             <Link
               href="/lp/create"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-medium"
             >
               <span className="text-base">➕</span>
               <span>新規LP作成</span>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             
             <Link
               href="/products"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-medium"
             >
               <span className="text-base">📦</span>
               <span>商品管理</span>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
             
             <Link
               href="/points/purchase"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-medium"
             >
               <span className="text-base">💰</span>
               <span>ポイント購入</span>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             
             <Link
               href="/media"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-medium"
             >
               <span className="text-base">🖼️</span>
               <span>メディア</span>
@@ -154,13 +154,13 @@ export default function DashboardPage() {
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white text-sm font-light truncate">{user?.username}</div>
+              <div className="text-white text-sm font-semibold truncate">{user?.username}</div>
               <div className="text-gray-400 text-xs">{user?.user_type}</div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+            className="w-full px-3 py-1.5 bg-red-600/20 text-red-300 rounded hover:bg-red-600/30 transition-colors text-xs font-semibold"
           >
             ログアウト
           </button>
@@ -174,16 +174,16 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             {/* Left: Page Title & Breadcrumb */}
             <div>
-              <h1 className="text-xl font-light text-white mb-0.5">ダッシュボード</h1>
-              <p className="text-gray-400 text-xs font-light">ようこそ、{user?.username}さん</p>
+              <h1 className="text-xl font-semibold text-white mb-0.5">ダッシュボード</h1>
+              <p className="text-gray-400 text-xs font-medium">ようこそ、{user?.username}さん</p>
             </div>
             
             {/* Right: Actions & User Info */}
             <div className="flex items-center space-x-4">
               {/* Point Balance */}
               <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-900/50 rounded border border-gray-700">
-                <span className="text-gray-400 text-xs font-light">ポイント残高</span>
-                <span className="text-white text-sm font-light">{pointBalance.toLocaleString()} P</span>
+                <span className="text-gray-400 text-xs font-medium">ポイント残高</span>
+                <span className="text-white text-sm font-semibold">{pointBalance.toLocaleString()} P</span>
               </div>
               
               {/* User Avatar */}
@@ -202,10 +202,10 @@ export default function DashboardPage() {
           {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-light text-white">最近編集したLP</h2>
+              <h2 className="text-lg font-semibold text-white">最近編集したLP</h2>
               <Link
                 href="/lp/create"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold"
               >
                 + 新規LP作成
               </Link>
@@ -214,27 +214,38 @@ export default function DashboardPage() {
             {lps.length === 0 ? (
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-12 text-center">
                 <div className="text-5xl mb-3">📄</div>
-                <h3 className="text-xl font-light text-white mb-2">LPがありません</h3>
-                <p className="text-gray-400 text-sm font-light mb-4">最初のLPを作成しましょう</p>
+                <h3 className="text-xl font-semibold text-white mb-2">LPがありません</h3>
+                <p className="text-gray-400 text-sm font-medium mb-4">最初のLPを作成しましょう</p>
                 <Link
                   href="/lp/create"
-                  className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+                  className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold"
                 >
                   新規LP作成
                 </Link>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
-                {lps.map((lp: any) => (
+                {lps.map((lp: any) => {
+                  const steps = Array.isArray(lp.steps) ? lp.steps : [];
+                  const heroStep = steps.find((step: any) => {
+                    const type = step?.block_type || step?.content_data?.block_type;
+                    return typeof type === 'string' && type.includes('hero');
+                  }) || steps[0];
+                  const heroImage = heroStep?.content_data?.imageUrl
+                    || heroStep?.content_data?.image_url
+                    || heroStep?.image_url
+                    || heroStep?.imageUrl;
+
+                  return (
                   <div
                     key={lp.id}
                     className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-all"
                   >
                     {/* Thumbnail */}
                     <div className="relative h-32 bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
-                      {lp.steps?.[0]?.image_url ? (
+                      {heroImage ? (
                         <img
-                          src={lp.steps[0].image_url}
+                          src={heroImage}
                           alt={lp.title}
                           className="w-full h-full object-cover"
                         />
@@ -244,11 +255,11 @@ export default function DashboardPage() {
                       {/* Status Badge */}
                       <div className="absolute top-2 right-2">
                         {lp.is_published ? (
-                          <span className="px-2 py-0.5 bg-green-500 text-white text-[10px] rounded-full font-light">
+                          <span className="px-2 py-0.5 bg-green-500 text-white text-[10px] rounded-full font-semibold">
                             公開中
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-gray-500 text-white text-[10px] rounded-full font-light">
+                          <span className="px-2 py-0.5 bg-gray-500 text-white text-[10px] rounded-full font-semibold">
                             下書き
                           </span>
                         )}
@@ -257,8 +268,8 @@ export default function DashboardPage() {
 
                     {/* Content */}
                     <div className="p-3">
-                      <h3 className="text-white font-light text-sm mb-2 truncate">{lp.title}</h3>
-                      <div className="flex items-center space-x-3 text-xs text-gray-400 mb-3 font-light">
+                      <h3 className="text-white font-semibold text-sm mb-2 truncate">{lp.title}</h3>
+                      <div className="flex items-center space-x-3 text-xs text-gray-400 mb-3 font-medium">
                         <span>閲覧: {lp.total_views || 0}</span>
                         <span>クリック: {lp.total_cta_clicks || 0}</span>
                       </div>
@@ -267,19 +278,19 @@ export default function DashboardPage() {
                       <div className="grid grid-cols-3 gap-1.5">
                         <Link
                           href={`/lp/${lp.id}/edit`}
-                          className="px-2 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-center text-xs font-light"
+                          className="px-2 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-center text-xs font-semibold"
                         >
                           編集
                         </Link>
                         <Link
                           href={`/lp/${lp.id}/analytics`}
-                          className="px-2 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-center text-xs font-light"
+                          className="px-2 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-center text-xs font-semibold"
                         >
                           分析
                         </Link>
                         <button
                           onClick={() => handleDeleteLP(lp.id)}
-                          className="px-2 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs font-light"
+                          className="px-2 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs font-semibold"
                         >
                           削除
                         </button>
@@ -300,7 +311,7 @@ export default function DashboardPage() {
                                 navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
                                 alert('URLをコピーしました');
                               }}
-                              className="px-2 py-1 bg-blue-600 text-white rounded text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-light"
+                              className="px-2 py-1 bg-blue-600 text-white rounded text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-semibold"
                             >
                               コピー
                             </button>
@@ -309,7 +320,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             )}
           </div>
@@ -320,11 +331,11 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3 mb-2">
                 <span className="text-2xl">📊</span>
                 <div>
-                  <div className="text-gray-400 text-xs font-light">ご利用中のプラン</div>
-                  <div className="text-white text-sm font-light">無料プラン</div>
+                  <div className="text-gray-400 text-xs font-medium">ご利用中のプラン</div>
+                  <div className="text-white text-sm font-semibold">無料プラン</div>
                 </div>
               </div>
-              <p className="text-gray-400 text-xs font-light">
+              <p className="text-gray-400 text-xs font-medium">
                 LP作成数: 無制限
               </p>
             </div>
@@ -333,11 +344,11 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3 mb-2">
                 <span className="text-2xl">📈</span>
                 <div>
-                  <div className="text-gray-400 text-xs font-light">登録中のLP数</div>
-                  <div className="text-white text-sm font-light">{lps.length}本のLPが登録されています</div>
+                  <div className="text-gray-400 text-xs font-medium">登録中のLP数</div>
+                  <div className="text-white text-sm font-semibold">{lps.length}本のLPが登録されています</div>
                 </div>
               </div>
-              <p className="text-gray-400 text-xs font-light">
+              <p className="text-gray-400 text-xs font-medium">
                 公開中: {lps.filter(lp => lp.is_published).length}本
               </p>
             </div>
@@ -346,11 +357,11 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3 mb-2">
                 <span className="text-2xl">💼</span>
                 <div>
-                  <div className="text-gray-400 text-xs font-light">販売実績</div>
-                  <div className="text-white text-sm font-light">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
+                  <div className="text-gray-400 text-xs font-medium">販売実績</div>
+                  <div className="text-white text-sm font-semibold">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
                 </div>
               </div>
-              <p className="text-gray-400 text-xs font-light">
+              <p className="text-gray-400 text-xs font-medium">
                 総売上: {totalSales.toLocaleString()}ポイント
               </p>
             </div>
@@ -359,21 +370,21 @@ export default function DashboardPage() {
           {/* Usage Stats */}
           <div className="grid md:grid-cols-3 gap-3">
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
-              <div className="text-gray-400 text-xs font-light mb-1">登録商品数</div>
-              <div className="text-white text-lg font-light">{products.length}商品</div>
-              <div className="text-gray-500 text-xs font-light mt-1">販売中: {products.filter(p => p.is_available).length}商品</div>
+              <div className="text-gray-400 text-xs font-medium mb-1">登録商品数</div>
+              <div className="text-white text-lg font-semibold">{products.length}商品</div>
+              <div className="text-gray-500 text-xs font-medium mt-1">販売中: {products.filter(p => p.is_available).length}商品</div>
             </div>
 
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
-              <div className="text-gray-400 text-xs font-light mb-1">今月の売上</div>
-              <div className="text-white text-lg font-light">{totalSales.toLocaleString()}P</div>
-              <div className="text-gray-500 text-xs font-light mt-1">販売件数: {products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
+              <div className="text-gray-400 text-xs font-medium mb-1">今月の売上</div>
+              <div className="text-white text-lg font-semibold">{totalSales.toLocaleString()}P</div>
+              <div className="text-gray-500 text-xs font-medium mt-1">販売件数: {products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
             </div>
 
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
-              <div className="text-gray-400 text-xs font-light mb-1">総閲覧数</div>
-              <div className="text-white text-lg font-light">{lps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0)}</div>
-              <div className="text-gray-500 text-xs font-light mt-1">CTAクリック: {lps.reduce((sum: number, lp: any) => sum + (lp.total_cta_clicks || 0), 0)}回</div>
+              <div className="text-gray-400 text-xs font-medium mb-1">総閲覧数</div>
+              <div className="text-white text-lg font-semibold">{lps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0)}</div>
+              <div className="text-gray-500 text-xs font-medium mt-1">CTAクリック: {lps.reduce((sum: number, lp: any) => sum + (lp.total_cta_clicks || 0), 0)}回</div>
             </div>
           </div>
         </div>

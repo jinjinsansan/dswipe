@@ -22,8 +22,13 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-10 px-6 sm:px-10' : 'py-12 px-8'}
-      style={{ background, color: textColor, backgroundImage: `radial-gradient(circle at top right, ${accent}18, transparent 55%)` }}
+      className={fullWidth ? 'py-10 px-4 sm:px-8' : 'py-12 px-8'}
+      style={{
+        background,
+        color: textColor,
+        backgroundImage: `radial-gradient(circle at top right, ${accent}18, transparent 55%)`,
+        borderRadius: fullWidth ? '0px' : undefined,
+      }}
     >
       <div
         className={fullWidth ? 'w-full text-center' : 'max-w-4xl mx-auto text-center'}
@@ -69,7 +74,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'block w-full max-w-xl px-10 py-5 rounded-lg font-bold text-lg shadow-2xl hover:scale-[1.015] transition-transform'
+                      ? 'block w-full px-10 py-5 rounded-none font-bold text-lg shadow-2xl hover:scale-[1.005] transition-transform'
                       : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
                   }
                   style={{
@@ -84,7 +89,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'w-full max-w-xl px-10 py-5 rounded-lg font-bold text-lg shadow-2xl hover:scale-[1.015] transition-transform'
+                      ? 'w-full px-10 py-5 rounded-none font-bold text-lg shadow-2xl hover:scale-[1.005] transition-transform'
                       : 'px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
                   }
                   style={{
@@ -102,7 +107,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={content.secondaryButtonUrl || '#'}
                   className={
                     fullWidth
-                      ? 'w-full max-w-xl px-10 py-5 rounded-lg font-semibold text-lg transition-transform border'
+                      ? 'w-full px-10 py-5 rounded-none font-semibold text-lg transition-transform border'
                       : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg transition-transform border'
                   }
                   style={{

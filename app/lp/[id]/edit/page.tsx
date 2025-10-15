@@ -391,18 +391,18 @@ export default function EditLPNewPage() {
           <div className="flex items-center gap-3">
             <Link 
               href="/dashboard"
-              className="text-gray-400 hover:text-white transition-colors text-sm font-light"
+              className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
             >
               ← 戻る
             </Link>
             <div className="w-px h-4 bg-gray-800"></div>
-            <div className="text-sm font-light text-white/90">{lp.title}</div>
+            <div className="text-sm font-semibold text-white">{lp.title}</div>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-2">
             {/* Status */}
-            <span className={`px-2 py-1 text-xs rounded font-light ${
+            <span className={`px-2 py-1 text-xs rounded font-semibold ${
               lp.status === 'published'
                 ? 'bg-green-500/10 text-green-400'
                 : 'bg-gray-700/50 text-gray-400'
@@ -417,7 +417,7 @@ export default function EditLPNewPage() {
                   href={`/view/${lp.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs font-light text-blue-400 hover:text-blue-300 border border-gray-800 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200 border border-gray-800 rounded transition-colors"
                 >
                   プレビュー
                 </a>
@@ -427,7 +427,7 @@ export default function EditLPNewPage() {
                     navigator.clipboard.writeText(url);
                     alert('URLをコピーしました！');
                   }}
-                  className="px-3 py-1.5 text-xs font-light text-gray-400 hover:text-white border border-gray-800 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white border border-gray-800 rounded transition-colors"
                   title="公開URLをコピー"
                 >
                   URLコピー
@@ -439,7 +439,7 @@ export default function EditLPNewPage() {
             {lp.status === 'draft' && (
               <button
                 onClick={handlePublish}
-                className="px-3 py-1.5 text-xs font-light bg-green-600/90 text-white rounded hover:bg-green-600 transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold bg-green-600/90 text-white rounded hover:bg-green-600 transition-colors"
               >
                 公開
               </button>
@@ -449,7 +449,7 @@ export default function EditLPNewPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-3 py-1.5 text-xs font-light bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 text-xs font-semibold bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
             >
               {isSaving ? '保存中...' : '保存'}
             </button>
@@ -470,14 +470,14 @@ export default function EditLPNewPage() {
           <div className="p-4 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
-              className="w-full px-3 py-2 bg-blue-600/90 text-white text-sm font-light rounded hover:bg-blue-600 transition-colors"
+              className="w-full px-3 py-2 bg-blue-600/90 text-white text-sm font-semibold rounded hover:bg-blue-600 transition-colors"
             >
               + ブロック追加
             </button>
           </div>
 
           <div className="px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20">
-            <h4 className="text-xs font-semibold text-gray-400 tracking-wide">LP設定</h4>
+            <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
             <label className="flex items-start gap-3 cursor-pointer">
               <input
@@ -489,8 +489,8 @@ export default function EditLPNewPage() {
                 }
               />
               <div>
-                <p className="text-sm text-white/90 font-light">スワイプアニメーション</p>
-                <p className="text-xs text-gray-500">1枚目に指アイコンでスワイプを促します</p>
+                <p className="text-sm text-white font-semibold">スワイプアニメーション</p>
+                <p className="text-xs text-gray-400">1枚目に指アイコンでスワイプを促します</p>
               </div>
             </label>
 
@@ -504,8 +504,8 @@ export default function EditLPNewPage() {
                 }
               />
               <div>
-                <p className="text-sm text-white/90 font-light">メディアの全画面表示</p>
-                <p className="text-xs text-gray-500">画像やHTMLをブラウザ全体に広げます</p>
+                <p className="text-sm text-white font-semibold">メディアの全画面表示</p>
+                <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
               </div>
             </label>
 
@@ -519,8 +519,8 @@ export default function EditLPNewPage() {
                 }
               />
               <div>
-                <p className="text-sm text-white/90 font-light">CTAフローティング</p>
-                <p className="text-xs text-gray-500">CTAを画面下部に固定し全幅表示します</p>
+                <p className="text-sm text-white font-semibold">CTAフローティング</p>
+                <p className="text-xs text-gray-400">CTAを画面下部に固定し全幅表示します</p>
               </div>
             </label>
           </div>
@@ -528,7 +528,7 @@ export default function EditLPNewPage() {
           {/* Block List */}
           <div className="p-2 flex-1 overflow-y-auto min-h-0">
             {blocks.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm font-light">
+              <div className="text-center py-8 text-gray-400 text-sm font-medium">
                 ブロックを追加してください
               </div>
             ) : (
@@ -570,7 +570,7 @@ export default function EditLPNewPage() {
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-light text-gray-400">#{index + 1}</span>
+                      <span className="text-xs font-semibold text-gray-300">#{index + 1}</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -581,7 +581,7 @@ export default function EditLPNewPage() {
                         削除
                       </button>
                     </div>
-                    <div className="text-sm font-light text-white/90">{block.blockType}</div>
+                    <div className="text-sm font-semibold text-white">{block.blockType}</div>
                   </div>
                 ))}
               </div>
@@ -613,7 +613,7 @@ export default function EditLPNewPage() {
               onGenerateAI={handleGenerateAI}
             />
           ) : (
-            <div className="p-6 text-center text-gray-500 font-light text-sm">
+            <div className="p-6 text-center text-gray-400 font-medium text-sm">
               ブロックを選択して編集
             </div>
           )}
