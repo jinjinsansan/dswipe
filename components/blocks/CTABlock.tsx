@@ -13,10 +13,9 @@ interface CTABlockProps {
   isEditing?: boolean;
   onEdit?: (field: string, value: string) => void;
   productId?: string;
-  onInteract?: () => void;
 }
 
-export default function CTABlock({ content, isEditing, onEdit, productId, onInteract }: CTABlockProps) {
+export default function CTABlock({ content, isEditing, onEdit, productId }: CTABlockProps) {
   const style = {
     backgroundColor: content.backgroundColor,
     color: content.textColor,
@@ -63,7 +62,6 @@ export default function CTABlock({ content, isEditing, onEdit, productId, onInte
               <Link
                 href={`/points/purchase?product_id=${productId}`}
                 className="inline-block px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
-                onClick={() => onInteract?.()}
                 style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
               >
                 {content.buttonText || '今すぐ始める'}
@@ -71,7 +69,6 @@ export default function CTABlock({ content, isEditing, onEdit, productId, onInte
             ) : (
               <button
                 className="px-12 py-5 rounded-lg font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
-                onClick={() => onInteract?.()}
                 style={{ backgroundColor: content.buttonColor, color: '#FFFFFF' }}
               >
                 {content.buttonText || '今すぐ始める'}

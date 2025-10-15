@@ -9,10 +9,9 @@ interface FormBlockProps {
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
   productId?: string;
-  onInteract?: () => void;
 }
 
-export default function FormBlock({ content, isEditing, onEdit, productId, onInteract }: FormBlockProps) {
+export default function FormBlock({ content, isEditing, onEdit, productId }: FormBlockProps) {
   const router = useRouter();
   const { title, fields, submitButtonText = '送信', backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
@@ -22,7 +21,6 @@ export default function FormBlock({ content, isEditing, onEdit, productId, onInt
     e.preventDefault();
     if (isEditing) return;
 
-    onInteract?.();
     setIsSubmitting(true);
     // TODO: フォーム送信処理（バックエンドAPI連携）
     // await api.post('/form-submit', formData);

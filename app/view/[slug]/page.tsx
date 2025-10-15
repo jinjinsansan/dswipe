@@ -33,7 +33,6 @@ export default function LPViewerPage() {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [fixedCta, setFixedCta] = useState<any>(null);
   const [stickyCtaStep, setStickyCtaStep] = useState<any>(null);
-  const [ctaInteracted, setCtaInteracted] = useState(false);
   const swiperRef = useRef<SwiperType | null>(null);
 
   useEffect(() => {
@@ -52,8 +51,6 @@ export default function LPViewerPage() {
 
       const stickySteps = sortedSteps.filter((step) => step.block_type === 'sticky-cta-1');
       setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
-
-      setCtaInteracted(false);
 
       const displaySteps = sortedSteps.filter((step) => step.block_type !== 'sticky-cta-1');
 
@@ -248,7 +245,6 @@ export default function LPViewerPage() {
   };
 
   const handleCtaClick = async (cta: CTA) => {
-    setCtaInteracted(true);
     try {
       await publicApi.recordCtaClick(slug, {
         cta_id: cta.id,
@@ -388,7 +384,6 @@ export default function LPViewerPage() {
                     content={step.content_data}
                     isEditing={false}
                     productId={lp.product_id}
-                    onCtaInteract={() => setCtaInteracted(true)}
                   />
                 ) : step.image_url ? (
                   <>
@@ -448,23 +443,12 @@ export default function LPViewerPage() {
       {/* 固定CTAフッター */}
       {fixedCta && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl">
-          <div
-            className={`max-w-4xl mx-auto transition-all duration-300 ${
-              ctaInteracted ? '' : 'cta-highlight relative'
-            }`}
-            onClick={() => setCtaInteracted(true)}
-          >
-            {!ctaInteracted && (
-              <div className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-sm font-semibold px-5 py-1.5 rounded-full shadow-lg">
-                ここから申し込みできます
-              </div>
-            )}
+          <div className="max-w-4xl mx-auto">
             <BlockRenderer
               blockType={fixedCta.blockType}
               content={fixedCta.content}
               isEditing={false}
               productId={fixedCta.productId}
-              onCtaInteract={() => setCtaInteracted(true)}
             />
           </div>
         </div>
@@ -477,8 +461,6 @@ export default function LPViewerPage() {
           content={stickyCtaStep.content_data}
           isEditing={false}
           productId={lp.product_id}
-          ctaHighlight={!ctaInteracted}
-          onCtaInteract={() => setCtaInteracted(true)}
         />
       )}
 
