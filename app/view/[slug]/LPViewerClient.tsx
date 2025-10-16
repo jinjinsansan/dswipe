@@ -75,12 +75,22 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         .reverse()
         .find((step: any) =>
           step.block_type &&
+          step.block_type !== 'sticky-cta-1' &&
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
 
       const displaySteps = validSteps
         .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
         .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
+
+      console.log('🔍 ステップ詳細:', {
+        validStepsCount: validSteps.length,
+        displayStepsCount: displaySteps.length,
+        ctaBlockFound: !!ctaBlock,
+        ctaBlockType: ctaBlock?.block_type,
+        shouldUseFloating,
+        displayStepIds: displaySteps.map((s: any) => ({ id: s.id, blockType: s.block_type })),
+      });
 
       if (ctaBlock) {
         setFixedCta({
