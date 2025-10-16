@@ -30,6 +30,7 @@ export default function ProductsPage() {
   const [lps, setLps] = useState<LP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -164,7 +165,7 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
       {/* Sidebar */}
-      <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
+      <aside className="hidden sm:flex w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
         <div className="px-6 h-16 border-b border-gray-700 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
@@ -235,45 +236,106 @@ export default function ProductsPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 sm:flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 h-16">
-          <div className="flex items-center justify-between">
-            {/* Left: Page Title & Description */}
-            <div>
-              <h1 className="text-xl font-light text-white mb-0.5">商品管理</h1>
-              <p className="text-gray-400 text-xs font-light">LPに紐付ける商品を管理します（ポイント決済）</p>
-            </div>
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2">
+          {/* Left: Page Title & Description (Hidden on Mobile) */}
+          <div className="hidden sm:block flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl font-light text-white mb-0.5">商品管理</h1>
+            <p className="text-gray-400 text-[10px] sm:text-xs font-light truncate">LPに紐付ける商品を管理します（ポイント決済）</p>
+          </div>
+          
+          {/* Right: Actions & User Info */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            {/* Create Button */}
+            <button
+              onClick={handleOpenCreate}
+              className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">+ 商品を作成</span>
+              <span className="sm:hidden">+ 作成</span>
+            </button>
             
-            {/* Right: Actions & User Info */}
-            <div className="flex items-center space-x-4">
-              {/* Create Button */}
-              <button
-                onClick={handleOpenCreate}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
-              >
-                + 商品を作成
-              </button>
-              
-              {/* User Avatar */}
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
-                </div>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden p-2 text-gray-300 hover:text-white transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
+            {/* User Avatar (Desktop) */}
+            <div className="hidden sm:flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                {user?.username?.charAt(0).toUpperCase() || 'U'}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Mobile Menu (Mobile Only) */}
+        {showMobileMenu && (
+          <div className="sm:hidden bg-gray-800/50 border-b border-gray-700 p-3">
+            <nav className="space-y-0.5">
+              <Link
+                href="/dashboard"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">📊</span>
+                <span>ダッシュボード</span>
+              </Link>
+              <Link
+                href="/lp/create"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">➕</span>
+                <span>新規LP作成</span>
+              </Link>
+              <Link
+                href="/products"
+                className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <span className="text-base">📦</span>
+                <span>商品管理</span>
+              </Link>
+              <Link
+                href="/points/purchase"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">💰</span>
+                <span>ポイント購入</span>
+              </Link>
+              <Link
+                href="/media"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">🖼️</span>
+                <span>メディア</span>
+              </Link>
+              <div className="px-3 py-2 border-t border-gray-700 mt-2 pt-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+                >
+                  ログアウト
+                </button>
+              </div>
+            </nav>
+          </div>
+        )}
+
         {/* Content Area */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
 
         {/* 商品一覧 */}
         {products.length === 0 ? (
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-12 text-center">
-            <div className="text-5xl mb-3">📦</div>
-            <h2 className="text-xl font-light text-white mb-2">商品がありません</h2>
-            <p className="text-gray-400 text-sm font-light mb-4">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-8 sm:p-12 text-center">
+            <div className="text-4xl sm:text-5xl mb-3">📦</div>
+            <h2 className="text-lg sm:text-xl font-light text-white mb-2">商品がありません</h2>
+            <p className="text-gray-400 text-xs sm:text-sm font-light mb-4">
               最初の商品を作成して、LPに紐付けましょう
             </p>
             <button
@@ -284,7 +346,7 @@ export default function ProductsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {products.map((product) => {
               const linkedLP = lps.find(lp => lp.id === product.lp_id);
               
@@ -293,17 +355,17 @@ export default function ProductsPage() {
                   key={product.id}
                   className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-light text-white mb-1">{product.title}</h3>
+                  <div className="flex items-start justify-between mb-2 sm:mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm sm:text-lg font-light text-white mb-0.5 sm:mb-1 truncate">{product.title}</h3>
                       {product.description && (
-                        <p className="text-gray-400 text-xs font-light mb-2 line-clamp-2">
+                        <p className="text-gray-400 text-[10px] sm:text-xs font-light mb-1 sm:mb-2 line-clamp-2">
                           {product.description}
                         </p>
                       )}
                     </div>
                     <span
-                      className={`px-2 py-0.5 text-[10px] rounded-full flex-shrink-0 ml-2 ${
+                      className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] rounded-full flex-shrink-0 ml-2 whitespace-nowrap ${
                         product.is_available
                           ? 'bg-green-500/20 text-green-400'
                           : 'bg-red-500/20 text-red-400'
@@ -313,27 +375,27 @@ export default function ProductsPage() {
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 mb-3">
+                  <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-xs font-light">価格</span>
-                      <span className="text-white text-sm font-light">{product.price_in_points.toLocaleString()} P</span>
+                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">価格</span>
+                      <span className="text-white text-xs sm:text-sm font-light">{product.price_in_points.toLocaleString()} P</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-xs font-light">在庫</span>
-                      <span className="text-white text-sm font-light">
+                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">在庫</span>
+                      <span className="text-white text-xs sm:text-sm font-light">
                         {product.stock_quantity === null ? '無制限' : `${product.stock_quantity}個`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-xs font-light">販売数</span>
-                      <span className="text-white text-sm font-light">{product.total_sales}件</span>
+                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">販売数</span>
+                      <span className="text-white text-xs sm:text-sm font-light">{product.total_sales}件</span>
                     </div>
                     {linkedLP && (
-                      <div className="flex items-center justify-between pt-1.5 border-t border-gray-700">
-                        <span className="text-gray-400 text-xs font-light">紐付けLP</span>
+                      <div className="flex items-center justify-between pt-1 sm:pt-1.5 border-t border-gray-700">
+                        <span className="text-gray-400 text-[10px] sm:text-xs font-light">紐付けLP</span>
                         <Link
                           href={`/lp/${linkedLP.id}/edit`}
-                          className="text-blue-400 hover:text-blue-300 text-xs font-light"
+                          className="text-blue-400 hover:text-blue-300 text-[10px] sm:text-xs font-light truncate"
                         >
                           {linkedLP.title}
                         </Link>
@@ -341,16 +403,16 @@ export default function ProductsPage() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 sm:gap-2">
                     <button
                       onClick={() => handleOpenEdit(product)}
-                      className="flex-1 px-3 py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs font-light"
+                      className="flex-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-[10px] sm:text-xs font-light"
                     >
                       編集
                     </button>
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs font-light"
+                      className="px-2 sm:px-3 py-1 sm:py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-light"
                     >
                       削除
                     </button>
@@ -365,13 +427,13 @@ export default function ProductsPage() {
 
       {/* 作成/編集モーダル */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4">
-          <div className="bg-gray-800 rounded-lg p-6 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-light text-white mb-4">
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-3 sm:px-4">
+          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg sm:text-xl font-light text-white mb-3 sm:mb-4">
               {editingProduct ? '商品を編集' : '商品を作成'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
               {/* 商品名 */}
               <div>
                 <label className="block text-xs font-light text-gray-300 mb-1">
@@ -515,17 +577,17 @@ export default function ProductsPage() {
               </div>
 
               {/* ボタン */}
-              <div className="flex gap-2 pt-3">
+              <div className="flex gap-2 pt-2 sm:pt-3">
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+                  className="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light"
                 >
                   {editingProduct ? '更新' : '作成'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-sm font-light"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs sm:text-sm font-light"
                 >
                   キャンセル
                 </button>
