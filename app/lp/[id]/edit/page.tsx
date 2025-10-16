@@ -743,17 +743,17 @@ export default function EditLPNewPage() {
         <div className={`flex-col min-h-0 bg-gray-800/30 border-gray-800 overflow-hidden flex ${
           mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
         } flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
-          <div className="p-3 lg:p-4 border-b border-gray-800">
+          <div className="py-3 lg:py-3 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
-              className="w-full px-3 py-2.5 lg:py-2 bg-blue-600/90 text-white text-sm font-semibold rounded hover:bg-blue-600 transition-colors min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 py-2.5 lg:py-2 bg-blue-600/90 text-white text-sm font-semibold hover:bg-blue-600 transition-colors min-h-[44px] lg:min-h-auto"
             >
               + ブロック追加
             </button>
           </div>
 
           {/* モバイルではLP設定とSNSメタ情報を非表示 */}
-          <div className="hidden lg:block px-3 lg:px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
+          <div className="hidden lg:block py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
             <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
             <button
