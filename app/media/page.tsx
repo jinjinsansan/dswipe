@@ -18,6 +18,7 @@ export default function MediaPage() {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -115,7 +116,7 @@ export default function MediaPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
       {/* Sidebar */}
-      <aside className="w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
+      <aside className="hidden sm:flex w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
         <div className="px-6 h-16 border-b border-gray-700 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
@@ -188,68 +189,138 @@ export default function MediaPage() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-6 h-16">
-          <div className="flex items-center justify-between">
-            {/* Left: Page Title & Description */}
-            <div>
-              <h1 className="text-xl font-light text-white mb-0.5">メディア</h1>
-              <p className="text-gray-400 text-xs font-light">画像をアップロードして管理</p>
-            </div>
+        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2">
+          {/* Left: Page Title & Description (Hidden on Mobile) */}
+          <div className="hidden sm:block flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl font-light text-white mb-0.5">メディア</h1>
+            <p className="text-gray-400 text-[10px] sm:text-xs font-light truncate">画像をアップロードして管理</p>
+          </div>
+          
+          {/* Right: Actions & User Info */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            {/* Upload Button */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept="image/*"
+              multiple
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light disabled:opacity-50 whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">{isUploading ? 'アップロード中...' : '+ 画像をアップロード'}</span>
+              <span className="sm:hidden">{isUploading ? '中...' : '📤'}</span>
+            </button>
             
-            {/* Right: Actions & User Info */}
-            <div className="flex items-center space-x-4">
-              {/* Upload Button */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept="image/*"
-                multiple
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light disabled:opacity-50"
-              >
-                {isUploading ? 'アップロード中...' : '+ 画像をアップロード'}
-              </button>
-              
-              {/* User Avatar */}
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
-                </div>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden p-2 text-gray-300 hover:text-white transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
+            {/* User Avatar (Desktop) */}
+            <div className="hidden sm:flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                {user?.username?.charAt(0).toUpperCase() || 'U'}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Mobile Menu (Mobile Only) */}
+        {showMobileMenu && (
+          <div className="sm:hidden bg-gray-800/50 border-b border-gray-700 p-3">
+            <nav className="space-y-0.5 mb-3">
+              <Link
+                href="/dashboard"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">📊</span>
+                <span>ダッシュボード</span>
+              </Link>
+              <Link
+                href="/lp/create"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">➕</span>
+                <span>新規LP作成</span>
+              </Link>
+              <Link
+                href="/products"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">📦</span>
+                <span>商品管理</span>
+              </Link>
+              <Link
+                href="/points/purchase"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+              >
+                <span className="text-base">💰</span>
+                <span>ポイント購入</span>
+              </Link>
+              <Link
+                href="/media"
+                className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <span className="text-base">🖼️</span>
+                <span>メディア</span>
+              </Link>
+            </nav>
+            <div className="px-3 py-2 border-t border-gray-700 pt-2">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-white text-sm font-light truncate">{user?.username}</div>
+                  <div className="text-gray-400 text-xs">{user?.user_type}</div>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+              >
+                ログアウト
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Content Area */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
 
           {/* Media Grid */}
           {media.length === 0 ? (
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-12 text-center">
-              <div className="text-5xl mb-3">🖼️</div>
-              <h3 className="text-xl font-light text-white mb-2">画像がありません</h3>
-              <p className="text-gray-400 text-sm font-light mb-4">最初の画像をアップロードしましょう</p>
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 sm:p-12 text-center">
+              <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">🖼️</div>
+              <h3 className="text-lg sm:text-xl font-light text-white mb-1 sm:mb-2">画像がありません</h3>
+              <p className="text-gray-400 text-xs sm:text-sm font-light mb-3 sm:mb-4">最初の画像をアップロードしましょう</p>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+                className="inline-block px-4 sm:px-5 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light"
               >
                 画像をアップロード
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3">
               {media.map((item, index) => (
                 <div
                   key={index}
                   className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-all group"
                 >
                   {/* Image */}
-                  <div className="relative h-32 bg-gray-900">
+                  <div className="relative h-20 sm:h-32 bg-gray-900">
                     <img
                       src={item.url}
                       alt="Media"
@@ -259,7 +330,7 @@ export default function MediaPage() {
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => window.open(item.url, '_blank')}
-                        className="px-3 py-1.5 bg-white text-black rounded text-xs font-light mr-1"
+                        className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-black rounded text-[10px] sm:text-xs font-light"
                       >
                         表示
                       </button>
@@ -267,20 +338,20 @@ export default function MediaPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="p-2">
-                    <div className="text-gray-400 text-[10px] font-light mb-2 truncate">
+                  <div className="p-1.5 sm:p-2">
+                    <div className="text-gray-400 text-[8px] sm:text-[10px] font-light mb-1 sm:mb-2 truncate">
                       {new Date(item.uploaded_at).toLocaleDateString('ja-JP')}
                     </div>
-                    <div className="grid grid-cols-2 gap-1">
+                    <div className="grid grid-cols-2 gap-0.5 sm:gap-1">
                       <button
                         onClick={() => handleCopyUrl(item.url)}
-                        className="px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs font-light"
+                        className="px-1 sm:px-2 py-0.5 sm:py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-[10px] sm:text-xs font-light"
                       >
                         URL
                       </button>
                       <button
                         onClick={() => handleDelete(item.url)}
-                        className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs font-light"
+                        className="px-1 sm:px-2 py-0.5 sm:py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-light"
                       >
                         削除
                       </button>
@@ -293,12 +364,12 @@ export default function MediaPage() {
 
           {/* Info */}
           {media.length > 0 && (
-            <div className="mt-6 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">ℹ️</span>
+            <div className="mt-4 sm:mt-6 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-lg sm:text-2xl">ℹ️</span>
                 <div>
-                  <div className="text-white text-sm font-light">合計 {media.length}枚の画像</div>
-                  <div className="text-gray-400 text-xs font-light">LPエディタでこれらの画像を使用できます</div>
+                  <div className="text-white text-xs sm:text-sm font-light">合計 {media.length}枚の画像</div>
+                  <div className="text-gray-400 text-[10px] sm:text-xs font-light">LPエディタでこれらの画像を使用できます</div>
                 </div>
               </div>
             </div>
