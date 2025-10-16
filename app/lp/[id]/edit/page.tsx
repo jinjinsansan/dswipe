@@ -850,7 +850,7 @@ export default function EditLPNewPage() {
           </div>
 
           {/* Block List - モバイルではブロック一覧のみ */}
-          <div className={`px-2 py-3 lg:px-2 lg:py-4 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
+          <div className={`py-3 lg:py-4 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-400 text-sm font-medium">
                 ブロックを追加してください
@@ -893,10 +893,10 @@ export default function EditLPNewPage() {
                         handleReorderBlocks(newBlocks);
                       }
                     }}
-                    className={`p-3 lg:p-3.5 rounded cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
+                    className={`p-3 lg:p-3.5 cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
                       selectedBlockId === block.id
-                        ? 'bg-blue-600/20 border-2 border-blue-600'
-                        : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-700'
+                        ? 'bg-blue-600/20 border-l-2 border-blue-600'
+                        : 'bg-gray-800/50 border-l border-gray-800 hover:bg-gray-700'
                     }`}
                   >
                     <div className="flex-1 min-w-0">
