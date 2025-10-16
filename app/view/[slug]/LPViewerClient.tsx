@@ -102,10 +102,20 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         setFixedCta(null);
       }
 
-      setLp({
+      const newLp = {
         ...response.data,
         steps: displaySteps,
+      };
+      
+      console.log('📝 setLp 実行前:', {
+        displayStepsLength: displaySteps.length,
+        newLpStepsLength: newLp.steps.length,
+        displayStepIds: displaySteps.map((s: any) => s.block_type),
       });
+      
+      setLp(newLp);
+      
+      console.log('✅ setLp 実行完了');
 
       if (response.data.id) {
         fetchProducts(response.data.id);
