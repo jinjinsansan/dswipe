@@ -56,32 +56,32 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   return (
     <div className="h-full flex flex-col">
       {/* ヘッダー */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800 flex-shrink-0">
+      <div className="flex items-center justify-between p-3 lg:p-4 border-b border-gray-800 flex-shrink-0">
         <div>
-          <h3 className="text-white text-sm font-light">プロパティ</h3>
+          <h3 className="text-white text-sm lg:text-sm font-light">プロパティ</h3>
           <p className="text-gray-500 text-xs mt-0.5">{block.blockType}</p>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-white transition-colors text-sm"
+          className="text-gray-500 hover:text-white transition-colors text-xl lg:text-sm"
         >
           ×
         </button>
       </div>
 
       {/* プロパティ */}
-      <div className="p-4 space-y-4 overflow-y-auto flex-1">
+      <div className="p-3 lg:p-4 space-y-4 overflow-y-auto flex-1">
         {/* テキストコンテンツ */}
         {('tagline' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               タグライン
             </label>
             <input
               type="text"
               value={(content as any).tagline || ''}
               onChange={(e) => onUpdateContent('tagline', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タグラインを入力"
             />
           </div>
@@ -89,14 +89,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('title' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               タイトル
             </label>
             <input
               type="text"
               value={(content as any).title || ''}
               onChange={(e) => onUpdateContent('title', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タイトルを入力"
             />
           </div>
@@ -104,14 +104,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('subtitle' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               サブタイトル
             </label>
             <input
               type="text"
               value={(content as any).subtitle || ''}
               onChange={(e) => onUpdateContent('subtitle', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="サブタイトルを入力"
             />
           </div>
@@ -119,14 +119,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('text' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               説明文
             </label>
             <textarea
               value={(content as any).text || ''}
               onChange={(e) => onUpdateContent('text', e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="説明文を入力"
             />
           </div>
@@ -134,14 +134,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('highlightText' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               ハイライトテキスト
             </label>
             <input
               type="text"
               value={(content as any).highlightText || ''}
               onChange={(e) => onUpdateContent('highlightText', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ハイライトテキストを入力"
             />
           </div>
@@ -149,14 +149,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('buttonText' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               ボタンテキスト
             </label>
             <input
               type="text"
               value={(content as any).buttonText || ''}
               onChange={(e) => onUpdateContent('buttonText', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
           </div>
@@ -164,14 +164,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('buttonUrl' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               ボタンURL
             </label>
             <input
               type="text"
               value={(content as any).buttonUrl || ''}
               onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="https://..."
             />
           </div>
@@ -179,21 +179,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('secondaryButtonText' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               セカンダリーボタン
             </label>
             <input
               type="text"
               value={(content as any).secondaryButtonText || ''}
               onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 mb-2"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
             <input
               type="text"
               value={(content as any).secondaryButtonUrl || ''}
               onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンのURL"
             />
           </div>
@@ -201,14 +201,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('subText' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               サブテキスト
             </label>
             <textarea
               value={(content as any).subText || ''}
               onChange={(e) => onUpdateContent('subText', e.target.value)}
               rows={3}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="CTAの補足説明"
             />
           </div>
@@ -216,14 +216,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('caption' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               キャプション
             </label>
             <input
               type="text"
               value={(content as any).caption || ''}
               onChange={(e) => onUpdateContent('caption', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="画像下に表示するテキスト"
             />
           </div>
@@ -231,14 +231,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('urgencyText' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               緊急性テキスト
             </label>
             <input
               type="text"
               value={(content as any).urgencyText || ''}
               onChange={(e) => onUpdateContent('urgencyText', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="緊急性テキストを入力"
             />
           </div>
@@ -246,13 +246,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('position' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               表示位置
             </label>
             <select
               value={(content as any).position || 'bottom'}
               onChange={(e) => onUpdateContent('position', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="top">上部固定</option>
               <option value="bottom">下部固定</option>
@@ -303,11 +303,11 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {(supportsThemeSelection || currentThemeKey) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">カラーテーマ</label>
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">カラーテーマ</label>
             <select
               value={currentThemeKey ?? ''}
               onChange={(e) => onUpdateContent('themeKey', e.target.value as ColorThemeKey)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="">デフォルト</option>
               {THEME_ENTRIES.map(([key, value]) => (
@@ -514,7 +514,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   <span>おすすめ表示（ハイライト）</span>
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                    className="h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
                     checked={Boolean(plan.highlighted)}
                     onChange={(e) => onUpdateContent(`plans.${index}.highlighted`, e.target.checked)}
                   />
@@ -736,13 +736,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* 背景色 */}
         {content.backgroundColor !== undefined && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               背景色
             </label>
             <div className="relative">
               <button
                 onClick={() => setShowColorPicker(showColorPicker === 'bg' ? null : 'bg')}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               >
                 <span>{content.backgroundColor || '#FFFFFF'}</span>
                 <div
@@ -772,13 +772,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* テキスト色 */}
         {content.textColor !== undefined && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               テキスト色
             </label>
             <div className="relative">
               <button
                 onClick={() => setShowColorPicker(showColorPicker === 'text' ? null : 'text')}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               >
                 <span>{content.textColor || '#000000'}</span>
                 <div
@@ -808,13 +808,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* ボタン色（CTAブロック等） */}
         {('buttonColor' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               ボタン色
             </label>
             <div className="relative">
               <button
                 onClick={() => setShowColorPicker(showColorPicker === 'button' ? null : 'button')}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               >
                 <span>{(content as any).buttonColor || '#3B82F6'}</span>
                 <div
@@ -843,13 +843,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {('accentColor' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               アクセントカラー
             </label>
             <div className="relative">
               <button
                 onClick={() => setShowColorPicker(showColorPicker === 'accent' ? null : 'accent')}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               >
                 <span>{(content as any).accentColor || '#ffffff'}</span>
                 <div
@@ -879,7 +879,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* パディング */}
         {content.padding !== undefined && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               パディング
             </label>
             <input
@@ -887,14 +887,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={content.padding || ''}
               onChange={(e) => onUpdateContent('padding', e.target.value)}
               placeholder="例: 16px または 1rem"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
 
         {('borderRadius' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               角丸
             </label>
             <input
@@ -902,14 +902,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).borderRadius || ''}
               onChange={(e) => onUpdateContent('borderRadius', e.target.value)}
               placeholder="例: 20px"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
 
         {('maxWidth' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               最大幅
             </label>
             <input
@@ -917,7 +917,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).maxWidth || ''}
               onChange={(e) => onUpdateContent('maxWidth', e.target.value)}
               placeholder="例: 960px"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -930,7 +930,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             </div>
             <input
               type="checkbox"
-              className="h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+              className="h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
               checked={Boolean((content as any).shadow)}
               onChange={(e) => onUpdateContent('shadow', e.target.checked)}
             />
@@ -940,13 +940,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* 配置（ヒーローブロック等） */}
         {('alignment' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               配置
             </label>
             <select
               value={(content as any).alignment || 'center'}
               onChange={(e) => onUpdateContent('alignment', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="left">左寄せ</option>
               <option value="center">中央</option>
@@ -958,13 +958,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* カラム数（Features, Pricing等） */}
         {('columns' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               カラム数
             </label>
             <select
               value={(content as any).columns || 3}
               onChange={(e) => onUpdateContent('columns', parseInt(e.target.value))}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="2">2カラム</option>
               <option value="3">3カラム</option>
@@ -976,7 +976,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* 画像アップロード */}
         {('imageUrl' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               画像
             </label>
             {(content as any).imageUrl ? (
@@ -1045,13 +1045,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* レイアウト（Testimonial, FAQ等） */}
         {('layout' in content) && (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
               レイアウト
             </label>
             <select
               value={(content as any).layout || 'card'}
               onChange={(e) => onUpdateContent('layout', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               {block.blockType.includes('testimonial') && (
                 <>
@@ -1078,7 +1078,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       </div>
 
       {/* フッター */}
-      <div className="p-4 border-t border-gray-700 bg-gray-900/50">
+      <div className="p-3 lg:p-4 border-t border-gray-700 bg-gray-900/50 flex-shrink-0">
         <p className="text-gray-400 text-xs text-center">
           💡 テキストをクリックすると直接編集できます
         </p>

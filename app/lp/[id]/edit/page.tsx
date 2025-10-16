@@ -14,6 +14,9 @@ import AITextGenerator from '@/components/AITextGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import type { AIGenerationResponse } from '@/types/api';
+
+// モバイル用タブ型定義
+type TabType = 'blocks' | 'preview' | 'properties';
 // UUID生成のヘルパー関数
 function generateId() {
   return `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -53,6 +56,8 @@ export default function EditLPNewPage() {
     imageUrl: '',
     siteName: '',
   });
+  const [mobileTab, setMobileTab] = useState<TabType>('preview');
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -405,23 +410,23 @@ export default function EditLPNewPage() {
 
   return (
     <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
-      {/* Header - Simplified */}
+      {/* Header */}
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 h-14 flex-shrink-0">
-        <div className="h-full px-4 flex items-center justify-between">
+        <div className="h-full px-3 sm:px-4 lg:px-4 flex items-center justify-between">
           {/* Left: Back & Title */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link 
               href="/dashboard"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
+              className="text-gray-300 hover:text-white transition-colors text-xs sm:text-sm font-medium"
             >
               ← 戻る
             </Link>
-            <div className="w-px h-4 bg-gray-800"></div>
-            <div className="text-sm font-semibold text-white">{lp.title}</div>
+            <div className="w-px h-4 bg-gray-800 hidden sm:block"></div>
+            <div className="text-xs sm:text-sm font-semibold text-white truncate">{lp.title}</div>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2">
+          {/* Right: Actions - モバイルではメニュー */}
+          <div className="hidden lg:flex items-center gap-2">
             {/* Status */}
             <span className={`px-2 py-1 text-xs rounded font-semibold ${
               lp.status === 'published'
@@ -475,73 +480,180 @@ export default function EditLPNewPage() {
               {isSaving ? '保存中...' : '保存'}
             </button>
           </div>
+
+          {/* モバイルメニューボタン */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="lg:hidden p-2 text-gray-300 hover:text-white"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
+
+        {/* モバイルメニュー */}
+        {showMobileMenu && (
+          <div className="lg:hidden border-t border-gray-800 bg-gray-900/50 p-3 space-y-2">
+            <span className={`block px-3 py-1 text-xs rounded font-semibold w-fit ${
+              lp.status === 'published'
+                ? 'bg-green-500/10 text-green-400'
+                : 'bg-gray-700/50 text-gray-400'
+            }`}>
+              {lp.status === 'published' ? '公開中' : '下書き'}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {lp.status === 'published' && (
+                <>
+                  <a
+                    href={`/view/${lp.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200 border border-gray-800 rounded transition-colors"
+                  >
+                    プレビュー
+                  </a>
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/view/${lp.slug}`;
+                      navigator.clipboard.writeText(url);
+                      alert('URLをコピーしました！');
+                      setShowMobileMenu(false);
+                    }}
+                    className="px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white border border-gray-800 rounded transition-colors"
+                  >
+                    URLコピー
+                  </button>
+                </>
+              )}
+              {lp.status === 'draft' && (
+                <button
+                  onClick={() => {
+                    handlePublish();
+                    setShowMobileMenu(false);
+                  }}
+                  className="px-3 py-1.5 text-xs font-semibold bg-green-600/90 text-white rounded hover:bg-green-600 transition-colors"
+                >
+                  公開
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  handleSave();
+                  setShowMobileMenu(false);
+                }}
+                disabled={isSaving}
+                className="px-3 py-1.5 text-xs font-semibold bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+              >
+                {isSaving ? '保存中...' : '保存'}
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Main Content - 3 Column Layout */}
-      <main className="flex-1 flex overflow-hidden">
+      {/* Main Content - 3 Column Layout (Desktop) / Tab-based Layout (Mobile) */}
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {error && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
+        {/* モバイル用タブ */}
+        <div className="lg:hidden flex-shrink-0 border-b border-gray-800 bg-gray-900/50">
+          <div className="flex gap-1 px-2 py-2 overflow-x-auto">
+            <button
+              onClick={() => setMobileTab('blocks')}
+              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
+                mobileTab === 'blocks'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800 text-gray-400 hover:text-white'
+              }`}
+            >
+              📋 ブロック
+            </button>
+            <button
+              onClick={() => setMobileTab('preview')}
+              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
+                mobileTab === 'preview'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800 text-gray-400 hover:text-white'
+              }`}
+            >
+              👁️ プレビュー
+            </button>
+            <button
+              onClick={() => setMobileTab('properties')}
+              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
+                mobileTab === 'properties'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800 text-gray-400 hover:text-white'
+              }`}
+            >
+              ⚙️ 設定
+            </button>
+          </div>
+        </div>
+
         {/* Left: Block List */}
-        <div className="w-64 bg-gray-800/30 border-r border-gray-800 overflow-hidden flex-shrink-0 flex flex-col min-h-0">
-          <div className="p-4 border-b border-gray-800">
+        <div className={`flex-col min-h-0 bg-gray-800/30 border-gray-800 overflow-hidden flex ${
+          mobileTab === 'blocks' ? 'lg:flex' : 'hidden lg:flex'
+        } flex-shrink-0 lg:flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
+          <div className="p-3 lg:p-4 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
-              className="w-full px-3 py-2 bg-blue-600/90 text-white text-sm font-semibold rounded hover:bg-blue-600 transition-colors"
+              className="w-full px-3 py-2.5 lg:py-2 bg-blue-600/90 text-white text-sm font-semibold rounded hover:bg-blue-600 transition-colors min-h-[44px] lg:min-h-auto"
             >
               + ブロック追加
             </button>
           </div>
 
-          <div className="px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20">
+          <div className="px-3 lg:px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
             <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
                 checked={lpSettings.showSwipeHint}
                 onChange={(e) =>
                   setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
                 }
               />
               <div>
-                <p className="text-sm text-white font-semibold">スワイプアニメーション</p>
-                <p className="text-xs text-gray-400">1枚目に指アイコンでスワイプを促します</p>
+                <p className="text-sm lg:text-xs text-white font-semibold">スワイプアニメーション</p>
+                <p className="text-xs lg:text-[11px] text-gray-400">1枚目に指アイコンでスワイプを促します</p>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
                 checked={lpSettings.fullscreenMedia}
                 onChange={(e) =>
                   setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
                 }
               />
               <div>
-                <p className="text-sm text-white font-semibold">メディアの全画面表示</p>
-                <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
+                <p className="text-sm lg:text-xs text-white font-semibold">メディアの全画面表示</p>
+                <p className="text-xs lg:text-[11px] text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
                 checked={lpSettings.floatingCta}
                 onChange={(e) =>
                   setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
                 }
               />
               <div>
-                <p className="text-sm text-white font-semibold">CTAを画面下部に固定表示</p>
-                <p className="text-xs text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
+                <p className="text-sm lg:text-xs text-white font-semibold">CTAを画面下部に固定表示</p>
+                <p className="text-xs lg:text-[11px] text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
               </div>
             </label>
 
@@ -556,28 +668,28 @@ export default function EditLPNewPage() {
                   value={metaSettings.title}
                   onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                   placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                 />
                 <textarea
                   value={metaSettings.description}
                   onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                   placeholder="OGPディスクリプション（120文字程度の紹介文）"
                   rows={3}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
                 />
                 <input
                   type="text"
                   value={metaSettings.imageUrl}
                   onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                   placeholder="OGP画像URL（1200x630推奨）"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                 />
                 <input
                   type="text"
                   value={metaSettings.siteName}
                   onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                   placeholder="サイト名（例：ABC情報局）"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                 />
               </div>
               <p className="text-[11px] text-gray-500 leading-relaxed">
@@ -587,7 +699,7 @@ export default function EditLPNewPage() {
           </div>
 
           {/* Block List */}
-          <div className="p-2 flex-1 overflow-y-auto min-h-0">
+          <div className="p-2 lg:p-2 flex-1 overflow-y-auto min-h-0">
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-400 text-sm font-medium">
                 ブロックを追加してください
@@ -624,25 +736,27 @@ export default function EditLPNewPage() {
                       }
                     }}
                     onClick={() => setSelectedBlockId(block.id)}
-                    className={`p-3 rounded cursor-move transition-colors ${
+                    className={`p-3 lg:p-3 rounded cursor-move transition-colors min-h-[56px] lg:min-h-auto flex items-center ${
                       selectedBlockId === block.id
                         ? 'bg-blue-600/20 border border-blue-600/50'
                         : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-800'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-gray-300">#{index + 1}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteBlock(block.id);
-                        }}
-                        className="text-xs text-gray-500 hover:text-red-400 transition-colors"
-                      >
-                        削除
-                      </button>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold text-gray-300">#{index + 1}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteBlock(block.id);
+                          }}
+                          className="text-xs text-gray-500 hover:text-red-400 transition-colors"
+                        >
+                          削除
+                        </button>
+                      </div>
+                      <div className="text-sm lg:text-sm font-semibold text-white">{block.blockType}</div>
                     </div>
-                    <div className="text-sm font-semibold text-white">{block.blockType}</div>
                   </div>
                 ))}
               </div>
@@ -651,7 +765,9 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Center: Preview */}
-        <div className="flex-1 bg-white overflow-y-auto">
+        <div className={`flex-1 bg-white overflow-y-auto ${
+          mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
+        }`}>
           <DraggableBlockEditor
             blocks={blocks}
             onUpdateBlock={() => {}}
@@ -664,8 +780,27 @@ export default function EditLPNewPage() {
           />
         </div>
 
-        {/* Right: Properties Panel */}
-        <div className="w-96 bg-gray-800/30 border-l border-gray-800 overflow-hidden flex-shrink-0">
+        {/* Right: Properties Panel (Desktop) / Bottom Drawer (Mobile) */}
+        {/* デスクトップ表示 */}
+        <div className={`hidden lg:flex w-96 bg-gray-800/30 border-l border-gray-800 overflow-hidden flex-shrink-0 flex-col`}>
+          {selectedBlockId ? (
+            <PropertyPanel
+              block={blocks.find(b => b.id === selectedBlockId) || null}
+              onUpdateContent={handleUpdateSelectedBlock}
+              onClose={() => setSelectedBlockId(null)}
+              onGenerateAI={handleGenerateAI}
+            />
+          ) : (
+            <div className="p-6 text-center text-gray-400 font-medium text-sm">
+              ブロックを選択して編集
+            </div>
+          )}
+        </div>
+
+        {/* モバイル表示: Properties Panel タブ */}
+        <div className={`flex-col min-h-0 bg-gray-800/30 border-t border-gray-800 lg:hidden overflow-hidden flex ${
+          mobileTab === 'properties' ? 'lg:flex' : 'hidden lg:flex'
+        }`}>
           {selectedBlockId ? (
             <PropertyPanel
               block={blocks.find(b => b.id === selectedBlockId) || null}

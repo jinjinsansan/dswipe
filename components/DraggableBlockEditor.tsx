@@ -77,12 +77,12 @@ function SortableBlock({
       ref={setNodeRef}
       style={style}
       className={`relative group ${
-        isEditing ? 'mb-4 cursor-move' : ''
+        isEditing ? 'mb-2 lg:mb-4 cursor-move' : ''
       } ${isDragging ? 'z-50' : ''}`}
     >
       {/* ドラッグハンドル & コントロール（編集モード時のみ） */}
       {isEditing && (
-        <div className="absolute -left-16 top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <div className="absolute -left-14 lg:-left-16 top-2 lg:top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 hidden lg:flex">
           {/* ドラッグハンドル */}
           <button
             {...attributes}
@@ -127,7 +127,7 @@ function SortableBlock({
         }`}
       >
         {isEditing && (
-          <div className="absolute top-2 right-2 bg-black/70 text-white px-3 py-1 rounded text-sm z-10 pointer-events-none">
+          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
             {block.blockType}
           </div>
         )}
@@ -188,10 +188,10 @@ export default function DraggableBlockEditor({
 
   if (sortedBlocks.length === 0) {
     return (
-      <div className="text-center py-16 px-8 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-700">
-        <div className="text-6xl mb-4">📦</div>
-        <h3 className="text-white font-semibold text-xl mb-2">ブロックがありません</h3>
-        <p className="text-gray-400">
+      <div className="text-center py-8 lg:py-16 px-4 lg:px-8 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-700">
+        <div className="text-4xl lg:text-6xl mb-2 lg:mb-4">📦</div>
+        <h3 className="text-white font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
+        <p className="text-gray-400 text-sm lg:text-base">
           「+ ブロック追加」ボタンからテンプレートを追加してください
         </p>
       </div>
