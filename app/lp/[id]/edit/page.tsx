@@ -893,26 +893,26 @@ export default function EditLPNewPage() {
                         handleReorderBlocks(newBlocks);
                       }
                     }}
-                    className={`p-4 lg:p-4 rounded cursor-move transition-colors min-h-[64px] lg:min-h-[70px] flex items-center ${
+                    className={`p-5 lg:p-6 rounded cursor-move transition-colors min-h-[80px] lg:min-h-[90px] flex items-center ${
                       selectedBlockId === block.id
-                        ? 'bg-blue-600/20 border border-blue-600/50'
-                        : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-800'
+                        ? 'bg-blue-600/20 border-2 border-blue-600'
+                        : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-700'
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2 gap-2">
-                        <span className="text-sm lg:text-sm font-bold text-blue-400 flex-shrink-0">#{index + 1}</span>
+                      <div className="flex items-center justify-between mb-3 gap-2">
+                        <span className="text-lg lg:text-lg font-bold text-blue-300 flex-shrink-0">#{index + 1}</span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteBlock(block.id);
                           }}
-                          className="text-xs text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
+                          className="text-sm text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           削除
                         </button>
                       </div>
-                      <div className="text-base lg:text-base font-bold text-white truncate">{block.blockType}</div>
+                      <div className="text-lg lg:text-lg font-bold text-white truncate">{block.blockType}</div>
                     </div>
                   </div>
                 ))}
