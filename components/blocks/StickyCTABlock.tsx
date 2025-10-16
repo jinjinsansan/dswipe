@@ -39,7 +39,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
               {content.subText && (
                 <div className="hidden md:block text-left">
-                  <p className="text-lg font-semibold text-gray-300">
+                  <p className="text-lg font-semibold" style={{ color: content.descriptionColor || textColor }}>
                     {content.subText}
                   </p>
                 </div>
@@ -58,7 +58,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
               </div>
 
               {content.subText && (
-                <div className="md:hidden w-full text-center text-sm text-gray-400">
+                <div className="md:hidden w-full text-center text-sm" style={{ color: content.descriptionColor || textColor }}>
                   {content.subText}
                 </div>
               )}
@@ -79,9 +79,10 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
         style={{ paddingTop: position === 'top' ? '1rem' : '1.75rem' }}
       >
         <div
-          className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+          className="relative overflow-hidden w-full backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
           style={{
             backgroundImage: gradientBackground,
+            backgroundColor: content.backgroundColor || '#111827',
             borderTop: `3px solid ${accentColor}`,
           }}
         >
@@ -95,7 +96,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
           {/* サブテキスト */}
           {content.subText && (
             <div className="hidden md:block">
-              <p className="text-lg font-semibold text-gray-300">
+              <p className="text-lg font-semibold" style={{ color: content.descriptionColor || textColor }}>
                 {content.subText}
               </p>
             </div>
@@ -114,7 +115,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
 
           {/* モバイル用サブテキスト */}
           {content.subText && (
-            <div className="md:hidden w-full text-center text-sm text-gray-400">
+            <div className="md:hidden w-full text-center text-sm" style={{ color: content.descriptionColor || textColor }}>
               {content.subText}
             </div>
           )}

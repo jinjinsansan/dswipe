@@ -367,6 +367,15 @@ export interface BeforeAfterBlockContent extends BaseBlockContent {
   arrowIcon?: string;
   titleColor?: string;
   descriptionColor?: string;
+  beforeBgColor?: string;
+  beforeTitleColor?: string;
+  beforeTextColor?: string;
+  beforeCheckColor?: string;
+  afterBgColor?: string;
+  afterTitleColor?: string;
+  afterTextColor?: string;
+  afterCheckColor?: string;
+  highlightColor?: string;
 }
 
 // 著者プロフィール

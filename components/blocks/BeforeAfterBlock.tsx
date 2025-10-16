@@ -8,18 +8,37 @@ interface BeforeAfterBlockProps {
 }
 
 export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
+  const {
+    backgroundColor = '#111827',
+    textColor = '#FFFFFF',
+    titleColor,
+    descriptionColor,
+    beforeBgColor = '#1F2937',
+    beforeTitleColor = '#EF4444',
+    beforeTextColor = '#D1D5DB',
+    beforeCheckColor = '#F87171',
+    afterBgColor = '#059669',
+    afterTitleColor = '#FBBF24',
+    afterTextColor = '#FFFFFF',
+    afterCheckColor = '#FCD34D',
+    highlightColor = '#FBBF24',
+  } = content;
+
   return (
     <div
       className="py-12 px-4"
       style={{
-        backgroundColor: content.backgroundColor || '#111827',
-        color: content.textColor || '#FFFFFF',
+        backgroundColor,
+        color: textColor,
       }}
     >
       <div className="max-w-6xl mx-auto">
         {/* タイトル */}
         {content.title && (
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+          <h2 
+            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            style={{ color: titleColor || textColor }}
+          >
             {content.title}
           </h2>
         )}
@@ -27,9 +46,21 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
         {/* Before & After比較 */}
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Before */}
-          <div className="bg-gray-800 rounded-2xl p-8 border-4 border-red-500/50">
+          <div 
+            className="rounded-2xl p-8 border-4"
+            style={{ 
+              backgroundColor: beforeBgColor,
+              borderColor: beforeTitleColor + '80',
+            }}
+          >
             <div className="text-center mb-6">
-              <span className="bg-red-600 text-white px-6 py-2 rounded-full text-2xl font-bold inline-block">
+              <span 
+                className="px-6 py-2 rounded-full text-2xl font-bold inline-block"
+                style={{ 
+                  backgroundColor: beforeTitleColor,
+                  color: '#FFFFFF',
+                }}
+              >
                 {content.beforeTitle || 'BEFORE'}
               </span>
             </div>
@@ -45,10 +76,10 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
             )}
             
             {content.beforeText && (
-              <div className="text-lg text-gray-300 leading-relaxed">
+              <div className="text-lg leading-relaxed" style={{ color: beforeTextColor }}>
                 {content.beforeText.split('\n').map((line, i) => (
                   <p key={i} className="mb-2 flex items-start gap-2">
-                    <span className="text-red-400 flex-shrink-0">❌</span>
+                    <span className="flex-shrink-0" style={{ color: beforeCheckColor }}>❌</span>
                     <span>{line}</span>
                   </p>
                 ))}
@@ -67,9 +98,21 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
           </div>
 
           {/* After */}
-          <div className="bg-gradient-to-br from-green-600 to-blue-600 rounded-2xl p-8 border-4 border-yellow-400">
+          <div 
+            className="rounded-2xl p-8 border-4"
+            style={{ 
+              backgroundImage: `linear-gradient(to bottom right, ${afterBgColor}, ${afterBgColor}dd)`,
+              borderColor: highlightColor + '80',
+            }}
+          >
             <div className="text-center mb-6">
-              <span className="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full text-2xl font-bold inline-block">
+              <span 
+                className="px-6 py-2 rounded-full text-2xl font-bold inline-block"
+                style={{ 
+                  backgroundColor: highlightColor,
+                  color: '#111827',
+                }}
+              >
                 {content.afterTitle || 'AFTER'}
               </span>
             </div>
@@ -85,10 +128,10 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
             )}
             
             {content.afterText && (
-              <div className="text-lg text-white leading-relaxed">
+              <div className="text-lg leading-relaxed" style={{ color: afterTextColor }}>
                 {content.afterText.split('\n').map((line, i) => (
                   <p key={i} className="mb-2 flex items-start gap-2">
-                    <span className="text-yellow-300 flex-shrink-0 text-2xl">✓</span>
+                    <span className="flex-shrink-0 text-2xl" style={{ color: afterCheckColor }}>✓</span>
                     <span className="font-semibold">{line}</span>
                   </p>
                 ))}
@@ -99,10 +142,16 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
 
         {/* 変化を促すメッセージ */}
         <div className="mt-16 text-center">
-          <p className="text-3xl md:text-4xl font-bold text-yellow-400 mb-4">
+          <p 
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ color: highlightColor }}
+          >
             あなたもこの変化を手に入れませんか？
           </p>
-          <p className="text-xl text-gray-300">
+          <p 
+            className="text-xl"
+            style={{ color: descriptionColor || textColor }}
+          >
             実践者全員が同じ結果を得ています
           </p>
         </div>
