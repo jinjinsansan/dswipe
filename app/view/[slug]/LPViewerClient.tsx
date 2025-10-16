@@ -480,7 +480,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           {(() => {
             const { accent, background } = getFixedCtaDecoration();
             return (
-              <div className="w-full px-3 sm:px-4 pt-2.5 pb-2.5">
+              <div className="w-full px-3 sm:px-4 py-2 sm:py-2.5">
                 <div
                   className="relative overflow-hidden max-w-4xl mx-auto bg-gray-950/90 backdrop-blur-2xl shadow-[0_18px_50px_-18px_rgba(0,0,0,0.55)] border border-white/10"
                   style={{ background, borderRadius: '18px 18px 0 0' }}
@@ -491,7 +491,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                       background: 'radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 60%)',
                     }}
                   />
-                  <div className="relative z-[1] p-3 sm:p-4">
+                  <div className="relative z-[1] p-2 sm:p-3">
                     <BlockRenderer
                       blockType={fixedCta.blockType}
                       content={fixedCta.content}

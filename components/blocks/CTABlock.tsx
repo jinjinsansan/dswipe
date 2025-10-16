@@ -22,7 +22,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-2 px-4 sm:py-3 sm:px-5' : 'py-6 px-5'}
+      className={fullWidth ? 'py-1.5 px-4 sm:py-2 sm:px-5' : 'py-6 px-5'}
       style={{
         background,
         color: textColor,
@@ -57,12 +57,12 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            <h2 className={fullWidth ? 'text-lg md:text-xl font-bold mb-1.5' : 'text-3xl md:text-4xl font-bold mb-3'}>
+            <h2 className={fullWidth ? 'text-base md:text-lg font-bold mb-0.5' : 'text-3xl md:text-4xl font-bold mb-3'}>
               {content.title || 'さあ、始めましょう'}
             </h2>
             {content.subtitle && (
               <p
-                className={fullWidth ? 'text-xs md:text-sm mb-2.5 text-white/80' : 'text-base mb-3 text-white/80'}
+                className={fullWidth ? 'text-xs mb-1 text-white/80' : 'text-base mb-3 text-white/80'}
                 style={{ color: `${textColor}CC` }}
               >
                 {content.subtitle}
@@ -74,7 +74,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'inline-flex items-center justify-center min-w-[200px] md:min-w-[240px] px-6 py-2 rounded-full font-semibold text-sm shadow-lg hover:scale-[1.03] transition-transform'
+                      ? 'inline-flex items-center justify-center min-w-[180px] md:min-w-[220px] px-5 py-1.5 rounded-full font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.03] transition-transform'
                       : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
@@ -89,7 +89,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'inline-flex items-center justify-center min-w-[200px] md:min-w-[240px] px-6 py-2 rounded-full font-semibold text-sm shadow-lg hover:scale-[1.03] transition-transform'
+                      ? 'inline-flex items-center justify-center min-w-[180px] md:min-w-[220px] px-5 py-1.5 rounded-full font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.03] transition-transform'
                       : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
