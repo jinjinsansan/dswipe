@@ -55,9 +55,19 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
           )}
         </figure>
       ) : (
-        <div className="w-full max-w-3xl border-2 border-dashed border-white/15 rounded-2xl bg-white/5 p-10 text-center">
+        <div 
+          className="w-full max-w-3xl border-2 border-dashed rounded-2xl p-10 text-center"
+          style={{
+            backgroundColor: `${textColor || '#ffffff'}08`,
+            borderColor: `${textColor || '#ffffff'}26`,
+            color: textColor || '#ffffff',
+          }}
+        >
           <div className="text-4xl mb-3">🖼️</div>
-          <p className="text-base text-gray-300/80">
+          <p 
+            className="text-base"
+            style={{ color: textColor ? `${textColor}CC` : '#E5E7EB' }}
+          >
             {isEditing ? '画像をアップロードすると、ここに表示されます。' : '画像が設定されていません。'}
           </p>
         </div>

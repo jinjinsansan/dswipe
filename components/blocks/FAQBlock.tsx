@@ -68,7 +68,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                   {faq.question}
                 </h3>
                 <p
-                  className="text-gray-600"
+                  className="leading-relaxed"
                   style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning

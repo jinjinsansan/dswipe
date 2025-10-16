@@ -48,20 +48,23 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                 value={tagline ?? ""}
                 onChange={(e) => onEdit?.("tagline", e.target.value)}
                 placeholder="タグライン"
-                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm text-blue-100/90 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                style={{ color: bodyColor }}
               />
               <textarea
                 value={title ?? ""}
                 onChange={(e) => onEdit?.("title", e.target.value)}
                 placeholder="セクションタイトル"
                 rows={2}
-                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-base text-blue-100/90 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                style={{ color: bodyColor }}
               />
               <input
                 value={highlightText ?? ""}
                 onChange={(e) => onEdit?.("highlightText", e.target.value)}
                 placeholder="ハイライトテキスト"
-                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm text-blue-100/90 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                style={{ color: bodyColor }}
               />
             </div>
           ) : (
@@ -98,20 +101,23 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                       value={feature.icon ?? ""}
                       onChange={(e) => onEdit?.(`features.${index}.icon`, e.target.value)}
                       placeholder="アイコン / 絵文字"
-                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm text-blue-100/90 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      style={{ color: bodyColor }}
                     />
                     <input
                       value={feature.title ?? ""}
                       onChange={(e) => onEdit?.(`features.${index}.title`, e.target.value)}
                       placeholder="特徴タイトル"
-                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-base text-blue-100/90 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      style={{ color: bodyColor }}
                     />
                     <textarea
                       value={feature.description ?? ""}
                       onChange={(e) => onEdit?.(`features.${index}.description`, e.target.value)}
                       placeholder="詳細説明"
                       rows={3}
-                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm text-blue-100/85 focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      className="w-full rounded-lg border border-glass-faint bg-surface-alt-soft px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]"
+                      style={{ color: bodyColor }}
                     />
                   </>
                 ) : (
