@@ -8,7 +8,7 @@ interface FeaturesBlockProps {
 }
 
 export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBlockProps) {
-  const { title, features, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
+  const { title, features, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
 
   const gridCols = 
     columns === 2 ? 'md:grid-cols-2' : 
@@ -25,6 +25,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
         {title && (
           <h2
             className="text-4xl font-bold text-center mb-12"
+            style={{ color: textColor }}
             contentEditable={isEditing}
             suppressContentEditableWarning
             onBlur={(e) => {
@@ -40,7 +41,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
         {/* 特徴グリッド */}
         <div className={`grid grid-cols-1 ${gridCols} gap-8`}>
           {features.map((feature, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="text-center p-6 rounded-lg" style={{ backgroundColor: accentColor + '08', borderTop: `3px solid ${accentColor}` }}>
               {/* アイコン */}
               {feature.icon && (
                 <div className="text-6xl mb-4"
@@ -61,6 +62,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
               {/* タイトル */}
               <h3
                 className="text-xl font-semibold mb-3"
+                style={{ color: textColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -76,7 +78,8 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
 
               {/* 説明 */}
               <p
-                className="text-gray-600 leading-relaxed"
+                className="leading-relaxed"
+                style={{ color: textColor, opacity: 0.8 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {

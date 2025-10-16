@@ -10,7 +10,7 @@ interface FAQBlockProps {
 }
 
 export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) {
-  const { title, faqs, layout = 'accordion', backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
+  const { title, faqs, layout = 'accordion', backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {
@@ -42,9 +42,10 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
           
           <div className="grid md:grid-cols-2 gap-8">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 shadow-md">
+              <div key={index} className="rounded-lg p-6 shadow-md" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
                 <h3
-                  className="text-xl font-semibold mb-3 text-gray-900"
+                  className="text-xl font-semibold mb-3"
+                  style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -59,6 +60,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                 </h3>
                 <p
                   className="text-gray-600"
+                  style={{ color: textColor, opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -105,14 +107,17 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+              className="rounded-lg shadow-md overflow-hidden"
+              style={{ backgroundColor: backgroundColor + 'F0', borderLeft: `4px solid ${accentColor}` }}
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between p-6 text-left transition-colors"
+                style={{ backgroundColor: backgroundColor + 'F0' }}
               >
                 <h3
-                  className="text-lg font-semibold text-gray-900 flex-1"
+                  className="text-lg font-semibold flex-1"
+                  style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -146,7 +151,8 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
               {openIndex === index && (
                 <div className="px-6 pb-6">
                   <p
-                    className="text-gray-600 leading-relaxed"
+                    className="leading-relaxed"
+                    style={{ color: textColor, opacity: 0.8 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={(e) => {

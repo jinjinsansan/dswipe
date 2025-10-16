@@ -8,7 +8,7 @@ interface PricingBlockProps {
 }
 
 export default function PricingBlock({ content, isEditing, onEdit }: PricingBlockProps) {
-  const { plans, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
+  const { plans, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
 
   const gridCols = columns === 2 ? 'sm:grid-cols-2' : columns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-1';
 
@@ -22,15 +22,18 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`rounded-2xl p-8 transition-all ${
-                plan.highlighted
-                  ? 'bg-blue-600 text-white shadow-2xl scale-105 border-4 border-blue-500'
-                  : 'bg-white text-gray-900 shadow-lg border border-gray-200'
-              }`}
+              className="rounded-2xl p-8 transition-all shadow-lg"
+              style={{
+                backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
+                color: plan.highlighted ? '#FFFFFF' : textColor,
+                borderWidth: '1px',
+                borderColor: plan.highlighted ? accentColor : '#E5E7EB',
+                transform: plan.highlighted ? 'scale(1.05)' : 'scale(1)',
+              }}
             >
               {/* プラン名 */}
               <h3
-                className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}
+                className="text-2xl font-bold mb-2"
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -47,7 +50,8 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 説明 */}
               {plan.description && (
                 <p
-                  className={`text-sm mb-4 ${plan.highlighted ? 'text-blue-100' : 'text-gray-600'}`}
+                  className="text-sm mb-4"
+                  style={{ opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -65,7 +69,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 価格 */}
               <div className="mb-6">
                 <span
-                  className={`text-5xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}
+                  className="text-5xl font-bold"
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -79,7 +83,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
                   {plan.price}
                 </span>
                 {plan.period && (
-                  <span className={`text-lg ml-2 ${plan.highlighted ? 'text-blue-100' : 'text-gray-600'}`}>
+                  <span className="text-lg ml-2" style={{ opacity: 0.7 }}>
                     / {plan.period}
                   </span>
                 )}
@@ -90,13 +94,14 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}
-                    className={`flex items-center ${plan.highlighted ? 'text-white' : 'text-gray-700'}`}
+                    className="flex items-center"
                   >
                     <svg
-                      className={`w-5 h-5 mr-2 ${plan.highlighted ? 'text-blue-200' : 'text-green-500'}`}
+                      className="w-5 h-5 mr-2"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      style={{ color: accentColor }}
                     >
                       <path
                         strokeLinecap="round"
@@ -124,11 +129,11 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
 
               {/* ボタン */}
               <button
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-                  plan.highlighted
-                    ? 'bg-white text-blue-600 hover:bg-gray-100'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                className="w-full py-3 px-6 rounded-lg font-semibold transition-colors"
+                style={{
+                  backgroundColor: plan.highlighted ? '#FFFFFF' : accentColor,
+                  color: plan.highlighted ? accentColor : '#FFFFFF',
+                }}
                 onClick={() => {
                   if (plan.buttonUrl) {
                     window.location.href = plan.buttonUrl;

@@ -9,7 +9,7 @@ interface TestimonialBlockProps {
 }
 
 export default function TestimonialBlock({ content, isEditing, onEdit }: TestimonialBlockProps) {
-  const { testimonials, layout = 'card', backgroundColor = '#F9FAFB', textColor = '#111827' } = content;
+  const { testimonials, layout = 'card', backgroundColor = '#F9FAFB', textColor = '#111827', accentColor = '#3B82F6' } = content;
 
   const renderStars = (rating: number = 5) => {
     return (
@@ -38,10 +38,11 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 shadow-md">
+              <div key={index} className="rounded-lg p-6 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
                 {testimonial.rating && renderStars(testimonial.rating)}
                 <p
-                  className="text-gray-700 my-4"
+                  className="my-4"
+                  style={{ color: textColor, opacity: 0.9 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -55,7 +56,8 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                   &ldquo;{testimonial.text}&rdquo;
                 </p>
                 <p
-                  className="font-semibold text-gray-900"
+                  className="font-semibold"
+                  style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -85,7 +87,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white rounded-xl p-8 shadow-lg">
+            <div key={index} className="rounded-xl p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
               {/* 画像 */}
               {testimonial.imageUrl && (
                 <div className="relative w-16 h-16 mx-auto mb-4">
@@ -108,7 +110,8 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
 
               {/* テキスト */}
               <p
-                className="text-gray-700 text-center mb-6 leading-relaxed"
+                className="text-center mb-6 leading-relaxed"
+                style={{ color: textColor, opacity: 0.9 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -125,7 +128,8 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
               {/* 名前 */}
               <div className="text-center">
                 <p
-                  className="font-semibold text-gray-900"
+                  className="font-semibold"
+                  style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -140,7 +144,8 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                 </p>
                 {testimonial.role && (
                   <p
-                    className="text-sm text-gray-600"
+                    className="text-sm"
+                    style={{ color: textColor, opacity: 0.7 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={(e) => {
@@ -155,7 +160,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                   </p>
                 )}
                 {testimonial.company && (
-                  <p className="text-sm text-gray-500">{testimonial.company}</p>
+                  <p className="text-sm" style={{ color: textColor, opacity: 0.6 }}>{testimonial.company}</p>
                 )}
               </div>
             </div>
