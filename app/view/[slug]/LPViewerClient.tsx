@@ -51,21 +51,24 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const response = await publicApi.getLP(slug);
       const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
+      const meaningfulSteps = sortedSteps.filter(
+        (step) => Boolean(step.block_type) || Boolean(step.image_url)
+      );
 
       const shouldUseFloating = Boolean(response.data.floating_cta);
       const stickySteps = shouldUseFloating
-        ? sortedSteps.filter((step) => step.block_type === 'sticky-cta-1')
+        ? meaningfulSteps.filter((step) => step.block_type === 'sticky-cta-1')
         : [];
       setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
 
-      const ctaBlock = [...sortedSteps]
+      const ctaBlock = [...meaningfulSteps]
         .reverse()
         .find((step: any) =>
           step.block_type &&
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
 
-      const displaySteps = sortedSteps
+      const displaySteps = meaningfulSteps
         .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
         .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
 
