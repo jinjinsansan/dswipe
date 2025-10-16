@@ -30,7 +30,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
         borderRadius: fullWidth ? '0px' : undefined,
       }}
     >
-      <div className={fullWidth ? 'w-full px-4 md:px-6 flex items-center justify-between gap-4' : 'max-w-4xl mx-auto text-center'}>
+      <div className={fullWidth ? 'w-full px-4 md:px-8 lg:px-12 py-4 md:py-6 flex items-center justify-between gap-6 md:gap-8' : 'max-w-4xl mx-auto text-center'}>
         {isEditing ? (
           <>
             <input
@@ -60,12 +60,12 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
             {fullWidth ? (
               <>
                 <div className="flex-1 text-left">
-                  <h2 className="text-base md:text-lg font-bold mb-0.5">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
                     {content.title || 'さあ、始めましょう'}
                   </h2>
                   {content.subtitle && (
                     <p
-                      className="text-xs mb-0 text-white/80"
+                      className="text-sm md:text-base text-white/80"
                       style={{ color: `${textColor}CC` }}
                     >
                       {content.subtitle}
@@ -88,7 +88,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 )}
               </>
             )}
-            <div className={fullWidth ? 'flex-shrink-0' : 'flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3'}>
+            <div className={fullWidth ? 'flex-shrink-0 flex items-center' : 'flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3'}>
               {productId ? (
                 <Link
                   href={`/points/purchase?product_id=${productId}`}
