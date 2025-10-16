@@ -52,7 +52,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
       const meaningfulSteps = sortedSteps.filter(
-        (step) => Boolean(step.block_type) || Boolean(step.image_url)
+        (step) => typeof step.block_type === 'string' && step.block_type.trim().length > 0
       );
 
       const shouldUseFloating = Boolean(response.data.floating_cta);
