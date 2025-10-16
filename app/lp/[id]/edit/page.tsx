@@ -742,7 +742,7 @@ export default function EditLPNewPage() {
         {/* Left: Block List */}
         <div className={`flex-col min-h-0 bg-gray-800/30 border-gray-800 overflow-hidden flex ${
           mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
-        } flex-shrink-0 lg:flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
+        } flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
           <div className="p-3 lg:p-4 border-b border-gray-800">
             <button
               onClick={() => setShowTemplateSelector(true)}
@@ -850,13 +850,13 @@ export default function EditLPNewPage() {
           </div>
 
           {/* Block List - モバイルではブロック一覧のみ */}
-          <div className={`p-2 lg:p-2 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
+          <div className={`p-3 lg:p-4 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-400 text-sm font-medium">
                 ブロックを追加してください
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-2 lg:space-y-2">
                 {blocks.map((block, index) => (
                   <div
                     key={block.id}
@@ -922,19 +922,21 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Center: Preview */}
-        <div className={`flex-1 bg-white overflow-y-auto ${
+        <div className={`flex-1 min-w-0 bg-white overflow-y-auto flex flex-col items-center ${
           mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
         }`}>
-          <DraggableBlockEditor
-            blocks={blocks}
-            onUpdateBlock={() => {}}
-            onDeleteBlock={() => {}}
-            onReorderBlocks={handleReorderBlocks}
-            isEditing={false}
-            onSelectBlock={setSelectedBlockId}
-            selectedBlockId={selectedBlockId || undefined}
-            withinEditor
-          />
+          <div className="w-full h-full overflow-y-auto p-4 lg:p-8">
+            <DraggableBlockEditor
+              blocks={blocks}
+              onUpdateBlock={() => {}}
+              onDeleteBlock={() => {}}
+              onReorderBlocks={handleReorderBlocks}
+              isEditing={false}
+              onSelectBlock={setSelectedBlockId}
+              selectedBlockId={selectedBlockId || undefined}
+              withinEditor
+            />
+          </div>
         </div>
 
         {/* Right: Properties Panel (Desktop) / Bottom Drawer (Mobile) */}
