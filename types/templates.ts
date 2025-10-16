@@ -309,6 +309,11 @@ export interface SpecialPriceBlockContent extends BaseBlockContent {
   features?: string[];
   buttonText?: string;
   buttonColor?: string;
+  titleColor?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
+  priceColor?: string;
+  originalPriceColor?: string;
 }
 
 // ボーナス特典リスト
@@ -322,6 +327,8 @@ export interface BonusListBlockContent extends BaseBlockContent {
     icon?: string;
   }[];
   totalValue?: string;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // 保証セクション
@@ -332,6 +339,10 @@ export interface GuaranteeBlockContent extends BaseBlockContent {
   description?: string;
   badgeText?: string;
   features?: string[];
+  titleColor?: string;
+  descriptionColor?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
 }
 
 // 問題提起ブロック
@@ -340,6 +351,8 @@ export interface ProblemBlockContent extends BaseBlockContent {
   subtitle?: string;
   problems: string[];
   checkIcon?: string;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // ビフォーアフター
@@ -352,6 +365,8 @@ export interface BeforeAfterBlockContent extends BaseBlockContent {
   afterText?: string;
   afterImage?: string;
   arrowIcon?: string;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // 著者プロフィール
@@ -362,6 +377,8 @@ export interface AuthorProfileBlockContent extends BaseBlockContent {
   bio?: string;
   achievements?: string[];
   mediaLogos?: string[];
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // 緊急性訴求
@@ -370,6 +387,8 @@ export interface UrgencyBlockContent extends BaseBlockContent {
   message: string;
   icon?: string;
   highlightColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // 限定性訴求
@@ -379,6 +398,8 @@ export interface ScarcityBlockContent extends BaseBlockContent {
   totalCount?: number;
   message?: string;
   progressColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // スティッキーCTA
@@ -387,7 +408,22 @@ export interface StickyCTABlockContent extends BaseBlockContent {
   buttonColor?: string;
   subText?: string;
   position?: 'top' | 'bottom';
+  titleColor?: string;
+  descriptionColor?: string;
   themeKey?: TemplateThemeKey;
+}
+
+// カウントダウン
+export interface CountdownBlockContent extends BaseBlockContent {
+  title?: string;
+  targetDate: string;
+  urgencyText?: string;
+  showDays?: boolean;
+  showHours?: boolean;
+  showMinutes?: boolean;
+  showSeconds?: boolean;
+  titleColor?: string;
+  descriptionColor?: string;
 }
 
 // ブロックコンテンツの型（Union型）
