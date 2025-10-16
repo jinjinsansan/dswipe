@@ -13,9 +13,27 @@ interface FormBlockProps {
 
 export default function FormBlock({ content, isEditing, onEdit, productId }: FormBlockProps) {
   const router = useRouter();
-  const { title, fields, submitButtonText = '送信', backgroundColor = '#FFFFFF', textColor = '#111827' } = content;
+  const { 
+    title, 
+    fields, 
+    submitButtonText = '送信', 
+    backgroundColor = '#FFFFFF', 
+    textColor = '#111827',
+    buttonColor = '#2563EB',
+    accentColor = '#DC2626',
+  } = content;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 色の計算
+  const formBgColor = '#FFFFFF';
+  const labelColor = textColor;
+  const requiredMarkColor = accentColor;
+  const borderColor = `${textColor}33`;
+  const focusRingColor = buttonColor;
+  const checkboxColor = buttonColor;
+  const buttonBgColor = buttonColor;
+  const disabledBgColor = `${textColor}10`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,12 +83,13 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
         )}
 
         {/* フォーム */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="rounded-xl shadow-lg p-8 space-y-6" style={{ backgroundColor: formBgColor }}>
           {fields.map((field, index) => (
             <div key={index}>
               <label
                 htmlFor={field.name}
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium mb-2"
+                style={{ color: labelColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -82,7 +101,7 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
                 }}
               >
                 {field.label}
-                {field.required && <span className="text-red-500 ml-1">*</span>}
+                {field.required && <span className="ml-1" style={{ color: requiredMarkColor }}>*</span>}
               </label>
 
               {field.type === 'textarea' ? (
@@ -95,7 +114,19 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
                   required={field.required}
                   disabled={isEditing}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{
+                    borderColor,
+                    borderWidth: '1px',
+                    backgroundColor: formBgColor,
+                    color: textColor,
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.boxShadow = `0 0 0 2px ${focusRingColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 />
               ) : field.type === 'select' ? (
                 <select
@@ -105,7 +136,19 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   required={field.required}
                   disabled={isEditing}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{
+                    borderColor,
+                    borderWidth: '1px',
+                    backgroundColor: formBgColor,
+                    color: textColor,
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.boxShadow = `0 0 0 2px ${focusRingColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
                   <option value="">選択してください</option>
                   {field.options?.map((option, optIndex) => (
@@ -124,9 +167,19 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
                     onChange={(e) => handleChange(field.name, e.target.checked)}
                     required={field.required}
                     disabled={isEditing}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 rounded focus:ring-2"
+                    style={{
+                      borderColor,
+                      borderWidth: '1px',
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.boxShadow = `0 0 0 2px ${focusRingColor}33`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   />
-                  <label htmlFor={field.name} className="ml-2 text-sm text-gray-700">
+                  <label htmlFor={field.name} className="ml-2 text-sm" style={{ color: labelColor }}>
                     {field.placeholder || field.label}
                   </label>
                 </div>
@@ -140,7 +193,19 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
                   placeholder={field.placeholder}
                   required={field.required}
                   disabled={isEditing}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{
+                    borderColor,
+                    borderWidth: '1px',
+                    backgroundColor: formBgColor,
+                    color: textColor,
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.boxShadow = `0 0 0 2px ${focusRingColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 />
               )}
             </div>
@@ -150,7 +215,21 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
           <button
             type="submit"
             disabled={isSubmitting || isEditing}
-            className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="w-full py-3 px-6 font-semibold rounded-lg transition-colors shadow-lg"
+            style={{
+              backgroundColor: buttonBgColor,
+              color: '#FFFFFF',
+              opacity: isSubmitting || isEditing ? 0.5 : 1,
+              cursor: isSubmitting || isEditing ? 'not-allowed' : 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              if (!isSubmitting && !isEditing) {
+                e.currentTarget.style.filter = 'brightness(1.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.filter = 'brightness(1)';
+            }}
           >
             <span
               contentEditable={isEditing}

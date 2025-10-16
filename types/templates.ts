@@ -216,6 +216,8 @@ export interface FormBlockContent extends BaseBlockContent {
   }[];
   submitButtonText?: string;
   submitUrl?: string;
+  buttonColor?: string;
+  accentColor?: string;
 }
 
 // 画像ブロックコンテンツ
