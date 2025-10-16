@@ -68,7 +68,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   </h2>
                   {content.subtitle && (
                     <p
-                      className="text-sm md:text-base text-white/80"
+                      className="text-sm md:text-base"
                       style={{ color: `${textColor}CC` }}
                     >
                       {content.subtitle}
@@ -83,7 +83,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 </h2>
                 {content.subtitle && (
                   <p
-                    className="text-base mb-3 text-white/80"
+                    className="text-base mb-3"
                     style={{ color: `${textColor}CC` }}
                   >
                     {content.subtitle}

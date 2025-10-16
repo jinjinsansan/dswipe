@@ -78,7 +78,8 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
   const renderInput = (field: string, value: string, placeholder: string, type: "input" | "textarea" = "input") => {
     if (!isEditing) return null;
 
-    const commonClass = "w-full bg-surface-alt-soft border border-glass-faint text-white/90 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]";
+    const commonClass = "w-full bg-surface-alt-soft border border-glass-faint rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(99,102,241,0.5)]";
+    const commonStyle = { color: `${bodyTextColor}E6` };
 
     if (type === "textarea") {
       return (
@@ -88,6 +89,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
           placeholder={placeholder}
           rows={3}
           className={commonClass}
+          style={commonStyle}
         />
       );
     }
@@ -99,6 +101,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         onChange={(e) => onEdit?.(field, e.target.value)}
         placeholder={placeholder}
         className={commonClass}
+        style={commonStyle}
       />
     );
   };
@@ -163,8 +166,14 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   <GlowButton
                     href={secondaryButtonUrl || "#"}
                     variant="secondary"
-                    className="border-white/20 bg-white/10 text-white/85 hover:text-white"
-                    style={{ boxShadow: `0 20px 40px -30px ${accent}80` }}
+                    className="hover:text-white"
+                    style={{ 
+                      boxShadow: `0 20px 40px -30px ${accent}80`,
+                      borderColor: `${bodyTextColor}33`,
+                      borderWidth: '1px',
+                      backgroundColor: `${bodyTextColor}08`,
+                      color: `${bodyTextColor}D9`
+                    }}
                   >
                     {secondaryButtonText}
                   </GlowButton>
@@ -207,7 +216,10 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
               >
                 {highlightText || "AI Launch Accelerator"}
               </span>
-              <div className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft bg-black/60 shadow-glow">
+              <div 
+                className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft shadow-glow"
+                style={{ backgroundColor: `${accent}40` }}
+              >
                 {imageUrl ? (
                   <Image
                     src={imageUrl}

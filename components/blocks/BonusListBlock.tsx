@@ -73,8 +73,11 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
                     </h3>
                     {bonus.value && (
                       <span 
-                        className="text-white px-4 py-1 rounded-full text-lg font-semibold"
-                        style={{ backgroundColor: accentColor }}
+                        className="px-4 py-1 rounded-full text-lg font-semibold"
+                        style={{ 
+                          backgroundColor: accentColor,
+                          color: '#FFFFFF'
+                        }}
                       >
                         {bonus.value}相当
                       </span>

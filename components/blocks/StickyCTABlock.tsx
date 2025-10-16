@@ -24,10 +24,13 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
       <div className="relative w-full pointer-events-none" style={{ color: textColor }}>
         <div className="w-full px-0 pb-4">
           <div
-            className="relative overflow-hidden w-full border border-white/10 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)] rounded-2xl"
+            className="relative overflow-hidden w-full backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)] rounded-2xl"
             style={{
               backgroundImage: gradientBackground,
               borderTop: `3px solid ${accentColor}`,
+              borderLeft: `1px solid ${textColor}1A`,
+              borderRight: `1px solid ${textColor}1A`,
+              borderBottom: `1px solid ${textColor}1A`,
             }}
           >
             <div

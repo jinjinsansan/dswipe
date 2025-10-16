@@ -8,6 +8,9 @@ interface CountdownBlockProps {
 }
 
 export default function CountdownBlock({ content }: CountdownBlockProps) {
+  const backgroundColor = content.backgroundColor || '#EF4444';
+  const textColor = content.textColor || '#FFFFFF';
+  
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -46,8 +49,8 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
     <div
       className="py-12 px-4"
       style={{
-        backgroundColor: content.backgroundColor || '#EF4444',
-        color: content.textColor || '#FFFFFF',
+        backgroundColor,
+        color: textColor,
       }}
     >
       <div className="max-w-4xl mx-auto text-center">
@@ -71,7 +74,12 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
             unit.show ? (
               <div
                 key={index}
-                className="flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 md:p-6 min-w-[80px] md:min-w-[120px] shadow-2xl border-2 border-white/20"
+                className="flex flex-col items-center backdrop-blur-sm rounded-xl p-4 md:p-6 min-w-[80px] md:min-w-[120px] shadow-2xl"
+                style={{
+                  backgroundColor: `#FFFFFF0D`,
+                  borderWidth: '2px',
+                  borderColor: `${textColor}33`,
+                }}
               >
                 <div className="text-4xl md:text-6xl font-bold mb-2 tabular-nums">
                   {String(unit.value).padStart(2, '0')}

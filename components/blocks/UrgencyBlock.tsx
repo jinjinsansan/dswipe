@@ -8,16 +8,26 @@ interface UrgencyBlockProps {
 }
 
 export default function UrgencyBlock({ content }: UrgencyBlockProps) {
+  const backgroundColor = content.backgroundColor || content.highlightColor || '#DC2626';
+  const textColor = content.textColor || '#FFFFFF';
+  
   return (
     <div
       className="py-12 px-4"
       style={{
-        backgroundColor: content.backgroundColor || content.highlightColor || '#DC2626',
-        color: content.textColor || '#FFFFFF',
+        backgroundColor,
+        color: textColor,
       }}
     >
       <div className="max-w-4xl mx-auto">
-        <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 md:p-8 border-4 border-white/30 shadow-2xl">
+        <div 
+          className="backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl"
+          style={{
+            backgroundColor: `#FFFFFF0D`,
+            borderWidth: '4px',
+            borderColor: `${textColor}4D`,
+          }}
+        >
           <div className="flex items-center justify-center gap-4 flex-wrap">
             {/* アイコン */}
             <div className="text-5xl md:text-6xl animate-pulse">
