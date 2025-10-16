@@ -412,22 +412,21 @@ export default function EditLPNewPage() {
     <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 h-14 flex-shrink-0">
-        <div className="h-full px-3 sm:px-4 lg:px-4 flex items-center justify-between">
+        <div className="h-full px-2 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-3">
           {/* Left: Back & Title */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <Link 
               href="/dashboard"
               className="text-gray-300 hover:text-white transition-colors text-xs sm:text-sm font-medium"
             >
               ← 戻る
             </Link>
-            <div className="w-px h-4 bg-gray-800 hidden sm:block"></div>
             <div className="text-xs sm:text-sm font-semibold text-white truncate">{lp.title}</div>
           </div>
 
-          {/* Right: Actions - モバイルではメニュー */}
-          <div className="hidden lg:flex items-center gap-2">
-            {/* Status */}
+          {/* Right: Actions */}
+          {/* Desktop Actions - Full Menu */}
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             <span className={`px-2 py-1 text-xs rounded font-semibold ${
               lp.status === 'published'
                 ? 'bg-green-500/10 text-green-400'
@@ -436,7 +435,6 @@ export default function EditLPNewPage() {
               {lp.status === 'published' ? '公開中' : '下書き'}
             </span>
 
-            {/* Public URL (if published) */}
             {lp.status === 'published' && (
               <>
                 <a
@@ -461,7 +459,6 @@ export default function EditLPNewPage() {
               </>
             )}
 
-            {/* Publish Button (if draft) */}
             {lp.status === 'draft' && (
               <button
                 onClick={handlePublish}
@@ -471,7 +468,6 @@ export default function EditLPNewPage() {
               </button>
             )}
 
-            {/* Save */}
             <button
               onClick={handleSave}
               disabled={isSaving}
@@ -481,85 +477,147 @@ export default function EditLPNewPage() {
             </button>
           </div>
 
-          {/* モバイルメニューボタン */}
-          <button
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 text-gray-300 hover:text-white"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
+          {/* Mobile Actions - Always Visible */}
+          <div className="flex lg:hidden items-center gap-1.5 flex-shrink-0">
+            {/* Quick Save Button */}
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+              title="保存"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+              </svg>
+            </button>
 
-        {/* モバイルメニュー */}
-        {showMobileMenu && (
-          <div className="lg:hidden border-t border-gray-800 bg-gray-900/50 p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className={`px-2 py-1 text-xs rounded font-semibold ${
-                lp.status === 'published'
-                  ? 'bg-green-500/10 text-green-400'
-                  : 'bg-gray-700/50 text-gray-400'
-              }`}>
-                {lp.status === 'published' ? '公開中' : '下書き'}
-              </span>
-            </div>
-            
-            {/* Action Buttons Grid */}
-            <div className="grid grid-cols-2 gap-2">
-              {/* Save Button */}
+            {/* Quick Publish Button */}
+            {lp.status === 'draft' && (
               <button
-                onClick={() => {
-                  handleSave();
-                  setShowMobileMenu(false);
-                }}
-                disabled={isSaving}
-                className="w-full px-2 py-2 bg-blue-600/90 text-white rounded text-xs font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 min-h-[40px] flex items-center justify-center"
+                onClick={handlePublish}
+                className="p-2 text-green-400 hover:text-green-300 transition-colors"
+                title="公開"
               >
-                {isSaving ? '保存中' : '💾 保存'}
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </button>
+            )}
 
-              {/* Publish Button (Draft) / Preview (Published) */}
-              {lp.status === 'draft' && (
+            {/* Menu Button */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 text-gray-300 hover:text-white transition-colors"
+              title="メニュー"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu - Full Screen Modal */}
+      {showMobileMenu && (
+        <div className="lg:hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl max-w-sm w-full overflow-y-auto max-h-[80vh]">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700 bg-gray-900/50">
+              <h3 className="text-white font-semibold">メニュー</h3>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="text-gray-400 hover:text-white transition-colors text-2xl leading-none"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              {/* Status Display */}
+              <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                <span className="text-gray-300 text-sm">ステータス</span>
+                <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                  lp.status === 'published'
+                    ? 'bg-green-500/20 text-green-400'
+                    : 'bg-yellow-500/20 text-yellow-400'
+                }`}>
+                  {lp.status === 'published' ? '公開中' : '下書き'}
+                </span>
+              </div>
+
+              {/* Primary Actions */}
+              <div className="space-y-3 pt-2">
+                {/* Save Button */}
                 <button
                   onClick={() => {
-                    handlePublish();
+                    handleSave();
                     setShowMobileMenu(false);
                   }}
-                  className="w-full px-2 py-2 bg-green-600/90 text-white rounded text-xs font-semibold hover:bg-green-600 transition-colors min-h-[40px] flex items-center justify-center"
+                  disabled={isSaving}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] flex items-center justify-center gap-2"
                 >
-                  🚀 公開
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                  </svg>
+                  {isSaving ? '保存中...' : '💾 保存'}
                 </button>
-              )}
-              {lp.status === 'published' && (
-                <a
-                  href={`/view/${lp.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full px-2 py-2 bg-purple-600/90 text-white rounded text-xs font-semibold hover:bg-purple-600 transition-colors min-h-[40px] flex items-center justify-center text-center"
-                >
-                  👁️ 表示
-                </a>
-              )}
 
-              {/* URL Copy Button (Published only) */}
+                {/* Publish/Preview Button */}
+                {lp.status === 'draft' && (
+                  <button
+                    onClick={() => {
+                      handlePublish();
+                      setShowMobileMenu(false);
+                    }}
+                    className="w-full px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    🚀 公開
+                  </button>
+                )}
+                {lp.status === 'published' && (
+                  <a
+                    href={`/view/${lp.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                    </svg>
+                    👁️ プレビュー
+                  </a>
+                )}
+              </div>
+
+              {/* Secondary Actions */}
               {lp.status === 'published' && (
-                <button
-                  onClick={() => {
-                    const url = `${window.location.origin}/view/${lp.slug}`;
-                    navigator.clipboard.writeText(url);
-                    alert('URLをコピーしました！');
-                    setShowMobileMenu(false);
-                  }}
-                  className="w-full px-2 py-2 bg-gray-700 text-gray-300 rounded text-xs font-semibold hover:bg-gray-600 transition-colors min-h-[40px] flex items-center justify-center"
-                >
-                  🔗 コピー
-                </button>
+                <div className="pt-4 border-t border-gray-700 space-y-2">
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/view/${lp.slug}`;
+                      navigator.clipboard.writeText(url);
+                      alert('URLをコピーしました！');
+                      setShowMobileMenu(false);
+                    }}
+                    className="w-full px-4 py-2.5 bg-gray-700 text-gray-200 rounded-lg font-semibold hover:bg-gray-600 transition-colors min-h-[44px] flex items-center justify-center gap-2 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M12.586 4.586a2 2 0 112.828 2.828l-.793.793-2.828-2.829.793-.793zM12.539 12.539L9.404 9.404m9.146-5.404a2 2 0 010 2.828l-.793.793m2.828 2.828a4 4 0 01-5.656 0l-4-4a4 4 0 015.656-5.656l1.102 1.101m-.758 4.899a2 2 0 001.768-3.468A2 2 0 0014 6l1.586 1.586" />
+                    </svg>
+                    🔗 URLをコピー
+                  </button>
+                </div>
               )}
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
 
       {/* Main Content - 3 Column Layout (Desktop) / Tab-based Layout (Mobile) */}
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
