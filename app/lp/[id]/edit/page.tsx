@@ -893,26 +893,26 @@ export default function EditLPNewPage() {
                         handleReorderBlocks(newBlocks);
                       }
                     }}
-                    className={`p-3 lg:p-3 rounded cursor-move transition-colors min-h-[56px] lg:min-h-auto flex items-center ${
+                    className={`p-4 lg:p-4 rounded cursor-move transition-colors min-h-[64px] lg:min-h-[70px] flex items-center ${
                       selectedBlockId === block.id
                         ? 'bg-blue-600/20 border border-blue-600/50'
                         : 'bg-gray-800/50 border border-gray-800 hover:bg-gray-800'
                     }`}
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-semibold text-gray-300">#{index + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <span className="text-sm lg:text-sm font-bold text-blue-400 flex-shrink-0">#{index + 1}</span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteBlock(block.id);
                           }}
-                          className="text-xs text-gray-500 hover:text-red-400 transition-colors"
+                          className="text-xs text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           削除
                         </button>
                       </div>
-                      <div className="text-sm lg:text-sm font-semibold text-white">{block.blockType}</div>
+                      <div className="text-base lg:text-base font-bold text-white truncate">{block.blockType}</div>
                     </div>
                   </div>
                 ))}
@@ -922,21 +922,19 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Center: Preview */}
-        <div className={`flex-1 min-w-0 bg-white overflow-y-auto flex flex-col items-center ${
+        <div className={`flex-1 min-w-0 bg-white overflow-y-auto flex flex-col ${
           mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
         }`}>
-          <div className="w-full h-full overflow-y-auto p-4 lg:p-8">
-            <DraggableBlockEditor
-              blocks={blocks}
-              onUpdateBlock={() => {}}
-              onDeleteBlock={() => {}}
-              onReorderBlocks={handleReorderBlocks}
-              isEditing={false}
-              onSelectBlock={setSelectedBlockId}
-              selectedBlockId={selectedBlockId || undefined}
-              withinEditor
-            />
-          </div>
+          <DraggableBlockEditor
+            blocks={blocks}
+            onUpdateBlock={() => {}}
+            onDeleteBlock={() => {}}
+            onReorderBlocks={handleReorderBlocks}
+            isEditing={false}
+            onSelectBlock={setSelectedBlockId}
+            selectedBlockId={selectedBlockId || undefined}
+            withinEditor
+          />
         </div>
 
         {/* Right: Properties Panel (Desktop) / Bottom Drawer (Mobile) */}
