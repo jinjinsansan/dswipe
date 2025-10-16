@@ -22,7 +22,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-1.5 px-4 sm:py-2 sm:px-5' : 'py-6 px-5'}
+      className={fullWidth ? 'py-2 px-0 sm:py-2.5' : 'py-6 px-5'}
       style={{
         background,
         color: textColor,
@@ -30,7 +30,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
         borderRadius: fullWidth ? '0px' : undefined,
       }}
     >
-      <div className={fullWidth ? 'max-w-3xl mx-auto text-center' : 'max-w-4xl mx-auto text-center'}>
+      <div className={fullWidth ? 'w-full px-4 md:px-6 flex items-center justify-between gap-4' : 'max-w-4xl mx-auto text-center'}>
         {isEditing ? (
           <>
             <input
@@ -57,24 +57,44 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            <h2 className={fullWidth ? 'text-base md:text-lg font-bold mb-0.5' : 'text-3xl md:text-4xl font-bold mb-3'}>
-              {content.title || 'さあ、始めましょう'}
-            </h2>
-            {content.subtitle && (
-              <p
-                className={fullWidth ? 'text-xs mb-1 text-white/80' : 'text-base mb-3 text-white/80'}
-                style={{ color: `${textColor}CC` }}
-              >
-                {content.subtitle}
-              </p>
+            {fullWidth ? (
+              <>
+                <div className="flex-1 text-left">
+                  <h2 className="text-base md:text-lg font-bold mb-0.5">
+                    {content.title || 'さあ、始めましょう'}
+                  </h2>
+                  {content.subtitle && (
+                    <p
+                      className="text-xs mb-0 text-white/80"
+                      style={{ color: `${textColor}CC` }}
+                    >
+                      {content.subtitle}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                  {content.title || 'さあ、始めましょう'}
+                </h2>
+                {content.subtitle && (
+                  <p
+                    className="text-base mb-3 text-white/80"
+                    style={{ color: `${textColor}CC` }}
+                  >
+                    {content.subtitle}
+                  </p>
+                )}
+              </>
             )}
-            <div className="flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3">
+            <div className={fullWidth ? 'flex-shrink-0' : 'flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3'}>
               {productId ? (
                 <Link
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'inline-flex items-center justify-center min-w-[180px] md:min-w-[220px] px-5 py-1.5 rounded-full font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.03] transition-transform'
+                      ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
                       : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
@@ -89,7 +109,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'inline-flex items-center justify-center min-w-[180px] md:min-w-[220px] px-5 py-1.5 rounded-full font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.03] transition-transform'
+                      ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
                       : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
