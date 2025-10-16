@@ -482,16 +482,13 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             return (
               <div className="w-full px-0 pt-3 pb-3 sm:pb-4">
                 <div
-                  className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
-                  style={{
-                    background,
-                    borderTop: `3px solid ${accent}`,
-                  }}
+                  className="relative overflow-hidden w-full bg-gray-950/90 backdrop-blur-2xl shadow-[0_18px_50px_-18px_rgba(0,0,0,0.55)] border border-white/10"
+                  style={{ background }}
                 >
                   <div
                     className="pointer-events-none absolute inset-0"
                     style={{
-                      background: 'radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)',
+                      background: 'radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 60%)',
                     }}
                   />
                   <div className="relative z-[1] p-3 sm:p-4">

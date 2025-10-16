@@ -22,7 +22,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-4 px-4 sm:py-5 sm:px-6 lg:px-8' : 'py-10 px-6'}
+      className={fullWidth ? 'py-3 px-4 sm:py-4 sm:px-6 lg:px-7' : 'py-8 px-5'}
       style={{
         background,
         color: textColor,
@@ -60,12 +60,12 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            <h2 className={fullWidth ? 'text-2xl md:text-3xl font-bold mb-3' : 'text-3xl md:text-4xl font-bold mb-5'}>
+            <h2 className={fullWidth ? 'text-xl md:text-2xl font-bold mb-2' : 'text-3xl md:text-4xl font-bold mb-4'}>
               {content.title || 'さあ、始めましょう'}
             </h2>
             {content.subtitle && (
               <p
-                className={fullWidth ? 'text-sm md:text-base mb-4' : 'text-lg mb-6'}
+                className={fullWidth ? 'text-xs md:text-sm mb-3' : 'text-base mb-4'}
                 style={{ color: `${textColor}CC` }}
               >
                 {content.subtitle}
@@ -77,13 +77,13 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'block w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base shadow-xl hover:scale-[1.01] transition-transform'
-                      : 'inline-flex px-10 py-3 rounded-lg font-semibold text-base shadow-xl hover:scale-[1.02] transition-transform'
+                      ? 'block w-full px-4 py-2.5 rounded-none font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.01] transition-transform'
+                      : 'inline-flex px-8 py-3 rounded-lg font-semibold text-base shadow-lg hover:scale-[1.02] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
                     color: '#FFFFFF',
-                    boxShadow: `0 20px 50px -28px ${buttonColor}80`,
+                    boxShadow: `0 16px 40px -26px ${buttonColor}7a`,
                   }}
                 >
                   {content.buttonText || '今すぐ始める'}
@@ -92,35 +92,17 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base shadow-xl hover:scale-[1.01] transition-transform'
-                      : 'px-10 py-3 rounded-lg font-semibold text-base shadow-xl hover:scale-[1.02] transition-transform'
+                      ? 'w-full px-4 py-2.5 rounded-none font-semibold text-xs md:text-sm shadow-lg hover:scale-[1.01] transition-transform'
+                      : 'px-8 py-3 rounded-lg font-semibold text-base shadow-lg hover:scale-[1.02] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
                     color: '#FFFFFF',
-                    boxShadow: `0 20px 50px -28px ${buttonColor}80`,
+                    boxShadow: `0 16px 40px -26px ${buttonColor}7a`,
                   }}
                 >
                   {content.buttonText || '今すぐ始める'}
                 </button>
-              )}
-
-              {content.secondaryButtonText && (
-                <Link
-                  href={content.secondaryButtonUrl || '#'}
-                  className={
-                    fullWidth
-                      ? 'w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base transition-transform border'
-                      : 'inline-flex px-10 py-3 rounded-lg font-semibold text-base transition-transform border'
-                  }
-                  style={{
-                    color: textColor,
-                    borderColor: `${accent}66`,
-                    backgroundColor: `${accent}12`,
-                  }}
-                >
-                  {content.secondaryButtonText}
-                </Link>
               )}
             </div>
           </>
