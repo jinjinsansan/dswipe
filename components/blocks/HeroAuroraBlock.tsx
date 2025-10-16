@@ -107,7 +107,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
   };
 
   return (
-    <Section tone="tint" padding="extended" className="overflow-hidden">
+    <Section tone="none" padding="extended" className="overflow-hidden" style={{ backgroundColor: surfaceColor, color: bodyTextColor }}>
       <div className="absolute inset-0 opacity-95 pointer-events-none" style={blurOverlayStyle}>
         <div className="absolute inset-x-[-20%] bottom-[-40%] h-[160%] blur-[160px]" style={blurOverlayStyle} />
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />

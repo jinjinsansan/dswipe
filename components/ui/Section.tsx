@@ -1,13 +1,14 @@
-import { ReactNode } from "react";
+import { ReactNode, CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
-type SectionTone = "base" | "tint" | "alt";
+type SectionTone = "base" | "tint" | "alt" | "none";
 type SectionPadding = "default" | "condensed" | "extended";
 
 const toneClassMap: Record<SectionTone, string> = {
   base: "bg-surface-base",
   tint: "bg-surface-tint",
   alt: "bg-surface-alt",
+  none: "",
 };
 
 const paddingClassMap: Record<SectionPadding, string> = {
@@ -22,6 +23,7 @@ interface SectionProps {
   className?: string;
   tone?: SectionTone;
   padding?: SectionPadding;
+  style?: CSSProperties;
 }
 
 export function Section({
@@ -30,11 +32,16 @@ export function Section({
   className,
   tone = "base",
   padding = "default",
+  style,
 }: SectionProps) {
+  // tone が "none" の場合は style を適用、そうでない場合は tone クラスを使用
+  const shouldUseStyle = tone === "none" && style;
+  
   return (
     <section
       id={id}
-      className={cn("relative w-full", toneClassMap[tone], paddingClassMap[padding], className)}
+      className={cn("relative w-full", !shouldUseStyle && toneClassMap[tone], paddingClassMap[padding], className)}
+      style={shouldUseStyle ? style : undefined}
     >
       <div className="section-inner">
         {children}
