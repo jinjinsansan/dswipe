@@ -95,7 +95,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   className={
                     fullWidth
                       ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
-                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
+                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
@@ -110,7 +110,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   className={
                     fullWidth
                       ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
-                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded-full font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
+                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,

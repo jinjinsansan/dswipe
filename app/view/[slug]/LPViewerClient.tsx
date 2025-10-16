@@ -367,7 +367,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </div>
       )}
 
-      <div className={`h-screen flex flex-col ${lp.is_fullscreen ? '' : 'container mx-auto'}`}>
+      <div className="h-screen w-full flex flex-col overflow-hidden">
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
