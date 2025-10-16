@@ -19,10 +19,26 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
   const accent = content.accentColor || theme.accent;
   const buttonColor = content.buttonColor || theme.primary;
   const secondaryColor = theme.secondary ?? theme.primary;
+  const outerPaddingClass = fullWidth ? 'py-2 px-0 sm:py-2.5' : 'py-4 px-4 sm:px-6';
+  const innerContainerClass = fullWidth
+    ? 'w-full px-4 md:px-8 lg:px-12 py-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6'
+    : 'max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6';
+  const buttonWrapperClass = fullWidth
+    ? 'flex-shrink-0 flex items-center'
+    : 'flex-shrink-0 flex items-center justify-start sm:justify-end w-full sm:w-auto';
+  const buttonBaseClass = 'inline-flex items-center justify-center px-6 py-3 font-semibold shadow-lg transition-transform hover:scale-[1.03]';
+  const buttonClass = fullWidth
+    ? `${buttonBaseClass} text-sm md:text-base rounded`
+    : `${buttonBaseClass} text-base rounded w-full sm:w-auto`;
+  const buttonStyle = {
+    backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
+    color: '#FFFFFF',
+    boxShadow: `0 16px 36px -26px ${buttonColor}73`,
+  } as const;
 
   return (
     <div
-      className={fullWidth ? 'py-2 px-0 sm:py-2.5' : 'py-6 px-5'}
+      className={outerPaddingClass}
       style={{
         background,
         color: textColor,
@@ -30,7 +46,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
         borderRadius: fullWidth ? '0px' : undefined,
       }}
     >
-      <div className={fullWidth ? 'w-full px-4 md:px-8 lg:px-12 py-4 md:py-6 flex items-center justify-between gap-6 md:gap-8' : 'max-w-4xl mx-auto text-center'}>
+      <div className={innerContainerClass}>
         {isEditing ? (
           <>
             <input
@@ -60,66 +76,32 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            {fullWidth ? (
-              <>
-                <div className="flex-1 text-left">
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
-                    {content.title || 'さあ、始めましょう'}
-                  </h2>
-                  {content.subtitle && (
-                    <p
-                      className="text-sm md:text-base"
-                      style={{ color: `${textColor}CC` }}
-                    >
-                      {content.subtitle}
-                    </p>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                  {content.title || 'さあ、始めましょう'}
-                </h2>
-                {content.subtitle && (
-                  <p
-                    className="text-base mb-3"
-                    style={{ color: `${textColor}CC` }}
-                  >
-                    {content.subtitle}
-                  </p>
-                )}
-              </>
-            )}
-            <div className={fullWidth ? 'flex-shrink-0 flex items-center' : 'flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3'}>
+            <div className="flex-1 w-full text-left">
+              <h2 className={`font-bold ${fullWidth ? 'text-2xl md:text-3xl lg:text-4xl' : 'text-2xl sm:text-3xl lg:text-4xl'} mb-1`}>
+                {content.title || 'さあ、始めましょう'}
+              </h2>
+              {content.subtitle && (
+                <p
+                  className={`text-sm sm:text-base ${fullWidth ? '' : 'mt-1'}`}
+                  style={{ color: `${textColor}CC` }}
+                >
+                  {content.subtitle}
+                </p>
+              )}
+            </div>
+            <div className={buttonWrapperClass}>
               {productId ? (
                 <Link
                   href={`/points/purchase?product_id=${productId}`}
-                  className={
-                    fullWidth
-                      ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
-                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
-                  }
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
-                    color: '#FFFFFF',
-                    boxShadow: `0 16px 36px -26px ${buttonColor}73`,
-                  }}
+                  className={buttonClass}
+                  style={buttonStyle}
                 >
                   {content.buttonText || '今すぐ始める'}
                 </Link>
               ) : (
                 <button
-                  className={
-                    fullWidth
-                      ? 'inline-flex items-center justify-center px-6 py-1.5 rounded font-semibold text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity'
-                      : 'inline-flex items-center justify-center min-w-[220px] px-8 py-2.5 rounded font-semibold text-base shadow-lg hover:scale-[1.04] transition-transform'
-                  }
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
-                    color: '#FFFFFF',
-                    boxShadow: `0 16px 36px -26px ${buttonColor}73`,
-                  }}
+                  className={buttonClass}
+                  style={buttonStyle}
                 >
                   {content.buttonText || '今すぐ始める'}
                 </button>
