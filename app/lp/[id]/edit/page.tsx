@@ -90,6 +90,14 @@ export default function EditLPNewPage() {
         imageUrl: response.data.meta_image_url ?? '',
         siteName: response.data.meta_site_name ?? '',
       });
+
+      // カスタムテーマを復元
+      if (response.data.custom_theme_hex) {
+        setCustomThemeHex(response.data.custom_theme_hex);
+      }
+      if (response.data.custom_theme_shades) {
+        setCustomThemeShades(response.data.custom_theme_shades as unknown as ColorShades);
+      }
       
       // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
@@ -265,7 +273,7 @@ export default function EditLPNewPage() {
     setBlocks(updatedBlocks);
   };
 
-  const handleApplyTheme = (shades: ColorShades, hex: string) => {
+  const handleApplyTheme = async (shades: ColorShades, hex: string) => {
     // テーマシェードを保存
     setCustomThemeShades(shades);
     setCustomThemeHex(hex);
@@ -276,14 +284,36 @@ export default function EditLPNewPage() {
         ...block,
         content: {
           ...block.content,
-          // シェード500をベースカラーに、シェード950を暗い場所に
+          // シェード500をベースカラーに、シェード600をアクセント色に
           backgroundColor: shades[500],
           accentColor: shades[600],
           textColor: '#FFFFFF',
-          // ボタンカラー: ライトな背景ならシェード700、ダークなら400
         } as BlockContent,
       })),
     );
+
+    // テーマを LP に保存
+    try {
+      const lpUpdateResponse = await lpApi.update(lpId, {
+        custom_theme_hex: hex,
+        custom_theme_shades: shades as unknown as Record<string, string>,
+      });
+      
+      if (lpUpdateResponse.data) {
+        setLp((prev) =>
+          prev
+            ? {
+                ...prev,
+                custom_theme_hex: hex,
+                custom_theme_shades: shades as unknown as Record<string, string>,
+              }
+            : prev
+        );
+      }
+    } catch (err) {
+      console.error('テーマ保存エラー:', err);
+      setError('テーマの保存に失敗しました');
+    }
   };
 
   const handleUpdateSelectedBlock = (field: string, value: any) => {
@@ -359,6 +389,8 @@ export default function EditLPNewPage() {
         meta_description: normalizeMetaValue(metaSettings.description),
         meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
         meta_site_name: normalizeMetaValue(metaSettings.siteName),
+        custom_theme_hex: customThemeHex,
+        custom_theme_shades: customThemeShades as unknown as Record<string, string> | null,
       });
       setLp((prev) =>
         prev

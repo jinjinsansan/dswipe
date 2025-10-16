@@ -34,6 +34,8 @@ export interface LandingPage {
   meta_description?: string | null;
   meta_image_url?: string | null;
   meta_site_name?: string | null;
+  custom_theme_hex?: string | null;
+  custom_theme_shades?: Record<string, string> | null;
   created_at: string;
   updated_at: string;
 }
