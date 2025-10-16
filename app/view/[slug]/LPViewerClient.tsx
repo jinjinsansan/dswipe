@@ -62,20 +62,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
 
-      let displaySteps = sortedSteps.filter((step) => step.block_type !== 'sticky-cta-1');
-
-      if (ctaBlock) {
-        displaySteps = displaySteps.filter((step) => step.id !== ctaBlock.id);
-        if (!response.data.floating_cta) {
-          displaySteps.push(ctaBlock);
-        }
-      }
+      const displaySteps = sortedSteps
+        .filter((step) => step.block_type !== 'sticky-cta-1')
+        .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
 
       if (ctaBlock) {
         setFixedCta({
           blockType: ctaBlock.block_type,
           content: ctaBlock.content_data,
-          productId: response.data.product_id
+          productId: response.data.product_id,
         });
       } else {
         setFixedCta(null);
@@ -480,7 +475,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </Swiper>
       </div>
 
-      {lp.floating_cta && fixedCta && (
+      {fixedCta && (
         <div className="fixed bottom-0 left-0 right-0 z-40">
           {(() => {
             const { accent, background } = getFixedCtaDecoration();

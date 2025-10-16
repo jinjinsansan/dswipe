@@ -22,11 +22,11 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-6 px-4 sm:py-8 sm:px-6 lg:px-10' : 'py-12 px-8'}
+      className={fullWidth ? 'py-4 px-4 sm:py-5 sm:px-6 lg:px-8' : 'py-10 px-6'}
       style={{
         background,
         color: textColor,
-        backgroundImage: `radial-gradient(circle at top right, ${accent}18, transparent 55%)`,
+        backgroundImage: `radial-gradient(circle at top right, ${accent}1a, transparent 50%)`,
         borderRadius: fullWidth ? '0px' : undefined,
       }}
     >
@@ -60,12 +60,12 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            <h2 className={fullWidth ? 'text-3xl md:text-4xl font-bold mb-4' : 'text-4xl md:text-5xl font-bold mb-6'}>
+            <h2 className={fullWidth ? 'text-2xl md:text-3xl font-bold mb-3' : 'text-3xl md:text-4xl font-bold mb-5'}>
               {content.title || 'さあ、始めましょう'}
             </h2>
             {content.subtitle && (
               <p
-                className={fullWidth ? 'text-base md:text-lg mb-5' : 'text-xl mb-8'}
+                className={fullWidth ? 'text-sm md:text-base mb-4' : 'text-lg mb-6'}
                 style={{ color: `${textColor}CC` }}
               >
                 {content.subtitle}
@@ -77,13 +77,13 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'block w-full px-6 py-3 rounded-none font-bold text-base md:text-lg shadow-2xl hover:scale-[1.005] transition-transform'
-                      : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
+                      ? 'block w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base shadow-xl hover:scale-[1.01] transition-transform'
+                      : 'inline-flex px-10 py-3 rounded-lg font-semibold text-base shadow-xl hover:scale-[1.02] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
                     color: '#FFFFFF',
-                    boxShadow: `0 24px 60px -28px ${buttonColor}80`,
+                    boxShadow: `0 20px 50px -28px ${buttonColor}80`,
                   }}
                 >
                   {content.buttonText || '今すぐ始める'}
@@ -92,13 +92,13 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'w-full px-6 py-3 rounded-none font-bold text-base md:text-lg shadow-2xl hover:scale-[1.005] transition-transform'
-                      : 'px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
+                      ? 'w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base shadow-xl hover:scale-[1.01] transition-transform'
+                      : 'px-10 py-3 rounded-lg font-semibold text-base shadow-xl hover:scale-[1.02] transition-transform'
                   }
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${buttonColor}, ${secondaryColor})`,
                     color: '#FFFFFF',
-                    boxShadow: `0 24px 60px -28px ${buttonColor}80`,
+                    boxShadow: `0 20px 50px -28px ${buttonColor}80`,
                   }}
                 >
                   {content.buttonText || '今すぐ始める'}
@@ -110,8 +110,8 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={content.secondaryButtonUrl || '#'}
                   className={
                     fullWidth
-                      ? 'w-full px-6 py-3 rounded-none font-semibold text-base md:text-lg transition-transform border'
-                      : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg transition-transform border'
+                      ? 'w-full px-5 py-3 rounded-none font-semibold text-sm md:text-base transition-transform border'
+                      : 'inline-flex px-10 py-3 rounded-lg font-semibold text-base transition-transform border'
                   }
                   style={{
                     color: textColor,
