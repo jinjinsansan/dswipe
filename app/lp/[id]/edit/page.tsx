@@ -278,18 +278,41 @@ export default function EditLPNewPage() {
     setCustomThemeShades(shades);
     setCustomThemeHex(hex);
     
-    // すべてのブロックのカラーを更新（50, 100, 900段階の利用）
+    // ブロックタイプによってカラー適用するかを判定
+    const colorableBlockTypes = [
+      'hero-1', 'hero-2', 'hero-3', 'hero-aurora',
+      'text-img-1', 'text-img-2', 'text-img-3',
+      'pricing-1', 'pricing-2', 'pricing-3',
+      'testimonial-1', 'testimonial-2', 'testimonial-3',
+      'faq-1', 'faq-2',
+      'features-1', 'features-2', 'features-aurora',
+      'cta-1', 'cta-2', 'cta-3',
+      'stats-1', 'timeline-1', 'team-1',
+      'countdown-1', 'special-price-1', 'bonus-list-1',
+      'guarantee-1', 'problem-1', 'before-after-1',
+      'author-profile-1', 'urgency-1', 'scarcity-1', 'sticky-cta-1',
+      'comparison-1', 'logo-grid-1'
+    ];
+    
+    // すべてのブロックのカラーを更新（テキスト系ブロックのみ）
     setBlocks((prev) =>
-      prev.map((block) => ({
-        ...block,
-        content: {
-          ...block.content,
-          // シェード500をベースカラーに、シェード600をアクセント色に
-          backgroundColor: shades[500],
-          accentColor: shades[600],
-          textColor: '#FFFFFF',
-        } as BlockContent,
-      })),
+      prev.map((block) => {
+        // テキストを持つブロックのみカラー適用
+        if (colorableBlockTypes.includes(block.blockType)) {
+          return {
+            ...block,
+            content: {
+              ...block.content,
+              // シェード500をベースカラーに、シェード600をアクセント色に
+              backgroundColor: shades[500],
+              accentColor: shades[600],
+              textColor: '#FFFFFF',
+            } as BlockContent,
+          };
+        }
+        // 画像オンリーのブロック（image-1, gallery, video等）はスキップ
+        return block;
+      }),
     );
 
     // テーマを LP に保存
@@ -309,10 +332,12 @@ export default function EditLPNewPage() {
               }
             : prev
         );
+        console.log('✅ テーマが正常に保存されました');
       }
-    } catch (err) {
-      console.error('テーマ保存エラー:', err);
-      setError('テーマの保存に失敗しました');
+    } catch (err: any) {
+      console.error('❌ テーマ保存エラー:', err);
+      const errorDetail = err?.response?.data?.detail || err?.message || '不明なエラー';
+      setError(`テーマの保存に失敗しました: ${errorDetail}`);
     }
   };
 
