@@ -367,7 +367,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </div>
       )}
 
-      <div className={`h-screen ${lp.is_fullscreen ? '' : 'container mx-auto'}`}>
+      <div className={`h-screen flex flex-col ${lp.is_fullscreen ? '' : 'container mx-auto'}`}>
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
@@ -380,7 +380,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className="h-full"
+          className={`flex-1 ${fixedCta ? 'pb-12 sm:pb-16' : ''}`}
         >
           {lp.steps.map((step, index) => {
             const stepCtas = getCurrentStepCtas(index);
@@ -476,34 +476,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       </div>
 
       {fixedCta && (
-        <div className="fixed bottom-0 left-0 right-0 z-40">
-          {(() => {
-            const { accent, background } = getFixedCtaDecoration();
-            return (
-              <div className="w-full px-0 py-0">
-                <div
-                  className="relative overflow-hidden w-full bg-gray-950/90 backdrop-blur-2xl shadow-[0_-18px_50px_-18px_rgba(0,0,0,0.55)] border-t border-white/10"
-                  style={{ background, borderRadius: '0' }}
-                >
-                  <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                      background: 'radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 60%)',
-                    }}
-                  />
-                  <div className="relative z-[1] p-2 sm:p-3">
-                    <BlockRenderer
-                      blockType={fixedCta.blockType}
-                      content={fixedCta.content}
-                      isEditing={false}
-                      productId={fixedCta.productId}
-                      fullWidth
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+        <div className="fixed bottom-0 left-0 right-0 z-40 w-full border-t border-white/10">
+          <BlockRenderer
+            blockType={fixedCta.blockType}
+            content={fixedCta.content}
+            isEditing={false}
+            productId={fixedCta.productId}
+            fullWidth
+          />
         </div>
       )}
 
