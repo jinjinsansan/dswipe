@@ -665,7 +665,7 @@ export default function EditLPNewPage() {
 
         {/* Left: Block List */}
         <div className={`flex-col min-h-0 bg-gray-800/30 border-gray-800 overflow-hidden flex ${
-          mobileTab === 'blocks' ? 'lg:flex' : 'hidden lg:flex'
+          mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
         } flex-shrink-0 lg:flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
           <div className="p-3 lg:p-4 border-b border-gray-800">
             <button
@@ -676,7 +676,8 @@ export default function EditLPNewPage() {
             </button>
           </div>
 
-          <div className="px-3 lg:px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
+          {/* モバイルではLP設定とSNSメタ情報を非表示 */}
+          <div className="hidden lg:block px-3 lg:px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
             <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
             <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
@@ -765,8 +766,8 @@ export default function EditLPNewPage() {
             </div>
           </div>
 
-          {/* Block List */}
-          <div className="p-2 lg:p-2 flex-1 overflow-y-auto min-h-0">
+          {/* Block List - モバイルではブロック一覧のみ */}
+          <div className={`p-2 lg:p-2 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
             {blocks.length === 0 ? (
               <div className="text-center py-8 text-gray-400 text-sm font-medium">
                 ブロックを追加してください
@@ -777,6 +778,13 @@ export default function EditLPNewPage() {
                   <div
                     key={block.id}
                     draggable
+                    onClick={() => {
+                      // モバイル表示ではブロッククリック時に自動的に設定タブに切り替え
+                      if (window.innerWidth < 1024) {
+                        setMobileTab('properties');
+                      }
+                      setSelectedBlockId(block.id);
+                    }}
                     onDragStart={(e) => {
                       e.dataTransfer.effectAllowed = 'move';
                       e.dataTransfer.setData('text/html', block.id);
@@ -802,7 +810,6 @@ export default function EditLPNewPage() {
                         handleReorderBlocks(newBlocks);
                       }
                     }}
-                    onClick={() => setSelectedBlockId(block.id)}
                     className={`p-3 lg:p-3 rounded cursor-move transition-colors min-h-[56px] lg:min-h-auto flex items-center ${
                       selectedBlockId === block.id
                         ? 'bg-blue-600/20 border border-blue-600/50'
@@ -864,22 +871,113 @@ export default function EditLPNewPage() {
           )}
         </div>
 
-        {/* モバイル表示: Properties Panel タブ */}
+        {/* モバイル表示: Settings タブ (LP設定 + SNSメタ情報 + ブロック編集) */}
         <div className={`flex-col min-h-0 bg-gray-800/30 border-t border-gray-800 lg:hidden overflow-hidden flex ${
-          mobileTab === 'properties' ? 'lg:flex' : 'hidden lg:flex'
+          mobileTab === 'properties' ? 'flex' : 'hidden'
         }`}>
-          {selectedBlockId ? (
-            <PropertyPanel
-              block={blocks.find(b => b.id === selectedBlockId) || null}
-              onUpdateContent={handleUpdateSelectedBlock}
-              onClose={() => setSelectedBlockId(null)}
-              onGenerateAI={handleGenerateAI}
-            />
-          ) : (
-            <div className="p-6 text-center text-gray-400 font-medium text-sm">
-              ブロックを選択して編集
+          <div className="overflow-y-auto flex-1 min-h-0">
+            {/* LP設定 + SNSメタ情報 */}
+            <div className="px-3 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20">
+              <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.showSwipeHint}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
+                  }
+                />
+                <div>
+                  <p className="text-sm text-white font-semibold">スワイプアニメーション</p>
+                  <p className="text-xs text-gray-400">1枚目に指アイコンでスワイプを促します</p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.fullscreenMedia}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
+                  }
+                />
+                <div>
+                  <p className="text-sm text-white font-semibold">メディアの全画面表示</p>
+                  <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.floatingCta}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
+                  }
+                />
+                <div>
+                  <p className="text-sm text-white font-semibold">CTAを画面下部に固定表示</p>
+                  <p className="text-xs text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
+                </div>
+              </label>
+
+              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+                <div>
+                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
+                  <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
+                </div>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={metaSettings.title}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="OGPタイトル（例：〇〇講座 特設LP）"
+                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                  />
+                  <textarea
+                    value={metaSettings.description}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
+                    placeholder="OGPディスクリプション（120文字程度の紹介文）"
+                    rows={3}
+                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  />
+                  <input
+                    type="text"
+                    value={metaSettings.imageUrl}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                    placeholder="OGP画像URL（1200x630推奨）"
+                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                  />
+                  <input
+                    type="text"
+                    value={metaSettings.siteName}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
+                    placeholder="サイト名（例：ABC情報局）"
+                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                  />
+                </div>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
+                  未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
+                </p>
+              </div>
             </div>
-          )}
+
+            {/* ブロック編集パネル */}
+            {selectedBlockId && (
+              <div className="border-t border-gray-800">
+                <PropertyPanel
+                  block={blocks.find(b => b.id === selectedBlockId) || null}
+                  onUpdateContent={handleUpdateSelectedBlock}
+                  onClose={() => setSelectedBlockId(null)}
+                  onGenerateAI={handleGenerateAI}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </main>
 
