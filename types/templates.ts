@@ -400,6 +400,8 @@ export interface ScarcityBlockContent extends BaseBlockContent {
   progressColor?: string;
   titleColor?: string;
   descriptionColor?: string;
+  numberColor?: string;
+  accentColor?: string;
 }
 
 // スティッキーCTA

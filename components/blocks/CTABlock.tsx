@@ -37,21 +37,24 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
               type="text"
               value={content.title}
               onChange={(e) => onEdit?.('title', e.target.value)}
-              className="w-full text-4xl md:text-5xl font-bold mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              className="w-full text-4xl md:text-5xl font-bold mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+              style={{ borderColor: textColor, color: textColor }}
               placeholder="CTAタイトルを入力"
             />
             <input
               type="text"
               value={content.subtitle || ''}
               onChange={(e) => onEdit?.('subtitle', e.target.value)}
-              className="w-full text-xl mb-8 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              className="w-full text-xl mb-8 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+              style={{ borderColor: textColor, color: textColor }}
               placeholder="サブタイトル（オプション）"
             />
             <input
               type="text"
               value={content.buttonText}
               onChange={(e) => onEdit?.('buttonText', e.target.value)}
-              className="w-full text-lg bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              className="w-full text-lg bg-transparent border-2 border-dashed px-4 py-2 rounded"
+              style={{ borderColor: textColor, color: textColor }}
               placeholder="ボタンテキスト"
             />
           </>

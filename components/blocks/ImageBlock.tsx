@@ -46,7 +46,10 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
             style={imageStyle}
           />
           {caption && (
-            <figcaption className="text-sm text-gray-300/80 tracking-wide">
+            <figcaption 
+              className="text-sm tracking-wide"
+              style={{ color: textColor ? textColor + 'CC' : '#ffffff' }}
+            >
               {caption}
             </figcaption>
           )}

@@ -33,13 +33,15 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
               type="text"
               value={content.title}
               onChange={(e) => onEdit?.('title', e.target.value)}
-              className="w-full text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+              className="w-full text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+              style={{ borderColor: content.textColor, color: content.textColor }}
               placeholder="見出しを入力"
             />
             <textarea
               value={content.subtitle}
               onChange={(e) => onEdit?.('subtitle', e.target.value)}
-              className="w-full text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded resize-none"
+              className="w-full text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 bg-transparent border-2 border-dashed px-4 py-2 rounded resize-none"
+              style={{ borderColor: content.textColor, color: content.textColor }}
               rows={2}
               placeholder="サブタイトルを入力"
             />

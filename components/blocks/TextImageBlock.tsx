@@ -32,13 +32,15 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
                 type="text"
                 value={content.title}
                 onChange={(e) => onEdit?.('title', e.target.value)}
-                className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded"
+                className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+                style={{ borderColor: content.textColor, color: content.textColor }}
                 placeholder="タイトルを入力"
               />
               <textarea
                 value={content.text}
                 onChange={(e) => onEdit?.('text', e.target.value)}
-                className="w-full text-lg bg-transparent border-2 border-dashed border-gray-400 px-4 py-2 rounded resize-none"
+                className="w-full text-lg bg-transparent border-2 border-dashed px-4 py-2 rounded resize-none"
+                style={{ borderColor: content.textColor, color: content.textColor }}
                 rows={6}
                 placeholder="説明文を入力"
               />
@@ -67,8 +69,11 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
               />
             </div>
           ) : (
-            <div className="w-full aspect-video bg-gray-200 rounded-xl flex items-center justify-center">
-              <span className="text-gray-400">画像をアップロード</span>
+            <div 
+              className="w-full aspect-video rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: content.textColor + '20', color: content.textColor }}
+            >
+              <span>画像をアップロード</span>
             </div>
           )}
         </div>
