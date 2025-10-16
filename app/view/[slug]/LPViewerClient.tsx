@@ -51,24 +51,34 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const response = await publicApi.getLP(slug);
       const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
-      const meaningfulSteps = sortedSteps.filter(
-        (step) => typeof step.block_type === 'string' && step.block_type.trim().length > 0
-      );
+      
+      // 第1層フィルタ：有効なコンテンツを持つステップのみ
+      const validSteps = sortedSteps.filter((step) => {
+        const hasValidBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
+        const hasValidImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
+        return hasValidBlockType || hasValidImageUrl;
+      });
+      
+      console.log('📊 ステップフィルタリング:', {
+        初期: sortedSteps.length,
+        有効: validSteps.length,
+        除外: sortedSteps.length - validSteps.length,
+      });
 
       const shouldUseFloating = Boolean(response.data.floating_cta);
       const stickySteps = shouldUseFloating
-        ? meaningfulSteps.filter((step) => step.block_type === 'sticky-cta-1')
+        ? validSteps.filter((step) => step.block_type === 'sticky-cta-1')
         : [];
       setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
 
-      const ctaBlock = [...meaningfulSteps]
+      const ctaBlock = [...validSteps]
         .reverse()
         .find((step: any) =>
           step.block_type &&
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
 
-      const displaySteps = meaningfulSteps
+      const displaySteps = validSteps
         .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
         .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
 
@@ -394,6 +404,23 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             const slideClass = lp.fullscreen_media
               ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
               : 'relative overflow-y-auto no-scrollbar';
+            
+            // デバッグログ：ステップの内容を確認
+            const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
+            const hasImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
+            const hasContentData = step.content_data && Object.keys(step.content_data).length > 0;
+            
+            if (!hasBlockType && !hasImageUrl) {
+              console.warn('⚠️ 警告：空のステップが検出されました', {
+                stepId: step.id,
+                index,
+                blockType: step.block_type,
+                imageUrl: step.image_url,
+                contentData: step.content_data,
+              });
+            } else {
+              console.log(`✅ スライド ${index + 1}: blockType=${step.block_type || 'なし'}, hasImage=${hasImageUrl}`);
+            }
             
             return (
               <SwiperSlide
