@@ -752,172 +752,174 @@ export default function EditLPNewPage() {
             </button>
           </div>
 
-          {/* モバイルではLP設定とSNSメタ情報を非表示 */}
-          <div className="hidden lg:block py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
-            <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
+          <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
+            {/* モバイルではLP設定とSNSメタ情報を非表示 */}
+            <div className="hidden lg:block py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 flex-shrink-0">
+              <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
-            <button
-              onClick={() => setShowColorGenerator(true)}
-              className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors"
-            >
-              🎨 テーマカラー生成
-            </button>
+              <button
+                onClick={() => setShowColorGenerator(true)}
+                className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors"
+              >
+                🎨 テーマカラー生成
+              </button>
 
-            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
-              <input
-                type="checkbox"
-                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                checked={lpSettings.showSwipeHint}
-                onChange={(e) =>
-                  setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
-                }
-              />
-              <div>
-                <p className="text-sm lg:text-xs text-white font-semibold">スワイプアニメーション</p>
-                <p className="text-xs lg:text-[11px] text-gray-400">1枚目に指アイコンでスワイプを促します</p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
-              <input
-                type="checkbox"
-                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                checked={lpSettings.fullscreenMedia}
-                onChange={(e) =>
-                  setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
-                }
-              />
-              <div>
-                <p className="text-sm lg:text-xs text-white font-semibold">メディアの全画面表示</p>
-                <p className="text-xs lg:text-[11px] text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
-              <input
-                type="checkbox"
-                className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                checked={lpSettings.floatingCta}
-                onChange={(e) =>
-                  setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
-                }
-              />
-              <div>
-                <p className="text-sm lg:text-xs text-white font-semibold">CTAを画面下部に固定表示</p>
-                <p className="text-xs lg:text-[11px] text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
-              </div>
-            </label>
-
-            <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
-              <div>
-                <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
-                <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
-              </div>
-              <div className="space-y-2">
+              <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
-                  type="text"
-                  value={metaSettings.title}
-                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
-                  placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.showSwipeHint}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
+                  }
                 />
-                <textarea
-                  value={metaSettings.description}
-                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
-                  placeholder="OGPディスクリプション（120文字程度の紹介文）"
-                  rows={3}
-                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
-                />
+                <div>
+                  <p className="text-sm lg:text-xs text-white font-semibold">スワイプアニメーション</p>
+                  <p className="text-xs lg:text-[11px] text-gray-400">1枚目に指アイコンでスワイプを促します</p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
-                  type="text"
-                  value={metaSettings.imageUrl}
-                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
-                  placeholder="OGP画像URL（1200x630推奨）"
-                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.fullscreenMedia}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
+                  }
                 />
+                <div>
+                  <p className="text-sm lg:text-xs text-white font-semibold">メディアの全画面表示</p>
+                  <p className="text-xs lg:text-[11px] text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
-                  type="text"
-                  value={metaSettings.siteName}
-                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
-                  placeholder="サイト名（例：ABC情報局）"
-                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  type="checkbox"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  checked={lpSettings.floatingCta}
+                  onChange={(e) =>
+                    setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
+                  }
                 />
+                <div>
+                  <p className="text-sm lg:text-xs text-white font-semibold">CTAを画面下部に固定表示</p>
+                  <p className="text-xs lg:text-[11px] text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
+                </div>
+              </label>
+
+              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+                <div>
+                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
+                  <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
+                </div>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={metaSettings.title}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="OGPタイトル（例：〇〇講座 特設LP）"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  />
+                  <textarea
+                    value={metaSettings.description}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
+                    placeholder="OGPディスクリプション（120文字程度の紹介文）"
+                    rows={3}
+                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  />
+                  <input
+                    type="text"
+                    value={metaSettings.imageUrl}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                    placeholder="OGP画像URL（1200x630推奨）"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  />
+                  <input
+                    type="text"
+                    value={metaSettings.siteName}
+                    onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
+                    placeholder="サイト名（例：ABC情報局）"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  />
+                </div>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
+                  未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
+                </p>
               </div>
-              <p className="text-[11px] text-gray-500 leading-relaxed">
-                未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
-              </p>
             </div>
-          </div>
 
-          {/* Block List - モバイルではブロック一覧のみ */}
-          <div className={`py-3 lg:py-4 flex-1 overflow-y-auto min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex'}`}>
-            {blocks.length === 0 ? (
-              <div className="text-center py-8 text-gray-400 text-sm font-medium">
-                ブロックを追加してください
-              </div>
-            ) : (
-              <div className="space-y-2 lg:space-y-2">
-                {blocks.map((block, index) => (
-                  <div
-                    key={block.id}
-                    draggable
-                    onClick={() => {
-                      // モバイル表示ではブロッククリック時に自動的に設定タブに切り替え
-                      if (window.innerWidth < 1024) {
-                        setMobileTab('properties');
-                      }
-                      setSelectedBlockId(block.id);
-                    }}
-                    onDragStart={(e) => {
-                      e.dataTransfer.effectAllowed = 'move';
-                      e.dataTransfer.setData('text/html', block.id);
-                      (e.target as HTMLElement).style.opacity = '0.5';
-                    }}
-                    onDragEnd={(e) => {
-                      (e.target as HTMLElement).style.opacity = '1';
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = 'move';
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const draggedId = e.dataTransfer.getData('text/html');
-                      const draggedIndex = blocks.findIndex(b => b.id === draggedId);
-                      const targetIndex = index;
-                      
-                      if (draggedIndex !== targetIndex) {
-                        const newBlocks = [...blocks];
-                        const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
-                        newBlocks.splice(targetIndex, 0, draggedBlock);
-                        handleReorderBlocks(newBlocks);
-                      }
-                    }}
-                    className={`p-3 lg:p-3.5 cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
-                      selectedBlockId === block.id
-                        ? 'bg-blue-600/20 border-l-2 border-blue-600'
-                        : 'bg-gray-800/50 border-l border-gray-800 hover:bg-gray-700'
-                    }`}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1.5 gap-2">
-                        <span className="text-base font-bold text-blue-300 flex-shrink-0">#{index + 1}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteBlock(block.id);
-                          }}
-                          className="text-xs text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
-                        >
-                          削除
-                        </button>
+            {/* Block List - モバイルではブロック一覧のみ */}
+            <div className={`py-3 lg:py-4 flex-1 min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
+              {blocks.length === 0 ? (
+                <div className="text-center py-8 text-gray-400 text-sm font-medium">
+                  ブロックを追加してください
+                </div>
+              ) : (
+                <div className="space-y-2 lg:space-y-2">
+                  {blocks.map((block, index) => (
+                    <div
+                      key={block.id}
+                      draggable
+                      onClick={() => {
+                        // モバイル表示ではブロッククリック時に自動的に設定タブに切り替え
+                        if (window.innerWidth < 1024) {
+                          setMobileTab('properties');
+                        }
+                        setSelectedBlockId(block.id);
+                      }}
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/html', block.id);
+                        (e.target as HTMLElement).style.opacity = '0.5';
+                      }}
+                      onDragEnd={(e) => {
+                        (e.target as HTMLElement).style.opacity = '1';
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const draggedId = e.dataTransfer.getData('text/html');
+                        const draggedIndex = blocks.findIndex(b => b.id === draggedId);
+                        const targetIndex = index;
+
+                        if (draggedIndex !== targetIndex) {
+                          const newBlocks = [...blocks];
+                          const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
+                          newBlocks.splice(targetIndex, 0, draggedBlock);
+                          handleReorderBlocks(newBlocks);
+                        }
+                      }}
+                      className={`w-full p-3 lg:p-3.5 cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
+                        selectedBlockId === block.id
+                          ? 'bg-blue-600/20 border-l-2 border-blue-600'
+                          : 'bg-gray-800/50 border-l border-gray-800 hover:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1.5 gap-2">
+                          <span className="text-base font-bold text-blue-300 flex-shrink-0">#{index + 1}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteBlock(block.id);
+                            }}
+                            className="text-xs text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
+                          >
+                            削除
+                          </button>
+                        </div>
+                        <div className="text-base font-semibold text-white truncate">{block.blockType}</div>
                       </div>
-                      <div className="text-base font-semibold text-white truncate">{block.blockType}</div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
