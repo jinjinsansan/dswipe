@@ -174,7 +174,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
           </div>
 
           {!isEditing && stats.length > 0 && (
-            <div className="mt-6 grid gap-6 text-sm text-blue-100/80 sm:grid-cols-3">
+            <div className="mt-6 grid gap-6 text-sm sm:grid-cols-3" style={{ color: `${bodyTextColor}CC` }}>
               {stats.map((item, index) => (
                 <div key={index} className="space-y-1">
                   <div className="text-lg font-semibold" style={statsValueStyle}>{item.value}</div>
