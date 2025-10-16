@@ -873,6 +873,146 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </label>
         )}
 
+        {/* ヒーローブロック設定 */}
+        {(block.blockType === 'hero' || block.blockType === 'hero-1' || block.blockType === 'hero-2' || block.blockType === 'hero-3') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">📸 ヒーロー設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('buttonColor', (content as any).buttonColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* テキスト+画像ブロック設定 */}
+        {(block.blockType.includes('text-image') || block.blockType.includes('text-img')) && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">🖼️ テキスト+画像設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CTAブロック設定 */}
+        {block.blockType.includes('cta') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">🎯 CTA設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('buttonColor', (content as any).buttonColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 価格表ブロック設定 */}
+        {block.blockType.includes('pricing') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">💰 価格表設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('buttonColor', (content as any).buttonColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 特徴ブロック設定 */}
+        {block.blockType.includes('features') && !block.blockType.includes('aurora') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">⭐ 特徴設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* FAQブロック設定 */}
+        {block.blockType.includes('faq') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">❓ FAQ設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* お客様の声ブロック設定 */}
+        {block.blockType.includes('testimonial') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">💬 お客様の声設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('accentColor', (content as any).accentColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* フォームブロック設定 */}
+        {block.blockType.includes('form') && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">📝 フォーム設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('buttonColor', (content as any).buttonColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 情報商材特化ブロック設定 */}
+        {(block.blockType.includes('countdown') || block.blockType.includes('urgency') || 
+          block.blockType.includes('scarcity') || block.blockType.includes('sticky-cta')) && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">⚡ 特殊ブロック設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('buttonColor', (content as any).buttonColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 情報商材その他ブロック設定 */}
+        {(block.blockType.includes('special-price') || block.blockType.includes('bonus-list') || 
+          block.blockType.includes('guarantee') || block.blockType.includes('problem') || 
+          block.blockType.includes('before-after') || block.blockType.includes('author-profile')) && (
+          <div className="space-y-4 pb-4 border-b border-gray-700">
+            <div>
+              <h3 className="text-sm font-medium text-gray-200 mb-3">🎁 コンテンツブロック設定</h3>
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('accentColor', (content as any).accentColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 配置（ヒーローブロック等） */}
         {('alignment' in content) && (
           <div>
