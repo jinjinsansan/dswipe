@@ -11,9 +11,11 @@ import TemplateSelector from '@/components/TemplateSelector';
 import DraggableBlockEditor from '@/components/DraggableBlockEditor';
 import PropertyPanel from '@/components/PropertyPanel';
 import AITextGenerator from '@/components/AITextGenerator';
+import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import type { AIGenerationResponse } from '@/types/api';
+import type { ColorShades } from '@/lib/colorGenerator';
 
 // モバイル用タブ型定義
 type TabType = 'blocks' | 'preview' | 'properties';
@@ -58,6 +60,9 @@ export default function EditLPNewPage() {
   });
   const [mobileTab, setMobileTab] = useState<TabType>('preview');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showColorGenerator, setShowColorGenerator] = useState(false);
+  const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
+  const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -258,6 +263,27 @@ export default function EditLPNewPage() {
       order: index
     }));
     setBlocks(updatedBlocks);
+  };
+
+  const handleApplyTheme = (shades: ColorShades, hex: string) => {
+    // テーマシェードを保存
+    setCustomThemeShades(shades);
+    setCustomThemeHex(hex);
+    
+    // すべてのブロックのカラーを更新（50, 100, 900段階の利用）
+    setBlocks((prev) =>
+      prev.map((block) => ({
+        ...block,
+        content: {
+          ...block.content,
+          // シェード500をベースカラーに、シェード950を暗い場所に
+          backgroundColor: shades[500],
+          accentColor: shades[600],
+          textColor: '#FFFFFF',
+          // ボタンカラー: ライトな背景ならシェード700、ダークなら400
+        } as BlockContent,
+      })),
+    );
   };
 
   const handleUpdateSelectedBlock = (field: string, value: any) => {
@@ -680,6 +706,13 @@ export default function EditLPNewPage() {
           <div className="hidden lg:block px-3 lg:px-4 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 overflow-y-auto flex-1 lg:flex-shrink-0">
             <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
 
+            <button
+              onClick={() => setShowColorGenerator(true)}
+              className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors"
+            >
+              🎨 テーマカラー生成
+            </button>
+
             <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
               <input
                 type="checkbox"
@@ -1002,6 +1035,18 @@ export default function EditLPNewPage() {
             setAiGeneratorConfig(null);
           }}
         />
+      )}
+
+      {/* カラーテーマジェネレーターモーダル */}
+      {showColorGenerator && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-gray-900 rounded-xl border border-gray-700 w-full max-w-2xl my-8">
+            <ColorThemeGenerator
+              onApply={handleApplyTheme}
+              onClose={() => setShowColorGenerator(false)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
