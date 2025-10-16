@@ -28,6 +28,59 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
 
+  // 色フィールドと表示名のマッピング
+  const colorFields = {
+    backgroundColor: { label: '背景色', defaultColor: '#FFFFFF' },
+    textColor: { label: 'テキスト色', defaultColor: '#000000' },
+    buttonColor: { label: 'ボタン色', defaultColor: '#3B82F6' },
+    accentColor: { label: 'アクセントカラー', defaultColor: '#ffffff' },
+    titleColor: { label: '見出し色', defaultColor: '#111827' },
+    descriptionColor: { label: '説明テキスト色', defaultColor: '#666666' },
+    iconColor: { label: 'アイコン色', defaultColor: '#3B82F6' },
+  } as const;
+
+  // 色ピッカーのレンダリング関数（DRY原則）
+  const renderColorPicker = (fieldName: keyof typeof colorFields, contentValue: any) => {
+    const config = colorFields[fieldName];
+    const value = contentValue || config.defaultColor;
+    const pickerId = fieldName;
+
+    return (
+      <div>
+        <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
+          {config.label}
+        </label>
+        <div className="relative">
+          <button
+            onClick={() => setShowColorPicker(showColorPicker === pickerId ? null : pickerId)}
+            className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+          >
+            <span>{value}</span>
+            <div
+              className="w-8 h-8 rounded border-2 border-gray-600"
+              style={{ backgroundColor: value }}
+            />
+          </button>
+          
+          {showColorPicker === pickerId && (
+            <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
+              <HexColorPicker
+                color={value}
+                onChange={(color) => onUpdateContent(fieldName, color)}
+              />
+              <button
+                onClick={() => setShowColorPicker(null)}
+                className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+              >
+                完了
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -733,148 +786,31 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
-        {/* 背景色 */}
-        {content.backgroundColor !== undefined && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
-              背景色
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowColorPicker(showColorPicker === 'bg' ? null : 'bg')}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              >
-                <span>{content.backgroundColor || '#FFFFFF'}</span>
-                <div
-                  className="w-8 h-8 rounded border-2 border-gray-600"
-                  style={{ backgroundColor: content.backgroundColor || '#FFFFFF' }}
-                />
-              </button>
-              
-              {showColorPicker === 'bg' && (
-                <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
-                  <HexColorPicker
-                    color={content.backgroundColor || '#FFFFFF'}
-                    onChange={(color) => onUpdateContent('backgroundColor', color)}
-                  />
-                  <button
-                    onClick={() => setShowColorPicker(null)}
-                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
-                    完了
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* テキスト色 */}
-        {content.textColor !== undefined && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
-              テキスト色
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowColorPicker(showColorPicker === 'text' ? null : 'text')}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              >
-                <span>{content.textColor || '#000000'}</span>
-                <div
-                  className="w-8 h-8 rounded border-2 border-gray-600"
-                  style={{ backgroundColor: content.textColor || '#000000' }}
-                />
-              </button>
-              
-              {showColorPicker === 'text' && (
-                <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
-                  <HexColorPicker
-                    color={content.textColor || '#000000'}
-                    onChange={(color) => onUpdateContent('textColor', color)}
-                  />
-                  <button
-                    onClick={() => setShowColorPicker(null)}
-                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
-                    完了
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ボタン色（CTAブロック等） */}
-        {('buttonColor' in content) && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
-              ボタン色
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowColorPicker(showColorPicker === 'button' ? null : 'button')}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              >
-                <span>{(content as any).buttonColor || '#3B82F6'}</span>
-                <div
-                  className="w-8 h-8 rounded border-2 border-gray-600"
-                  style={{ backgroundColor: (content as any).buttonColor || '#3B82F6' }}
-                />
-              </button>
-              
-              {showColorPicker === 'button' && (
-                <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
-                  <HexColorPicker
-                    color={(content as any).buttonColor || '#3B82F6'}
-                    onChange={(color) => onUpdateContent('buttonColor', color)}
-                  />
-                  <button
-                    onClick={() => setShowColorPicker(null)}
-                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
-                    完了
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {('accentColor' in content) && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
-              アクセントカラー
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowColorPicker(showColorPicker === 'accent' ? null : 'accent')}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              >
-                <span>{(content as any).accentColor || '#ffffff'}</span>
-                <div
-                  className="w-8 h-8 rounded border-2 border-gray-600"
-                  style={{ backgroundColor: (content as any).accentColor || '#ffffff' }}
-                />
-              </button>
-
-              {showColorPicker === 'accent' && (
-                <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
-                  <HexColorPicker
-                    color={(content as any).accentColor || '#ffffff'}
-                    onChange={(color) => onUpdateContent('accentColor', color)}
-                  />
-                  <button
-                    onClick={() => setShowColorPicker(null)}
-                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
-                    完了
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* 色フィールドセクション */}
+        <div className="border-t border-gray-800 pt-3 mt-3">
+          <h4 className="text-xs font-bold text-gray-400 uppercase mb-3">色設定</h4>
+          
+          {/* 背景色 */}
+          {content.backgroundColor !== undefined && renderColorPicker('backgroundColor', content.backgroundColor)}
+          
+          {/* テキスト色 */}
+          {content.textColor !== undefined && renderColorPicker('textColor', content.textColor)}
+          
+          {/* ボタン色 */}
+          {('buttonColor' in content) && renderColorPicker('buttonColor', (content as any).buttonColor)}
+          
+          {/* アクセントカラー */}
+          {('accentColor' in content) && renderColorPicker('accentColor', (content as any).accentColor)}
+          
+          {/* 見出し色 */}
+          {('titleColor' in content) && renderColorPicker('titleColor', (content as any).titleColor)}
+          
+          {/* 説明テキスト色 */}
+          {('descriptionColor' in content) && renderColorPicker('descriptionColor', (content as any).descriptionColor)}
+          
+          {/* アイコン色 */}
+          {('iconColor' in content) && renderColorPicker('iconColor', (content as any).iconColor)}
+        </div>
 
         {/* パディング */}
         {content.padding !== undefined && (
