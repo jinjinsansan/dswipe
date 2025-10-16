@@ -495,58 +495,67 @@ export default function EditLPNewPage() {
         {/* モバイルメニュー */}
         {showMobileMenu && (
           <div className="lg:hidden border-t border-gray-800 bg-gray-900/50 p-3 space-y-2">
-            <span className={`block px-3 py-1 text-xs rounded font-semibold w-fit ${
-              lp.status === 'published'
-                ? 'bg-green-500/10 text-green-400'
-                : 'bg-gray-700/50 text-gray-400'
-            }`}>
-              {lp.status === 'published' ? '公開中' : '下書き'}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {lp.status === 'published' && (
-                <>
-                  <a
-                    href={`/view/${lp.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200 border border-gray-800 rounded transition-colors"
-                  >
-                    プレビュー
-                  </a>
-                  <button
-                    onClick={() => {
-                      const url = `${window.location.origin}/view/${lp.slug}`;
-                      navigator.clipboard.writeText(url);
-                      alert('URLをコピーしました！');
-                      setShowMobileMenu(false);
-                    }}
-                    className="px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white border border-gray-800 rounded transition-colors"
-                  >
-                    URLコピー
-                  </button>
-                </>
-              )}
-              {lp.status === 'draft' && (
-                <button
-                  onClick={() => {
-                    handlePublish();
-                    setShowMobileMenu(false);
-                  }}
-                  className="px-3 py-1.5 text-xs font-semibold bg-green-600/90 text-white rounded hover:bg-green-600 transition-colors"
-                >
-                  公開
-                </button>
-              )}
+            <div className="flex items-center justify-between">
+              <span className={`px-2 py-1 text-xs rounded font-semibold ${
+                lp.status === 'published'
+                  ? 'bg-green-500/10 text-green-400'
+                  : 'bg-gray-700/50 text-gray-400'
+              }`}>
+                {lp.status === 'published' ? '公開中' : '下書き'}
+              </span>
+            </div>
+            
+            {/* Action Buttons Grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Save Button */}
               <button
                 onClick={() => {
                   handleSave();
                   setShowMobileMenu(false);
                 }}
                 disabled={isSaving}
-                className="px-3 py-1.5 text-xs font-semibold bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+                className="w-full px-2 py-2 bg-blue-600/90 text-white rounded text-xs font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 min-h-[40px] flex items-center justify-center"
               >
-                {isSaving ? '保存中...' : '保存'}
+                {isSaving ? '保存中' : '💾 保存'}
               </button>
+
+              {/* Publish Button (Draft) / Preview (Published) */}
+              {lp.status === 'draft' && (
+                <button
+                  onClick={() => {
+                    handlePublish();
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full px-2 py-2 bg-green-600/90 text-white rounded text-xs font-semibold hover:bg-green-600 transition-colors min-h-[40px] flex items-center justify-center"
+                >
+                  🚀 公開
+                </button>
+              )}
+              {lp.status === 'published' && (
+                <a
+                  href={`/view/${lp.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-2 py-2 bg-purple-600/90 text-white rounded text-xs font-semibold hover:bg-purple-600 transition-colors min-h-[40px] flex items-center justify-center text-center"
+                >
+                  👁️ 表示
+                </a>
+              )}
+
+              {/* URL Copy Button (Published only) */}
+              {lp.status === 'published' && (
+                <button
+                  onClick={() => {
+                    const url = `${window.location.origin}/view/${lp.slug}`;
+                    navigator.clipboard.writeText(url);
+                    alert('URLをコピーしました！');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full px-2 py-2 bg-gray-700 text-gray-300 rounded text-xs font-semibold hover:bg-gray-600 transition-colors min-h-[40px] flex items-center justify-center"
+                >
+                  🔗 コピー
+                </button>
+              )}
             </div>
           </div>
         )}
