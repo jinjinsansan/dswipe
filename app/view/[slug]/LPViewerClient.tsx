@@ -418,29 +418,33 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           onSlideChange={handleSlideChange}
           className={`flex-1 ${fixedCta ? 'pb-12 sm:pb-16' : ''}`}
         >
+          {lp.steps.length > 0 && (() => {
+            console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);
+            return null;
+          })()}
           {lp.steps.map((step, index) => {
-            const stepCtas = getCurrentStepCtas(index);
-            const slideBackground = getStepBackgroundStyle(step);
-            const slideClass = lp.fullscreen_media
-              ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
-              : 'relative overflow-y-auto no-scrollbar';
-            
-            // デバッグログ：ステップの内容を確認
-            const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
-            const hasImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
-            const hasContentData = step.content_data && Object.keys(step.content_data).length > 0;
-            
-            if (!hasBlockType && !hasImageUrl) {
-              console.warn('⚠️ 警告：空のステップが検出されました', {
-                stepId: step.id,
-                index,
-                blockType: step.block_type,
-                imageUrl: step.image_url,
-                contentData: step.content_data,
-              });
-            } else {
-              console.log(`✅ スライド ${index + 1}: blockType=${step.block_type || 'なし'}, hasImage=${hasImageUrl}`);
-            }
+              const stepCtas = getCurrentStepCtas(index);
+              const slideBackground = getStepBackgroundStyle(step);
+              const slideClass = lp.fullscreen_media
+                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
+                : 'relative overflow-y-auto no-scrollbar';
+              
+              // デバッグログ：ステップの内容を確認
+              const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
+              const hasImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
+              const hasContentData = step.content_data && Object.keys(step.content_data).length > 0;
+              
+              if (!hasBlockType && !hasImageUrl) {
+                console.warn('⚠️ 警告：空のステップが検出されました', {
+                  stepId: step.id,
+                  index,
+                  blockType: step.block_type,
+                  imageUrl: step.image_url,
+                  contentData: step.content_data,
+                });
+              } else {
+                console.log(`✅ スライド ${index + 1}: blockType=${step.block_type || 'なし'}, hasImage=${hasImageUrl}`);
+              }
             
             return (
               <SwiperSlide
