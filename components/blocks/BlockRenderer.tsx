@@ -143,9 +143,20 @@ export default function BlockRenderer({
     
     default:
       return (
-        <div className="px-8 bg-gray-100 text-center">
-          <p className="text-gray-500">未対応のブロックタイプ: {blockType}</p>
-          <p className="text-sm text-gray-400 mt-2">サポートされているブロックを選択してください</p>
+        <div 
+          className="px-8 text-center"
+          style={{ 
+            backgroundColor: content?.backgroundColor || '#F3F4F6',
+            color: content?.textColor || '#6B7280',
+          }}
+        >
+          <p style={{ color: content?.textColor || '#6B7280' }}>未対応のブロックタイプ: {blockType}</p>
+          <p 
+            className="text-sm mt-2"
+            style={{ color: content?.textColor ? `${content.textColor}99` : '#9CA3AF' }}
+          >
+            サポートされているブロックを選択してください
+          </p>
         </div>
       );
   }
