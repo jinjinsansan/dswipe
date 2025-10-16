@@ -52,7 +52,10 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
 
-      const stickySteps = sortedSteps.filter((step) => step.block_type === 'sticky-cta-1');
+      const shouldUseFloating = Boolean(response.data.floating_cta);
+      const stickySteps = shouldUseFloating
+        ? sortedSteps.filter((step) => step.block_type === 'sticky-cta-1')
+        : [];
       setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
 
       const ctaBlock = [...sortedSteps]
@@ -63,7 +66,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         );
 
       const displaySteps = sortedSteps
-        .filter((step) => step.block_type !== 'sticky-cta-1')
+        .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
         .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
 
       if (ctaBlock) {
