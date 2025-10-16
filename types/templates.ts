@@ -388,6 +388,9 @@ export interface AuthorProfileBlockContent extends BaseBlockContent {
   mediaLogos?: string[];
   titleColor?: string;
   descriptionColor?: string;
+  nameColor?: string;
+  borderColor?: string;
+  accentColor?: string;
 }
 
 // 緊急性訴求
