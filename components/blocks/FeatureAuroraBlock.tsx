@@ -125,7 +125,7 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                       </div>
                     )}
                     <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-white/90">
+                      <h3 className="text-lg font-semibold" style={{ color: `${bodyColor}E6` }}>
                         {feature.title || '機能タイトル'}
                       </h3>
                       <p className="text-sm leading-relaxed" style={{ color: `${bodyColor}CC` }}>
