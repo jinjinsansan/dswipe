@@ -1,0 +1,253 @@
+/**
+ * 11段階のカラーシェードをブロックに自動的に割り当てる
+ * Kigenで生成したシェードを各ブロック要素に分散させる
+ */
+
+import type { BlockContent } from '@/types/templates';
+import type { ColorShades } from './colorGenerator';
+
+/**
+ * ブロックコンテンツにシェードを適用する
+ */
+export function applyThemeShadesToBlock(
+  block: any,
+  shades: ColorShades
+): any {
+  const blockType = block.blockType || '';
+  const content = block.content || {};
+
+  // 基本的なカラー割り当て（すべてのブロック）
+  const baseUpdate = {
+    backgroundColor: shades[50],    // 最も明るい背景
+    textColor: shades[800],         // 濃いテキスト
+    accentColor: shades[600],       // アクセント色
+    buttonColor: shades[500],       // ボタンは基本色
+  };
+
+  let updatedContent = { ...content, ...baseUpdate };
+
+  // ブロックタイプ別の詳細な色割り当て
+  if (blockType.startsWith('hero')) {
+    updatedContent = applyHeroTheme(updatedContent, shades);
+  } else if (blockType.startsWith('pricing')) {
+    updatedContent = applyPricingTheme(updatedContent, shades);
+  } else if (blockType.startsWith('testimonial')) {
+    updatedContent = applyTestimonialTheme(updatedContent, shades);
+  } else if (blockType.startsWith('faq')) {
+    updatedContent = applyFAQTheme(updatedContent, shades);
+  } else if (blockType.startsWith('features')) {
+    updatedContent = applyFeaturesTheme(updatedContent, shades);
+  } else if (blockType.startsWith('cta')) {
+    updatedContent = applyCTATheme(updatedContent, shades);
+  } else if (blockType.startsWith('text-img')) {
+    updatedContent = applyTextImageTheme(updatedContent, shades);
+  } else if (blockType.startsWith('stats')) {
+    updatedContent = applyStatsTheme(updatedContent, shades);
+  } else if (blockType.startsWith('comparison')) {
+    updatedContent = applyComparisonTheme(updatedContent, shades);
+  } else if (blockType.startsWith('bonus-list')) {
+    updatedContent = applyBonusListTheme(updatedContent, shades);
+  } else if (blockType.startsWith('guarantee')) {
+    updatedContent = applyGuaranteeTheme(updatedContent, shades);
+  } else if (blockType.startsWith('problem')) {
+    updatedContent = applyProblemTheme(updatedContent, shades);
+  }
+
+  return {
+    ...block,
+    content: updatedContent,
+  };
+}
+
+// ===== ブロックタイプ別テーマ適用関数 =====
+
+function applyHeroTheme(content: any, shades: ColorShades): any {
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    textColor: shades[900],
+    buttonColor: shades[500],
+    accentColor: shades[600],
+    // 見出しは最も濃い色
+    taglineColor: shades[700],
+  };
+}
+
+function applyPricingTheme(content: any, shades: ColorShades): any {
+  const updatedPlans = content.plans?.map((plan: any) => ({
+    ...plan,
+    backgroundColor: plan.highlighted ? shades[600] : shades[100],
+    textColor: plan.highlighted ? shades[50] : shades[900],
+    buttonColor: plan.highlighted ? shades[500] : shades[600],
+    borderColor: shades[200],
+    priceColor: shades[500],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    textColor: shades[900],
+    accentColor: shades[600],
+    plans: updatedPlans,
+  };
+}
+
+function applyTestimonialTheme(content: any, shades: ColorShades): any {
+  const updatedTestimonials = content.testimonials?.map((testimonial: any) => ({
+    ...testimonial,
+    nameColor: shades[900],
+    textColor: shades[800],
+    roleColor: shades[600],
+    backgroundColor: shades[100],
+    borderColor: shades[200],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    accentColor: shades[600],
+    testimonials: updatedTestimonials,
+  };
+}
+
+function applyFAQTheme(content: any, shades: ColorShades): any {
+  const updatedFAQs = content.faqs?.map((faq: any) => ({
+    ...faq,
+    questionColor: shades[700],
+    answerColor: shades[800],
+    backgroundColor: shades[100],
+    accentColor: shades[500],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    borderColor: shades[200],
+    faqs: updatedFAQs,
+  };
+}
+
+function applyFeaturesTheme(content: any, shades: ColorShades): any {
+  const updatedFeatures = content.features?.map((feature: any) => ({
+    ...feature,
+    titleColor: shades[900],
+    descriptionColor: shades[800],
+    iconColor: shades[600],
+    backgroundColor: shades[100],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    taglineColor: shades[700],
+    accentColor: shades[600],
+    features: updatedFeatures,
+  };
+}
+
+function applyCTATheme(content: any, shades: ColorShades): any {
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    subtitleColor: shades[800],
+    buttonColor: shades[500],
+    buttonTextColor: shades[50],
+    accentColor: shades[600],
+    borderColor: shades[200],
+  };
+}
+
+function applyTextImageTheme(content: any, shades: ColorShades): any {
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    textColor: shades[800],
+    accentColor: shades[600],
+    borderColor: shades[200],
+  };
+}
+
+function applyStatsTheme(content: any, shades: ColorShades): any {
+  const updatedStats = content.stats?.map((stat: any) => ({
+    ...stat,
+    numberColor: shades[500],
+    labelColor: shades[800],
+    backgroundColor: shades[100],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    accentColor: shades[600],
+    stats: updatedStats,
+  };
+}
+
+function applyComparisonTheme(content: any, shades: ColorShades): any {
+  const updatedRows = content.rows?.map((row: any) => ({
+    ...row,
+    headerColor: shades[900],
+    highlightedColor: shades[500],
+    normalColor: shades[800],
+    backgroundColor: shades[100],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    borderColor: shades[200],
+    rows: updatedRows,
+  };
+}
+
+function applyBonusListTheme(content: any, shades: ColorShades): any {
+  const updatedBonuses = content.bonuses?.map((bonus: any) => ({
+    ...bonus,
+    titleColor: shades[900],
+    descriptionColor: shades[800],
+    highlightColor: shades[500],
+    checkmarkColor: shades[600],
+    backgroundColor: shades[100],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    accentColor: shades[600],
+    bonuses: updatedBonuses,
+  };
+}
+
+function applyGuaranteeTheme(content: any, shades: ColorShades): any {
+  return {
+    ...content,
+    backgroundColor: shades[100],
+    titleColor: shades[900],
+    descriptionColor: shades[800],
+    badgeColor: shades[500],
+    accentColor: shades[600],
+    borderColor: shades[600],
+  };
+}
+
+function applyProblemTheme(content: any, shades: ColorShades): any {
+  const updatedItems = content.items?.map((item: any) => ({
+    ...item,
+    titleColor: shades[900],
+    checkColor: shades[600],
+    backgroundColor: shades[100],
+  })) || [];
+
+  return {
+    ...content,
+    backgroundColor: shades[50],
+    titleColor: shades[900],
+    accentColor: shades[600],
+    items: updatedItems,
+  };
+}

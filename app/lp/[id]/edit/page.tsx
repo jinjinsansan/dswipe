@@ -14,6 +14,7 @@ import AITextGenerator from '@/components/AITextGenerator';
 import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
+import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
 
@@ -294,21 +295,12 @@ export default function EditLPNewPage() {
       'comparison-1', 'logo-grid-1'
     ];
     
-    // すべてのブロックのカラーを更新（テキスト系ブロックのみ）
+    // 11段階のシェードをブロックごとに適用
     setBlocks((prev) =>
       prev.map((block) => {
         // テキストを持つブロックのみカラー適用
         if (colorableBlockTypes.includes(block.blockType)) {
-          return {
-            ...block,
-            content: {
-              ...block.content,
-              // シェード500をベースカラーに、シェード600をアクセント色に
-              backgroundColor: shades[500],
-              accentColor: shades[600],
-              textColor: '#FFFFFF',
-            } as BlockContent,
-          };
+          return applyThemeShadesToBlock(block, shades);
         }
         // 画像オンリーのブロック（image-1, gallery, video等）はスキップ
         return block;
@@ -333,6 +325,7 @@ export default function EditLPNewPage() {
             : prev
         );
         console.log('✅ テーマが正常に保存されました');
+        console.log('📊 11段階のシェードを全ブロックに適用しました');
       }
     } catch (err: any) {
       console.error('❌ テーマ保存エラー:', err);
