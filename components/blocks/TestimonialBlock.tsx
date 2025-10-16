@@ -9,7 +9,15 @@ interface TestimonialBlockProps {
 }
 
 export default function TestimonialBlock({ content, isEditing, onEdit }: TestimonialBlockProps) {
-  const { testimonials, layout = 'card', backgroundColor = '#F9FAFB', textColor = '#111827', accentColor = '#3B82F6' } = content;
+  const { 
+    testimonials, 
+    layout = 'card', 
+    backgroundColor = '#F9FAFB', 
+    textColor = '#111827', 
+    accentColor = '#3B82F6',
+    titleColor,
+    descriptionColor,
+  } = content;
 
   const renderStars = (rating: number = 5) => {
     return (
@@ -111,7 +119,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
               {/* テキスト */}
               <p
                 className="text-center mb-6 leading-relaxed"
-                style={{ color: textColor, opacity: 0.9 }}
+                style={{ color: descriptionColor || textColor, opacity: 0.9 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -129,7 +137,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
               <div className="text-center">
                 <p
                   className="font-semibold"
-                  style={{ color: textColor }}
+                  style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -145,7 +153,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                 {testimonial.role && (
                   <p
                     className="text-sm"
-                    style={{ color: textColor, opacity: 0.7 }}
+                    style={{ color: descriptionColor || textColor, opacity: 0.7 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={(e) => {
@@ -160,7 +168,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                   </p>
                 )}
                 {testimonial.company && (
-                  <p className="text-sm" style={{ color: textColor, opacity: 0.6 }}>{testimonial.company}</p>
+                  <p className="text-sm" style={{ color: descriptionColor || textColor, opacity: 0.6 }}>{testimonial.company}</p>
                 )}
               </div>
             </div>

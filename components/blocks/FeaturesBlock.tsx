@@ -8,7 +8,17 @@ interface FeaturesBlockProps {
 }
 
 export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBlockProps) {
-  const { title, features, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
+  const { 
+    title, 
+    features, 
+    columns = 3, 
+    backgroundColor = '#FFFFFF', 
+    textColor = '#111827', 
+    accentColor = '#3B82F6',
+    titleColor,
+    descriptionColor,
+    iconColor,
+  } = content;
 
   const gridCols = 
     columns === 2 ? 'md:grid-cols-2' : 
@@ -44,7 +54,9 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
             <div key={index} className="text-center p-6 rounded-lg" style={{ backgroundColor: accentColor + '08', borderTop: `3px solid ${accentColor}` }}>
               {/* アイコン */}
               {feature.icon && (
-                <div className="text-6xl mb-4"
+                <div 
+                  className="text-6xl mb-4"
+                  style={{ color: iconColor || accentColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -62,7 +74,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
               {/* タイトル */}
               <h3
                 className="text-xl font-semibold mb-3"
-                style={{ color: textColor }}
+                style={{ color: titleColor || textColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -79,7 +91,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
               {/* 説明 */}
               <p
                 className="leading-relaxed"
-                style={{ color: textColor, opacity: 0.8 }}
+                style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {

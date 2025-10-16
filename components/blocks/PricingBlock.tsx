@@ -8,7 +8,15 @@ interface PricingBlockProps {
 }
 
 export default function PricingBlock({ content, isEditing, onEdit }: PricingBlockProps) {
-  const { plans, columns = 3, backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
+  const { 
+    plans, 
+    columns = 3, 
+    backgroundColor = '#FFFFFF', 
+    textColor = '#111827', 
+    accentColor = '#3B82F6',
+    titleColor,
+    descriptionColor,
+  } = content;
 
   const gridCols = columns === 2 ? 'sm:grid-cols-2' : columns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-1';
 
@@ -34,6 +42,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* プラン名 */}
               <h3
                 className="text-2xl font-bold mb-2"
+                style={{ color: titleColor || (plan.highlighted ? '#FFFFFF' : textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={(e) => {
@@ -51,7 +60,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {plan.description && (
                 <p
                   className="text-sm mb-4"
-                  style={{ opacity: 0.8 }}
+                  style={{ color: descriptionColor || (plan.highlighted ? '#FFFFFF' : textColor), opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {

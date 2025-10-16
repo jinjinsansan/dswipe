@@ -117,6 +117,8 @@ export interface PricingBlockContent extends BaseBlockContent {
     highlighted?: boolean;
   }[];
   columns?: 2 | 3;
+  titleColor?: string;
+  descriptionColor?: string;
   themeKey?: TemplateThemeKey;
 }
 
@@ -131,6 +133,8 @@ export interface TestimonialBlockContent extends BaseBlockContent {
     company?: string;
   }[];
   layout?: 'card' | 'slider' | 'grid';
+  titleColor?: string;
+  descriptionColor?: string;
   themeKey?: TemplateThemeKey;
 }
 
@@ -142,6 +146,8 @@ export interface FAQBlockContent extends BaseBlockContent {
     answer: string;
   }[];
   layout?: 'accordion' | 'grid';
+  titleColor?: string;
+  descriptionColor?: string;
   themeKey?: TemplateThemeKey;
 }
 
@@ -156,6 +162,9 @@ export interface FeaturesBlockContent extends BaseBlockContent {
     description: string;
   }[];
   columns?: 2 | 3 | 4;
+  titleColor?: string;
+  descriptionColor?: string;
+  iconColor?: string;
   themeKey?: TemplateThemeKey;
 }
 

@@ -10,7 +10,16 @@ interface FAQBlockProps {
 }
 
 export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) {
-  const { title, faqs, layout = 'accordion', backgroundColor = '#FFFFFF', textColor = '#111827', accentColor = '#3B82F6' } = content;
+  const { 
+    title, 
+    faqs, 
+    layout = 'accordion', 
+    backgroundColor = '#FFFFFF', 
+    textColor = '#111827', 
+    accentColor = '#3B82F6',
+    titleColor,
+    descriptionColor,
+  } = content;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {
@@ -45,7 +54,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
               <div key={index} className="rounded-lg p-6 shadow-md" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
                 <h3
                   className="text-xl font-semibold mb-3"
-                  style={{ color: textColor }}
+                  style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -60,7 +69,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                 </h3>
                 <p
                   className="text-gray-600"
-                  style={{ color: textColor, opacity: 0.8 }}
+                  style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -117,7 +126,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
               >
                 <h3
                   className="text-lg font-semibold flex-1"
-                  style={{ color: textColor }}
+                  style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -152,7 +161,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                 <div className="px-6 pb-6">
                   <p
                     className="leading-relaxed"
-                    style={{ color: textColor, opacity: 0.8 }}
+                    style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={(e) => {
