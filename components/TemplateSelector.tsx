@@ -93,34 +93,36 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
   const templates = React.useMemo(() => getAllTemplates(), []);
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-      <div className="relative w-full max-w-6xl max-h-[88vh] overflow-hidden rounded-2xl border border-white/10 bg-[#070b16]/95 shadow-[0_36px_120px_-60px_rgba(56,189,248,0.6)]">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="relative w-full max-w-6xl h-[90vh] sm:h-auto sm:max-h-[88vh] overflow-hidden rounded-2xl border border-white/10 bg-[#070b16]/95 shadow-[0_36px_120px_-60px_rgba(56,189,248,0.6)] flex flex-col">
         <div className="pointer-events-none absolute -top-24 -left-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
 
-        <div className="relative flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-white/10">
-          <div>
+        {/* Header */}
+        <div className="relative flex items-center justify-between px-3 sm:px-5 sm:px-6 py-3 sm:py-4 sm:py-5 border-b border-white/10 flex-shrink-0">
+          <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.32em] text-blue-200/80 mb-1">Template Library</p>
-            <h2 className="text-xl font-semibold text-white">テンプレートを選択</h2>
-            <p className="text-xs text-gray-400 mt-1">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-white truncate">テンプレートを選択</h2>
+            <p className="text-xs text-gray-400 mt-1 hidden sm:block">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
           </div>
           <button
             onClick={onClose}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition"
+            className="inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition flex-shrink-0 ml-2"
             aria-label="閉じる"
           >
             ×
           </button>
         </div>
 
-        <div className="relative flex-1 overflow-y-auto px-5 sm:px-6 py-5 sm:py-6">
+        {/* Content - Scrollable */}
+        <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
               <span className="text-4xl">🗂️</span>
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {templates.map((template) => {
                 const meta = CATEGORY_META[template.category] || { name: template.category, icon: '📄' };
                 return (
@@ -130,29 +132,29 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                       onSelectTemplate(template);
                       onClose();
                     }}
-                    className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] px-4 pt-4 pb-4 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.05] hover:shadow-[0_20px_45px_-35px_rgba(59,130,246,0.65)]"
+                    className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] px-3 sm:px-4 pt-3 sm:pt-4 pb-3 sm:pb-4 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.05] hover:shadow-[0_20px_45px_-35px_rgba(59,130,246,0.65)]"
                   >
                     <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
 
-                    <div className="relative flex items-center justify-between gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/20 text-blue-100">
+                    <div className="relative flex items-center justify-between gap-2 sm:gap-3">
+                      <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-blue-500/20 text-blue-100 flex-shrink-0">
                         {meta.icon}
                       </span>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-3 py-0.5 text-[11px] font-medium text-blue-100/80">
+                      <span className="rounded-full border border-white/10 bg-white/10 px-2 sm:px-3 py-0.5 text-[10px] sm:text-[11px] font-medium text-blue-100/80 truncate">
                         {meta.name}
                       </span>
                     </div>
 
-                    <div className="relative mt-3 space-y-1.5">
-                      <h3 className="text-sm font-semibold text-white">{template.name}</h3>
-                      <p className="text-[11px] text-gray-400 leading-relaxed line-clamp-2">
+                    <div className="relative mt-2 sm:mt-3 space-y-1">
+                      <h3 className="text-xs sm:text-sm font-semibold text-white line-clamp-1">{template.name}</h3>
+                      <p className="text-[10px] sm:text-[11px] text-gray-400 leading-relaxed line-clamp-2">
                         {template.description}
                       </p>
                     </div>
 
-                    <div className="relative mt-4 flex items-center gap-1.5 text-[11px] font-medium text-blue-300">
+                    <div className="relative mt-2 sm:mt-4 flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-blue-300">
                       追加する
-                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <svg className="h-3 sm:h-3.5 w-3 sm:w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -163,8 +165,9 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           )}
         </div>
 
-        <div className="relative border-t border-white/10 bg-white/5 px-5 sm:px-6 py-3.5 text-center text-[11px] sm:text-xs text-gray-400">
-          <span className="font-medium text-white/80">ヒント:</span> 追加後はプロパティパネルで色やコンテンツを自由に編集できます。
+        {/* Footer */}
+        <div className="relative border-t border-white/10 bg-white/5 px-2 sm:px-5 sm:px-6 py-2 sm:py-3.5 text-center text-[10px] sm:text-[11px] sm:text-xs text-gray-400 flex-shrink-0">
+          <span className="font-medium text-white/80">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
         </div>
       </div>
     </div>
