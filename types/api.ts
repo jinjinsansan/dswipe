@@ -136,6 +136,10 @@ export interface CreateLPRequest {
   fullscreen_media?: boolean;
   floating_cta?: boolean;
   product_id?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  meta_image_url?: string | null;
+  meta_site_name?: string | null;
 }
 
 export interface UpdateLPRequest {
@@ -148,6 +152,10 @@ export interface UpdateLPRequest {
   fullscreen_media?: boolean;
   floating_cta?: boolean;
   product_id?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  meta_image_url?: string | null;
+  meta_site_name?: string | null;
 }
 
 // LP一覧レスポンス

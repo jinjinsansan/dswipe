@@ -40,6 +40,41 @@ export default function DashboardPage() {
         : Array.isArray(lpsResponse.data) 
         ? lpsResponse.data 
         : [];
+
+      const heroImageMap = new Map<string, string | null>();
+
+      await Promise.all(
+        lpsData.map(async (lpItem) => {
+          try {
+            const detailResponse = await lpApi.get(lpItem.id);
+            const steps = Array.isArray(detailResponse.data?.steps) ? detailResponse.data.steps : [];
+            const heroStep = [...steps].find((step: any) => {
+              const type = step?.block_type || step?.content_data?.block_type;
+              return typeof type === 'string' && type.includes('hero');
+            }) || steps.find((step: any) => step?.block_type === 'image-aurora-1') || steps[0];
+
+            const extractImageFromStep = (step: any): string | null => {
+              if (!step) return null;
+              const sources = [
+                step?.content_data?.imageUrl,
+                step?.content_data?.image_url,
+                step?.content_data?.heroImage,
+                step?.content_data?.hero_image,
+                step?.content_data?.primaryImageUrl,
+                step?.content_data?.primary_image_url,
+                step?.image_url,
+                step?.imageUrl,
+              ];
+              return sources.find((value) => typeof value === 'string' && value.trim().length > 0) || null;
+            };
+
+            heroImageMap.set(lpItem.id, extractImageFromStep(heroStep));
+          } catch (detailError) {
+            console.error('Failed to fetch LP detail for hero image:', detailError);
+            heroImageMap.set(lpItem.id, null);
+          }
+        })
+      );
       
       const productsData = Array.isArray(productsResponse.data?.data)
         ? productsResponse.data.data
@@ -47,7 +82,12 @@ export default function DashboardPage() {
         ? productsResponse.data
         : [];
       
-      setLps(lpsData);
+      const enrichedLps = lpsData.map((lpItem: any) => ({
+        ...lpItem,
+        heroImage: heroImageMap.get(lpItem.id) || lpItem.image_url || null,
+      }));
+
+      setLps(enrichedLps);
       setProducts(productsData);
       setPointBalance(pointsResponse.data.point_balance);
       
@@ -226,15 +266,7 @@ export default function DashboardPage() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                 {lps.map((lp: any) => {
-                  const steps = Array.isArray(lp.steps) ? lp.steps : [];
-                  const heroStep = steps.find((step: any) => {
-                    const type = step?.block_type || step?.content_data?.block_type;
-                    return typeof type === 'string' && type.includes('hero');
-                  }) || steps[0];
-                  const heroImage = heroStep?.content_data?.imageUrl
-                    || heroStep?.content_data?.image_url
-                    || heroStep?.image_url
-                    || heroStep?.imageUrl;
+                  const heroImage = lp.heroImage;
 
                   return (
                   <div

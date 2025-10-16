@@ -12,7 +12,7 @@ import type { AIGenerationResponse } from '@/types/api';
 
 export default function CreateLPPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isInitialized } = useAuthStore();
   const [showWizard, setShowWizard] = useState(true);
   const [aiSuggestion, setAiSuggestion] = useState<AIGenerationResponse | null>(null);
   const outlinePreview = useMemo(() => {
@@ -52,6 +52,13 @@ export default function CreateLPPage() {
       fetchProducts();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (!isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, isInitialized, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -134,8 +141,11 @@ export default function CreateLPPage() {
     }
   };
 
+  if (!isInitialized) {
+    return null;
+  }
+
   if (!isAuthenticated) {
-    router.push('/login');
     return null;
   }
 

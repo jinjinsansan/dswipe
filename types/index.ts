@@ -30,6 +30,10 @@ export interface LandingPage {
   total_views: number;
   total_cta_clicks: number;
   product_id?: string;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  meta_image_url?: string | null;
+  meta_site_name?: string | null;
   created_at: string;
   updated_at: string;
 }

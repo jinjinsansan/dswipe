@@ -22,7 +22,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
 
   return (
     <div
-      className={fullWidth ? 'py-10 px-4 sm:px-8' : 'py-12 px-8'}
+      className={fullWidth ? 'py-6 px-4 sm:py-8 sm:px-6 lg:px-10' : 'py-12 px-8'}
       style={{
         background,
         color: textColor,
@@ -60,21 +60,24 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
           </>
         ) : (
           <>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className={fullWidth ? 'text-3xl md:text-4xl font-bold mb-4' : 'text-4xl md:text-5xl font-bold mb-6'}>
               {content.title || 'さあ、始めましょう'}
             </h2>
             {content.subtitle && (
-              <p className="text-xl mb-8" style={{ color: `${textColor}CC` }}>
+              <p
+                className={fullWidth ? 'text-base md:text-lg mb-5' : 'text-xl mb-8'}
+                style={{ color: `${textColor}CC` }}
+              >
                 {content.subtitle}
               </p>
             )}
-            <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:gap-4">
+            <div className={fullWidth ? 'flex flex-col items-center justify-center gap-2 md:flex-row md:gap-3' : 'flex flex-col items-center justify-center gap-3 md:flex-row md:gap-4'}>
               {productId ? (
                 <Link
                   href={`/points/purchase?product_id=${productId}`}
                   className={
                     fullWidth
-                      ? 'block w-full px-10 py-5 rounded-none font-bold text-lg shadow-2xl hover:scale-[1.005] transition-transform'
+                      ? 'block w-full px-6 py-3 rounded-none font-bold text-base md:text-lg shadow-2xl hover:scale-[1.005] transition-transform'
                       : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
                   }
                   style={{
@@ -89,7 +92,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                 <button
                   className={
                     fullWidth
-                      ? 'w-full px-10 py-5 rounded-none font-bold text-lg shadow-2xl hover:scale-[1.005] transition-transform'
+                      ? 'w-full px-6 py-3 rounded-none font-bold text-base md:text-lg shadow-2xl hover:scale-[1.005] transition-transform'
                       : 'px-12 py-4 rounded-lg font-semibold text-lg shadow-2xl hover:scale-[1.03] transition-transform'
                   }
                   style={{
@@ -107,7 +110,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
                   href={content.secondaryButtonUrl || '#'}
                   className={
                     fullWidth
-                      ? 'w-full px-10 py-5 rounded-none font-semibold text-lg transition-transform border'
+                      ? 'w-full px-6 py-3 rounded-none font-semibold text-base md:text-lg transition-transform border'
                       : 'inline-flex px-12 py-4 rounded-lg font-semibold text-lg transition-transform border'
                   }
                   style={{

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState, useRef, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard } from 'swiper/modules';
@@ -13,10 +13,12 @@ import { useAuthStore } from '@/store/authStore';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-export default function LPViewerPage() {
-  const params = useParams();
+interface LPViewerClientProps {
+  slug: string;
+}
+
+export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const router = useRouter();
-  const slug = params.slug as string;
   const { isAuthenticated } = useAuthStore();
   const [lp, setLp] = useState<LPDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +43,7 @@ export default function LPViewerPage() {
     if (isAuthenticated) {
       fetchPointBalance();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, isAuthenticated]);
 
   const fetchLP = async () => {
@@ -52,14 +55,21 @@ export default function LPViewerPage() {
       const stickySteps = sortedSteps.filter((step) => step.block_type === 'sticky-cta-1');
       setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
 
-      const displaySteps = sortedSteps.filter((step) => step.block_type !== 'sticky-cta-1');
-
       const ctaBlock = [...sortedSteps]
         .reverse()
         .find((step: any) =>
           step.block_type &&
           (step.block_type.startsWith('cta') || step.block_type === 'form')
         );
+
+      let displaySteps = sortedSteps.filter((step) => step.block_type !== 'sticky-cta-1');
+
+      if (ctaBlock) {
+        displaySteps = displaySteps.filter((step) => step.id !== ctaBlock.id);
+        if (!response.data.floating_cta) {
+          displaySteps.push(ctaBlock);
+        }
+      }
 
       if (ctaBlock) {
         setFixedCta({
@@ -76,7 +86,6 @@ export default function LPViewerPage() {
         steps: displaySteps,
       });
 
-      // LPに紐付いた商品を取得
       if (response.data.id) {
         fetchProducts(response.data.id);
       }
@@ -154,25 +163,19 @@ export default function LPViewerPage() {
       
       setShowPurchaseModal(false);
       
-      // 購入完了後のリダイレクト処理
       const { redirect_url, thanks_lp_slug } = response.data;
       
       if (redirect_url) {
-        // 外部URLにリダイレクト
         alert('購入が完了しました！\nサンクスページに移動します。');
         window.location.href = redirect_url;
       } else if (thanks_lp_slug) {
-        // サイト内のサンクスページLPにリダイレクト
         alert('購入が完了しました！\nサンクスページに移動します。');
         router.push(`/view/${thanks_lp_slug}`);
       } else {
-        // デフォルト：購入完了メッセージ
         alert('購入が完了しました！\nありがとうございます。');
       }
       
-      // ポイント残高を再取得
       await fetchPointBalance();
-      // 商品情報を再取得（在庫更新のため）
       if (lp?.id) {
         await fetchProducts(lp.id);
       }
@@ -198,7 +201,6 @@ export default function LPViewerPage() {
       const response = await publicApi.getRequiredActions(slug, sessionId);
       setRequiredActions(response.data);
       
-      // メールゲートが必要かチェック
       if (!response.data.all_completed) {
         const emailAction = response.data.required_actions.find(
           (a: any) => a.action_type === 'email' && !response.data.completed_actions.includes(a.id)
@@ -217,7 +219,6 @@ export default function LPViewerPage() {
     
     const currentStep = lp.steps[swiper.activeIndex];
     if (currentStep) {
-      // ステップ閲覧記録
       try {
         await publicApi.recordStepView(slug, {
           step_id: currentStep.id,
@@ -228,7 +229,6 @@ export default function LPViewerPage() {
       }
     }
 
-    // 前のステップの離脱記録
     if (swiper.previousIndex !== swiper.activeIndex && swiper.previousIndex < lp.steps.length) {
       const previousStep = lp.steps[swiper.previousIndex];
       if (previousStep) {
@@ -259,7 +259,7 @@ export default function LPViewerPage() {
     }
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
     try {
@@ -347,7 +347,6 @@ export default function LPViewerPage() {
 
   return (
     <>
-      {/* メールゲート */}
       {showEmailGate && (
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4">
           <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700">
@@ -373,7 +372,6 @@ export default function LPViewerPage() {
         </div>
       )}
 
-      {/* LP Viewer */}
       <div className={`h-screen ${lp.is_fullscreen ? '' : 'container mx-auto'}`}>
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
@@ -402,7 +400,6 @@ export default function LPViewerPage() {
                 className={slideClass}
                 style={slideBackground ? { background: slideBackground } : undefined}
               >
-                {/* ブロックレンダリング */}
                 {(() => {
                   const renderBlock = () => {
                     if (step.block_type && step.content_data) {
@@ -443,7 +440,6 @@ export default function LPViewerPage() {
                   return renderBlock();
                 })()}
                 
-                {/* CTAボタン */}
                 {stepCtas.length > 0 && (
                   <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
                     <div className="space-y-4 pointer-events-auto">
@@ -468,7 +464,6 @@ export default function LPViewerPage() {
                   </div>
                 )}
 
-                {/* スワイプヒント */}
                 {index === 0 && lp.show_swipe_hint && (
                   <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 gap-1 animate-bounce z-20">
                     <span className="text-4xl">
@@ -485,13 +480,12 @@ export default function LPViewerPage() {
         </Swiper>
       </div>
 
-      {/* 固定CTAフッター */}
       {lp.floating_cta && fixedCta && (
         <div className="fixed bottom-0 left-0 right-0 z-40">
           {(() => {
             const { accent, background } = getFixedCtaDecoration();
             return (
-              <div className="w-full px-0 pb-4" style={{ paddingTop: '1.5rem' }}>
+              <div className="w-full px-0 pt-3 pb-3 sm:pb-4">
                 <div
                   className="relative overflow-hidden w-full border-t border-white/15 bg-gray-900/90 backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
                   style={{
@@ -505,7 +499,7 @@ export default function LPViewerPage() {
                       background: 'radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 55%)',
                     }}
                   />
-                  <div className="relative z-[1] p-4">
+                  <div className="relative z-[1] p-3 sm:p-4">
                     <BlockRenderer
                       blockType={fixedCta.blockType}
                       content={fixedCta.content}
@@ -521,7 +515,6 @@ export default function LPViewerPage() {
         </div>
       )}
 
-      {/* スティッキーCTAブロック */}
       {lp.floating_cta && stickyCtaStep && (
         <BlockRenderer
           blockType={stickyCtaStep.block_type}
@@ -531,7 +524,6 @@ export default function LPViewerPage() {
         />
       )}
 
-      {/* 商品購入セクション */}
       {products.length > 0 && (
         <div className="fixed bottom-6 right-6 z-50 space-y-4">
           {products.map((product) => (
@@ -567,7 +559,6 @@ export default function LPViewerPage() {
         </div>
       )}
 
-      {/* 購入モーダル */}
       {showPurchaseModal && selectedProduct && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center px-4">
           <div className="bg-white rounded-xl p-8 max-w-md w-full">

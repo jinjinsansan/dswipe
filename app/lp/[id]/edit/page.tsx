@@ -47,6 +47,12 @@ export default function EditLPNewPage() {
     fullscreenMedia: false,
     floatingCta: false,
   });
+  const [metaSettings, setMetaSettings] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    siteName: '',
+  });
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -67,6 +73,12 @@ export default function EditLPNewPage() {
         showSwipeHint: Boolean(response.data.show_swipe_hint),
         fullscreenMedia: Boolean(response.data.fullscreen_media),
         floatingCta: Boolean(response.data.floating_cta),
+      });
+      setMetaSettings({
+        title: response.data.meta_title ?? '',
+        description: response.data.meta_description ?? '',
+        imageUrl: response.data.meta_image_url ?? '',
+        siteName: response.data.meta_site_name ?? '',
       });
       
       // AI提案がsessionStorageにある場合は、それをブロックに変換
@@ -302,11 +314,20 @@ export default function EditLPNewPage() {
         order: index,
       }));
 
+      const normalizeMetaValue = (value: string) => {
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? trimmed : null;
+      };
+
       // LP本体の表示設定を更新
       const lpUpdateResponse = await lpApi.update(lpId, {
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
         floating_cta: lpSettings.floatingCta,
+        meta_title: normalizeMetaValue(metaSettings.title),
+        meta_description: normalizeMetaValue(metaSettings.description),
+        meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
+        meta_site_name: normalizeMetaValue(metaSettings.siteName),
       });
       setLp((prev) =>
         prev
@@ -519,10 +540,50 @@ export default function EditLPNewPage() {
                 }
               />
               <div>
-                <p className="text-sm text-white font-semibold">CTAフローティング</p>
-                <p className="text-xs text-gray-400">CTAを画面下部に固定し全幅表示します</p>
+                <p className="text-sm text-white font-semibold">CTAを画面下部に固定表示</p>
+                <p className="text-xs text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
               </div>
             </label>
+
+            <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+              <div>
+                <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
+                <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
+              </div>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={metaSettings.title}
+                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
+                  placeholder="OGPタイトル（例：〇〇講座 特設LP）"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+                <textarea
+                  value={metaSettings.description}
+                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
+                  placeholder="OGPディスクリプション（120文字程度の紹介文）"
+                  rows={3}
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                />
+                <input
+                  type="text"
+                  value={metaSettings.imageUrl}
+                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                  placeholder="OGP画像URL（1200x630推奨）"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="text"
+                  value={metaSettings.siteName}
+                  onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
+                  placeholder="サイト名（例：ABC情報局）"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <p className="text-[11px] text-gray-500 leading-relaxed">
+                未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
+              </p>
+            </div>
           </div>
 
           {/* Block List */}
