@@ -480,10 +480,10 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           {(() => {
             const { accent, background } = getFixedCtaDecoration();
             return (
-              <div className="w-full px-0 pt-3 pb-3 sm:pb-4">
+              <div className="w-full px-3 sm:px-4 pt-2.5 pb-2.5">
                 <div
-                  className="relative overflow-hidden w-full bg-gray-950/90 backdrop-blur-2xl shadow-[0_18px_50px_-18px_rgba(0,0,0,0.55)] border border-white/10"
-                  style={{ background }}
+                  className="relative overflow-hidden max-w-4xl mx-auto bg-gray-950/90 backdrop-blur-2xl shadow-[0_18px_50px_-18px_rgba(0,0,0,0.55)] border border-white/10"
+                  style={{ background, borderRadius: '18px 18px 0 0' }}
                 >
                   <div
                     className="pointer-events-none absolute inset-0"
