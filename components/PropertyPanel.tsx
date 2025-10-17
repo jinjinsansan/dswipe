@@ -5,6 +5,7 @@ import { HexColorPicker } from 'react-colorful';
 import { BlockContent } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
+import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
 import MediaLibraryModal from './MediaLibraryModal';
 
 const THEME_ENTRIES = Object.entries(COLOR_THEMES) as Array<[
@@ -148,6 +149,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const content = block.content;
   const supportsThemeSelection = ['hero-aurora', 'features-aurora', 'sticky-cta-1', 'cta-1', 'cta-2', 'cta-3'].includes(block.blockType);
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
+  const textFieldCandidates = [
+    'tagline',
+    'title',
+    'subtitle',
+    'text',
+    'highlightText',
+    'buttonText',
+    'secondaryButtonText',
+    'subText',
+    'caption',
+    'urgencyText',
+    'stats',
+  ];
+  const hasEditableText = textFieldCandidates.some((key) => key in content);
+  const currentFontKey = (content as any).fontFamily || DEFAULT_FONT_KEY;
 
   return (
     <div className="h-full flex flex-col">
@@ -255,6 +271,28 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
+          </div>
+        )}
+
+        {hasEditableText && (
+          <div>
+            <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">フォントスタイル</label>
+            <div className="space-y-2">
+              <select
+                value={currentFontKey}
+                onChange={(e) => onUpdateContent('fontFamily', e.target.value)}
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              >
+                {FONT_OPTIONS.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs lg:text-[11px] text-gray-500">
+                ブロック内の全テキストに適用されます。選択後は他のブロックにもコピーして貼り付け可能です。
+              </p>
+            </div>
           </div>
         )}
 

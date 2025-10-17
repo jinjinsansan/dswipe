@@ -20,6 +20,7 @@ import ScarcityBlock from './ScarcityBlock';
 import StickyCTABlock from './StickyCTABlock';
 import ImageBlock from './ImageBlock';
 import HeroAuroraBlock from './HeroAuroraBlock';
+import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
   blockType: string;
@@ -41,63 +42,73 @@ export default function BlockRenderer({
   withinEditor,
 }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
+  let element: React.ReactElement;
   switch (blockType) {
     // ヒーロー系
     case 'hero':
     case 'hero-1':
     case 'hero-2':
     case 'hero-3':
-      return <HeroBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <HeroBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     case 'hero-aurora':
-      return <HeroAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <HeroAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // テキスト+画像系
     case 'text-image':
     case 'text-img-1':
     case 'text-img-2':
     case 'text-img-3':
-      return <TextImageBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <TextImageBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // 価格表系
     case 'pricing':
     case 'pricing-1':
     case 'pricing-2':
     case 'pricing-3':
-      return <PricingBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <PricingBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // お客様の声系
     case 'testimonial':
     case 'testimonial-1':
     case 'testimonial-2':
     case 'testimonial-3':
-      return <TestimonialBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <TestimonialBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // FAQ系
     case 'faq':
     case 'faq-1':
     case 'faq-2':
-      return <FAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <FAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // 特徴系
     case 'features':
     case 'features-1':
     case 'features-2':
-      return <FeaturesBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <FeaturesBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     case 'features-aurora':
-      return <FeatureAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = <FeatureAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
     
     // フォーム系
     case 'form':
     case 'form-1':
     case 'form-2':
-      return <FormBlock content={content} isEditing={isEditing} onEdit={onEdit} productId={productId} />;
+      element = <FormBlock content={content} isEditing={isEditing} onEdit={onEdit} productId={productId} />;
+      break;
     
     // CTA系
     case 'cta':
     case 'cta-1':
     case 'cta-2':
     case 'cta-3':
-      return (
+      element = (
         <CTABlock
           content={content}
           isEditing={isEditing}
@@ -106,43 +117,55 @@ export default function BlockRenderer({
           fullWidth={fullWidth}
         />
       );
+      break;
 
     case 'image-1':
-      return <ImageBlock content={content} isEditing={isEditing} />;
+      element = <ImageBlock content={content} isEditing={isEditing} />;
+      break;
     
     // 情報商材特化ブロック
     case 'countdown-1':
-      return <CountdownBlock content={content} />;
+      element = <CountdownBlock content={content} />;
+      break;
     
     case 'special-price-1':
-      return <SpecialPriceBlock content={content} />;
+      element = <SpecialPriceBlock content={content} />;
+      break;
     
     case 'bonus-list-1':
-      return <BonusListBlock content={content} />;
+      element = <BonusListBlock content={content} />;
+      break;
     
     case 'guarantee-1':
-      return <GuaranteeBlock content={content} />;
+      element = <GuaranteeBlock content={content} />;
+      break;
     
     case 'problem-1':
-      return <ProblemBlock content={content} />;
+      element = <ProblemBlock content={content} />;
+      break;
     
     case 'before-after-1':
-      return <BeforeAfterBlock content={content} />;
+      element = <BeforeAfterBlock content={content} />;
+      break;
     
     case 'author-profile-1':
-      return <AuthorProfileBlock content={content} />;
+      element = <AuthorProfileBlock content={content} />;
+      break;
     
     case 'urgency-1':
-      return <UrgencyBlock content={content} />;
+      element = <UrgencyBlock content={content} />;
+      break;
     
     case 'scarcity-1':
-      return <ScarcityBlock content={content} />;
+      element = <ScarcityBlock content={content} />;
+      break;
     
     case 'sticky-cta-1':
-      return <StickyCTABlock content={content} withinEditor={withinEditor} />;
+      element = <StickyCTABlock content={content} withinEditor={withinEditor} />;
+      break;
     
     default:
-      return (
+      element = (
         <div 
           className="px-8 text-center"
           style={{ 
@@ -159,5 +182,18 @@ export default function BlockRenderer({
           </p>
         </div>
       );
+      break;
   }
+
+  const fontStack = content?.fontFamily ? getFontStack(content.fontFamily) : undefined;
+
+  if (!fontStack) {
+    return element;
+  }
+
+  return (
+    <div style={{ fontFamily: fontStack }}>
+      {element}
+    </div>
+  );
 }
