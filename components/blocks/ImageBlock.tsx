@@ -26,10 +26,12 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
     padding: padding || '0px',
   };
 
-  const imageStyle: React.CSSProperties = {
+  const containerStyle: React.CSSProperties = {
     borderRadius: borderRadius || '18px',
     boxShadow: shadow ? '0 25px 60px -35px rgba(15, 23, 42, 0.65)' : 'none',
     maxWidth: maxWidth || '980px',
+    overflow: 'hidden',
+    width: '100%',
   };
 
   return (
@@ -39,12 +41,13 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
     >
       {imageUrl ? (
         <figure className="w-full flex flex-col items-center gap-4">
-          <img
-            src={imageUrl}
-            alt={caption || 'メインビジュアル画像'}
-            className="w-full object-cover"
-            style={imageStyle}
-          />
+          <div style={containerStyle}>
+            <img
+              src={imageUrl}
+              alt={caption || 'メインビジュアル画像'}
+              className="block w-full h-auto object-cover"
+            />
+          </div>
           {caption && (
             <figcaption 
               className="text-sm tracking-wide"
