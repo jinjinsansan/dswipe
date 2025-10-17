@@ -92,7 +92,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
           }}
         />
         <div className="relative z-[1] px-5 py-4">
-          <div className="max-w-[min(1100px,95vw)] mx-auto flex flex-col md:flex-row items-center md:items-stretch gap-3 md:gap-5">
+          <div className="max-w-[min(1100px,95vw)] mx-auto flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-5">
             {content.subText && (
               <p
                 className="w-full text-base md:text-lg font-semibold text-center md:text-left"
