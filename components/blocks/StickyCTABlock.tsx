@@ -91,11 +91,11 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             background: `radial-gradient(circle at top right, ${glowAccent}1a, transparent 55%)`,
           }}
         />
-        <div className="relative z-[1] px-5 py-4">
+        <div className="relative z-[1] px-4 sm:px-5 py-3 sm:py-4">
           <div className="max-w-[min(1100px,95vw)] mx-auto flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-5">
             {content.subText && (
               <p
-                className="w-full text-base md:text-lg font-semibold text-center md:text-left"
+                className="w-full text-sm sm:text-base md:text-lg font-semibold text-center md:text-left"
                 style={{ color: content.descriptionColor || textColor }}
               >
                 {content.subText}
@@ -103,7 +103,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             )}
 
             <button
-              className="w-full md:w-auto min-w-[220px] py-3.5 px-8 text-lg font-bold transition-transform hover:scale-105 shadow-2xl rounded-full"
+              className="w-full md:w-auto min-w-[200px] py-3 sm:py-3.5 px-6 sm:px-8 text-base sm:text-lg font-bold transition-transform hover:scale-105 shadow-2xl rounded-full"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
                 color: '#FFFFFF',

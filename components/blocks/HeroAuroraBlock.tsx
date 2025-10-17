@@ -122,17 +122,17 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid items-center gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+        className="relative grid gap-10 md:gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
         style={{
-          minHeight: 'min(76vh, 720px)',
+          minHeight: 'min(72vh, 680px)',
           alignItems: 'center',
-          maxWidth: 'min(1100px, 94vw)',
+          maxWidth: 'min(1080px, 94vw)',
           marginInline: 'auto',
         }}
       >
         <div
           className="space-y-6"
-          style={{ color: bodyTextColor, maxWidth: 'min(680px, 90vw)' }}
+          style={{ color: bodyTextColor, maxWidth: 'min(700px, 92vw)' }}
         >
           {isEditing ? (
             <div className="space-y-3">

@@ -80,6 +80,7 @@ body {
   .text-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); color: transparent; background-clip: text; }
 }
 
+
 .lp-viewer-block {
   display: flex;
   flex-direction: column;
@@ -92,7 +93,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(2rem, 10vh, 5rem) !important;
+  padding-block: clamp(1.5rem, 8vh, 4rem) !important;
 }
 
 .lp-viewer-block > section .section-inner {
@@ -100,6 +101,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(1.5rem, 6vh, 4rem);
+  padding-block: clamp(1rem, 5vh, 3rem);
   height: 100%;
 }

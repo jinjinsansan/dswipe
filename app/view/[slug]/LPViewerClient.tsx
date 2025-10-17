@@ -416,7 +416,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className={`flex-1 h-full ${fixedCta ? 'pb-4 sm:pb-6 md:pb-8' : ''}`}
+          className={`flex-1 h-full ${fixedCta ? 'pb-28 sm:pb-20 md:pb-12' : 'pb-14 sm:pb-10 md:pb-8'}`}
         >
           {lp.steps.length > 0 && (() => {
             console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);

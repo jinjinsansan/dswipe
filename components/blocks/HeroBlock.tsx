@@ -31,8 +31,8 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 'clamp(2.5rem, 8vh, 4rem)',
-          maxWidth: 'min(1100px, 90vw)',
+          gap: 'clamp(1.5rem, 7vh, 4rem)',
+          maxWidth: 'min(1040px, 92vw)',
           marginInline: 'auto',
         }}
       >
@@ -60,14 +60,14 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               {content.title || '見出しをここに入力'}
             </h1>
-            <p className="text-xl md:text-2xl lg:text-[1.65rem] max-w-4xl mx-auto" style={{ lineHeight: 1.6 }}>
+            <p className="text-base sm:text-lg md:text-2xl lg:text-[1.65rem] max-w-4xl mx-auto" style={{ lineHeight: 1.6 }}>
               {content.subtitle || 'サブタイトルをここに入力'}
             </p>
           </>
         )}
 
         {content.imageUrl && (
-          <div className="relative w-full max-w-3xl mx-auto aspect-[16/9]">
+          <div className="relative w-full max-w-3xl mx-auto aspect-[4/3] sm:aspect-[16/9]">
             <Image 
               src={content.imageUrl} 
               alt="Hero" 
@@ -82,7 +82,7 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
         {content.buttonText && (
           <div className="flex justify-center">
             <button
-              className="px-7 md:px-10 lg:px-12 py-3.5 md:py-4.5 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
+              className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
               style={{ backgroundColor: content.buttonColor }}
             >
               {content.buttonText}
