@@ -82,7 +82,7 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
         {content.buttonText && (
           <div className="flex justify-center">
             <button
-              className="px-7 md:px-10 lg:px-12 py-3.5 md:py-4.5 rounded-full font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
+              className="px-7 md:px-10 lg:px-12 py-3.5 md:py-4.5 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
               style={{ backgroundColor: content.buttonColor }}
             >
               {content.buttonText}
