@@ -51,7 +51,7 @@ export default function EditLPNewPage() {
   const [lpSettings, setLpSettings] = useState({
     showSwipeHint: false,
     fullscreenMedia: false,
-    floatingCta: false,
+    floatingCta: true,
   });
   const [metaSettings, setMetaSettings] = useState({
     title: '',
@@ -83,7 +83,7 @@ export default function EditLPNewPage() {
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
         fullscreenMedia: Boolean(response.data.fullscreen_media),
-        floatingCta: Boolean(response.data.floating_cta),
+        floatingCta: true,
       });
       setMetaSettings({
         title: response.data.meta_title ?? '',
@@ -402,7 +402,7 @@ export default function EditLPNewPage() {
       const lpUpdateResponse = await lpApi.update(lpId, {
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
-        floating_cta: lpSettings.floatingCta,
+        floating_cta: true,
         meta_title: normalizeMetaValue(metaSettings.title),
         meta_description: normalizeMetaValue(metaSettings.description),
         meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
@@ -794,21 +794,6 @@ export default function EditLPNewPage() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                  checked={lpSettings.floatingCta}
-                  onChange={(e) =>
-                    setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
-                  }
-                />
-                <div>
-                  <p className="text-sm lg:text-xs text-white font-semibold">CTAを画面下部に固定表示</p>
-                  <p className="text-xs lg:text-[11px] text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
-                </div>
-              </label>
-
               <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
@@ -992,21 +977,6 @@ export default function EditLPNewPage() {
                 <div>
                   <p className="text-sm text-white font-semibold">メディアの全画面表示</p>
                   <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                  checked={lpSettings.floatingCta}
-                  onChange={(e) =>
-                    setLpSettings((prev) => ({ ...prev, floatingCta: e.target.checked }))
-                  }
-                />
-                <div>
-                  <p className="text-sm text-white font-semibold">CTAを画面下部に固定表示</p>
-                  <p className="text-xs text-gray-400">オンにすると常に画面下部に表示され、オフのときは最後のページに表示されます</p>
                 </div>
               </label>
 
