@@ -107,13 +107,33 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
   };
 
   return (
-    <Section tone="none" padding="extended" className="overflow-hidden" style={{ backgroundColor: surfaceColor, color: bodyTextColor }}>
+    <Section
+      tone="none"
+      padding="extended"
+      className="overflow-hidden"
+      style={{
+        backgroundColor: surfaceColor,
+        color: bodyTextColor,
+        minHeight: '100%',
+      }}
+    >
       <div className="absolute inset-0 opacity-95 pointer-events-none" style={blurOverlayStyle}>
         <div className="absolute inset-x-[-20%] bottom-[-40%] h-[160%] blur-[160px]" style={blurOverlayStyle} />
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
-      <div className="relative grid items-center gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-        <div className="space-y-6" style={{ color: bodyTextColor }}>
+      <div
+        className="relative grid items-center gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+        style={{
+          minHeight: 'min(76vh, 720px)',
+          alignItems: 'center',
+          maxWidth: 'min(1100px, 94vw)',
+          marginInline: 'auto',
+        }}
+      >
+        <div
+          className="space-y-6"
+          style={{ color: bodyTextColor, maxWidth: 'min(680px, 90vw)' }}
+        >
           {isEditing ? (
             <div className="space-y-3">
               {renderInput("tagline", tagline ?? "", "タグライン (例: NEXT WAVE)")}
@@ -217,7 +237,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                 {highlightText || "AI Launch Accelerator"}
               </span>
               <div 
-                className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft shadow-glow"
+              className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft shadow-glow"
                 style={{ backgroundColor: `${accent}40` }}
               >
                 {imageUrl ? (

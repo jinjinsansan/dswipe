@@ -23,24 +23,33 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center px-4 md:px-8"
+      className="min-h-full flex items-center justify-center px-4 md:px-8"
       style={style}
     >
-      <div className="max-w-4xl w-full text-center px-4">
+      <div
+        className="w-full text-center px-4"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'clamp(2.5rem, 8vh, 4rem)',
+          maxWidth: 'min(1100px, 90vw)',
+          marginInline: 'auto',
+        }}
+      >
         {isEditing ? (
           <>
             <input
               type="text"
               value={content.title}
               onChange={(e) => onEdit?.('title', e.target.value)}
-              className="w-full text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+              className="w-full text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-transparent border-2 border-dashed px-4 py-3 rounded"
               style={{ borderColor: content.textColor, color: content.textColor }}
               placeholder="見出しを入力"
             />
             <textarea
               value={content.subtitle}
               onChange={(e) => onEdit?.('subtitle', e.target.value)}
-              className="w-full text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 bg-transparent border-2 border-dashed px-4 py-2 rounded resize-none"
+              className="w-full text-lg md:text-xl lg:text-2xl bg-transparent border-2 border-dashed px-4 py-3 rounded resize-none"
               style={{ borderColor: content.textColor, color: content.textColor }}
               rows={2}
               placeholder="サブタイトルを入力"
@@ -48,17 +57,17 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
           </>
         ) : (
           <>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               {content.title || '見出しをここに入力'}
             </h1>
-            <p className="text-xl md:text-2xl mb-12">
+            <p className="text-xl md:text-2xl lg:text-[1.65rem] max-w-4xl mx-auto" style={{ lineHeight: 1.6 }}>
               {content.subtitle || 'サブタイトルをここに入力'}
             </p>
           </>
         )}
 
         {content.imageUrl && (
-          <div className="mb-8 md:mb-12 relative w-full max-w-2xl mx-auto aspect-video">
+          <div className="relative w-full max-w-3xl mx-auto aspect-[16/9]">
             <Image 
               src={content.imageUrl} 
               alt="Hero" 
@@ -71,12 +80,14 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
         )}
 
         {content.buttonText && (
-          <button
-            className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
-            style={{ backgroundColor: content.buttonColor }}
-          >
-            {content.buttonText}
-          </button>
+          <div className="flex justify-center">
+            <button
+              className="px-7 md:px-10 lg:px-12 py-3.5 md:py-4.5 rounded-full font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
+              style={{ backgroundColor: content.buttonColor }}
+            >
+              {content.buttonText}
+            </button>
+          </div>
         )}
       </div>
     </div>
