@@ -170,6 +170,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'caption',
     'urgencyText',
     'stats',
+    'testimonials',
+    'plans',
   ];
   const hasEditableText = textFieldCandidates.some((key) => key in content);
   const currentFontKey = (content as any).fontFamily || DEFAULT_FONT_KEY;

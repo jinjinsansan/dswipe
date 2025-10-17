@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { TestimonialBlockContent } from '@/types/templates';
+import { getFontStack } from '@/lib/fonts';
 
 interface TestimonialBlockProps {
   content: TestimonialBlockContent;
@@ -18,6 +19,8 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     titleColor,
     descriptionColor,
   } = content;
+  
+  const fontStack = getFontStack((content as any).fontFamily);
 
   const renderStars = (rating: number = 5) => {
     const starColor = accentColor || '#FBBF24';
@@ -44,7 +47,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     return (
       <section
         className="px-4 py-10 md:px-8 md:py-12"
-        style={{ backgroundColor, color: textColor }}
+        style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -93,7 +96,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   return (
     <section
       className="px-4 py-10 md:px-8 md:py-12"
-      style={{ backgroundColor, color: textColor }}
+      style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">

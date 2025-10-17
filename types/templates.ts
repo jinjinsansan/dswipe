@@ -119,6 +119,7 @@ export interface PricingBlockContent extends BaseBlockContent {
   columns?: 2 | 3;
   titleColor?: string;
   descriptionColor?: string;
+  fontFamily?: string;
   themeKey?: TemplateThemeKey;
 }
 
@@ -135,6 +136,7 @@ export interface TestimonialBlockContent extends BaseBlockContent {
   layout?: 'card' | 'slider' | 'grid';
   titleColor?: string;
   descriptionColor?: string;
+  fontFamily?: string;
   themeKey?: TemplateThemeKey;
 }
 

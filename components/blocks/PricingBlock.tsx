@@ -1,5 +1,6 @@
 import React from 'react';
 import { PricingBlockContent } from '@/types/templates';
+import { getFontStack } from '@/lib/fonts';
 
 interface PricingBlockProps {
   content: PricingBlockContent;
@@ -17,13 +18,15 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     titleColor,
     descriptionColor,
   } = content;
+  
+  const fontStack = getFontStack((content as any).fontFamily);
 
   const gridCols = columns === 2 ? 'sm:grid-cols-2' : columns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-1';
 
   return (
     <section
       className="px-4 pt-10 pb-16 md:px-8 md:pt-14 md:pb-20"
-      style={{ backgroundColor, color: textColor }}
+      style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="max-w-7xl mx-auto">
         <div className={`grid grid-cols-1 ${gridCols} gap-5 md:gap-6 lg:gap-8`}>
