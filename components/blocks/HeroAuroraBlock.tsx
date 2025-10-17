@@ -110,7 +110,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     <Section
       tone="none"
       padding="extended"
-      className="overflow-hidden"
+      className="overflow-visible md:overflow-hidden"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,

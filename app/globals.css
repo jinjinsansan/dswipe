@@ -102,19 +102,22 @@ body {
   flex-direction: column;
   justify-content: center;
   padding-block: clamp(1rem, 5vh, 3rem);
-  height: 100%;
+  min-height: 100%;
+  height: auto;
 }
 
 @media (max-width: 640px) {
   .lp-viewer-block > section {
-    padding-top: 1.25rem !important;
+    padding-top: 0.5rem !important;
     padding-bottom: 6.5rem !important;
   }
 
   .lp-viewer-block > section .section-inner {
+    flex: initial;
     justify-content: flex-start;
-    padding-top: 0.75rem;
-    padding-bottom: 0.5rem;
-    gap: 1.25rem;
+    min-height: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+    gap: 1.5rem;
   }
 }
