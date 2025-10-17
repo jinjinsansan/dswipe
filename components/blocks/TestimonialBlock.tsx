@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { TestimonialBlockContent } from '@/types/templates';
 import { getFontStack } from '@/lib/fonts';
+import { Section } from '@/components/ui';
 
 interface TestimonialBlockProps {
   content: TestimonialBlockContent;
@@ -45,11 +46,12 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   if (layout === 'grid') {
     // グリッドレイアウト
     return (
-      <section
-        className="px-4 py-10 md:px-8 md:py-12"
+      <Section
+        tone="none"
+        padding="default"
         style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="rounded-lg p-5 sm:p-6 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
@@ -88,17 +90,18 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
             ))}
           </div>
         </div>
-      </section>
+      </Section>
     );
   }
 
   // カードレイアウト（デフォルト）
   return (
-    <section
-      className="px-4 py-10 md:px-8 md:py-12"
+    <Section
+      tone="none"
+      padding="default"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="rounded-xl p-6 md:p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
@@ -181,6 +184,6 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

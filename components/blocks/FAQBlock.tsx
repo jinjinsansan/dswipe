@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { FAQBlockContent } from '@/types/templates';
+import { Section } from '@/components/ui';
 
 interface FAQBlockProps {
   content: FAQBlockContent;
@@ -29,11 +30,12 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
   if (layout === 'grid') {
     // 2カラムレイアウト
     return (
-      <section
-        className="py-12 px-8"
+      <Section
+        tone="none"
+        padding="default"
         style={{ backgroundColor, color: textColor }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
           {title && (
             <h2
               className="text-4xl font-bold text-center mb-12"
@@ -86,17 +88,18 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
             ))}
           </div>
         </div>
-      </section>
+      </Section>
     );
   }
 
   // アコーディオンレイアウト（デフォルト）
   return (
-    <section
-      className="py-12 px-8"
+    <Section
+      tone="none"
+      padding="default"
       style={{ backgroundColor, color: textColor }}
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto" style={{ paddingInline: 0 }}>
         {title && (
           <h2
             className="text-4xl font-bold text-center mb-12"
@@ -181,6 +184,6 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
