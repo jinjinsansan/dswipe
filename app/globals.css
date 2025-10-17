@@ -104,3 +104,15 @@ body {
   padding-block: clamp(1rem, 5vh, 3rem);
   height: 100%;
 }
+
+@media (max-width: 640px) {
+  .lp-viewer-block > section {
+    padding-block: 1.25rem !important;
+  }
+
+  .lp-viewer-block > section .section-inner {
+    justify-content: flex-start;
+    padding-block: 1rem;
+    gap: 1.5rem;
+  }
+}
