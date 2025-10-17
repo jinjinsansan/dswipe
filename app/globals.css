@@ -65,7 +65,7 @@ body {
   .py-section { padding-block: var(--space-section); }
   .py-section-sm { padding-block: var(--space-section-sm); }
   .py-section-lg { padding-block: var(--space-section-lg); }
-  .section-inner { position: relative; margin-inline: auto; width: 100%; max-width: 72rem; padding-inline: 1.5rem; }
+  .section-inner { position: relative; margin-inline: auto; width: 100%; max-width: 96rem; padding-inline: 1.5rem; }
   @media (min-width: 768px) {
     .section-inner { padding-inline: 2.5rem; }
   }
