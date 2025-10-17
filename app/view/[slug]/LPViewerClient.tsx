@@ -416,7 +416,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className={`flex-1 ${fixedCta ? 'pb-12 sm:pb-16' : ''}`}
+          className={`flex-1 h-full ${fixedCta ? 'pb-12 sm:pb-16' : ''}`}
         >
           {lp.steps.length > 0 && (() => {
             console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);
@@ -426,8 +426,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
               const slideClass = lp.fullscreen_media
-                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
-                : 'relative overflow-y-auto no-scrollbar';
+                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar h-full'
+                : 'relative overflow-y-auto no-scrollbar h-full';
               
               // デバッグログ：ステップの内容を確認
               const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
@@ -456,12 +456,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   const renderBlock = () => {
                     if (step.block_type && step.content_data) {
                       return (
-                        <BlockRenderer
-                          blockType={step.block_type}
-                          content={step.content_data}
-                          isEditing={false}
-                          productId={lp.product_id}
-                        />
+                        <div className="lp-viewer-block h-full w-full">
+                          <BlockRenderer
+                            blockType={step.block_type}
+                            content={step.content_data}
+                            isEditing={false}
+                            productId={lp.product_id}
+                          />
+                        </div>
                       );
                     }
 
@@ -475,7 +477,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     }
 
                     return (
-                      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                      <div className="min-h-full bg-gray-900 flex items-center justify-center">
                         <p className="text-gray-500 text-lg">コンテンツがありません</p>
                       </div>
                     );

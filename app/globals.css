@@ -79,3 +79,27 @@ body {
   .text-gradient-aqua { background-image: linear-gradient(135deg, #38bdf8, #6366f1); color: transparent; background-clip: text; }
   .text-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); color: transparent; background-clip: text; }
 }
+
+.lp-viewer-block {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.lp-viewer-block > section {
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 0 !important;
+}
+
+.lp-viewer-block > section .section-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 0;
+  height: 100%;
+}
