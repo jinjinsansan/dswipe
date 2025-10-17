@@ -74,55 +74,41 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
 
   return (
     <div
-      className={`fixed ${position === 'top' ? 'top-0' : 'bottom-0'} left-0 right-0 z-50`}
+      className="w-full px-0"
       style={{ color: textColor }}
     >
       <div
-        className="w-full px-0 pb-4"
-        style={{ paddingTop: position === 'top' ? '1rem' : '1.75rem' }}
+        className="relative overflow-hidden w-full backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+        style={{
+          backgroundImage: gradientBackground,
+          backgroundColor: content.backgroundColor || '#111827',
+          borderTop: `3px solid ${accentColor}`,
+        }}
       >
         <div
-          className="relative overflow-hidden w-full backdrop-blur-xl shadow-[0_18px_40px_-15px_rgba(0,0,0,0.45)]"
+          className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: gradientBackground,
-            backgroundColor: content.backgroundColor || '#111827',
-            borderTop: `3px solid ${accentColor}`,
+            background: `radial-gradient(circle at top right, ${glowAccent}1a, transparent 55%)`,
           }}
-        >
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background: `radial-gradient(circle at top right, ${glowAccent}1a, transparent 55%)`,
-            }}
-          />
-          <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
-            {/* サブテキスト */}
-            {content.subText && (
-              <div className="hidden md:block">
-                <p className="text-lg font-semibold" style={{ color: content.descriptionColor || textColor }}>
-                  {content.subText}
-                </p>
-              </div>
-            )}
-
-            {/* CTAボタン */}
-            <button
-              className="flex-1 md:flex-none md:min-w-[300px] py-4 px-8 text-xl font-bold transition-transform hover:scale-105 shadow-2xl animate-pulse"
-              style={{
-                background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
-                color: '#FFFFFF',
-              }}
-            >
-              {content.buttonText}
-            </button>
-
-            {/* モバイル用サブテキスト */}
-            {content.subText && (
-              <div className="md:hidden w-full text-center text-sm" style={{ color: content.descriptionColor || textColor }}>
+        />
+        <div className="relative z-[1] flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-5 py-4">
+          {content.subText && (
+            <div className="text-center sm:text-left sm:flex-1">
+              <p className="text-lg font-semibold" style={{ color: content.descriptionColor || textColor }}>
                 {content.subText}
-              </div>
-            )}
-          </div>
+              </p>
+            </div>
+          )}
+
+          <button
+            className="w-full sm:w-auto min-w-[240px] py-4 px-8 text-lg sm:text-xl font-bold transition-transform hover:scale-105 shadow-2xl"
+            style={{
+              background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
+              color: '#FFFFFF',
+            }}
+          >
+            {content.buttonText}
+          </button>
         </div>
       </div>
     </div>
