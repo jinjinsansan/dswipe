@@ -107,12 +107,14 @@ body {
 
 @media (max-width: 640px) {
   .lp-viewer-block > section {
-    padding-block: 1.25rem !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 6.5rem !important;
   }
 
   .lp-viewer-block > section .section-inner {
     justify-content: flex-start;
-    padding-block: 1rem;
-    gap: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+    gap: 1.25rem;
   }
 }

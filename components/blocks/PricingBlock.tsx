@@ -22,21 +22,21 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
 
   return (
     <section
-      className="px-4 md:px-8"
+      className="px-4 pt-10 pb-16 md:px-8 md:pt-14 md:pb-20"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className={`grid grid-cols-1 ${gridCols} gap-4 md:gap-6 lg:gap-8`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-5 md:gap-6 lg:gap-8`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-2xl p-8 transition-all shadow-lg"
+              className="rounded-2xl p-6 md:p-8 transition-all shadow-lg"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
                 borderWidth: '1px',
                 borderColor: plan.highlighted ? accentColor : '#E5E7EB',
-                transform: plan.highlighted ? 'scale(1.05)' : 'scale(1)',
+                transform: 'scale(1)',
               }}
             >
               {/* プラン名 */}

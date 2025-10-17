@@ -122,10 +122,9 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid gap-10 md:gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+        className="relative grid items-start md:items-center gap-10 md:gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
         style={{
           minHeight: 'min(72vh, 680px)',
-          alignItems: 'center',
           maxWidth: 'min(1080px, 94vw)',
           marginInline: 'auto',
         }}
@@ -219,7 +218,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             variant="glass"
             glow
             className={cn(
-              "relative overflow-hidden px-8 pb-10 pt-12",
+              "relative overflow-hidden px-6 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-12",
               "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:opacity-60 after:blur-3xl"
             )}
             style={{ backgroundColor: surfaceColor }}

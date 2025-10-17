@@ -40,7 +40,7 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
   return (
     <Section tone="none" padding="default" className="overflow-hidden" style={{ backgroundColor: surface, color: bodyColor }}>
       <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
-      <div className="relative space-y-12" style={{ color: bodyColor }}>
+      <div className="relative space-y-9 sm:space-y-12" style={{ color: bodyColor }}>
         <div className="max-w-3xl space-y-4">
           {isEditing ? (
             <div className="space-y-3">
@@ -85,16 +85,16 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
           )}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           {features.map((feature, index) => (
             <SurfaceCard
               key={index}
               variant="glass"
               glow
-              className="h-full p-6"
+              className="h-full p-5 sm:p-6"
               style={{ backgroundColor: surface, borderColor: `${accent}1a` }}
             >
-              <div className="space-y-4">
+              <div className="space-y-3.5 sm:space-y-4">
                 {isEditing ? (
                   <>
                     <input

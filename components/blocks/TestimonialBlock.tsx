@@ -43,13 +43,13 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     // グリッドレイアウト
     return (
       <section
-        className="py-12 px-8"
+        className="px-4 py-10 md:px-8 md:py-12"
         style={{ backgroundColor, color: textColor }}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="rounded-lg p-6 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
+              <div key={index} className="rounded-lg p-5 sm:p-6 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
                 {testimonial.rating && renderStars(testimonial.rating)}
                 <p
                   className="my-4"
@@ -92,13 +92,13 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   // カードレイアウト（デフォルト）
   return (
     <section
-      className="py-12 px-8"
+      className="px-4 py-10 md:px-8 md:py-12"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="rounded-xl p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
+            <div key={index} className="rounded-xl p-6 md:p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
               {/* 画像 */}
               {testimonial.imageUrl && (
                 <div className="relative w-16 h-16 mx-auto mb-4">
