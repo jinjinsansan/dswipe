@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
@@ -27,6 +27,36 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [copiedColorField, setCopiedColorField] = useState<string | null>(null);
+  const copyResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyResetTimeoutRef.current) {
+        clearTimeout(copyResetTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyColor = async (fieldName: string, colorValue: string) => {
+    try {
+      if (!navigator?.clipboard) {
+        alert('お使いのブラウザではクリップボードコピーがサポートされていません');
+        return;
+      }
+      await navigator.clipboard.writeText(colorValue);
+      setCopiedColorField(fieldName);
+      if (copyResetTimeoutRef.current) {
+        clearTimeout(copyResetTimeoutRef.current);
+      }
+      copyResetTimeoutRef.current = setTimeout(() => {
+        setCopiedColorField(null);
+      }, 1500);
+    } catch (error) {
+      console.error('カラーコードのコピーに失敗しました:', error);
+      alert('カラーコードのコピーに失敗しました');
+    }
+  };
 
   // 色フィールドと表示名のマッピング
   const colorFields = {
@@ -50,18 +80,31 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         <label className="block text-sm lg:text-sm font-medium text-gray-300 mb-2">
           {config.label}
         </label>
-        <div className="relative">
-          <button
-            onClick={() => setShowColorPicker(showColorPicker === pickerId ? null : pickerId)}
-            className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-          >
-            <span>{value}</span>
-            <div
-              className="w-8 h-8 rounded border-2 border-gray-600"
-              style={{ backgroundColor: value }}
-            />
-          </button>
-          
+        <div className="relative flex flex-col gap-2">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowColorPicker(showColorPicker === pickerId ? null : pickerId)}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white flex items-center justify-between hover:border-gray-600 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+            >
+              <span>{value}</span>
+              <div
+                className="w-8 h-8 rounded border-2 border-gray-600"
+                style={{ backgroundColor: value }}
+              />
+            </button>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                handleCopyColor(pickerId, value);
+              }}
+              className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 hover:bg-gray-700 transition-colors min-w-[90px]"
+              title="カラーコードをコピー"
+            >
+              {copiedColorField === pickerId ? 'コピー済み' : 'コピー'}
+            </button>
+          </div>
           {showColorPicker === pickerId && (
             <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
               <HexColorPicker
