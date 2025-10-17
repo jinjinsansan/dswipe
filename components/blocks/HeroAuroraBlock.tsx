@@ -110,11 +110,10 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     <Section
       tone="none"
       padding="extended"
-      className="overflow-visible md:overflow-hidden"
+      className="overflow-hidden"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
-        minHeight: '100%',
       }}
     >
       <div className="absolute inset-0 opacity-95 pointer-events-none" style={blurOverlayStyle}>
@@ -122,16 +121,15 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid items-start md:items-center gap-10 md:gap-14 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+        className="relative grid items-start md:items-center gap-6 md:gap-10 xl:gap-14 md:grid-cols-2"
         style={{
-          minHeight: 'min(72vh, 680px)',
-          maxWidth: 'min(1080px, 94vw)',
+          maxWidth: '100%',
           marginInline: 'auto',
         }}
       >
         <div
-          className="space-y-6"
-          style={{ color: bodyTextColor, maxWidth: 'min(700px, 92vw)' }}
+          className="space-y-4 md:space-y-6"
+          style={{ color: bodyTextColor }}
         >
           {isEditing ? (
             <div className="space-y-3">
@@ -149,7 +147,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   {tagline}
                 </span>
               )}
-              <GradientHeading tone={headingTone} as="h1" className="text-4xl leading-tight md:text-5xl lg:text-6xl">
+              <GradientHeading tone={headingTone} as="h1" className="text-2xl leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
                 {title || "AIが導く、高速ランディングページ体験"}
               </GradientHeading>
               {highlightText && !isEditing && (
