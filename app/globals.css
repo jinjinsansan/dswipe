@@ -92,7 +92,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: 0 !important;
+  padding-block: clamp(2rem, 10vh, 5rem) !important;
 }
 
 .lp-viewer-block > section .section-inner {
@@ -100,6 +100,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: 0;
+  padding-block: clamp(1.5rem, 6vh, 4rem);
   height: 100%;
 }
