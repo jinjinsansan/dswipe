@@ -106,6 +106,15 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               {copiedColorField === pickerId ? 'コピー済み' : 'コピー'}
             </button>
           </div>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onUpdateContent(fieldName, e.target.value)}
+            onFocus={(e) => e.target.select()}
+            className="px-3 lg:px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+            placeholder="#000000"
+            spellCheck={false}
+          />
           {showColorPicker === pickerId && (
             <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 p-3 rounded-lg shadow-2xl border border-gray-700">
               <HexColorPicker
