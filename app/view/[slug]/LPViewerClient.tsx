@@ -427,8 +427,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
               const slideClass = lp.fullscreen_media
-                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar h-full'
-                : 'relative overflow-y-auto no-scrollbar h-full';
+                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
+                : 'relative overflow-y-auto no-scrollbar';
               
               // デバッグログ：ステップの内容を確認
               const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;

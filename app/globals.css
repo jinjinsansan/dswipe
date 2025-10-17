@@ -82,42 +82,9 @@ body {
 
 
 .lp-viewer-block {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+  width: 100%;
 }
 
 .lp-viewer-block > section {
-  flex: 1;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-block: clamp(1.5rem, 8vh, 4rem) !important;
-}
-
-.lp-viewer-block > section .section-inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-block: clamp(1rem, 5vh, 3rem);
-  min-height: 100%;
-  height: auto;
-}
-
-@media (max-width: 640px) {
-  .lp-viewer-block > section {
-    padding-top: 0.5rem !important;
-    padding-bottom: 6.5rem !important;
-  }
-
-  .lp-viewer-block > section .section-inner {
-    flex: initial;
-    justify-content: flex-start;
-    min-height: auto;
-    padding-top: 0.5rem;
-    padding-bottom: 0.75rem;
-    gap: 1.5rem;
-  }
+  width: 100%;
 }
