@@ -103,7 +103,7 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             )}
 
             <button
-              className="w-full md:w-auto min-w-[220px] py-3.5 px-8 text-lg font-bold transition-transform hover:scale-105 shadow-2xl"
+              className="w-full md:w-auto min-w-[220px] py-3.5 px-8 text-lg font-bold transition-transform hover:scale-105 shadow-2xl rounded-full"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
                 color: '#FFFFFF',
