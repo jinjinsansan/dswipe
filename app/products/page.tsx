@@ -17,7 +17,7 @@ interface Product {
   total_sales: number;
   lp_id?: string;
   redirect_url?: string | null;
-  thanks_lp_slug?: string | null;
+  thanks_lp_id?: string | null;
 }
 
 interface LP {
@@ -31,7 +31,7 @@ export default function ProductsPage() {
   const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [lps, setLps] = useState<LP[]>([]);
-  const [productOverrides, setProductOverrides] = useState<Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }>>({});
+  const [productOverrides, setProductOverrides] = useState<Record<string, { redirect_url: string | null; thanks_lp_id: string | null }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -44,7 +44,7 @@ export default function ProductsPage() {
     is_available: true,
     lp_id: '',
     redirect_url: '',
-    thanks_lp_slug: '',
+    thanks_lp_id: '',
   });
 
   const readPath = (obj: any, path: string) => {
@@ -65,65 +65,35 @@ export default function ProductsPage() {
   const normalizeProduct = (rawProduct: any, lpList: LP[]) => {
     const redirectValue = pickFirstString(rawProduct, [
       'redirect_url',
-      'post_purchase_redirect_url',
       'redirectUrl',
-      'postPurchaseRedirectUrl',
       'data.redirect_url',
-      'data.post_purchase_redirect_url',
       'data.redirectUrl',
-      'data.postPurchaseRedirectUrl',
-      'post_purchase_settings.redirect_url',
-      'post_purchase_settings.url',
-      'postPurchaseSettings.redirectUrl',
-      'postPurchaseSettings.url',
-      'metadata.redirect_url',
-      'metadata.post_purchase_redirect_url',
-      'metadata.redirectUrl',
-      'metadata.postPurchaseRedirectUrl',
     ]);
 
-    const thanksCandidate = pickFirstString(rawProduct, [
-      'thanks_lp_slug',
+    const thanksLpIdValue = pickFirstString(rawProduct, [
       'thanks_lp_id',
-      'thanksLpSlug',
       'thanksLpId',
-      'data.thanks_lp_slug',
       'data.thanks_lp_id',
-      'data.thanksLpSlug',
       'data.thanksLpId',
-      'metadata.thanks_lp_slug',
-      'metadata.thanks_lp_id',
-      'metadata.thanksLpSlug',
-      'metadata.thanksLpId',
-      'post_purchase_settings.thanks_lp_slug',
-      'post_purchase_settings.thanks_lp_id',
-      'postPurchaseSettings.thanksLpSlug',
-      'postPurchaseSettings.thanksLpId',
     ]);
-
-    const resolvedThanksSlug = (() => {
-      if (!thanksCandidate) return '';
-      const matched = lpList.find((lp) => lp.slug === thanksCandidate || lp.id === thanksCandidate);
-      return matched?.slug || thanksCandidate;
-    })();
 
     return {
       ...rawProduct,
       redirect_url: redirectValue ?? null,
-      thanks_lp_slug: resolvedThanksSlug || null,
+      thanks_lp_id: thanksLpIdValue ?? null,
     } as Product;
   };
 
   const applyOverrides = (
     product: Product,
-    overrides: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }> = productOverrides,
+    overrides: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }> = productOverrides,
   ): Product => {
     const override = overrides[product.id];
     if (!override) return product;
     return {
       ...product,
       redirect_url: override.redirect_url ?? product.redirect_url ?? null,
-      thanks_lp_slug: override.thanks_lp_slug ?? product.thanks_lp_slug ?? null,
+      thanks_lp_id: override.thanks_lp_id ?? product.thanks_lp_id ?? null,
     };
   };
 
@@ -135,7 +105,7 @@ export default function ProductsPage() {
     is_available: product.is_available ?? true,
     lp_id: product.lp_id || '',
     redirect_url: product.redirect_url || '',
-    thanks_lp_slug: product.thanks_lp_slug || '',
+    thanks_lp_id: product.thanks_lp_id || '',
   });
 
   const buildFormState = (source: any, lpList: LP[]) => {
@@ -155,7 +125,7 @@ export default function ProductsPage() {
   }, [isAuthenticated, isInitialized]);
 
   const fetchData = async (
-    overrideSeed?: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }>,
+    overrideSeed?: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }>,
   ) => {
     try {
       const [productsRes, lpsRes] = await Promise.all([
@@ -184,22 +154,26 @@ export default function ProductsPage() {
       setLps(lpsData);
       const normalizedProducts = productsData.map((product: any) => normalizeProduct(product, lpsData));
 
-      const overrideSnapshot: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }> = {
-        ...(overrideSeed ?? productOverrides),
-      };
+      const existingOverrides = overrideSeed ?? productOverrides;
+      const overrideSnapshot: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }> = {};
 
-      normalizedProducts.forEach((product) => {
-        overrideSnapshot[product.id] = {
-          redirect_url: product.redirect_url ?? null,
-          thanks_lp_slug: product.thanks_lp_slug ?? null,
-        };
+      normalizedProducts.forEach((product: Product) => {
+        const existing = existingOverrides[product.id];
+        if (existing) {
+          overrideSnapshot[product.id] = existing;
+        } else {
+          overrideSnapshot[product.id] = {
+            redirect_url: product.redirect_url ?? null,
+            thanks_lp_id: product.thanks_lp_id ?? null,
+          };
+        }
       });
 
       setProductOverrides(overrideSnapshot);
-      setProducts(normalizedProducts.map((product) => ({
+      setProducts(normalizedProducts.map((product: Product) => ({
         ...product,
         redirect_url: overrideSnapshot[product.id]?.redirect_url ?? product.redirect_url ?? null,
-        thanks_lp_slug: overrideSnapshot[product.id]?.thanks_lp_slug ?? product.thanks_lp_slug ?? null,
+        thanks_lp_id: overrideSnapshot[product.id]?.thanks_lp_id ?? product.thanks_lp_id ?? null,
       })));
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -222,7 +196,7 @@ export default function ProductsPage() {
       is_available: true,
       lp_id: '',
       redirect_url: '',
-      thanks_lp_slug: '',
+      thanks_lp_id: '',
     });
     setEditingProduct(null);
     setShowCreateModal(true);
@@ -259,16 +233,23 @@ export default function ProductsPage() {
   const handleOpenEdit = async (product: Product) => {
     setShowCreateModal(true);
     setEditingProduct(product);
-    setFormData(buildFormState(product, lps));
+    
+    const existingOverride = productOverrides[product.id];
+    if (existingOverride) {
+      setFormData(buildFormStateFromProduct(applyOverrides(product, productOverrides)));
+    } else {
+      setFormData(buildFormState(product, lps));
+    }
 
     try {
       const detail = await fetchProductDetail(product.id);
       if (detail) {
+        const existingForProduct = productOverrides[detail.id];
         const nextOverrides = {
           ...productOverrides,
-          [detail.id]: {
+          [detail.id]: existingForProduct || {
             redirect_url: detail.redirect_url ?? null,
-            thanks_lp_slug: detail.thanks_lp_slug ?? null,
+            thanks_lp_id: detail.thanks_lp_id ?? null,
           },
         };
         setProductOverrides(nextOverrides);
@@ -290,7 +271,7 @@ export default function ProductsPage() {
     e.preventDefault();
     
     try {
-      const { redirect_url, thanks_lp_slug, ...rest } = formData;
+      const { redirect_url, thanks_lp_id, ...rest } = formData;
 
       const data: Record<string, any> = {
         title: rest.title,
@@ -299,13 +280,13 @@ export default function ProductsPage() {
         stock_quantity: rest.stock_quantity ?? null,
         is_available: rest.is_available,
         lp_id: rest.lp_id || null,
-        post_purchase_redirect_url: redirect_url ? redirect_url : null,
-        thanks_lp_slug: redirect_url ? null : (thanks_lp_slug || null),
+        redirect_url: redirect_url?.trim() || null,
+        thanks_lp_id: (redirect_url?.trim() ? null : (thanks_lp_id?.trim() || null)),
       };
 
       const overrideValues = {
         redirect_url: redirect_url?.trim() ? redirect_url.trim() : null,
-        thanks_lp_slug: thanks_lp_slug?.trim() ? thanks_lp_slug.trim() : null,
+        thanks_lp_id: thanks_lp_id?.trim() ? thanks_lp_id.trim() : null,
       };
 
       let nextOverrides = { ...productOverrides };
@@ -326,7 +307,7 @@ export default function ProductsPage() {
                     is_available: data.is_available,
                     lp_id: data.lp_id || undefined,
                     redirect_url: overrideValues.redirect_url,
-                    thanks_lp_slug: overrideValues.thanks_lp_slug,
+                    thanks_lp_id: overrideValues.thanks_lp_id,
                   },
                   nextOverrides,
                 )
@@ -353,7 +334,7 @@ export default function ProductsPage() {
                 total_sales: 0,
                 lp_id: data.lp_id || undefined,
                 redirect_url: overrideValues.redirect_url,
-                thanks_lp_slug: overrideValues.thanks_lp_slug,
+                thanks_lp_id: overrideValues.thanks_lp_id,
               },
               nextOverrides,
             ),
@@ -758,7 +739,7 @@ export default function ProductsPage() {
                   <input
                     type="url"
                     value={formData.redirect_url}
-                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_slug: '' })}
+                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
                     placeholder="https://example.com/thank-you"
                     className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   />
@@ -773,14 +754,14 @@ export default function ProductsPage() {
                     または、サイト内のLPをサンクスページに設定
                   </label>
                   <select
-                    value={formData.thanks_lp_slug}
-                    onChange={(e) => setFormData({ ...formData, thanks_lp_slug: e.target.value, redirect_url: '' })}
+                    value={formData.thanks_lp_id}
+                    onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
                     className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
                     disabled={!!formData.redirect_url}
                   >
                     <option value="">設定しない</option>
                     {lps.map((lp) => (
-                      <option key={lp.id} value={lp.slug}>
+                      <option key={lp.id} value={lp.id}>
                         {lp.title}
                       </option>
                     ))}
