@@ -65,9 +65,11 @@ body {
   .py-section { padding-block: var(--space-section); }
   .py-section-sm { padding-block: var(--space-section-sm); }
   .py-section-lg { padding-block: var(--space-section-lg); }
+  .py-section-xs { padding-block: clamp(2rem, 6vh, 3rem); }
   .section-inner { position: relative; margin-inline: auto; width: 100%; max-width: 96rem; padding-inline: 1.5rem; }
   @media (min-width: 768px) {
     .section-inner { padding-inline: 2.5rem; }
+    .py-section-xs { padding-block: clamp(2.5rem, 7vh, 3.5rem); }
   }
   .bg-gradient-primary { background-image: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent)); }
   .bg-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); }

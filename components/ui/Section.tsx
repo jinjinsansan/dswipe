@@ -2,7 +2,7 @@ import { ReactNode, CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 type SectionTone = "base" | "tint" | "alt" | "none";
-type SectionPadding = "default" | "condensed" | "extended";
+type SectionPadding = "default" | "condensed" | "extended" | "compact";
 
 const toneClassMap: Record<SectionTone, string> = {
   base: "bg-surface-base",
@@ -15,6 +15,7 @@ const paddingClassMap: Record<SectionPadding, string> = {
   default: "py-section",
   condensed: "py-section-sm",
   extended: "py-section-lg",
+  compact: "py-section-xs",
 };
 
 interface SectionProps {
