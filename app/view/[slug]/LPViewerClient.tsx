@@ -217,21 +217,29 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       
       setShowPurchaseModal(false);
       
-      const {
-        redirect_url,
-        post_purchase_redirect_url,
-        thanks_lp_slug,
-        thanks_lp_url,
-      } = response.data || {};
+      const payload = response.data || {};
+      const nested = payload.data || {};
 
-      const redirectTarget = redirect_url || post_purchase_redirect_url || thanks_lp_url;
+      const redirectTarget =
+        payload.redirect_url ||
+        payload.post_purchase_redirect_url ||
+        payload.thanks_lp_url ||
+        nested.redirect_url ||
+        nested.post_purchase_redirect_url ||
+        nested.thanks_lp_url;
+
+      const thanksSlug =
+        payload.thanks_lp_slug ||
+        nested.thanks_lp_slug ||
+        payload.thanks_lp_id ||
+        nested.thanks_lp_id;
 
       if (redirectTarget) {
         alert('購入が完了しました！\nサンクスページに移動します。');
         window.location.href = redirectTarget;
-      } else if (thanks_lp_slug) {
+      } else if (thanksSlug) {
         alert('購入が完了しました！\nサンクスページに移動します。');
-        router.push(`/view/${thanks_lp_slug}`);
+        router.push(`/view/${thanksSlug}`);
       } else {
         alert('購入が完了しました！\nありがとうございます。');
       }
