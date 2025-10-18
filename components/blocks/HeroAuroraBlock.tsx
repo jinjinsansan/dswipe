@@ -271,10 +271,10 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit, productId,
                     alt="Product preview"
                     width={480}
                     height={420}
-                    className="w-full object-cover aspect-[4/5] sm:aspect-auto"
+                    className="w-full h-auto object-contain aspect-[16/10] sm:aspect-[4/3]"
                   />
                 ) : (
-                  <div className="aspect-[4/5] sm:aspect-[4/3] bg-gradient-aqua" />
+                  <div className="aspect-[16/10] sm:aspect-[4/3] bg-gradient-aqua" />
                 )}
               </div>
               <div className="flex items-center gap-3 text-xs uppercase tracking-[0.45em]" style={{ color: `${bodyTextColor}80` }}>

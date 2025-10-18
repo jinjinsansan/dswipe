@@ -30,25 +30,27 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
     borderRadius: borderRadius || '18px',
     boxShadow: shadow ? '0 25px 60px -35px rgba(15, 23, 42, 0.65)' : 'none',
     maxWidth: maxWidth || '980px',
-    overflow: 'hidden',
     width: '100%',
   };
 
   return (
     <section
-      className="w-full flex flex-col items-center justify-center px-6 py-10 sm:py-14"
+      className="w-full flex flex-col items-center justify-center px-0 sm:px-6 py-10 sm:py-14"
       style={wrapperStyle}
     >
       {imageUrl ? (
-        <figure className="w-full flex flex-col items-center gap-4">
+        <figure className="w-full flex flex-col items-center gap-4 px-4 sm:px-0">
           <div
-            className="flex w-full justify-center"
+            className="flex w-full justify-center overflow-hidden"
             style={containerStyle}
           >
             <img
               src={imageUrl}
               alt={caption || 'メインビジュアル画像'}
-              className="block h-auto w-full max-w-full object-contain sm:w-auto sm:max-h-[80vh] md:max-h-[75vh] xl:max-h-[70vh]"
+              className="block h-auto w-full object-contain max-h-[70vh] sm:max-h-[80vh] md:max-h-[75vh] xl:max-h-[70vh]"
+              style={{
+                borderRadius: borderRadius || '18px',
+              }}
             />
           </div>
           {caption && (
