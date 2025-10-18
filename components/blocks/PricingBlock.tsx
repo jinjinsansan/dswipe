@@ -28,15 +28,15 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="compact"
-      className="pt-0 pb-0 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-4 pb-48 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="space-y-2 sm:space-y-6" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-1 md:gap-3 lg:gap-4`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-3 md:gap-3 lg:gap-4`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-xl p-1.5 transition-all shadow-lg sm:p-3 md:p-5"
+              className="rounded-xl p-3 transition-all shadow-lg sm:p-3 md:p-5"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
@@ -84,7 +84,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 価格 */}
               <div className="mb-3">
                 <span
-                  className="text-[1.4rem] font-bold sm:text-[1.9rem]"
+                  className="text-[1.3rem] font-bold sm:text-[1.9rem]"
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {

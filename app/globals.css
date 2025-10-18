@@ -96,9 +96,17 @@ body {
   width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 639px) {
   .lp-viewer-block {
-    padding-bottom: clamp(9rem, 20vh, 12rem);
+    padding-top: clamp(8rem, 20vh, 12rem);
+    padding-bottom: clamp(16rem, 30vh, 20rem);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .lp-viewer-block {
+    justify-content: center;
+    padding-bottom: clamp(8rem, 18vh, 12rem);
   }
 }
 

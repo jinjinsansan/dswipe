@@ -30,13 +30,13 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
     <Section
       tone="none"
       padding="compact"
-      className="pt-0 pb-0 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-12 pb-64 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor }}
     >
-      <div className="space-y-2 sm:space-y-6">
+      <div className="space-y-2 sm:space-y-6 pt-32 sm:pt-0">
         {title && (
           <h2
-            className="text-xs font-bold text-center sm:text-2xl"
+            className="text-base font-bold text-center sm:text-2xl"
             style={{ color: textColor }}
             contentEditable={isEditing}
             suppressContentEditableWarning

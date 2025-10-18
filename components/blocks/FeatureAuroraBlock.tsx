@@ -38,9 +38,9 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
   const headingTone = headingToneMap[resolvedTheme] ?? "primary";
 
   return (
-    <Section tone="none" padding="default" className="overflow-hidden" style={{ backgroundColor: surface, color: bodyColor }}>
+    <Section tone="none" padding="default" className="overflow-hidden min-h-screen sm:min-h-0" style={{ backgroundColor: surface, color: bodyColor }}>
       <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
-      <div className="relative space-y-9 sm:space-y-12" style={{ color: bodyColor }}>
+      <div className="relative space-y-9 sm:space-y-12 md:space-y-6 pt-[25rem] pb-96 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
         <div className="max-w-3xl space-y-4">
           {isEditing ? (
             <div className="space-y-3">
@@ -85,16 +85,16 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
           )}
         </div>
 
-        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
+        <div className="grid gap-3 sm:gap-6 md:gap-4 md:grid-cols-2">
           {features.map((feature, index) => (
             <SurfaceCard
               key={index}
               variant="glass"
               glow
-              className="h-full p-5 sm:p-6"
+              className="h-full p-3 sm:p-6 md:p-4"
               style={{ backgroundColor: surface, borderColor: `${accent}1a` }}
             >
-              <div className="space-y-3.5 sm:space-y-4">
+              <div className="space-y-2 sm:space-y-4 md:space-y-3">
                 {isEditing ? (
                   <>
                     <input
@@ -124,17 +124,17 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                   <>
                     {feature.icon && (
                       <div
-                        className="inline-flex h-12 w-12 items-center justify-center rounded-xl text-2xl shadow-soft"
+                        className="inline-flex h-10 w-10 sm:h-12 sm:w-12 md:h-11 md:w-11 items-center justify-center rounded-xl text-xl sm:text-2xl md:text-xl shadow-soft"
                         style={{ backgroundColor: `${accent}1f`, color: accent }}
                       >
                         {feature.icon}
                       </div>
                     )}
                     <div className="space-y-2">
-                      <h3 className="text-lg font-semibold" style={{ color: `${bodyColor}E6` }}>
+                      <h3 className="text-base sm:text-lg md:text-base font-semibold" style={{ color: `${bodyColor}E6` }}>
                         {feature.title || '機能タイトル'}
                       </h3>
-                      <p className="text-sm leading-relaxed" style={{ color: `${bodyColor}CC` }}>
+                      <p className="text-xs sm:text-sm md:text-xs leading-snug sm:leading-relaxed md:leading-snug" style={{ color: `${bodyColor}CC` }}>
                         {feature.description || '詳細説明を入力してください。'}
                       </p>
                     </div>

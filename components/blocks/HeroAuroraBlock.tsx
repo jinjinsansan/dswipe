@@ -110,7 +110,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     <Section
       tone="none"
       padding="condensed"
-      className="overflow-hidden pt-8 pb-12 sm:pt-11 sm:pb-15 md:pt-15 md:pb-15 lg:py-section-lg"
+      className="overflow-hidden !-mt-[8rem] sm:!-mt-0 pt-8 pb-0 sm:pt-11 sm:pb-15 md:pt-15 md:pb-15 lg:py-section-lg"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
@@ -128,7 +128,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         }}
       >
         <div
-          className="space-y-3 sm:space-y-4 md:space-y-5"
+          className="pt-[8rem] space-y-3 sm:pt-0 sm:space-y-4 md:space-y-5"
           style={{ color: bodyTextColor }}
         >
           {isEditing ? (
@@ -147,12 +147,19 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   {tagline}
                 </span>
               )}
-              <GradientHeading tone={headingTone} as="h1" className="text-[1.8rem] leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
-                {title || "AIが導く、高速ランディングページ体験"}
-              </GradientHeading>
-              {highlightText && !isEditing && (
-                <p className="text-sm uppercase tracking-[0.4em]" style={highlightStyle}>{highlightText}</p>
-              )}
+              <div className="flex flex-wrap items-end gap-3">
+                <GradientHeading tone={headingTone} as="h1" className="text-[1.8rem] leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+                  {title || "AIが導く、高速ランディングページ体験"}
+                </GradientHeading>
+                {highlightText && !isEditing && (
+                  <span
+                    className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] mb-1"
+                    style={pillStyle}
+                  >
+                    {highlightText}
+                  </span>
+                )}
+              </div>
               <p className="max-w-xl text-sm leading-relaxed sm:text-base md:text-lg" style={{ color: `${bodyTextColor}CC` }}>
                 {subtitle || "ブランドとコンバージョンを両立するプレミアムデザインを、AIの力で最短24時間で構築。"}
               </p>
@@ -225,7 +232,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             variant="glass"
             glow
             className={cn(
-              "relative overflow-hidden px-4 pb-6 pt-6 sm:px-6 sm:pb-8 sm:pt-9 md:px-8 md:pb-10 md:pt-12",
+              "relative overflow-hidden px-2 pb-2 pt-2 sm:px-6 sm:pb-8 sm:pt-9 md:px-8 md:pb-10 md:pt-12",
               "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:opacity-60 after:blur-3xl"
             )}
             style={{ backgroundColor: surfaceColor }}
@@ -235,15 +242,15 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
               intensity="strong"
               style={{ background: `linear-gradient(135deg, ${accent}20, ${primaryButtonColor}10)` }}
             />
-            <div className="relative flex flex-col items-center gap-6">
+            <div className="relative flex flex-col items-center gap-2">
               <span
-                className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                className="hidden sm:inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
                 style={{ ...pillStyle, borderColor: `${accent}26` }}
               >
                 {highlightText || "AI Launch Accelerator"}
               </span>
               <div 
-                className="relative w-full max-w-[18rem] overflow-hidden rounded-3xl border border-glass-soft shadow-glow sm:max-w-sm"
+                className="relative w-full max-w-[28rem] overflow-hidden rounded-3xl border border-glass-soft shadow-glow sm:max-w-sm"
                 style={{ backgroundColor: `${accent}40` }}
               >
                 {imageUrl ? (
@@ -251,11 +258,11 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                     src={imageUrl}
                     alt="Product preview"
                     width={480}
-                    height={320}
-                    className="w-full object-cover"
+                    height={420}
+                    className="w-full object-cover aspect-[4/5] sm:aspect-auto"
                   />
                 ) : (
-                  <div className="aspect-[4/3] bg-gradient-aqua" />
+                  <div className="aspect-[4/5] sm:aspect-[4/3] bg-gradient-aqua" />
                 )}
               </div>
               <div className="flex items-center gap-3 text-xs uppercase tracking-[0.45em]" style={{ color: `${bodyTextColor}80` }}>
