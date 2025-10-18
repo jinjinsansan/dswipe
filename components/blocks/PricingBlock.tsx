@@ -27,15 +27,16 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
   return (
     <Section
       tone="none"
-      padding="default"
+      padding="condensed"
+      className="pt-12 pb-10 sm:pb-12 md:pb-14 lg:py-section"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
+      <div className="space-y-8" style={{ paddingInline: 0 }}>
         <div className={`grid grid-cols-1 ${gridCols} gap-5 md:gap-6 lg:gap-8`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-2xl p-6 md:p-8 transition-all shadow-lg"
+              className="rounded-2xl p-5 transition-all shadow-lg sm:p-6 md:p-8"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
@@ -81,7 +82,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               )}
 
               {/* 価格 */}
-              <div className="mb-6">
+              <div className="mb-5">
                 <span
                   className="text-5xl font-bold"
                   contentEditable={isEditing}
@@ -104,7 +105,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               </div>
 
               {/* 機能リスト */}
-              <ul className="space-y-3 mb-8">
+              <ul className="mb-6 space-y-3 sm:mb-8">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}

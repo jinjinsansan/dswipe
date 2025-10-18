@@ -412,7 +412,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           mousewheel={{ releaseOnEdges: true, forceToAxis: true }}
           keyboard={true}
           pagination={{ clickable: true }}
-          autoHeight={true}
           modules={[Pagination, Mousewheel, Keyboard]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;

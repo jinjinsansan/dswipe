@@ -109,8 +109,8 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
   return (
     <Section
       tone="none"
-      padding="extended"
-      className="overflow-hidden"
+      padding="condensed"
+      className="overflow-hidden pt-16 pb-12 sm:pb-14 md:pt-20 md:pb-16 lg:py-section-lg"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
@@ -121,7 +121,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid items-start md:items-center gap-6 md:gap-10 xl:gap-14 md:grid-cols-2"
+        className="relative grid items-start md:items-center gap-5 md:gap-9 xl:gap-14 md:grid-cols-2"
         style={{
           maxWidth: '100%',
           marginInline: 'auto',
@@ -200,11 +200,19 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
           </div>
 
           {!isEditing && stats.length > 0 && (
-            <div className="mt-6 grid gap-6 text-sm sm:grid-cols-3" style={{ color: `${bodyTextColor}CC` }}>
+            <div
+              className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-4 text-xs sm:text-sm md:text-base"
+              style={{ color: `${bodyTextColor}CC` }}
+            >
               {stats.map((item, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="text-lg font-semibold" style={statsValueStyle}>{item.value}</div>
-                  <div className="text-xs uppercase tracking-[0.4em]" style={{ color: `${bodyTextColor}99` }}>{item.label}</div>
+                <div key={index} className="flex flex-col items-center">
+                  <div className="text-lg md:text-xl font-semibold" style={statsValueStyle}>{item.value}</div>
+                  <div
+                    className="mt-1 text-[0.7rem] uppercase tracking-[0.35em] md:text-xs"
+                    style={{ color: `${bodyTextColor}99` }}
+                  >
+                    {item.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -216,7 +224,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             variant="glass"
             glow
             className={cn(
-              "relative overflow-hidden px-6 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-12",
+              "relative overflow-hidden px-5 pb-6 pt-8 sm:px-7 sm:pb-8 sm:pt-10 md:px-8 md:pb-10 md:pt-12",
               "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:opacity-60 after:blur-3xl"
             )}
             style={{ backgroundColor: surfaceColor }}
