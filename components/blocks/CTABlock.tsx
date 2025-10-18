@@ -9,7 +9,7 @@ interface CTABlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   fullWidth?: boolean;
-  onProductClick?: (productId: string) => void;
+  onProductClick?: (productId?: string) => void;
 }
 
 export default function CTABlock({ content, isEditing, onEdit, productId, fullWidth, onProductClick }: CTABlockProps) {

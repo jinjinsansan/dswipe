@@ -30,7 +30,7 @@ interface BlockRendererProps {
   productId?: string;
   fullWidth?: boolean;
   withinEditor?: boolean;
-  onProductClick?: (productId: string) => void;
+  onProductClick?: (productId?: string) => void;
 }
 
 export default function BlockRenderer({
@@ -51,10 +51,26 @@ export default function BlockRenderer({
     case 'hero-1':
     case 'hero-2':
     case 'hero-3':
-      element = <HeroBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = (
+        <HeroBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
       break;
     case 'hero-aurora':
-      element = <HeroAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = (
+        <HeroAuroraBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
       break;
     
     // テキスト+画像系

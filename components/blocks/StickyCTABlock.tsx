@@ -8,7 +8,7 @@ interface StickyCTABlockProps {
   content: StickyCTABlockContent;
   withinEditor?: boolean;
   productId?: string;
-  onProductClick?: (productId: string) => void;
+  onProductClick?: (productId?: string) => void;
 }
 
 export default function StickyCTABlock({ content, withinEditor, productId, onProductClick }: StickyCTABlockProps) {

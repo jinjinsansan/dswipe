@@ -177,12 +177,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     setShowPurchaseModal(true);
   };
 
-  const handleProductButtonClick = (productId: string) => {
-    if (!productId) {
+  const handleProductButtonClick = (productId?: string) => {
+    const resolvedProductId = productId ?? (products[0] ? String(products[0].id) : undefined);
+
+    if (!resolvedProductId) {
+      console.warn('⚠️ Product button clicked but no product is linked to this LP.');
       return;
     }
 
-    const matchedProduct = products.find((product) => product.id === productId);
+    const matchedProduct = products.find((product) => String(product.id) === String(resolvedProductId));
 
     if (matchedProduct) {
       handleOpenPurchaseModal(matchedProduct);
@@ -190,11 +193,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
 
     console.warn('⚠️ Product not found for CTA click. Falling back to points purchase page.', {
-      productId,
+      productId: resolvedProductId,
       availableProducts: products.map((p) => p.id),
     });
 
-    router.push(`/points/purchase?product_id=${productId}`);
+    router.push(`/points/purchase?product_id=${resolvedProductId}`);
   };
 
   const handlePurchase = async () => {

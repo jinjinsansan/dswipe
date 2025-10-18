@@ -10,12 +10,15 @@ interface HeroBlockProps {
     textColor: string;
     buttonText?: string;
     buttonColor?: string;
+    buttonUrl?: string;
   };
   isEditing?: boolean;
   onEdit?: (field: string, value: string) => void;
+  productId?: string;
+  onProductClick?: (productId?: string) => void;
 }
 
-export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps) {
+export default function HeroBlock({ content, isEditing, onEdit, productId, onProductClick }: HeroBlockProps) {
   const style = {
     backgroundColor: content.backgroundColor,
     color: content.textColor,
@@ -81,12 +84,37 @@ export default function HeroBlock({ content, isEditing, onEdit }: HeroBlockProps
 
         {content.buttonText && (
           <div className="flex justify-center">
-            <button
-              className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
-              style={{ backgroundColor: content.buttonColor }}
-            >
-              {content.buttonText}
-            </button>
+            {productId && onProductClick ? (
+              <button
+                type="button"
+                className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
+                style={{ backgroundColor: content.buttonColor }}
+                onClick={() => onProductClick(productId)}
+              >
+                {content.buttonText}
+              </button>
+            ) : content.buttonUrl ? (
+              <a
+                href={content.buttonUrl}
+                className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"
+                style={{
+                  backgroundColor: content.buttonColor,
+                }}
+              >
+                {content.buttonText}
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg cursor-default"
+                style={{
+                  backgroundColor: `${content.buttonColor || '#374151'}66`,
+                }}
+                disabled
+              >
+                {content.buttonText}
+              </button>
+            )}
           </div>
         )}
       </div>
