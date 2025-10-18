@@ -376,6 +376,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     );
   }
 
+  const hasBottomOverlay = Boolean(fixedCta || (lp.floating_cta && stickyCtaStep));
+
   return (
     <>
       {showEmailGate && (
@@ -407,7 +409,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
-          mousewheel={true}
+          mousewheel={{ releaseOnEdges: true, forceToAxis: true }}
           keyboard={true}
           pagination={{ clickable: true }}
           autoHeight={true}
@@ -417,7 +419,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className={`flex-1 h-full ${fixedCta ? 'pb-28 sm:pb-20 md:pb-12' : 'pb-14 sm:pb-10 md:pb-8'}`}
+          className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-28 sm:pb-20 md:pb-16' : 'pb-8 sm:pb-6 md:pb-5'}`}
         >
           {lp.steps.length > 0 && (() => {
             console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);
@@ -457,7 +459,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   const renderBlock = () => {
                     if (step.block_type && step.content_data) {
                       return (
-                        <div className="lp-viewer-block h-full w-full">
+                        <div className="lp-viewer-block w-full">
                           <BlockRenderer
                             blockType={step.block_type}
                             content={step.content_data}

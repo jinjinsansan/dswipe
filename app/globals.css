@@ -83,8 +83,23 @@ body {
 
 .lp-viewer-block {
   width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.lp-viewer-block > section {
+.lp-viewer-block > * {
   width: 100%;
+  margin-block: auto;
+}
+
+@media (max-width: 768px) {
+  .lp-viewer-block {
+    justify-content: flex-start;
+  }
+
+  .lp-viewer-block > * {
+    margin-block: 0;
+  }
 }
