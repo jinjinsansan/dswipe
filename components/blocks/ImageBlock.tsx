@@ -41,11 +41,14 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
     >
       {imageUrl ? (
         <figure className="w-full flex flex-col items-center gap-4">
-          <div style={containerStyle}>
+          <div
+            className="flex w-full justify-center"
+            style={containerStyle}
+          >
             <img
               src={imageUrl}
               alt={caption || 'メインビジュアル画像'}
-              className="block w-full h-auto object-cover"
+              className="block h-auto w-full max-w-full object-contain sm:w-auto sm:max-h-[80vh] md:max-h-[75vh] xl:max-h-[70vh]"
             />
           </div>
           {caption && (
