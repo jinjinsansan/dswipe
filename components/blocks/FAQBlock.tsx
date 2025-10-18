@@ -32,13 +32,14 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
     return (
       <Section
         tone="none"
-        padding="default"
+        padding="condensed"
+        className="pt-10 pb-9 sm:pb-12 md:pb-14"
         style={{ backgroundColor, color: textColor }}
       >
-        <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
+        <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
           {title && (
             <h2
-              className="text-4xl font-bold text-center mb-12"
+              className="mb-8 text-3xl font-bold text-center sm:mb-10 sm:text-4xl"
               contentEditable={isEditing}
               suppressContentEditableWarning
               onBlur={(e) => {
@@ -51,11 +52,11 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
             </h2>
           )}
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid gap-6 md:grid-cols-2 md:gap-8">
             {faqs.map((faq, index) => (
-              <div key={index} className="rounded-lg p-6 shadow-md" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
+              <div key={index} className="rounded-lg p-5 shadow-md sm:p-6" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
                 <h3
-                  className="text-xl font-semibold mb-3"
+                  className="mb-2 text-lg font-semibold sm:text-xl"
                   style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -70,7 +71,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                   {faq.question}
                 </h3>
                 <p
-                  className="leading-relaxed"
+                  className="text-sm leading-relaxed sm:text-base"
                   style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -96,13 +97,14 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
   return (
     <Section
       tone="none"
-      padding="default"
+      padding="condensed"
+      className="pt-10 pb-9 sm:pb-12 md:pb-14"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-4xl mx-auto" style={{ paddingInline: 0 }}>
         {title && (
           <h2
-            className="text-4xl font-bold text-center mb-12"
+            className="mb-8 text-3xl font-bold text-center sm:mb-10 sm:text-4xl"
             contentEditable={isEditing}
             suppressContentEditableWarning
             onBlur={(e) => {
@@ -115,7 +117,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
           </h2>
         )}
         
-        <div className="space-y-4">
+        <div className="space-y-4 sm:space-y-5">
           {faqs.map((faq, index) => (
             <div
               key={index}
@@ -124,11 +126,11 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full flex items-center justify-between p-6 text-left transition-colors"
+                className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors sm:px-6 sm:py-5"
                 style={{ backgroundColor: backgroundColor + 'F0' }}
               >
                 <h3
-                  className="text-lg font-semibold flex-1"
+                  className="flex-1 text-base font-semibold sm:text-lg"
                   style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -149,7 +151,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                   {faq.question}
                 </h3>
                 <svg
-                  className={`w-6 h-6 transition-transform ${
+                  className={`h-5 w-5 transition-transform sm:h-6 sm:w-6 ${
                     openIndex === index ? 'transform rotate-180' : ''
                   }`}
                   fill="none"
@@ -162,9 +164,9 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
               </button>
               
               {openIndex === index && (
-                <div className="px-6 pb-6">
+                <div className="px-5 pb-5 sm:px-6 sm:pb-6">
                   <p
-                    className="leading-relaxed"
+                    className="text-sm leading-relaxed sm:text-base"
                     style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning

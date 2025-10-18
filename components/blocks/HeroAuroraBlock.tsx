@@ -110,7 +110,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     <Section
       tone="none"
       padding="condensed"
-      className="overflow-hidden pt-16 pb-12 sm:pb-14 md:pt-20 md:pb-16 lg:py-section-lg"
+      className="overflow-hidden pt-10 pb-14 sm:pt-12 sm:pb-16 md:pt-16 md:pb-16 lg:py-section-lg"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
@@ -121,14 +121,14 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid items-start md:items-center gap-5 md:gap-9 xl:gap-14 md:grid-cols-2"
+        className="relative grid items-start md:items-center gap-4 md:gap-8 xl:gap-14 md:grid-cols-2"
         style={{
           maxWidth: '100%',
           marginInline: 'auto',
         }}
       >
         <div
-          className="space-y-4 md:space-y-6"
+          className="space-y-3 sm:space-y-4 md:space-y-6"
           style={{ color: bodyTextColor }}
         >
           {isEditing ? (
@@ -138,7 +138,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
               {renderInput("subtitle", subtitle ?? "", "サブコピー", "textarea")}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {tagline && (
                 <span
                   className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-medium uppercase tracking-[0.3em]"
@@ -147,13 +147,13 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   {tagline}
                 </span>
               )}
-              <GradientHeading tone={headingTone} as="h1" className="text-2xl leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+              <GradientHeading tone={headingTone} as="h1" className="text-[1.8rem] leading-tight sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
                 {title || "AIが導く、高速ランディングページ体験"}
               </GradientHeading>
               {highlightText && !isEditing && (
                 <p className="text-sm uppercase tracking-[0.4em]" style={highlightStyle}>{highlightText}</p>
               )}
-              <p className="max-w-xl text-base md:text-lg" style={{ color: `${bodyTextColor}CC` }}>
+              <p className="max-w-xl text-sm leading-relaxed sm:text-base md:text-lg" style={{ color: `${bodyTextColor}CC` }}>
                 {subtitle || "ブランドとコンバージョンを両立するプレミアムデザインを、AIの力で最短24時間で構築。"}
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
 
           {isEditing && renderInput("highlightText", highlightText ?? "", "ハイライトテキスト (例: AI LAUNCH)")}
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             {isEditing ? (
               <>
                 {renderInput("buttonText", buttonText ?? "", "一次ボタン文言")}
@@ -174,6 +174,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                 {buttonText && (
                   <GlowButton
                     href={buttonUrl || "#"}
+                    className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
                     style={primaryButtonStyle}
                   >
                     {buttonText}
@@ -183,7 +184,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                   <GlowButton
                     href={secondaryButtonUrl || "#"}
                     variant="secondary"
-                    className="hover:text-white"
+                    className="px-4 py-2 text-sm hover:text-white sm:px-6 sm:py-3 sm:text-base"
                     style={{ 
                       boxShadow: `0 20px 40px -30px ${accent}80`,
                       borderColor: `${bodyTextColor}33`,
@@ -224,7 +225,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
             variant="glass"
             glow
             className={cn(
-              "relative overflow-hidden px-5 pb-6 pt-8 sm:px-7 sm:pb-8 sm:pt-10 md:px-8 md:pb-10 md:pt-12",
+              "relative overflow-hidden px-4 pb-6 pt-6 sm:px-6 sm:pb-8 sm:pt-9 md:px-8 md:pb-10 md:pt-12",
               "after:absolute after:inset-x-[-30%] after:top-[-40%] after:h-[70%] after:opacity-60 after:blur-3xl"
             )}
             style={{ backgroundColor: surfaceColor }}
@@ -242,7 +243,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                 {highlightText || "AI Launch Accelerator"}
               </span>
               <div 
-              className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-glass-soft shadow-glow"
+                className="relative w-full max-w-[15rem] overflow-hidden rounded-3xl border border-glass-soft shadow-glow sm:max-w-sm"
                 style={{ backgroundColor: `${accent}40` }}
               >
                 {imageUrl ? (

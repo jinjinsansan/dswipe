@@ -48,16 +48,17 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     return (
       <Section
         tone="none"
-        padding="default"
+        padding="condensed"
+        className="pt-10 pb-9 sm:pb-12 md:pb-14"
         style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
       >
-        <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="rounded-lg p-5 sm:p-6 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
+              <div key={index} className="rounded-lg p-4 sm:p-5 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
                 {testimonial.rating && renderStars(testimonial.rating)}
                 <p
-                  className="my-4"
+                  className="my-3 text-sm leading-relaxed sm:text-base"
                   style={{ color: textColor, opacity: 0.9 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -72,7 +73,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
                   &ldquo;{testimonial.text}&rdquo;
                 </p>
                 <p
-                  className="font-semibold"
+                  className="font-semibold text-sm sm:text-base"
                   style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -98,16 +99,17 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   return (
     <Section
       tone="none"
-      padding="default"
+      padding="condensed"
+      className="pt-10 pb-9 sm:pb-12 md:pb-14"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="max-w-7xl mx-auto" style={{ paddingInline: 0 }}>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+      <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-7">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="rounded-xl p-6 md:p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
+            <div key={index} className="rounded-xl p-5 shadow-lg sm:p-6 md:p-7" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
               {/* 画像 */}
               {testimonial.imageUrl && (
-                <div className="relative w-16 h-16 mx-auto mb-4">
+                <div className="relative w-14 h-14 mx-auto mb-4 sm:w-16 sm:h-16">
                   <Image
                     src={testimonial.imageUrl}
                     alt={testimonial.name}
@@ -120,14 +122,14 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
 
               {/* 評価 */}
               {testimonial.rating && (
-                <div className="flex justify-center mb-4">
+                <div className="mb-3 flex justify-center sm:mb-4">
                   {renderStars(testimonial.rating)}
                 </div>
               )}
 
               {/* テキスト */}
               <p
-                className="text-center mb-6 leading-relaxed"
+                className="mb-5 text-center text-sm leading-relaxed sm:mb-6 sm:text-base"
                 style={{ color: descriptionColor || textColor, opacity: 0.9 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -145,7 +147,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
               {/* 名前 */}
               <div className="text-center">
                 <p
-                  className="font-semibold"
+                  className="font-semibold text-sm sm:text-base"
                   style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning

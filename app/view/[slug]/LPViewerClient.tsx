@@ -418,7 +418,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-28 sm:pb-20 md:pb-16' : 'pb-8 sm:pb-6 md:pb-5'}`}
+          className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-16 sm:pb-14 md:pb-12' : 'pb-6 sm:pb-5 md:pb-4'}`}
         >
           {lp.steps.length > 0 && (() => {
             console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);

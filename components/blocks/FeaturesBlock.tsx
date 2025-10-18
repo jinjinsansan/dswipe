@@ -30,13 +30,13 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
     <Section
       tone="none"
       padding="condensed"
-      className="pt-12 pb-10 sm:pb-12 md:pb-14 lg:py-section"
+      className="pt-10 pb-9 sm:pb-12 md:pb-14 lg:py-section"
       style={{ backgroundColor, color: textColor }}
     >
-      <div className="space-y-10">
+      <div className="space-y-8 sm:space-y-10">
         {title && (
           <h2
-            className="text-3xl font-bold text-center sm:text-4xl"
+            className="text-2xl font-bold text-center sm:text-4xl"
             style={{ color: textColor }}
             contentEditable={isEditing}
             suppressContentEditableWarning
@@ -50,16 +50,16 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
           </h2>
         )}
 
-        <div className={`grid grid-cols-1 ${gridCols} gap-6 sm:gap-8`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-5 sm:gap-7`}>
           {features.map((feature, index) => (
             <div
               key={index}
-              className="h-full rounded-lg p-5 text-center shadow-sm sm:p-6"
+              className="h-full rounded-lg p-4 text-center shadow-sm sm:p-5"
               style={{ backgroundColor: accentColor + '08', borderTop: `3px solid ${accentColor}` }}
             >
               {feature.icon && (
                 <div
-                  className="mb-3 text-4xl sm:mb-4 sm:text-5xl"
+                  className="mb-3 text-3xl sm:mb-4 sm:text-5xl"
                   style={{ color: iconColor || accentColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -76,7 +76,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
               )}
 
               <h3
-                className="text-lg font-semibold sm:text-xl"
+                className="text-base font-semibold sm:text-xl"
                 style={{ color: titleColor || textColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -92,7 +92,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
               </h3>
 
               <p
-                className="mt-3 leading-relaxed"
+                className="mt-2 text-sm leading-relaxed sm:text-base"
                 style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
