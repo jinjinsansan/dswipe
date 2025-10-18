@@ -46,6 +46,87 @@ export default function ProductsPage() {
     thanks_lp_slug: '',
   });
 
+  const readPath = (obj: any, path: string) => {
+    if (!obj) return undefined;
+    return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+  };
+
+  const pickFirstString = (obj: any, paths: string[]) => {
+    for (const path of paths) {
+      const value = readPath(obj, path);
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+    return null;
+  };
+
+  const normalizeProduct = (rawProduct: any, lpList: LP[]) => {
+    const redirectValue = pickFirstString(rawProduct, [
+      'redirect_url',
+      'post_purchase_redirect_url',
+      'redirectUrl',
+      'postPurchaseRedirectUrl',
+      'data.redirect_url',
+      'data.post_purchase_redirect_url',
+      'data.redirectUrl',
+      'data.postPurchaseRedirectUrl',
+      'post_purchase_settings.redirect_url',
+      'post_purchase_settings.url',
+      'postPurchaseSettings.redirectUrl',
+      'postPurchaseSettings.url',
+      'metadata.redirect_url',
+      'metadata.post_purchase_redirect_url',
+      'metadata.redirectUrl',
+      'metadata.postPurchaseRedirectUrl',
+    ]);
+
+    const thanksCandidate = pickFirstString(rawProduct, [
+      'thanks_lp_slug',
+      'thanks_lp_id',
+      'thanksLpSlug',
+      'thanksLpId',
+      'data.thanks_lp_slug',
+      'data.thanks_lp_id',
+      'data.thanksLpSlug',
+      'data.thanksLpId',
+      'metadata.thanks_lp_slug',
+      'metadata.thanks_lp_id',
+      'metadata.thanksLpSlug',
+      'metadata.thanksLpId',
+      'post_purchase_settings.thanks_lp_slug',
+      'post_purchase_settings.thanks_lp_id',
+      'postPurchaseSettings.thanksLpSlug',
+      'postPurchaseSettings.thanksLpId',
+    ]);
+
+    const resolvedThanksSlug = (() => {
+      if (!thanksCandidate) return '';
+      const matched = lpList.find((lp) => lp.slug === thanksCandidate || lp.id === thanksCandidate);
+      return matched?.slug || thanksCandidate;
+    })();
+
+    return {
+      ...rawProduct,
+      redirect_url: redirectValue ?? null,
+      thanks_lp_slug: resolvedThanksSlug || null,
+    } as Product;
+  };
+
+  const buildFormState = (source: any, lpList: LP[]) => {
+    const normalized = normalizeProduct(source, lpList);
+    return {
+      title: normalized.title || '',
+      description: normalized.description || '',
+      price_in_points: Number(normalized.price_in_points) || 0,
+      stock_quantity: normalized.stock_quantity ?? null,
+      is_available: normalized.is_available ?? true,
+      lp_id: normalized.lp_id || '',
+      redirect_url: normalized.redirect_url || '',
+      thanks_lp_slug: normalized.thanks_lp_slug || '',
+    };
+  };
+
   useEffect(() => {
     if (!isInitialized) return;
     
@@ -82,24 +163,9 @@ export default function ProductsPage() {
         slug: lp.slug || lp.id,
       }));
 
-      const normalizedProducts = productsData.map((product: any) => ({
-        ...product,
-        redirect_url:
-          product.redirect_url ??
-          product.post_purchase_redirect_url ??
-          product.redirectUrl ??
-          product.postPurchaseRedirectUrl ??
-          null,
-        thanks_lp_slug:
-          product.thanks_lp_slug ??
-          product.thanks_lp_id ??
-          product.thanksLpSlug ??
-          product.thanksLpId ??
-          null,
-      }));
-
-      setProducts(normalizedProducts);
       setLps(lpsData);
+      const normalizedProducts = productsData.map((product: any) => normalizeProduct(product, lpsData));
+      setProducts(normalizedProducts);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -127,41 +193,20 @@ export default function ProductsPage() {
     setShowCreateModal(true);
   };
 
-  const handleOpenEdit = (product: Product) => {
-    const productAny = product as any;
-    const resolvedRedirect =
-      product.redirect_url ||
-      productAny.post_purchase_redirect_url ||
-      productAny.redirectUrl ||
-      productAny.postPurchaseRedirectUrl ||
-      '';
-
-    const fallbackThanksSlug =
-      product.thanks_lp_slug ||
-      productAny.thanks_lp_id ||
-      productAny.thanksLpSlug ||
-      productAny.thanksLpId ||
-      (() => {
-        const rawThanksId = productAny.thanks_lp_id || productAny.thanksLpId;
-        if (rawThanksId) {
-          const linked = lps.find((lp) => lp.id === rawThanksId);
-          if (linked) return linked.slug;
-        }
-        return '';
-      })();
-
-    setFormData({
-      title: product.title,
-      description: product.description || '',
-      price_in_points: product.price_in_points,
-      stock_quantity: product.stock_quantity || null,
-      is_available: product.is_available,
-      lp_id: product.lp_id || '',
-      redirect_url: resolvedRedirect,
-      thanks_lp_slug: fallbackThanksSlug,
-    });
-    setEditingProduct(product);
+  const handleOpenEdit = async (product: Product) => {
     setShowCreateModal(true);
+    setEditingProduct(product);
+    setFormData(buildFormState(product, lps));
+
+    try {
+      const response = await productApi.get(product.id);
+      const detail = response.data?.data ?? response.data ?? null;
+      if (detail) {
+        setFormData(buildFormState(detail, lps));
+      }
+    } catch (error) {
+      console.error('Failed to fetch product detail:', error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
