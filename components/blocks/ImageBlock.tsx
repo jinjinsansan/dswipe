@@ -31,6 +31,7 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
     boxShadow: shadow ? '0 25px 60px -35px rgba(15, 23, 42, 0.65)' : 'none',
     maxWidth: maxWidth || '980px',
     width: '100%',
+    backgroundColor: 'transparent',
   };
 
   return (
