@@ -177,6 +177,26 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     setShowPurchaseModal(true);
   };
 
+  const handleProductButtonClick = (productId: string) => {
+    if (!productId) {
+      return;
+    }
+
+    const matchedProduct = products.find((product) => product.id === productId);
+
+    if (matchedProduct) {
+      handleOpenPurchaseModal(matchedProduct);
+      return;
+    }
+
+    console.warn('⚠️ Product not found for CTA click. Falling back to points purchase page.', {
+      productId,
+      availableProducts: products.map((p) => p.id),
+    });
+
+    router.push(`/points/purchase?product_id=${productId}`);
+  };
+
   const handlePurchase = async () => {
     if (!selectedProduct) return;
 
@@ -376,7 +396,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     );
   }
 
-  const hasBottomOverlay = Boolean(fixedCta || (lp.floating_cta && stickyCtaStep));
+  const hasFloatingCta = Boolean(lp.floating_cta && stickyCtaStep);
+  const hasBottomOverlay = Boolean(fixedCta || hasFloatingCta);
+  const shouldShowProductCards = products.length > 0 && !fixedCta && !hasFloatingCta;
 
   return (
     <>
@@ -464,6 +486,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                             content={step.content_data}
                             isEditing={false}
                             productId={lp.product_id}
+                          onProductClick={handleProductButtonClick}
                           />
                         </div>
                       );
@@ -544,6 +567,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             isEditing={false}
             productId={fixedCta.productId}
             fullWidth
+          onProductClick={handleProductButtonClick}
           />
         </div>
       )}
@@ -556,11 +580,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             isEditing={false}
             productId={lp.product_id}
             fullWidth
+            onProductClick={handleProductButtonClick}
           />
         </div>
       )}
 
-      {products.length > 0 && (
+      {shouldShowProductCards && (
         <div className="fixed bottom-6 right-6 z-50 space-y-4">
           {products.map((product) => (
             <div

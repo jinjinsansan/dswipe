@@ -7,9 +7,11 @@ import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 interface StickyCTABlockProps {
   content: StickyCTABlockContent;
   withinEditor?: boolean;
+  productId?: string;
+  onProductClick?: (productId: string) => void;
 }
 
-export default function StickyCTABlock({ content, withinEditor }: StickyCTABlockProps) {
+export default function StickyCTABlock({ content, withinEditor, productId, onProductClick }: StickyCTABlockProps) {
   const position = content.position || 'bottom';
   const themeKey: ColorThemeKey = (content.themeKey as ColorThemeKey) ?? 'power_blue';
   const theme = COLOR_THEMES[themeKey] ?? COLOR_THEMES.power_blue;
@@ -103,10 +105,16 @@ export default function StickyCTABlock({ content, withinEditor }: StickyCTABlock
             )}
 
             <button
+              type="button"
               className="w-full md:w-auto min-w-[200px] py-3 sm:py-3.5 px-6 sm:px-8 text-base sm:text-lg font-bold transition-transform hover:scale-105 shadow-2xl rounded-full"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
                 color: '#FFFFFF',
+              }}
+              onClick={() => {
+                if (productId && onProductClick) {
+                  onProductClick(productId);
+                }
               }}
             >
               {content.buttonText}

@@ -30,6 +30,7 @@ interface BlockRendererProps {
   productId?: string;
   fullWidth?: boolean;
   withinEditor?: boolean;
+  onProductClick?: (productId: string) => void;
 }
 
 export default function BlockRenderer({
@@ -40,6 +41,7 @@ export default function BlockRenderer({
   productId,
   fullWidth,
   withinEditor,
+  onProductClick,
 }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   let element: React.ReactElement;
@@ -115,6 +117,7 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           fullWidth={fullWidth}
+          onProductClick={onProductClick}
         />
       );
       break;
@@ -161,7 +164,14 @@ export default function BlockRenderer({
       break;
     
     case 'sticky-cta-1':
-      element = <StickyCTABlock content={content} withinEditor={withinEditor} />;
+      element = (
+        <StickyCTABlock
+          content={content}
+          withinEditor={withinEditor}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
       break;
     
     default:

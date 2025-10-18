@@ -9,9 +9,10 @@ interface CTABlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   fullWidth?: boolean;
+  onProductClick?: (productId: string) => void;
 }
 
-export default function CTABlock({ content, isEditing, onEdit, productId, fullWidth }: CTABlockProps) {
+export default function CTABlock({ content, isEditing, onEdit, productId, fullWidth, onProductClick }: CTABlockProps) {
   const themeKey: ColorThemeKey = (content.themeKey as ColorThemeKey) ?? 'urgent_red';
   const theme = COLOR_THEMES[themeKey] ?? COLOR_THEMES.urgent_red;
   const background = content.backgroundColor || theme.background;
@@ -35,6 +36,61 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
     color: '#FFFFFF',
     boxShadow: `0 16px 36px -26px ${buttonColor}73`,
   } as const;
+
+  const renderButton = () => {
+    const label = content.buttonText || '今すぐ始める';
+
+    if (productId) {
+      if (onProductClick) {
+        return (
+          <button
+            type="button"
+            className={buttonClass}
+            style={buttonStyle}
+            onClick={() => onProductClick(productId)}
+          >
+            {label}
+          </button>
+        );
+      }
+
+      return (
+        <Link
+          href={`/points/purchase?product_id=${productId}`}
+          className={buttonClass}
+          style={buttonStyle}
+        >
+          {label}
+        </Link>
+      );
+    }
+
+    if (content.buttonUrl && content.buttonUrl.trim().length > 0) {
+      const isExternal = /^https?:/i.test(content.buttonUrl.trim());
+      return (
+        <Link
+          href={content.buttonUrl}
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          className={buttonClass}
+          style={buttonStyle}
+        >
+          {label}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        className={`${buttonClass} opacity-70 cursor-not-allowed`}
+        style={buttonStyle}
+        disabled
+      >
+        {label}
+      </button>
+    );
+  };
 
   return (
     <div
@@ -93,22 +149,7 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
               )}
             </div>
             <div className={buttonWrapperClass}>
-              {productId ? (
-                <Link
-                  href={`/points/purchase?product_id=${productId}`}
-                  className={buttonClass}
-                  style={buttonStyle}
-                >
-                  {content.buttonText || '今すぐ始める'}
-                </Link>
-              ) : (
-                <button
-                  className={buttonClass}
-                  style={buttonStyle}
-                >
-                  {content.buttonText || '今すぐ始める'}
-                </button>
-              )}
+              {renderButton()}
             </div>
           </>
         )}
