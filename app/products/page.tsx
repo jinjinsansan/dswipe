@@ -16,11 +16,14 @@ interface Product {
   is_available: boolean;
   total_sales: number;
   lp_id?: string;
+  redirect_url?: string | null;
+  thanks_lp_slug?: string | null;
 }
 
 interface LP {
   id: string;
   title: string;
+  slug: string;
 }
 
 export default function ProductsPage() {
@@ -40,7 +43,7 @@ export default function ProductsPage() {
     is_available: true,
     lp_id: '',
     redirect_url: '',
-    thanks_lp_id: '',
+    thanks_lp_slug: '',
   });
 
   useEffect(() => {
@@ -67,13 +70,25 @@ export default function ProductsPage() {
         ? productsRes.data 
         : [];
       
-      const lpsData = Array.isArray(lpsRes.data?.data) 
+      const lpsDataRaw = Array.isArray(lpsRes.data?.data) 
         ? lpsRes.data.data 
         : Array.isArray(lpsRes.data) 
         ? lpsRes.data 
         : [];
-      
-      setProducts(productsData);
+
+      const lpsData = lpsDataRaw.map((lp: any) => ({
+        id: lp.id,
+        title: lp.title,
+        slug: lp.slug || lp.id,
+      }));
+
+      const normalizedProducts = productsData.map((product: any) => ({
+        ...product,
+        redirect_url: product.redirect_url ?? product.post_purchase_redirect_url ?? null,
+        thanks_lp_slug: product.thanks_lp_slug ?? product.thanks_lp_id ?? null,
+      }));
+
+      setProducts(normalizedProducts);
       setLps(lpsData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -96,13 +111,22 @@ export default function ProductsPage() {
       is_available: true,
       lp_id: '',
       redirect_url: '',
-      thanks_lp_id: '',
+      thanks_lp_slug: '',
     });
     setEditingProduct(null);
     setShowCreateModal(true);
   };
 
   const handleOpenEdit = (product: Product) => {
+    const fallbackThanksSlug = product.thanks_lp_slug || (() => {
+      const rawThanksId = (product as any).thanks_lp_id;
+      if (rawThanksId) {
+        const linked = lps.find((lp) => lp.id === rawThanksId);
+        if (linked) return linked.slug;
+      }
+      return '';
+    })();
+
     setFormData({
       title: product.title,
       description: product.description || '',
@@ -110,8 +134,8 @@ export default function ProductsPage() {
       stock_quantity: product.stock_quantity || null,
       is_available: product.is_available,
       lp_id: product.lp_id || '',
-      redirect_url: (product as any).redirect_url || '',
-      thanks_lp_id: (product as any).thanks_lp_id || '',
+      redirect_url: product.redirect_url || '',
+      thanks_lp_slug: fallbackThanksSlug,
     });
     setEditingProduct(product);
     setShowCreateModal(true);
@@ -121,12 +145,24 @@ export default function ProductsPage() {
     e.preventDefault();
     
     try {
-      const data = {
-        ...formData,
-        lp_id: formData.lp_id || undefined,
-        redirect_url: formData.redirect_url || undefined,
-        thanks_lp_id: formData.thanks_lp_id || undefined,
+      const { redirect_url, thanks_lp_slug, ...rest } = formData;
+
+      const data: Record<string, any> = {
+        ...rest,
+        lp_id: rest.lp_id || undefined,
+        stock_quantity: rest.stock_quantity ?? undefined,
       };
+
+      if (redirect_url) {
+        data.post_purchase_redirect_url = redirect_url;
+        data.thanks_lp_slug = null;
+      } else if (thanks_lp_slug) {
+        data.thanks_lp_slug = thanks_lp_slug;
+        data.post_purchase_redirect_url = null;
+      } else {
+        data.thanks_lp_slug = null;
+        data.post_purchase_redirect_url = null;
+      }
 
       if (editingProduct) {
         await productApi.update(editingProduct.id, data);
@@ -530,7 +566,7 @@ export default function ProductsPage() {
                   <input
                     type="url"
                     value={formData.redirect_url}
-                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
+                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_slug: '' })}
                     placeholder="https://example.com/thank-you"
                     className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   />
@@ -545,14 +581,14 @@ export default function ProductsPage() {
                     または、サイト内のLPをサンクスページに設定
                   </label>
                   <select
-                    value={formData.thanks_lp_id}
-                    onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
+                    value={formData.thanks_lp_slug}
+                    onChange={(e) => setFormData({ ...formData, thanks_lp_slug: e.target.value, redirect_url: '' })}
                     className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
                     disabled={!!formData.redirect_url}
                   >
                     <option value="">設定しない</option>
                     {lps.map((lp) => (
-                      <option key={lp.id} value={lp.id}>
+                      <option key={lp.id} value={lp.slug}>
                         {lp.title}
                       </option>
                     ))}
