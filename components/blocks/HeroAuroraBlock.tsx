@@ -110,7 +110,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
     <Section
       tone="none"
       padding="condensed"
-      className="overflow-hidden pt-10 pb-14 sm:pt-12 sm:pb-16 md:pt-16 md:pb-16 lg:py-section-lg"
+      className="overflow-hidden pt-8 pb-12 sm:pt-11 sm:pb-15 md:pt-15 md:pb-15 lg:py-section-lg"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
@@ -121,14 +121,14 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
         <div className="absolute inset-x-0 top-0 h-32" style={topOverlayStyle} />
       </div>
       <div
-        className="relative grid items-start md:items-center gap-4 md:gap-8 xl:gap-14 md:grid-cols-2"
+        className="relative grid items-start md:items-center gap-3.5 md:gap-7 xl:gap-14 md:grid-cols-2"
         style={{
           maxWidth: '100%',
           marginInline: 'auto',
         }}
       >
         <div
-          className="space-y-3 sm:space-y-4 md:space-y-6"
+          className="space-y-3 sm:space-y-4 md:space-y-5"
           style={{ color: bodyTextColor }}
         >
           {isEditing ? (

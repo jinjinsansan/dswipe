@@ -49,11 +49,11 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
       <Section
         tone="none"
         padding="condensed"
-        className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100"
+        className="transform origin-top scale-[0.88] pt-9 pb-8 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:origin-center lg:scale-[0.98] xl:scale-100"
         style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
       >
         <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="rounded-lg p-4 sm:p-5 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
                 {testimonial.rating && renderStars(testimonial.rating)}
@@ -99,12 +99,12 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
   return (
     <Section
       tone="none"
-      padding="condensed"
-      className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100"
+        padding="condensed"
+        className="transform origin-top scale-[0.88] pt-9 pb-8 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:origin-center lg:scale-[0.98] xl:scale-100"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-7">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="rounded-xl p-5 shadow-lg sm:p-6 md:p-7" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
               {/* 画像 */}

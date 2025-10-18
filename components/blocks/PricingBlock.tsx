@@ -28,15 +28,15 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100 lg:py-section"
+      className="transform origin-top scale-[0.85] pt-9 pb-8 sm:scale-[0.92] sm:pb-11 md:pb-13 lg:origin-center lg:scale-[0.97] lg:py-section xl:scale-100"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="space-y-7 sm:space-y-8" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-3 md:gap-6 lg:gap-7`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-2.5 md:gap-5 lg:gap-6`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-2xl p-4 transition-all shadow-lg sm:p-6 md:p-8"
+              className="rounded-2xl p-3.5 transition-all shadow-lg sm:p-5 md:p-7"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
