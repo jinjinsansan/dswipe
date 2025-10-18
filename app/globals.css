@@ -98,7 +98,7 @@ body {
 
 @media (max-width: 768px) {
   .lp-viewer-block {
-    padding-bottom: clamp(5.5rem, 17vh, 10.5rem);
+    padding-bottom: clamp(9rem, 20vh, 12rem);
   }
 }
 

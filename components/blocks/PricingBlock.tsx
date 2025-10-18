@@ -28,15 +28,15 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="compact"
-      className="pt-2 pb-16 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-0 pb-0 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="space-y-4 sm:space-y-6" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-1.5 md:gap-3 lg:gap-4`}>
+      <div className="space-y-2 sm:space-y-6" style={{ paddingInline: 0 }}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-1 md:gap-3 lg:gap-4`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-xl p-2 transition-all shadow-lg sm:p-3 md:p-5"
+              className="rounded-xl p-1.5 transition-all shadow-lg sm:p-3 md:p-5"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
@@ -47,7 +47,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
             >
               {/* プラン名 */}
               <h3
-                className="text-sm font-bold mb-1 sm:text-lg"
+                className="text-xs font-bold mb-0.5 sm:text-lg"
                 style={{ color: titleColor || (plan.highlighted ? '#FFFFFF' : textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -65,7 +65,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 説明 */}
               {plan.description && (
                 <p
-                  className="text-[0.72rem] mb-3"
+                  className="text-[0.65rem] mb-2"
                   style={{ color: descriptionColor || (plan.highlighted ? '#FFFFFF' : textColor), opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -84,7 +84,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 価格 */}
               <div className="mb-3">
                 <span
-                  className="text-[1.6rem] font-bold sm:text-[1.9rem]"
+                  className="text-[1.4rem] font-bold sm:text-[1.9rem]"
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -98,14 +98,14 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
                   {plan.price}
                 </span>
                 {plan.period && (
-                  <span className="ml-1 text-[0.7rem] sm:text-sm" style={{ opacity: 0.7 }}>
+                  <span className="ml-1 text-[0.65rem] sm:text-sm" style={{ opacity: 0.7 }}>
                     / {plan.period}
                   </span>
                 )}
               </div>
 
               {/* 機能リスト */}
-              <ul className="mb-3.5 space-y-1.5 sm:space-y-2 sm:mb-6">
+              <ul className="mb-3 space-y-1 sm:space-y-2 sm:mb-6">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}
@@ -144,7 +144,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
 
               {/* ボタン */}
               <button
-                className="w-full rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4.5 sm:py-2 sm:text-sm"
+                className="w-full rounded-lg px-3 py-1.5 text-[0.65rem] font-semibold transition-colors sm:px-4.5 sm:py-2 sm:text-sm"
                 style={{
                   backgroundColor: plan.highlighted ? '#FFFFFF' : accentColor,
                   color: plan.highlighted ? accentColor : '#FFFFFF',
