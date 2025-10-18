@@ -243,7 +243,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit }: HeroAuro
                 {highlightText || "AI Launch Accelerator"}
               </span>
               <div 
-                className="relative w-full max-w-[15rem] overflow-hidden rounded-3xl border border-glass-soft shadow-glow sm:max-w-sm"
+                className="relative w-full max-w-[18rem] overflow-hidden rounded-3xl border border-glass-soft shadow-glow sm:max-w-sm"
                 style={{ backgroundColor: `${accent}40` }}
               >
                 {imageUrl ? (

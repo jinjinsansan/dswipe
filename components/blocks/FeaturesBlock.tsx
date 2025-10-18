@@ -30,7 +30,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
     <Section
       tone="none"
       padding="condensed"
-      className="pt-10 pb-9 sm:pb-12 md:pb-14 lg:py-section"
+      className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100 lg:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="space-y-8 sm:space-y-10">
@@ -50,7 +50,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
           </h2>
         )}
 
-        <div className={`grid grid-cols-1 ${gridCols} gap-5 sm:gap-7`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-4 sm:gap-6`}>
           {features.map((feature, index) => (
             <div
               key={index}

@@ -33,7 +33,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
       <Section
         tone="none"
         padding="condensed"
-        className="pt-10 pb-9 sm:pb-12 md:pb-14"
+        className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100"
         style={{ backgroundColor, color: textColor }}
       >
         <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
@@ -98,7 +98,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
     <Section
       tone="none"
       padding="condensed"
-      className="pt-10 pb-9 sm:pb-12 md:pb-14"
+      className="transform origin-top scale-[0.9] pt-10 pb-9 sm:scale-[0.95] sm:pb-12 md:pb-14 lg:origin-center lg:scale-100"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="max-w-4xl mx-auto" style={{ paddingInline: 0 }}>
