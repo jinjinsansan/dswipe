@@ -148,21 +148,15 @@ export default function ProductsPage() {
       const { redirect_url, thanks_lp_slug, ...rest } = formData;
 
       const data: Record<string, any> = {
-        ...rest,
-        lp_id: rest.lp_id || undefined,
-        stock_quantity: rest.stock_quantity ?? undefined,
+        title: rest.title,
+        description: rest.description || undefined,
+        price_in_points: rest.price_in_points,
+        stock_quantity: rest.stock_quantity ?? null,
+        is_available: rest.is_available,
+        lp_id: rest.lp_id || null,
+        post_purchase_redirect_url: redirect_url ? redirect_url : null,
+        thanks_lp_slug: redirect_url ? null : (thanks_lp_slug || null),
       };
-
-      if (redirect_url) {
-        data.post_purchase_redirect_url = redirect_url;
-        data.thanks_lp_slug = null;
-      } else if (thanks_lp_slug) {
-        data.thanks_lp_slug = thanks_lp_slug;
-        data.post_purchase_redirect_url = null;
-      } else {
-        data.thanks_lp_slug = null;
-        data.post_purchase_redirect_url = null;
-      }
 
       if (editingProduct) {
         await productApi.update(editingProduct.id, data);
