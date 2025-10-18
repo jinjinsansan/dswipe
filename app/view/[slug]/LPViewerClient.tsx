@@ -223,16 +223,24 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const redirectTarget =
         payload.redirect_url ||
         payload.post_purchase_redirect_url ||
+        payload.postPurchaseRedirectUrl ||
         payload.thanks_lp_url ||
+        payload.thanksLpUrl ||
         nested.redirect_url ||
         nested.post_purchase_redirect_url ||
-        nested.thanks_lp_url;
+        nested.postPurchaseRedirectUrl ||
+        nested.thanks_lp_url ||
+        nested.thanksLpUrl;
 
       const thanksSlug =
         payload.thanks_lp_slug ||
+        payload.thanksLpSlug ||
         nested.thanks_lp_slug ||
+        nested.thanksLpSlug ||
         payload.thanks_lp_id ||
-        nested.thanks_lp_id;
+        payload.thanksLpId ||
+        nested.thanks_lp_id ||
+        nested.thanksLpId;
 
       if (redirectTarget) {
         alert('購入が完了しました！\nサンクスページに移動します。');

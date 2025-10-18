@@ -84,8 +84,18 @@ export default function ProductsPage() {
 
       const normalizedProducts = productsData.map((product: any) => ({
         ...product,
-        redirect_url: product.redirect_url ?? product.post_purchase_redirect_url ?? null,
-        thanks_lp_slug: product.thanks_lp_slug ?? product.thanks_lp_id ?? null,
+        redirect_url:
+          product.redirect_url ??
+          product.post_purchase_redirect_url ??
+          product.redirectUrl ??
+          product.postPurchaseRedirectUrl ??
+          null,
+        thanks_lp_slug:
+          product.thanks_lp_slug ??
+          product.thanks_lp_id ??
+          product.thanksLpSlug ??
+          product.thanksLpId ??
+          null,
       }));
 
       setProducts(normalizedProducts);
@@ -118,14 +128,27 @@ export default function ProductsPage() {
   };
 
   const handleOpenEdit = (product: Product) => {
-    const fallbackThanksSlug = product.thanks_lp_slug || (() => {
-      const rawThanksId = (product as any).thanks_lp_id;
-      if (rawThanksId) {
-        const linked = lps.find((lp) => lp.id === rawThanksId);
-        if (linked) return linked.slug;
-      }
-      return '';
-    })();
+    const productAny = product as any;
+    const resolvedRedirect =
+      product.redirect_url ||
+      productAny.post_purchase_redirect_url ||
+      productAny.redirectUrl ||
+      productAny.postPurchaseRedirectUrl ||
+      '';
+
+    const fallbackThanksSlug =
+      product.thanks_lp_slug ||
+      productAny.thanks_lp_id ||
+      productAny.thanksLpSlug ||
+      productAny.thanksLpId ||
+      (() => {
+        const rawThanksId = productAny.thanks_lp_id || productAny.thanksLpId;
+        if (rawThanksId) {
+          const linked = lps.find((lp) => lp.id === rawThanksId);
+          if (linked) return linked.slug;
+        }
+        return '';
+      })();
 
     setFormData({
       title: product.title,
@@ -134,7 +157,7 @@ export default function ProductsPage() {
       stock_quantity: product.stock_quantity || null,
       is_available: product.is_available,
       lp_id: product.lp_id || '',
-      redirect_url: product.redirect_url || '',
+      redirect_url: resolvedRedirect,
       thanks_lp_slug: fallbackThanksSlug,
     });
     setEditingProduct(product);
