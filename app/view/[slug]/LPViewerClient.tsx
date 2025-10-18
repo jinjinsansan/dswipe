@@ -217,11 +217,18 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       
       setShowPurchaseModal(false);
       
-      const { redirect_url, thanks_lp_slug } = response.data;
-      
-      if (redirect_url) {
+      const {
+        redirect_url,
+        post_purchase_redirect_url,
+        thanks_lp_slug,
+        thanks_lp_url,
+      } = response.data || {};
+
+      const redirectTarget = redirect_url || post_purchase_redirect_url || thanks_lp_url;
+
+      if (redirectTarget) {
         alert('購入が完了しました！\nサンクスページに移動します。');
-        window.location.href = redirect_url;
+        window.location.href = redirectTarget;
       } else if (thanks_lp_slug) {
         alert('購入が完了しました！\nサンクスページに移動します。');
         router.push(`/view/${thanks_lp_slug}`);
