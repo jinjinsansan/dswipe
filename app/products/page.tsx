@@ -31,6 +31,7 @@ export default function ProductsPage() {
   const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [lps, setLps] = useState<LP[]>([]);
+  const [productOverrides, setProductOverrides] = useState<Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -113,18 +114,33 @@ export default function ProductsPage() {
     } as Product;
   };
 
-  const buildFormState = (source: any, lpList: LP[]) => {
-    const normalized = normalizeProduct(source, lpList);
+  const applyOverrides = (
+    product: Product,
+    overrides: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }> = productOverrides,
+  ): Product => {
+    const override = overrides[product.id];
+    if (!override) return product;
     return {
-      title: normalized.title || '',
-      description: normalized.description || '',
-      price_in_points: Number(normalized.price_in_points) || 0,
-      stock_quantity: normalized.stock_quantity ?? null,
-      is_available: normalized.is_available ?? true,
-      lp_id: normalized.lp_id || '',
-      redirect_url: normalized.redirect_url || '',
-      thanks_lp_slug: normalized.thanks_lp_slug || '',
+      ...product,
+      redirect_url: override.redirect_url ?? product.redirect_url ?? null,
+      thanks_lp_slug: override.thanks_lp_slug ?? product.thanks_lp_slug ?? null,
     };
+  };
+
+  const buildFormStateFromProduct = (product: Product) => ({
+    title: product.title || '',
+    description: product.description || '',
+    price_in_points: Number(product.price_in_points) || 0,
+    stock_quantity: product.stock_quantity ?? null,
+    is_available: product.is_available ?? true,
+    lp_id: product.lp_id || '',
+    redirect_url: product.redirect_url || '',
+    thanks_lp_slug: product.thanks_lp_slug || '',
+  });
+
+  const buildFormState = (source: any, lpList: LP[]) => {
+    const normalized = applyOverrides(normalizeProduct(source, lpList));
+    return buildFormStateFromProduct(normalized);
   };
 
   useEffect(() => {
@@ -138,7 +154,9 @@ export default function ProductsPage() {
     fetchData();
   }, [isAuthenticated, isInitialized]);
 
-  const fetchData = async () => {
+  const fetchData = async (
+    overrideSeed?: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }>,
+  ) => {
     try {
       const [productsRes, lpsRes] = await Promise.all([
         productApi.list(),
@@ -165,7 +183,24 @@ export default function ProductsPage() {
 
       setLps(lpsData);
       const normalizedProducts = productsData.map((product: any) => normalizeProduct(product, lpsData));
-      setProducts(normalizedProducts);
+
+      const overrideSnapshot: Record<string, { redirect_url: string | null; thanks_lp_slug: string | null }> = {
+        ...(overrideSeed ?? productOverrides),
+      };
+
+      normalizedProducts.forEach((product) => {
+        overrideSnapshot[product.id] = {
+          redirect_url: product.redirect_url ?? null,
+          thanks_lp_slug: product.thanks_lp_slug ?? null,
+        };
+      });
+
+      setProductOverrides(overrideSnapshot);
+      setProducts(normalizedProducts.map((product) => ({
+        ...product,
+        redirect_url: overrideSnapshot[product.id]?.redirect_url ?? product.redirect_url ?? null,
+        thanks_lp_slug: overrideSnapshot[product.id]?.thanks_lp_slug ?? product.thanks_lp_slug ?? null,
+      })));
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -193,16 +228,58 @@ export default function ProductsPage() {
     setShowCreateModal(true);
   };
 
+  const unwrapProductPayload = (payload: any) => {
+    let current = payload;
+    while (current) {
+      if (Array.isArray(current)) {
+        current = current[0];
+        continue;
+      }
+      if (current?.data !== undefined) {
+        current = current.data;
+        continue;
+      }
+      return current;
+    }
+    return null;
+  };
+
+  const fetchProductDetail = async (productId: string) => {
+    try {
+      const response = await productApi.get(productId);
+      const raw = unwrapProductPayload(response?.data ?? response);
+      if (!raw) return null;
+      return normalizeProduct(raw, lps);
+    } catch (error) {
+      console.error('Failed to fetch product detail:', error);
+      return null;
+    }
+  };
+
   const handleOpenEdit = async (product: Product) => {
     setShowCreateModal(true);
     setEditingProduct(product);
     setFormData(buildFormState(product, lps));
 
     try {
-      const response = await productApi.get(product.id);
-      const detail = response.data?.data ?? response.data ?? null;
+      const detail = await fetchProductDetail(product.id);
       if (detail) {
-        setFormData(buildFormState(detail, lps));
+        const nextOverrides = {
+          ...productOverrides,
+          [detail.id]: {
+            redirect_url: detail.redirect_url ?? null,
+            thanks_lp_slug: detail.thanks_lp_slug ?? null,
+          },
+        };
+        setProductOverrides(nextOverrides);
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === detail.id
+              ? applyOverrides(detail, nextOverrides)
+              : applyOverrides(p, nextOverrides),
+          ),
+        );
+        setFormData(buildFormStateFromProduct(applyOverrides(detail, nextOverrides)));
       }
     } catch (error) {
       console.error('Failed to fetch product detail:', error);
@@ -226,15 +303,68 @@ export default function ProductsPage() {
         thanks_lp_slug: redirect_url ? null : (thanks_lp_slug || null),
       };
 
+      const overrideValues = {
+        redirect_url: redirect_url?.trim() ? redirect_url.trim() : null,
+        thanks_lp_slug: thanks_lp_slug?.trim() ? thanks_lp_slug.trim() : null,
+      };
+
+      let nextOverrides = { ...productOverrides };
+
       if (editingProduct) {
         await productApi.update(editingProduct.id, data);
+        nextOverrides[editingProduct.id] = overrideValues;
+        setProducts((prev) =>
+          prev.map((product) =>
+            product.id === editingProduct.id
+              ? applyOverrides(
+                  {
+                    ...product,
+                    title: data.title,
+                    description: data.description || '',
+                    price_in_points: data.price_in_points,
+                    stock_quantity: data.stock_quantity ?? null,
+                    is_available: data.is_available,
+                    lp_id: data.lp_id || undefined,
+                    redirect_url: overrideValues.redirect_url,
+                    thanks_lp_slug: overrideValues.thanks_lp_slug,
+                  },
+                  nextOverrides,
+                )
+              : applyOverrides(product, nextOverrides),
+          ),
+        );
       } else {
-        await productApi.create(data);
+        const createResponse = await productApi.create(data);
+        const raw = unwrapProductPayload(createResponse?.data ?? createResponse);
+        const normalized = raw ? normalizeProduct(raw, lps) : null;
+        const newId = normalized?.id || raw?.id;
+        if (newId) {
+          nextOverrides[newId] = overrideValues;
+          setProducts((prev) => [
+            ...prev.map((product) => applyOverrides(product, nextOverrides)),
+            applyOverrides(
+              {
+                id: newId,
+                title: data.title,
+                description: data.description || '',
+                price_in_points: data.price_in_points,
+                stock_quantity: data.stock_quantity ?? null,
+                is_available: data.is_available,
+                total_sales: 0,
+                lp_id: data.lp_id || undefined,
+                redirect_url: overrideValues.redirect_url,
+                thanks_lp_slug: overrideValues.thanks_lp_slug,
+              },
+              nextOverrides,
+            ),
+          ]);
+        }
       }
 
+      setProductOverrides(nextOverrides);
       setShowCreateModal(false);
-      await fetchData();
       alert(editingProduct ? '商品を更新しました' : '商品を作成しました');
+      await fetchData(nextOverrides);
     } catch (error: any) {
       alert(error.response?.data?.detail || '商品の保存に失敗しました');
     }
