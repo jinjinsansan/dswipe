@@ -84,7 +84,7 @@ export default function HeroBlock({ content, isEditing, onEdit, productId, onPro
 
         {content.buttonText && (
           <div className="flex justify-center">
-            {productId && onProductClick ? (
+            {onProductClick ? (
               <button
                 type="button"
                 className="px-6 md:px-8 lg:px-10 py-3 md:py-4 rounded-none font-semibold text-base md:text-lg lg:text-xl shadow-lg hover:scale-105 transition-transform"

@@ -40,20 +40,20 @@ export default function CTABlock({ content, isEditing, onEdit, productId, fullWi
   const renderButton = () => {
     const label = content.buttonText || '今すぐ始める';
 
-    if (productId) {
-      if (onProductClick) {
-        return (
-          <button
-            type="button"
-            className={buttonClass}
-            style={buttonStyle}
-            onClick={() => onProductClick(productId)}
-          >
-            {label}
-          </button>
-        );
-      }
+    if (onProductClick) {
+      return (
+        <button
+          type="button"
+          className={buttonClass}
+          style={buttonStyle}
+          onClick={() => onProductClick(productId)}
+        >
+          {label}
+        </button>
+      );
+    }
 
+    if (productId) {
       return (
         <Link
           href={`/points/purchase?product_id=${productId}`}

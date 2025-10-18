@@ -112,7 +112,7 @@ export default function StickyCTABlock({ content, withinEditor, productId, onPro
                 color: '#FFFFFF',
               }}
               onClick={() => {
-                if (productId && onProductClick) {
+                if (onProductClick) {
                   onProductClick(productId);
                 }
               }}
