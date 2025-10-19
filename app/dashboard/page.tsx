@@ -689,12 +689,15 @@ export default function DashboardPage() {
                         key={product.id}
                         className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-3 hover:border-gray-600 transition-all"
                       >
-                        <div className="flex items-center gap-2 mb-2">
+                        <Link 
+                          href={`/u/${product.seller_username}`}
+                          className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                        >
                           <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
                             {product.seller_username?.charAt(0).toUpperCase() || 'S'}
                           </div>
-                          <span className="text-gray-400 text-xs">{product.seller_username}</span>
-                        </div>
+                          <span className="text-blue-400 hover:text-blue-300 text-xs">{product.seller_username}</span>
+                        </Link>
                         <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{product.title}</h3>
                         <p className="text-gray-400 text-xs mb-2 line-clamp-2">{product.description}</p>
                         <div className="flex items-center justify-between">
@@ -722,12 +725,15 @@ export default function DashboardPage() {
                         key={product.id}
                         className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-3 hover:border-gray-600 transition-all"
                       >
-                        <div className="flex items-center gap-2 mb-2">
+                        <Link 
+                          href={`/u/${product.seller_username}`}
+                          className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                        >
                           <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white text-xs">
                             {product.seller_username?.charAt(0).toUpperCase() || 'S'}
                           </div>
-                          <span className="text-gray-400 text-xs">{product.seller_username}</span>
-                        </div>
+                          <span className="text-green-400 hover:text-green-300 text-xs">{product.seller_username}</span>
+                        </Link>
                         <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{product.title}</h3>
                         <p className="text-gray-400 text-xs mb-2 line-clamp-2">{product.description}</p>
                         <div className="flex items-center justify-between">
