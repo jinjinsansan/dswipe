@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { lpApi, pointsApi, productApi } from '@/lib/api';
+import { lpApi, pointsApi, productApi, authApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
 
 export default function DashboardPage() {
