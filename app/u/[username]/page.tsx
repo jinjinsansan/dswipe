@@ -35,12 +35,18 @@ export default function UserProfilePage() {
       const response = await productApi.getPublic({ limit: 100 });
       
       console.log('✅ API レスポンス取得成功');
-      console.log('📦 全商品データ:', response.data);
-      console.log('📦 商品数:', response.data.length);
-      console.log('🔍 検索中のユーザー名:', username);
-      console.log('👥 商品の販売者名リスト:', response.data.map((p: any) => p.seller_username));
+      console.log('📦 レスポンス全体:', response);
+      console.log('📦 response.data:', response.data);
+      console.log('📦 response.data.data:', response.data?.data);
       
-      const userProducts = response.data.filter(
+      // バックエンドのレスポンス構造に合わせる
+      const allProducts = response.data?.data || response.data || [];
+      console.log('📦 全商品データ:', allProducts);
+      console.log('📦 商品数:', allProducts.length);
+      console.log('🔍 検索中のユーザー名:', username);
+      console.log('👥 商品の販売者名リスト:', allProducts.map((p: any) => p.seller_username));
+      
+      const userProducts = allProducts.filter(
         (p: any) => p.seller_username === username
       );
       

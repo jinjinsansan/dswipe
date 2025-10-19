@@ -49,9 +49,15 @@ function ProductsContent() {
       console.log('📡 API呼び出し: productApi.getPublic({ limit: 1000 })');
       const response = await productApi.getPublic({ limit: 1000 });
       console.log('✅ API レスポンス取得成功');
-      console.log('📦 取得した商品数:', response.data.length);
-      console.log('📦 商品データ:', response.data);
-      setProducts(response.data);
+      console.log('📦 レスポンス全体:', response);
+      console.log('📦 response.data:', response.data);
+      console.log('📦 response.data.data:', response.data?.data);
+      
+      // バックエンドのレスポンス構造に合わせる
+      const productsData = response.data?.data || response.data || [];
+      console.log('📦 取得した商品数:', productsData.length);
+      console.log('📦 商品データ:', productsData);
+      setProducts(productsData);
     } catch (error: any) {
       console.error('❌ 商品の取得に失敗:', error);
       console.error('❌ エラー詳細:', error.response?.data || error.message);
