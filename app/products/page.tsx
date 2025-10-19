@@ -46,9 +46,10 @@ function ProductsContent() {
     console.log('🛍️ /products ページ - 商品取得開始');
     try {
       setIsLoading(true);
-      console.log('📡 API呼び出し: productApi.getPublic({ sort: latest, limit: 1000 })');
+      console.log('📡 API呼び出し: productApi.getPublic({ sort: latest, limit: 50 })');
       // sortパラメータを追加（ダッシュボードと同じ形式）
-      const response = await productApi.getPublic({ sort: 'latest', limit: 1000 });
+      // limitは最大50に制限されている
+      const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
       console.log('✅ API レスポンス取得成功');
       console.log('📦 レスポンス全体:', response);
       console.log('📦 response.data:', response.data);

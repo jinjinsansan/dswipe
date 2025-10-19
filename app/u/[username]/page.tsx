@@ -33,7 +33,8 @@ export default function UserProfilePage() {
       
       console.log('📡 API呼び出し: productApi.getPublic');
       // sortパラメータを追加（ダッシュボードと同じ形式）
-      const response = await productApi.getPublic({ sort: 'latest', limit: 100 });
+      // limitは最大50に制限されている
+      const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
       
       console.log('✅ API レスポンス取得成功');
       console.log('📦 レスポンス全体:', response);
