@@ -110,32 +110,45 @@ export default function DashboardPage() {
 
   const fetchBuyerData = async () => {
     try {
-      // まず全てのトランザクションを取得して確認
+      console.log('=== Starting fetchBuyerData ===');
+      
+      // 全てのトランザクションを取得
       const allTransactions = await pointsApi.getTransactions({ limit: 50 });
-      console.log('All transactions:', allTransactions.data);
-
-      const [historyResponse, popularResponse, latestResponse] = await Promise.all([
-        pointsApi.getTransactions({ transaction_type: 'product_purchase', limit: 10 }),
-        productApi.getPublic({ sort: 'popular', limit: 5 }),
-        productApi.getPublic({ sort: 'latest', limit: 5 }),
-      ]);
-
-      console.log('Purchase history (filtered):', historyResponse.data);
-      console.log('Popular products:', popularResponse.data);
-      console.log('Latest products:', latestResponse.data);
+      console.log('✅ All transactions:', allTransactions.data);
 
       // transaction_typeに関係なく、product_purchase関連を全て表示
       const purchaseTransactions = allTransactions.data?.data?.filter(
         (tx: any) => tx.transaction_type === 'product_purchase'
       ) || [];
       
-      console.log('Filtered purchase transactions:', purchaseTransactions);
-
+      console.log('✅ Filtered purchase transactions:', purchaseTransactions);
       setPurchaseHistory(purchaseTransactions);
-      setPopularProducts(popularResponse.data?.data || []);
-      setLatestProducts(latestResponse.data?.data || []);
+
+      // 人気商品を取得（エラーでも続行）
+      try {
+        console.log('Fetching popular products...');
+        const popularResponse = await productApi.getPublic({ sort: 'popular', limit: 5 });
+        console.log('✅ Popular products:', popularResponse.data);
+        setPopularProducts(popularResponse.data?.data || []);
+      } catch (error) {
+        console.error('❌ Failed to fetch popular products:', error);
+        setPopularProducts([]);
+      }
+
+      // 新着商品を取得（エラーでも続行）
+      try {
+        console.log('Fetching latest products...');
+        const latestResponse = await productApi.getPublic({ sort: 'latest', limit: 5 });
+        console.log('✅ Latest products:', latestResponse.data);
+        setLatestProducts(latestResponse.data?.data || []);
+      } catch (error) {
+        console.error('❌ Failed to fetch latest products:', error);
+        setLatestProducts([]);
+      }
+
+      console.log('=== fetchBuyerData completed ===');
     } catch (error) {
-      console.error('Failed to fetch buyer data:', error);
+      console.error('❌ Failed to fetch buyer data:', error);
     }
   };
 
