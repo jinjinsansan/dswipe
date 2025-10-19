@@ -1,21 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { DASHBOARD_NAV_LINKS, isDashboardLinkActive } from '@/components/dashboard/navLinks';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
+  const pathname = usePathname();
   const [lps, setLps] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [totalSales, setTotalSales] = useState<number>(0);
-  const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [dashboardType, setDashboardType] = useState<'seller' | 'buyer' | 'settings'>('seller');
   const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
   const [popularProducts, setPopularProducts] = useState<any[]>([]);
@@ -261,45 +262,23 @@ export default function DashboardPage() {
         {/* Navigation */}
         <nav className="flex-1 p-3">
           <div className="space-y-0.5">
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-semibold"
-            >
-              <span className="text-base">📊</span>
-              <span>ダッシュボード</span>
-            </Link>
-            
-            <Link
-              href="/lp/create"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">➕</span>
-              <span>新規LP作成</span>
-            </Link>
-            
-            <Link
-              href="/products"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">🏪</span>
-              <span>マーケット</span>
-            </Link>
-            
-            <Link
-              href="/points/purchase"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">💰</span>
-              <span>ポイント購入</span>
-            </Link>
-            
-            <Link
-              href="/media"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">🖼️</span>
-              <span>メディア</span>
-            </Link>
+            {DASHBOARD_NAV_LINKS.map((link) => {
+              const isActive = isDashboardLinkActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
+                    isActive
+                      ? 'text-white bg-blue-600/90'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  <span className="text-base">{link.icon}</span>
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </nav>
 
@@ -329,14 +308,6 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between h-full">
             {/* Left: Menu Button (Mobile) + Title */}
             <div className="flex items-center gap-3 min-w-0">
-              <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="sm:hidden p-2 text-slate-300 hover:text-white"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
               <div className="min-w-0">
                 <h1 className="text-lg sm:text-xl font-semibold text-white mb-0 truncate">ダッシュボード</h1>
                 <p className="text-slate-400 text-xs hidden sm:block">ようこそ、{user?.username}さん</p>
@@ -371,69 +342,27 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="sm:hidden border-b border-slate-800 bg-slate-950/60 p-3 space-y-1">
-            <Link
-              href="/dashboard"
-              onClick={() => setShowMobileMenu(false)}
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-semibold"
-            >
-              <span>📊</span>
-              <span>ダッシュボード</span>
-            </Link>
-            <Link
-              href="/lp/create"
-              onClick={() => setShowMobileMenu(false)}
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm"
-            >
-              <span>➕</span>
-              <span>新規LP作成</span>
-            </Link>
-            <Link
-              href="/products"
-              onClick={() => setShowMobileMenu(false)}
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm"
-            >
-              <span>📦</span>
-              <span>商品管理</span>
-            </Link>
-            <Link
-              href="/points/purchase"
-              onClick={() => setShowMobileMenu(false)}
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm"
-            >
-              <span>💰</span>
-              <span>ポイント購入</span>
-            </Link>
-            <Link
-              href="/media"
-              onClick={() => setShowMobileMenu(false)}
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors text-sm"
-            >
-              <span>🖼️</span>
-              <span>メディア</span>
-            </Link>
-            <hr className="border-slate-800 my-2" />
-            <div className="px-3 py-2 flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <div className="flex-1">
-                <div className="text-white text-sm font-semibold">{user?.username}</div>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                handleLogout();
-                setShowMobileMenu(false);
-              }}
-              className="w-full px-3 py-1.5 bg-red-600/20 text-red-300 rounded hover:bg-red-600/30 transition-colors text-xs font-semibold"
-            >
-              ログアウト
-            </button>
-          </div>
-        )}
+        <div className="sm:hidden border-b border-slate-800 bg-slate-950/80">
+          <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
+            {DASHBOARD_NAV_LINKS.map((link) => {
+              const isActive = isDashboardLinkActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
+                    isActive
+                      ? 'bg-blue-600/90 text-white'
+                      : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <span>{link.icon}</span>
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-3 sm:p-6">

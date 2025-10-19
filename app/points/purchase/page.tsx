@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { DASHBOARD_NAV_LINKS, isDashboardLinkActive } from '@/components/dashboard/navLinks';
 
 const POINT_PACKAGES = [
   { points: 1000, price: 1000, bonus: 0 },
@@ -23,9 +24,9 @@ const PAYMENT_METHODS = [
 export default function PointPurchasePage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
+  const pathname = usePathname();
   const [pointBalance, setPointBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(POINT_PACKAGES[0]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(PAYMENT_METHODS[0]);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -75,7 +76,7 @@ export default function PointPurchasePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
@@ -93,45 +94,23 @@ export default function PointPurchasePage() {
 
         <nav className="flex-1 p-3">
           <div className="space-y-0.5">
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">📊</span>
-              <span>ダッシュボード</span>
-            </Link>
-            
-            <Link
-              href="/lp/create"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">➕</span>
-              <span>新規LP作成</span>
-            </Link>
-            
-            <Link
-              href="/products"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">📦</span>
-              <span>商品管理</span>
-            </Link>
-            
-            <Link
-              href="/points/purchase"
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600/90 rounded text-sm font-semibold"
-            >
-              <span className="text-base">💰</span>
-              <span>ポイント購入</span>
-            </Link>
-            
-            <Link
-              href="/media"
-              className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-            >
-              <span className="text-base">🖼️</span>
-              <span>メディア</span>
-            </Link>
+            {DASHBOARD_NAV_LINKS.map((link) => {
+              const isActive = isDashboardLinkActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
+                    isActive
+                      ? 'text-white bg-blue-600/90'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+                  }`}
+                >
+                  <span className="text-base">{link.icon}</span>
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </nav>
 
@@ -172,16 +151,6 @@ export default function PointPurchasePage() {
               <span className="text-white text-sm font-semibold">{pointBalance.toLocaleString()} P</span>
             </div>
             
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="sm:hidden p-2 text-slate-300 hover:text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            
             {/* User Avatar (Desktop) */}
             <div className="hidden sm:flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
@@ -191,66 +160,27 @@ export default function PointPurchasePage() {
           </div>
         </div>
 
-        {/* Mobile Menu (Mobile Only) */}
-        {showMobileMenu && (
-          <div className="sm:hidden bg-slate-900/70 border-b border-slate-800 p-3">
-            <nav className="space-y-0.5 mb-3">
-              <Link
-                href="/dashboard"
-                className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-              >
-                <span className="text-base">📊</span>
-                <span>ダッシュボード</span>
-              </Link>
-              <Link
-                href="/lp/create"
-                className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-              >
-                <span className="text-base">➕</span>
-                <span>新規LP作成</span>
-              </Link>
-              <Link
-                href="/products"
-                className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-              >
-                <span className="text-base">📦</span>
-                <span>商品管理</span>
-              </Link>
-              <Link
-                href="/points/purchase"
-                className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600/90 rounded text-sm font-semibold"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <span className="text-base">💰</span>
-                <span>ポイント購入</span>
-              </Link>
-              <Link
-                href="/media"
-                className="flex items-center space-x-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 rounded transition-colors text-sm font-medium"
-              >
-                <span className="text-base">🖼️</span>
-                <span>メディア</span>
-              </Link>
-            </nav>
-            <div className="px-3 py-2 border-t border-slate-800 pt-2">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-white text-sm font-medium truncate">{user?.username}</div>
-                  <div className="text-slate-400 text-xs capitalize">{user?.user_type}</div>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="w-full px-3 py-1.5 bg-red-600/15 text-red-300 rounded hover:bg-red-600/25 transition-colors text-xs font-semibold"
-              >
-                ログアウト
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="sm:hidden border-b border-slate-800 bg-slate-950/80">
+          <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
+            {DASHBOARD_NAV_LINKS.map((link) => {
+              const isActive = isDashboardLinkActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
+                    isActive
+                      ? 'bg-blue-600/90 text-white'
+                      : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <span>{link.icon}</span>
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-4 sm:p-6">
