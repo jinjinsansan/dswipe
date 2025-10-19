@@ -89,11 +89,19 @@ function ProductsContent() {
   // LPからプレビュー画像を取得する関数
   const getLPPreviewImage = (lp: any): string | null => {
     console.log('🖼️ getLPPreviewImage 呼び出し - LP:', lp.title);
+    
+    // 1. OGP画像（meta_image_url）を優先
+    if (lp.meta_image_url) {
+      console.log('✅ meta_image_url発見:', lp.meta_image_url);
+      return lp.meta_image_url;
+    }
+    
+    // 2. steps が存在する場合のみ探索
     console.log('🖼️ steps:', lp.steps);
     console.log('🖼️ stepsの型:', typeof lp.steps);
     
     if (!lp.steps || !Array.isArray(lp.steps)) {
-      console.log('❌ stepsが存在しないか配列ではない');
+      console.log('❌ stepsが存在しないか配列ではない - meta_image_urlもなし');
       return null;
     }
 
