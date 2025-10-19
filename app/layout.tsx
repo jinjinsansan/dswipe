@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Sawarabi_Gothic, Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 
@@ -31,8 +31,29 @@ const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   weight: ["300", "400", "500", "700", "900"],
 });
 
+// オプション5: BIZ UDPGothic - モリサワのUD Gothic、企業で広く使われている
+const bizUdpGothic = BIZ_UDPGothic({
+  variable: "--font-biz-udp",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+// オプション6: Sawarabi Gothic - シンプルでクリーン、読みやすい
+const sawarabiGothic = Sawarabi_Gothic({
+  variable: "--font-sawarabi",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+// オプション7: Zen Maru Gothic - 丸ゴシック、優しく親しみやすい
+const zenMaruGothic = Zen_Maru_Gothic({
+  variable: "--font-zen-maru",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
+});
+
 // 👇 ここを変更してフォントを切り替え
-// 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew'
+// 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew' | 'bizUdpGothic' | 'sawarabiGothic' | 'zenMaruGothic'
 const ACTIVE_FONT = 'zenKakuGothicNew';
 
 const fontConfig = {
@@ -51,6 +72,18 @@ const fontConfig = {
   zenKakuGothicNew: {
     variable: zenKakuGothicNew.variable,
     className: zenKakuGothicNew.className,
+  },
+  bizUdpGothic: {
+    variable: bizUdpGothic.variable,
+    className: bizUdpGothic.className,
+  },
+  sawarabiGothic: {
+    variable: sawarabiGothic.variable,
+    className: sawarabiGothic.className,
+  },
+  zenMaruGothic: {
+    variable: zenMaruGothic.variable,
+    className: zenMaruGothic.className,
   },
 };
 
