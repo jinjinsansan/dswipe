@@ -48,6 +48,7 @@ export default function EditLPNewPage() {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
+  const [lpTitle, setLpTitle] = useState('');
   const [lpSettings, setLpSettings] = useState({
     showSwipeHint: false,
     fullscreenMedia: false,
@@ -80,6 +81,7 @@ export default function EditLPNewPage() {
     try {
       const response = await lpApi.get(lpId);
       setLp(response.data);
+      setLpTitle(response.data.title || '');
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
         fullscreenMedia: Boolean(response.data.fullscreen_media),
@@ -400,6 +402,7 @@ export default function EditLPNewPage() {
 
       // LP本体の表示設定を更新
       const lpUpdateResponse = await lpApi.update(lpId, {
+        title: lpTitle.trim() || undefined,
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
         floating_cta: true,
@@ -796,6 +799,20 @@ export default function EditLPNewPage() {
 
               <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
                 <div>
+                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">LP名</h5>
+                  <p className="text-[11px] text-gray-500 mt-1">ダッシュボードに表示されるLP名を設定できます。</p>
+                </div>
+                <input
+                  type="text"
+                  value={lpTitle}
+                  onChange={(e) => setLpTitle(e.target.value)}
+                  placeholder="LP名（例：春の新商品キャンペーン）"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                />
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+                <div>
                   <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
                   <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
                 </div>
@@ -979,6 +996,20 @@ export default function EditLPNewPage() {
                   <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
                 </div>
               </label>
+
+              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+                <div>
+                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">LP名</h5>
+                  <p className="text-[11px] text-gray-500 mt-1">ダッシュボードに表示されるLP名を設定できます。</p>
+                </div>
+                <input
+                  type="text"
+                  value={lpTitle}
+                  onChange={(e) => setLpTitle(e.target.value)}
+                  placeholder="LP名（例：春の新商品キャンペーン）"
+                  className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                />
+              </div>
 
               <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
                 <div>
