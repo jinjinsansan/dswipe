@@ -156,17 +156,17 @@ export default function CreateLPPage() {
         <AIWizard onComplete={handleWizardComplete} onSkip={handleWizardSkip} />
       )}
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="min-h-screen bg-slate-950">
       {/* Header */}
-      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
+      <header className="bg-slate-900/70 backdrop-blur-sm border-b border-slate-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="text-2xl font-bold text-white">
-              SwipeLaunch
+            <Link href="/dashboard" className="text-2xl font-bold text-white tracking-[0.06em]">
+              Ｄ－swipe
             </Link>
             <Link
               href="/dashboard"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
             >
               ← ダッシュボードに戻る
             </Link>
@@ -178,10 +178,10 @@ export default function CreateLPPage() {
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">新規LP作成</h1>
-          <p className="text-gray-400">基本情報を入力してLPを作成します</p>
+          <p className="text-slate-400">基本情報を入力してLPを作成します</p>
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8">
+        <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">

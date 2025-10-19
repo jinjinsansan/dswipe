@@ -10,12 +10,12 @@ interface SEOHeadProps {
 
 export default function SEOHead({
   title,
-  description = 'SwipeLaunch - スワイプ操作で魅せるランディングページ作成プラットフォーム',
+  description = 'Ｄ－swipe - スワイプ操作で魅せるランディングページ作成プラットフォーム',
   image = '/og-image.png',
   url,
   type = 'website',
 }: SEOHeadProps) {
-  const siteName = 'SwipeLaunch';
+  const siteName = 'Ｄ－swipe';
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
   return (

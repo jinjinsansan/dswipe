@@ -76,6 +76,9 @@ export const lpApi = {
   
   update: (id: string, data: UpdateLPRequest) =>
     api.put<LP>(`/lp/${id}`, data),
+
+  duplicate: (id: string) =>
+    api.post<LPDetail>(`/lp/${id}/duplicate`),
   
   delete: (id: string) =>
     api.delete(`/lp/${id}`),

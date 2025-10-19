@@ -57,7 +57,7 @@ export default function RegisterPage() {
       localStorage.setItem('user', JSON.stringify(user));
 
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {
       setIsLoading(false);
@@ -65,14 +65,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">SwipeLaunch</h1>
-          <p className="text-gray-400">新規アカウント登録</p>
+          <h1 className="text-4xl font-bold text-white mb-2 tracking-[0.08em]">Ｄ－swipe</h1>
+          <p className="text-slate-400">新規アカウント登録</p>
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700">
+        <div className="bg-slate-900/70 backdrop-blur-sm p-8 rounded-xl border border-slate-800">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
@@ -81,7 +81,7 @@ export default function RegisterPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                 メールアドレス
               </label>
               <input
@@ -91,13 +91,13 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="your@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-slate-300 mb-2">
                 ユーザー名
               </label>
               <input
@@ -107,13 +107,13 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="username"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                 パスワード
               </label>
               <input
@@ -123,13 +123,13 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300 mb-2">
                 パスワード（確認）
               </label>
               <input
@@ -139,7 +139,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="••••••••"
               />
             </div>
@@ -154,7 +154,7 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-slate-400 text-sm">
               既にアカウントをお持ちの方は{' '}
               <Link href="/login" className="text-blue-400 hover:text-blue-300 font-semibold">
                 ログイン
@@ -164,7 +164,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-gray-500 hover:text-gray-400 text-sm">
+          <Link href="/" className="text-slate-500 hover:text-slate-400 text-sm">
             ← ホームに戻る
           </Link>
         </div>
