@@ -44,6 +44,7 @@ export default function EditLPNewPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
@@ -450,14 +451,17 @@ export default function EditLPNewPage() {
         });
       }
       
-      alert('保存しました！');
       setBlocks(recreatedBlocks);
+      // 成功通知を表示
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
       // ページを再読み込みして最新データを取得
       await fetchLP();
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || '保存に失敗しました';
       setError(errorMessage);
-      alert(errorMessage);
+      // エラー通知（3秒後に自動消去）
+      setTimeout(() => setError(''), 3000);
     } finally {
       setIsSaving(false);
     }
@@ -489,6 +493,24 @@ export default function EditLPNewPage() {
 
   return (
     <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
+      {/* Toast Notifications */}
+      {saveSuccess && (
+        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          <span className="font-semibold">✅ 保存完了！</span>
+        </div>
+      )}
+      {error && (
+        <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+          <span className="font-semibold">{error}</span>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 h-14 flex-shrink-0">
         <div className="h-full px-2 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-3">
@@ -550,9 +572,15 @@ export default function EditLPNewPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-3 py-1.5 text-xs font-semibold bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 text-xs font-semibold bg-blue-600/90 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-1.5"
             >
-              {isSaving ? '保存中...' : '保存'}
+              {isSaving && (
+                <svg className="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              )}
+              {isSaving ? '保存中...' : '💾 保存'}
             </button>
           </div>
 
@@ -637,9 +665,16 @@ export default function EditLPNewPage() {
                   disabled={isSaving}
                   className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] flex items-center justify-center gap-2"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
-                  </svg>
+                  {isSaving ? (
+                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                    </svg>
+                  )}
                   {isSaving ? '保存中...' : '💾 保存'}
                 </button>
 
