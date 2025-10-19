@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [totalSales, setTotalSales] = useState<number>(0);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+  const [dashboardType, setDashboardType] = useState<'seller' | 'buyer'>('seller');
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -325,7 +326,36 @@ export default function DashboardPage() {
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-3 sm:p-6">
 
-          {/* Recently Edited LPs */}
+          {/* Dashboard Type Tabs */}
+          <div className="mb-6">
+            <div className="flex gap-2 border-b border-gray-700">
+              <button
+                onClick={() => setDashboardType('seller')}
+                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                  dashboardType === 'seller'
+                    ? 'text-white border-b-2 border-blue-500'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                🏪 Sellerダッシュボード
+              </button>
+              <button
+                onClick={() => setDashboardType('buyer')}
+                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                  dashboardType === 'buyer'
+                    ? 'text-white border-b-2 border-blue-500'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                🛍️ Buyerダッシュボード
+              </button>
+            </div>
+          </div>
+
+          {/* Seller Dashboard */}
+          {dashboardType === 'seller' && (
+            <>
+              {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
               <h2 className="text-lg font-semibold text-white">最近編集したLP</h2>
@@ -505,6 +535,90 @@ export default function DashboardPage() {
               <div className="text-gray-500 text-[10px] sm:text-xs font-medium mt-1">CTAクリック: {lps.reduce((sum: number, lp: any) => sum + (lp.total_cta_clicks || 0), 0)}回</div>
             </div>
           </div>
+            </>
+          )}
+
+          {/* Buyer Dashboard */}
+          {dashboardType === 'buyer' && (
+            <>
+              {/* Point Balance Card */}
+              <div className="mb-6">
+                <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+                  <div className="text-sm font-medium mb-2">現在のポイント残高</div>
+                  <div className="text-4xl font-bold mb-4">{pointBalance.toLocaleString()} P</div>
+                  <Link
+                    href="/points/purchase"
+                    className="inline-block px-4 py-2 bg-white text-blue-600 rounded hover:bg-gray-100 transition-colors text-sm font-semibold"
+                  >
+                    ポイントを購入する
+                  </Link>
+                </div>
+              </div>
+
+              {/* Purchase History */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-4">購入履歴</h2>
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
+                  <div className="text-4xl mb-3">🛒</div>
+                  <h3 className="text-xl font-semibold text-white mb-2">購入履歴はまだありません</h3>
+                  <p className="text-gray-400 text-sm">商品を購入すると、ここに履歴が表示されます</p>
+                </div>
+              </div>
+
+              {/* Available Products */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-white">購入可能な商品</h2>
+                </div>
+                {products.filter(p => p.is_available).length === 0 ? (
+                  <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
+                    <div className="text-4xl mb-3">📦</div>
+                    <h3 className="text-xl font-semibold text-white mb-2">商品がありません</h3>
+                    <p className="text-gray-400 text-sm">現在購入可能な商品はありません</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {products.filter(p => p.is_available).map((product: any) => (
+                      <div
+                        key={product.id}
+                        className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-all"
+                      >
+                        <h3 className="text-white font-semibold text-sm mb-2">{product.name}</h3>
+                        <p className="text-gray-400 text-xs mb-3">{product.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-blue-400 font-semibold">{product.price_in_points?.toLocaleString()} P</span>
+                          <Link
+                            href={`/products/${product.id}`}
+                            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs font-semibold"
+                          >
+                            詳細を見る
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Buyer Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
+                  <div className="text-gray-400 text-xs font-medium mb-1">総購入回数</div>
+                  <div className="text-white text-lg font-semibold">0回</div>
+                </div>
+
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
+                  <div className="text-gray-400 text-xs font-medium mb-1">総使用ポイント</div>
+                  <div className="text-white text-lg font-semibold">0 P</div>
+                </div>
+
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
+                  <div className="text-gray-400 text-xs font-medium mb-1">保有商品数</div>
+                  <div className="text-white text-lg font-semibold">0個</div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

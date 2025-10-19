@@ -15,7 +15,6 @@ export default function RegisterPage() {
     username: '',
     password: '',
     confirmPassword: '',
-    userType: 'seller' as 'seller' | 'buyer',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +47,7 @@ export default function RegisterPage() {
         email: formData.email,
         username: formData.username,
         password: formData.password,
-        user_type: formData.userType,
+        user_type: 'seller', // 全ユーザーをsellerとして登録
       });
 
       const { access_token, user } = response.data;
@@ -80,22 +79,6 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
-
-            <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-300 mb-2">
-                ユーザータイプ
-              </label>
-              <select
-                id="userType"
-                name="userType"
-                value={formData.userType}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="seller">Seller（販売者）</option>
-                <option value="buyer">Buyer（購入者）</option>
-              </select>
-            </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
