@@ -86,78 +86,10 @@ function ProductsContent() {
     }
   };
 
-  // LPからプレビュー画像を取得する関数
+  // LPからプレビュー画像を取得する関数（ダッシュボードと同じロジック）
   const getLPPreviewImage = (lp: any): string | null => {
-    console.log('🖼️ getLPPreviewImage 呼び出し - LP:', lp.title);
-    
-    // 1. OGP画像（meta_image_url）を優先
-    if (lp.meta_image_url) {
-      console.log('✅ meta_image_url発見:', lp.meta_image_url);
-      return lp.meta_image_url;
-    }
-    
-    // 2. steps が存在する場合のみ探索
-    console.log('🖼️ steps:', lp.steps);
-    console.log('🖼️ stepsの型:', typeof lp.steps);
-    
-    if (!lp.steps || !Array.isArray(lp.steps)) {
-      console.log('❌ stepsが存在しないか配列ではない - meta_image_urlもなし');
-      return null;
-    }
-
-    console.log('✅ steps配列あり - 件数:', lp.steps.length);
-
-    // 1. ヒーローセクションの画像を探す
-    const heroBlock = lp.steps.find((step: any) => {
-      const blockType = step?.block_type || step?.content_data?.block_type || '';
-      return blockType.toLowerCase().includes('hero');
-    });
-
-    console.log('🎯 ヒーローブロック:', heroBlock);
-
-    if (heroBlock?.content_data?.imageUrl) {
-      console.log('✅ 画像発見: heroBlock.content_data.imageUrl');
-      return heroBlock.content_data.imageUrl;
-    }
-    if (heroBlock?.content_data?.image_url) {
-      console.log('✅ 画像発見: heroBlock.content_data.image_url');
-      return heroBlock.content_data.image_url;
-    }
-    if (heroBlock?.image_url) {
-      console.log('✅ 画像発見: heroBlock.image_url');
-      return heroBlock.image_url;
-    }
-
-    // 2. 画像ブロックの画像を探す
-    const imageBlock = lp.steps.find((step: any) => {
-      const blockType = step?.block_type || step?.content_data?.block_type || '';
-      return blockType.toLowerCase().includes('image');
-    });
-
-    if (imageBlock?.content_data?.imageUrl) return imageBlock.content_data.imageUrl;
-    if (imageBlock?.content_data?.image_url) return imageBlock.content_data.image_url;
-    if (imageBlock?.image_url) return imageBlock.image_url;
-
-    // 3. 最初のステップで画像があるものを探す
-    console.log('📋 全ステップを確認中...');
-    for (const step of lp.steps) {
-      console.log('  - ステップ:', step.block_type || step.content_data?.block_type);
-      if (step?.content_data?.imageUrl) {
-        console.log('✅ 画像発見: step.content_data.imageUrl');
-        return step.content_data.imageUrl;
-      }
-      if (step?.content_data?.image_url) {
-        console.log('✅ 画像発見: step.content_data.image_url');
-        return step.content_data.image_url;
-      }
-      if (step?.image_url) {
-        console.log('✅ 画像発見: step.image_url');
-        return step.image_url;
-      }
-    }
-
-    console.log('❌ 画像が見つかりませんでした');
-    return null;
+    // heroImage を使用（ダッシュボードと同じ）
+    return lp.heroImage || null;
   };
 
   const applyFiltersAndSort = () => {
