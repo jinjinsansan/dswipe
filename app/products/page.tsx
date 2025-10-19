@@ -74,6 +74,40 @@ function ProductsContent() {
     }
   };
 
+  // LPからプレビュー画像を取得する関数
+  const getLPPreviewImage = (lp: any): string | null => {
+    if (!lp.steps || !Array.isArray(lp.steps)) return null;
+
+    // 1. ヒーローセクションの画像を探す
+    const heroBlock = lp.steps.find((step: any) => {
+      const blockType = step?.block_type || step?.content_data?.block_type || '';
+      return blockType.toLowerCase().includes('hero');
+    });
+
+    if (heroBlock?.content_data?.imageUrl) return heroBlock.content_data.imageUrl;
+    if (heroBlock?.content_data?.image_url) return heroBlock.content_data.image_url;
+    if (heroBlock?.image_url) return heroBlock.image_url;
+
+    // 2. 画像ブロックの画像を探す
+    const imageBlock = lp.steps.find((step: any) => {
+      const blockType = step?.block_type || step?.content_data?.block_type || '';
+      return blockType.toLowerCase().includes('image');
+    });
+
+    if (imageBlock?.content_data?.imageUrl) return imageBlock.content_data.imageUrl;
+    if (imageBlock?.content_data?.image_url) return imageBlock.content_data.image_url;
+    if (imageBlock?.image_url) return imageBlock.image_url;
+
+    // 3. 最初のステップで画像があるものを探す
+    for (const step of lp.steps) {
+      if (step?.content_data?.imageUrl) return step.content_data.imageUrl;
+      if (step?.content_data?.image_url) return step.content_data.image_url;
+      if (step?.image_url) return step.image_url;
+    }
+
+    return null;
+  };
+
   const applyFiltersAndSort = () => {
     let filtered = [...products];
 
@@ -247,18 +281,31 @@ function ProductsContent() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
-              {currentProducts.map((lp) => (
+              {currentProducts.map((lp) => {
+                const previewImage = getLPPreviewImage(lp);
+                
+                return (
                 <Link
                   key={lp.id}
                   href={`/view/${lp.slug}`}
                   className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group block"
                 >
-                  {/* LP Preview Image (gradient background for now) */}
-                  <div className="aspect-video bg-gradient-to-br from-blue-600/20 to-purple-600/20 overflow-hidden flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <div className="text-4xl mb-2">📄</div>
-                      <div className="text-white text-sm font-semibold line-clamp-2">{lp.title}</div>
-                    </div>
+                  {/* LP Preview Image */}
+                  <div className="aspect-video bg-gradient-to-br from-blue-600/20 to-purple-600/20 overflow-hidden relative">
+                    {previewImage ? (
+                      <img
+                        src={previewImage}
+                        alt={lp.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center p-4">
+                          <div className="text-4xl mb-2">📄</div>
+                          <div className="text-white text-sm font-semibold line-clamp-2">{lp.title}</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* LP Info */}
@@ -283,7 +330,8 @@ function ProductsContent() {
                     </div>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
 
             {/* Pagination */}
