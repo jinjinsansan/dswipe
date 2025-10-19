@@ -17,6 +17,9 @@ export default function DashboardPage() {
   const [totalSales, setTotalSales] = useState<number>(0);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [dashboardType, setDashboardType] = useState<'seller' | 'buyer'>('seller');
+  const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
+  const [popularProducts, setPopularProducts] = useState<any[]>([]);
+  const [latestProducts, setLatestProducts] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -104,6 +107,28 @@ export default function DashboardPage() {
       setIsLoading(false);
     }
   };
+
+  const fetchBuyerData = async () => {
+    try {
+      const [historyResponse, popularResponse, latestResponse] = await Promise.all([
+        pointsApi.getTransactions({ transaction_type: 'product_purchase', limit: 10 }),
+        productApi.getPublic({ sort: 'popular', limit: 5 }),
+        productApi.getPublic({ sort: 'latest', limit: 5 }),
+      ]);
+
+      setPurchaseHistory(historyResponse.data?.data || []);
+      setPopularProducts(popularResponse.data?.data || []);
+      setLatestProducts(latestResponse.data?.data || []);
+    } catch (error) {
+      console.error('Failed to fetch buyer data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (dashboardType === 'buyer' && isAuthenticated) {
+      fetchBuyerData();
+    }
+  }, [dashboardType, isAuthenticated]);
 
   const handleLogout = () => {
     logout();
@@ -558,41 +583,88 @@ export default function DashboardPage() {
               {/* Purchase History */}
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-white mb-4">購入履歴</h2>
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
-                  <div className="text-4xl mb-3">🛒</div>
-                  <h3 className="text-xl font-semibold text-white mb-2">購入履歴はまだありません</h3>
-                  <p className="text-gray-400 text-sm">商品を購入すると、ここに履歴が表示されます</p>
-                </div>
-              </div>
-
-              {/* Available Products */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white">購入可能な商品</h2>
-                </div>
-                {products.filter(p => p.is_available).length === 0 ? (
+                {purchaseHistory.length === 0 ? (
                   <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
-                    <div className="text-4xl mb-3">📦</div>
-                    <h3 className="text-xl font-semibold text-white mb-2">商品がありません</h3>
-                    <p className="text-gray-400 text-sm">現在購入可能な商品はありません</p>
+                    <div className="text-4xl mb-3">🛒</div>
+                    <h3 className="text-xl font-semibold text-white mb-2">購入履歴はまだありません</h3>
+                    <p className="text-gray-400 text-sm">商品を購入すると、ここに履歴が表示されます</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {products.filter(p => p.is_available).map((product: any) => (
+                  <div className="space-y-3">
+                    {purchaseHistory.map((transaction: any) => (
+                      <div key={transaction.id} className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h3 className="text-white font-semibold text-sm">{transaction.description}</h3>
+                            <p className="text-gray-400 text-xs">{new Date(transaction.created_at).toLocaleDateString('ja-JP')}</p>
+                          </div>
+                          <span className="text-red-400 font-semibold">{transaction.amount?.toLocaleString()} P</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Popular Products */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-4">🔥 人気の商品</h2>
+                {popularProducts.length === 0 ? (
+                  <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
+                    <div className="text-4xl mb-3">📦</div>
+                    <p className="text-gray-400 text-sm">現在人気商品はありません</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                    {popularProducts.map((product: any) => (
                       <div
                         key={product.id}
-                        className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-all"
+                        className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-3 hover:border-gray-600 transition-all"
                       >
-                        <h3 className="text-white font-semibold text-sm mb-2">{product.name}</h3>
-                        <p className="text-gray-400 text-xs mb-3">{product.description}</p>
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
+                            {product.seller_username?.charAt(0).toUpperCase() || 'S'}
+                          </div>
+                          <span className="text-gray-400 text-xs">{product.seller_username}</span>
+                        </div>
+                        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{product.title}</h3>
+                        <p className="text-gray-400 text-xs mb-2 line-clamp-2">{product.description}</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-blue-400 font-semibold">{product.price_in_points?.toLocaleString()} P</span>
-                          <Link
-                            href={`/products/${product.id}`}
-                            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs font-semibold"
-                          >
-                            詳細を見る
-                          </Link>
+                          <span className="text-blue-400 font-semibold text-sm">{product.price_in_points?.toLocaleString()} P</span>
+                          <span className="text-gray-500 text-xs">🔥 {product.total_sales}件</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Latest Products */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-4">✨ 新着商品</h2>
+                {latestProducts.length === 0 ? (
+                  <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
+                    <div className="text-4xl mb-3">📦</div>
+                    <p className="text-gray-400 text-sm">現在新着商品はありません</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                    {latestProducts.map((product: any) => (
+                      <div
+                        key={product.id}
+                        className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-3 hover:border-gray-600 transition-all"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white text-xs">
+                            {product.seller_username?.charAt(0).toUpperCase() || 'S'}
+                          </div>
+                          <span className="text-gray-400 text-xs">{product.seller_username}</span>
+                        </div>
+                        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{product.title}</h3>
+                        <p className="text-gray-400 text-xs mb-2 line-clamp-2">{product.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-blue-400 font-semibold text-sm">{product.price_in_points?.toLocaleString()} P</span>
+                          <span className="text-gray-500 text-xs">✨ NEW</span>
                         </div>
                       </div>
                     ))}
@@ -604,17 +676,19 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
                   <div className="text-gray-400 text-xs font-medium mb-1">総購入回数</div>
-                  <div className="text-white text-lg font-semibold">0回</div>
+                  <div className="text-white text-lg font-semibold">{purchaseHistory.length}回</div>
                 </div>
 
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
                   <div className="text-gray-400 text-xs font-medium mb-1">総使用ポイント</div>
-                  <div className="text-white text-lg font-semibold">0 P</div>
+                  <div className="text-white text-lg font-semibold">
+                    {Math.abs(purchaseHistory.reduce((sum: number, tx: any) => sum + (tx.amount || 0), 0)).toLocaleString()} P
+                  </div>
                 </div>
 
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
-                  <div className="text-gray-400 text-xs font-medium mb-1">保有商品数</div>
-                  <div className="text-white text-lg font-semibold">0個</div>
+                  <div className="text-gray-400 text-xs font-medium mb-1">購入商品数</div>
+                  <div className="text-white text-lg font-semibold">{purchaseHistory.length}個</div>
                 </div>
               </div>
             </>

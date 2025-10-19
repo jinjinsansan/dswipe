@@ -154,6 +154,9 @@ export const productApi = {
   
   purchase: (id: string, data: { quantity: number }) =>
     api.post(`/products/${id}/purchase`, data),
+  
+  getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number }) =>
+    api.get('/products/public', { params }),
 };
 
 // ポイントAPI
