@@ -176,10 +176,14 @@ export default function DashboardPage() {
 
     try {
       const response = await authApi.updateProfile({ username: newUsername });
+      
+      // 更新されたユーザー情報をストアに保存
+      const updatedUser = response.data;
+      useAuthStore.getState().setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
       setUpdateSuccess(true);
       setNewUsername('');
-      // ユーザー情報を再取得
-      await fetchData();
       setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (error: any) {
       setUsernameError(error.response?.data?.detail || 'ユーザー名の更新に失敗しました');
