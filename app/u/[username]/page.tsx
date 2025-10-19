@@ -26,9 +26,15 @@ export default function UserProfilePage() {
       setIsLoading(true);
       // 全商品を取得してフィルター（後でバックエンドAPIを改善）
       const response = await productApi.getPublic({ limit: 100 });
+      console.log('全商品データ:', response.data);
+      console.log('検索中のユーザー名:', username);
+      console.log('商品の販売者名の例:', response.data.map((p: any) => p.seller_username));
+      
       const userProducts = response.data.filter(
         (p: any) => p.seller_username === username
       );
+      
+      console.log('フィルター後の商品:', userProducts);
       
       setProducts(userProducts);
       setStats({
@@ -101,7 +107,11 @@ export default function UserProfilePage() {
 
         {products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">まだ商品がありません</p>
+            <p className="text-gray-400 text-lg mb-4">まだ商品がありません</p>
+            <div className="text-gray-500 text-sm">
+              <p>ユーザー名: {username}</p>
+              <p className="mt-2">ブラウザの開発者ツール（F12）→ Consoleタブ でデバッグ情報を確認できます</p>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">

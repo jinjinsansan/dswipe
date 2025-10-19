@@ -252,8 +252,8 @@ export default function DashboardPage() {
               href="/products"
               className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-medium"
             >
-              <span className="text-base">📦</span>
-              <span>商品管理</span>
+              <span className="text-base">🛍️</span>
+              <span>商品一覧</span>
             </Link>
             
             <Link
