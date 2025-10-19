@@ -58,6 +58,9 @@ export const authApi = {
   
   getMe: () =>
     api.get('/auth/me'),
+  
+  updateProfile: (data: { username?: string }) =>
+    api.put('/auth/profile', data),
 };
 
 // LP管理API

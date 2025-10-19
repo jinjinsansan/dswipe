@@ -16,10 +16,13 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [totalSales, setTotalSales] = useState<number>(0);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
-  const [dashboardType, setDashboardType] = useState<'seller' | 'buyer'>('seller');
+  const [dashboardType, setDashboardType] = useState<'seller' | 'buyer' | 'settings'>('seller');
   const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
   const [popularProducts, setPopularProducts] = useState<any[]>([]);
   const [latestProducts, setLatestProducts] = useState<any[]>([]);
+  const [newUsername, setNewUsername] = useState<string>('');
+  const [usernameError, setUsernameError] = useState<string>('');
+  const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -149,6 +152,39 @@ export default function DashboardPage() {
   }, [dashboardType, isAuthenticated]);
 
 
+
+  const handleUsernameChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUsernameError('');
+    setUpdateSuccess(false);
+
+    // バリデーション
+    if (!newUsername.trim()) {
+      setUsernameError('ユーザー名を入力してください');
+      return;
+    }
+
+    if (newUsername.length < 3 || newUsername.length > 20) {
+      setUsernameError('ユーザー名は3-20文字で入力してください');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
+      setUsernameError('ユーザー名は英数字とアンダースコアのみ使用できます');
+      return;
+    }
+
+    try {
+      const response = await authApi.updateProfile({ username: newUsername });
+      setUpdateSuccess(true);
+      setNewUsername('');
+      // ユーザー情報を再取得
+      await fetchData();
+      setTimeout(() => setUpdateSuccess(false), 3000);
+    } catch (error: any) {
+      setUsernameError(error.response?.data?.detail || 'ユーザー名の更新に失敗しました');
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -393,6 +429,16 @@ export default function DashboardPage() {
                 }`}
               >
                 🛍️ Buyerダッシュボード
+              </button>
+              <button
+                onClick={() => setDashboardType('settings')}
+                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                  dashboardType === 'settings'
+                    ? 'text-white border-b-2 border-blue-500'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                ⚙️ 設定
               </button>
             </div>
           </div>
@@ -709,6 +755,77 @@ export default function DashboardPage() {
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4">
                   <div className="text-gray-400 text-xs font-medium mb-1">購入商品数</div>
                   <div className="text-white text-lg font-semibold">{purchaseHistory.length}個</div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Settings Dashboard */}
+          {dashboardType === 'settings' && (
+            <>
+              <div className="max-w-2xl">
+                <h2 className="text-2xl font-bold text-white mb-6">アカウント設定</h2>
+
+                {/* Current User Info */}
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">現在の情報</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm text-gray-400">メールアドレス</label>
+                      <div className="text-white font-medium">{user?.email}</div>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-400">ユーザー名</label>
+                      <div className="text-white font-medium">{user?.username}</div>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-400">ポイント残高</label>
+                      <div className="text-white font-medium">{pointBalance.toLocaleString()} P</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Profile Update Form */}
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">プロフィール更新</h3>
+                  
+                  <form onSubmit={handleUsernameChange} className="space-y-4">
+                    <div>
+                      <label htmlFor="newUsername" className="block text-sm font-medium text-gray-300 mb-2">
+                        新しいユーザー名
+                      </label>
+                      <input
+                        id="newUsername"
+                        type="text"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        placeholder="新しいユーザー名を入力"
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        3-20文字、英数字とアンダースコア（_）のみ使用可能
+                      </p>
+                    </div>
+
+                    {usernameError && (
+                      <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
+                        {usernameError}
+                      </div>
+                    )}
+
+                    {updateSuccess && (
+                      <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg text-sm">
+                        ✅ ユーザー名を更新しました
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      更新する
+                    </button>
+                  </form>
                 </div>
               </div>
             </>
