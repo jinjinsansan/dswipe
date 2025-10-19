@@ -58,13 +58,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         const hasValidImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
         return hasValidBlockType || hasValidImageUrl;
       });
-      
-      console.log('📊 ステップフィルタリング:', {
-        初期: sortedSteps.length,
-        有効: validSteps.length,
-        除外: sortedSteps.length - validSteps.length,
-      });
-
       const shouldUseFloating = Boolean(response.data.floating_cta);
       const stickySteps = shouldUseFloating
         ? validSteps.filter((step) => step.block_type === 'sticky-cta-1')
@@ -83,15 +76,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
         .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
 
-      console.log('🔍 ステップ詳細:', {
-        validStepsCount: validSteps.length,
-        displayStepsCount: displaySteps.length,
-        ctaBlockFound: !!ctaBlock,
-        ctaBlockType: ctaBlock?.block_type,
-        shouldUseFloating,
-        displayStepIds: displaySteps.map((s: any) => ({ id: s.id, blockType: s.block_type })),
-      });
-
       if (ctaBlock) {
         setFixedCta({
           blockType: ctaBlock.block_type,
@@ -106,16 +90,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         ...response.data,
         steps: displaySteps,
       };
-      
-      console.log('📝 setLp 実行前:', {
-        displayStepsLength: displaySteps.length,
-        newLpStepsLength: newLp.steps.length,
-        displayStepIds: displaySteps.map((s: any) => s.block_type),
-      });
-      
       setLp(newLp);
       
-      console.log('✅ setLp 実行完了');
 
       if (response.data.id) {
         fetchProducts(response.data.id);
@@ -130,7 +106,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
   const fetchProducts = async (lpId: string) => {
     try {
-      console.log('📦 Fetching products for LP:', lpId);
       const response = await productApi.list({ lp_id: lpId });
       const productsData = Array.isArray(response.data?.data) 
         ? response.data.data 
@@ -138,7 +113,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         ? response.data 
         : [];
       const availableProducts = productsData.filter((p: any) => p.is_available);
-      console.log('✅ Found products:', availableProducts.length, availableProducts);
       setProducts(availableProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
@@ -147,10 +121,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
   const fetchPointBalance = async () => {
     try {
-      console.log('💰 Fetching point balance...');
       const response = await pointsApi.getBalance();
       const balance = response.data.point_balance || 0;
-      console.log('✅ Point balance:', balance);
       setPointBalance(balance);
     } catch (error) {
       console.error('❌ Failed to fetch point balance:', error);
@@ -158,19 +130,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   const handleOpenPurchaseModal = (product: any) => {
-    console.log('🛍️ Opening purchase modal for product:', product);
     
     if (!isAuthenticated) {
-      console.log('⚠️ User not authenticated, redirecting to login');
       if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
         router.push('/login');
       }
       return;
     }
     
-    console.log('✅ User authenticated, showing modal');
-    console.log('Current point balance:', pointBalance);
-    console.log('Product price:', product.price_in_points);
     
     setSelectedProduct(product);
     setPurchaseQuantity(1);
@@ -203,17 +170,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const handlePurchase = async () => {
     if (!selectedProduct) return;
 
-    console.log('🛒 Starting purchase:', {
-      productId: selectedProduct.id,
-      quantity: purchaseQuantity,
-      totalPoints: selectedProduct.price_in_points * purchaseQuantity,
-      currentBalance: pointBalance,
-    });
+
 
     setIsPurchasing(true);
     try {
       const response = await productApi.purchase(selectedProduct.id, { quantity: purchaseQuantity });
-      console.log('✅ Purchase success:', response.data);
       
       setShowPurchaseModal(false);
       
@@ -469,7 +430,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-16 sm:pb-14 md:pb-12' : 'pb-6 sm:pb-5 md:pb-4'}`}
         >
           {lp.steps.length > 0 && (() => {
-            console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);
             return null;
           })()}
           {lp.steps.map((step, index) => {
@@ -493,7 +453,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   contentData: step.content_data,
                 });
               } else {
-                console.log(`✅ スライド ${index + 1}: blockType=${step.block_type || 'なし'}, hasImage=${hasImageUrl}`);
               }
             
             return (
