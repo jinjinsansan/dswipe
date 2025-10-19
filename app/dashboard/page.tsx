@@ -413,30 +413,30 @@ export default function DashboardPage() {
 
           {/* Dashboard Type Tabs */}
           <div className="mb-6">
-            <div className="flex gap-2 border-b border-gray-700">
+            <div className="flex gap-1 sm:gap-2 border-b border-gray-700 overflow-x-auto">
               <button
                 onClick={() => setDashboardType('seller')}
-                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'seller'
                     ? 'text-white border-b-2 border-blue-500'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                🏪 Sellerダッシュボード
+                🏪 販売者画面
               </button>
               <button
                 onClick={() => setDashboardType('buyer')}
-                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'buyer'
                     ? 'text-white border-b-2 border-blue-500'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                🛍️ Buyerダッシュボード
+                🛍️ 購入者画面
               </button>
               <button
                 onClick={() => setDashboardType('settings')}
-                className={`px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'settings'
                     ? 'text-white border-b-2 border-blue-500'
                     : 'text-gray-400 hover:text-white'
