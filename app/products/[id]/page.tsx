@@ -42,10 +42,31 @@ export default function ProductDetailPage() {
       return;
     }
 
+    // 購入確認ダイアログ
+    const totalPrice = product.price_in_points * quantity;
+    const confirmMessage = `以下の商品を購入しますか？\n\n` +
+      `商品名: ${product.title}\n` +
+      `単価: ${product.price_in_points.toLocaleString()} P\n` +
+      `数量: ${quantity}個\n` +
+      `合計: ${totalPrice.toLocaleString()} P\n\n` +
+      `ポイントが消費されます。よろしいですか？`;
+
+    if (!confirm(confirmMessage)) {
+      return; // キャンセルされた
+    }
+
     try {
       setIsPurchasing(true);
       await productApi.purchase(productId, { quantity });
-      alert(`購入完了！${quantity}個の商品を購入しました。`);
+      
+      // 購入完了メッセージ
+      const successMessage = `購入完了！\n\n` +
+        `商品名: ${product.title}\n` +
+        `数量: ${quantity}個\n` +
+        `使用ポイント: ${totalPrice.toLocaleString()} P\n\n` +
+        `ダッシュボードに移動します。`;
+      alert(successMessage);
+      
       router.push('/dashboard');
     } catch (error: any) {
       alert(error.response?.data?.detail || '購入に失敗しました');

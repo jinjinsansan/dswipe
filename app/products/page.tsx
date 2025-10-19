@@ -43,23 +43,27 @@ function ProductsContent() {
   }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
   const fetchProducts = async () => {
-    console.log('🛍️ /products ページ - 商品取得開始');
+    console.log('🛍️ /products ページ - 公開LP取得開始');
     try {
       setIsLoading(true);
-      console.log('📡 API呼び出し: productApi.getPublic({ sort: latest, limit: 50 })');
-      // sortパラメータを追加（ダッシュボードと同じ形式）
-      // limitは最大50に制限されている
-      const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
+      console.log('📡 API呼び出し: lpApi.getPublicLPs');
+      // 公開されているLPを取得
+      const response = await lpApi.list();
       console.log('✅ API レスポンス取得成功');
       console.log('📦 レスポンス全体:', response);
       console.log('📦 response.data:', response.data);
       console.log('📦 response.data.data:', response.data?.data);
       
       // バックエンドのレスポンス構造に合わせる
-      const productsData = response.data?.data || response.data || [];
-      console.log('📦 取得した商品数:', productsData.length);
-      console.log('📦 商品データ:', productsData);
-      setProducts(productsData);
+      const allLPs = response.data?.data || response.data || [];
+      
+      // 公開されているLPのみをフィルタリング
+      const publishedLPs = allLPs.filter((lp: any) => lp.status === 'published');
+      
+      console.log('📦 全LP数:', allLPs.length);
+      console.log('📦 公開LP数:', publishedLPs.length);
+      console.log('📦 公開LPデータ:', publishedLPs);
+      setProducts(publishedLPs);
     } catch (error: any) {
       console.error('❌ 商品の取得に失敗:', error);
       console.error('❌ エラー詳細:', error.response?.data || error.message);
@@ -148,10 +152,10 @@ function ProductsContent() {
               <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm">
                 ← ダッシュボード
               </Link>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">商品一覧</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">公開LP一覧</h1>
             </div>
             <div className="text-gray-400 text-sm">
-              {filteredProducts.length} 件の商品
+              {filteredProducts.length} 件のLP
             </div>
           </div>
         </div>
@@ -228,7 +232,7 @@ function ProductsContent() {
         {/* Products Grid */}
         {currentProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">該当する商品が見つかりませんでした</p>
+            <p className="text-gray-400 text-lg">該当するLPが見つかりませんでした</p>
             <button
               onClick={() => {
                 setSearchQuery('');
@@ -243,61 +247,42 @@ function ProductsContent() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
-              {currentProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group"
+              {currentProducts.map((lp) => (
+                <Link
+                  key={lp.id}
+                  href={`/view/${lp.slug}`}
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group block"
                 >
-                  {/* Product Image */}
-                  {product.image_url && (
-                    <div className="aspect-video bg-gray-900 overflow-hidden">
-                      <img
-                        src={product.image_url}
-                        alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                  {/* LP Preview Image (gradient background for now) */}
+                  <div className="aspect-video bg-gradient-to-br from-blue-600/20 to-purple-600/20 overflow-hidden flex items-center justify-center">
+                    <div className="text-center p-4">
+                      <div className="text-4xl mb-2">📄</div>
+                      <div className="text-white text-sm font-semibold line-clamp-2">{lp.title}</div>
                     </div>
-                  )}
-
-                  {/* Product Info */}
-                  <div className="p-4">
-                    {/* Seller */}
-                    <Link
-                      href={`/u/${product.seller_username}`}
-                      className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
-                    >
-                      <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
-                        {product.seller_username?.charAt(0).toUpperCase() || 'S'}
-                      </div>
-                      <span className="text-blue-400 hover:text-blue-300 text-xs">
-                        {product.seller_username}
-                      </span>
-                    </Link>
-
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">
-                      {product.description}
-                    </p>
-
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-blue-400 font-bold text-lg">
-                        {product.price_in_points?.toLocaleString()} P
-                      </span>
-                      <span className="text-gray-500 text-sm">
-                        🔥 {product.total_sales || 0}件
-                      </span>
-                    </div>
-
-                    <Link
-                      href={`/products/${product.id}`}
-                      className="block w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
-                    >
-                      詳細を見る
-                    </Link>
                   </div>
-                </div>
+
+                  {/* LP Info */}
+                  <div className="p-4">
+                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                      {lp.title}
+                    </h3>
+
+                    <div className="flex items-center justify-between mb-3 text-sm">
+                      <span className="text-gray-400">
+                        👁️ {lp.total_views || 0} 閲覧
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        lp.status === 'published' ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'
+                      }`}>
+                        {lp.status === 'published' ? '公開中' : '下書き'}
+                      </span>
+                    </div>
+
+                    <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
+                      LPを見る
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
 
@@ -353,7 +338,7 @@ function ProductsContent() {
 
             {/* Page Info */}
             <div className="text-center mt-4 text-gray-400 text-sm">
-              {filteredProducts.length} 件中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
+              {filteredProducts.length} 件のLP中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
             </div>
           </>
         )}
