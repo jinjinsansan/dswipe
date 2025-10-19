@@ -38,9 +38,9 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
   const headingTone = headingToneMap[resolvedTheme] ?? "primary";
 
   return (
-    <Section tone="none" padding="compact" className="overflow-hidden sm:min-h-0" style={{ backgroundColor: surface, color: bodyColor }}>
+    <Section tone="none" padding="compact" className="overflow-hidden sm:min-h-0 py-0 sm:py-section-xs" style={{ backgroundColor: surface, color: bodyColor }}>
       <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
-      <div className="relative space-y-3 sm:space-y-12 md:space-y-6 pt-[2.5rem] pb-4 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
+      <div className="relative space-y-3 sm:space-y-12 md:space-y-6 pt-[1rem] pb-2 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
         <div className="max-w-3xl space-y-2">
           {isEditing ? (
             <div className="space-y-3">
