@@ -36,7 +36,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-lg p-1.5 transition-all shadow-lg sm:p-3 md:p-5">
+              className="rounded-lg p-1.5 transition-all shadow-lg sm:p-3 md:p-5"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
