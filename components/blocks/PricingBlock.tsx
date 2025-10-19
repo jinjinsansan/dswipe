@@ -28,15 +28,15 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="compact"
-      className="pt-4 pb-8 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-2 pb-4 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="space-y-1.5 sm:space-y-6" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-2 md:gap-3 lg:gap-4`}>
+      <div className="space-y-1 sm:space-y-6" style={{ paddingInline: 0 }}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-1.5 md:gap-3 lg:gap-4`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-xl p-2 transition-all shadow-lg sm:p-3 md:p-5"
+              className="rounded-xl p-1.5 transition-all shadow-lg sm:p-3 md:p-5">
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
@@ -65,7 +65,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 説明 */}
               {plan.description && (
                 <p
-                  className="text-[0.65rem] mb-1"
+                  className="text-[0.6rem] mb-0.5"
                   style={{ color: descriptionColor || (plan.highlighted ? '#FFFFFF' : textColor), opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -82,7 +82,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               )}
 
               {/* 価格 */}
-              <div className="mb-1.5">
+              <div className="mb-1">
                 <span
                   className="text-[1.3rem] font-bold sm:text-[1.9rem]"
                   contentEditable={isEditing}
@@ -105,7 +105,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               </div>
 
               {/* 機能リスト */}
-              <ul className="mb-1.5 space-y-0 sm:space-y-2 sm:mb-6">
+              <ul className="mb-1 space-y-0 sm:space-y-2 sm:mb-6">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}

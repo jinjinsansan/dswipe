@@ -40,8 +40,8 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
   return (
     <Section tone="none" padding="compact" className="overflow-hidden sm:min-h-0 py-0 sm:py-section-xs" style={{ backgroundColor: surface, color: bodyColor }}>
       <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
-      <div className="relative space-y-3 sm:space-y-12 md:space-y-6 pt-[1rem] pb-2 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
-        <div className="max-w-3xl space-y-2">
+      <div className="relative space-y-2 sm:space-y-12 md:space-y-6 pt-[0.5rem] pb-0 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
+        <div className="max-w-3xl space-y-1">
           {isEditing ? (
             <div className="space-y-3">
               <input
@@ -85,16 +85,16 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
           )}
         </div>
 
-        <div className="grid gap-2 sm:gap-6 md:gap-4 md:grid-cols-2">
+        <div className="grid gap-1.5 sm:gap-6 md:gap-4 md:grid-cols-2">
           {features.map((feature, index) => (
             <SurfaceCard
               key={index}
               variant="glass"
               glow
-              className="h-full p-2.5 sm:p-6 md:p-4"
+              className="h-full p-2 sm:p-6 md:p-4"
               style={{ backgroundColor: surface, borderColor: `${accent}1a` }}
             >
-              <div className="space-y-1.5 sm:space-y-4 md:space-y-3">
+              <div className="space-y-1 sm:space-y-4 md:space-y-3">
                 {isEditing ? (
                   <>
                     <input
@@ -130,7 +130,7 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
                         {feature.icon}
                       </div>
                     )}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <h3 className="text-base sm:text-lg md:text-base font-semibold" style={{ color: `${bodyColor}E6` }}>
                         {feature.title || '機能タイトル'}
                       </h3>
