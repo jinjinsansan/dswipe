@@ -33,7 +33,7 @@ const zenKakuGothicNew = Zen_Kaku_Gothic_New({
 
 // 👇 ここを変更してフォントを切り替え
 // 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew'
-const ACTIVE_FONT = 'mPlus1p';
+const ACTIVE_FONT = 'zenKakuGothicNew';
 
 const fontConfig = {
   notoSansJP: {
