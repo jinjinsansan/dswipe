@@ -28,7 +28,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="compact"
-      className="pt-4 pb-48 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-4 pb-20 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="space-y-2 sm:space-y-6" style={{ paddingInline: 0 }}>
