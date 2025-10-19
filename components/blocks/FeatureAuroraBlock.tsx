@@ -40,7 +40,7 @@ export default function FeatureAuroraBlock({ content, isEditing, onEdit }: Featu
   return (
     <Section tone="none" padding="default" className="overflow-hidden min-h-screen sm:min-h-0" style={{ backgroundColor: surface, color: bodyColor }}>
       <div className="absolute inset-x-[-20%] top-[-40%] h-80 blur-[120px]" style={{ background: `radial-gradient(120% 120% at 50% 20%, ${secondary}26 0%, rgba(8,11,25,0) 70%)` }} />
-      <div className="relative space-y-9 sm:space-y-12 md:space-y-6 pt-[25rem] pb-96 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
+      <div className="relative space-y-9 sm:space-y-12 md:space-y-6 pt-[20rem] pb-80 sm:pt-0 sm:pb-0" style={{ color: bodyColor }}>
         <div className="max-w-3xl space-y-4">
           {isEditing ? (
             <div className="space-y-3">
