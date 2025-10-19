@@ -110,13 +110,28 @@ export default function DashboardPage() {
 
   const fetchBuyerData = async () => {
     try {
+      // まず全てのトランザクションを取得して確認
+      const allTransactions = await pointsApi.getTransactions({ limit: 50 });
+      console.log('All transactions:', allTransactions.data);
+
       const [historyResponse, popularResponse, latestResponse] = await Promise.all([
         pointsApi.getTransactions({ transaction_type: 'product_purchase', limit: 10 }),
         productApi.getPublic({ sort: 'popular', limit: 5 }),
         productApi.getPublic({ sort: 'latest', limit: 5 }),
       ]);
 
-      setPurchaseHistory(historyResponse.data?.data || []);
+      console.log('Purchase history (filtered):', historyResponse.data);
+      console.log('Popular products:', popularResponse.data);
+      console.log('Latest products:', latestResponse.data);
+
+      // transaction_typeに関係なく、product_purchase関連を全て表示
+      const purchaseTransactions = allTransactions.data?.data?.filter(
+        (tx: any) => tx.transaction_type === 'product_purchase'
+      ) || [];
+      
+      console.log('Filtered purchase transactions:', purchaseTransactions);
+
+      setPurchaseHistory(purchaseTransactions);
       setPopularProducts(popularResponse.data?.data || []);
       setLatestProducts(latestResponse.data?.data || []);
     } catch (error) {
