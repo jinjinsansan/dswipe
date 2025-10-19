@@ -597,7 +597,8 @@ export default function DashboardPage() {
 
               {/* Purchase History */}
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-white mb-4">購入履歴</h2>
+                <h2 className="text-lg font-semibold text-white mb-4">購入履歴 (件数: {purchaseHistory.length})</h2>
+                {console.log('Rendering purchase history, length:', purchaseHistory.length, 'data:', purchaseHistory)}
                 {purchaseHistory.length === 0 ? (
                   <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-8 text-center">
                     <div className="text-4xl mb-3">🛒</div>
