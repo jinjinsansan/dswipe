@@ -28,11 +28,11 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
     <Section
       tone="none"
       padding="compact"
-      className="pt-0 pb-2 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
+      className="pt-0 pb-0 sm:pt-5 sm:pb-20 md:pt-6 md:pb-20 lg:pt-9 lg:pb-20"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="space-y-0.5 sm:space-y-6" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-1 md:gap-3 lg:gap-4`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-0.5 md:gap-3 lg:gap-4`}>
           {plans.map((plan, index) => (
             <div
               key={index}
