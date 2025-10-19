@@ -1,810 +1,344 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
-import { productApi, lpApi } from '@/lib/api';
-import DSwipeLogo from '@/components/DSwipeLogo';
-
-interface Product {
-  id: string;
-  title: string;
-  description?: string;
-  price_in_points: number;
-  stock_quantity?: number;
-  is_available: boolean;
-  total_sales: number;
-  lp_id?: string;
-  redirect_url?: string | null;
-  thanks_lp_id?: string | null;
-}
-
-interface LP {
-  id: string;
-  title: string;
-  slug: string;
-}
+import { productApi } from '@/lib/api';
 
 export default function ProductsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [lps, setLps] = useState<LP[]>([]);
-  const [productOverrides, setProductOverrides] = useState<Record<string, { redirect_url: string | null; thanks_lp_id: string | null }>>({});
+  const searchParams = useSearchParams();
+
+  const [products, setProducts] = useState<any[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    price_in_points: 1000,
-    stock_quantity: null as number | null,
-    is_available: true,
-    lp_id: '',
-    redirect_url: '',
-    thanks_lp_id: '',
-  });
-
-  const readPath = (obj: any, path: string) => {
-    if (!obj) return undefined;
-    return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
-  };
-
-  const pickFirstString = (obj: any, paths: string[]) => {
-    for (const path of paths) {
-      const value = readPath(obj, path);
-      if (typeof value === 'string' && value.trim().length > 0) {
-        return value.trim();
-      }
-    }
-    return null;
-  };
-
-  const normalizeProduct = (rawProduct: any, lpList: LP[]) => {
-    const redirectValue = pickFirstString(rawProduct, [
-      'redirect_url',
-      'redirectUrl',
-      'data.redirect_url',
-      'data.redirectUrl',
-    ]);
-
-    const thanksLpIdValue = pickFirstString(rawProduct, [
-      'thanks_lp_id',
-      'thanksLpId',
-      'data.thanks_lp_id',
-      'data.thanksLpId',
-    ]);
-
-    return {
-      ...rawProduct,
-      redirect_url: redirectValue ?? null,
-      thanks_lp_id: thanksLpIdValue ?? null,
-    } as Product;
-  };
-
-  const applyOverrides = (
-    product: Product,
-    overrides: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }> = productOverrides,
-  ): Product => {
-    const override = overrides[product.id];
-    if (!override) return product;
-    return {
-      ...product,
-      redirect_url: override.redirect_url ?? product.redirect_url ?? null,
-      thanks_lp_id: override.thanks_lp_id ?? product.thanks_lp_id ?? null,
-    };
-  };
-
-  const buildFormStateFromProduct = (product: Product) => ({
-    title: product.title || '',
-    description: product.description || '',
-    price_in_points: Number(product.price_in_points) || 0,
-    stock_quantity: product.stock_quantity ?? null,
-    is_available: product.is_available ?? true,
-    lp_id: product.lp_id || '',
-    redirect_url: product.redirect_url || '',
-    thanks_lp_id: product.thanks_lp_id || '',
-  });
-
-  const buildFormState = (source: any, lpList: LP[]) => {
-    const normalized = applyOverrides(normalizeProduct(source, lpList));
-    return buildFormStateFromProduct(normalized);
-  };
+  
+  // フィルター状態
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priceRange, setPriceRange] = useState<'all' | 'low' | 'mid' | 'high'>('all');
+  const [sortBy, setSortBy] = useState<'latest' | 'popular' | 'price_low' | 'price_high'>('latest');
+  const [sellerFilter, setSellerFilter] = useState('');
+  
+  // ページネーション
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
 
   useEffect(() => {
-    if (!isInitialized) return;
-    
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    // URLパラメータからsellerを取得
+    const seller = searchParams.get('seller');
+    if (seller) {
+      setSellerFilter(seller);
     }
+  }, [searchParams]);
 
-    fetchData();
-  }, [isAuthenticated, isInitialized]);
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
-  const fetchData = async (
-    overrideSeed?: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }>,
-  ) => {
+  const fetchProducts = async () => {
     try {
-      const [productsRes, lpsRes] = await Promise.all([
-        productApi.list(),
-        lpApi.list(),
-      ]);
-      
-      const productsData = Array.isArray(productsRes.data?.data) 
-        ? productsRes.data.data 
-        : Array.isArray(productsRes.data) 
-        ? productsRes.data 
-        : [];
-      
-      const lpsDataRaw = Array.isArray(lpsRes.data?.data) 
-        ? lpsRes.data.data 
-        : Array.isArray(lpsRes.data) 
-        ? lpsRes.data 
-        : [];
-
-      const lpsData = lpsDataRaw.map((lp: any) => ({
-        id: lp.id,
-        title: lp.title,
-        slug: lp.slug || lp.id,
-      }));
-
-      setLps(lpsData);
-      const normalizedProducts = productsData.map((product: any) => normalizeProduct(product, lpsData));
-
-      const existingOverrides = overrideSeed ?? productOverrides;
-      const overrideSnapshot: Record<string, { redirect_url: string | null; thanks_lp_id: string | null }> = {};
-
-      normalizedProducts.forEach((product: Product) => {
-        const existing = existingOverrides[product.id];
-        if (existing) {
-          overrideSnapshot[product.id] = existing;
-        } else {
-          overrideSnapshot[product.id] = {
-            redirect_url: product.redirect_url ?? null,
-            thanks_lp_id: product.thanks_lp_id ?? null,
-          };
-        }
-      });
-
-      setProductOverrides(overrideSnapshot);
-      setProducts(normalizedProducts.map((product: Product) => ({
-        ...product,
-        redirect_url: overrideSnapshot[product.id]?.redirect_url ?? product.redirect_url ?? null,
-        thanks_lp_id: overrideSnapshot[product.id]?.thanks_lp_id ?? product.thanks_lp_id ?? null,
-      })));
+      setIsLoading(true);
+      const response = await productApi.getPublic({ limit: 1000 });
+      setProducts(response.data);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error('商品の取得に失敗:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
+  const applyFiltersAndSort = () => {
+    let filtered = [...products];
 
-  const handleOpenCreate = () => {
-    setFormData({
-      title: '',
-      description: '',
-      price_in_points: 1000,
-      stock_quantity: null,
-      is_available: true,
-      lp_id: '',
-      redirect_url: '',
-      thanks_lp_id: '',
+    // 検索フィルター
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // 販売者フィルター
+    if (sellerFilter) {
+      filtered = filtered.filter((p) => p.seller_username === sellerFilter);
+    }
+
+    // 価格帯フィルター
+    if (priceRange !== 'all') {
+      filtered = filtered.filter((p) => {
+        const price = p.price_in_points || 0;
+        if (priceRange === 'low') return price < 10000;
+        if (priceRange === 'mid') return price >= 10000 && price < 50000;
+        if (priceRange === 'high') return price >= 50000;
+        return true;
+      });
+    }
+
+    // ソート
+    filtered.sort((a, b) => {
+      if (sortBy === 'latest') {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      if (sortBy === 'popular') {
+        return (b.total_sales || 0) - (a.total_sales || 0);
+      }
+      if (sortBy === 'price_low') {
+        return (a.price_in_points || 0) - (b.price_in_points || 0);
+      }
+      if (sortBy === 'price_high') {
+        return (b.price_in_points || 0) - (a.price_in_points || 0);
+      }
+      return 0;
     });
-    setEditingProduct(null);
-    setShowCreateModal(true);
+
+    setFilteredProducts(filtered);
+    setCurrentPage(1); // フィルター変更時は1ページ目に戻る
   };
 
-  const unwrapProductPayload = (payload: any) => {
-    let current = payload;
-    while (current) {
-      if (Array.isArray(current)) {
-        current = current[0];
-        continue;
-      }
-      if (current?.data !== undefined) {
-        current = current.data;
-        continue;
-      }
-      return current;
-    }
-    return null;
-  };
+  // ページネーション計算
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-  const fetchProductDetail = async (productId: string) => {
-    try {
-      const response = await productApi.get(productId);
-      const raw = unwrapProductPayload(response?.data ?? response);
-      if (!raw) return null;
-      return normalizeProduct(raw, lps);
-    } catch (error) {
-      console.error('Failed to fetch product detail:', error);
-      return null;
-    }
-  };
-
-  const handleOpenEdit = async (product: Product) => {
-    setShowCreateModal(true);
-    setEditingProduct(product);
-    
-    const existingOverride = productOverrides[product.id];
-    if (existingOverride) {
-      setFormData(buildFormStateFromProduct(applyOverrides(product, productOverrides)));
-    } else {
-      setFormData(buildFormState(product, lps));
-    }
-
-    try {
-      const detail = await fetchProductDetail(product.id);
-      if (detail) {
-        const existingForProduct = productOverrides[detail.id];
-        const nextOverrides = {
-          ...productOverrides,
-          [detail.id]: existingForProduct || {
-            redirect_url: detail.redirect_url ?? null,
-            thanks_lp_id: detail.thanks_lp_id ?? null,
-          },
-        };
-        setProductOverrides(nextOverrides);
-        setProducts((prev) =>
-          prev.map((p) =>
-            p.id === detail.id
-              ? applyOverrides(detail, nextOverrides)
-              : applyOverrides(p, nextOverrides),
-          ),
-        );
-        setFormData(buildFormStateFromProduct(applyOverrides(detail, nextOverrides)));
-      }
-    } catch (error) {
-      console.error('Failed to fetch product detail:', error);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const { redirect_url, thanks_lp_id, ...rest } = formData;
-
-      const data: Record<string, any> = {
-        title: rest.title,
-        description: rest.description || undefined,
-        price_in_points: rest.price_in_points,
-        stock_quantity: rest.stock_quantity ?? null,
-        is_available: rest.is_available,
-        lp_id: rest.lp_id || null,
-        redirect_url: redirect_url?.trim() || null,
-        thanks_lp_id: (redirect_url?.trim() ? null : (thanks_lp_id?.trim() || null)),
-      };
-
-      const overrideValues = {
-        redirect_url: redirect_url?.trim() ? redirect_url.trim() : null,
-        thanks_lp_id: thanks_lp_id?.trim() ? thanks_lp_id.trim() : null,
-      };
-
-      let nextOverrides = { ...productOverrides };
-
-      if (editingProduct) {
-        await productApi.update(editingProduct.id, data);
-        nextOverrides[editingProduct.id] = overrideValues;
-        setProducts((prev) =>
-          prev.map((product) =>
-            product.id === editingProduct.id
-              ? applyOverrides(
-                  {
-                    ...product,
-                    title: data.title,
-                    description: data.description || '',
-                    price_in_points: data.price_in_points,
-                    stock_quantity: data.stock_quantity ?? null,
-                    is_available: data.is_available,
-                    lp_id: data.lp_id || undefined,
-                    redirect_url: overrideValues.redirect_url,
-                    thanks_lp_id: overrideValues.thanks_lp_id,
-                  },
-                  nextOverrides,
-                )
-              : applyOverrides(product, nextOverrides),
-          ),
-        );
-      } else {
-        const createResponse = await productApi.create(data);
-        const raw = unwrapProductPayload(createResponse?.data ?? createResponse);
-        const normalized = raw ? normalizeProduct(raw, lps) : null;
-        const newId = normalized?.id || raw?.id;
-        if (newId) {
-          nextOverrides[newId] = overrideValues;
-          setProducts((prev) => [
-            ...prev.map((product) => applyOverrides(product, nextOverrides)),
-            applyOverrides(
-              {
-                id: newId,
-                title: data.title,
-                description: data.description || '',
-                price_in_points: data.price_in_points,
-                stock_quantity: data.stock_quantity ?? null,
-                is_available: data.is_available,
-                total_sales: 0,
-                lp_id: data.lp_id || undefined,
-                redirect_url: overrideValues.redirect_url,
-                thanks_lp_id: overrideValues.thanks_lp_id,
-              },
-              nextOverrides,
-            ),
-          ]);
-        }
-      }
-
-      setProductOverrides(nextOverrides);
-      setShowCreateModal(false);
-      alert(editingProduct ? '商品を更新しました' : '商品を作成しました');
-      await fetchData(nextOverrides);
-    } catch (error: any) {
-      alert(error.response?.data?.detail || '商品の保存に失敗しました');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('この商品を削除しますか？')) return;
-
-    try {
-      await productApi.delete(id);
-      await fetchData();
-      alert('商品を削除しました');
-    } catch (error: any) {
-      alert(error.response?.data?.detail || '商品の削除に失敗しました');
-    }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">読み込み中...</div>
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-white text-lg">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
-      {/* Sidebar */}
-      <aside className="hidden sm:flex w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
-        <div className="px-6 h-16 border-b border-gray-700 flex items-center">
-          <Link href="/dashboard" className="block">
-            <DSwipeLogo size="medium" showFullName={true} />
-          </Link>
-        </div>
-
-        <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">📊</span>
-              <span>ダッシュボード</span>
-            </Link>
-            
-            <Link
-              href="/lp/create"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">➕</span>
-              <span>新規LP作成</span>
-            </Link>
-            
-            <Link
-              href="/products"
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
-            >
-              <span className="text-base">📦</span>
-              <span>商品管理</span>
-            </Link>
-            
-            <Link
-              href="/points/purchase"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">💰</span>
-              <span>ポイント購入</span>
-            </Link>
-            
-            <Link
-              href="/media"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">🖼️</span>
-              <span>メディア</span>
-            </Link>
-          </div>
-        </nav>
-
-        <div className="p-3 border-t border-gray-700">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+    <div className="min-h-screen bg-gray-950">
+      {/* Header */}
+      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm">
+                ← ダッシュボード
+              </Link>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">商品一覧</h1>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-white text-sm font-light truncate">{user?.username}</div>
-              <div className="text-gray-400 text-xs">{user?.user_type}</div>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
-          >
-            ログアウト
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 sm:flex-1 flex flex-col overflow-hidden">
-        {/* Top Navigation Bar */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2">
-          {/* Left: Page Title & Description (Hidden on Mobile) */}
-          <div className="hidden sm:block flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-light text-white mb-0.5">商品管理</h1>
-            <p className="text-gray-400 text-[10px] sm:text-xs font-light truncate">LPに紐付ける商品を管理します（ポイント決済）</p>
-          </div>
-          
-          {/* Right: Actions & User Info */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            {/* Create Button */}
-            <button
-              onClick={handleOpenCreate}
-              className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light whitespace-nowrap"
-            >
-              <span className="hidden sm:inline">+ 商品を作成</span>
-              <span className="sm:hidden">+ 作成</span>
-            </button>
-            
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="sm:hidden p-2 text-gray-300 hover:text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            
-            {/* User Avatar (Desktop) */}
-            <div className="hidden sm:flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
-              </div>
+            <div className="text-gray-400 text-sm">
+              {filteredProducts.length} 件の商品
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Menu (Mobile Only) */}
-        {showMobileMenu && (
-          <div className="sm:hidden bg-gray-800/50 border-b border-gray-700 p-3">
-            <nav className="space-y-0.5">
-              <Link
-                href="/dashboard"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Filters */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Search */}
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">🔍 検索</label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="商品名・説明で検索"
+                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            {/* Price Range */}
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">💰 価格帯</label>
+              <select
+                value={priceRange}
+                onChange={(e) => setPriceRange(e.target.value as any)}
+                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
               >
-                <span className="text-base">📊</span>
-                <span>ダッシュボード</span>
-              </Link>
-              <Link
-                href="/lp/create"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
+                <option value="all">すべて</option>
+                <option value="low">〜10,000 P</option>
+                <option value="mid">10,000〜50,000 P</option>
+                <option value="high">50,000 P〜</option>
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">📊 並び替え</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
               >
-                <span className="text-base">➕</span>
-                <span>新規LP作成</span>
-              </Link>
-              <Link
-                href="/products"
-                className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <span className="text-base">📦</span>
-                <span>商品管理</span>
-              </Link>
-              <Link
-                href="/points/purchase"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">💰</span>
-                <span>ポイント購入</span>
-              </Link>
-              <Link
-                href="/media"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">🖼️</span>
-                <span>メディア</span>
-              </Link>
-              <div className="px-3 py-2 border-t border-gray-700 mt-2 pt-2">
+                <option value="latest">新着順</option>
+                <option value="popular">人気順</option>
+                <option value="price_low">価格が安い順</option>
+                <option value="price_high">価格が高い順</option>
+              </select>
+            </div>
+
+            {/* Seller Filter */}
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">👤 販売者</label>
+              <input
+                type="text"
+                value={sellerFilter}
+                onChange={(e) => setSellerFilter(e.target.value)}
+                placeholder="販売者名で絞り込み"
+                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+              />
+              {sellerFilter && (
                 <button
-                  onClick={handleLogout}
-                  className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+                  onClick={() => setSellerFilter('')}
+                  className="text-blue-400 hover:text-blue-300 text-xs mt-1"
                 >
-                  ログアウト
+                  クリア
                 </button>
-              </div>
-            </nav>
+              )}
+            </div>
           </div>
-        )}
+        </div>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
-
-        {/* 商品一覧 */}
-        {products.length === 0 ? (
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-8 sm:p-12 text-center">
-            <div className="text-4xl sm:text-5xl mb-3">📦</div>
-            <h2 className="text-lg sm:text-xl font-light text-white mb-2">商品がありません</h2>
-            <p className="text-gray-400 text-xs sm:text-sm font-light mb-4">
-              最初の商品を作成して、LPに紐付けましょう
-            </p>
+        {/* Products Grid */}
+        {currentProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-lg">該当する商品が見つかりませんでした</p>
             <button
-              onClick={handleOpenCreate}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
+              onClick={() => {
+                setSearchQuery('');
+                setPriceRange('all');
+                setSellerFilter('');
+              }}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              商品を作成
+              フィルターをリセット
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {products.map((product) => {
-              const linkedLP = lps.find(lp => lp.id === product.lp_id);
-              
-              return (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+              {currentProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors"
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group"
                 >
-                  <div className="flex items-start justify-between mb-2 sm:mb-3">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm sm:text-lg font-light text-white mb-0.5 sm:mb-1 truncate">{product.title}</h3>
-                      {product.description && (
-                        <p className="text-gray-400 text-[10px] sm:text-xs font-light mb-1 sm:mb-2 line-clamp-2">
-                          {product.description}
-                        </p>
-                      )}
+                  {/* Product Image */}
+                  {product.image_url && (
+                    <div className="aspect-video bg-gray-900 overflow-hidden">
+                      <img
+                        src={product.image_url}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
-                    <span
-                      className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] rounded-full flex-shrink-0 ml-2 whitespace-nowrap ${
-                        product.is_available
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-red-500/20 text-red-400'
-                      }`}
-                    >
-                      {product.is_available ? '販売中' : '停止中'}
-                    </span>
-                  </div>
+                  )}
 
-                  <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">価格</span>
-                      <span className="text-white text-xs sm:text-sm font-light">{product.price_in_points.toLocaleString()} P</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">在庫</span>
-                      <span className="text-white text-xs sm:text-sm font-light">
-                        {product.stock_quantity === null ? '無制限' : `${product.stock_quantity}個`}
+                  {/* Product Info */}
+                  <div className="p-4">
+                    {/* Seller */}
+                    <Link
+                      href={`/u/${product.seller_username}`}
+                      className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
+                        {product.seller_username?.charAt(0).toUpperCase() || 'S'}
+                      </div>
+                      <span className="text-blue-400 hover:text-blue-300 text-xs">
+                        {product.seller_username}
+                      </span>
+                    </Link>
+
+                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                      {product.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-blue-400 font-bold text-lg">
+                        {product.price_in_points?.toLocaleString()} P
+                      </span>
+                      <span className="text-gray-500 text-sm">
+                        🔥 {product.total_sales || 0}件
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">販売数</span>
-                      <span className="text-white text-xs sm:text-sm font-light">{product.total_sales}件</span>
-                    </div>
-                    {linkedLP && (
-                      <div className="flex items-center justify-between pt-1 sm:pt-1.5 border-t border-gray-700">
-                        <span className="text-gray-400 text-[10px] sm:text-xs font-light">紐付けLP</span>
-                        <Link
-                          href={`/lp/${linkedLP.id}/edit`}
-                          className="text-blue-400 hover:text-blue-300 text-[10px] sm:text-xs font-light truncate"
-                        >
-                          {linkedLP.title}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="flex gap-1.5 sm:gap-2">
-                    <button
-                      onClick={() => handleOpenEdit(product)}
-                      className="flex-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-[10px] sm:text-xs font-light"
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="block w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
                     >
-                      編集
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="px-2 sm:px-3 py-1 sm:py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-light"
-                    >
-                      削除
-                    </button>
+                      詳細を見る
+                    </Link>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  ← 前へ
+                </button>
+
+                <div className="flex gap-2">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                          currentPage === pageNum
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  次へ →
+                </button>
+              </div>
+            )}
+
+            {/* Page Info */}
+            <div className="text-center mt-4 text-gray-400 text-sm">
+              {filteredProducts.length} 件中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
+            </div>
+          </>
         )}
-        </div>
-      </main>
-
-      {/* 作成/編集モーダル */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-3 sm:px-4">
-          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg sm:text-xl font-light text-white mb-3 sm:mb-4">
-              {editingProduct ? '商品を編集' : '商品を作成'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
-              {/* 商品名 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  商品名 <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  placeholder="例: プレミアム会員プラン"
-                />
-              </div>
-
-              {/* 説明 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  説明
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
-                  placeholder="商品の説明を入力..."
-                />
-              </div>
-
-              {/* 価格 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  価格（ポイント） <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="number"
-                  value={formData.price_in_points}
-                  onChange={(e) => setFormData({ ...formData, price_in_points: parseInt(e.target.value) })}
-                  required
-                  min="0"
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                />
-                <p className="mt-1 text-xs font-light text-gray-500">
-                  1ポイント = 1円相当として設定してください
-                </p>
-              </div>
-
-              {/* 在庫 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  在庫数
-                </label>
-                <input
-                  type="number"
-                  value={formData.stock_quantity || ''}
-                  onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value ? parseInt(e.target.value) : null })}
-                  min="0"
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  placeholder="空欄で無制限"
-                />
-              </div>
-
-              {/* LP紐付け */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  紐付けLP（オプション）
-                </label>
-                <select
-                  value={formData.lp_id}
-                  onChange={(e) => setFormData({ ...formData, lp_id: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
-                >
-                  <option value="">紐付けない</option>
-                  {lps.map((lp) => (
-                    <option key={lp.id} value={lp.id}>
-                      {lp.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 購入完了後の設定 */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
-                <h3 className="text-white text-sm font-light mb-2">購入完了後の設定</h3>
-                <p className="text-gray-400 text-xs font-light mb-3">
-                  購入完了後にユーザーをどこに誘導するか設定できます
-                </p>
-
-                {/* 外部URLリダイレクト */}
-                <div className="mb-4">
-                  <label className="block text-xs font-light text-gray-300 mb-1">
-                    外部URLにリダイレクト（オプション）
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.redirect_url}
-                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
-                    placeholder="https://example.com/thank-you"
-                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="mt-1 text-xs font-light text-gray-500">
-                    会員サイトやダウンロードページのURL
-                  </p>
-                </div>
-
-                {/* サンクスページLP選択 */}
-                <div>
-                  <label className="block text-xs font-light text-gray-300 mb-1">
-                    または、サイト内のLPをサンクスページに設定
-                  </label>
-                  <select
-                    value={formData.thanks_lp_id}
-                    onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
-                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
-                    disabled={!!formData.redirect_url}
-                  >
-                    <option value="">設定しない</option>
-                    {lps.map((lp) => (
-                      <option key={lp.id} value={lp.id}>
-                        {lp.title}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="mt-1 text-xs font-light text-gray-500">
-                    どちらも設定しない場合は、シンプルな完了メッセージを表示
-                  </p>
-                </div>
-              </div>
-
-              {/* 販売状態 */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.is_available}
-                  onChange={(e) => setFormData({ ...formData, is_available: e.target.checked })}
-                  className="w-4 h-4 bg-gray-900 border-gray-700 rounded focus:ring-blue-500 focus:ring-2"
-                />
-                <label className="ml-2 text-xs font-light text-gray-300">
-                  販売可能にする
-                </label>
-              </div>
-
-              {/* ボタン */}
-              <div className="flex gap-2 pt-2 sm:pt-3">
-                <button
-                  type="submit"
-                  className="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light"
-                >
-                  {editingProduct ? '更新' : '作成'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs sm:text-sm font-light"
-                >
-                  キャンセル
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
