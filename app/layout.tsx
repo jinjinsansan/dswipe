@@ -54,7 +54,7 @@ const zenMaruGothic = Zen_Maru_Gothic({
 
 // 👇 ここを変更してフォントを切り替え
 // 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew' | 'bizUdpGothic' | 'sawarabiGothic' | 'zenMaruGothic'
-const ACTIVE_FONT = 'bizUdpGothic';
+const ACTIVE_FONT = 'sawarabiGothic';
 
 const fontConfig = {
   notoSansJP: {
