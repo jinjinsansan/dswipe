@@ -63,6 +63,17 @@ function ProductsContent() {
       console.log('📦 全LP数:', allLPs.length);
       console.log('📦 公開LP数:', publishedLPs.length);
       console.log('📦 公開LPデータ:', publishedLPs);
+      
+      // 最初のLPのstepsを確認
+      if (publishedLPs.length > 0) {
+        console.log('🔍 最初のLPの構造:', publishedLPs[0]);
+        console.log('🔍 user_id:', publishedLPs[0].user_id);
+        console.log('🔍 owner:', publishedLPs[0].owner);
+        console.log('🔍 user:', publishedLPs[0].user);
+        console.log('🔍 username:', publishedLPs[0].username);
+        console.log('🔍 steps:', publishedLPs[0].steps);
+      }
+      
       setProducts(publishedLPs);
     } catch (error: any) {
       console.error('❌ 商品の取得に失敗:', error);
@@ -76,7 +87,16 @@ function ProductsContent() {
 
   // LPからプレビュー画像を取得する関数
   const getLPPreviewImage = (lp: any): string | null => {
-    if (!lp.steps || !Array.isArray(lp.steps)) return null;
+    console.log('🖼️ getLPPreviewImage 呼び出し - LP:', lp.title);
+    console.log('🖼️ steps:', lp.steps);
+    console.log('🖼️ stepsの型:', typeof lp.steps);
+    
+    if (!lp.steps || !Array.isArray(lp.steps)) {
+      console.log('❌ stepsが存在しないか配列ではない');
+      return null;
+    }
+
+    console.log('✅ steps配列あり - 件数:', lp.steps.length);
 
     // 1. ヒーローセクションの画像を探す
     const heroBlock = lp.steps.find((step: any) => {
@@ -84,9 +104,20 @@ function ProductsContent() {
       return blockType.toLowerCase().includes('hero');
     });
 
-    if (heroBlock?.content_data?.imageUrl) return heroBlock.content_data.imageUrl;
-    if (heroBlock?.content_data?.image_url) return heroBlock.content_data.image_url;
-    if (heroBlock?.image_url) return heroBlock.image_url;
+    console.log('🎯 ヒーローブロック:', heroBlock);
+
+    if (heroBlock?.content_data?.imageUrl) {
+      console.log('✅ 画像発見: heroBlock.content_data.imageUrl');
+      return heroBlock.content_data.imageUrl;
+    }
+    if (heroBlock?.content_data?.image_url) {
+      console.log('✅ 画像発見: heroBlock.content_data.image_url');
+      return heroBlock.content_data.image_url;
+    }
+    if (heroBlock?.image_url) {
+      console.log('✅ 画像発見: heroBlock.image_url');
+      return heroBlock.image_url;
+    }
 
     // 2. 画像ブロックの画像を探す
     const imageBlock = lp.steps.find((step: any) => {
@@ -99,12 +130,24 @@ function ProductsContent() {
     if (imageBlock?.image_url) return imageBlock.image_url;
 
     // 3. 最初のステップで画像があるものを探す
+    console.log('📋 全ステップを確認中...');
     for (const step of lp.steps) {
-      if (step?.content_data?.imageUrl) return step.content_data.imageUrl;
-      if (step?.content_data?.image_url) return step.content_data.image_url;
-      if (step?.image_url) return step.image_url;
+      console.log('  - ステップ:', step.block_type || step.content_data?.block_type);
+      if (step?.content_data?.imageUrl) {
+        console.log('✅ 画像発見: step.content_data.imageUrl');
+        return step.content_data.imageUrl;
+      }
+      if (step?.content_data?.image_url) {
+        console.log('✅ 画像発見: step.content_data.image_url');
+        return step.content_data.image_url;
+      }
+      if (step?.image_url) {
+        console.log('✅ 画像発見: step.image_url');
+        return step.image_url;
+      }
     }
 
+    console.log('❌ 画像が見つかりませんでした');
     return null;
   };
 
@@ -310,6 +353,22 @@ function ProductsContent() {
 
                   {/* LP Info */}
                   <div className="p-4">
+                    {/* Seller Info */}
+                    {(lp.owner?.username || lp.user?.username || lp.seller_username) && (
+                      <Link
+                        href={`/u/${lp.owner?.username || lp.user?.username || lp.seller_username}`}
+                        className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
+                          {(lp.owner?.username || lp.user?.username || lp.seller_username)?.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-blue-400 hover:text-blue-300 text-xs">
+                          {lp.owner?.username || lp.user?.username || lp.seller_username}
+                        </span>
+                      </Link>
+                    )}
+
                     <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
                       {lp.title}
                     </h3>
