@@ -35,11 +35,23 @@ const zenKakuGothicNew = Zen_Kaku_Gothic_New({
 // 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew'
 const ACTIVE_FONT = 'mPlus1p';
 
-const fontMap = {
-  notoSansJP: notoSansJP.variable,
-  inter: `${inter.variable} ${notoSansJP.variable}`, // 英語Inter + 日本語Noto Sans JP
-  mPlus1p: mPlus1p.variable,
-  zenKakuGothicNew: zenKakuGothicNew.variable,
+const fontConfig = {
+  notoSansJP: {
+    variable: notoSansJP.variable,
+    className: notoSansJP.className,
+  },
+  inter: {
+    variable: `${inter.variable} ${notoSansJP.variable}`,
+    className: `${inter.className}`,
+  },
+  mPlus1p: {
+    variable: mPlus1p.variable,
+    className: mPlus1p.className,
+  },
+  zenKakuGothicNew: {
+    variable: zenKakuGothicNew.variable,
+    className: zenKakuGothicNew.className,
+  },
 };
 
 export const metadata: Metadata = {
@@ -54,7 +66,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`${fontMap[ACTIVE_FONT]} font-sans antialiased`}>
+      <body className={`${fontConfig[ACTIVE_FONT].className} antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>
