@@ -66,12 +66,13 @@ function ProductsContent() {
       
       // 最初のLPのstepsを確認
       if (publishedLPs.length > 0) {
-        console.log('🔍 最初のLPの構造:', publishedLPs[0]);
-        console.log('🔍 user_id:', publishedLPs[0].user_id);
-        console.log('🔍 owner:', publishedLPs[0].owner);
-        console.log('🔍 user:', publishedLPs[0].user);
-        console.log('🔍 username:', publishedLPs[0].username);
-        console.log('🔍 steps:', publishedLPs[0].steps);
+        const firstLP: any = publishedLPs[0];
+        console.log('🔍 最初のLPの構造:', firstLP);
+        console.log('🔍 user_id:', firstLP.user_id);
+        console.log('🔍 owner:', firstLP.owner);
+        console.log('🔍 user:', firstLP.user);
+        console.log('🔍 username:', firstLP.username);
+        console.log('🔍 steps:', firstLP.steps);
       }
       
       setProducts(publishedLPs);
