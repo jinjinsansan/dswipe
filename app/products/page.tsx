@@ -9,6 +9,9 @@ function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  console.log('🛍️ ProductsContent レンダリング');
+  console.log('🌐 API_URL:', process.env.NEXT_PUBLIC_API_URL);
+
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,14 +43,22 @@ function ProductsContent() {
   }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
   const fetchProducts = async () => {
+    console.log('🛍️ /products ページ - 商品取得開始');
     try {
       setIsLoading(true);
+      console.log('📡 API呼び出し: productApi.getPublic({ limit: 1000 })');
       const response = await productApi.getPublic({ limit: 1000 });
+      console.log('✅ API レスポンス取得成功');
+      console.log('📦 取得した商品数:', response.data.length);
+      console.log('📦 商品データ:', response.data);
       setProducts(response.data);
-    } catch (error) {
-      console.error('商品の取得に失敗:', error);
+    } catch (error: any) {
+      console.error('❌ 商品の取得に失敗:', error);
+      console.error('❌ エラー詳細:', error.response?.data || error.message);
+      console.error('❌ エラースタック:', error.stack);
     } finally {
       setIsLoading(false);
+      console.log('🏁 商品取得完了');
     }
   };
 
