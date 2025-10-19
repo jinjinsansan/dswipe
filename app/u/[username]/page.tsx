@@ -10,40 +10,55 @@ export default function UserProfilePage() {
   const router = useRouter();
   const username = params.username as string;
 
+  console.log('🔍 UserProfilePage レンダリング - ユーザー名:', username);
+
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>('');
   const [stats, setStats] = useState({
     totalProducts: 0,
     activeProducts: 0,
   });
 
   useEffect(() => {
+    console.log('🚀 useEffect 実行 - fetchUserProducts を呼び出します');
     fetchUserProducts();
   }, [username]);
 
   const fetchUserProducts = async () => {
+    console.log('📡 fetchUserProducts 開始');
     try {
       setIsLoading(true);
-      // 全商品を取得してフィルター（後でバックエンドAPIを改善）
+      setError('');
+      
+      console.log('📡 API呼び出し: productApi.getPublic');
       const response = await productApi.getPublic({ limit: 100 });
-      console.log('全商品データ:', response.data);
-      console.log('検索中のユーザー名:', username);
-      console.log('商品の販売者名の例:', response.data.map((p: any) => p.seller_username));
+      
+      console.log('✅ API レスポンス取得成功');
+      console.log('📦 全商品データ:', response.data);
+      console.log('📦 商品数:', response.data.length);
+      console.log('🔍 検索中のユーザー名:', username);
+      console.log('👥 商品の販売者名リスト:', response.data.map((p: any) => p.seller_username));
       
       const userProducts = response.data.filter(
         (p: any) => p.seller_username === username
       );
       
-      console.log('フィルター後の商品:', userProducts);
+      console.log('✅ フィルター完了');
+      console.log('🎯 フィルター後の商品数:', userProducts.length);
+      console.log('🎯 フィルター後の商品:', userProducts);
       
       setProducts(userProducts);
       setStats({
         totalProducts: userProducts.length,
         activeProducts: userProducts.filter((p: any) => p.stock > 0).length,
       });
-    } catch (error) {
-      console.error('商品の取得に失敗:', error);
+    } catch (error: any) {
+      console.error('❌ 商品の取得に失敗:', error);
+      console.error('❌ エラー詳細:', error.response?.data || error.message);
+      setError(error.message || '商品の取得に失敗しました');
     } finally {
+      console.log('🏁 fetchUserProducts 完了');
       setIsLoading(false);
     }
   };
@@ -52,6 +67,23 @@ export default function UserProfilePage() {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-white text-lg">読み込み中...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 text-lg mb-4">エラーが発生しました</p>
+          <p className="text-gray-400 text-sm mb-4">{error}</p>
+          <button
+            onClick={() => fetchUserProducts()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            再試行
+          </button>
+        </div>
       </div>
     );
   }
