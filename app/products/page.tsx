@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { productApi } from '@/lib/api';
+import { lpApi } from '@/lib/api';
 
 function ProductsContent() {
   const router = useRouter();
