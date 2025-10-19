@@ -282,7 +282,6 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-white text-sm font-semibold truncate">{user?.username}</div>
-              <div className="text-gray-400 text-xs">{user?.user_type}</div>
             </div>
           </div>
           <button
@@ -393,7 +392,6 @@ export default function DashboardPage() {
               </div>
               <div className="flex-1">
                 <div className="text-white text-sm font-semibold">{user?.username}</div>
-                <div className="text-gray-400 text-xs">{user?.user_type}</div>
               </div>
             </div>
             <button
