@@ -170,7 +170,7 @@ function ProductsContent() {
               <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm">
                 ← ダッシュボード
               </Link>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">🏪 商品管理</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">🏪 マーケット</h1>
             </div>
             <div className="text-gray-400 text-sm">
               {filteredProducts.length} 件のLP
