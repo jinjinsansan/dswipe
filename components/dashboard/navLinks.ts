@@ -7,7 +7,7 @@ export interface DashboardNavLink {
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/dashboard', label: 'ダッシュボード', icon: '📊' },
   { href: '/lp/create', label: '新規LP作成', icon: '➕' },
-  { href: '/products', label: 'マーケット', icon: '🏪' },
+  { href: '/products', label: '商品管理', icon: '🏪' },
   { href: '/points/purchase', label: 'ポイント購入', icon: '💰' },
   { href: '/media', label: 'メディア', icon: '🖼️' },
 ];
