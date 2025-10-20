@@ -489,28 +489,33 @@ export default function AdminPanelPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
-      <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+      <header className="border-b border-slate-800 bg-slate-900/75 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
             <Link href="/dashboard" className="flex items-center gap-3">
               <DSwipeLogo size="medium" showFullName />
               <span className="text-xs font-semibold tracking-[0.35em] text-red-400 uppercase">ADMIN</span>
             </Link>
-            <nav className="hidden md:flex items-center gap-2">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-900/70 text-slate-300 hover:text-white hover:bg-slate-800'
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
+            <nav className="hidden md:block">
+              <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-2 py-1 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.9)]">
+                {TABS.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-[0_18px_40px_-20px_rgba(37,99,235,0.8)]'
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                      }`}
+                    >
+                      <span className="text-base leading-none">{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </nav>
           </div>
           <div className="flex items-center gap-3">
@@ -529,12 +534,12 @@ export default function AdminPanelPage() {
             </button>
           </div>
         </div>
-        <div className="md:hidden border-t border-slate-800 px-3 py-2 flex items-center gap-2 overflow-x-auto">
+        <div className="md:hidden border-t border-slate-800 px-3 py-3 flex items-center gap-2 overflow-x-auto bg-slate-900/80">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-900/70 text-slate-300 hover:text-white hover:bg-slate-800'
