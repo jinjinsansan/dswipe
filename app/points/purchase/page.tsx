@@ -7,6 +7,11 @@ import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import {
+  CreditCardIcon,
+  BanknotesIcon,
+  BuildingLibraryIcon,
+} from '@heroicons/react/24/outline';
 
 const POINT_PACKAGES = [
   { points: 1000, price: 1000, bonus: 0 },
@@ -16,9 +21,9 @@ const POINT_PACKAGES = [
 ];
 
 const PAYMENT_METHODS = [
-  { id: 'stripe', name: 'クレジットカード', icon: '💳', status: 'coming_soon' },
-  { id: 'paypal', name: 'PayPal', icon: '🅿️', status: 'coming_soon' },
-  { id: 'bank', name: '銀行振込', icon: '🏦', status: 'coming_soon' },
+  { id: 'stripe', name: 'クレジットカード', icon: <CreditCardIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
+  { id: 'paypal', name: 'PayPal', icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
+  { id: 'bank', name: '銀行振込', icon: <BuildingLibraryIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
 ];
 
 export default function PointPurchasePage() {
@@ -252,7 +257,9 @@ export default function PointPurchasePage() {
                       } ${isComingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-2xl sm:text-3xl">{method.icon}</span>
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-slate-200">
+                          {method.icon}
+                        </span>
                         <span className="text-white text-sm sm:text-base font-medium truncate">{method.name}</span>
                       </div>
                       {isComingSoon ? (
