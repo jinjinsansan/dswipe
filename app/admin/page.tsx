@@ -92,12 +92,18 @@ export default function AdminPanelPage() {
   const [marketplaceItems, setMarketplaceItems] = useState<AdminMarketplaceLP[]>([]);
   const [marketSearch, setMarketSearch] = useState('');
   const [marketLoading, setMarketLoading] = useState(false);
+  const [marketError, setMarketError] = useState<string | null>(null);
 
   const [analytics, setAnalytics] = useState<AdminPointAnalytics | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
 
   const [logs, setLogs] = useState<ModerationEvent[]>([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  const [logsError, setLogsError] = useState<string | null>(null);
+
+  const [usersError, setUsersError] = useState<string | null>(null);
+  const [userActionError, setUserActionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -136,6 +142,7 @@ export default function AdminPanelPage() {
       const payload = response.data as AdminUserListApiResponse;
       const summaries = Array.isArray(payload.data) ? payload.data : [];
       setUserSummaries(summaries);
+      setUsersError(null);
 
       if (selectedUserId) {
         const matched = summaries.find((item) => item.id === selectedUserId);
@@ -146,7 +153,7 @@ export default function AdminPanelPage() {
     } catch (error) {
       const message = getErrorMessage(error, 'ユーザー情報の取得に失敗しました');
       console.error(error);
-      alert(message);
+      setUsersError(message);
     } finally {
       setUsersLoading(false);
     }
@@ -157,10 +164,11 @@ export default function AdminPanelPage() {
     try {
       const response = await adminApi.getUserDetail(userId);
       setSelectedUserDetail(response.data as AdminUserDetailApiResponse);
+      setUserActionError(null);
     } catch (error) {
       const message = getErrorMessage(error, 'ユーザー詳細の取得に失敗しました');
       console.error(error);
-      alert(message);
+      setUserActionError(message);
     } finally {
       setUserDetailLoading(false);
     }
@@ -173,10 +181,11 @@ export default function AdminPanelPage() {
       const payload = response.data as AdminMarketplaceApiResponse;
       const items = Array.isArray(payload.data) ? payload.data : [];
       setMarketplaceItems(items);
+      setMarketError(null);
     } catch (error) {
       const message = getErrorMessage(error, 'マーケット情報の取得に失敗しました');
       console.error(error);
-      alert(message);
+      setMarketError(message);
     } finally {
       setMarketLoading(false);
     }
@@ -187,10 +196,11 @@ export default function AdminPanelPage() {
     try {
       const response = await adminApi.getPointAnalytics({ limit_days: 120 });
       setAnalytics((response.data as AdminPointAnalyticsApiResponse) ?? null);
+      setAnalyticsError(null);
     } catch (error) {
       const message = getErrorMessage(error, 'ポイント分析の取得に失敗しました');
       console.error(error);
-      alert(message);
+      setAnalyticsError(message);
     } finally {
       setAnalyticsLoading(false);
     }
@@ -203,10 +213,11 @@ export default function AdminPanelPage() {
       const payload = response.data as ModerationLogApiResponse;
       const rows = Array.isArray(payload.data) ? payload.data : [];
       setLogs(rows);
+      setLogsError(null);
     } catch (error) {
       const message = getErrorMessage(error, 'モデレーションログの取得に失敗しました');
       console.error(error);
-      alert(message);
+      setLogsError(message);
     } finally {
       setLogsLoading(false);
     }
@@ -232,14 +243,14 @@ export default function AdminPanelPage() {
         amount: grantAmount,
         description: grantDescription || undefined,
       });
-      alert('ポイントを更新しました');
+      setUserActionError(null);
       await Promise.all([fetchUsers(userSearch), fetchUserDetail(selectedUserId)]);
       setGrantAmount(1000);
       setGrantDescription('');
     } catch (error) {
       const message = getErrorMessage(error, 'ポイント付与に失敗しました');
       console.error(error);
-      alert(message);
+      setUserActionError(message);
     } finally {
       setUserActionLoading(false);
     }
@@ -250,12 +261,12 @@ export default function AdminPanelPage() {
     setUserActionLoading(true);
     try {
       await adminApi.blockUser(selectedUserId, { reason: blockReason || undefined });
-      alert('ユーザーをブロックしました');
+      setUserActionError(null);
       await Promise.all([fetchUsers(userSearch), fetchUserDetail(selectedUserId)]);
     } catch (error) {
       const message = getErrorMessage(error, 'ユーザーブロックに失敗しました');
       console.error(error);
-      alert(message);
+      setUserActionError(message);
     } finally {
       setUserActionLoading(false);
     }
@@ -266,13 +277,13 @@ export default function AdminPanelPage() {
     setUserActionLoading(true);
     try {
       await adminApi.unblockUser(selectedUserId);
-      alert('ユーザーのブロックを解除しました');
+      setUserActionError(null);
       setBlockReason('');
       await Promise.all([fetchUsers(userSearch), fetchUserDetail(selectedUserId)]);
     } catch (error) {
       const message = getErrorMessage(error, 'ブロック解除に失敗しました');
       console.error(error);
-      alert(message);
+      setUserActionError(message);
     } finally {
       setUserActionLoading(false);
     }
@@ -286,14 +297,14 @@ export default function AdminPanelPage() {
     setUserActionLoading(true);
     try {
       await adminApi.deleteUser(selectedUserId);
-      alert('ユーザーを削除しました');
+      setUserActionError(null);
       setSelectedUserId(null);
       setSelectedUserDetail(null);
       await fetchUsers(userSearch);
     } catch (error) {
       const message = getErrorMessage(error, 'ユーザー削除に失敗しました');
       console.error(error);
-      alert(message);
+      setUserActionError(message);
     } finally {
       setUserActionLoading(false);
     }
@@ -309,11 +320,11 @@ export default function AdminPanelPage() {
     try {
       await adminApi.updateLPStatus(lpId, { status, reason });
       await fetchMarketplace(marketSearch);
-      alert('LPステータスを更新しました');
+      setMarketError(null);
     } catch (error) {
       const message = getErrorMessage(error, 'LPステータスの更新に失敗しました');
       console.error(error);
-      alert(message);
+      setMarketError(message);
     } finally {
       setMarketLoading(false);
     }
@@ -445,6 +456,12 @@ export default function AdminPanelPage() {
                     </button>
                   </div>
                 </form>
+
+                {usersError && (
+                  <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                    {usersError}
+                  </div>
+                )}
 
                 <div className="border border-slate-800 rounded-xl overflow-hidden">
                   <div className="bg-slate-900/60 grid grid-cols-6 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
@@ -612,6 +629,12 @@ export default function AdminPanelPage() {
                       </div>
                     </form>
 
+                    {userActionError && (
+                      <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                        {userActionError}
+                      </div>
+                    )}
+
                     <div className="space-y-3">
                       <h3 className="text-sm font-semibold text-white">最新トランザクション</h3>
                       <div className="border border-slate-800 rounded-xl overflow-hidden">
@@ -767,6 +790,12 @@ export default function AdminPanelPage() {
                 </div>
               </form>
 
+                {marketError && (
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                    {marketError}
+                  </div>
+                )}
+
               <div className="border border-slate-800 rounded-2xl overflow-hidden">
                 <table className="w-full text-sm text-slate-200">
                   <thead className="bg-slate-900/70 text-xs uppercase tracking-wide text-slate-400">
@@ -855,6 +884,10 @@ export default function AdminPanelPage() {
               {analyticsLoading ? (
                 <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
                   分析データを読み込み中...
+                </div>
+              ) : analyticsError ? (
+                <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  {analyticsError}
                 </div>
               ) : !analytics ? (
                 <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
@@ -994,6 +1027,12 @@ export default function AdminPanelPage() {
                     {logsLoading ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">読み込み中...</td>
+                      </tr>
+                    ) : logsError ? (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center text-sm text-red-200">
+                          {logsError}
+                        </td>
                       </tr>
                     ) : logs.length === 0 ? (
                       <tr>
