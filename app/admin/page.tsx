@@ -408,7 +408,7 @@ export default function AdminPanelPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
           {activeTab === 'users' && (
-            <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 xl:gap-8">
+            <div className="grid xl:grid-cols-[1.4fr_1fr] gap-6 xl:gap-8">
               <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.9)]">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <div>
@@ -463,7 +463,7 @@ export default function AdminPanelPage() {
                   </div>
                 )}
 
-                <div className="hidden sm:block border border-slate-800 rounded-xl overflow-hidden">
+                <div className="hidden xl:block border border-slate-800 rounded-xl overflow-hidden">
                   <div className="bg-slate-900/60 grid grid-cols-6 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                     <span>ユーザー</span>
                     <span className="col-span-2">メール</span>
@@ -509,7 +509,7 @@ export default function AdminPanelPage() {
                   </div>
                 </div>
 
-                <div className="sm:hidden space-y-3">
+                <div className="xl:hidden space-y-3">
                   {usersLoading ? (
                     <div className="flex items-center justify-center py-10 text-slate-400 text-sm">読み込み中...</div>
                   ) : userSummaries.length === 0 ? (
@@ -552,9 +552,202 @@ export default function AdminPanelPage() {
                     })
                   )}
                 </div>
+
+                <div className="xl:hidden">
+                  {userDetailLoading ? (
+                    <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center text-slate-300">
+                      詳細を読み込み中...
+                    </div>
+                  ) : !selectedUserDetail ? (
+                    <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 text-center text-slate-400 text-sm">
+                      ユーザーを選択すると詳細が表示されます
+                    </div>
+                  ) : (
+                    <div className="mt-4 space-y-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                      <div className="space-y-1">
+                        <h2 className="text-lg font-semibold text-white">{selectedUserDetail.username}</h2>
+                        <p className="text-xs text-slate-400 break-all">{selectedUserDetail.email}</p>
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-300">
+                          <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5">{selectedUserDetail.user_type}</span>
+                          <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5">登録日: {formatDateTime(selectedUserDetail.created_at)}</span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 ${
+                              selectedUserDetail.is_blocked ? 'bg-red-600/30 text-red-100' : 'bg-emerald-500/15 text-emerald-200'
+                            }`}
+                          >
+                            {selectedUserDetail.is_blocked ? 'BLOCKED' : 'ACTIVE'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                          <p className="text-[11px] text-slate-400">ポイント残高</p>
+                          <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.point_balance)}</p>
+                        </div>
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                          <p className="text-[11px] text-slate-400">総購入ポイント</p>
+                          <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_purchased)}</p>
+                        </div>
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                          <p className="text-[11px] text-slate-400">マーケット利用ポイント</p>
+                          <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_spent)}</p>
+                        </div>
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                          <p className="text-[11px] text-slate-400">管理者付与累計</p>
+                          <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_granted)}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-white font-semibold">ブロック制御</span>
+                          <span className="text-slate-400">
+                            {selectedUserDetail.blocked_at ? `最終更新: ${formatDateTime(selectedUserDetail.blocked_at)}` : '未ブロック'}
+                          </span>
+                        </div>
+                        {selectedUserDetail.blocked_reason && (
+                          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] text-red-200">
+                            現在のブロック理由: {selectedUserDetail.blocked_reason}
+                          </div>
+                        )}
+                        <textarea
+                          value={blockReason}
+                          onChange={(event) => setBlockReason(event.target.value)}
+                          placeholder="ブロック理由 (任意)"
+                          className="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                          rows={3}
+                        />
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <button
+                            onClick={handleBlockUser}
+                            disabled={userActionLoading}
+                            className="flex-1 rounded-xl bg-red-600 text-white text-sm font-semibold px-4 py-2 hover:bg-red-700 disabled:opacity-60"
+                          >
+                            ユーザーをブロック
+                          </button>
+                          <button
+                            onClick={handleUnblockUser}
+                            disabled={userActionLoading}
+                            className="flex-1 rounded-xl bg-emerald-600/80 text-white text-sm font-semibold px-4 py-2 hover:bg-emerald-600 disabled:opacity-60"
+                          >
+                            ブロック解除
+                          </button>
+                          <button
+                            onClick={handleDeleteUser}
+                            disabled={userActionLoading}
+                            className="flex-1 rounded-xl border border-red-900/60 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-900/30 disabled:opacity-60"
+                          >
+                            ユーザー削除
+                          </button>
+                        </div>
+                      </div>
+
+                      <form onSubmit={handleGrantPoints} className="space-y-3 rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-semibold text-white">ポイント手動調整</h3>
+                          <span className="text-xs text-slate-400">正数で付与、負数で減算</span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <input
+                            type="number"
+                            value={grantAmount}
+                            onChange={(event) => setGrantAmount(Number(event.target.value))}
+                            className="flex-1 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={grantDescription}
+                            onChange={(event) => setGrantDescription(event.target.value)}
+                            placeholder="メモ (任意)"
+                            className="flex-1 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                          />
+                          <button
+                            type="submit"
+                            disabled={userActionLoading}
+                            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                          >
+                            実行
+                          </button>
+                        </div>
+                      </form>
+
+                      {userActionError && (
+                        <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                          {userActionError}
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-white">最新トランザクション</h3>
+                        <div className="space-y-2">
+                          {selectedUserDetail.transactions.slice(0, 6).map((tx) => (
+                            <div key={tx.id} className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-200">
+                              <div className="flex items-center justify-between">
+                                <span className="font-semibold text-white">{tx.transaction_type}</span>
+                                <span className={tx.amount >= 0 ? 'text-emerald-200 font-semibold' : 'text-red-300 font-semibold'}>
+                                  {formatPoints(tx.amount)}
+                                </span>
+                              </div>
+                              <div className="mt-1 text-[11px] text-slate-400">{formatDateTime(tx.created_at)}</div>
+                              <div className="mt-1 text-[11px] text-slate-400 break-all">{tx.description || '-'}</div>
+                            </div>
+                          ))}
+                          {selectedUserDetail.transactions.length === 0 && (
+                            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-4 text-center text-xs text-slate-400">
+                              トランザクションがありません
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-white">LP 作成履歴</h3>
+                        <div className="space-y-2">
+                          {selectedUserDetail.landing_pages.slice(0, 6).map((lp) => (
+                            <div key={lp.id} className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-200">
+                              <div className="text-white font-semibold">{lp.title}</div>
+                              <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                                <span>ステータス: {lp.status}</span>
+                                <span>ビュー: {formatNumber(lp.total_views)}</span>
+                              </div>
+                              <div className="mt-1 text-[11px] text-slate-400">CTA: {formatNumber(lp.total_cta_clicks)}</div>
+                            </div>
+                          ))}
+                          {selectedUserDetail.landing_pages.length === 0 && (
+                            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-4 text-center text-xs text-slate-400">
+                              LP作成履歴がありません
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-white">商品購入履歴</h3>
+                        <div className="space-y-2">
+                          {selectedUserDetail.purchase_history.slice(0, 6).map((purchase) => (
+                            <div key={purchase.transaction_id} className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-200">
+                              <div className="text-white font-semibold">{purchase.product_title || '-'}</div>
+                              <div className="mt-1 text-[11px] text-slate-400 break-all">{purchase.description || '-'}</div>
+                              <div className="mt-1 flex items-center justify-between text-[11px]">
+                                <span className="text-red-300 font-semibold">{formatPoints(purchase.amount)}</span>
+                                <span className="text-slate-400">{formatDateTime(purchase.created_at)}</span>
+                              </div>
+                            </div>
+                          ))}
+                          {selectedUserDetail.purchase_history.length === 0 && (
+                            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-4 text-center text-xs text-slate-400">
+                              商品購入履歴がありません
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
+              <div className="hidden xl:block rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
                 {userDetailLoading ? (
                   <div className="flex h-full items-center justify-center text-slate-300">
                     詳細を読み込み中...
