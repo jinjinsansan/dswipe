@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { DevicePhoneMobileIcon, ChartBarIcon, CurrencyYenIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
   return (
@@ -29,7 +30,9 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-16">
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700 hover:border-gray-600 transition-colors">
-              <div className="text-4xl mb-4">📱</div>
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-700/60 text-white">
+                <DevicePhoneMobileIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-bold mb-2 text-white">スワイプ型LP</h3>
               <p className="text-gray-400">
                 縦・横スワイプ対応の魅力的なランディングページを作成
@@ -37,7 +40,9 @@ export default function Home() {
             </div>
             
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700 hover:border-gray-600 transition-colors">
-              <div className="text-4xl mb-4">📊</div>
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-700/60 text-white">
+                <ChartBarIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-bold mb-2 text-white">詳細な分析</h3>
               <p className="text-gray-400">
                 閲覧数、クリック率、ファネル分析で効果を可視化
@@ -45,7 +50,9 @@ export default function Home() {
             </div>
             
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700 hover:border-gray-600 transition-colors">
-              <div className="text-4xl mb-4">💰</div>
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-700/60 text-white">
+                <CurrencyYenIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-bold mb-2 text-white">ポイント決済</h3>
               <p className="text-gray-400">
                 ポイントベースのシンプルな決済システム

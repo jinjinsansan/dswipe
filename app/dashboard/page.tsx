@@ -6,8 +6,24 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi, announcementApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import {
+  getDashboardNavLinks,
+  isDashboardLinkActive,
+} from '@/components/dashboard/navLinks';
 import type { DashboardAnnouncement } from '@/types';
+import {
+  ArrowPathIcon,
+  ArrowTrendingUpIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
+  ClipboardDocumentListIcon,
+  ClipboardIcon,
+  DocumentIcon,
+  PhotoIcon,
+  ShoppingBagIcon,
+  Cog6ToothIcon,
+  BriefcaseIcon,
+} from '@heroicons/react/24/outline';
 
 const formatAnnouncementDate = (value?: string) => {
   if (!value) return '-';
@@ -314,7 +330,9 @@ export default function DashboardPage() {
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  <span className="text-base">{link.icon}</span>
+                  <span className="flex h-5 w-5 items-center justify-center text-slate-500 group-hover:text-slate-900">
+                    {link.icon}
+                  </span>
                   <span>{link.label}</span>
                 </Link>
               );
@@ -418,7 +436,10 @@ export default function DashboardPage() {
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                🏪 販売者画面
+                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
+                  <BuildingStorefrontIcon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                販売者画面
               </button>
               <button
                 onClick={() => setDashboardType('buyer')}
@@ -428,7 +449,10 @@ export default function DashboardPage() {
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                🛍️ 購入者画面
+                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
+                  <ShoppingBagIcon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                購入者画面
               </button>
               <button
                 onClick={() => setDashboardType('settings')}
@@ -438,7 +462,10 @@ export default function DashboardPage() {
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                ⚙️ 設定
+                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
+                  <Cog6ToothIcon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                設定
               </button>
             </div>
           </div>
@@ -460,7 +487,9 @@ export default function DashboardPage() {
 
             {lps.length === 0 ? (
               <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 text-center shadow-sm">
-                <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">📄</div>
+                <div className="text-4xl sm:text-5xl mb-2 sm:mb-3 text-slate-500">
+                  <DocumentIcon className="inline-block h-10 w-10" aria-hidden="true" />
+                </div>
                 <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2">LPがありません</h3>
                 <p className="text-slate-500 text-sm font-medium mb-3 sm:mb-4">最初のLPを作成しましょう</p>
                 <Link
@@ -489,7 +518,7 @@ export default function DashboardPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="text-white text-2xl sm:text-4xl">📄</div>
+                        <DocumentIcon className="h-12 w-12 text-white/80" aria-hidden="true" />
                       )}
                       {/* Status Badge */}
                       <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
@@ -575,7 +604,9 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <span className="text-xl sm:text-2xl flex-shrink-0">📊</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <ChartBarIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
                 <div className="min-w-0">
                   <div className="text-slate-500 text-[10px] sm:text-xs font-medium">ご利用中のプラン</div>
                   <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">無料プラン</div>
@@ -588,7 +619,9 @@ export default function DashboardPage() {
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <span className="text-xl sm:text-2xl flex-shrink-0">📈</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
                 <div className="min-w-0">
                   <div className="text-slate-500 text-[10px] sm:text-xs font-medium">登録中のLP数</div>
                   <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{lps.length}本</div>
@@ -601,7 +634,9 @@ export default function DashboardPage() {
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <span className="text-xl sm:text-2xl flex-shrink-0">💼</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <BriefcaseIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
                 <div className="min-w-0">
                   <div className="text-slate-500 text-[10px] sm:text-xs font-medium">販売実績</div>
                   <div className="text-slate-900 text-xs sm:text-sm font-semibold">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
