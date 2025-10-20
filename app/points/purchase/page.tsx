@@ -24,7 +24,7 @@ const PAYMENT_METHODS = [
 export default function PointPurchasePage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
-  const navLinks = getDashboardNavLinks({ isAdmin });
+  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const pathname = usePathname();
   const [pointBalance, setPointBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);

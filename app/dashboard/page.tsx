@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
   const pathname = usePathname();
   const [lps, setLps] = useState<any[]>([]);
-  const navLinks = getDashboardNavLinks({ isAdmin });
+  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
