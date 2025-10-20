@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Sawarabi_Gothic, Zen_Maru_Gothic } from "next/font/google";
+import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Sawarabi_Gothic, Zen_Maru_Gothic, Roboto } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 
@@ -52,9 +52,16 @@ const zenMaruGothic = Zen_Maru_Gothic({
   weight: ["300", "400", "500", "700", "900"],
 });
 
+// オプション8: Roboto + Noto Sans JP - グローバル/国内併用向け
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+});
+
 // 👇 ここを変更してフォントを切り替え
-// 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew' | 'bizUdpGothic' | 'sawarabiGothic' | 'zenMaruGothic'
-const ACTIVE_FONT = 'mPlus1p';
+// 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew' | 'bizUdpGothic' | 'sawarabiGothic' | 'zenMaruGothic' | 'robotoNoto'
+const ACTIVE_FONT = 'robotoNoto';
 
 const fontConfig = {
   notoSansJP: {
@@ -84,6 +91,10 @@ const fontConfig = {
   zenMaruGothic: {
     variable: zenMaruGothic.variable,
     className: zenMaruGothic.className,
+  },
+  robotoNoto: {
+    variable: `${roboto.variable} ${notoSansJP.variable}`,
+    className: `${roboto.className} ${notoSansJP.className}`,
   },
 };
 
