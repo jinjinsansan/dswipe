@@ -331,7 +331,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).secondaryButtonText || ''}
               onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
             <input
@@ -397,7 +397,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).position || 'bottom'}
               onChange={(e) => onUpdateContent('position', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="top">上部固定</option>
               <option value="bottom">下部固定</option>
@@ -471,7 +471,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={currentThemeKey ?? ''}
               onChange={(e) => onUpdateContent('themeKey', e.target.value as ColorThemeKey)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="">デフォルト</option>
               {THEME_ENTRIES.map(([key, value]) => (
@@ -498,8 +498,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).stats as Array<{ value: string; label: string }>).map((stat, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>項目 {index + 1}</span>
                   <button
                     type="button"
@@ -517,14 +517,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={stat.value || ''}
                   onChange={(e) => onUpdateContent(`stats.${index}.value`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="表示値 (例: 87%)"
                 />
                 <input
                   type="text"
                   value={stat.label || ''}
                   onChange={(e) => onUpdateContent(`stats.${index}.label`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="ラベル (例: CVR改善率)"
                 />
               </div>
@@ -549,8 +549,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).features as Array<{ icon?: string; title: string; description: string }>).map((feature, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>カード {index + 1}</span>
                   <button
                     type="button"
@@ -568,20 +568,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={feature.icon || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.icon`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="アイコン (例: ⚡️)"
                 />
                 <input
                   type="text"
                   value={feature.title || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.title`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="特徴タイトル"
                 />
                 <textarea
                   value={feature.description || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={3}
                   placeholder="詳細説明"
                 />
@@ -607,8 +607,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).plans as Array<Record<string, any>>).map((plan, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>プラン {index + 1}</span>
                   <button
                     type="button"
@@ -625,7 +625,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={plan.name || ''}
                   onChange={(e) => onUpdateContent(`plans.${index}.name`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="プラン名"
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -633,28 +633,28 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.price || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.price`, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="価格"
                   />
                   <input
                     type="text"
                     value={plan.period || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.period`, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="期間 / バッジ"
                   />
                 </div>
                 <textarea
                   value={plan.description || ''}
                   onChange={(e) => onUpdateContent(`plans.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={2}
                   placeholder="説明"
                 />
                 <textarea
                   value={Array.isArray(plan.features) ? plan.features.join('\n') : ''}
                   onChange={(e) => onUpdateContent(`plans.${index}.features`, e.target.value.split('\n').filter(Boolean))}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={3}
                   placeholder="機能リスト（1行につき1項目）"
                 />
@@ -663,22 +663,22 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.buttonText || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.buttonText`, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="ボタン文言"
                   />
                   <input
                     type="text"
                     value={plan.buttonUrl || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.buttonUrl`, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="ボタンURL"
                   />
                 </div>
-                <label className="flex items-center justify-between gap-3 bg-gray-900 border border-gray-700 rounded px-3 py-2 text-xs text-gray-300">
+                <label className="flex items-center justify-between gap-3 bg-white border border-slate-300 rounded px-3 py-2 text-xs text-slate-700">
                   <span>おすすめ表示（ハイライト）</span>
                   <input
                     type="checkbox"
-                    className="h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+                    className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
                     checked={Boolean(plan.highlighted)}
                     onChange={(e) => onUpdateContent(`plans.${index}.highlighted`, e.target.checked)}
                   />
@@ -705,8 +705,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).faqs as Array<Record<string, any>>).map((faq, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>FAQ {index + 1}</span>
                   <button
                     type="button"
@@ -723,13 +723,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={faq.question || ''}
                   onChange={(e) => onUpdateContent(`faqs.${index}.question`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="質問"
                 />
                 <textarea
                   value={faq.answer || ''}
                   onChange={(e) => onUpdateContent(`faqs.${index}.answer`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={3}
                   placeholder="回答"
                 />
@@ -755,8 +755,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).testimonials as Array<Record<string, any>>).map((testimonial, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>事例 {index + 1}</span>
                   <button
                     type="button"
@@ -773,20 +773,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={testimonial.name || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.name`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="氏名 / 社名等"
                 />
                 <input
                   type="text"
                   value={testimonial.role || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.role`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="肩書き"
                 />
                 <textarea
                   value={testimonial.text || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.text`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={3}
                   placeholder="コメント"
                 />
@@ -795,7 +795,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={testimonial.company || ''}
                     onChange={(e) => onUpdateContent(`testimonials.${index}.company`, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="会社名等（任意）"
                   />
                   <input
@@ -804,7 +804,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     max={5}
                     value={testimonial.rating ?? 5}
                     onChange={(e) => onUpdateContent(`testimonials.${index}.rating`, Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="評価 (1-5)"
                   />
                 </div>
@@ -812,7 +812,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={testimonial.imageUrl || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.imageUrl`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="画像URL (任意)"
                 />
               </div>
@@ -837,8 +837,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
             {((content as any).bonuses as Array<Record<string, any>>).map((bonus, index) => (
-              <div key={index} className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>特典 {index + 1}</span>
                   <button
                     type="button"
@@ -855,20 +855,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={bonus.title || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.title`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="特典タイトル"
                 />
                 <input
                   type="text"
                   value={bonus.value || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.value`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="金額・価値など"
                 />
                 <textarea
                   value={bonus.description || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={2}
                   placeholder="詳細説明"
                 />
@@ -876,7 +876,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={bonus.icon || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.icon`, e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
                   placeholder="アイコン / 絵文字"
                 />
               </div>
@@ -890,7 +890,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <textarea
               value={Array.isArray((content as any).problems) ? (content as any).problems.join('\n') : ''}
               onChange={(e) => onUpdateContent('problems', e.target.value.split('\n').filter(Boolean))}
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
               rows={6}
               placeholder="問題提起を1行につき1つ入力"
             />
@@ -898,8 +898,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 色フィールドセクション */}
-        <div className="border-t border-gray-800 pt-3 mt-3">
-          <h4 className="text-xs font-bold text-gray-400 uppercase mb-3">色設定</h4>
+        <div className="border-t border-slate-200 pt-3 mt-3">
+          <h4 className="text-xs font-bold text-slate-700 uppercase mb-3">色設定</h4>
           
           {/* 背景色 */}
           {content.backgroundColor !== undefined && renderColorPicker('backgroundColor', content.backgroundColor)}
@@ -970,14 +970,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('shadow' in content) && (
-          <label className="flex items-center justify-between gap-3 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3">
+          <label className="flex items-center justify-between gap-3 bg-white border border-slate-300 rounded-lg px-4 py-3">
             <div>
-              <p className="text-sm text-gray-200">シャドウを表示</p>
-              <p className="text-xs text-gray-500">画像の立体感を強調します</p>
+              <p className="text-sm text-slate-700">シャドウを表示</p>
+              <p className="text-xs text-slate-500">画像の立体感を強調します</p>
             </div>
             <input
               type="checkbox"
-              className="h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500"
+              className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
               checked={Boolean((content as any).shadow)}
               onChange={(e) => onUpdateContent('shadow', e.target.checked)}
             />
@@ -986,9 +986,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* ヒーローブロック設定 */}
         {(block.blockType === 'hero' || block.blockType === 'hero-1' || block.blockType === 'hero-2' || block.blockType === 'hero-3') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">📸 ヒーロー設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">📸 ヒーロー設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1000,9 +1000,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* テキスト+画像ブロック設定 */}
         {(block.blockType.includes('text-image') || block.blockType.includes('text-img')) && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">🖼️ テキスト+画像設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">🖼️ テキスト+画像設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1013,9 +1013,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* CTAブロック設定 */}
         {block.blockType.includes('cta') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">🎯 CTA設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">🎯 CTA設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1027,9 +1027,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* 価格表ブロック設定 */}
         {block.blockType.includes('pricing') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">💰 価格表設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">💰 価格表設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1041,9 +1041,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* 特徴ブロック設定 */}
         {block.blockType.includes('features') && !block.blockType.includes('aurora') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">⭐ 特徴設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">⭐ 特徴設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1054,9 +1054,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* FAQブロック設定 */}
         {block.blockType.includes('faq') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">❓ FAQ設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">❓ FAQ設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1067,9 +1067,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* お客様の声ブロック設定 */}
         {block.blockType.includes('testimonial') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">💬 お客様の声設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">💬 お客様の声設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1081,9 +1081,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* フォームブロック設定 */}
         {block.blockType.includes('form') && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">📝 フォーム設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">📝 フォーム設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1096,9 +1096,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* 情報商材特化ブロック設定 */}
         {(block.blockType.includes('countdown') || block.blockType.includes('urgency') || 
           block.blockType.includes('scarcity') || block.blockType.includes('sticky-cta')) && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">⚡ 特殊ブロック設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">⚡ 特殊ブロック設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1112,9 +1112,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {(block.blockType.includes('special-price') || block.blockType.includes('bonus-list') || 
           block.blockType.includes('guarantee') || block.blockType.includes('problem') || 
           block.blockType.includes('before-after') || block.blockType.includes('author-profile')) && (
-          <div className="space-y-4 pb-4 border-b border-gray-700">
+          <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-gray-200 mb-3">🎁 コンテンツブロック設定</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-3">🎁 コンテンツブロック設定</h3>
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1133,7 +1133,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).alignment || 'center'}
               onChange={(e) => onUpdateContent('alignment', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="left">左寄せ</option>
               <option value="center">中央</option>
@@ -1151,7 +1151,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).columns || 3}
               onChange={(e) => onUpdateContent('columns', parseInt(e.target.value))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="2">2カラム</option>
               <option value="3">3カラム</option>
@@ -1238,7 +1238,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).layout || 'card'}
               onChange={(e) => onUpdateContent('layout', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               {block.blockType.includes('testimonial') && (
                 <>
@@ -1265,8 +1265,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       </div>
 
       {/* フッター */}
-      <div className="p-3 lg:p-4 border-t border-gray-700 bg-gray-900/50 flex-shrink-0">
-        <p className="text-gray-400 text-xs text-center">
+      <div className="p-3 lg:p-4 border-t border-slate-200 bg-slate-50 flex-shrink-0">
+        <p className="text-slate-500 text-xs text-center">
           💡 テキストをクリックすると直接編集できます
         </p>
       </div>
