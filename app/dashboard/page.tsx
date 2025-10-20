@@ -282,18 +282,18 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-white text-xl">読み込み中...</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-700 text-xl">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col sm:flex-row">
+    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
       {/* Sidebar - Hidden on Mobile */}
-      <aside className="hidden sm:flex w-52 bg-slate-900/70 backdrop-blur-sm border-r border-slate-800 flex-col flex-shrink-0">
+      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm border-r border-slate-200 flex-col flex-shrink-0">
         {/* Logo */}
-        <div className="px-6 h-16 border-b border-slate-800 flex items-center">
+        <div className="px-6 h-16 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
           </Link>
@@ -310,8 +310,8 @@ export default function DashboardPage() {
                   href={link.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
                     isActive
-                      ? 'text-white bg-blue-600/90'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                      ? 'text-white bg-blue-600'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
                   <span className="text-base">{link.icon}</span>
@@ -323,18 +323,18 @@ export default function DashboardPage() {
         </nav>
 
         {/* User Info */}
-        <div className="p-3 border-t border-slate-800">
+        <div className="p-3 border-t border-slate-200">
           <div className="flex items-center space-x-2 mb-2">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white text-sm font-semibold truncate">{user?.username}</div>
+              <div className="text-slate-900 text-sm font-semibold truncate">{user?.username}</div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-600/20 text-red-300 rounded hover:bg-red-600/30 transition-colors text-xs font-semibold"
+            className="w-full px-3 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-xs font-semibold"
           >
             ログアウト
           </button>
@@ -344,22 +344,22 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <div className="bg-slate-900/70 backdrop-blur-sm border-b border-slate-800 px-3 sm:px-6 h-16 flex-shrink-0">
+        <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
           <div className="flex items-center justify-between h-full">
             {/* Left: Menu Button (Mobile) + Title */}
             <div className="flex items-center gap-3 min-w-0">
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl font-semibold text-white mb-0 truncate">ダッシュボード</h1>
-                <p className="text-slate-400 text-xs hidden sm:block">ようこそ、{user?.username}さん</p>
+                <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">ダッシュボード</h1>
+                <p className="text-slate-500 text-xs hidden sm:block">ようこそ、{user?.username}さん</p>
               </div>
             </div>
             
             {/* Right: Actions & User Info */}
             <div className="hidden sm:flex items-center space-x-4">
               {/* Point Balance */}
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-950/60 rounded border border-slate-800">
-                <span className="text-slate-400 text-xs font-medium">ポイント残高</span>
-                <span className="text-white text-sm font-semibold">{pointBalance.toLocaleString()} P</span>
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200">
+                <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
+                <span className="text-slate-900 text-sm font-semibold">{pointBalance.toLocaleString()} P</span>
               </div>
               
               {/* User Avatar */}
@@ -373,7 +373,7 @@ export default function DashboardPage() {
             {/* Mobile User Info */}
             <div className="sm:hidden flex items-center space-x-2">
               <div className="text-right">
-                <div className="text-white text-xs font-semibold">{pointBalance.toLocaleString()}P</div>
+                <div className="text-slate-900 text-xs font-semibold">{pointBalance.toLocaleString()}P</div>
               </div>
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
@@ -382,7 +382,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-800 bg-slate-950/80">
+        <div className="sm:hidden border-b border-slate-200 bg-white/80">
           <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
             {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
@@ -392,8 +392,8 @@ export default function DashboardPage() {
                   href={link.href}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-600/90 text-white'
-                      : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-300'
                   }`}
                 >
                   <span>{link.icon}</span>
@@ -409,13 +409,13 @@ export default function DashboardPage() {
 
           {/* Dashboard Type Tabs */}
           <div className="mb-6">
-            <div className="flex gap-1 sm:gap-2 border-b border-slate-800 overflow-x-auto">
+            <div className="flex gap-1 sm:gap-2 border-b border-slate-200 overflow-x-auto">
               <button
                 onClick={() => setDashboardType('seller')}
                 className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'seller'
-                    ? 'text-white border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'text-slate-900 border-b-2 border-blue-500'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 🏪 販売者画面
@@ -424,8 +424,8 @@ export default function DashboardPage() {
                 onClick={() => setDashboardType('buyer')}
                 className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'buyer'
-                    ? 'text-white border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'text-slate-900 border-b-2 border-blue-500'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 🛍️ 購入者画面
@@ -434,8 +434,8 @@ export default function DashboardPage() {
                 onClick={() => setDashboardType('settings')}
                 className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                   dashboardType === 'settings'
-                    ? 'text-white border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'text-slate-900 border-b-2 border-blue-500'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 ⚙️ 設定
@@ -449,7 +449,7 @@ export default function DashboardPage() {
               {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
-              <h2 className="text-lg font-semibold text-white">最近編集したLP</h2>
+              <h2 className="text-lg font-semibold text-slate-900">最近編集したLP</h2>
               <Link
                 href="/lp/create"
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold self-start sm:self-auto"
@@ -459,10 +459,10 @@ export default function DashboardPage() {
             </div>
 
             {lps.length === 0 ? (
-              <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-8 sm:p-12 text-center">
+              <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 text-center shadow-sm">
                 <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">📄</div>
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">LPがありません</h3>
-                <p className="text-slate-400 text-sm font-medium mb-3 sm:mb-4">最初のLPを作成しましょう</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2">LPがありません</h3>
+                <p className="text-slate-500 text-sm font-medium mb-3 sm:mb-4">最初のLPを作成しましょう</p>
                 <Link
                   href="/lp/create"
                   className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold"
@@ -478,10 +478,10 @@ export default function DashboardPage() {
                   return (
                   <div
                     key={lp.id}
-                    className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 overflow-hidden hover:border-slate-700 transition-all flex flex-col"
+                    className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-blue-200 transition-all flex flex-col shadow-sm"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center flex-shrink-0">
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0">
                       {heroImage ? (
                         <img
                           src={heroImage}
@@ -498,7 +498,7 @@ export default function DashboardPage() {
                             公開中
                           </span>
                         ) : (
-                          <span className="px-1.5 py-0.5 bg-slate-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
+                          <span className="px-1.5 py-0.5 bg-slate-400 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
                             下書き
                           </span>
                         )}
@@ -507,8 +507,8 @@ export default function DashboardPage() {
 
                     {/* Content */}
                     <div className="p-2 sm:p-3 flex-1 flex flex-col">
-                      <h3 className="text-white font-semibold text-xs sm:text-sm mb-1 truncate">{lp.title}</h3>
-                      <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-slate-400 mb-2 font-medium">
+                      <h3 className="text-slate-900 font-semibold text-xs sm:text-sm mb-1 truncate">{lp.title}</h3>
+                      <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-slate-500 mb-2 font-medium">
                         <span className="truncate">閲覧: {lp.total_views || 0}</span>
                         <span className="truncate">クリック: {lp.total_cta_clicks || 0}</span>
                       </div>
@@ -517,20 +517,20 @@ export default function DashboardPage() {
                       <div className="grid grid-cols-4 gap-1 mb-2">
                         <Link
                           href={`/lp/${lp.id}/edit`}
-                          className="px-1 sm:px-2 py-1 bg-slate-800 text-white rounded hover:bg-slate-700 transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded hover:bg-slate-300 transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           編集
                         </Link>
                         <Link
                           href={`/lp/${lp.id}/analytics`}
-                          className="px-1 sm:px-2 py-1 bg-slate-800 text-white rounded hover:bg-slate-700 transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded hover:bg-slate-300 transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           分析
                         </Link>
                         <button
                           onClick={() => handleDuplicateLP(lp.id)}
                           disabled={duplicatingId === lp.id}
-                          className={`px-1 sm:px-2 py-1 bg-slate-800 text-white rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-slate-700'}`}
+                          className={`px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-slate-300'}`}
                         >
                           {duplicatingId === lp.id ? '複製中…' : '複製'}
                         </button>
@@ -544,13 +544,13 @@ export default function DashboardPage() {
 
                       {/* Public URL */}
                       {lp.is_published && lp.slug && (
-                        <div className="border-t border-slate-800 pt-1.5">
+                        <div className="border-t border-slate-200 pt-1.5">
                           <div className="flex gap-1">
                             <input
                               type="text"
                               value={`${window.location.origin}/view/${lp.slug}`}
                               readOnly
-                              className="flex-1 px-1 py-0.5 bg-slate-950 border border-slate-800 rounded text-slate-400 text-[8px] sm:text-[10px] min-w-0"
+                              className="flex-1 px-1 py-0.5 bg-white border border-slate-300 rounded text-slate-500 text-[8px] sm:text-[10px] min-w-0"
                             />
                             <button
                               onClick={() => {
@@ -573,41 +573,41 @@ export default function DashboardPage() {
 
           {/* Bottom Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <span className="text-xl sm:text-2xl flex-shrink-0">📊</span>
                 <div className="min-w-0">
-                  <div className="text-slate-400 text-[10px] sm:text-xs font-medium">ご利用中のプラン</div>
-                  <div className="text-white text-xs sm:text-sm font-semibold truncate">無料プラン</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">ご利用中のプラン</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">無料プラン</div>
                 </div>
               </div>
-              <p className="text-slate-400 text-[10px] sm:text-xs font-medium">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
                 LP作成数: 無制限
               </p>
             </div>
 
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <span className="text-xl sm:text-2xl flex-shrink-0">📈</span>
                 <div className="min-w-0">
-                  <div className="text-slate-400 text-[10px] sm:text-xs font-medium">登録中のLP数</div>
-                  <div className="text-white text-xs sm:text-sm font-semibold truncate">{lps.length}本</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">登録中のLP数</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{lps.length}本</div>
                 </div>
               </div>
-              <p className="text-slate-400 text-[10px] sm:text-xs font-medium">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
                 公開中: {lps.filter(lp => lp.is_published).length}本
               </p>
             </div>
 
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <span className="text-xl sm:text-2xl flex-shrink-0">💼</span>
                 <div className="min-w-0">
-                  <div className="text-slate-400 text-[10px] sm:text-xs font-medium">販売実績</div>
-                  <div className="text-white text-xs sm:text-sm font-semibold">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">販売実績</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
                 </div>
               </div>
-              <p className="text-slate-400 text-[10px] sm:text-xs font-medium">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
                 総売上: {totalSales.toLocaleString()}P
               </p>
             </div>
@@ -615,21 +615,21 @@ export default function DashboardPage() {
 
           {/* Usage Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
-              <div className="text-slate-400 text-[10px] sm:text-xs font-medium mb-1">登録商品数</div>
-              <div className="text-white text-base sm:text-lg font-semibold">{products.length}商品</div>
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
+              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">登録商品数</div>
+              <div className="text-slate-900 text-base sm:text-lg font-semibold">{products.length}商品</div>
               <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">販売中: {products.filter(p => p.is_available).length}商品</div>
             </div>
 
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
-              <div className="text-slate-400 text-[10px] sm:text-xs font-medium mb-1">今月の売上</div>
-              <div className="text-white text-base sm:text-lg font-semibold">{totalSales.toLocaleString()}P</div>
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
+              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">今月の売上</div>
+              <div className="text-slate-900 text-base sm:text-lg font-semibold">{totalSales.toLocaleString()}P</div>
               <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">販売件数: {products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
             </div>
 
-            <div className="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-slate-800 p-3 sm:p-4">
-              <div className="text-slate-400 text-[10px] sm:text-xs font-medium mb-1">総閲覧数</div>
-              <div className="text-white text-base sm:text-lg font-semibold">{lps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0)}</div>
+            <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
+              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">総閲覧数</div>
+              <div className="text-slate-900 text-base sm:text-lg font-semibold">{lps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0)}</div>
               <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">CTAクリック: {lps.reduce((sum: number, lp: any) => sum + (lp.total_cta_clicks || 0), 0)}回</div>
             </div>
           </div>
@@ -640,20 +640,20 @@ export default function DashboardPage() {
           {dashboardType === 'buyer' && (
             <>
               <div className="mb-8">
-                <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.8)]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     <div>
                       <p className="text-sm uppercase tracking-wider text-slate-300/80">現在のポイント残高</p>
-                      <p className="mt-3 text-3xl sm:text-4xl font-semibold text-white">
-                        {pointBalance.toLocaleString()} <span className="text-base text-slate-400 font-normal">P</span>
+                      <p className="mt-3 text-3xl sm:text-4xl font-semibold text-slate-900">
+                        {pointBalance.toLocaleString()} <span className="text-base text-slate-500 font-normal">P</span>
                       </p>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-400">
+                      <p className="mt-2 text-xs sm:text-sm text-slate-500">
                         残高はリアルタイムで更新されます。購入履歴は下の一覧で確認できます。
                       </p>
                     </div>
                     <Link
                       href="/points/purchase"
-                      className="inline-flex items-center justify-center rounded-xl border border-blue-500/60 bg-blue-600/20 px-6 py-3 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-500/40"
+                      className="inline-flex items-center justify-center rounded-xl border border-blue-500 bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
                     >
                       ポイントを購入する
                     </Link>
@@ -663,29 +663,29 @@ export default function DashboardPage() {
 
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
                 <div className="xl:col-span-2 space-y-6">
-                  <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg font-semibold text-white">購入履歴</h2>
-                      <span className="text-xs text-slate-400">{purchaseHistory.length}件</span>
+                      <h2 className="text-lg font-semibold text-slate-900">購入履歴</h2>
+                      <span className="text-xs text-slate-500">{purchaseHistory.length}件</span>
                     </div>
                     {purchaseHistory.length === 0 ? (
-                      <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 py-12 text-center">
-                        <h3 className="text-base font-medium text-white mb-2">購入履歴がまだありません</h3>
-                        <p className="text-sm text-slate-400">
+                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-12 text-center">
+                        <h3 className="text-base font-medium text-slate-900 mb-2">購入履歴がまだありません</h3>
+                        <p className="text-sm text-slate-500">
                           購入が完了すると、ここに明細が表示されます。
                         </p>
                       </div>
                     ) : (
-                      <div className="divide-y divide-slate-800/70">
+                      <div className="divide-y divide-slate-200">
                         {purchaseHistory.map((transaction: any) => (
                           <div key={transaction.id} className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
-                              <p className="text-sm font-medium text-white">{transaction.description}</p>
-                              <p className="text-xs text-slate-400">
+                              <p className="text-sm font-medium text-slate-900">{transaction.description}</p>
+                              <p className="text-xs text-slate-500">
                                 {new Date(transaction.created_at).toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
-                            <span className="text-sm font-semibold text-rose-300">
+                            <span className="text-sm font-semibold text-rose-500">
                               -{Math.abs(transaction.amount || 0).toLocaleString()} P
                             </span>
                           </div>
@@ -694,13 +694,13 @@ export default function DashboardPage() {
                     )}
                   </div>
 
-                  <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold text-white">人気の公開LP</h2>
                       <span className="text-xs text-slate-400">直近のトレンド</span>
                     </div>
                     {popularProducts.length === 0 ? (
-                      <div className="rounded-xl border border-slate-800/70 bg-slate-950/60 py-10 text-center text-sm text-slate-400">
+                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-10 text-center text-sm text-slate-500">
                         現在人気の公開LPはありません
                       </div>
                     ) : (
@@ -708,21 +708,21 @@ export default function DashboardPage() {
                         {popularProducts.map((product: any) => (
                           <div
                             key={product.id}
-                            className="group rounded-xl border border-slate-800 bg-slate-950/60 p-4 transition-colors hover:border-blue-500/60"
+                            className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
                           >
                             <Link href={`/u/${product.seller_username}`} className="flex items-center gap-3 mb-3">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/80 text-sm font-semibold text-white">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-semibold text-white">
                                 {product.seller_username?.charAt(0).toUpperCase() || 'S'}
                               </div>
-                              <span className="text-sm font-medium text-blue-200 group-hover:text-blue-100 transition-colors">
+                              <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
                                 @{product.seller_username}
                               </span>
                             </Link>
-                            <h3 className="text-sm font-semibold text-white line-clamp-2 mb-2">{product.title}</h3>
-                            <p className="text-xs text-slate-400 line-clamp-2 mb-3">{product.description}</p>
-                            <div className="flex items-center justify-between text-xs text-slate-400">
-                              <span className="font-semibold text-blue-200">{product.price_in_points?.toLocaleString()} P</span>
-                              <span className="text-slate-500">成約 {product.total_sales} 件</span>
+                            <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{product.title}</h3>
+                            <p className="text-xs text-slate-500 line-clamp-2 mb-3">{product.description}</p>
+                            <div className="flex items-center justify-between text-xs text-slate-500">
+                              <span className="font-semibold text-blue-600">{product.price_in_points?.toLocaleString()} P</span>
+                              <span className="text-slate-600">成約 {product.total_sales} 件</span>
                             </div>
                           </div>
                         ))}
@@ -730,13 +730,13 @@ export default function DashboardPage() {
                     )}
                   </div>
 
-                  <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold text-white">新着の公開LP</h2>
                       <span className="text-xs text-slate-400">最新アップデート</span>
                     </div>
                     {latestProducts.length === 0 ? (
-                      <div className="rounded-xl border border-slate-800/70 bg-slate-950/60 py-10 text-center text-sm text-slate-400">
+                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-10 text-center text-sm text-slate-500">
                         現在新着の公開LPはありません
                       </div>
                     ) : (
@@ -744,21 +744,21 @@ export default function DashboardPage() {
                         {latestProducts.map((product: any) => (
                           <div
                             key={product.id}
-                            className="group rounded-xl border border-slate-800 bg-slate-950/60 p-4 transition-colors hover:border-emerald-400/50"
+                            className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-emerald-300"
                           >
                             <Link href={`/u/${product.seller_username}`} className="flex items-center gap-3 mb-3">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/80 text-sm font-semibold text-white">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-sm font-semibold text-white">
                                 {product.seller_username?.charAt(0).toUpperCase() || 'S'}
                               </div>
-                              <span className="text-sm font-medium text-emerald-200 group-hover:text-emerald-100 transition-colors">
+                              <span className="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 transition-colors">
                                 @{product.seller_username}
                               </span>
                             </Link>
-                            <h3 className="text-sm font-semibold text-white line-clamp-2 mb-2">{product.title}</h3>
-                            <p className="text-xs text-slate-400 line-clamp-2 mb-3">{product.description}</p>
-                            <div className="flex items-center justify-between text-xs text-slate-400">
-                              <span className="font-semibold text-blue-200">{product.price_in_points?.toLocaleString()} P</span>
-                              <span className="text-emerald-400">NEW</span>
+                            <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{product.title}</h3>
+                            <p className="text-xs text-slate-500 line-clamp-2 mb-3">{product.description}</p>
+                            <div className="flex items-center justify-between text-xs text-slate-500">
+                              <span className="font-semibold text-blue-600">{product.price_in_points?.toLocaleString()} P</span>
+                              <span className="text-emerald-600">NEW</span>
                             </div>
                           </div>
                         ))}
@@ -768,60 +768,60 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
-                    <p className="text-sm font-medium text-white">ポイント利用サマリー</p>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm font-medium text-slate-900">ポイント利用サマリー</p>
                     <dl className="mt-4 space-y-3 text-sm">
-                      <div className="flex items-center justify-between text-slate-300">
-                        <dt className="text-slate-400">累計使用ポイント</dt>
-                        <dd className="font-semibold text-white">{totalPointsUsed.toLocaleString()} P</dd>
+                      <div className="flex items-center justify-between text-slate-600">
+                        <dt className="text-slate-500">累計使用ポイント</dt>
+                        <dd className="font-semibold text-slate-900">{totalPointsUsed.toLocaleString()} P</dd>
                       </div>
-                      <div className="flex items-center justify-between text-slate-300">
-                        <dt className="text-slate-400">平均購入ポイント</dt>
-                        <dd className="font-semibold text-white">{averagePointsUsed.toLocaleString()} P</dd>
+                      <div className="flex items-center justify-between text-slate-600">
+                        <dt className="text-slate-500">平均購入ポイント</dt>
+                        <dd className="font-semibold text-slate-900">{averagePointsUsed.toLocaleString()} P</dd>
                       </div>
-                      <div className="flex items-center justify-between text-slate-300">
-                        <dt className="text-slate-400">直近の購入</dt>
-                        <dd className="font-semibold text-white">{lastPurchaseDateLabel}</dd>
+                      <div className="flex items-center justify-between text-slate-600">
+                        <dt className="text-slate-500">直近の購入</dt>
+                        <dd className="font-semibold text-slate-900">{lastPurchaseDateLabel}</dd>
                       </div>
                     </dl>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
-                    <h3 className="text-sm font-semibold text-white mb-4">購入に関するメモ</h3>
-                    <ul className="space-y-3 text-xs text-slate-400">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-4">購入に関するメモ</h3>
+                    <ul className="space-y-3 text-xs text-slate-500">
                       <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-400 mt-1" />
+                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
                         <span>1ポイント = 1円としてご利用いただけます。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-400 mt-1" />
+                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
                         <span>購入後のポイントに有効期限はありません。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-400 mt-1" />
+                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
                         <span>大口購入をご希望の場合はサポートまでお問い合わせください。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-400 mt-1" />
+                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
                         <span>決済サービスとの連携は現在準備中です。</span>
                       </li>
                     </ul>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
-                    <h3 className="text-sm font-semibold text-white mb-3">購入状況のサマリー</h3>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-3">購入状況のサマリー</h3>
                     <div className="space-y-4 text-sm">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">総購入回数</span>
-                        <span className="font-semibold text-white">{purchaseHistory.length}回</span>
+                        <span className="text-slate-500">総購入回数</span>
+                        <span className="font-semibold text-slate-900">{purchaseHistory.length}回</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">総使用ポイント</span>
-                        <span className="font-semibold text-white">{totalPointsUsed.toLocaleString()} P</span>
+                        <span className="text-slate-500">総使用ポイント</span>
+                        <span className="font-semibold text-slate-900">{totalPointsUsed.toLocaleString()} P</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">購入商品数</span>
-                        <span className="font-semibold text-white">{purchaseHistory.length}個</span>
+                        <span className="text-slate-500">購入商品数</span>
+                        <span className="font-semibold text-slate-900">{purchaseHistory.length}個</span>
                       </div>
                     </div>
                   </div>
@@ -902,24 +902,24 @@ export default function DashboardPage() {
           )}
 
           <section className="mt-12">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.8)]">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Ｄ－swipe Corporate News</p>
-                  <h2 className="mt-2 text-xl sm:text-2xl font-semibold text-white">Ｄ－swipe からのお知らせ</h2>
-                  <p className="mt-1 text-sm text-slate-400">プロダクト更新情報やメンテナンス予定などをリアルタイムでお届けします。</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Ｄ－swipe Corporate News</p>
+                  <h2 className="mt-2 text-xl sm:text-2xl font-semibold text-slate-900">Ｄ－swipe からのお知らせ</h2>
+                  <p className="mt-1 text-sm text-slate-500">プロダクト更新情報やメンテナンス予定などをリアルタイムでお届けします。</p>
                 </div>
                 <button
                   type="button"
                   onClick={loadAnnouncements}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
                 >
                   🔄 最新情報に更新
                 </button>
               </div>
 
               {announcementsError && (
-                <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                   {announcementsError}
                 </div>
               )}
@@ -927,14 +927,14 @@ export default function DashboardPage() {
               {announcementsLoading ? (
                 <div className="space-y-3">
                   {[...Array(3)].map((_, index) => (
-                    <div key={index} className="animate-pulse rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4">
-                      <div className="h-3 w-24 rounded bg-slate-800/60" />
-                      <div className="mt-3 h-4 w-64 rounded bg-slate-800/60" />
+                    <div key={index} className="animate-pulse rounded-2xl border border-slate-200 bg-slate-100 px-4 py-4">
+                      <div className="h-3 w-24 rounded bg-slate-200" />
+                      <div className="mt-3 h-4 w-64 rounded bg-slate-200" />
                     </div>
                   ))}
                 </div>
               ) : announcements.length === 0 ? (
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-10 text-center text-sm text-slate-400">
+                <div className="rounded-2xl border border-slate-200 bg-slate-100 px-4 py-10 text-center text-sm text-slate-500">
                   現在表示できるお知らせはありません。最新情報は順次こちらに掲載されます。
                 </div>
               ) : (
@@ -944,18 +944,18 @@ export default function DashboardPage() {
                       key={announcement.id}
                       type="button"
                       onClick={() => setActiveAnnouncement(announcement)}
-                      className="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4 text-left transition-colors hover:border-blue-500/60 hover:bg-slate-900/70"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left transition-colors hover:border-blue-300 hover:bg-blue-50"
                     >
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
-                        <span className="font-semibold tracking-wide">{formatAnnouncementDate(announcement.published_at)}</span>
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="font-semibold tracking-wide text-slate-700">{formatAnnouncementDate(announcement.published_at)}</span>
                         {announcement.highlight && (
-                          <span className="inline-flex items-center rounded-full border border-blue-500/50 bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-200">
+                          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-600">
                             重点トピック
                           </span>
                         )}
                       </div>
-                      <p className="mt-2 text-sm font-semibold text-white line-clamp-1">{announcement.title}</p>
-                      <p className="mt-1 text-xs text-slate-400 line-clamp-1">{announcement.summary}</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-900 line-clamp-1">{announcement.title}</p>
+                      <p className="mt-1 text-xs text-slate-500 line-clamp-1">{announcement.summary}</p>
                     </button>
                   ))}
                 </div>
@@ -966,25 +966,25 @@ export default function DashboardPage() {
       </main>
 
       {activeAnnouncement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
-          <div className="max-w-2xl w-full rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.9)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+          <div className="max-w-2xl w-full rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Corporate Update</p>
-                <h3 className="mt-2 text-xl font-semibold text-white">{activeAnnouncement.title}</h3>
-                <p className="mt-1 text-xs text-slate-400">{formatAnnouncementDate(activeAnnouncement.published_at)}</p>
+                <h3 className="mt-2 text-xl font-semibold text-slate-900">{activeAnnouncement.title}</h3>
+                <p className="mt-1 text-xs text-slate-500">{formatAnnouncementDate(activeAnnouncement.published_at)}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveAnnouncement(null)}
-                className="rounded-full border border-slate-700 bg-slate-900/80 p-2 text-slate-200 hover:border-slate-500"
+                className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 hover:border-slate-300"
                 aria-label="閉じる"
               >
                 ✕
               </button>
             </div>
 
-            <div className="mt-5 max-h-[60vh] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/60 px-5 py-4 text-sm leading-relaxed text-slate-200 whitespace-pre-wrap">
+            <div className="mt-5 max-h-[60vh] overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
               {activeAnnouncement.body}
             </div>
 
@@ -992,7 +992,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => setActiveAnnouncement(null)}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-5 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
               >
                 閉じる
               </button>
