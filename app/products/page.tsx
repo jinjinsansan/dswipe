@@ -4,13 +4,23 @@ import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi } from '@/lib/api';
+import {
+  ArrowLeftIcon,
+  BuildingStorefrontIcon,
+  MagnifyingGlassIcon,
+  CurrencyYenIcon,
+  AdjustmentsHorizontalIcon,
+  UserCircleIcon,
+  DocumentIcon,
+  EyeIcon,
+} from '@heroicons/react/24/outline';
 
 function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  console.log('🛍️ ProductsContent レンダリング');
-  console.log('🌐 API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('ProductsContent レンダリング');
+  console.log('API_URL:', process.env.NEXT_PUBLIC_API_URL);
 
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
@@ -43,16 +53,14 @@ function ProductsContent() {
   }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
   const fetchProducts = async () => {
-    console.log('🛍️ /products ページ - 公開LP取得開始');
+    console.log('/products ページ - 公開LP取得開始');
     try {
       setIsLoading(true);
-      console.log('📡 API呼び出し: lpApi.getPublicLPs');
+      console.log('API呼び出し: lpApi.getPublicLPs');
       // 公開されているLPを取得
       const response = await lpApi.list();
-      console.log('✅ API レスポンス取得成功');
-      console.log('📦 レスポンス全体:', response);
-      console.log('📦 response.data:', response.data);
-      console.log('📦 response.data.data:', response.data?.data);
+      console.log('API レスポンス取得成功');
+      console.log('response.data:', response.data);
       
       // バックエンドのレスポンス構造に合わせる
       const allLPs = response.data?.data || response.data || [];
@@ -60,29 +68,29 @@ function ProductsContent() {
       // 公開されているLPのみをフィルタリング
       const publishedLPs = allLPs.filter((lp: any) => lp.status === 'published');
       
-      console.log('📦 全LP数:', allLPs.length);
-      console.log('📦 公開LP数:', publishedLPs.length);
-      console.log('📦 公開LPデータ:', publishedLPs);
+      console.log('全LP数:', allLPs.length);
+      console.log('公開LP数:', publishedLPs.length);
+      console.log('公開LPデータ:', publishedLPs);
       
       // 最初のLPのstepsを確認
       if (publishedLPs.length > 0) {
         const firstLP: any = publishedLPs[0];
-        console.log('🔍 最初のLPの構造:', firstLP);
-        console.log('🔍 user_id:', firstLP.user_id);
-        console.log('🔍 owner:', firstLP.owner);
-        console.log('🔍 user:', firstLP.user);
-        console.log('🔍 username:', firstLP.username);
-        console.log('🔍 steps:', firstLP.steps);
+        console.log('最初のLPの構造:', firstLP);
+        console.log('user_id:', firstLP.user_id);
+        console.log('owner:', firstLP.owner);
+        console.log('user:', firstLP.user);
+        console.log('username:', firstLP.username);
+        console.log('steps:', firstLP.steps);
       }
       
       setProducts(publishedLPs);
     } catch (error: any) {
-      console.error('❌ 商品の取得に失敗:', error);
-      console.error('❌ エラー詳細:', error.response?.data || error.message);
-      console.error('❌ エラースタック:', error.stack);
+      console.error('商品の取得に失敗:', error);
+      console.error('エラー詳細:', error.response?.data || error.message);
+      console.error('エラースタック:', error.stack);
     } finally {
       setIsLoading(false);
-      console.log('🏁 商品取得完了');
+      console.log('商品取得完了');
     }
   };
 
@@ -154,26 +162,30 @@ function ProductsContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white text-lg">読み込み中...</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-600 text-lg">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-slate-100">
       {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm">
-                ← ダッシュボード
+      <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 text-sm font-semibold transition-colors">
+                <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
+                ダッシュボード
               </Link>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">🏪 マーケット</h1>
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-600">
+                <BuildingStorefrontIcon className="h-4 w-4" aria-hidden="true" />
+                マーケット
+              </div>
             </div>
-            <div className="text-gray-400 text-sm">
-              {filteredProducts.length} 件のLP
+            <div className="text-sm text-slate-500">
+              {filteredProducts.length} 件のLPを表示
             </div>
           </div>
         </div>
@@ -181,27 +193,33 @@ function ProductsContent() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Filters */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 mb-6">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-gray-400 text-sm mb-2">🔍 検索</label>
+              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
+                <MagnifyingGlassIcon className="h-4 w-4" aria-hidden="true" />
+                検索
+              </label>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="商品名・説明で検索"
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
             {/* Price Range */}
             <div>
-              <label className="block text-gray-400 text-sm mb-2">💰 価格帯</label>
+              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
+                <CurrencyYenIcon className="h-4 w-4" aria-hidden="true" />
+                価格帯
+              </label>
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value as any)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">すべて</option>
                 <option value="low">〜10,000 P</option>
@@ -212,11 +230,14 @@ function ProductsContent() {
 
             {/* Sort */}
             <div>
-              <label className="block text-gray-400 text-sm mb-2">📊 並び替え</label>
+              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
+                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
+                並び替え
+              </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="latest">新着順</option>
                 <option value="popular">人気順</option>
@@ -227,18 +248,21 @@ function ProductsContent() {
 
             {/* Seller Filter */}
             <div>
-              <label className="block text-gray-400 text-sm mb-2">👤 販売者</label>
+              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
+                <UserCircleIcon className="h-4 w-4" aria-hidden="true" />
+                販売者
+              </label>
               <input
                 type="text"
                 value={sellerFilter}
                 onChange={(e) => setSellerFilter(e.target.value)}
                 placeholder="販売者名で絞り込み"
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
               {sellerFilter && (
                 <button
                   onClick={() => setSellerFilter('')}
-                  className="text-blue-400 hover:text-blue-300 text-xs mt-1"
+                  className="text-blue-600 hover:text-blue-500 text-xs mt-1"
                 >
                   クリア
                 </button>
@@ -249,15 +273,18 @@ function ProductsContent() {
 
         {/* Products Grid */}
         {currentProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">該当するLPが見つかりませんでした</p>
+          <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+              <DocumentIcon className="h-8 w-8" aria-hidden="true" />
+            </div>
+            <p className="text-slate-600 text-lg">該当するLPが見つかりませんでした</p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setPriceRange('all');
                 setSellerFilter('');
               }}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               フィルターをリセット
             </button>
@@ -272,10 +299,10 @@ function ProductsContent() {
                 <Link
                   key={lp.id}
                   href={`/view/${lp.slug}`}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group block"
+                  className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
                 >
                   {/* LP Preview Image */}
-                  <div className="aspect-video bg-gradient-to-br from-blue-600/20 to-purple-600/20 overflow-hidden relative">
+                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
                     {previewImage ? (
                       <img
                         src={previewImage}
@@ -284,9 +311,9 @@ function ProductsContent() {
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">
-                        <div className="text-center p-4">
-                          <div className="text-4xl mb-2">📄</div>
-                          <div className="text-white text-sm font-semibold line-clamp-2">{lp.title}</div>
+                        <div className="text-center p-4 text-slate-600">
+                          <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
+                          <div className="text-sm font-semibold line-clamp-2">{lp.title}</div>
                         </div>
                       </div>
                     )}
@@ -304,22 +331,23 @@ function ProductsContent() {
                         <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
                           {(lp.owner?.username || lp.user?.username || lp.seller_username)?.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-blue-400 hover:text-blue-300 text-xs">
+                        <span className="text-blue-600 hover:text-blue-500 text-xs">
                           {lp.owner?.username || lp.user?.username || lp.seller_username}
                         </span>
                       </Link>
                     )}
 
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                    <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
                       {lp.title}
                     </h3>
 
                     <div className="flex items-center justify-between mb-3 text-sm">
-                      <span className="text-gray-400">
-                        👁️ {lp.total_views || 0} 閲覧
+                      <span className="inline-flex items-center gap-1 text-slate-500">
+                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                        {lp.total_views || 0} 閲覧
                       </span>
                       <span className={`text-xs px-2 py-1 rounded ${
-                        lp.status === 'published' ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'
+                        lp.status === 'published' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'
                       }`}>
                         {lp.status === 'published' ? '公開中' : '下書き'}
                       </span>
@@ -340,7 +368,7 @@ function ProductsContent() {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-3 py-2 bg-white border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                 >
                   ← 前へ
                 </button>
@@ -365,7 +393,7 @@ function ProductsContent() {
                         className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
                           currentPage === pageNum
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:border-blue-200 hover:text-blue-600'
                         }`}
                       >
                         {pageNum}
@@ -377,7 +405,7 @@ function ProductsContent() {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-3 py-2 bg-white border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                 >
                   次へ →
                 </button>
@@ -385,7 +413,7 @@ function ProductsContent() {
             )}
 
             {/* Page Info */}
-            <div className="text-center mt-4 text-gray-400 text-sm">
+            <div className="text-center mt-4 text-slate-500 text-sm">
               {filteredProducts.length} 件のLP中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
             </div>
           </>
@@ -398,8 +426,8 @@ function ProductsContent() {
 export default function ProductsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white text-lg">読み込み中...</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-600 text-lg">読み込み中...</div>
       </div>
     }>
       <ProductsContent />
