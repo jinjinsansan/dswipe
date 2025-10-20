@@ -463,7 +463,7 @@ export default function AdminPanelPage() {
                   </div>
                 )}
 
-                <div className="border border-slate-800 rounded-xl overflow-hidden">
+                <div className="hidden sm:block border border-slate-800 rounded-xl overflow-hidden">
                   <div className="bg-slate-900/60 grid grid-cols-6 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                     <span>ユーザー</span>
                     <span className="col-span-2">メール</span>
@@ -507,6 +507,50 @@ export default function AdminPanelPage() {
                       })
                     )}
                   </div>
+                </div>
+
+                <div className="sm:hidden space-y-3">
+                  {usersLoading ? (
+                    <div className="flex items-center justify-center py-10 text-slate-400 text-sm">読み込み中...</div>
+                  ) : userSummaries.length === 0 ? (
+                    <div className="flex items-center justify-center py-10 text-slate-400 text-sm">ユーザーが見つかりません</div>
+                  ) : (
+                    userSummaries.map((summary) => {
+                      const isSelected = summary.id === selectedUserId;
+                      return (
+                        <button
+                          key={summary.id}
+                          onClick={() => handleSelectUser(summary.id)}
+                          className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
+                            isSelected
+                              ? 'border-blue-500/70 bg-blue-500/15 text-white'
+                              : 'border-slate-800 bg-slate-950/60 text-slate-200 hover:border-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="text-sm font-semibold text-white">{summary.username}</div>
+                              <div className="text-xs text-slate-400 break-all">{summary.email}</div>
+                            </div>
+                            <div className="text-right text-xs text-slate-300">
+                              <div>{formatNumber(summary.point_balance)} P</div>
+                              <div>{summary.total_lp_count} LP</div>
+                            </div>
+                          </div>
+                          <div className="mt-3 flex items-center justify-between text-xs">
+                            <span className="text-slate-400">ユーザー種別: {summary.user_type}</span>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 ${
+                                summary.is_blocked ? 'bg-red-500/20 text-red-200' : 'bg-emerald-500/15 text-emerald-200'
+                              }`}
+                            >
+                              {summary.is_blocked ? 'BLOCKED' : 'ACTIVE'}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
@@ -790,13 +834,13 @@ export default function AdminPanelPage() {
                 </div>
               </form>
 
-                {marketError && (
-                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
-                    {marketError}
-                  </div>
-                )}
+              {marketError && (
+                <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                  {marketError}
+                </div>
+              )}
 
-              <div className="border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="hidden sm:block border border-slate-800 rounded-2xl overflow-hidden">
                 <table className="w-full text-sm text-slate-200">
                   <thead className="bg-slate-900/70 text-xs uppercase tracking-wide text-slate-400">
                     <tr>
@@ -862,6 +906,58 @@ export default function AdminPanelPage() {
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="sm:hidden space-y-3">
+                {marketLoading ? (
+                  <div className="flex items-center justify-center py-10 text-slate-400 text-sm">読み込み中...</div>
+                ) : marketplaceItems.length === 0 ? (
+                  <div className="flex items-center justify-center py-10 text-slate-400 text-sm">対象のLPがありません</div>
+                ) : (
+                  marketplaceItems.map((item) => (
+                    <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-slate-200 space-y-3">
+                      <div>
+                        <div className="text-base font-semibold text-white">{item.title}</div>
+                        <div className="text-xs text-slate-500 truncate">/{item.slug}</div>
+                      </div>
+                      <div className="flex flex-col gap-1 text-xs text-slate-400">
+                        <span>販売者: {item.seller_username}</span>
+                        <span className="break-all">{item.seller_email}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-slate-300">
+                        <span>ビュー: {formatNumber(item.total_views)}</span>
+                        <span>CTA: {formatNumber(item.total_cta_clicks)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
+                            item.status === 'published'
+                              ? 'bg-emerald-500/15 text-emerald-200'
+                              : item.status === 'archived'
+                              ? 'bg-red-500/15 text-red-200'
+                              : 'bg-slate-800 text-slate-300'
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleUpdateLPStatus(item.id, 'archived')}
+                            className="rounded-lg bg-red-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                          >
+                            非公開
+                          </button>
+                          <button
+                            onClick={() => handleUpdateLPStatus(item.id, 'published')}
+                            className="rounded-lg bg-emerald-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                          >
+                            公開
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
