@@ -156,3 +156,106 @@ export interface RequiredActionsStatus {
   completed_actions: string[];
   all_completed: boolean;
 }
+
+export interface AdminUserSummary {
+  id: string;
+  username: string;
+  email: string;
+  user_type: 'seller' | 'buyer';
+  point_balance: number;
+  created_at: string;
+  is_blocked: boolean;
+  blocked_reason?: string | null;
+  blocked_at?: string | null;
+  total_lp_count: number;
+  total_product_count: number;
+  total_point_purchased: number;
+  total_point_spent: number;
+  total_point_granted: number;
+  latest_activity?: string | null;
+}
+
+export interface AdminPointTransaction {
+  id: string;
+  transaction_type: string;
+  amount: number;
+  description?: string | null;
+  created_at: string;
+  related_product_id?: string | null;
+}
+
+export interface AdminUserLandingPage {
+  id: string;
+  title: string;
+  status: 'draft' | 'published' | 'archived';
+  slug: string;
+  total_views: number;
+  total_cta_clicks: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminUserPurchase {
+  transaction_id: string;
+  product_id?: string | null;
+  product_title?: string | null;
+  amount: number;
+  created_at: string;
+  description?: string | null;
+}
+
+export interface AdminUserDetail extends AdminUserSummary {
+  transactions: AdminPointTransaction[];
+  landing_pages: AdminUserLandingPage[];
+  purchase_history: AdminUserPurchase[];
+}
+
+export interface AdminMarketplaceLP {
+  id: string;
+  title: string;
+  slug: string;
+  status: 'draft' | 'published' | 'archived';
+  seller_id: string;
+  seller_username: string;
+  seller_email: string;
+  total_views: number;
+  total_cta_clicks: number;
+  created_at: string;
+  updated_at: string;
+  product_count: number;
+}
+
+export interface AdminPointAnalyticsTotals {
+  purchased: number;
+  spent: number;
+  granted: number;
+  other: number;
+  net: number;
+}
+
+export interface AdminPointAnalyticsBreakdown {
+  label: string;
+  purchased: number;
+  spent: number;
+  granted: number;
+  other: number;
+  net: number;
+}
+
+export interface AdminPointAnalytics {
+  totals: AdminPointAnalyticsTotals;
+  daily: AdminPointAnalyticsBreakdown[];
+  monthly: AdminPointAnalyticsBreakdown[];
+}
+
+export interface ModerationEvent {
+  id: string;
+  action: string;
+  reason?: string | null;
+  target_lp_id?: string | null;
+  target_user_id?: string | null;
+  performed_by?: string | null;
+  performed_by_username?: string | null;
+  performed_by_email?: string | null;
+  created_at: string;
+}

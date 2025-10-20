@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { User } from '@/types';
+import { isAdminEmail } from '@/constants/admin';
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isInitialized: boolean;
+  isAdmin: boolean;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -17,8 +19,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isAuthenticated: false,
   isInitialized: false,
+  isAdmin: false,
   
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setUser: (user) => set({ user, isAuthenticated: !!user, isAdmin: isAdminEmail(user?.email) }),
   
   setToken: (token) => {
     if (token) {
@@ -43,15 +46,15 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (token && userStr) {
         try {
           const user = JSON.parse(userStr);
-          set({ user, token, isAuthenticated: true, isInitialized: true });
+          set({ user, token, isAuthenticated: true, isInitialized: true, isAdmin: isAdminEmail(user?.email) });
         } catch (error) {
           console.error('Failed to parse user data:', error);
           localStorage.removeItem('access_token');
           localStorage.removeItem('user');
-          set({ isInitialized: true });
+          set({ isInitialized: true, isAdmin: false });
         }
       } else {
-        set({ isInitialized: true });
+        set({ isInitialized: true, isAdmin: false });
       }
     }
   },

@@ -184,6 +184,33 @@ export const adminApi = {
   
   searchUsers: (params?: { query?: string; user_type?: string; limit?: number; offset?: number }) =>
     api.get('/admin/users/search', { params }),
+
+  listUsers: (params?: { search?: string; user_type?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/users', { params }),
+
+  getUserDetail: (userId: string) =>
+    api.get(`/admin/users/${userId}`),
+
+  blockUser: (userId: string, data?: { reason?: string }) =>
+    api.post(`/admin/users/${userId}/block`, data ?? {}),
+
+  unblockUser: (userId: string) =>
+    api.post(`/admin/users/${userId}/unblock`, {}),
+
+  deleteUser: (userId: string) =>
+    api.delete(`/admin/users/${userId}`),
+
+  listMarketplaceLPs: (params?: { status?: string; search?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/marketplace/lps', { params }),
+
+  updateLPStatus: (lpId: string, data: { status: 'published' | 'archived'; reason?: string }) =>
+    api.post(`/admin/marketplace/lps/${lpId}/status`, data),
+
+  getPointAnalytics: (params?: { date_from?: string; date_to?: string; limit_days?: number }) =>
+    api.get('/admin/analytics/points', { params }),
+
+  getModerationLogs: (params?: { limit?: number }) =>
+    api.get('/admin/moderation/logs', { params }),
 };
 
 // AI API

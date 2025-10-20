@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { DASHBOARD_NAV_LINKS, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
 
 const POINT_PACKAGES = [
   { points: 1000, price: 1000, bonus: 0 },
@@ -23,7 +23,8 @@ const PAYMENT_METHODS = [
 
 export default function PointPurchasePage() {
   const router = useRouter();
-  const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
+  const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
+  const navLinks = getDashboardNavLinks({ isAdmin });
   const pathname = usePathname();
   const [pointBalance, setPointBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +95,7 @@ export default function PointPurchasePage() {
 
         <nav className="flex-1 p-3">
           <div className="space-y-0.5">
-            {DASHBOARD_NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               return (
                 <Link
@@ -162,7 +163,7 @@ export default function PointPurchasePage() {
 
         <div className="sm:hidden border-b border-slate-800 bg-slate-950/80">
           <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
-            {DASHBOARD_NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               return (
                 <Link

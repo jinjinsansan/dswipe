@@ -6,13 +6,14 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { DASHBOARD_NAV_LINKS, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
+  const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
   const pathname = usePathname();
   const [lps, setLps] = useState<any[]>([]);
+  const navLinks = getDashboardNavLinks({ isAdmin });
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -262,7 +263,7 @@ export default function DashboardPage() {
         {/* Navigation */}
         <nav className="flex-1 p-3">
           <div className="space-y-0.5">
-            {DASHBOARD_NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               return (
                 <Link
@@ -344,7 +345,7 @@ export default function DashboardPage() {
 
         <div className="sm:hidden border-b border-slate-800 bg-slate-950/80">
           <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
-            {DASHBOARD_NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               return (
                 <Link
