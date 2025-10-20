@@ -13,6 +13,7 @@ import type {
   AdminPointAnalyticsBreakdown,
   AdminUserDetail,
   AdminUserSummary,
+  AdminAnnouncement,
   ModerationEvent,
 } from '@/types';
 
@@ -20,6 +21,7 @@ const TABS = [
   { id: 'users', label: 'ユーザー管理', icon: '👥' },
   { id: 'marketplace', label: 'マーケット監視', icon: '🧭' },
   { id: 'analytics', label: 'ポイント分析', icon: '📈' },
+  { id: 'announcements', label: 'お知らせ管理', icon: '📰' },
   { id: 'logs', label: 'モデレーションログ', icon: '📜' },
 ] as const;
 
@@ -37,6 +39,17 @@ const formatDateTime = (value?: string | null) => {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
+  }).format(date);
+};
+
+const formatDate = (value?: string | null) => {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value ?? '-';
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
   }).format(date);
 };
 
@@ -64,11 +77,23 @@ type ModerationLogApiResponse = {
   data?: ModerationEvent[];
 };
 
+type AdminAnnouncementsApiResponse = {
+  data?: AdminAnnouncement[];
+  total?: number;
+};
+
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (isAxiosError<ApiErrorResponse>(error)) {
     return error.response?.data?.detail ?? fallback;
   }
   return fallback;
+};
+
+const defaultAnnouncementPublishedAt = () => {
+  const now = new Date();
+  now.setSeconds(0, 0);
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
 };
 
 export default function AdminPanelPage() {
@@ -102,8 +127,32 @@ export default function AdminPanelPage() {
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
 
+  const [announcements, setAnnouncements] = useState<AdminAnnouncement[]>([]);
+  const [announcementsLoading, setAnnouncementsLoading] = useState(false);
+  const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
+  const [announcementSaving, setAnnouncementSaving] = useState(false);
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
+  const [announcementTitle, setAnnouncementTitle] = useState('');
+  const [announcementSummary, setAnnouncementSummary] = useState('');
+  const [announcementBody, setAnnouncementBody] = useState('');
+  const [announcementPublishedAt, setAnnouncementPublishedAt] = useState(defaultAnnouncementPublishedAt());
+  const [announcementPublished, setAnnouncementPublished] = useState(true);
+  const [announcementHighlight, setAnnouncementHighlight] = useState(false);
+
   const [usersError, setUsersError] = useState<string | null>(null);
   const [userActionError, setUserActionError] = useState<string | null>(null);
+
+  const resetAnnouncementForm = () => {
+    setEditingAnnouncementId(null);
+    setAnnouncementTitle('');
+    setAnnouncementSummary('');
+    setAnnouncementBody('');
+    setAnnouncementPublishedAt(defaultAnnouncementPublishedAt());
+    setAnnouncementPublished(true);
+    setAnnouncementHighlight(false);
+    setAnnouncementsError(null);
+  };
+
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -125,6 +174,7 @@ export default function AdminPanelPage() {
           fetchMarketplace(),
           fetchAnalytics(),
           fetchLogs(),
+          fetchAnnouncements(),
         ]);
       } finally {
         setPageLoading(false);
@@ -220,6 +270,98 @@ export default function AdminPanelPage() {
       setLogsError(message);
     } finally {
       setLogsLoading(false);
+    }
+  };
+
+  const fetchAnnouncements = async () => {
+    setAnnouncementsLoading(true);
+    try {
+      const response = await adminApi.listAnnouncements({ limit: 50 });
+      const payload = response.data as AdminAnnouncementsApiResponse;
+      const rows = Array.isArray(payload.data) ? payload.data : [];
+      setAnnouncements(rows);
+      setAnnouncementsError(null);
+    } catch (error) {
+      const message = getErrorMessage(error, 'お知らせの取得に失敗しました');
+      console.error(error);
+      setAnnouncementsError(message);
+    } finally {
+      setAnnouncementsLoading(false);
+    }
+  };
+
+  const populateAnnouncementForm = (item: AdminAnnouncement) => {
+    setEditingAnnouncementId(item.id);
+    setAnnouncementTitle(item.title);
+    setAnnouncementSummary(item.summary);
+    setAnnouncementBody(item.body);
+    const publishedAt = new Date(item.published_at);
+    if (!Number.isNaN(publishedAt.getTime())) {
+      const local = new Date(publishedAt.getTime() - publishedAt.getTimezoneOffset() * 60000);
+      setAnnouncementPublishedAt(local.toISOString().slice(0, 16));
+    } else {
+      setAnnouncementPublishedAt(defaultAnnouncementPublishedAt());
+    }
+    setAnnouncementPublished(item.is_published);
+    setAnnouncementHighlight(item.highlight);
+    setAnnouncementsError(null);
+  };
+
+  const handleAnnouncementSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!announcementTitle.trim() || !announcementSummary.trim() || !announcementBody.trim()) {
+      setAnnouncementsError('タイトル・サマリー・本文は必須です');
+      return;
+    }
+    setAnnouncementSaving(true);
+    try {
+      const payload = {
+        title: announcementTitle.trim(),
+        summary: announcementSummary.trim(),
+        body: announcementBody,
+        published_at: announcementPublishedAt ? new Date(announcementPublishedAt).toISOString() : undefined,
+        is_published: announcementPublished,
+        highlight: announcementHighlight,
+      };
+      if (editingAnnouncementId) {
+        await adminApi.updateAnnouncement(editingAnnouncementId, payload);
+      } else {
+        await adminApi.createAnnouncement(payload);
+      }
+      await fetchAnnouncements();
+      resetAnnouncementForm();
+      setAnnouncementsError(null);
+    } catch (error) {
+      const message = getErrorMessage(error, editingAnnouncementId ? 'お知らせの更新に失敗しました' : 'お知らせの作成に失敗しました');
+      console.error(error);
+      setAnnouncementsError(message);
+    } finally {
+      setAnnouncementSaving(false);
+    }
+  };
+
+  const handleAnnouncementEdit = (item: AdminAnnouncement) => {
+    populateAnnouncementForm(item);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAnnouncementDelete = async (announcementId: string) => {
+    const target = announcements.find((item) => item.id === announcementId);
+    const confirmed = window.confirm(`${target?.title ?? 'お知らせ'}を削除しますか？`);
+    if (!confirmed) return;
+    setAnnouncementSaving(true);
+    try {
+      await adminApi.deleteAnnouncement(announcementId);
+      if (editingAnnouncementId === announcementId) {
+        resetAnnouncementForm();
+      }
+      await fetchAnnouncements();
+    } catch (error) {
+      const message = getErrorMessage(error, 'お知らせの削除に失敗しました');
+      console.error(error);
+      setAnnouncementsError(message);
+    } finally {
+      setAnnouncementSaving(false);
     }
   };
 
@@ -1282,6 +1424,192 @@ export default function AdminPanelPage() {
                   </div>
                 </>
               )}
+            </div>
+          )}
+
+          {activeTab === 'announcements' && (
+            <div className="space-y-6">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_40px_120px_-80px_rgba(15,23,42,0.9)]">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-white">お知らせコラム管理</h2>
+                    <p className="text-sm text-slate-400">
+                      ダッシュボード下部に掲載される公式アナウンスを作成・更新できます。顧客コミュニケーションの基点としてご活用ください。
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={resetAnnouncementForm}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                  >
+                    {editingAnnouncementId ? '新規作成モードに戻る' : '入力内容をクリア'}
+                  </button>
+                </div>
+
+                <form onSubmit={handleAnnouncementSubmit} className="space-y-5">
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-200">タイトル</label>
+                      <input
+                        type="text"
+                        value={announcementTitle}
+                        onChange={(event) => setAnnouncementTitle(event.target.value)}
+                        required
+                        maxLength={200}
+                        placeholder="例：年末年始サポート体制のご案内"
+                        className="w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-200">掲載日時</label>
+                      <input
+                        type="datetime-local"
+                        value={announcementPublishedAt}
+                        onChange={(event) => setAnnouncementPublishedAt(event.target.value)}
+                        className="w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                        required
+                      />
+                      <p className="mt-1 text-xs text-slate-500">配信日時を指定できます。未設定の場合は現在時刻で公開されます。</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-slate-200">サマリー</label>
+                    <input
+                      type="text"
+                      value={announcementSummary}
+                      onChange={(event) => setAnnouncementSummary(event.target.value)}
+                      required
+                      maxLength={255}
+                      placeholder="例：【重要】 新料金プラン提供のお知らせ"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                    />
+                    <p className="mt-1 text-xs text-slate-500">ダッシュボードでは投稿日とサマリーのみ表示され、クリックで本文をモーダル表示します。</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-slate-200">本文</label>
+                    <textarea
+                      value={announcementBody}
+                      onChange={(event) => setAnnouncementBody(event.target.value)}
+                      required
+                      rows={8}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                      placeholder="本文を入力してください。改行で段落を構成できます。"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <label className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-sm text-slate-200">
+                      <input
+                        type="checkbox"
+                        checked={announcementPublished}
+                        onChange={(event) => setAnnouncementPublished(event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500"
+                      />
+                      公開中として表示
+                    </label>
+                    <label className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-sm text-slate-200">
+                      <input
+                        type="checkbox"
+                        checked={announcementHighlight}
+                        onChange={(event) => setAnnouncementHighlight(event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                      />
+                      トップで強調表示
+                    </label>
+                    <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+                      <p className="font-semibold text-slate-200">運用メモ</p>
+                      <p className="mt-1">強調表示をオンにすると、ダッシュボードで企業のお知らせとして目立つピル表示が追加されます。</p>
+                    </div>
+                  </div>
+
+                  {announcementsError && (
+                    <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-200">
+                      {announcementsError}
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <button
+                      type="submit"
+                      disabled={announcementSaving}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/40 transition-colors hover:bg-blue-700 disabled:opacity-60"
+                    >
+                      {editingAnnouncementId ? 'お知らせを更新する' : 'お知らせを公開する'}
+                    </button>
+                    {editingAnnouncementId && (
+                      <button
+                        type="button"
+                        onClick={resetAnnouncementForm}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/70 px-6 py-3 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                      >
+                        新規作成に戻る
+                      </button>
+                    )}
+                    <span className="text-xs text-slate-500">保存すると即座に利用者ダッシュボードに反映されます。</span>
+                  </div>
+                </form>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-0">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/60">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">公開済み／下書き一覧</h3>
+                    <p className="text-sm text-slate-400">投稿日とサマリーを一覧で確認できます。各項目から素早く編集・削除が可能です。</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fetchAnnouncements}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                  >
+                    🔄 最新情報を取得
+                  </button>
+                </div>
+
+                {announcementsLoading ? (
+                  <div className="px-6 py-10 text-center text-sm text-slate-400">読み込み中です...</div>
+                ) : announcements.length === 0 ? (
+                  <div className="px-6 py-12 text-center text-sm text-slate-400">
+                    まだお知らせは登録されていません。企業の取り組みやメンテナンス情報を発信しましょう。
+                  </div>
+                ) : (
+                  <div className="divide-y divide-slate-800/60">
+                    {announcements.map((announcement) => (
+                      <div key={announcement.id} className="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-semibold text-slate-400">{formatDate(announcement.published_at)}</span>
+                            {!announcement.is_published && (
+                              <span className="inline-flex items-center rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-200">Draft</span>
+                            )}
+                            {announcement.highlight && announcement.is_published && (
+                              <span className="inline-flex items-center rounded-full border border-blue-500/50 bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-200">Highlight</span>
+                            )}
+                          </div>
+                          <p className="text-sm font-semibold text-white truncate">{announcement.title}</p>
+                          <p className="text-xs text-slate-400 truncate">{announcement.summary}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => handleAnnouncementEdit(announcement)}
+                            className="inline-flex items-center justify-center gap-1 rounded-full border border-blue-500/50 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-100 hover:bg-blue-500/20"
+                          >
+                            編集
+                          </button>
+                          <button
+                            onClick={() => handleAnnouncementDelete(announcement.id)}
+                            disabled={announcementSaving}
+                            className="inline-flex items-center justify-center gap-1 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/20 disabled:opacity-60"
+                          >
+                            削除
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

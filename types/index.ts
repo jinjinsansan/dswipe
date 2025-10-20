@@ -259,3 +259,27 @@ export interface ModerationEvent {
   performed_by_email?: string | null;
   created_at: string;
 }
+
+export interface AdminAnnouncement {
+  id: string;
+  title: string;
+  summary: string;
+  body: string;
+  is_published: boolean;
+  highlight: boolean;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string | null;
+  created_by_email?: string | null;
+  created_by_username?: string | null;
+}
+
+export interface DashboardAnnouncement {
+  id: string;
+  title: string;
+  summary: string;
+  body: string;
+  highlight: boolean;
+  published_at: string;
+}

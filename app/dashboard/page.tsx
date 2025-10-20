@@ -4,9 +4,21 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { lpApi, pointsApi, productApi, authApi } from '@/lib/api';
+import { lpApi, pointsApi, productApi, authApi, announcementApi } from '@/lib/api';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import type { DashboardAnnouncement } from '@/types';
+
+const formatAnnouncementDate = (value?: string) => {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -26,6 +38,10 @@ export default function DashboardPage() {
   const [usernameError, setUsernameError] = useState<string>('');
   const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [announcements, setAnnouncements] = useState<DashboardAnnouncement[]>([]);
+  const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
+  const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
+  const [activeAnnouncement, setActiveAnnouncement] = useState<DashboardAnnouncement | null>(null);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -38,8 +54,29 @@ export default function DashboardPage() {
     fetchData();
   }, [isAuthenticated, isInitialized]);
 
+  const loadAnnouncements = async () => {
+    setAnnouncementsLoading(true);
+    try {
+      const response = await announcementApi.list({ limit: 6 });
+      const payload = response.data as { data?: DashboardAnnouncement[] } | DashboardAnnouncement[] | undefined;
+      const rows = Array.isArray((payload as any)?.data)
+        ? ((payload as any).data as DashboardAnnouncement[])
+        : Array.isArray(payload)
+        ? (payload as DashboardAnnouncement[])
+        : [];
+      setAnnouncements(rows);
+      setAnnouncementsError(null);
+    } catch (error) {
+      console.error('Failed to fetch announcements:', error);
+      setAnnouncementsError('お知らせの取得に失敗しました');
+    } finally {
+      setAnnouncementsLoading(false);
+    }
+  };
+
   const fetchData = async () => {
     try {
+      const announcementPromise = loadAnnouncements();
       const [lpsResponse, pointsResponse, productsResponse] = await Promise.all([
         lpApi.list(),
         pointsApi.getBalance(),
@@ -107,6 +144,8 @@ export default function DashboardPage() {
         sum + (p.total_sales || 0) * (p.price_in_points || 0), 0
       );
       setTotalSales(sales);
+
+      await announcementPromise;
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -861,8 +900,106 @@ export default function DashboardPage() {
               </div>
             </>
           )}
+
+          <section className="mt-12">
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.8)]">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Ｄ－swipe Corporate News</p>
+                  <h2 className="mt-2 text-xl sm:text-2xl font-semibold text-white">Ｄ－swipe からのお知らせ</h2>
+                  <p className="mt-1 text-sm text-slate-400">プロダクト更新情報やメンテナンス予定などをリアルタイムでお届けします。</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadAnnouncements}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                >
+                  🔄 最新情報に更新
+                </button>
+              </div>
+
+              {announcementsError && (
+                <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {announcementsError}
+                </div>
+              )}
+
+              {announcementsLoading ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, index) => (
+                    <div key={index} className="animate-pulse rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4">
+                      <div className="h-3 w-24 rounded bg-slate-800/60" />
+                      <div className="mt-3 h-4 w-64 rounded bg-slate-800/60" />
+                    </div>
+                  ))}
+                </div>
+              ) : announcements.length === 0 ? (
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-10 text-center text-sm text-slate-400">
+                  現在表示できるお知らせはありません。最新情報は順次こちらに掲載されます。
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {announcements.map((announcement) => (
+                    <button
+                      key={announcement.id}
+                      type="button"
+                      onClick={() => setActiveAnnouncement(announcement)}
+                      className="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4 text-left transition-colors hover:border-blue-500/60 hover:bg-slate-900/70"
+                    >
+                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                        <span className="font-semibold tracking-wide">{formatAnnouncementDate(announcement.published_at)}</span>
+                        {announcement.highlight && (
+                          <span className="inline-flex items-center rounded-full border border-blue-500/50 bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-200">
+                            重点トピック
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm font-semibold text-white line-clamp-1">{announcement.title}</p>
+                      <p className="mt-1 text-xs text-slate-400 line-clamp-1">{announcement.summary}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </main>
+
+      {activeAnnouncement && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
+          <div className="max-w-2xl w-full rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.9)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Corporate Update</p>
+                <h3 className="mt-2 text-xl font-semibold text-white">{activeAnnouncement.title}</h3>
+                <p className="mt-1 text-xs text-slate-400">{formatAnnouncementDate(activeAnnouncement.published_at)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveAnnouncement(null)}
+                className="rounded-full border border-slate-700 bg-slate-900/80 p-2 text-slate-200 hover:border-slate-500"
+                aria-label="閉じる"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-5 max-h-[60vh] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/60 px-5 py-4 text-sm leading-relaxed text-slate-200 whitespace-pre-wrap">
+              {activeAnnouncement.body}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setActiveAnnouncement(null)}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-5 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

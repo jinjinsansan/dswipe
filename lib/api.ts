@@ -211,6 +211,26 @@ export const adminApi = {
 
   getModerationLogs: (params?: { limit?: number }) =>
     api.get('/admin/moderation/logs', { params }),
+
+  listAnnouncements: (params?: { include_unpublished?: boolean; limit?: number; offset?: number }) =>
+    api.get('/admin/announcements', { params }),
+
+  createAnnouncement: (data: { title: string; summary: string; body: string; published_at?: string; is_published?: boolean; highlight?: boolean }) =>
+    api.post('/admin/announcements', data),
+
+  updateAnnouncement: (announcementId: string, data: { title?: string; summary?: string; body?: string; published_at?: string; is_published?: boolean; highlight?: boolean }) =>
+    api.put(`/admin/announcements/${announcementId}`, data),
+
+  deleteAnnouncement: (announcementId: string) =>
+    api.delete(`/admin/announcements/${announcementId}`),
+};
+
+export const announcementApi = {
+  list: (params?: { limit?: number }) =>
+    api.get('/announcements', { params }),
+
+  get: (announcementId: string) =>
+    api.get(`/announcements/${announcementId}`),
 };
 
 // AI API
