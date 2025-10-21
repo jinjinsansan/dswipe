@@ -22,6 +22,89 @@ import {
   GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
+type GalleryStat = {
+  label: string;
+  value: string;
+  accent?: string;
+};
+
+type GalleryItem = {
+  title: string;
+  category: string;
+  palette: string;
+  description: string;
+  heroImage?: string;
+  collage?: string[];
+  stats?: GalleryStat[];
+  variant?: string;
+};
+
+const GalleryCard = ({ item }: { item: GalleryItem }) => {
+  return (
+    <div className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]">
+      <div className="relative aspect-[9/16] overflow-hidden">
+        {item.heroImage ? (
+          <Image
+            src={item.heroImage}
+            alt={`${item.title} showcase`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            sizes="(min-width: 1280px) 320px, (min-width: 1024px) 28vw, (min-width: 768px) 40vw, 100vw"
+            priority={item.title === 'Executive Briefing'}
+          />
+        ) : null}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-40`} />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/35 to-transparent" />
+          <div className="absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.55),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-80 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4),transparent_55%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.14)_1px,transparent_1px)]" style={{ backgroundSize: '42px 42px' }} />
+        </div>
+        <div className="relative z-10 flex h-full flex-col gap-6 p-8">
+          <div className="space-y-4">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.32em] text-white/80">
+              {item.category}
+            </span>
+            <div>
+              <h4 className="text-2xl font-semibold text-white drop-shadow-md">{item.title}</h4>
+              <p className="mt-3 text-sm leading-relaxed text-white/75">{item.description}</p>
+            </div>
+          </div>
+
+          {item.collage?.length ? (
+            <div className="grid grid-cols-3 gap-3">
+              {item.collage.slice(0, 3).map((src) => (
+                <div key={src} className="relative h-16 overflow-hidden rounded-xl border border-white/15 bg-white/10">
+                  <Image src={src} alt={`${item.title} detail`} fill className="object-cover" sizes="96px" />
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {item.stats?.length ? (
+            <div className="space-y-2">
+              {item.stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/10/60 px-4 py-3 backdrop-blur-sm"
+                >
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/60">{stat.label}</span>
+                    <p className={`text-lg font-semibold text-white drop-shadow-sm ${stat.accent ?? ''}`}>{stat.value}</p>
+                  </div>
+                  <div className="h-10 w-10 rounded-full border border-white/20 bg-white/10" />
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="mt-auto h-12 rounded-full border border-white/20 bg-white/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   const [selectedFaq, setSelectedFaq] = useState<number>(0);
   const [currentVideo, setCurrentVideo] = useState(0);
@@ -309,7 +392,8 @@ export default function Home() {
       stats: [
         { label: 'プロジェクト実績', value: '500+', accent: 'text-blue-200/90' },
         { label: '顧客満足度', value: '98%', accent: 'text-blue-200/90' }
-      ]
+      ],
+      variant: 'executive'
     },
     {
       title: 'Luxe Beauty Retreat',
@@ -317,23 +401,27 @@ export default function Home() {
       palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]',
       description: '高級美容プロダクトの販売用LP。グロッシーなモジュールと限定プランバッジを持たせた、ローズ×パープルのラグジュアリーなトーン。',
       heroImage: '/gallery/luxe-beauty.jpg',
-      collage: ['/gallery/luxe-beauty-treatment.jpg', '/gallery/luxe-beauty-massage.jpg', '/gallery/luxe-beauty-premium.jpg']
+      collage: ['/gallery/luxe-beauty-treatment.jpg', '/gallery/luxe-beauty-massage.jpg', '/gallery/luxe-beauty-premium.jpg'],
+      stats: [{ label: '顧客評価', value: '4.9 / 5.0', accent: 'text-rose-100/90' }],
+      variant: 'beauty'
     },
     {
       title: 'Next-Growth Academy',
       category: '教育',
       palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]',
       description: '教育業界向けのアカデミーLP。学習ロードマップや講師紹介、成果指標をインジケーター付きで提示するリッチなレイアウト。',
-      heroImage: '/gallery/next-growth.svg',
-      stats: [{ label: '受講生', value: '50,000+', accent: 'text-indigo-100/90' }]
+      heroImage: '/gallery/next-growth.jpg',
+      stats: [{ label: '受講生', value: '50,000+', accent: 'text-indigo-100/90' }],
+      variant: 'academy'
     },
     {
       title: 'Prime Investment Deck',
       category: '投資',
       palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]',
       description: '投資家向けピッチデッキ。実績チャートやフィードバックをガラスカードで配置し、コンプライアンス情報を含んだ信頼重視のデザイン。',
-      heroImage: '/gallery/digital-launch.jpg',
-      stats: [{ label: '投資家評価', value: 'A+', accent: 'text-emerald-100/90' }]
+      heroImage: '/gallery/prime-investment.jpg',
+      stats: [{ label: '投資家評価', value: 'A+', accent: 'text-emerald-100/90' }],
+      variant: 'investment'
     },
     {
       title: 'Momentum Fitness Lab',
@@ -341,7 +429,8 @@ export default function Home() {
       palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]',
       description: 'フィットネスブランドのオンラインラボ。トレーナー紹介とプログラム比較、スケジュールチップで構成するダイナミックな画面。',
       heroImage: '/gallery/momentum-fitness.jpg',
-      stats: [{ label: '新規LP/日', value: '120', accent: 'text-amber-200/90' }]
+      stats: [{ label: '新規LP / 日', value: '120', accent: 'text-amber-200/90' }],
+      variant: 'fitness'
     },
     {
       title: 'Digital Launch Studio',
@@ -349,7 +438,8 @@ export default function Home() {
       palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]',
       description: 'スタートアップの自動化プラットフォーム。製品UIを前面に出し、機能グリッドと自動化フロー図をハイライト。',
       heroImage: '/gallery/digital-launch.jpg',
-      stats: [{ label: 'ARR', value: '¥1.2B', accent: 'text-cyan-200/90' }]
+      stats: [{ label: 'ARR', value: '¥1.2B', accent: 'text-cyan-200/90' }],
+      variant: 'digital'
     }
   ];
 
@@ -849,71 +939,7 @@ export default function Home() {
                 variants={fadeInUp}
               className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]"
               >
-                <div className="relative aspect-[9/16] overflow-hidden">
-                  {item.heroImage ? (
-                    <Image
-                      src={item.heroImage}
-                      alt={`${item.title} showcase`}
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      sizes="(min-width: 1280px) 320px, (min-width: 1024px) 28vw, (min-width: 768px) 40vw, 100vw"
-                      priority={item.title === 'Executive Briefing'}
-                    />
-                  ) : null}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-45`} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/30 to-transparent" />
-                    <div className="absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.5),transparent_40%)]" />
-                    <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-80 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4),transparent_55%)]" />
-                    <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.14)_1px,transparent_1px)]" style={{ backgroundSize: '42px 42px' }} />
-                  </div>
-                  <div className="relative z-10 flex h-full flex-col p-8">
-                    <div className="space-y-4">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs uppercase tracking-[0.32em]">
-                        {item.category}
-                      </span>
-                      <h4 className="text-2xl font-semibold text-white drop-shadow-md">
-                        {item.title}
-                      </h4>
-                      <p className="text-sm text-white/75 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                    {item.collage?.length ? (
-                      <div className="mt-6 grid grid-cols-3 gap-3">
-                        {item.collage.slice(0, 3).map((src) => (
-                          <div key={src} className="relative h-16 overflow-hidden rounded-xl border border-white/15 bg-white/10">
-                            <Image src={src} alt={`${item.title} detail`} fill className="object-cover" sizes="96px" />
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-                    {item.stats?.length ? (
-                      <div className="mt-6 space-y-2">
-                        {item.stats.map((stat) => (
-                          <div
-                            key={stat.label}
-                            className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/10/60 px-4 py-3 backdrop-blur-sm"
-                          >
-                            <div className="flex flex-col">
-                              <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/60">
-                                {stat.label}
-                              </span>
-                              <span className={`text-xl font-semibold text-white drop-shadow-sm ${stat.accent ?? ''}`}>
-                                {stat.value}
-                              </span>
-                            </div>
-                            <div className="h-10 w-10 rounded-full border border-white/20 bg-white/10" />
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-                    <div className="mt-auto flex items-center justify-between pt-8 text-white/80 text-sm font-medium">
-                      <span>詳細を見る</span>
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-transform duration-500 group-hover:translate-x-1">→</span>
-                    </div>
-                  </div>
-                </div>
+                <GalleryCard item={item} />
               </motion.div>
             ))}
           </motion.div>
