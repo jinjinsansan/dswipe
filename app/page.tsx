@@ -489,30 +489,16 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* ===== 1. ヒーローセクション（ビデオ背景） ===== */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* ビデオ背景 - 2つを交互に表示 */}
+        {/* ビデオ背景 - pixta */}
         <div className="absolute inset-0 bg-slate-900">
-          {/* ビデオ1 */}
           <video 
-            key="video-1"
             autoPlay 
             loop 
             muted 
             playsInline 
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${currentVideo === 0 ? 'opacity-40' : 'opacity-0'}`}
+            className="absolute inset-0 w-full h-full object-cover opacity-40"
           >
-            <source src="/videos/hero-bg-1.mp4" type="video/mp4" />
-          </video>
-          
-          {/* ビデオ2 */}
-          <video 
-            key="video-2"
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${currentVideo === 1 ? 'opacity-40' : 'opacity-0'}`}
-          >
-            <source src="/videos/hero-bg-2.mp4" type="video/mp4" />
+            <source src="/videos/pixta.mp4" type="video/mp4" />
           </video>
         </div>
         

@@ -185,9 +185,5 @@ body {
     color: #ffffff !important;
   }
 
-  .shadow-[0_30px_90px_-60px_rgba(15\,23\,42\,0.8)] { box-shadow: 0 30px 90px -60px rgba(30, 64, 175, 0.2) !important; }
-  .shadow-[0_20px_60px_-40px_rgba(14\,116\,244\,0.35)] { box-shadow: 0 20px 60px -40px rgba(37, 99, 235, 0.2) !important; }
-  .shadow-[0_40px_120px_-60px_rgba(15\,23\,42\,0.9)] { box-shadow: 0 40px 120px -60px rgba(30, 64, 175, 0.25) !important; }
-  .shadow-[0_30px_80px_-40px_rgba(15\,23\,42\,0.8)] { box-shadow: 0 30px 80px -40px rgba(30, 64, 175, 0.2) !important; }
-  .shadow-[0_40px_120px_-80px_rgba(15\,23\,42\,0.9)] { box-shadow: 0 40px 120px -80px rgba(30, 64, 175, 0.22) !important; }
+
 }
