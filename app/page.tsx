@@ -492,12 +492,29 @@ export default function Home() {
         {/* ビデオ背景 - pixta */}
         <div className="absolute inset-0 bg-slate-900">
           <video 
+            id="hero-video"
             autoPlay 
             loop 
             muted 
             playsInline 
             preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
+            onLoadedData={(e) => {
+              const video = e.currentTarget;
+              video.play().catch(err => console.log('Video play failed:', err));
+            }}
+            onStalled={(e) => {
+              const video = e.currentTarget;
+              console.log('Video stalled, attempting to resume...');
+              video.load();
+              video.play().catch(err => console.log('Resume failed:', err));
+            }}
+            onSuspend={(e) => {
+              const video = e.currentTarget;
+              if (video.paused && video.readyState > 2) {
+                video.play().catch(err => console.log('Auto-resume failed:', err));
+              }
+            }}
           >
             <source src="/videos/pixta.mp4" type="video/mp4" />
             お使いのブラウザは動画タグをサポートしていません。
@@ -514,7 +531,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
                 情報には鮮度がある。
               </span>
@@ -523,8 +540,8 @@ export default function Home() {
                 1分でLP公開。
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-12 drop-shadow-lg">
-              スワイプ型LP作成プラットフォーム<br className="md:hidden" />で、今すぐ情報商材を販売
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 drop-shadow-lg px-4">
+              スワイプ型LP作成プラットフォームで、<br className="sm:hidden" />今すぐ情報商材を販売
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
