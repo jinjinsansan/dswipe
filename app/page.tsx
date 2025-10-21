@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -22,6 +22,16 @@ import {
   GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
+import executiveBriefing from '@/public/gallery/executive-briefing.jpg';
+import luxeBeauty from '@/public/gallery/luxe-beauty.jpg';
+import luxeBeautyTreatment from '@/public/gallery/luxe-beauty-treatment.jpg';
+import luxeBeautyMassage from '@/public/gallery/luxe-beauty-massage.jpg';
+import luxeBeautyPremium from '@/public/gallery/luxe-beauty-premium.jpg';
+import nextGrowth from '@/public/gallery/next-growth.jpg';
+import primeInvestment from '@/public/gallery/prime-investment.jpg';
+import momentumFitness from '@/public/gallery/momentum-fitness.jpg';
+import digitalLaunch from '@/public/gallery/digital-launch.jpg';
+
 type GalleryStat = {
   label: string;
   value: string;
@@ -33,8 +43,8 @@ type GalleryItem = {
   category: string;
   palette: string;
   description: string;
-  heroImage?: string;
-  collage?: string[];
+  heroImage?: StaticImageData;
+  collage?: StaticImageData[];
   stats?: GalleryStat[];
   variant?: string;
 };
@@ -74,9 +84,9 @@ const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean
 
           {item.collage?.length ? (
             <div className="grid grid-cols-3 gap-3">
-              {item.collage.slice(0, 3).map((src) => (
-                <div key={src} className="relative h-16 overflow-hidden rounded-xl border border-white/15 bg-white/10">
-                  <Image src={src} alt={`${item.title} detail`} fill className="object-cover" sizes="96px" />
+              {item.collage.slice(0, 3).map((image) => (
+                <div key={image.src} className="relative h-16 overflow-hidden rounded-xl border border-white/15 bg-white/10">
+                  <Image src={image} alt={`${item.title} detail`} fill className="object-cover" sizes="96px" />
                 </div>
               ))}
             </div>
@@ -389,7 +399,7 @@ export default function Home() {
       category: 'コンサル',
       palette: 'from-[#0F172A] via-[#1E3A8A] to-[#0F172A]',
       description: '企業トップ向けの戦略ブリーフィングLP。指標カードとKPIをガラス質感で配置し、上質なネイビーのグラデを基調にした構成。',
-      heroImage: '/gallery/executive-briefing.jpg',
+      heroImage: executiveBriefing,
       stats: [
         { label: 'プロジェクト実績', value: '500+', accent: 'text-blue-200/90' },
         { label: '顧客満足度', value: '98%', accent: 'text-blue-200/90' }
@@ -401,8 +411,8 @@ export default function Home() {
       category: '美容',
       palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]',
       description: '高級美容プロダクトの販売用LP。グロッシーなモジュールと限定プランバッジを持たせた、ローズ×パープルのラグジュアリーなトーン。',
-      heroImage: '/gallery/luxe-beauty.jpg',
-      collage: ['/gallery/luxe-beauty-treatment.jpg', '/gallery/luxe-beauty-massage.jpg', '/gallery/luxe-beauty-premium.jpg'],
+      heroImage: luxeBeauty,
+      collage: [luxeBeautyTreatment, luxeBeautyMassage, luxeBeautyPremium],
       stats: [{ label: '顧客評価', value: '4.9 / 5.0', accent: 'text-rose-100/90' }],
       variant: 'beauty'
     },
@@ -411,7 +421,7 @@ export default function Home() {
       category: '教育',
       palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]',
       description: '教育業界向けのアカデミーLP。学習ロードマップや講師紹介、成果指標をインジケーター付きで提示するリッチなレイアウト。',
-      heroImage: '/gallery/next-growth.jpg',
+      heroImage: nextGrowth,
       stats: [{ label: '受講生', value: '50,000+', accent: 'text-indigo-100/90' }],
       variant: 'academy'
     },
@@ -420,7 +430,7 @@ export default function Home() {
       category: '投資',
       palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]',
       description: '投資家向けピッチデッキ。実績チャートやフィードバックをガラスカードで配置し、コンプライアンス情報を含んだ信頼重視のデザイン。',
-      heroImage: '/gallery/prime-investment.jpg',
+      heroImage: primeInvestment,
       stats: [{ label: '投資家評価', value: 'A+', accent: 'text-emerald-100/90' }],
       variant: 'investment'
     },
@@ -429,7 +439,7 @@ export default function Home() {
       category: '健康',
       palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]',
       description: 'フィットネスブランドのオンラインラボ。トレーナー紹介とプログラム比較、スケジュールチップで構成するダイナミックな画面。',
-      heroImage: '/gallery/momentum-fitness.jpg',
+      heroImage: momentumFitness,
       stats: [{ label: '新規LP / 日', value: '120', accent: 'text-amber-200/90' }],
       variant: 'fitness'
     },
@@ -438,7 +448,7 @@ export default function Home() {
       category: 'スタートアップ',
       palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]',
       description: 'スタートアップの自動化プラットフォーム。製品UIを前面に出し、機能グリッドと自動化フロー図をハイライト。',
-      heroImage: '/gallery/digital-launch.jpg',
+      heroImage: digitalLaunch,
       stats: [{ label: 'ARR', value: '¥1.2B', accent: 'text-cyan-200/90' }],
       variant: 'digital'
     }
