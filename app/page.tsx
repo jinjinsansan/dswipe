@@ -50,33 +50,21 @@ type GalleryItem = {
 };
 
 const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean }) => {
-  // Debug: Log image data
-  if (typeof window !== 'undefined' && !item.heroImage) {
-    console.error(`[GalleryCard] Missing heroImage for: ${item.title}`);
-  }
-  
   return (
     <div className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]">
       <div className="relative aspect-[9/16] overflow-hidden">
         {item.heroImage ? (
-          <Image
-            src={item.heroImage}
+          <img
+            src={item.heroImage.src}
             alt={`${item.title} showcase`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            sizes="(min-width: 1280px) 320px, (min-width: 1024px) 28vw, (min-width: 768px) 40vw, 100vw"
-            priority={priority}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             loading={priority ? 'eager' : 'lazy'}
-            onError={(e) => console.error(`[Image] Failed to load: ${item.title}`, e)}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-500/20 text-white text-sm">
-            Missing image: {item.title}
+          <div className="absolute inset-0 flex items-center justify-center bg-red-500 text-white">
+            画像なし: {item.title}
           </div>
         )}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
-        </div>
         <div className="relative z-10 flex h-full flex-col gap-6 p-8">
           <div className="space-y-4">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.32em] text-white/80">
@@ -93,22 +81,6 @@ const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean
               {item.collage.slice(0, 3).map((image) => (
                 <div key={image.src} className="relative h-16 overflow-hidden rounded-xl border border-white/15 bg-white/10">
                   <Image src={image} alt={`${item.title} detail`} fill className="object-cover" sizes="96px" />
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {item.stats?.length ? (
-            <div className="space-y-2">
-              {item.stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/10/60 px-4 py-3 backdrop-blur-sm"
-                >
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/60">{stat.label}</span>
-                    <p className={`text-lg font-semibold text-white drop-shadow-sm ${stat.accent ?? ''}`}>{stat.value}</p>
-                  </div>
                 </div>
               ))}
             </div>
@@ -424,7 +396,7 @@ export default function Home() {
       category: '教育',
       palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]',
       description: '教育業界向けのアカデミーLP。学習ロードマップや講師紹介、成果指標をインジケーター付きで提示するリッチなレイアウト。',
-      heroImage: nextGrowth,
+      heroImage: executiveBriefing,
       stats: [{ label: '受講生', value: '50,000+', accent: 'text-indigo-100/90' }],
       variant: 'academy'
     },
@@ -433,7 +405,7 @@ export default function Home() {
       category: '投資',
       palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]',
       description: '投資家向けピッチデッキ。実績チャートやフィードバックをガラスカードで配置し、コンプライアンス情報を含んだ信頼重視のデザイン。',
-      heroImage: primeInvestment,
+      heroImage: luxeBeauty,
       stats: [{ label: '投資家評価', value: 'A+', accent: 'text-emerald-100/90' }],
       variant: 'investment'
     },
@@ -442,7 +414,7 @@ export default function Home() {
       category: '健康',
       palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]',
       description: 'フィットネスブランドのオンラインラボ。トレーナー紹介とプログラム比較、スケジュールチップで構成するダイナミックな画面。',
-      heroImage: momentumFitness,
+      heroImage: executiveBriefing,
       stats: [{ label: '新規LP / 日', value: '120', accent: 'text-amber-200/90' }],
       variant: 'fitness'
     },
@@ -451,7 +423,7 @@ export default function Home() {
       category: 'スタートアップ',
       palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]',
       description: 'スタートアップの自動化プラットフォーム。製品UIを前面に出し、機能グリッドと自動化フロー図をハイライト。',
-      heroImage: digitalLaunch,
+      heroImage: luxeBeauty,
       stats: [{ label: 'ARR', value: '¥1.2B', accent: 'text-cyan-200/90' }],
       variant: 'digital'
     }
