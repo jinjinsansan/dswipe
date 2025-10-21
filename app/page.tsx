@@ -441,12 +441,13 @@ export default function Home() {
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <motion.div {...fadeInUp} className="mb-16">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-              <div>
+              <div className="max-w-2xl">
                 <p className="uppercase text-xs tracking-[0.4em] text-slate-400/80 mb-4">
                   Solution
                 </p>
                 <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                  <span className="text-slate-400">D-swipe</span> なら、すべて解決
+                  <span className="text-slate-400">D-swipe</span>
+                  <span className="ml-2 inline-block align-baseline">なら、すべて解決</span>
                 </h2>
               </div>
               <div className="max-w-xl">
@@ -462,12 +463,12 @@ export default function Home() {
               {...fadeInUp}
               className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 p-8 md:p-10 backdrop-blur-xl shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
-                <div className="max-w-md">
+              <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] items-start">
+                <div className="space-y-6">
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/80 text-xs tracking-[0.3em] uppercase mb-6">
                     Flagship
                   </div>
-                  <h3 className="text-3xl md:text-4xl font-semibold text-white mb-6 leading-snug">
+                  <h3 className="text-3xl md:text-4xl font-semibold text-white leading-snug">
                     LP制作の初速を <span className="text-blue-200">AI</span> が引き上げる
                   </h3>
                   <p className="text-slate-300 leading-relaxed">
