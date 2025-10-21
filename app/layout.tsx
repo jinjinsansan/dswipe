@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Sawarabi_Gothic, Zen_Maru_Gothic, Roboto } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import NextTopLoader from 'nextjs-toploader';
 
 // オプション1: Noto Sans JP（現在使用中）- Google公式、企業サイトで最も使われている
 const notoSansJP = Noto_Sans_JP({
@@ -112,11 +112,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${fontConfig[ACTIVE_FONT].className} antialiased`}>
-        <ProgressBar
-          height="3px"
+        <NextTopLoader
           color="#3b82f6"
-          options={{ showSpinner: false }}
-          shallowRouting
+          height={3}
+          showSpinner={false}
+          shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
         />
         <AuthProvider>
           {children}
