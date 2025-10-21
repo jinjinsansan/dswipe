@@ -948,7 +948,6 @@ export default function Home() {
               <motion.div
                 key={item.title}
                 variants={fadeInUp}
-              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]"
               >
                 <GalleryCard item={item} priority={index < 6} />
               </motion.div>
