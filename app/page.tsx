@@ -138,8 +138,8 @@ export default function Home() {
     {
       icon: ChartBarIcon,
       value: '10,000+',
-      label: '累計作成LP数',
-      detail: '1日あたり平均 120 件の新規LPが公開されています。'
+      label: 'グループでのユーザー数',
+      detail: 'Dグループはサービスを拡大します。'
     },
     {
       icon: ClockIcon,
