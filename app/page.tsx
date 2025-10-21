@@ -150,25 +150,26 @@ export default function Home() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {[
-              { icon: PaintBrushIcon, text: 'デザインを\n考えないといけない', color: 'red', bgColor: 'bg-red-50' },
-              { icon: GlobeAltIcon, text: 'ドメインを\n取得しないといけない', color: 'orange', bgColor: 'bg-orange-50' },
-              { icon: CreditCardIcon, text: '決済機能を\nつけないといけない', color: 'amber', bgColor: 'bg-amber-50' },
-              { icon: CurrencyYenIcon, text: '手数料が\n高いサイトが多い', color: 'rose', bgColor: 'bg-rose-50' },
-              { icon: ClockIcon, text: 'すぐに販売したいのに\n準備に時間がかかる', color: 'purple', bgColor: 'bg-purple-50' },
+              { icon: PaintBrushIcon, text: 'デザインを考えないといけない', iconBg: 'bg-red-500', iconColor: 'text-white' },
+              { icon: GlobeAltIcon, text: 'ドメインを取得しないといけない', iconBg: 'bg-orange-500', iconColor: 'text-white' },
+              { icon: CreditCardIcon, text: '決済機能をつけないといけない', iconBg: 'bg-amber-500', iconColor: 'text-white' },
+              { icon: CurrencyYenIcon, text: '手数料が高いサイトが多い', iconBg: 'bg-rose-500', iconColor: 'text-white' },
+              { icon: ClockIcon, text: 'すぐに販売したいのに準備に時間がかかる', iconBg: 'bg-purple-500', iconColor: 'text-white' },
             ].map((item, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className={`${item.bgColor} p-8 rounded-2xl border-2 border-${item.color}-200 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden group`}
+                className="bg-white p-8 rounded-xl border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all group"
               >
-                <div className={`absolute top-0 right-0 w-32 h-32 bg-${item.color}-100/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500`} />
-                <div className="relative">
-                  <div className={`inline-flex p-4 rounded-xl bg-white/50 mb-4`}>
-                    <item.icon className={`w-8 h-8 text-${item.color}-600`} />
+                <div className="flex items-start gap-4">
+                  <div className={`flex-shrink-0 w-14 h-14 rounded-2xl ${item.iconBg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <item.icon className={`w-7 h-7 ${item.iconColor}`} />
                   </div>
-                  <p className="text-lg font-semibold text-slate-900 whitespace-pre-line leading-relaxed">
-                    {item.text}
-                  </p>
+                  <div className="flex-1 pt-1">
+                    <p className="text-base font-medium text-slate-700 leading-relaxed">
+                      {item.text}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -199,26 +200,30 @@ export default function Home() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {[
-              { icon: BoltIcon, title: 'LP作成がわずか1分', desc: 'AIが質問に答えるだけで自動生成', color: 'blue', gradient: 'from-blue-500 to-blue-600' },
-              { icon: ShieldCheckIcon, title: 'ドメイン不要', desc: '専用URLを即座に発行', color: 'emerald', gradient: 'from-emerald-500 to-emerald-600' },
-              { icon: CreditCardIcon, title: 'ポイント決済機能付き', desc: '複雑な決済設定は不要', color: 'purple', gradient: 'from-purple-500 to-purple-600' },
-              { icon: CurrencyYenIcon, title: '手数料最安値', desc: '業界最安3%の手数料', color: 'green', gradient: 'from-green-500 to-green-600' },
-              { icon: RocketLaunchIcon, title: '即座に情報商材を販売可能', desc: '審査なし・待ち時間ゼロ', color: 'orange', gradient: 'from-orange-500 to-orange-600' },
+              { icon: BoltIcon, title: 'LP作成がわずか1分', desc: 'AIが質問に答えるだけで自動生成', gradient: 'from-blue-500 to-blue-600' },
+              { icon: ShieldCheckIcon, title: 'ドメイン不要', desc: '専用URLを即座に発行', gradient: 'from-emerald-500 to-emerald-600' },
+              { icon: CreditCardIcon, title: 'ポイント決済機能付き', desc: '複雑な決済設定は不要', gradient: 'from-purple-500 to-purple-600' },
+              { icon: CurrencyYenIcon, title: '手数料最安値', desc: '業界最安3%の手数料', gradient: 'from-green-500 to-green-600' },
+              { icon: RocketLaunchIcon, title: '即座に情報商材を販売可能', desc: '審査なし・待ち時間ゼロ', gradient: 'from-orange-500 to-orange-600' },
             ].map((item, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 group"
+                className="bg-white p-8 rounded-xl border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all group"
               >
-                <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${item.gradient} mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <CheckCircleIcon className="w-8 h-8 text-white" />
+                <div className="flex items-start gap-5">
+                  <div className={`flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <item.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-slate-600">
-                  {item.desc}
-                </p>
               </motion.div>
             ))}
           </motion.div>
