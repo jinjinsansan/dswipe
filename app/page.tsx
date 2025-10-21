@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   SparklesIcon, 
@@ -23,6 +23,16 @@ import {
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [currentVideo, setCurrentVideo] = useState(0);
+  
+  // ビデオを10秒ごとに切り替え
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentVideo((prev) => (prev === 0 ? 1 : 0));
+    }, 10000); // 10秒ごとに切り替え
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // アニメーション設定
   const fadeInUp = {
@@ -42,12 +52,31 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* ===== 1. ヒーローセクション（ビデオ背景） ===== */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* ビデオ背景（仮：グラデーション） */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
-          {/* TODO: 実際のビデオを用意したら以下を有効化 */}
-          {/* <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40">
-            <source src="/videos/hero-bg.mp4" type="video/mp4" />
-          </video> */}
+        {/* ビデオ背景 - 2つを交互に表示 */}
+        <div className="absolute inset-0 bg-slate-900">
+          {/* ビデオ1 */}
+          <video 
+            key="video-1"
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${currentVideo === 0 ? 'opacity-40' : 'opacity-0'}`}
+          >
+            <source src="/videos/hero-bg-1.mp4" type="video/mp4" />
+          </video>
+          
+          {/* ビデオ2 */}
+          <video 
+            key="video-2"
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${currentVideo === 1 ? 'opacity-40' : 'opacity-0'}`}
+          >
+            <source src="/videos/hero-bg-2.mp4" type="video/mp4" />
+          </video>
         </div>
         
         {/* オーバーレイ */}
