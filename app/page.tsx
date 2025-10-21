@@ -65,11 +65,7 @@ const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean
           />
         ) : null}
         <div className="absolute inset-0 pointer-events-none">
-          <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-40`} />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/35 to-transparent" />
-          <div className="absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.55),transparent_45%)]" />
-          <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-80 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4),transparent_55%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.14)_1px,transparent_1px)]" style={{ backgroundSize: '42px 42px' }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
         </div>
         <div className="relative z-10 flex h-full flex-col gap-6 p-8">
           <div className="space-y-4">
@@ -103,13 +99,10 @@ const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean
                     <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/60">{stat.label}</span>
                     <p className={`text-lg font-semibold text-white drop-shadow-sm ${stat.accent ?? ''}`}>{stat.value}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-full border border-white/20 bg-white/10" />
                 </div>
               ))}
             </div>
           ) : null}
-
-          <div className="mt-auto h-12 rounded-full border border-white/20 bg-white/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </div>
       </div>
     </div>
