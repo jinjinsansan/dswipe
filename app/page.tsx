@@ -80,7 +80,7 @@ export default function Home() {
         </div>
         
         {/* オーバーレイ */}
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/70" />
         
         {/* コンテンツ */}
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
