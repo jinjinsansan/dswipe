@@ -131,49 +131,86 @@ export default function Home() {
       </section>
 
       {/* ===== 2. 問題提起セクション ===== */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              従来のLP作成、<br className="md:hidden" />こんな悩みありませんか？
-            </h2>
-            <p className="text-lg text-slate-600">
-              情報には鮮度がありスピードが求められるにも関わらず...
-            </p>
-          </motion.div>
+      <section className="relative py-20 bg-slate-50 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
+          <div className="flex flex-col lg:flex-row lg:items-stretch gap-12">
+            <motion.div {...fadeInUp} className="w-full lg:w-5/12">
+              <div className="relative pl-6">
+                <div className="absolute left-0 top-1 h-full w-px bg-gradient-to-b from-blue-500/60 via-blue-500/20 to-transparent" />
+                <p className="uppercase tracking-[0.35em] text-xs font-semibold text-slate-400 mb-6">
+                  Pain Points
+                </p>
+                <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-snug">
+                  従来のLP制作では、<br className="md:hidden" />重要な瞬間を逃していませんか？
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed">
+                  情報の鮮度が命であるにも関わらず、制作工程が複雑で時間ばかりが過ぎていく──。そんな課題を抱える企業が後を絶ちません。
+                </p>
+              </div>
+            </motion.div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {[
-              { icon: PaintBrushIcon, text: 'デザインを考えないといけない', iconBg: 'bg-red-500', iconColor: 'text-white' },
-              { icon: GlobeAltIcon, text: 'ドメインを取得しないといけない', iconBg: 'bg-orange-500', iconColor: 'text-white' },
-              { icon: CreditCardIcon, text: '決済機能をつけないといけない', iconBg: 'bg-amber-500', iconColor: 'text-white' },
-              { icon: CurrencyYenIcon, text: '手数料が高いサイトが多い', iconBg: 'bg-rose-500', iconColor: 'text-white' },
-              { icon: ClockIcon, text: 'すぐに販売したいのに準備に時間がかかる', iconBg: 'bg-purple-500', iconColor: 'text-white' },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="bg-white p-8 rounded-xl border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 w-14 h-14 rounded-2xl ${item.iconBg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                    <item.icon className={`w-7 h-7 ${item.iconColor}`} />
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true, margin: '-100px' }}
+              className="w-full lg:w-7/12 grid grid-cols-1 gap-6"
+            >
+              {[
+                {
+                  icon: PaintBrushIcon,
+                  title: 'デザイン設計に時間を奪われる',
+                  description: 'LPの構成やビジュアルをゼロから整えるのは非効率で、差別化にも限界があります。',
+                },
+                {
+                  icon: GlobeAltIcon,
+                  title: 'ドメイン・サーバー整備が面倒',
+                  description: '取得・設定・SSL対応まで社内で段取りを組む必要があり、初動が遅れます。',
+                },
+                {
+                  icon: CreditCardIcon,
+                  title: '決済機能の実装ハードル',
+                  description: '安全な決済フローを自前で準備するには高い技術コストとセキュリティの知見が求められます。',
+                },
+                {
+                  icon: CurrencyYenIcon,
+                  title: '販売手数料がかさむ',
+                  description: '既存プラットフォームの高い手数料に依存すると利益率が大幅に削られます。',
+                },
+                {
+                  icon: ClockIcon,
+                  title: 'スピード感が阻害される',
+                  description: 'ローンチに至るまでの調整項目が多く、旬な情報を届けるタイミングを逃してしまいます。',
+                },
+              ].map((item, index) => (
+                <motion.div key={index} variants={fadeInUp} className="relative group">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-50 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+                  <div className="relative rounded-2xl border border-slate-200/70 bg-white/95 p-8 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_32px_70px_-35px_rgba(15,23,42,0.55)]">
+                    <div className="flex items-start gap-6">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
+                        <item.icon className="w-7 h-7" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-[11px] tracking-[0.32em] uppercase text-slate-400">
+                            ISSUE {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <div className="h-px flex-1 bg-slate-200/70" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 pt-1">
-                    <p className="text-base font-medium text-slate-700 leading-relaxed">
-                      {item.text}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
