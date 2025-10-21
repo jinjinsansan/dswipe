@@ -39,7 +39,7 @@ type GalleryItem = {
   variant?: string;
 };
 
-const GalleryCard = ({ item }: { item: GalleryItem }) => {
+const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean }) => {
   return (
     <div className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]">
       <div className="relative aspect-[9/16] overflow-hidden">
@@ -50,7 +50,8 @@ const GalleryCard = ({ item }: { item: GalleryItem }) => {
             fill
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             sizes="(min-width: 1280px) 320px, (min-width: 1024px) 28vw, (min-width: 768px) 40vw, 100vw"
-            priority={item.title === 'Executive Briefing'}
+            priority={priority}
+            loading={priority ? 'eager' : 'lazy'}
           />
         ) : null}
         <div className="absolute inset-0 pointer-events-none">
@@ -933,13 +934,13 @@ export default function Home() {
             viewport={{ once: true, margin: '-100px' }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {galleryShowcase.map((item) => (
+            {galleryShowcase.map((item, index) => (
               <motion.div
                 key={item.title}
                 variants={fadeInUp}
               className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]"
               >
-                <GalleryCard item={item} />
+                <GalleryCard item={item} priority={index < 6} />
               </motion.div>
             ))}
           </motion.div>
