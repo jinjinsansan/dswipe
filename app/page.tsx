@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  SparklesIcon, 
-  ClockIcon, 
-  CreditCardIcon, 
+import {
+  SparklesIcon,
+  ClockIcon,
+  CreditCardIcon,
   BoltIcon,
   CheckCircleIcon,
-  XCircleIcon,
   ChartBarIcon,
   PaintBrushIcon,
   PhotoIcon,
@@ -23,7 +22,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function Home() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [selectedFaq, setSelectedFaq] = useState<number>(0);
   const [currentVideo, setCurrentVideo] = useState(0);
   
   // ビデオを10秒ごとに切り替え
@@ -48,6 +47,211 @@ export default function Home() {
     whileInView: { transition: { staggerChildren: 0.1 } },
     viewport: { once: true }
   };
+
+  const solutionHighlights = [
+    {
+      icon: BoltIcon,
+      label: 'Speed',
+      title: 'LP作成がわずか1分',
+      description: 'AIアシスタントがヒアリングしながら最適な構成を即時生成。試作品づくりの時間を大幅に短縮します。',
+      cardClass: 'bg-gradient-to-br from-blue-50 via-white to-white border border-blue-100/60',
+      iconClass: 'bg-gradient-to-br from-blue-600 to-indigo-500',
+      accentClass: 'text-blue-600'
+    },
+    {
+      icon: ShieldCheckIcon,
+      label: 'Security',
+      title: 'ドメイン・SSL完備',
+      description: '煩雑なドメイン取得やSSL設定は不要。企業水準のセキュリティで即日運用が可能です。',
+      cardClass: 'bg-gradient-to-br from-slate-50 via-white to-white border border-slate-200/70',
+      iconClass: 'bg-gradient-to-br from-slate-900 to-slate-700',
+      accentClass: 'text-slate-700'
+    },
+    {
+      icon: CreditCardIcon,
+      label: 'Payment',
+      title: 'ポイント決済を標準搭載',
+      description: 'カード・銀行振込・コンビニ決済をカバー。自社での PCI DSS 対応は不要です。',
+      cardClass: 'bg-gradient-to-br from-purple-50 via-white to-white border border-purple-100/60',
+      iconClass: 'bg-gradient-to-br from-purple-600 to-fuchsia-500',
+      accentClass: 'text-purple-600'
+    },
+    {
+      icon: CurrencyYenIcon,
+      label: 'Profit',
+      title: '業界最安3%の手数料',
+      description: '売上が発生したときだけ 3% をお支払い。高い利益率を維持したまま拡張できます。',
+      cardClass: 'bg-gradient-to-br from-emerald-50 via-white to-white border border-emerald-100/60',
+      iconClass: 'bg-gradient-to-br from-emerald-500 to-teal-500',
+      accentClass: 'text-emerald-600'
+    },
+    {
+      icon: RocketLaunchIcon,
+      label: 'Launch',
+      title: '審査なしで即リリース',
+      description: '社内承認を待つことなく、その日のうちにローンチ。旬な情報発信に対応します。',
+      cardClass: 'bg-gradient-to-br from-orange-50 via-white to-white border border-orange-100/60',
+      iconClass: 'bg-gradient-to-br from-orange-500 to-rose-500',
+      accentClass: 'text-orange-600'
+    }
+  ];
+
+  const statsMetrics = [
+    {
+      icon: ChartBarIcon,
+      value: '10,000+',
+      label: '累計作成LP数',
+      detail: '1日あたり平均 120 件の新規LPが公開されています。'
+    },
+    {
+      icon: ClockIcon,
+      value: '1.2 分',
+      label: '平均制作時間',
+      detail: '入力から公開までの平均所要時間。最速 47 秒の事例も。'
+    },
+    {
+      icon: CurrencyYenIcon,
+      value: '3 %',
+      label: '販売手数料',
+      detail: '固定費ゼロ。売上が発生したタイミングのみ課金します。'
+    }
+  ];
+
+  const featureTimeline = [
+    {
+      icon: SparklesIcon,
+      tag: 'AI自動生成',
+      title: 'ヒアリングに答えるだけで下地が完成',
+      description: '商品概要・ターゲット・訴求ポイントを入力すると、AIが構成案をその場で提案。コピーも自動生成されるため、ゼロから書き起こす必要はありません。',
+      bullets: ['3ステップの質問フロー', '戦略的なセクション構成', '生成内容は即プレビュー']
+    },
+    {
+      icon: PaintBrushIcon,
+      tag: 'デザインコントロール',
+      title: 'ブランドに合わせた演出を瞬時に反映',
+      description: 'カラーパレット／タイポグラフィ／コンポーネントのレイアウトを自由に設定可能。全11段階のシェードが自動生成され、統一感あるトーンに仕上がります。',
+      bullets: ['ライブプレビュー編集', 'アクセントカラー自動展開', '企業フォントにも対応']
+    },
+    {
+      icon: PhotoIcon,
+      tag: 'メディアライブラリ',
+      title: '画像・動画アセットを一元管理',
+      description: 'ドラッグ＆ドロップでアップロードすると、自動で複数デバイス向けに最適化。LP間での使い回しもライブラリからワンクリックです。',
+      bullets: ['容量無制限のクラウド保存', '自動リサイズ＆圧縮', 'LP間での差し替えが即時反映']
+    },
+    {
+      icon: DevicePhoneMobileIcon,
+      tag: 'スワイプ体験',
+      title: 'SNSネイティブ世代に刺さる体験設計',
+      description: '縦横のスワイプ操作に最適化したUX。シームレスなアニメーションとストーリーテリングで、平均滞在時間が 2.5 倍に伸びています。',
+      bullets: ['モバイルファースト設計', 'レスポンシブ表示を自動調整', 'スクロール追従型CTA']
+    }
+  ];
+
+  const galleryShowcase = [
+    { title: 'Executive Briefing', category: 'コンサル', palette: 'from-[#0F172A] via-[#1E3A8A] to-[#0F172A]' },
+    { title: 'Luxe Beauty Retreat', category: '美容', palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]' },
+    { title: 'Next-Growth Academy', category: '教育', palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]' },
+    { title: 'Prime Investment Deck', category: '投資', palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]' },
+    { title: 'Momentum Fitness Lab', category: '健康', palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]' },
+    { title: 'Digital Launch Studio', category: 'スタートアップ', palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]' }
+  ];
+
+  const testimonialVoices = [
+    {
+      name: '田中 健太',
+      role: '情報商材クリエイター',
+      comment: 'WordPress での制作から乗り換えて、ローンチまでのリードタイムが 1/10 に短縮されました。市場投入のスピード感が全く違います。'
+    },
+    {
+      name: '佐藤 美咲',
+      role: 'オンラインコーチ',
+      comment: 'テキストもデザインもガイドしてくれるので、制作未経験でも安心。スマホからのコンバージョン率が顕著に向上しました。'
+    },
+    {
+      name: '山田 太郎',
+      role: 'デジタルマーケター',
+      comment: '手数料 3% でこのクオリティは破格です。複数LPをA/Bテストする運用にベストフィットでした。'
+    }
+  ];
+
+  const flowSteps = [
+    {
+      icon: ShieldCheckIcon,
+      step: 'STEP 01',
+      title: 'アカウント登録',
+      meta: '30秒で完了',
+      description: 'メールアドレスと基本情報だけでスタート。すぐに管理画面へアクセスできます。',
+      accent: {
+        ring: 'ring-1 ring-blue-400/30',
+        icon: 'bg-gradient-to-br from-blue-500 to-blue-600',
+        text: 'text-blue-500'
+      }
+    },
+    {
+      icon: SparklesIcon,
+      step: 'STEP 02',
+      title: 'LP作成',
+      meta: '平均1.2分',
+      description: 'AIガイドに沿って入力するだけ。配色やイメージ画像も同時に設定できます。',
+      accent: {
+        ring: 'ring-1 ring-indigo-400/30',
+        icon: 'bg-gradient-to-br from-indigo-500 to-purple-500',
+        text: 'text-indigo-500'
+      }
+    },
+    {
+      icon: RocketLaunchIcon,
+      step: 'STEP 03',
+      title: '公開・集客',
+      meta: 'URL即発行',
+      description: '生成された専用URLをSNSやメールで共有。スワイプ体験で訴求力を高めます。',
+      accent: {
+        ring: 'ring-1 ring-rose-400/30',
+        icon: 'bg-gradient-to-br from-rose-500 to-pink-500',
+        text: 'text-rose-500'
+      }
+    },
+    {
+      icon: CurrencyYenIcon,
+      step: 'STEP 04',
+      title: '売上管理',
+      meta: '即日入金対応',
+      description: 'ポイント決済で売上を一元管理。売掛リスクなく収益化を加速します。',
+      accent: {
+        ring: 'ring-1 ring-emerald-400/30',
+        icon: 'bg-gradient-to-br from-emerald-500 to-teal-500',
+        text: 'text-emerald-500'
+      }
+    }
+  ];
+
+  const faqItems = [
+    {
+      question: '本当に1分でLP作成できますか？',
+      answer: 'はい。AIの質問に答えるだけで構成案とコピーまで自動生成されます。画像や細かな文言を調整しても 5〜10 分程度で公開できます。'
+    },
+    {
+      question: '審査は本当にありませんか？',
+      answer: 'ありません。アカウント登録直後からLP作成・公開が可能です。プロダクトの鮮度を損ないません。'
+    },
+    {
+      question: '手数料3%は本当ですか？他に費用はかかりますか？',
+      answer: '販売手数料は 3% のみです。月額費用・初期費用・ドメイン費用は一切不要で、売上が発生した時点のみ課金されます。'
+    },
+    {
+      question: 'どのような商材を販売できますか？',
+      answer: 'オンライン講座、電子書籍、コンサルティング、会員制コンテンツなど、デジタルコンテンツ全般にご利用いただけます。'
+    },
+    {
+      question: 'スマホでも作成できますか？',
+      answer: 'はい。スマホ・タブレットからも管理画面へアクセスでき、レスポンシブデザインに完全対応しています。'
+    },
+    {
+      question: '決済方法は何が使えますか？',
+      answer: 'ポイント制を採用しており、クレジットカード・銀行振込・コンビニ決済に対応。販売者への入金もスムーズです。'
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -215,285 +419,273 @@ export default function Home() {
       </section>
 
       {/* ===== 3. ソリューションセクション ===== */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                D-swipe
-              </span>
-              なら、すべて解決
-            </h2>
-            <p className="text-lg text-slate-600">
-              面倒な準備は一切不要。今すぐ始められます。
-            </p>
+      <section className="relative py-24 bg-slate-950 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.25),transparent_60%)]" />
+          <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.2),transparent_65%)]" />
+          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(120deg, rgba(148,163,184,0.15) 1px, transparent 1px)', backgroundSize: '38px 38px' }} />
+        </div>
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <motion.div {...fadeInUp} className="mb-16">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+              <div>
+                <p className="uppercase text-xs tracking-[0.4em] text-slate-400/80 mb-4">
+                  Solution
+                </p>
+                <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                  <span className="text-slate-400">D-swipe</span> なら、すべて解決
+                </h2>
+              </div>
+              <div className="max-w-xl">
+                <p className="text-slate-300 leading-relaxed border-l border-slate-700/70 pl-6">
+                  LP制作の分断されたプロセスをシームレスに統合。設計・デザイン・決済・公開まで、ワンストップで完結する企業向けプラットフォームです。
+                </p>
+              </div>
+            </div>
           </motion.div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {[
-              { icon: BoltIcon, title: 'LP作成がわずか1分', desc: 'AIが質問に答えるだけで自動生成', gradient: 'from-blue-500 to-blue-600' },
-              { icon: ShieldCheckIcon, title: 'ドメイン不要', desc: '専用URLを即座に発行', gradient: 'from-emerald-500 to-emerald-600' },
-              { icon: CreditCardIcon, title: 'ポイント決済機能付き', desc: '複雑な決済設定は不要', gradient: 'from-purple-500 to-purple-600' },
-              { icon: CurrencyYenIcon, title: '手数料最安値', desc: '業界最安3%の手数料', gradient: 'from-green-500 to-green-600' },
-              { icon: RocketLaunchIcon, title: '即座に情報商材を販売可能', desc: '審査なし・待ち時間ゼロ', gradient: 'from-orange-500 to-orange-600' },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="bg-white p-8 rounded-xl border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all group"
-              >
-                <div className="flex items-start gap-5">
-                  <div className={`flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                    <item.icon className="w-8 h-8 text-white" />
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <motion.div
+              {...fadeInUp}
+              className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 p-8 md:p-10 backdrop-blur-xl shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
+            >
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
+                <div className="max-w-md">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/80 text-xs tracking-[0.3em] uppercase mb-6">
+                    Flagship
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {item.desc}
-                    </p>
+                  <h3 className="text-3xl md:text-4xl font-semibold text-white mb-6 leading-snug">
+                    LP制作の初速を <span className="text-blue-200">AI</span> が引き上げる
+                  </h3>
+                  <p className="text-slate-300 leading-relaxed">
+                    情報入力から公開までの時間を最小化。AIによる構成生成とリアルタイムプレビューにより、意思決定を中断させません。
+                  </p>
+                </div>
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                      <BoltIcon className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.28em] text-blue-200/80 mb-1">Speed</p>
+                      <p className="text-white text-lg font-medium">LP作成がわずか1分</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                      Q&A に回答するだけで構成案とコピーを同時生成
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                      プレビューと編集が同一画面で完結
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 col-span-2">
+                      生成結果はブランドトーンに合わせて自動補正
+                    </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true }}
+              className="lg:col-span-2 grid grid-cols-1 gap-6"
+            >
+              {solutionHighlights.slice(1).map((item) => (
+                <motion.div key={item.title} variants={fadeInUp} className={`rounded-3xl p-7 md:p-8 backdrop-blur-md shadow-[0px_24px_70px_-45px_rgba(15,23,42,0.65)] ${item.cardClass}`}>
+                  <div className="flex items-start gap-6">
+                    <div className={`h-12 w-12 md:h-14 md:w-14 rounded-xl flex items-center justify-center text-white shadow-lg ${item.iconClass}`}>
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                      <span className={`text-xs uppercase tracking-[0.32em] font-semibold ${item.accentClass} block mb-2`}>{item.label}</span>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-3">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ===== 4. 数字で見るD-swipe ===== */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
+      <section className="relative py-24 bg-slate-950 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.25),transparent_65%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.12)_1px,transparent_1px)]" style={{ backgroundSize: '46px 46px' }} />
         </div>
-        
+
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              数字で見るD-swipe
-            </h2>
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 mb-16">
+            <div>
+              <p className="uppercase text-xs tracking-[0.4em] text-slate-400/80 mb-4">Metrics</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                数字で見る <span className="text-emerald-300">D-swipe</span>
+              </h2>
+            </div>
+            <p className="max-w-lg text-slate-300 leading-relaxed border-l border-emerald-500/20 pl-6">
+              実際の導入企業・個人事業主の運用データにもとづく KPI。高速なローンチと高い利益率を両立します。
+            </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={staggerContainer}
             initial="initial"
             whileInView="whileInView"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            viewport={{ once: true, margin: '-120px' }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            {[
-              { number: '10,000+', label: '作成LP数', icon: ChartBarIcon },
-              { number: '1.2分', label: '平均制作時間', icon: ClockIcon },
-              { number: '3%', label: '業界最安手数料', icon: CurrencyYenIcon },
-            ].map((stat, index) => (
+            {statsMetrics.map((metric) => (
               <motion.div
-                key={index}
+                key={metric.label}
                 variants={fadeInUp}
-                className="text-center"
+                className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/10 backdrop-blur-2xl p-8 shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
               >
-                <div className="inline-flex p-4 rounded-full bg-white/10 backdrop-blur-sm mb-4">
-                  <stat.icon className="w-10 h-10 text-white" />
+                <div className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent blur-3xl" />
+                <div className="mb-6 inline-flex items-center gap-3 text-slate-200/90">
+                  <metric.icon className="w-7 h-7" />
+                  <span className="text-xs uppercase tracking-[0.28em]">INSIGHT</span>
                 </div>
-                <div className="text-6xl md:text-7xl font-bold text-white mb-2">
-                  {stat.number}
+                <div className="text-5xl md:text-6xl font-semibold text-white mb-3 tracking-tight">
+                  {metric.value}
                 </div>
-                <div className="text-xl text-blue-100">
-                  {stat.label}
-                </div>
+                <p className="text-sm font-medium uppercase tracking-[0.42em] text-emerald-300/80 mb-4">
+                  {metric.label}
+                </p>
+                <p className="text-sm text-slate-100/80 leading-relaxed">
+                  {metric.detail}
+                </p>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ===== 5. 機能詳細セクション（左右交互） ===== */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div {...fadeInUp} className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              圧倒的な使いやすさ
-            </h2>
-            <p className="text-lg text-slate-600">
-              初心者でもプロ級のLPが作れる4つの理由
-            </p>
-          </motion.div>
-
-          {/* 機能1: AIでLP自動生成 */}
-          <motion.div {...fadeInUp} className="grid md:grid-cols-2 gap-12 items-center mb-24">
+      {/* ===== 5. 機能詳細セクション ===== */}
+      <section className="py-24 bg-slate-50">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 mb-20">
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full font-semibold text-sm mb-6">
-                <SparklesIcon className="w-5 h-5" />
-                AI自動生成
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                AIの質問に答えると<br />基本的な型を作ってくれる
-              </h3>
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                商品名、ターゲット、訴求ポイントを入力するだけで、AIが最適なLP構成を自動生成。デザインの知識は一切不要です。
+              <p className="uppercase text-xs tracking-[0.4em] text-slate-400 mb-4">Capabilities</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+                圧倒的な使いやすさ
+              </h2>
+              <p className="text-lg text-slate-600 mt-4">
+                初心者でもプロ級のLPが作れる4つの理由
               </p>
-              <ul className="space-y-3">
-                {['3つの質問に答えるだけ', '業界特化のテンプレート', '心理学に基づいた構成'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700">
-                    <CheckCircleIcon className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-            <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 aspect-video flex items-center justify-center">
-              <div className="text-slate-400 text-center">
-                <SparklesIcon className="w-20 h-20 mx-auto mb-4" />
-                <p className="text-sm">AI生成デモGIF</p>
-              </div>
+            <div className="max-w-xl">
+              <p className="text-slate-600 leading-relaxed border-l border-slate-200 pl-6">
+                LP制作の全工程をワークフロー化し、迷いなく進行できるよう設計。各ステップで AI とエディタが伴走します。
+              </p>
             </div>
           </motion.div>
 
-          {/* 機能2: カラー&文字カスタマイズ */}
-          <motion.div {...fadeInUp} className="grid md:grid-cols-2 gap-12 items-center mb-24">
-            <div className="order-2 md:order-1 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 aspect-video flex items-center justify-center">
-              <div className="text-slate-400 text-center">
-                <PaintBrushIcon className="w-20 h-20 mx-auto mb-4" />
-                <p className="text-sm">カラーカスタマイズGIF</p>
-              </div>
-            </div>
-            <div className="order-1 md:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-full font-semibold text-sm mb-6">
-                <PaintBrushIcon className="w-5 h-5" />
-                完全カスタマイズ
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                カラーや文字も<br />自由自在にカスタマイズ
-              </h3>
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                ブランドカラーに合わせた配色、フォント選択、レイアウト調整まで。直感的なエディタで思い通りのデザインに。
-              </p>
-              <ul className="space-y-3">
-                {['ワンクリックでカラーテーマ変更', '11段階のシェード自動生成', 'リアルタイムプレビュー'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700">
-                    <CheckCircleIcon className="w-6 h-6 text-purple-500 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
-
-          {/* 機能3: 画像アップロード */}
-          <motion.div {...fadeInUp} className="grid md:grid-cols-2 gap-12 items-center mb-24">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full font-semibold text-sm mb-6">
-                <PhotoIcon className="w-5 h-5" />
-                簡単操作
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                お持ちの画像で<br />すぐにLP作成可能
-              </h3>
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                ドラッグ&ドロップで画像をアップロード。メディアライブラリで一元管理。複数のLPで使い回しも簡単。
-              </p>
-              <ul className="space-y-3">
-                {['ドラッグ&ドロップ対応', 'メディアライブラリで一元管理', '画像の差し替えも瞬時'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700">
-                    <CheckCircleIcon className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-8 aspect-video flex items-center justify-center">
-              <div className="text-slate-400 text-center">
-                <PhotoIcon className="w-20 h-20 mx-auto mb-4" />
-                <p className="text-sm">画像アップロードGIF</p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* 機能4: スライド型LP */}
-          <motion.div {...fadeInUp} className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1 bg-gradient-to-br from-orange-100 to-red-100 rounded-2xl p-8 aspect-video flex items-center justify-center">
-              <div className="text-slate-400 text-center">
-                <DevicePhoneMobileIcon className="w-20 h-20 mx-auto mb-4" />
-                <p className="text-sm">スワイプアニメーションGIF</p>
-              </div>
-            </div>
-            <div className="order-1 md:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-700 rounded-full font-semibold text-sm mb-6">
-                <DevicePhoneMobileIcon className="w-5 h-5" />
-                高訴求力
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                最も訴求効果が高い<br />スライド型LP
-              </h3>
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                ストーリー展開でユーザーを惹きつける縦・横スワイプ対応LP。SNSネイティブ世代に最適化された体験を提供。
-              </p>
-              <ul className="space-y-3">
-                {['縦・横スワイプ対応', 'モバイルファースト設計', '平均滞在時間2.5倍'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700">
-                    <CheckCircleIcon className="w-6 h-6 text-orange-500 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
+          <div className="relative pl-6 md:pl-12">
+            <div className="absolute left-3 md:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/30 via-slate-300/40 to-transparent" />
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true, margin: '-120px' }}
+              className="space-y-12"
+            >
+              {featureTimeline.map((feature) => (
+                <motion.div
+                  key={feature.title}
+                  variants={fadeInUp}
+                  className="relative rounded-3xl border border-slate-200 bg-white p-8 md:p-10 shadow-[0px_30px_80px_-50px_rgba(15,23,42,0.45)]"
+                >
+                  <div className="absolute -left-5 md:-left-7 top-10 h-10 w-10 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-slate-700" />
+                  </div>
+                  <div className="grid md:grid-cols-[minmax(220px,0.6fr)_1fr] gap-8 md:gap-12">
+                    <div>
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-600 uppercase text-[11px] tracking-[0.32em] font-semibold mb-4">
+                        {feature.tag}
+                      </span>
+                      <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-5 leading-snug">
+                        {feature.title}
+                      </h3>
+                      <p className="text-base text-slate-600 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {feature.bullets.map((bullet) => (
+                        <div key={bullet} className="rounded-2xl border border-slate-200/70 bg-slate-50 px-5 py-4 text-sm text-slate-700 leading-relaxed">
+                          {bullet}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="absolute left-2 md:left-5 top-10 -translate-x-1/2 h-0.5 w-8 bg-gradient-to-r from-blue-500/40 to-transparent" />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ===== 6. LPギャラリーセクション ===== */}
-      <section className="py-20 bg-slate-900">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              こんなLPが作れます
-            </h2>
-            <p className="text-lg text-slate-300">
-              カラフルで目を引く、プロフェッショナルなランディングページ
+      <section className="relative py-24 bg-slate-950 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.22),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(148,163,184,0.12)_1px,transparent_1px)]" style={{ backgroundSize: '48px 48px' }} />
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 mb-16">
+            <div>
+              <p className="uppercase text-xs tracking-[0.4em] text-slate-400/80 mb-4">Gallery</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                こんなLPが作れます
+              </h2>
+            </div>
+            <p className="max-w-xl text-slate-300 leading-relaxed border-l border-blue-400/20 pl-6">
+              企業ブランディングに寄り添ったプレミアムテンプレートをご用意。配色もタイポグラフィも自在に調整できます。
             </p>
           </motion.div>
 
-          {/* ギャラリーグリッド */}
-          <motion.div 
+          <motion.div
             variants={staggerContainer}
             initial="initial"
             whileInView="whileInView"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-100px' }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {[
-              { title: 'ビジネスコース', color: 'from-blue-500 to-blue-700', category: 'ビジネス' },
-              { title: '美容サロン', color: 'from-pink-500 to-rose-700', category: '美容' },
-              { title: 'オンライン講座', color: 'from-purple-500 to-purple-700', category: '教育' },
-              { title: '不動産投資', color: 'from-green-500 to-green-700', category: '投資' },
-              { title: 'フィットネス', color: 'from-orange-500 to-orange-700', category: '健康' },
-              { title: 'コンサルティング', color: 'from-indigo-500 to-indigo-700', category: 'コンサル' },
-            ].map((lp, index) => (
+            {galleryShowcase.map((item) => (
               <motion.div
-                key={index}
+                key={item.title}
                 variants={fadeInUp}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform shadow-2xl"
+                className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]"
               >
-                <div className={`aspect-[9/16] bg-gradient-to-br ${lp.color} p-8 flex flex-col justify-between`}>
-                  <div>
-                    <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-semibold mb-4">
-                      {lp.category}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-80`} />
+                  <div className="absolute inset-0 mix-blend-screen bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),transparent_45%)]" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-70 transition-opacity bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.35),transparent_60%)]" />
+                </div>
+                <div className="relative aspect-[9/16] p-8 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs uppercase tracking-[0.32em]">
+                      {item.category}
                     </span>
-                    <h4 className="text-2xl font-bold text-white">
-                      {lp.title}
+                    <h4 className="text-2xl font-semibold text-white drop-shadow-md">
+                      {item.title}
                     </h4>
                   </div>
-                  <div className="text-white/70 text-sm">
-                    タップして詳細を見る →
+                  <div className="text-white/80 text-sm font-medium">
+                    Showcase →
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                <div className="absolute inset-x-6 bottom-6 h-14 rounded-full border border-white/20 bg-white/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
               </motion.div>
             ))}
           </motion.div>
@@ -501,49 +693,50 @@ export default function Home() {
       </section>
 
       {/* ===== 7. お客様の声セクション ===== */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              お客様の声
-            </h2>
-            <p className="text-lg text-slate-600">
-              多くの方にご利用いただいています
+      <section className="relative py-24 bg-slate-50 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white to-transparent" />
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 mb-16">
+            <div>
+              <p className="uppercase text-xs tracking-[0.4em] text-slate-400 mb-4">Testimonials</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+                お客様の声
+              </h2>
+            </div>
+            <p className="max-w-lg text-slate-600 leading-relaxed border-l border-slate-200 pl-6">
+              実際に成果を出しているクリエイター・マーケターの声をご紹介します。
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={staggerContainer}
             initial="initial"
             whileInView="whileInView"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-100px' }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            {[
-              { name: '田中 健太', role: '情報商材クリエイター', comment: '今までWordPressで作っていましたが、D-swipeに変えてから作成時間が1/10に。審査待ちもないのでスピード勝負の情報商材に最適です。', rating: 5 },
-              { name: '佐藤 美咲', role: 'オンラインコーチ', comment: 'デザインの知識がなくても、AIが自動で作ってくれるので助かっています。スワイプ型なので、スマホユーザーの反応が特に良いです。', rating: 5 },
-              { name: '山田 太郎', role: 'デジタルマーケター', comment: '手数料3%は業界最安値。他社だと10%以上取られるので、利益率が全然違います。複数のLPを運用するなら圧倒的にお得。', rating: 5 },
-            ].map((testimonial, index) => (
+            {testimonialVoices.map((voice, index) => (
               <motion.div
-                key={index}
+                key={voice.name}
                 variants={fadeInUp}
-                className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg hover:shadow-xl transition-shadow"
+                className="relative rounded-3xl border border-slate-200 bg-white p-9 shadow-[0px_30px_90px_-60px_rgba(15,23,42,0.55)]"
               >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
+                <div className="absolute -top-7 left-10 h-14 w-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/30 flex items-center justify-center">
+                  <span className="text-white text-2xl font-semibold">“</span>
                 </div>
-                <p className="text-slate-700 mb-6 leading-relaxed">
-                  {testimonial.comment}
+                <div className="mt-7 text-xs uppercase tracking-[0.32em] text-blue-500/70 mb-5">
+                  Voice {String(index + 1).padStart(2, '0')}
+                </div>
+                <p className="text-slate-700 leading-relaxed mb-10">
+                  {voice.comment}
                 </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-400" />
+                <div className="flex items-center gap-5">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-slate-900 to-slate-700" />
                   <div>
-                    <div className="font-bold text-slate-900">{testimonial.name}</div>
-                    <div className="text-sm text-slate-500">{testimonial.role}</div>
+                    <div className="text-base font-semibold text-slate-900">{voice.name}</div>
+                    <div className="text-xs uppercase tracking-[0.28em] text-slate-400 mt-1">
+                      {voice.role}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -553,121 +746,129 @@ export default function Home() {
       </section>
 
       {/* ===== 8. スピード重視セクション（4ステップフロー） ===== */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              煩わしい審査は一切なし
-            </h2>
-            <p className="text-lg text-slate-600">
-              D-swipeはスピード重視。今すぐ販売を開始できます。
+      <section className="relative py-24 bg-white overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-slate-100 to-transparent" />
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
+            <div>
+              <p className="uppercase text-xs tracking-[0.4em] text-slate-400 mb-4">Workflow</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+                煩わしい審査は一切なし
+              </h2>
+            </div>
+            <p className="max-w-xl text-slate-600 leading-relaxed border-l border-slate-200 pl-6">
+              D-swipeはローンチスピードを最優先。仮説検証サイクルを止めずに次の打ち手へ進めます。
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={staggerContainer}
             initial="initial"
             whileInView="whileInView"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-120px' }}
             className="relative"
           >
-            {/* フローチャート */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-              {/* 接続線（デスクトップのみ） */}
-              <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 -translate-y-1/2 -z-10" />
-              
-              {[
-                { step: '01', title: 'アカウント登録', desc: '30秒で完了', icon: ShieldCheckIcon, color: 'blue' },
-                { step: '02', title: 'LP作成', desc: '1分で生成', icon: SparklesIcon, color: 'purple' },
-                { step: '03', title: '集客＆宣伝', desc: 'URLを共有', icon: RocketLaunchIcon, color: 'pink' },
-                { step: '04', title: '売上', desc: '即日入金可能', icon: CurrencyYenIcon, color: 'green' },
-              ].map((step, index) => (
-                <motion.div
-                  key={index}
-                  variants={fadeInUp}
-                  className="relative"
-                >
-                  <div className={`bg-white p-6 rounded-2xl border-2 border-${step.color}-200 shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 relative z-10`}>
-                    <div className={`inline-flex w-full justify-center p-4 rounded-xl bg-gradient-to-br from-${step.color}-400 to-${step.color}-600 mb-4 shadow-lg`}>
-                      <step.icon className="w-10 h-10 text-white" />
+            <div className="hidden md:block absolute left-[10%] right-[10%] top-1/2 h-px bg-gradient-to-r from-blue-200 via-slate-200 to-emerald-200" />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {flowSteps.map((step, index) => (
+                <motion.div key={step.step} variants={fadeInUp} className="relative">
+                  <div className={`rounded-3xl border border-slate-200 bg-white p-8 shadow-[0px_24px_80px_-60px_rgba(15,23,42,0.55)] ${step.accent.ring}`}>
+                    <div className={`inline-flex items-center justify-center h-16 w-16 rounded-2xl text-white mb-6 ${step.accent.icon} shadow-lg shadow-slate-900/15`}>
+                      <step.icon className="w-8 h-8" />
                     </div>
-                    <div className={`text-4xl font-bold text-${step.color}-600 mb-2 text-center`}>
+                    <p className={`text-xs uppercase tracking-[0.32em] font-semibold mb-3 ${step.accent.text}`}>
                       {step.step}
-                    </div>
-                    <h4 className="text-xl font-bold text-slate-900 mb-2 text-center">
+                    </p>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
                       {step.title}
-                    </h4>
-                    <p className="text-slate-600 text-center">
-                      {step.desc}
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-4">
+                      {step.meta}
+                    </p>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {step.description}
                     </p>
                   </div>
+                  {index < flowSteps.length - 1 && (
+                    <div className="hidden md:block absolute top-1/2 -right-3 translate-x-1/2 -translate-y-1/2">
+                      <div className="h-12 w-12 rounded-full border border-slate-200 bg-white shadow-md flex items-center justify中心">
+                        <ArrowRightIcon className="w-5 h-5 text-slate-400" />
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          <motion.div {...fadeInUp} className="text-center mt-12">
-            <p className="text-xl font-semibold text-slate-900 mb-2">
-              あらゆる業者、法人、個人問わずお使いいただけます
-            </p>
-            <p className="text-slate-600">
-              審査なし・待ち時間ゼロ・今すぐスタート
-            </p>
+          <motion.div {...fadeInUp} className="mt-16 text-center">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-slate-200 bg-white shadow-sm">
+              <CheckCircleIcon className="w-5 h-5 text-emerald-500" />
+              <p className="text-sm font-medium text-slate-600">
+                法人・個人事業主・副業クリエイター問わずお使いいただけます。審査待ちなしで即日開始。
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ===== 9. FAQセクション ===== */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              よくある質問
-            </h2>
-            <p className="text-lg text-slate-600">
-              お客様からよく寄せられる質問にお答えします
+      <section className="relative py-24 bg-slate-950 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.2),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.1)_1px,transparent_1px)]" style={{ backgroundSize: '42px 42px' }} />
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-16">
+            <div className="max-w-md">
+              <p className="uppercase text-xs tracking-[0.4em] text-blue-200/70 mb-4">FAQ</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                よくある質問
+              </h2>
+            </div>
+            <p className="max-w-xl text-blue-100/80 leading-relaxed border-l border-blue-400/20 pl-6">
+              導入前によくいただくご質問をまとめました。その他の疑問はサポートチームまでお気軽にご相談ください。
             </p>
           </motion.div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={{ once: true }}
-            className="space-y-4"
-          >
-            {[
-              { q: '本当に1分でLP作成できますか？', a: 'はい、可能です。AIの質問に答えるだけで基本的なLP構成が完成します。その後、画像やテキストのカスタマイズを含めても5-10分程度で完成します。' },
-              { q: '審査は本当にありませんか？', a: 'はい、一切ございません。アカウント登録後、すぐにLP作成と公開が可能です。スピード重視のため、煩わしい審査プロセスは設けておりません。' },
-              { q: '手数料3%は本当ですか？他に費用はかかりますか？', a: '販売手数料は3%のみです。月額費用、初期費用、ドメイン費用などは一切かかりません。売上が発生した場合のみ、3%の手数料をいただきます。' },
-              { q: 'どのような商材を販売できますか？', a: '情報商材全般に対応しています。オンライン講座、電子書籍、コンサルティング、会員制コンテンツなど、デジタルコンテンツであれば幅広く販売可能です。' },
-              { q: 'スマホでも作成できますか？', a: 'はい、スマホ・タブレットからもLPの作成と編集が可能です。レスポンシブデザインに完全対応しており、デバイスを問わず快適にご利用いただけます。' },
-              { q: '決済方法は何が使えますか？', a: 'ポイント制を採用しています。購入者はクレジットカード、銀行振込、コンビニ決済でポイントをチャージし、そのポイントで商材を購入します。販売者への入金は月末締め翌月払いです。' },
-            ].map((faq, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-lg"
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full p-6 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
-                >
-                  <span className="text-lg font-semibold text-slate-900 pr-4">
-                    {faq.q}
-                  </span>
-                  <ChevronDownIcon 
-                    className={`w-6 h-6 text-slate-400 flex-shrink-0 transition-transform ${openFaq === index ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {openFaq === index && (
-                  <div className="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                    {faq.a}
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid lg:grid-cols-[340px_minmax(0,1fr)] gap-10">
+            <motion.div
+              {...fadeInUp}
+              className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 md:p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.75)]"
+            >
+              <ul className="space-y-3 text-sm text-blue-100/80">
+                {faqItems.map((item, index) => (
+                  <li key={item.question}>
+                    <button
+                      onClick={() => setSelectedFaq(index)}
+                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10'}`}
+                    >
+                      <span className="text-xs uppercase tracking-[0.3em] block mb-2">
+                        Q{String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="text-base font-medium leading-relaxed">
+                        {item.question}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              {...fadeInUp}
+              className="rounded-3xl border border-white/10 bg-white/10 backdrop-blur-xl p-8 md:p-10 shadow-[0_40px_120px_-70px_rgba(15,23,42,0.75)]"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-blue-100/80 text-xs uppercase tracking-[0.32em] mb-6">
+                Answer
+              </div>
+              <h3 className="text-2xl font-semibold text-white mb-4 leading-snug">
+                {faqItems[selectedFaq].question}
+              </h3>
+              <p className="text-base text-blue-100/90 leading-relaxed">
+                {faqItems[selectedFaq].answer}
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -706,22 +907,56 @@ export default function Home() {
       </section>
 
       {/* ===== フッター ===== */}
-      <footer className="py-8 bg-slate-900">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-slate-400 text-sm">
-            © 2025 D-swipe. All rights reserved.
-          </p>
-          <p className="text-slate-500 text-xs mt-2">
-            Backend API:{' '}
-            <a 
-              href="https://swipelaunch-backend.onrender.com/docs" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-blue-400 hover:text-blue-300 hover:underline"
-            >
-              API Documentation
-            </a>
-          </p>
+      <footer className="relative bg-slate-950 text-slate-300 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.12)_1px,transparent_1px)]" style={{ backgroundSize: '44px 44px' }} />
+
+        <div className="relative z-10">
+          <div className="border-t border-white/10" />
+          <div className="container mx-auto px-4 py-16 max-w-6xl grid gap-12 md:grid-cols-[1.2fr_1fr_1fr]">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/80 text-xs uppercase tracking-[0.32em]">
+                D-swipe
+              </div>
+              <p className="text-lg text-slate-200 leading-relaxed">
+                情報の鮮度を逃さない、企業向けスワイプ型LP作成プラットフォーム。
+              </p>
+              <p className="text-sm text-slate-400">
+                © {new Date().getFullYear()} D-swipe. All rights reserved.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.32em] text-white mb-4">Navigation</h4>
+              <ul className="space-y-3 text-sm text-slate-400">
+                <li><Link href="/dashboard" className="hover:text-white transition-colors">ダッシュボード</Link></li>
+                <li><Link href="/lp/create" className="hover:text-white transition-colors">LPを作成</Link></li>
+                <li><Link href="/products" className="hover:text-white transition-colors">商品を管理</Link></li>
+                <li><Link href="/points/purchase" className="hover:text-white transition-colors">ポイントを購入</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.32em] text-white mb-4">Resources</h4>
+              <ul className="space-y-3 text-sm text-slate-400">
+                <li>
+                  <a
+                    href="https://swipelaunch-backend.onrender.com/docs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    API Documentation
+                  </a>
+                </li>
+                <li><Link href="/login" className="hover:text白 transition-colors">ログイン</Link></li>
+                <li><Link href="/register" className="hover:text-white transition-colors">無料で始める</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-white/10" />
+          <div className="container mx-auto px-4 py-6 max-w-6xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-slate-500">
+            <span>特定商取引法に基づく表記 / プライバシーポリシー</span>
+            <span>カスタマーサポート：support@d-swipe.jp</span>
+          </div>
         </div>
       </footer>
     </div>
