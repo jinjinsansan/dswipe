@@ -48,6 +48,44 @@ export default function Home() {
     viewport: { once: true }
   };
 
+  const painPoints = [
+    {
+      icon: PaintBrushIcon,
+      title: 'デザイン設計に時間を奪われる',
+      description: 'LPの構成やビジュアルをゼロから整えるのは非効率で、差別化にも限界があります。',
+      iconGradient: 'from-[#1f3a8a] via-[#1c2f63] to-[#0b152f]',
+      shadowGlow: 'shadow-indigo-500/25'
+    },
+    {
+      icon: GlobeAltIcon,
+      title: 'ドメイン・サーバー整備が面倒',
+      description: '取得・設定・SSL対応まで社内で段取りを組む必要があり、初動が遅れます。',
+      iconGradient: 'from-[#0f3b3a] via-[#0b2d2c] to-[#061818]',
+      shadowGlow: 'shadow-emerald-500/20'
+    },
+    {
+      icon: CreditCardIcon,
+      title: '決済機能の実装ハードル',
+      description: '安全な決済フローを自前で準備するには高い技術コストとセキュリティの知見が求められます。',
+      iconGradient: 'from-[#3b2468] via-[#2a1a4a] to-[#150d28]',
+      shadowGlow: 'shadow-violet-500/25'
+    },
+    {
+      icon: CurrencyYenIcon,
+      title: '販売手数料がかさむ',
+      description: '既存プラットフォームの高い手数料に依存すると利益率が大幅に削られます。',
+      iconGradient: 'from-[#7a4312] via-[#4f2a0d] to-[#2b1607]',
+      shadowGlow: 'shadow-amber-500/25'
+    },
+    {
+      icon: ClockIcon,
+      title: 'スピード感が阻害される',
+      description: 'ローンチに至るまでの調整項目が多く、旬な情報を届けるタイミングを逃してしまいます。',
+      iconGradient: 'from-[#3b2f55] via-[#251e39] to-[#120d1d]',
+      shadowGlow: 'shadow-purple-500/20'
+    }
+  ];
+
   const solutionHighlights = [
     {
       icon: BoltIcon,
@@ -361,38 +399,12 @@ export default function Home() {
               viewport={{ once: true, margin: '-100px' }}
               className="w-full lg:w-7/12 grid grid-cols-1 gap-6"
             >
-              {[
-                {
-                  icon: PaintBrushIcon,
-                  title: 'デザイン設計に時間を奪われる',
-                  description: 'LPの構成やビジュアルをゼロから整えるのは非効率で、差別化にも限界があります。',
-                },
-                {
-                  icon: GlobeAltIcon,
-                  title: 'ドメイン・サーバー整備が面倒',
-                  description: '取得・設定・SSL対応まで社内で段取りを組む必要があり、初動が遅れます。',
-                },
-                {
-                  icon: CreditCardIcon,
-                  title: '決済機能の実装ハードル',
-                  description: '安全な決済フローを自前で準備するには高い技術コストとセキュリティの知見が求められます。',
-                },
-                {
-                  icon: CurrencyYenIcon,
-                  title: '販売手数料がかさむ',
-                  description: '既存プラットフォームの高い手数料に依存すると利益率が大幅に削られます。',
-                },
-                {
-                  icon: ClockIcon,
-                  title: 'スピード感が阻害される',
-                  description: 'ローンチに至るまでの調整項目が多く、旬な情報を届けるタイミングを逃してしまいます。',
-                },
-              ].map((item, index) => (
-                <motion.div key={index} variants={fadeInUp} className="relative group">
+              {painPoints.map((item, index) => (
+                <motion.div key={item.title} variants={fadeInUp} className="relative group">
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-50 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
                   <div className="relative rounded-2xl border border-slate-200/70 bg-white/95 p-8 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_32px_70px_-35px_rgba(15,23,42,0.55)]">
                     <div className="flex items-start gap-6">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${item.iconGradient} text-white shadow-lg ${item.shadowGlow}`}>
                         <item.icon className="w-7 h-7" />
                       </div>
                       <div className="flex-1">
