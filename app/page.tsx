@@ -23,14 +23,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 import executiveBriefing from '@/public/gallery/executive-briefing.jpg';
-import luxeBeauty from '@/public/gallery/luxe-beauty.jpg';
-import luxeBeautyTreatment from '@/public/gallery/luxe-beauty-treatment.jpg';
-import luxeBeautyMassage from '@/public/gallery/luxe-beauty-massage.jpg';
-import luxeBeautyPremium from '@/public/gallery/luxe-beauty-premium.jpg';
 import nextGrowth from '@/public/gallery/next-growth.jpg';
 import primeInvestment from '@/public/gallery/prime-investment.jpg';
-import momentumFitness from '@/public/gallery/momentum-fitness.jpg';
-import digitalLaunch from '@/public/gallery/digital-launch.jpg';
 
 type GalleryStat = {
   label: string;
@@ -375,29 +369,14 @@ export default function Home() {
       palette: 'from-[#0F172A] via-[#1E3A8A] to-[#0F172A]',
       description: '企業トップ向けの戦略ブリーフィングLP。指標カードとKPIをガラス質感で配置し、上質なネイビーのグラデを基調にした構成。',
       heroImage: executiveBriefing,
-      stats: [
-        { label: 'プロジェクト実績', value: '500+', accent: 'text-blue-200/90' },
-        { label: '顧客満足度', value: '98%', accent: 'text-blue-200/90' }
-      ],
       variant: 'executive'
-    },
-    {
-      title: 'Luxe Beauty Retreat',
-      category: '美容',
-      palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]',
-      description: '高級美容プロダクトの販売用LP。グロッシーなモジュールと限定プランバッジを持たせた、ローズ×パープルのラグジュアリーなトーン。',
-      heroImage: luxeBeauty,
-      collage: [luxeBeautyTreatment, luxeBeautyMassage, luxeBeautyPremium],
-      stats: [{ label: '顧客評価', value: '4.9 / 5.0', accent: 'text-rose-100/90' }],
-      variant: 'beauty'
     },
     {
       title: 'Next-Growth Academy',
       category: '教育',
       palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]',
       description: '教育業界向けのアカデミーLP。学習ロードマップや講師紹介、成果指標をインジケーター付きで提示するリッチなレイアウト。',
-      heroImage: executiveBriefing,
-      stats: [{ label: '受講生', value: '50,000+', accent: 'text-indigo-100/90' }],
+      heroImage: nextGrowth,
       variant: 'academy'
     },
     {
@@ -405,27 +384,8 @@ export default function Home() {
       category: '投資',
       palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]',
       description: '投資家向けピッチデッキ。実績チャートやフィードバックをガラスカードで配置し、コンプライアンス情報を含んだ信頼重視のデザイン。',
-      heroImage: luxeBeauty,
-      stats: [{ label: '投資家評価', value: 'A+', accent: 'text-emerald-100/90' }],
+      heroImage: primeInvestment,
       variant: 'investment'
-    },
-    {
-      title: 'Momentum Fitness Lab',
-      category: '健康',
-      palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]',
-      description: 'フィットネスブランドのオンラインラボ。トレーナー紹介とプログラム比較、スケジュールチップで構成するダイナミックな画面。',
-      heroImage: executiveBriefing,
-      stats: [{ label: '新規LP / 日', value: '120', accent: 'text-amber-200/90' }],
-      variant: 'fitness'
-    },
-    {
-      title: 'Digital Launch Studio',
-      category: 'スタートアップ',
-      palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]',
-      description: 'スタートアップの自動化プラットフォーム。製品UIを前面に出し、機能グリッドと自動化フロー図をハイライト。',
-      heroImage: luxeBeauty,
-      stats: [{ label: 'ARR', value: '¥1.2B', accent: 'text-cyan-200/90' }],
-      variant: 'digital'
     }
   ];
 
@@ -924,7 +884,7 @@ export default function Home() {
                 key={item.title}
                 variants={fadeInUp}
               >
-                <GalleryCard item={item} priority={index < 6} />
+                <GalleryCard item={item} priority={index < 4} />
               </motion.div>
             ))}
           </motion.div>
