@@ -50,6 +50,11 @@ type GalleryItem = {
 };
 
 const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean }) => {
+  // Debug: Log image data
+  if (typeof window !== 'undefined' && !item.heroImage) {
+    console.error(`[GalleryCard] Missing heroImage for: ${item.title}`);
+  }
+  
   return (
     <div className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]">
       <div className="relative aspect-[9/16] overflow-hidden">
@@ -62,8 +67,13 @@ const GalleryCard = ({ item, priority }: { item: GalleryItem; priority?: boolean
             sizes="(min-width: 1280px) 320px, (min-width: 1024px) 28vw, (min-width: 768px) 40vw, 100vw"
             priority={priority}
             loading={priority ? 'eager' : 'lazy'}
+            onError={(e) => console.error(`[Image] Failed to load: ${item.title}`, e)}
           />
-        ) : null}
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-red-500/20 text-white text-sm">
+            Missing image: {item.title}
+          </div>
+        )}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
         </div>
