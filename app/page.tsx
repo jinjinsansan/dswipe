@@ -514,13 +514,16 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              情報には鮮度がある。<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
+                情報には鮮度がある。
+              </span>
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
                 1分でLP公開。
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-slate-200 mb-12">
+            <p className="text-xl md:text-2xl text-white/90 mb-12 drop-shadow-lg">
               スワイプ型LP作成プラットフォーム<br className="md:hidden" />で、今すぐ情報商材を販売
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
