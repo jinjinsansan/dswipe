@@ -496,14 +496,16 @@ export default function Home() {
             loop 
             muted 
             playsInline 
-            className="absolute inset-0 w-full h-full object-cover opacity-40"
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
           >
             <source src="/videos/pixta.mp4" type="video/mp4" />
+            お使いのブラウザは動画タグをサポートしていません。
           </video>
         </div>
         
         {/* オーバーレイ */}
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/30" />
         
         {/* コンテンツ */}
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
