@@ -161,28 +161,140 @@ export default function Home() {
       tag: 'AI自動生成',
       title: 'ヒアリングに答えるだけで下地が完成',
       description: '商品概要・ターゲット・訴求ポイントを入力すると、AIが構成案をその場で提案。コピーも自動生成されるため、ゼロから書き起こす必要はありません。',
-      bullets: ['3ステップの質問フロー', '戦略的なセクション構成', '生成内容は即プレビュー']
+      bullets: [
+        {
+          title: 'ヒアリングオートメーション',
+          description: '3ステップの質問フローで要件を抽出し、AIが瞬時に構成案を生成。',
+          accent: {
+            gradient: 'from-blue-500/18 via-blue-500/6 to-transparent',
+            border: 'border-blue-400/25',
+            text: 'text-blue-500'
+          }
+        },
+        {
+          title: 'リアルタイムプレビュー',
+          description: '入力と同時にプレビューが更新され、認識合わせにかかる往復時間を削減します。',
+          accent: {
+            gradient: 'from-indigo-500/18 via-indigo-500/6 to-transparent',
+            border: 'border-indigo-400/25',
+            text: 'text-indigo-500'
+          }
+        },
+        {
+          title: 'ブランドトーン補正',
+          description: '登録済みのブランドトーンを学習し、コピーと配色を企業基準に自動調整。',
+          accent: {
+            gradient: 'from-cyan-500/16 via-cyan-500/5 to-transparent',
+            border: 'border-cyan-400/25',
+            text: 'text-cyan-500'
+          }
+        }
+      ]
     },
     {
       icon: PaintBrushIcon,
       tag: 'デザインコントロール',
       title: 'ブランドに合わせた演出を瞬時に反映',
       description: 'カラーパレット／タイポグラフィ／コンポーネントのレイアウトを自由に設定可能。全11段階のシェードが自動生成され、統一感あるトーンに仕上がります。',
-      bullets: ['ライブプレビュー編集', 'アクセントカラー自動展開', '企業フォントにも対応']
+      bullets: [
+        {
+          title: 'ライブスタイルガイド',
+          description: '配色とタイポグラフィの更新が全セクションへ瞬時に反映され、ブランドの一貫性を保持。',
+          accent: {
+            gradient: 'from-violet-500/18 via-violet-500/6 to-transparent',
+            border: 'border-violet-400/25',
+            text: 'text-violet-500'
+          }
+        },
+        {
+          title: 'プレミアムブロック',
+          description: 'CTAやカードなどの高品質コンポーネントをドラッグ＆ドロップで切り替え可能。',
+          accent: {
+            gradient: 'from-slate-600/16 via-slate-600/5 to-transparent',
+            border: 'border-slate-400/25',
+            text: 'text-slate-600'
+          }
+        },
+        {
+          title: 'アクセント自動展開',
+          description: '選択したキーカラーから11段階のシェードを生成し、背景やボタンに最適化。',
+          accent: {
+            gradient: 'from-sky-500/18 via-sky-500/6 to-transparent',
+            border: 'border-sky-400/25',
+            text: 'text-sky-500'
+          }
+        }
+      ]
     },
     {
       icon: PhotoIcon,
       tag: 'メディアライブラリ',
       title: '画像・動画アセットを一元管理',
       description: 'ドラッグ＆ドロップでアップロードすると、自動で複数デバイス向けに最適化。LP間での使い回しもライブラリからワンクリックです。',
-      bullets: ['容量無制限のクラウド保存', '自動リサイズ＆圧縮', 'LP間での差し替えが即時反映']
+      bullets: [
+        {
+          title: 'スマートアップロード',
+          description: 'ファイル形式に応じた自動最適化とタグ付けで、管理コストを最小化します。',
+          accent: {
+            gradient: 'from-emerald-500/17 via-emerald-500/6 to-transparent',
+            border: 'border-emerald-400/25',
+            text: 'text-emerald-500'
+          }
+        },
+        {
+          title: 'バージョンタイムライン',
+          description: '更新履歴と差し替え先を時系列で記録し、レビュー体制を可視化。',
+          accent: {
+            gradient: 'from-teal-500/17 via-teal-500/6 to-transparent',
+            border: 'border-teal-400/25',
+            text: 'text-teal-500'
+          }
+        },
+        {
+          title: '権限コントロール',
+          description: 'メンバー種別ごとにアップロードや公開権限を細分化し、リスクを抑制。',
+          accent: {
+            gradient: 'from-slate-700/15 via-slate-700/5 to-transparent',
+            border: 'border-slate-500/25',
+            text: 'text-slate-600'
+          }
+        }
+      ]
     },
     {
       icon: DevicePhoneMobileIcon,
       tag: 'スワイプ体験',
       title: 'SNSネイティブ世代に刺さる体験設計',
       description: '縦横のスワイプ操作に最適化したUX。シームレスなアニメーションとストーリーテリングで、平均滞在時間が 2.5 倍に伸びています。',
-      bullets: ['モバイルファースト設計', 'レスポンシブ表示を自動調整', 'スクロール追従型CTA']
+      bullets: [
+        {
+          title: '動線最適化',
+          description: 'スワイプ方向ごとの導線をA/Bテストし、離脱率を継続的に改善します。',
+          accent: {
+            gradient: 'from-rose-500/19 via-rose-500/6 to-transparent',
+            border: 'border-rose-400/25',
+            text: 'text-rose-500'
+          }
+        },
+        {
+          title: 'マイクロインタラクション',
+          description: 'スクロール量に応じたアニメーションとエフェクトでブランド体験を強調。',
+          accent: {
+            gradient: 'from-purple-500/18 via-purple-500/6 to-transparent',
+            border: 'border-purple-400/25',
+            text: 'text-purple-500'
+          }
+        },
+        {
+          title: '多端末レビューモード',
+          description: 'iOS・Android・デスクトップのプレビューを並列表示し、体験を統一。',
+          accent: {
+            gradient: 'from-blue-500/18 via-blue-500/6 to-transparent',
+            border: 'border-blue-400/25',
+            text: 'text-blue-500'
+          }
+        }
+      ]
     }
   ];
 
@@ -563,18 +675,20 @@ export default function Home() {
                 variants={fadeInUp}
                 className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/10 backdrop-blur-2xl p-8 shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
               >
-                <div className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent blur-3xl" />
-                <div className="mb-6 inline-flex items-center gap-3 text-slate-200/90">
-                  <metric.icon className="w-7 h-7" />
-                  <span className="text-xs uppercase tracking-[0.28em]">INSIGHT</span>
+                <div className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-gradient-to-br from-emerald-300/30 via-transparent to-transparent blur-3xl" />
+                <div className="mb-6 inline-flex items-center gap-3 text-white/90">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/30">
+                    <metric.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.28em] text-emerald-200/90">INSIGHT</span>
                 </div>
-                <div className="text-5xl md:text-6xl font-semibold text-white mb-3 tracking-tight">
+                <div className="text-5xl md:text-6xl font-semibold text-white mb-3 tracking-tight drop-shadow-[0_10px_25px_rgba(16,185,129,0.35)]">
                   {metric.value}
                 </div>
-                <p className="text-sm font-medium uppercase tracking-[0.42em] text-emerald-300/80 mb-4">
+                <p className="text-sm font-medium uppercase tracking-[0.42em] text-emerald-200/90 mb-4">
                   {metric.label}
                 </p>
-                <p className="text-sm text-slate-100/80 leading-relaxed">
+                <p className="text-sm text-white/90 leading-relaxed">
                   {metric.detail}
                 </p>
               </motion.div>
@@ -635,8 +749,17 @@ export default function Home() {
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {feature.bullets.map((bullet) => (
-                        <div key={bullet} className="rounded-2xl border border-slate-200/70 bg-slate-50 px-5 py-4 text-sm text-slate-700 leading-relaxed">
-                          {bullet}
+                        <div
+                          key={bullet.title}
+                          className={`group relative overflow-hidden rounded-2xl border px-5 py-4 transition-all duration-500 bg-white/70 backdrop-blur-sm shadow-[0_18px_40px_-30px_rgba(15,23,42,0.45)] ${bullet.accent.border}`}
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${bullet.accent.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative">
+                            <span className={`text-[11px] uppercase tracking-[0.32em] font-semibold ${bullet.accent.text} block mb-2`}>{bullet.title}</span>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              {bullet.description}
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>
