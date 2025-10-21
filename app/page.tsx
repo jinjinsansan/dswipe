@@ -18,7 +18,8 @@ import {
   ShieldCheckIcon,
   CurrencyYenIcon,
   ArrowRightIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 export default function Home() {
@@ -149,21 +150,21 @@ export default function Home() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {[
-              { icon: PaintBrushIcon, text: 'デザインを\n考えないといけない', color: 'red' },
-              { icon: ShieldCheckIcon, text: 'ドメインを\n取得しないといけない', color: 'orange' },
-              { icon: CreditCardIcon, text: '決済機能を\nつけないといけない', color: 'amber' },
-              { icon: CurrencyYenIcon, text: '手数料が\n高いサイトが多い', color: 'rose' },
-              { icon: ClockIcon, text: 'すぐに販売したいのに\n準備に時間がかかる', color: 'red' },
+              { icon: PaintBrushIcon, text: 'デザインを\n考えないといけない', color: 'red', bgColor: 'bg-red-50' },
+              { icon: GlobeAltIcon, text: 'ドメインを\n取得しないといけない', color: 'orange', bgColor: 'bg-orange-50' },
+              { icon: CreditCardIcon, text: '決済機能を\nつけないといけない', color: 'amber', bgColor: 'bg-amber-50' },
+              { icon: CurrencyYenIcon, text: '手数料が\n高いサイトが多い', color: 'rose', bgColor: 'bg-rose-50' },
+              { icon: ClockIcon, text: 'すぐに販売したいのに\n準備に時間がかかる', color: 'purple', bgColor: 'bg-purple-50' },
             ].map((item, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className={`bg-white p-8 rounded-2xl border-2 border-${item.color}-200 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden group`}
+                className={`${item.bgColor} p-8 rounded-2xl border-2 border-${item.color}-200 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden group`}
               >
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-${item.color}-100/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500`} />
                 <div className="relative">
-                  <div className={`inline-flex p-4 rounded-xl bg-${item.color}-50 mb-4`}>
-                    <XCircleIcon className={`w-8 h-8 text-${item.color}-600`} />
+                  <div className={`inline-flex p-4 rounded-xl bg-white/50 mb-4`}>
+                    <item.icon className={`w-8 h-8 text-${item.color}-600`} />
                   </div>
                   <p className="text-lg font-semibold text-slate-900 whitespace-pre-line leading-relaxed">
                     {item.text}
