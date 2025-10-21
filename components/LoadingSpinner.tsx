@@ -16,10 +16,10 @@ export default function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | '
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-white text-lg">読み込み中...</p>
+        <p className="mt-4 text-slate-600 text-lg">読み込み中...</p>
       </div>
     </div>
   );
