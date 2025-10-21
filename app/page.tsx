@@ -299,12 +299,48 @@ export default function Home() {
   ];
 
   const galleryShowcase = [
-    { title: 'Executive Briefing', category: 'コンサル', palette: 'from-[#0F172A] via-[#1E3A8A] to-[#0F172A]' },
-    { title: 'Luxe Beauty Retreat', category: '美容', palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]' },
-    { title: 'Next-Growth Academy', category: '教育', palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]' },
-    { title: 'Prime Investment Deck', category: '投資', palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]' },
-    { title: 'Momentum Fitness Lab', category: '健康', palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]' },
-    { title: 'Digital Launch Studio', category: 'スタートアップ', palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]' }
+    {
+      title: 'Executive Briefing',
+      category: 'コンサル',
+      palette: 'from-[#0F172A] via-[#1E3A8A] to-[#0F172A]',
+      route: 'https://v0-lp.vercel.app/executive-briefing',
+      description: '企業トップ向けの戦略ブリーフィングLP。指標カードとKPIをガラス質感で配置し、上質なネイビーのグラデを基調にした構成。'
+    },
+    {
+      title: 'Luxe Beauty Retreat',
+      category: '美容',
+      palette: 'from-[#3B0764] via-[#BE123C] to-[#4C1D95]',
+      route: 'https://v0-lp.vercel.app/luxe-beauty',
+      description: '高級美容プロダクトの販売用LP。グロッシーなモジュールと限定プランバッジを持たせた、ローズ×パープルのラグジュアリーなトーン。'
+    },
+    {
+      title: 'Next-Growth Academy',
+      category: '教育',
+      palette: 'from-[#1E3A8A] via-[#6366F1] to-[#312E81]',
+      route: 'https://v0-lp.vercel.app/next-growth',
+      description: '教育業界向けのアカデミーLP。学習ロードマップや講師紹介、成果指標をインジケーター付きで提示するリッチなレイアウト。'
+    },
+    {
+      title: 'Prime Investment Deck',
+      category: '投資',
+      palette: 'from-[#0F766E] via-[#10B981] to-[#0B4F46]',
+      route: 'https://v0-lp.vercel.app/prime-investment',
+      description: '投資家向けピッチデッキ。実績チャートやフィードバックをガラスカードで配置し、コンプライアンス情報を含んだ信頼重視のデザイン。'
+    },
+    {
+      title: 'Momentum Fitness Lab',
+      category: '健康',
+      palette: 'from-[#9A3412] via-[#EA580C] to-[#7C2D12]',
+      route: 'https://v0-lp.vercel.app/momentum-fitness',
+      description: 'フィットネスブランドのオンラインラボ。トレーナー紹介とプログラム比較、スケジュールチップで構成するダイナミックな画面。'
+    },
+    {
+      title: 'Digital Launch Studio',
+      category: 'スタートアップ',
+      palette: 'from-[#1E293B] via-[#334155] to-[#0F172A]',
+      route: 'https://v0-lp.vercel.app/digital-launch',
+      description: 'スタートアップの自動化プラットフォーム。製品UIを前面に出し、機能グリッドと自動化フロー図をハイライト。'
+    }
   ];
 
   const testimonialVoices = [
@@ -803,22 +839,43 @@ export default function Home() {
                 variants={fadeInUp}
                 className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_32px_90px_-50px_rgba(30,41,59,0.75)]"
               >
+                <Link
+                  href={item.route}
+                  prefetch={false}
+                  className="absolute inset-0 z-20"
+                  target={item.route.startsWith('http') ? '_blank' : undefined}
+                  rel={item.route.startsWith('http') ? 'noopener noreferrer' : undefined}
+                >
+                  <span className="sr-only">{item.title} の詳細を見る</span>
+                </Link>
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-80`} />
-                  <div className="absolute inset-0 mix-blend-screen bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),transparent_45%)]" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-70 transition-opacity bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.35),transparent_60%)]" />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.palette} opacity-65`} />
+                  <div className="absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),transparent_45%)]" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-75 transition-opacity duration-500 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.35),transparent_60%)]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+                  <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.14)_1px,transparent_1px)]" style={{ backgroundSize: '42px 42px' }} />
                 </div>
-                <div className="relative aspect-[9/16] p-8 flex flex-col justify-between">
-                  <div className="space-y-4">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs uppercase tracking-[0.32em]">
-                      {item.category}
-                    </span>
-                    <h4 className="text-2xl font-semibold text-white drop-shadow-md">
-                      {item.title}
-                    </h4>
+                <div className="relative aspect-[9/16] overflow-hidden">
+                  <div className="absolute inset-0 opacity-90 transition duration-500 group-hover:scale-105">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.25),transparent_60%)]" />
+                    <div className="absolute inset-0 backdrop-blur-[1.5px]" />
                   </div>
-                  <div className="text-white/80 text-sm font-medium">
-                    Showcase →
+                  <div className="relative z-10 flex h-full flex-col justify-between p-8">
+                    <div className="space-y-4">
+                      <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs uppercase tracking-[0.32em]">
+                        {item.category}
+                      </span>
+                      <h4 className="text-2xl font-semibold text-white drop-shadow-md">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-white/75 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                    <div className="relative flex items-center justify-between text-white/80 text-sm font-medium">
+                      <span>Showcase</span>
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-transform duration-500 group-hover:translate-x-1">→</span>
+                    </div>
                   </div>
                 </div>
                 <div className="absolute inset-x-6 bottom-6 h-14 rounded-full border border-white/20 bg-white/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
