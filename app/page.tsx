@@ -586,7 +586,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:block"
+            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
           >
             <ChevronDownIcon className="w-8 h-8 text-white/60" />
           </motion.div>
@@ -947,7 +947,7 @@ export default function Home() {
                 variants={fadeInUp}
                 className="relative rounded-3xl border border-slate-200 bg-white p-9 shadow-[0px_30px_90px_-60px_rgba(15,23,42,0.55)]"
               >
-                <div className={`absolute -top-7 left-10 h-14 w-14 rounded-full bg-gradient-to-br ${voice.gradient} shadow-lg ${voice.shadow} flex items-center justify-center">
+                <div className={'absolute -top-7 left-10 h-14 w-14 rounded-full bg-gradient-to-br ' + voice.gradient + ' shadow-lg ' + voice.shadow + ' flex items-center justify-center'}>
                   <span className="text-white text-2xl font-semibold">“</span>
                 </div>
                 <div className="mt-7 text-xs uppercase tracking-[0.32em] text-blue-500/70 mb-5">
@@ -1046,12 +1046,12 @@ export default function Home() {
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <motion.div {...fadeInUp} className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-16">
             <div className="max-w-md">
-              <p className="uppercase text-xs tracking-[0.4em] text-blue-200/70 mb-4">FAQ</p>
+              <p className="uppercase text-xs tracking-[0.4em] text-blue-200 mb-4">FAQ</p>
               <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
                 よくある質問
               </h2>
             </div>
-            <p className="max-w-xl text-blue-100/80 leading-relaxed border-l border-blue-400/20 pl-6">
+            <p className="max-w-xl text-white leading-relaxed border-l border-blue-400/20 pl-6">
               導入前によくいただくご質問をまとめました。その他の疑問はサポートチームまでお気軽にご相談ください。
             </p>
           </motion.div>
@@ -1066,7 +1066,7 @@ export default function Home() {
                   <li key={item.question}>
                     <button
                       onClick={() => setSelectedFaq(index)}
-                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10 text-slate-200'}`}
+                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10'}`}
                     >
                       <span className="text-xs uppercase tracking-[0.3em] block mb-2 text-blue-300">
                         Q{String(index + 1).padStart(2, '0')}
@@ -1084,7 +1084,7 @@ export default function Home() {
               {...fadeInUp}
               className="rounded-3xl border border-white/10 bg-white/10 backdrop-blur-xl p-8 md:p-10 shadow-[0_40px_120px_-70px_rgba(15,23,42,0.75)]"
             >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-blue-200 text-xs uppercase tracking-[0.32em] mb-6 font-semibold">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-white text-xs uppercase tracking-[0.32em] mb-6">
                 Answer
               </div>
               <h3 className="text-2xl font-semibold text-white mb-4 leading-snug">
