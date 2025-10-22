@@ -429,11 +429,28 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </label>
               <input
                 type="datetime-local"
-                value={
-                  (content as any).targetDate 
-                    ? new Date((content as any).targetDate).toISOString().slice(0, 16)
-                    : ''
-                }
+                value={(() => {
+                  const targetDate = (content as any).targetDate;
+                  
+                  // targetDateが無い場合は7日後をデフォルト表示
+                  if (!targetDate) {
+                    const defaultDate = new Date();
+                    defaultDate.setDate(defaultDate.getDate() + 7);
+                    return defaultDate.toISOString().slice(0, 16);
+                  }
+                  
+                  const date = new Date(targetDate);
+                  const now = new Date();
+                  
+                  // 過去の日付の場合は7日後に自動置き換え（ユーザーが見落とさないように）
+                  if (date < now) {
+                    const futureDate = new Date();
+                    futureDate.setDate(futureDate.getDate() + 7);
+                    return futureDate.toISOString().slice(0, 16);
+                  }
+                  
+                  return date.toISOString().slice(0, 16);
+                })()}
                 onChange={(e) => {
                   if (e.target.value) {
                     // datetime-localの値をISO 8601形式に変換
@@ -446,6 +463,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <p className="text-xs text-slate-500 mt-1">
                 カウントダウンの締切日時を設定します
               </p>
+              {(() => {
+                const targetDate = (content as any).targetDate;
+                if (targetDate) {
+                  const date = new Date(targetDate);
+                  const now = new Date();
+                  if (date < now) {
+                    return (
+                      <p className="text-xs text-amber-600 mt-1 font-semibold">
+                        ⚠️ 過去の日付が設定されていたため、7日後の日付に自動変更されました。必要に応じて調整してください。
+                      </p>
+                    );
+                  }
+                }
+                return null;
+              })()}
             </div>
 
             <div>
