@@ -586,7 +586,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden md:block"
+            className="absolute bottom-20 left-1/2 transform -translate-x-1/2 hidden md:block"
           >
             <ChevronDownIcon className="w-8 h-8 text-white/60" />
           </motion.div>
@@ -1066,7 +1066,7 @@ export default function Home() {
                   <li key={item.question}>
                     <button
                       onClick={() => setSelectedFaq(index)}
-                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10 text-slate-200'}`}
+                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'bg-transparent text-slate-200 hover:bg-white/10 hover:text-white'}`}
                     >
                       <span className="text-xs uppercase tracking-[0.3em] block mb-2 text-blue-300">
                         Q{String(index + 1).padStart(2, '0')}
