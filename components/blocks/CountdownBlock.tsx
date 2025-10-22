@@ -37,13 +37,15 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
       const now = new Date().getTime();
       const difference = targetTime - now;
       
-      console.log('🕒 Countdown:', {
-        targetDate: content.targetDate,
-        targetTime: new Date(content.targetDate).toLocaleString('ja-JP'),
-        now: new Date().toLocaleString('ja-JP'),
-        difference,
-        daysLeft: Math.floor(difference / (1000 * 60 * 60 * 24))
-      });
+      // Only log once on mount or when targetDate changes
+      if (!(window as any).__countdownLogged || (window as any).__countdownLogged !== content.targetDate) {
+        console.log('🕒 Countdown initialized:', {
+          targetDate: content.targetDate,
+          targetTime: new Date(content.targetDate).toLocaleString('ja-JP'),
+          daysLeft: Math.floor(difference / (1000 * 60 * 60 * 24))
+        });
+        (window as any).__countdownLogged = content.targetDate;
+      }
       
       if (difference > 0) {
         setTimeLeft({
