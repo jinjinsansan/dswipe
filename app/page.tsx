@@ -543,18 +543,33 @@ export default function Home() {
             <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 drop-shadow-lg px-4">
               スワイプ型LP作成プラットフォームで、<br className="sm:hidden" />今すぐ情報商材を販売
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              {/* 無料で始めるボタン - 強力なCTA */}
               <Link
                 href="/register"
-                className="px-10 py-5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all font-bold text-lg shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105 transform"
+                className="group relative px-6 py-3 sm:px-10 sm:py-5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-2xl hover:shadow-cyan-500/50 transition-all overflow-hidden hover:scale-105 transform"
               >
-                無料で始める →
+                {/* アニメーションボーダー */}
+                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
+                
+                {/* グローエフェクト */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 animate-pulse" />
+                
+                <span className="relative flex items-center justify-center gap-2">
+                  <SparklesIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                  無料で始める
+                  <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
               </Link>
+
+              {/* ログインボタン - エレガントなセカンダリ */}
               <Link
                 href="/login"
-                className="px-10 py-5 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-xl hover:bg-white/20 transition-all font-bold text-lg"
+                className="group relative px-6 py-3 sm:px-10 sm:py-5 bg-white/5 backdrop-blur-md text-white border border-white/20 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-white/10 hover:border-white/40 transition-all"
               >
-                ログイン
+                <span className="relative">ログイン</span>
+                {/* ホバー時のグロー */}
+                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Link>
             </div>
             <p className="mt-6 text-sm text-slate-300">
