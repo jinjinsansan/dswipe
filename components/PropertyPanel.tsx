@@ -421,6 +421,87 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('targetDate' in content) && (
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+                カウントダウン締切日時
+              </label>
+              <input
+                type="datetime-local"
+                value={
+                  (content as any).targetDate 
+                    ? new Date((content as any).targetDate).toISOString().slice(0, 16)
+                    : ''
+                }
+                onChange={(e) => {
+                  if (e.target.value) {
+                    // datetime-localの値をISO 8601形式に変換
+                    const isoString = new Date(e.target.value).toISOString();
+                    onUpdateContent('targetDate', isoString);
+                  }
+                }}
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                カウントダウンの締切日時を設定します
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+                表示項目
+              </label>
+              <div className="space-y-2">
+                {('showDays' in content) && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(content as any).showDays !== false}
+                      onChange={(e) => onUpdateContent('showDays', e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">日数を表示</span>
+                  </label>
+                )}
+                {('showHours' in content) && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(content as any).showHours !== false}
+                      onChange={(e) => onUpdateContent('showHours', e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">時間を表示</span>
+                  </label>
+                )}
+                {('showMinutes' in content) && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(content as any).showMinutes !== false}
+                      onChange={(e) => onUpdateContent('showMinutes', e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">分を表示</span>
+                  </label>
+                )}
+                {('showSeconds' in content) && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(content as any).showSeconds === true}
+                      onChange={(e) => onUpdateContent('showSeconds', e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-slate-700">秒を表示</span>
+                  </label>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {('position' in content) && (
           <div>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
