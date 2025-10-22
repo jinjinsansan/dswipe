@@ -298,6 +298,7 @@ export interface CountdownBlockContent extends BaseBlockContent {
   targetDate: string; // ISO日時
   urgencyText?: string;
   showDays?: boolean;
+  themeKey?: TemplateThemeKey;
   showHours?: boolean;
   showMinutes?: boolean;
   showSeconds?: boolean;
@@ -306,6 +307,7 @@ export interface CountdownBlockContent extends BaseBlockContent {
 // 特別価格ブロック
 export interface SpecialPriceBlockContent extends BaseBlockContent {
   title?: string;
+  subtitle?: string;
   originalPrice: string;
   specialPrice: string;
   discountBadge?: string;
@@ -319,6 +321,7 @@ export interface SpecialPriceBlockContent extends BaseBlockContent {
   badgeTextColor?: string;
   priceColor?: string;
   originalPriceColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // ボーナス特典リスト
@@ -334,6 +337,7 @@ export interface BonusListBlockContent extends BaseBlockContent {
   totalValue?: string;
   titleColor?: string;
   descriptionColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // 保証セクション
@@ -348,6 +352,7 @@ export interface GuaranteeBlockContent extends BaseBlockContent {
   descriptionColor?: string;
   badgeColor?: string;
   badgeTextColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // 問題提起ブロック
@@ -358,6 +363,7 @@ export interface ProblemBlockContent extends BaseBlockContent {
   checkIcon?: string;
   titleColor?: string;
   descriptionColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // ビフォーアフター
@@ -381,6 +387,7 @@ export interface BeforeAfterBlockContent extends BaseBlockContent {
   afterTextColor?: string;
   afterCheckColor?: string;
   highlightColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // 著者プロフィール
@@ -396,6 +403,7 @@ export interface AuthorProfileBlockContent extends BaseBlockContent {
   nameColor?: string;
   borderColor?: string;
   accentColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // 緊急性訴求
@@ -419,6 +427,7 @@ export interface ScarcityBlockContent extends BaseBlockContent {
   descriptionColor?: string;
   numberColor?: string;
   accentColor?: string;
+  themeKey?: TemplateThemeKey;
 }
 
 // スティッキーCTA
@@ -430,19 +439,6 @@ export interface StickyCTABlockContent extends BaseBlockContent {
   titleColor?: string;
   descriptionColor?: string;
   themeKey?: TemplateThemeKey;
-}
-
-// カウントダウン
-export interface CountdownBlockContent extends BaseBlockContent {
-  title?: string;
-  targetDate: string;
-  urgencyText?: string;
-  showDays?: boolean;
-  showHours?: boolean;
-  showMinutes?: boolean;
-  showSeconds?: boolean;
-  titleColor?: string;
-  descriptionColor?: string;
 }
 
 // ブロックコンテンツの型（Union型）
