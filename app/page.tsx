@@ -391,19 +391,25 @@ export default function Home() {
 
   const testimonialVoices = [
     {
-      name: '田中 健太',
+      name: '高橋 誠一郎',
       role: '情報商材クリエイター',
-      comment: 'WordPress での制作から乗り換えて、ローンチまでのリードタイムが 1/10 に短縮されました。市場投入のスピード感が全く違います。'
+      comment: 'WordPress での制作から乗り換えて、ローンチまでのリードタイムが 1/10 に短縮されました。市場投入のスピード感が全く違います。',
+      gradient: 'from-blue-600 to-indigo-500',
+      shadow: 'shadow-blue-500/30'
     },
     {
-      name: '佐藤 美咲',
+      name: '木村 奈々子',
       role: 'オンラインコーチ',
-      comment: 'テキストもデザインもガイドしてくれるので、制作未経験でも安心。スマホからのコンバージョン率が顕著に向上しました。'
+      comment: 'テキストもデザインもガイドしてくれるので、制作未経験でも安心。スマホからのコンバージョン率が顕著に向上しました。',
+      gradient: 'from-purple-600 to-pink-500',
+      shadow: 'shadow-purple-500/30'
     },
     {
-      name: '山田 太郎',
+      name: '中村 健人',
       role: 'デジタルマーケター',
-      comment: '手数料 3% でこのクオリティは破格です。複数LPをA/Bテストする運用にベストフィットでした。'
+      comment: '手数料 3% でこのクオリティは破格です。複数LPをA/Bテストする運用にベストフィットでした。',
+      gradient: 'from-emerald-600 to-teal-500',
+      shadow: 'shadow-emerald-500/30'
     }
   ];
 
@@ -565,11 +571,9 @@ export default function Home() {
               {/* ログインボタン - エレガントなセカンダリ */}
               <Link
                 href="/login"
-                className="group relative px-6 py-3 sm:px-10 sm:py-5 bg-white/5 backdrop-blur-md text-white border border-white/20 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-white/10 hover:border-white/40 transition-all"
+                className="group relative px-6 py-3 sm:px-10 sm:py-5 bg-white text-slate-800 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-slate-50 transition-all shadow-lg"
               >
                 <span className="relative">ログイン</span>
-                {/* ホバー時のグロー */}
-                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Link>
             </div>
             <p className="mt-6 text-sm text-slate-300">
@@ -582,7 +586,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:block"
           >
             <ChevronDownIcon className="w-8 h-8 text-white/60" />
           </motion.div>
@@ -778,22 +782,22 @@ export default function Home() {
               <motion.div
                 key={metric.label}
                 variants={fadeInUp}
-                className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/10 backdrop-blur-2xl p-8 shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
+                className="relative overflow-hidden rounded-3xl border border-emerald-200/20 bg-white backdrop-blur-2xl p-8 shadow-[0px_40px_120px_-60px_rgba(8,47,73,0.9)]"
               >
-                <div className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-gradient-to-br from-emerald-300/30 via-transparent to-transparent blur-3xl" />
-                <div className="mb-6 inline-flex items-center gap-3 text-white/90">
+                <div className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-gradient-to-br from-emerald-300/20 via-transparent to-transparent blur-3xl" />
+                <div className="mb-6 inline-flex items-center gap-3 text-slate-700">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/30">
                     <metric.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-xs uppercase tracking-[0.28em] text-emerald-200/90">INSIGHT</span>
+                  <span className="text-xs uppercase tracking-[0.28em] text-emerald-600 font-bold">INSIGHT</span>
                 </div>
-                <div className="text-5xl md:text-6xl font-semibold text-white mb-3 tracking-tight drop-shadow-[0_10px_25px_rgba(16,185,129,0.35)]">
+                <div className="text-5xl md:text-6xl font-semibold text-slate-900 mb-3 tracking-tight drop-shadow-[0_2px_8px_rgba(16,185,129,0.15)]">
                   {metric.value}
                 </div>
-                <p className="text-sm font-medium uppercase tracking-[0.42em] text-emerald-200/90 mb-4">
+                <p className="text-sm font-bold uppercase tracking-[0.42em] text-emerald-600 mb-4">
                   {metric.label}
                 </p>
-                <p className="text-sm text-white/90 leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed">
                   {metric.detail}
                 </p>
               </motion.div>
@@ -943,7 +947,7 @@ export default function Home() {
                 variants={fadeInUp}
                 className="relative rounded-3xl border border-slate-200 bg-white p-9 shadow-[0px_30px_90px_-60px_rgba(15,23,42,0.55)]"
               >
-                <div className="absolute -top-7 left-10 h-14 w-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/30 flex items-center justify-center">
+                <div className={`absolute -top-7 left-10 h-14 w-14 rounded-full bg-gradient-to-br ${voice.gradient} shadow-lg ${voice.shadow} flex items-center justify-center">
                   <span className="text-white text-2xl font-semibold">“</span>
                 </div>
                 <div className="mt-7 text-xs uppercase tracking-[0.32em] text-blue-500/70 mb-5">
@@ -1057,14 +1061,14 @@ export default function Home() {
               {...fadeInUp}
               className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 md:p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.75)]"
             >
-              <ul className="space-y-3 text-sm text-blue-100/80">
+              <ul className="space-y-3 text-sm text-white">
                 {faqItems.map((item, index) => (
                   <li key={item.question}>
                     <button
                       onClick={() => setSelectedFaq(index)}
-                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10'}`}
+                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10 text-slate-200'}`}
                     >
-                      <span className="text-xs uppercase tracking-[0.3em] block mb-2">
+                      <span className="text-xs uppercase tracking-[0.3em] block mb-2 text-blue-300">
                         Q{String(index + 1).padStart(2, '0')}
                       </span>
                       <span className="text-base font-medium leading-relaxed">
@@ -1080,13 +1084,13 @@ export default function Home() {
               {...fadeInUp}
               className="rounded-3xl border border-white/10 bg-white/10 backdrop-blur-xl p-8 md:p-10 shadow-[0_40px_120px_-70px_rgba(15,23,42,0.75)]"
             >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-blue-100/80 text-xs uppercase tracking-[0.32em] mb-6">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-blue-200 text-xs uppercase tracking-[0.32em] mb-6 font-semibold">
                 Answer
               </div>
               <h3 className="text-2xl font-semibold text-white mb-4 leading-snug">
                 {faqItems[selectedFaq].question}
               </h3>
-              <p className="text-base text-blue-100/90 leading-relaxed">
+              <p className="text-base text-slate-100 leading-relaxed">
                 {faqItems[selectedFaq].answer}
               </p>
             </motion.div>
@@ -1095,7 +1099,7 @@ export default function Home() {
       </section>
 
       {/* ===== 10. 最終CTAセクション ===== */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
@@ -1103,23 +1107,26 @@ export default function Home() {
         
         <div className="container mx-auto px-4 max-w-4xl relative z-10">
           <motion.div {...fadeInUp} className="text-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6">
               まずは無料で<br />試してみませんか？
             </h2>
-            <p className="text-xl text-blue-100 mb-12">
+            <p className="text-lg md:text-xl text-blue-100 mb-8 md:mb-10">
               クレジットカード不要・30秒で開始・審査なし
             </p>
             
             <div className="max-w-md mx-auto">
               <Link
                 href="/register"
-                className="block w-full px-12 py-6 bg-white text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl hover:shadow-2xl transition-all font-bold text-2xl shadow-xl hover:scale-105 transform"
+                className="group relative block w-full px-10 py-5 md:px-12 md:py-6 bg-white rounded-2xl hover:shadow-2xl transition-all font-bold text-xl md:text-2xl shadow-xl hover:scale-105 transform overflow-hidden"
               >
-                無料で始める
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-10 transition-opacity" />
+                <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+                  無料で始める →
+                </span>
               </Link>
               <p className="mt-6 text-sm text-blue-100">
                 既にアカウントをお持ちの方は{' '}
-                <Link href="/login" className="text-white underline hover:text-blue-200">
+                <Link href="/login" className="text-white underline hover:text-blue-200 font-semibold">
                   ログイン
                 </Link>
               </p>
