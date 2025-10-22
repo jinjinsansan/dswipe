@@ -15,6 +15,7 @@ import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
+import { TEMPLATE_LIBRARY, INFO_PRODUCT_BLOCKS } from '@/lib/templates';
 import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
@@ -27,6 +28,14 @@ import {
 } from '@heroicons/react/24/outline';
 import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
+
+// ブロックタイプから日本語名を取得するヘルパー関数
+function getBlockDisplayName(blockType: BlockType): string {
+  // 全テンプレートから該当するブロックを検索
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  const template = allTemplates.find(t => t.templateId === blockType);
+  return template?.name || blockType;
+}
 
 // モバイル用タブ型定義
 type TabType = 'blocks' | 'edit' | 'preview' | 'settings';
@@ -995,7 +1004,7 @@ export default function EditLPNewPage() {
                             削除
                           </button>
                         </div>
-                        <div className="text-base font-semibold text-slate-900 truncate">{block.blockType}</div>
+                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(block.blockType)}</div>
                       </div>
                     </div>
                   ))}
