@@ -1,34 +1,38 @@
 'use client';
 
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+import AuthShell from '@/components/auth/AuthShell';
 
 const GoogleSignInButton = dynamic(() => import('@/components/auth/GoogleSignInButton'), { ssr: false });
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-semibold text-slate-900 tracking-[0.08em]">Ｄ－swipe</h1>
-          <p className="text-slate-600">Googleアカウントでログインしてください</p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-          <GoogleSignInButton />
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900"
-          >
-            <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-            ホームに戻る
+    <AuthShell
+      cardTitle="ログイン"
+      cardDescription="Googleアカウントでログインしてください"
+      helper={
+        <span>
+          アカウントをお持ちでない方は{' '}
+          <Link href="/register" className="font-semibold text-white hover:text-emerald-200">
+            新規登録
           </Link>
-        </div>
-      </div>
-    </div>
+        </span>
+      }
+      hero={{
+        eyebrow: 'SWIPE LP PLATFORM',
+        title: '引き込むスワイプ体験で、ファン化を加速させる',
+        description:
+          'Ｄ－swipeは情報商材インフォプレナー向けに最適化されたフローで、LP制作から分析までを一気通貫で支援します。',
+        highlights: [
+          { title: '高速な構成生成', description: 'ターゲットに響くコピーと構成をAIが瞬時にサジェスト。' },
+          { title: 'エモーショナルな演出', description: '動画と演出が一体となったヒーロー体験で興味を最大化。' },
+          { title: 'コンバージョン学習', description: '計測データを蓄積し、成果に直結する改善サイクルを構築。' },
+        ],
+      }}
+    >
+      <GoogleSignInButton />
+    </AuthShell>
   );
 }
