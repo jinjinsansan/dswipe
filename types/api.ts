@@ -16,12 +16,91 @@ export interface PointsBalance {
   point_balance: number;
 }
 
+export interface AIWizardBonus {
+  title: string;
+  description?: string;
+  value?: string;
+}
+
+export interface AIWizardPrice {
+  original?: string;
+  special?: string;
+  currency?: string;
+  payment_plan?: string;
+  deadline?: string;
+}
+
+export interface AIWizardGuarantee {
+  headline?: string;
+  description?: string;
+  conditions?: string;
+}
+
+export interface AIWizardTestimonial {
+  name?: string;
+  role?: string;
+  quote: string;
+  result?: string;
+}
+
+export interface AIWizardProductDetails {
+  name: string;
+  description?: string;
+  format?: string;
+  duration?: string;
+  delivery?: string;
+  transformation?: string;
+  promise?: string;
+  key_features?: string[];
+  deliverables?: string[];
+}
+
+export interface AIWizardAudienceDetails {
+  persona?: string;
+  desired_outcome?: string;
+  pain_points?: string[];
+  objections?: string[];
+  aspirations?: string[];
+}
+
+export interface AIWizardOfferDetails {
+  price?: AIWizardPrice;
+  bonuses?: AIWizardBonus[];
+  guarantee?: AIWizardGuarantee;
+  call_to_action?: string;
+  scarcity?: string;
+}
+
+export interface AIWizardProofDetails {
+  authority_headline?: string;
+  authority_name?: string;
+  authority_title?: string;
+  authority_bio?: string;
+  achievements?: string[];
+  testimonials?: AIWizardTestimonial[];
+  media_mentions?: string[];
+  social_proof?: string[];
+}
+
+export interface AIWizardNarrativeDetails {
+  origin_story?: string;
+  unique_mechanism?: string;
+  roadmap?: string;
+}
+
 export interface AIWizardRequest {
-  product_name: string;
-  business_type: string;
-  target_audience: string;
-  key_features: string[];
+  business: string;
+  target: string;
   goal: string;
+  theme?: string;
+  tone?: string;
+  language?: string;
+  product: AIWizardProductDetails;
+  audience: AIWizardAudienceDetails;
+  offer: AIWizardOfferDetails;
+  proof?: AIWizardProofDetails;
+  narrative?: AIWizardNarrativeDetails;
+  additional_notes?: string;
 }
 
 export interface AITextGenerationRequest {
@@ -64,25 +143,6 @@ export interface AIImprovementResponse {
   suggestions: AIImprovementSuggestion[];
   overall_score: number;
   reasoning: string;
-}
-
-export interface AIGenerationRequest {
-  theme?: string;
-  outline?: string[];
-  product: {
-    name: string;
-    description?: string;
-    category?: string;
-    pricePoint?: string;
-    keyBenefits?: string[];
-  };
-  audience?: {
-    persona?: string;
-    painPoints?: string[];
-    desiredOutcome?: string;
-  };
-  goals?: string[];
-  requiredBlocks?: Array<{ type: string; mustInclude?: boolean }>;
 }
 
 export interface AIGenerationResponse {
