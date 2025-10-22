@@ -586,7 +586,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden md:block"
           >
             <ChevronDownIcon className="w-8 h-8 text-white/60" />
           </motion.div>
