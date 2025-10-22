@@ -57,7 +57,8 @@ export type BlockCategory =
   | 'social-proof'  // 社会的証明
   | 'media'         // メディア系
   | 'form'         // フォーム系
-  | 'image';       // 画像ブロック
+  | 'image'        // 画像ブロック
+  | 'info-product'; // 情報商材特化
 
 export type TemplateThemeKey =
   | 'urgent_red'
