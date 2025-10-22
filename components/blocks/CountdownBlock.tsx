@@ -11,6 +11,9 @@ interface CountdownBlockProps {
 }
 
 export default function CountdownBlock({ content }: CountdownBlockProps) {
+  // Debug: Log the entire content object
+  console.log('🔍 CountdownBlock received content:', JSON.stringify(content, null, 2));
+  
   const resolvedThemeKey: ColorThemeKey = (content.themeKey as ColorThemeKey) ?? "urgent_red";
   const theme = COLOR_THEMES[resolvedThemeKey] ?? COLOR_THEMES.urgent_red;
   

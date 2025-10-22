@@ -465,6 +465,16 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                 {(() => {
                   const renderBlock = () => {
                     if (step.block_type && step.content_data) {
+                      // Debug: Log countdown blocks specifically
+                      if (step.block_type.includes('countdown')) {
+                        console.log('🔍 Rendering countdown block:', {
+                          stepId: step.id,
+                          blockType: step.block_type,
+                          content_data: step.content_data,
+                          targetDate: (step.content_data as any).targetDate,
+                        });
+                      }
+                      
                       return (
                         <div className="lp-viewer-block w-full">
                           <BlockRenderer
