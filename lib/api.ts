@@ -47,12 +47,9 @@ api.interceptors.response.use(
 
 // 認証API
 export const authApi = {
-  register: (data: { email: string; username: string; password: string; user_type: 'seller' | 'buyer' }) =>
-    api.post('/auth/register', data),
-  
-  login: (data: { email: string; password: string }) =>
-    api.post('/auth/login', data),
-  
+  loginWithGoogle: (credential: string) =>
+    api.post<AuthResponse>('/auth/google', { credential }),
+
   logout: () =>
     api.post('/auth/logout'),
   

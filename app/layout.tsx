@@ -3,6 +3,7 @@ import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Saw
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import NextTopLoader from 'nextjs-toploader';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // オプション1: Noto Sans JP（現在使用中）- Google公式、企業サイトで最も使われている
 const notoSansJP = Noto_Sans_JP({
@@ -109,6 +110,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const shouldUseGoogleProvider = Boolean(googleClientId && googleClientId.trim().length > 0);
+
   return (
     <html lang="ja">
       <body className={`${fontConfig[ACTIVE_FONT].className} antialiased`}>
@@ -118,9 +122,17 @@ export default function RootLayout({
           showSpinner={false}
           shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
         />
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {shouldUseGoogleProvider ? (
+          <GoogleOAuthProvider clientId={googleClientId!}>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </GoogleOAuthProvider>
+        ) : (
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        )}
       </body>
     </html>
   );
