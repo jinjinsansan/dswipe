@@ -1061,7 +1061,7 @@ export default function Home() {
               {...fadeInUp}
               className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 md:p-8 shadow-[0_30px_90px_-60px_rgba(15,23,42,0.75)]"
             >
-              <ul className="space-y-3 text-sm text-white">
+              <ul className="space-y-3 text-sm">
                 {faqItems.map((item, index) => (
                   <li key={item.question}>
                     <button
