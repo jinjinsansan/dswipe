@@ -1090,7 +1090,7 @@ export default function Home() {
               <h3 className="text-2xl font-semibold text-white mb-4 leading-snug">
                 {faqItems[selectedFaq].question}
               </h3>
-              <p className="text-base text-slate-100 leading-relaxed">
+              <p className="text-base text-slate-200 leading-relaxed">
                 {faqItems[selectedFaq].answer}
               </p>
             </motion.div>
@@ -1148,7 +1148,7 @@ export default function Home() {
                 D-swipe
               </div>
               <p className="text-lg text-slate-200 leading-relaxed">
-                情報の鮮度を逃さない、企業向けスワイプ型LP作成プラットフォーム。
+                情報の鮮度を逃がさない情報商材インフォプレナー向けスワイプ型LP作成プラットフォーム。
               </p>
               <p className="text-sm text-slate-400">
                 © {new Date().getFullYear()} D-swipe. All rights reserved.
@@ -1168,13 +1168,16 @@ export default function Home() {
               <ul className="space-y-3 text-sm text-slate-400">
                 <li>
                   <a
-                    href="https://swipelaunch-backend.onrender.com/docs"
+                    href="https://www.dlogicai.in/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors"
                   >
-                    API Documentation
+                    競馬予想AI D-logic
                   </a>
+                </li>
+                <li className="text-slate-400">
+                  競艇予想AI D-logic
                 </li>
                 <li><Link href="/login" className="hover:text白 transition-colors">ログイン</Link></li>
                 <li><Link href="/register" className="hover:text-white transition-colors">無料で始める</Link></li>
@@ -1183,8 +1186,12 @@ export default function Home() {
           </div>
           <div className="border-t border-white/10" />
           <div className="container mx-auto px-4 py-6 max-w-6xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-slate-500">
-            <span>特定商取引法に基づく表記 / プライバシーポリシー</span>
-            <span>カスタマーサポート：support@d-swipe.jp</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href="/terms" className="hover:text-white transition-colors">利用規約</Link>
+              <span>/</span>
+              <Link href="/privacy" className="hover:text-white transition-colors">プライバシーポリシー</Link>
+            </div>
+            <span>カスタマーサポート：info@dlogicai.com</span>
           </div>
         </div>
       </footer>
