@@ -28,7 +28,22 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = +new Date(content.targetDate) - +new Date();
+      if (!content.targetDate) {
+        console.warn('⚠️ CountdownBlock: targetDate is not set');
+        return;
+      }
+
+      const targetTime = new Date(content.targetDate).getTime();
+      const now = new Date().getTime();
+      const difference = targetTime - now;
+      
+      console.log('🕒 Countdown:', {
+        targetDate: content.targetDate,
+        targetTime: new Date(content.targetDate).toLocaleString('ja-JP'),
+        now: new Date().toLocaleString('ja-JP'),
+        difference,
+        daysLeft: Math.floor(difference / (1000 * 60 * 60 * 24))
+      });
       
       if (difference > 0) {
         setTimeLeft({
@@ -36,6 +51,14 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
           hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        // 期限切れの場合は0を表示
+        setTimeLeft({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
         });
       }
     };
