@@ -1066,7 +1066,7 @@ export default function Home() {
                   <li key={item.question}>
                     <button
                       onClick={() => setSelectedFaq(index)}
-                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10'}`}
+                      className={`w-full text-left px-4 py-3 rounded-2xl transition-all ${selectedFaq === index ? 'bg-white/15 text-white shadow-inner shadow-blue-500/10' : 'hover:bg-white/10 text-slate-200'}`}
                     >
                       <span className="text-xs uppercase tracking-[0.3em] block mb-2 text-blue-300">
                         Q{String(index + 1).padStart(2, '0')}
@@ -1084,7 +1084,7 @@ export default function Home() {
               {...fadeInUp}
               className="rounded-3xl border border-white/10 bg-white/10 backdrop-blur-xl p-8 md:p-10 shadow-[0_40px_120px_-70px_rgba(15,23,42,0.75)]"
             >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-white text-xs uppercase tracking-[0.32em] mb-6">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 text-blue-200 text-xs uppercase tracking-[0.32em] mb-6 font-semibold">
                 Answer
               </div>
               <h3 className="text-2xl font-semibold text-white mb-4 leading-snug">
