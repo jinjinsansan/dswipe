@@ -1,6 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import {
+  AdjustmentsHorizontalIcon,
+  ChartBarSquareIcon,
+  ExclamationTriangleIcon,
+  SparklesIcon,
+} from '@heroicons/react/24/outline';
 import { aiApi } from '@/lib/api';
 
 interface Suggestion {
@@ -68,11 +74,11 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
       case 'high':
-        return '🔴 高';
+        return '優先度: 高';
       case 'medium':
-        return '🟡 中';
+        return '優先度: 中';
       case 'low':
-        return '🟢 低';
+        return '優先度: 低';
       default:
         return priority;
     }
@@ -82,7 +88,10 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
     <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-white font-semibold text-lg">🤖 AI改善提案</h3>
+          <div className="flex items-center gap-2 text-white">
+            <ChartBarSquareIcon className="h-5 w-5" aria-hidden="true" />
+            <h3 className="font-semibold text-lg">AI改善提案</h3>
+          </div>
           <p className="text-gray-400 text-sm mt-1">分析データに基づいた最適化提案</p>
         </div>
         <button
@@ -99,7 +108,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
               分析中...
             </span>
           ) : (
-            '✨ AI分析開始'
+            'AI分析開始'
           )}
         </button>
       </div>
@@ -114,7 +123,10 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
         <div className="mb-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-white font-semibold mb-1">総合スコア</h4>
+              <div className="flex items-center gap-2 text-white">
+                <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                <h4 className="font-semibold">総合スコア</h4>
+              </div>
               <p className="text-gray-400 text-sm">{reasoning}</p>
             </div>
             <div className="text-5xl font-bold text-white">
@@ -134,7 +146,8 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
               className="bg-gray-900 rounded-lg border border-gray-700 p-4"
             >
               <div className="flex items-start justify-between mb-3">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(suggestion.priority)}`}>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(suggestion.priority)}`}>
+                  <ExclamationTriangleIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   {getPriorityLabel(suggestion.priority)}
                 </span>
                 <span className="text-xs text-gray-500">{suggestion.type}</span>
@@ -163,10 +176,10 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
         </div>
       ) : !isAnalyzing && (
         <div className="text-center py-8">
-          <div className="text-4xl mb-3">📊</div>
-          <p className="text-gray-400 text-sm">
-            AI分析を実行すると、LPの改善提案が表示されます
-          </p>
+          <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-800/70">
+            <AdjustmentsHorizontalIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+          </div>
+          <p className="text-gray-400 text-sm">AI分析を実行すると、LPの改善提案が表示されます</p>
         </div>
       )}
     </div>

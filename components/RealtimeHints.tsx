@@ -1,6 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import {
+  CheckCircleIcon,
+  Cog6ToothIcon,
+  ExclamationTriangleIcon,
+  LightBulbIcon,
+} from '@heroicons/react/24/outline';
 import { BlockType, BlockContent } from '@/types/templates';
 
 interface Hint {
@@ -195,15 +201,15 @@ export default function RealtimeHints({ blocks, selectedBlockId, lpData, onApply
   const getHintIcon = (type: Hint['type']) => {
     switch (type) {
       case 'tip':
-        return '💡';
+        return <LightBulbIcon className="h-5 w-5" aria-hidden="true" />;
       case 'warning':
-        return '⚠️';
+        return <ExclamationTriangleIcon className="h-5 w-5" aria-hidden="true" />;
       case 'success':
-        return '✅';
+        return <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />;
       case 'ai':
-        return '🤖';
+        return <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />;
       default:
-        return '💡';
+        return <LightBulbIcon className="h-5 w-5" aria-hidden="true" />;
     }
   };
 
@@ -230,7 +236,7 @@ export default function RealtimeHints({ blocks, selectedBlockId, lpData, onApply
           className={`rounded-lg border p-4 ${getHintColor(hint.type)}`}
         >
           <div className="flex items-start">
-            <div className="text-2xl mr-3">{getHintIcon(hint.type)}</div>
+            <div className="mr-3 text-white/90">{getHintIcon(hint.type)}</div>
             <div className="flex-1">
               <h4 className="font-semibold mb-1">{hint.title}</h4>
               <p className="text-sm opacity-90">{hint.message}</p>

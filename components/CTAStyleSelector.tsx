@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { LightBulbIcon } from '@heroicons/react/24/outline';
 import { CTA_CATEGORIES, CTAStyle, getStylesByCategory } from '@/lib/ctaStyles';
 
 interface CTAStyleSelectorProps {
@@ -110,8 +111,9 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
 
         {/* フッター */}
         <div className="p-4 border-t border-gray-700 bg-gray-800/50">
-          <p className="text-gray-400 text-xs text-center">
-            💡 スタイルを選択すると、ボタンの色やサイズをさらにカスタマイズできます
+          <p className="flex items-center justify-center gap-2 text-gray-400 text-xs text-center">
+            <LightBulbIcon className="h-4 w-4" aria-hidden="true" />
+            スタイルを選択すると、ボタンの色やサイズをさらにカスタマイズできます
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ExclamationTriangleIcon, FireIcon } from '@heroicons/react/24/outline';
 import { UrgencyBlockContent } from '@/types/templates';
 
 interface UrgencyBlockProps {
@@ -31,7 +32,11 @@ export default function UrgencyBlock({ content }: UrgencyBlockProps) {
           <div className="flex items-center justify-center gap-4 flex-wrap">
             {/* アイコン */}
             <div className="text-5xl md:text-6xl animate-pulse">
-              {content.icon || '⚠️'}
+              {content.icon ? (
+                <span aria-hidden="true">{content.icon}</span>
+              ) : (
+                <ExclamationTriangleIcon className="h-16 w-16" aria-hidden="true" />
+              )}
             </div>
 
             {/* メッセージ */}
@@ -48,14 +53,20 @@ export default function UrgencyBlock({ content }: UrgencyBlockProps) {
 
             {/* アイコン（右側） */}
             <div className="text-5xl md:text-6xl animate-pulse">
-              {content.icon || '⚠️'}
+              {content.icon ? (
+                <span aria-hidden="true">{content.icon}</span>
+              ) : (
+                <ExclamationTriangleIcon className="h-16 w-16" aria-hidden="true" />
+              )}
             </div>
           </div>
 
           {/* 追加の警告 */}
           <div className="mt-6 text-center">
-            <p className="text-lg md:text-xl font-semibold animate-bounce">
-              🔥 今すぐ行動してください 🔥
+            <p className="flex items-center justify-center gap-2 text-lg md:text-xl font-semibold animate-bounce">
+              <FireIcon className="h-5 w-5" aria-hidden="true" />
+              今すぐ行動してください
+              <FireIcon className="h-5 w-5" aria-hidden="true" />
             </p>
           </div>
         </div>

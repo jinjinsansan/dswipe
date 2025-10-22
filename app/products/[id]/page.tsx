@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ArchiveBoxIcon, CubeTransparentIcon, FireIcon } from '@heroicons/react/24/outline';
 import { productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
@@ -126,7 +127,7 @@ export default function ProductDetailPage() {
               </div>
             ) : (
               <div className="aspect-square bg-gray-900 rounded-lg flex items-center justify-center">
-                <span className="text-gray-600 text-4xl">📦</span>
+                <ArchiveBoxIcon className="h-16 w-16 text-gray-600" aria-hidden="true" />
               </div>
             )}
           </div>
@@ -155,12 +156,18 @@ export default function ProductDetailPage() {
             </p>
 
             {/* Stats */}
-            <div className="flex items-center gap-6 mb-6 text-sm">
-              <div className="text-gray-400">
-                🔥 <span className="font-semibold text-white">{product.total_sales || 0}</span> 件販売
+            <div className="flex items-center gap-6 mb-6 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <FireIcon className="h-5 w-5 text-orange-400" aria-hidden="true" />
+                <span>
+                  <span className="font-semibold text-white">{product.total_sales || 0}</span> 件販売
+                </span>
               </div>
-              <div className="text-gray-400">
-                📦 在庫: <span className="font-semibold text-white">{product.stock}</span>
+              <div className="flex items-center gap-2">
+                <CubeTransparentIcon className="h-5 w-5" aria-hidden="true" />
+                <span>
+                  在庫: <span className="font-semibold text-white">{product.stock}</span>
+                </span>
               </div>
             </div>
 

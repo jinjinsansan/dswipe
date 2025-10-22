@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, FormEvent } from 'react';
+import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
@@ -531,7 +532,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                 {index === 0 && lp.show_swipe_hint && (
                   <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 gap-1 animate-bounce z-20">
                     <span className="text-4xl">
-                      {lp.swipe_direction === 'vertical' ? '👇' : '👉'}
+                      {lp.swipe_direction === 'vertical' ? (
+                        <ArrowDownIcon className="h-8 w-8" aria-hidden="true" />
+                      ) : (
+                        <ArrowRightIcon className="h-8 w-8" aria-hidden="true" />
+                      )}
                     </span>
                     <span className="text-sm tracking-wide">
                       {lp.swipe_direction === 'vertical' ? '下にスワイプ' : '横にスワイプ'}

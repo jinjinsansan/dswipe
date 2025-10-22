@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { BanknotesIcon, ExclamationTriangleIcon, FireIcon } from '@heroicons/react/24/outline';
 import { SpecialPriceBlockContent } from '@/types/templates';
 
 interface SpecialPriceBlockProps {
@@ -46,10 +47,12 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
             {content.discountBadge && (
               <div className="flex justify-center mb-6">
                 <span 
-                  className="px-6 py-2 rounded-full text-xl font-bold animate-pulse shadow-lg"
+                  className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-xl font-bold animate-pulse shadow-lg"
                   style={{ backgroundColor: badgeColor, color: badgeTextColor }}
                 >
-                  🔥 {content.discountBadge} 🔥
+                  <FireIcon className="h-5 w-5" aria-hidden="true" />
+                  {content.discountBadge}
+                  <FireIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
               </div>
             )}
@@ -87,10 +90,11 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
               {/* 節約額 */}
               {content.originalPrice && content.specialPrice && (
                 <div 
-                  className="mt-4 text-2xl font-semibold"
+                  className="mt-4 inline-flex items-center gap-2 text-2xl font-semibold"
                   style={{ color: accentColor }}
                 >
-                  💰 {(parseInt(content.originalPrice.replace(/,/g, '')) - parseInt(content.specialPrice.replace(/,/g, ''))).toLocaleString()}円もお得！
+                  <BanknotesIcon className="h-6 w-6" aria-hidden="true" />
+                  {(parseInt(content.originalPrice.replace(/,/g, '')) - parseInt(content.specialPrice.replace(/,/g, ''))).toLocaleString()}円もお得！
                 </div>
               )}
             </div>
@@ -131,10 +135,11 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
 
             {/* 注意書き */}
             <p 
-              className="text-center mt-6 text-sm animate-pulse"
+              className="flex items-center justify-center gap-2 text-center mt-6 text-sm animate-pulse"
               style={{ color: priceColor }}
             >
-              ⚠️ この特別価格は予告なく終了する可能性があります
+              <ExclamationTriangleIcon className="h-4 w-4" aria-hidden="true" />
+              この特別価格は予告なく終了する可能性があります
             </p>
           </div>
         </div>

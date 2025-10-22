@@ -10,7 +10,7 @@ export default function UserProfilePage() {
   const router = useRouter();
   const username = params.username as string;
 
-  console.log('🔍 UserProfilePage レンダリング - ユーザー名:', username);
+  console.log('UserProfilePage レンダリング - ユーザー名:', username);
 
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,40 +21,40 @@ export default function UserProfilePage() {
   });
 
   useEffect(() => {
-    console.log('🚀 useEffect 実行 - fetchUserProducts を呼び出します');
+    console.log('useEffect 実行 - fetchUserProducts を呼び出します');
     fetchUserProducts();
   }, [username]);
 
   const fetchUserProducts = async () => {
-    console.log('📡 fetchUserProducts 開始');
+    console.log('fetchUserProducts 開始');
     try {
       setIsLoading(true);
       setError('');
       
-      console.log('📡 API呼び出し: productApi.getPublic');
+      console.log('API呼び出し: productApi.getPublic');
       // sortパラメータを追加（ダッシュボードと同じ形式）
       // limitは最大50に制限されている
       const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
       
-      console.log('✅ API レスポンス取得成功');
-      console.log('📦 レスポンス全体:', response);
-      console.log('📦 response.data:', response.data);
-      console.log('📦 response.data.data:', response.data?.data);
+      console.log('API レスポンス取得成功');
+      console.log('レスポンス全体:', response);
+      console.log('response.data:', response.data);
+      console.log('response.data.data:', response.data?.data);
       
       // バックエンドのレスポンス構造に合わせる
       const allProducts = response.data?.data || response.data || [];
-      console.log('📦 全商品データ:', allProducts);
-      console.log('📦 商品数:', allProducts.length);
-      console.log('🔍 検索中のユーザー名:', username);
-      console.log('👥 商品の販売者名リスト:', allProducts.map((p: any) => p.seller_username));
+      console.log('全商品データ:', allProducts);
+      console.log('商品数:', allProducts.length);
+      console.log('検索中のユーザー名:', username);
+      console.log('商品の販売者名リスト:', allProducts.map((p: any) => p.seller_username));
       
       const userProducts = allProducts.filter(
         (p: any) => p.seller_username === username
       );
       
-      console.log('✅ フィルター完了');
-      console.log('🎯 フィルター後の商品数:', userProducts.length);
-      console.log('🎯 フィルター後の商品:', userProducts);
+      console.log('フィルター完了');
+      console.log('フィルター後の商品数:', userProducts.length);
+      console.log('フィルター後の商品:', userProducts);
       
       setProducts(userProducts);
       setStats({
@@ -66,7 +66,7 @@ export default function UserProfilePage() {
       console.error('❌ エラー詳細:', error.response?.data || error.message);
       setError(error.message || '商品の取得に失敗しました');
     } finally {
-      console.log('🏁 fetchUserProducts 完了');
+      console.log('fetchUserProducts 完了');
       setIsLoading(false);
     }
   };

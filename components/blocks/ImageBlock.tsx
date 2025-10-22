@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 import { ImageBlockContent } from '@/types/templates';
 
 interface ImageBlockProps {
@@ -72,7 +73,9 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
             color: textColor || '#ffffff',
           }}
         >
-          <div className="text-4xl mb-3">🖼️</div>
+          <div className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
+            <PhotoIcon className="h-7 w-7" aria-hidden="true" />
+          </div>
           <p 
             className="text-base"
             style={{ color: textColor ? `${textColor}CC` : '#E5E7EB' }}

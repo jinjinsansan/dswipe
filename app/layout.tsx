@@ -61,7 +61,7 @@ const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
 });
 
-// 👇 ここを変更してフォントを切り替え
+// ここを変更してフォントを切り替え
 // 'notoSansJP' | 'inter' | 'mPlus1p' | 'zenKakuGothicNew' | 'bizUdpGothic' | 'sawarabiGothic' | 'zenMaruGothic' | 'robotoNoto'
 const ACTIVE_FONT = 'robotoNoto';
 

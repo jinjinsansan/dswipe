@@ -1,8 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ComponentType, type SVGProps } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import {
+  BoltIcon,
+  ChartBarSquareIcon,
+  CursorArrowRaysIcon,
+  EyeIcon,
+  PencilSquareIcon,
+  PhotoIcon,
+  PresentationChartLineIcon,
+  UsersIcon,
+} from '@heroicons/react/24/outline';
 import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPAnalytics } from '@/types';
@@ -89,7 +99,7 @@ export default function LPAnalyticsPage() {
             className="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 transition-colors text-sm font-medium"
           >
             <span className="flex items-center gap-2">
-              <span className="text-base">📊</span>
+              <ChartBarSquareIcon className="h-4 w-4" aria-hidden="true" />
               ダッシュボード
             </span>
             <span className="text-[10px] uppercase tracking-widest text-slate-600">HOME</span>
@@ -100,7 +110,7 @@ export default function LPAnalyticsPage() {
             className="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 transition-colors text-sm font-medium"
           >
             <span className="flex items-center gap-2">
-              <span className="text-base">✏️</span>
+              <PencilSquareIcon className="h-4 w-4" aria-hidden="true" />
               LP編集
             </span>
             <span className="text-[10px] uppercase tracking-widest text-slate-600">EDIT</span>
@@ -111,7 +121,7 @@ export default function LPAnalyticsPage() {
             className="flex items-center justify-between rounded-lg px-3 py-2 text-white bg-blue-600/90 transition-colors text-sm font-semibold"
           >
             <span className="flex items-center gap-2">
-              <span className="text-base">📈</span>
+              <PresentationChartLineIcon className="h-4 w-4" aria-hidden="true" />
               LP分析
             </span>
             <span className="text-[10px] uppercase tracking-widest text-blue-100">REPORT</span>
@@ -122,7 +132,7 @@ export default function LPAnalyticsPage() {
             className="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800/40 transition-colors text-sm font-medium"
           >
             <span className="flex items-center gap-2">
-              <span className="text-base">🗂️</span>
+              <PhotoIcon className="h-4 w-4" aria-hidden="true" />
               メディア
             </span>
             <span className="text-[10px] uppercase tracking-widest text-slate-600">LIBRARY</span>
@@ -180,7 +190,7 @@ export default function LPAnalyticsPage() {
               onClick={() => setShowMobileMenu(false)}
             >
               <span className="flex items-center gap-2">
-                <span>📊</span>
+                <ChartBarSquareIcon className="h-4 w-4" aria-hidden="true" />
                 ダッシュボード
               </span>
               <span className="text-[10px] uppercase tracking-widest text-slate-600">HOME</span>
@@ -191,7 +201,7 @@ export default function LPAnalyticsPage() {
               onClick={() => setShowMobileMenu(false)}
             >
               <span className="flex items-center gap-2">
-                <span>✏️</span>
+                <PencilSquareIcon className="h-4 w-4" aria-hidden="true" />
                 LP編集
               </span>
               <span className="text-[10px] uppercase tracking-widest text-slate-600">EDIT</span>
@@ -202,7 +212,7 @@ export default function LPAnalyticsPage() {
               onClick={() => setShowMobileMenu(false)}
             >
               <span className="flex items-center gap-2">
-                <span>📈</span>
+                <PresentationChartLineIcon className="h-4 w-4" aria-hidden="true" />
                 LP分析
               </span>
               <span className="text-[10px] uppercase tracking-widest text-blue-100">REPORT</span>
@@ -213,7 +223,7 @@ export default function LPAnalyticsPage() {
               onClick={() => setShowMobileMenu(false)}
             >
               <span className="flex items-center gap-2">
-                <span>🗂️</span>
+                <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                 メディア
               </span>
               <span className="text-[10px] uppercase tracking-widest text-slate-600">LIBRARY</span>
@@ -236,10 +246,10 @@ export default function LPAnalyticsPage() {
             )}
 
             <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              <MetricCard label="総閲覧数" value={totalViews} icon="👁️" />
-              <MetricCard label="総セッション数" value={totalSessions} icon="📈" />
-              <MetricCard label="CTAクリック" value={totalCtaClicks} icon="🎯" />
-              <MetricCard label="CTA転換率" value={conversionRate} icon="⚡" accent="text-emerald-300" />
+              <MetricCard label="総閲覧数" value={totalViews} icon={EyeIcon} />
+              <MetricCard label="総セッション数" value={totalSessions} icon={UsersIcon} />
+              <MetricCard label="CTAクリック" value={totalCtaClicks} icon={CursorArrowRaysIcon} />
+              <MetricCard label="CTA転換率" value={conversionRate} icon={BoltIcon} accent="text-emerald-300" />
             </section>
 
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6">
@@ -363,15 +373,15 @@ export default function LPAnalyticsPage() {
 interface MetricCardProps {
   label: string;
   value: string;
-  icon: string;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
   accent?: string;
 }
 
-function MetricCard({ label, value, icon, accent }: MetricCardProps) {
+function MetricCard({ label, value, icon: Icon, accent }: MetricCardProps) {
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-base">{icon}</span>
+        <Icon className="h-5 w-5 text-slate-300" aria-hidden="true" />
         <span className="text-[10px] uppercase tracking-widest text-slate-500">Snapshot</span>
       </div>
       <p className={`text-2xl font-semibold text-white ${accent ?? ''}`}>{value}</p>

@@ -23,6 +23,7 @@ import {
   ShoppingBagIcon,
   Cog6ToothIcon,
   BriefcaseIcon,
+  CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 
 const formatAnnouncementDate = (value?: string) => {
@@ -919,8 +920,9 @@ export default function DashboardPage() {
                     )}
 
                     {updateSuccess && (
-                      <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg text-sm">
-                        ✅ ユーザー名を更新しました
+                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg text-sm">
+                        <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
+                        ユーザー名を更新しました
                       </div>
                     )}
 
@@ -949,7 +951,8 @@ export default function DashboardPage() {
                   onClick={loadAnnouncements}
                   className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
                 >
-                  🔄 最新情報に更新
+                  <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                  最新情報に更新
                 </button>
               </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { InboxStackIcon } from '@heroicons/react/24/outline';
 import {
   DndContext,
   closestCenter,
@@ -189,7 +190,9 @@ export default function DraggableBlockEditor({
   if (sortedBlocks.length === 0) {
     return (
       <div className="text-center py-8 lg:py-16 px-4 lg:px-8 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-700">
-        <div className="text-4xl lg:text-6xl mb-2 lg:mb-4">📦</div>
+        <div className="mx-auto mb-2 lg:mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-700/50">
+          <InboxStackIcon className="h-8 w-8 text-gray-200" aria-hidden="true" />
+        </div>
         <h3 className="text-white font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
         <p className="text-gray-400 text-sm lg:text-base">
           「+ ブロック追加」ボタンからテンプレートを追加してください

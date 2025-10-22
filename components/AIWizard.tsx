@@ -1,6 +1,27 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import {
+  AcademicCapIcon,
+  BanknotesIcon,
+  BoltIcon,
+  BriefcaseIcon,
+  BuildingStorefrontIcon,
+  CreditCardIcon,
+  DevicePhoneMobileIcon,
+  EnvelopeIcon,
+  HeartIcon,
+  LightBulbIcon,
+  PencilSquareIcon,
+  PhoneIcon,
+  ShoppingBagIcon,
+  SparklesIcon,
+  TicketIcon,
+  UserCircleIcon,
+  UserGroupIcon,
+  UserIcon,
+  VideoCameraIcon,
+} from '@heroicons/react/24/outline';
 import type { AIGenerationRequest, AIGenerationResponse } from '@/types/api';
 
 type ThemeKey =
@@ -63,16 +84,16 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       question: 'どんな情報商材を販売しますか？',
       field: 'business',
       options: [
-        { value: '投資・FX・仮想通貨', label: '💰 投資・FX・仮想通貨', icon: '💰' },
-        { value: 'ダイエット・筋トレ', label: '💪 ダイエット・筋トレ', icon: '💪' },
-        { value: '副業・ビジネス', label: '💼 副業・ビジネス', icon: '💼' },
-        { value: '英語・資格学習', label: '📚 英語・資格学習', icon: '📚' },
-        { value: '恋愛・モテ術', label: '❤️ 恋愛・モテ術', icon: '❤️' },
-        { value: 'SNS・集客・マーケティング', label: '📱 SNS・集客', icon: '📱' },
-        { value: '転売・物販・せどり', label: '🏪 転売・物販', icon: '🏪' },
-        { value: 'ライティング・Webスキル', label: '✍️ ライティング', icon: '✍️' },
-        { value: '自己啓発・コーチング', label: '🧠 自己啓発', icon: '🧠' },
-        { value: 'その他ノウハウ', label: '🎯 その他', icon: '🎯' },
+        { value: '投資・FX・仮想通貨', label: '投資・FX・仮想通貨', icon: BanknotesIcon },
+        { value: 'ダイエット・筋トレ', label: 'ダイエット・筋トレ', icon: BoltIcon },
+        { value: '副業・ビジネス', label: '副業・ビジネス', icon: BriefcaseIcon },
+        { value: '英語・資格学習', label: '英語・資格学習', icon: AcademicCapIcon },
+        { value: '恋愛・モテ術', label: '恋愛・モテ術', icon: HeartIcon },
+        { value: 'SNS・集客・マーケティング', label: 'SNS・集客', icon: DevicePhoneMobileIcon },
+        { value: '転売・物販・せどり', label: '転売・物販', icon: BuildingStorefrontIcon },
+        { value: 'ライティング・Webスキル', label: 'ライティング・Webスキル', icon: PencilSquareIcon },
+        { value: '自己啓発・コーチング', label: '自己啓発・コーチング', icon: LightBulbIcon },
+        { value: 'その他ノウハウ', label: 'その他', icon: SparklesIcon },
       ],
     },
     {
@@ -80,12 +101,12 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       question: 'メインターゲットは誰ですか？',
       field: 'target',
       options: [
-        { value: '20-30代男性（独身・会社員）', label: '👨 20-30代男性', icon: '👨' },
-        { value: '30-40代男性（既婚・経営者志向）', label: '👔 30-40代男性', icon: '👔' },
-        { value: '20-30代女性（副業・美容志向）', label: '👩 20-30代女性', icon: '👩' },
-        { value: '30-50代女性（主婦・在宅ワーク）', label: '👩‍💼 30-50代女性', icon: '👩‍💼' },
-        { value: '学生・フリーター（〜20代）', label: '🎓 学生層', icon: '🎓' },
-        { value: '50代以上（老後・資産形成）', label: '👴 シニア層', icon: '👴' },
+        { value: '20-30代男性（独身・会社員）', label: '20-30代男性（会社員）', icon: UserIcon },
+        { value: '30-40代男性（既婚・経営者志向）', label: '30-40代男性（経営者志向）', icon: BriefcaseIcon },
+        { value: '20-30代女性（副業・美容志向）', label: '20-30代女性（副業・美容）', icon: UserCircleIcon },
+        { value: '30-50代女性（主婦・在宅ワーク）', label: '30-50代女性（在宅ワーク）', icon: UserGroupIcon },
+        { value: '学生・フリーター（〜20代）', label: '学生・フリーター層', icon: AcademicCapIcon },
+        { value: '50代以上（老後・資産形成）', label: '50代以上（資産形成）', icon: UserGroupIcon },
       ],
     },
     {
@@ -93,12 +114,12 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       question: 'どんなアクションが欲しいですか？',
       field: 'goal',
       options: [
-        { value: '高額商品購入（10万円以上）', label: '💎 高額商品購入', icon: '💎' },
-        { value: '中価格帯購入（3-10万円）', label: '💳 中価格帯購入', icon: '💳' },
-        { value: '低価格入門（〜3万円）', label: '🎫 低価格入門', icon: '🎫' },
-        { value: '無料オファー（メルマガ・LINE）', label: '📧 無料登録', icon: '📧' },
-        { value: 'ウェビナー・説明会申込', label: '🎥 ウェビナー', icon: '🎥' },
-        { value: '無料相談・個別面談', label: '☎️ 無料相談', icon: '☎️' },
+        { value: '高額商品購入（10万円以上）', label: '高額商品購入（10万円以上）', icon: ShoppingBagIcon },
+        { value: '中価格帯購入（3-10万円）', label: '中価格帯購入（3-10万円）', icon: CreditCardIcon },
+        { value: '低価格入門（〜3万円）', label: '低価格入門（〜3万円）', icon: TicketIcon },
+        { value: '無料オファー（メルマガ・LINE）', label: '無料オファー（メルマガ・LINE）', icon: EnvelopeIcon },
+        { value: 'ウェビナー・説明会申込', label: 'ウェビナー・説明会申込', icon: VideoCameraIcon },
+        { value: '無料相談・個別面談', label: '無料相談・個別面談', icon: PhoneIcon },
       ],
     },
   ];
@@ -170,7 +191,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       }
 
       const data = (await response.json()) as AIGenerationResponse;
-      console.log('🎉 AI Response:', data);
+      console.log('AI Response:', data);
       
       if (!data.blocks || data.blocks.length === 0) {
         throw new Error('AI生成でブロックが生成されませんでした');
@@ -223,20 +244,24 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               {currentQuestion.question}
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              {currentQuestion.options.map((option) => (
+              {currentQuestion.options.map((option) => {
+                const Icon = option.icon;
+                return (
                 <button
                   key={option.value}
                   onClick={() => handleOptionClick(option.value)}
-                  className={`p-4 rounded-lg border transition-all text-left ${
+                  className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
                     formData[currentQuestion.field as keyof typeof formData] === option.value
                       ? 'border-blue-500/50 bg-blue-500/5'
                       : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <div className="text-xl mb-1.5">{option.icon}</div>
-                  <div className="text-white/90 text-sm font-light">{option.label.replace(option.icon, '').trim()}</div>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-300">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
                 </button>
-              ))}
+              );})}
             </div>
           </div>
         ) : (

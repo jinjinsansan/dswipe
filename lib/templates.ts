@@ -210,9 +210,9 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       highlightText: "KEY FEATURES",
       features: [
         { icon: "⚡️", title: "AI Strategy Engine", description: "ハイコンバージョン構成とコピーをAIが瞬時に生成。訴求軸に合わせた最適なブロックを自動提案。" },
-        { icon: "🎨", title: "Premium Theme Library", description: "最新トレンドのテンプレートを即利用。ブランドカラーやタイポグラフィもワンクリックで反映。" },
-        { icon: "📈", title: "Launch Analytics", description: "ヒートマップやコンバージョン動線を自動分析。改善提案をAIがレコメンド。" },
-        { icon: "🤝", title: "Collaborative Workflow", description: "チームメンバーとリアルタイム編集。承認フローやコメント機能で制作プロセスを効率化。" },
+        { icon: "Theme", title: "Premium Theme Library", description: "最新トレンドのテンプレートを即利用。ブランドカラーやタイポグラフィもワンクリックで反映。" },
+        { icon: "Analytics", title: "Launch Analytics", description: "ヒートマップやコンバージョン動線を自動分析。改善提案をAIがレコメンド。" },
+        { icon: "Team", title: "Collaborative Workflow", description: "チームメンバーとリアルタイム編集。承認フローやコメント機能で制作プロセスを効率化。" },
       ],
     } as FeaturesBlockContent,
   },
@@ -231,10 +231,10 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       title: "恋愛・美容顧客の共感を生む4つの仕掛け",
       highlightText: "CUSTOMER LOVE",
       features: [
-        { icon: "💌", title: "感情テンプレ", description: "10種類の恋愛心理テンプレートから最適なメッセージを自動提案。" },
-        { icon: "🎯", title: "顧客インサイトAI", description: "チャット履歴を解析し、刺さる訴求パターンと禁止ワードを自動で提示。" },
-        { icon: "🔁", title: "LINE自動分岐", description: "開封・反応データから最適なシナリオに自動分岐。ワンクリックで改善サイクル。" },
-        { icon: "📊", title: "感情スコア", description: "共感・信頼・行動意欲をスコアリングし、最適なCTAタイミングを可視化。" },
+        { icon: "Message", title: "感情テンプレ", description: "10種類の恋愛心理テンプレートから最適なメッセージを自動提案。" },
+        { icon: "Insight", title: "顧客インサイトAI", description: "チャット履歴を解析し、刺さる訴求パターンと禁止ワードを自動で提示。" },
+        { icon: "Automation", title: "LINE自動分岐", description: "開封・反応データから最適なシナリオに自動分岐。ワンクリックで改善サイクル。" },
+        { icon: "Score", title: "感情スコア", description: "共感・信頼・行動意欲をスコアリングし、最適なCTAタイミングを可視化。" },
       ],
     } as FeaturesBlockContent,
   },
@@ -253,10 +253,10 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       title: "高単価ローンチを成功に導く4つの仕組み",
       highlightText: "EXECUTIVE STACK",
       features: [
-        { icon: "🧭", title: "プレローンチ診断", description: "過去の成約データを学習したAIが、提供価値と顧客課題のずれを指摘。" },
-        { icon: "🪙", title: "価格最適化モデル", description: "希望売上と目標人数から最適な価格設計と特典シナリオを算出。" },
-        { icon: "📺", title: "ライブ改善ダッシュボード", description: "ウェビナー参加率・滞在時間・チャット温度をリアルタイム分析。" },
-        { icon: "🤝", title: "VIPコミュニティ運用", description: "高単価顧客の継続率を高めるオンボーディングとフォロー導線を生成。" },
+        { icon: "Diagnostic", title: "プレローンチ診断", description: "過去の成約データを学習したAIが、提供価値と顧客課題のずれを指摘。" },
+        { icon: "Pricing", title: "価格最適化モデル", description: "希望売上と目標人数から最適な価格設計と特典シナリオを算出。" },
+        { icon: "Dashboard", title: "ライブ改善ダッシュボード", description: "ウェビナー参加率・滞在時間・チャット温度をリアルタイム分析。" },
+        { icon: "Community", title: "VIPコミュニティ運用", description: "高単価顧客の継続率を高めるオンボーディングとフォロー導線を生成。" },
       ],
     } as FeaturesBlockContent,
   },
@@ -275,10 +275,10 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       title: "習慣化と成果を両立する4つのサイクル",
       highlightText: "BODY TRANSFORMATION",
       features: [
-        { icon: "🥗", title: "個別栄養ハック", description: "血糖値と活動量から食事サイクルを自動アジャスト。" },
-        { icon: "🧠", title: "メンタルトラッキング", description: "朝晩の気分ログを解析し、挫折リスクを事前検知。" },
-        { icon: "📆", title: "60日ロードマップ", description: "成果が出やすい順番でトレーニングと休息を設計。" },
-        { icon: "📱", title: "行動通知AI", description: "最適なタイミングでリマインドを送信し、継続率を最大化。" },
+        { icon: "Nutrition", title: "個別栄養ハック", description: "血糖値と活動量から食事サイクルを自動アジャスト。" },
+        { icon: "Mind", title: "メンタルトラッキング", description: "朝晩の気分ログを解析し、挫折リスクを事前検知。" },
+        { icon: "Roadmap", title: "60日ロードマップ", description: "成果が出やすい順番でトレーニングと休息を設計。" },
+        { icon: "Notify", title: "行動通知AI", description: "最適なタイミングでリマインドを送信し、継続率を最大化。" },
       ],
     } as FeaturesBlockContent,
   },
@@ -412,7 +412,7 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
       accentColor: "#F472B6",
       buttonText: "限定キャンペーンに参加",
       buttonColor: "#F43F5E",
-      subText: "💞 今だけ初月0円 / 残席3名",
+      subText: "今だけ初月0円 / 残席3名",
       position: "bottom",
     } as StickyCTABlockContent,
   },
@@ -436,10 +436,10 @@ export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
 ];
 
 export const TEMPLATE_CATEGORIES = [
-  { id: "header", name: "ヒーロー", icon: "🎯" },
-  { id: "content", name: "コンテンツ", icon: "📝" },
-  { id: "conversion", name: "コンバージョン", icon: "🚀" },
-  { id: "info-product", name: "情報商材特化", icon: "🔥" },
+{ id: "header", name: "ヒーロー", icon: "Hero" },
+{ id: "content", name: "コンテンツ", icon: "Content" },
+{ id: "conversion", name: "コンバージョン", icon: "Conversion" },
+{ id: "info-product", name: "情報商材特化", icon: "Special" },
 ];
 
 export function getTemplatesByCategory(category: string) {

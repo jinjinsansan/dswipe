@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { PaintBrushIcon } from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
 import {
   generateShadesFromHex,
@@ -40,7 +41,10 @@ export default function ColorThemeGenerator({
   return (
     <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-6 max-w-2xl">
       <div>
-        <h3 className="text-white font-bold mb-4">🎨 テーマカラージェネレーター</h3>
+        <h3 className="flex items-center gap-2 text-white font-bold mb-4">
+          <PaintBrushIcon className="h-5 w-5" aria-hidden="true" />
+          テーマカラージェネレーター
+        </h3>
         <p className="text-gray-400 text-sm mb-6">
           ベースカラーを選択すると、Tailwind CSS互換の11段階シェードが自動生成されます
         </p>

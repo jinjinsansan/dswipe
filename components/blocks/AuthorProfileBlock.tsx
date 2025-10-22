@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { TrophyIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { AuthorProfileBlockContent } from '@/types/templates';
 
 interface AuthorProfileBlockProps {
@@ -54,7 +55,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
                       borderColor,
                     }}
                   >
-                    <span className="text-8xl">👤</span>
+                    <UserCircleIcon className="h-24 w-24 text-white" aria-hidden="true" />
                   </div>
                 )}
               </div>
@@ -93,10 +94,11 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
                 {content.achievements && content.achievements.length > 0 && (
                   <div className="space-y-3 mb-8">
                     <h3 
-                      className="text-2xl font-bold mb-4"
+                      className="flex items-center gap-2 text-2xl font-bold mb-4"
                       style={{ color: nameColor }}
                     >
-                      🏆 実績
+                      <TrophyIcon className="h-6 w-6" aria-hidden="true" />
+                      実績
                     </h3>
                     {content.achievements.map((achievement, index) => (
                       <div

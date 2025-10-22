@@ -4,6 +4,14 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
+import {
+  ArrowPathIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
+  DocumentTextIcon,
+  MegaphoneIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { adminApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -17,15 +25,21 @@ import type {
   ModerationEvent,
 } from '@/types';
 
-const TABS = [
-  { id: 'users', label: 'ユーザー管理', icon: '👥' },
-  { id: 'marketplace', label: 'マーケット監視', icon: '🧭' },
-  { id: 'analytics', label: 'ポイント分析', icon: '📈' },
-  { id: 'announcements', label: 'お知らせ管理', icon: '📰' },
-  { id: 'logs', label: 'モデレーションログ', icon: '📜' },
-] as const;
+type TabMeta = {
+  id: 'users' | 'marketplace' | 'analytics' | 'announcements' | 'logs';
+  label: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+};
 
-type TabKey = (typeof TABS)[number]['id'];
+const TABS: TabMeta[] = [
+  { id: 'users', label: 'ユーザー管理', icon: UserGroupIcon },
+  { id: 'marketplace', label: 'マーケット監視', icon: BuildingStorefrontIcon },
+  { id: 'analytics', label: 'ポイント分析', icon: ChartBarIcon },
+  { id: 'announcements', label: 'お知らせ管理', icon: MegaphoneIcon },
+  { id: 'logs', label: 'モデレーションログ', icon: DocumentTextIcon },
+];
+
+type TabKey = TabMeta['id'];
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ja-JP').format(value);
 
@@ -510,7 +524,7 @@ export default function AdminPanelPage() {
                           : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
                       }`}
                     >
-                      <span className="text-base leading-none">{tab.icon}</span>
+                      <tab.icon className="h-4 w-4" aria-hidden="true" />
                       <span>{tab.label}</span>
                     </button>
                   );
@@ -545,7 +559,7 @@ export default function AdminPanelPage() {
                   : 'bg-slate-900/70 text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
             >
-              <span>{tab.icon}</span>
+              <tab.icon className="h-4 w-4" aria-hidden="true" />
               <span>{tab.label}</span>
             </button>
           ))}
@@ -566,7 +580,8 @@ export default function AdminPanelPage() {
                     onClick={() => fetchUsers(userSearch)}
                     className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-900/80 border border-slate-800 hover:bg-slate-800"
                   >
-                    🔄 更新
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    更新
                   </button>
                 </div>
 
@@ -1136,7 +1151,8 @@ export default function AdminPanelPage() {
                   onClick={() => fetchMarketplace(marketSearch)}
                   className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-900/80 border border-slate-800 hover:bg-slate-800"
                 >
-                  🔄 更新
+                  <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                  更新
                 </button>
               </div>
 
@@ -1313,7 +1329,8 @@ export default function AdminPanelPage() {
                   onClick={() => fetchAnalytics()}
                   className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-900/80 border border-slate-800 hover:bg-slate-800"
                 >
-                  🔄 更新
+                  <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                  更新
                 </button>
               </div>
 
@@ -1568,7 +1585,8 @@ export default function AdminPanelPage() {
                     onClick={fetchAnnouncements}
                     className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
                   >
-                    🔄 最新情報を取得
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    最新情報を取得
                   </button>
                 </div>
 
@@ -1629,7 +1647,8 @@ export default function AdminPanelPage() {
                   onClick={() => fetchLogs()}
                   className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-900/80 border border-slate-800 hover:bg-slate-800"
                 >
-                  🔄 更新
+                  <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                  更新
                 </button>
               </div>
 

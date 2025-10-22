@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { InboxStackIcon } from '@heroicons/react/24/outline';
 import BlockRenderer from './blocks/BlockRenderer';
 import { BlockType, BlockContent } from '@/types/templates';
 
@@ -94,7 +95,9 @@ export default function BlockEditor({
 
       {sortedBlocks.length === 0 && (
         <div className="text-center py-16 px-8 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-700">
-          <div className="text-6xl mb-4">📦</div>
+          <div className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-700/60">
+            <InboxStackIcon className="h-8 w-8 text-gray-200" aria-hidden="true" />
+          </div>
           <h3 className="text-white font-semibold text-xl mb-2">ブロックがありません</h3>
           <p className="text-gray-400">
             「+ ブロック追加」ボタンからテンプレートを追加してください

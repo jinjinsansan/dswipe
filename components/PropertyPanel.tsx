@@ -1,6 +1,27 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import {
+  ArrowPathIcon,
+  BoltIcon,
+  ChartBarIcon,
+  ClipboardDocumentCheckIcon,
+  CloudArrowUpIcon,
+  ExclamationTriangleIcon,
+  GiftIcon,
+  InboxStackIcon,
+  InformationCircleIcon,
+  MegaphoneIcon,
+  PaintBrushIcon,
+  PhotoIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  Square2StackIcon,
+  TagIcon,
+  TrashIcon,
+  UsersIcon,
+  VideoCameraIcon,
+} from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
@@ -22,6 +43,17 @@ interface PropertyPanelProps {
   onUpdateContent: (field: string, value: any) => void;
   onClose: () => void;
   onGenerateAI?: (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => void;
+}
+
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
+function SectionHeader({ icon: Icon, label }: { icon: IconComponent; label: string }) {
+  return (
+    <div className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-3">
+      <Icon className="h-4 w-4 text-slate-500" aria-hidden="true" />
+      <span>{label}</span>
+    </div>
+  );
 }
 
 export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI }: PropertyPanelProps) {
@@ -988,7 +1020,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {(block.blockType === 'hero' || block.blockType === 'hero-1' || block.blockType === 'hero-2' || block.blockType === 'hero-3') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">📸 ヒーロー設定</h3>
+              <SectionHeader icon={PhotoIcon} label="ヒーロー設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1002,7 +1034,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {(block.blockType.includes('text-image') || block.blockType.includes('text-img')) && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">🖼️ テキスト+画像設定</h3>
+              <SectionHeader icon={Square2StackIcon} label="テキスト+画像設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1015,7 +1047,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('cta') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">🎯 CTA設定</h3>
+              <SectionHeader icon={SparklesIcon} label="CTA設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1029,7 +1061,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('pricing') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">💰 価格表設定</h3>
+              <SectionHeader icon={TagIcon} label="価格表設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1043,7 +1075,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('features') && !block.blockType.includes('aurora') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">⭐ 特徴設定</h3>
+              <SectionHeader icon={BoltIcon} label="特徴設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1056,7 +1088,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('faq') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">❓ FAQ設定</h3>
+              <SectionHeader icon={InformationCircleIcon} label="FAQ設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1069,7 +1101,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('testimonial') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">💬 お客様の声設定</h3>
+              <SectionHeader icon={UsersIcon} label="お客様の声設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1083,7 +1115,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {block.blockType.includes('form') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">📝 フォーム設定</h3>
+              <SectionHeader icon={ClipboardDocumentCheckIcon} label="フォーム設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1098,7 +1130,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           block.blockType.includes('scarcity') || block.blockType.includes('sticky-cta')) && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">⚡ 特殊ブロック設定</h3>
+              <SectionHeader icon={BoltIcon} label="特殊ブロック設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1114,7 +1146,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           block.blockType.includes('before-after') || block.blockType.includes('author-profile')) && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
-              <h3 className="text-sm font-medium text-slate-700 mb-3">🎁 コンテンツブロック設定</h3>
+              <SectionHeader icon={GiftIcon} label="コンテンツブロック設定" />
               <div className="space-y-4">
                 {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
                 {renderColorPicker('textColor', (content as any).textColor)}
@@ -1177,7 +1209,19 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium text-center cursor-pointer">
-                    {isUploading ? '📤 アップロード中...' : '🔄 変更'}
+                    <span className="inline-flex items-center justify-center gap-2">
+                      {isUploading ? (
+                        <>
+                          <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                          アップロード中...
+                        </>
+                      ) : (
+                        <>
+                          <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                          変更
+                        </>
+                      )}
+                    </span>
                     <input
                       type="file"
                       accept="image/*"
@@ -1188,22 +1232,26 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   </label>
                   <button
                     onClick={() => setShowMediaLibrary(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
-                    🖼️ ライブラリ
+                    <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                    ライブラリ
                   </button>
                   <button
                     onClick={() => onUpdateContent('imageUrl', '')}
-                    className="col-span-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                    className="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
                   >
-                    🗑️ 削除
+                    <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                    削除
                   </button>
                 </div>
               </div>
             ) : (
               <div className="space-y-2">
                 <label className="block w-full px-4 py-8 bg-white border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 transition-colors cursor-pointer text-center">
-                  <div className="text-4xl mb-2">📸</div>
+                  <div className="mx-auto mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                    <PhotoIcon className="h-6 w-6" aria-hidden="true" />
+                  </div>
                   <div className="text-slate-600 text-sm mb-1">
                     {isUploading ? 'アップロード中...' : 'クリックして画像をアップロード'}
                   </div>
@@ -1220,9 +1268,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 </label>
                 <button
                   onClick={() => setShowMediaLibrary(true)}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                 >
-                  🖼️ メディアライブラリから選択
+                  <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                  メディアライブラリから選択
                 </button>
               </div>
             )}
@@ -1266,8 +1315,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
       {/* フッター */}
       <div className="p-3 lg:p-4 border-t border-slate-200 bg-slate-50 flex-shrink-0">
-        <p className="text-slate-500 text-xs text-center">
-          💡 テキストをクリックすると直接編集できます
+        <p className="flex items-center justify-center gap-2 text-slate-500 text-xs text-center">
+          <InformationCircleIcon className="h-4 w-4" aria-hidden="true" />
+          テキストをクリックすると直接編集できます
         </p>
       </div>
 

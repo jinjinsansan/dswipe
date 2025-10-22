@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { getAllTemplates } from '@/lib/templates';
 import type { TemplateBlock } from '@/types/templates';
 
@@ -118,13 +119,16 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
-              <span className="text-4xl">🗂️</span>
+              <FolderOpenIcon className="h-12 w-12 text-gray-500" aria-hidden="true" />
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {templates.map((template) => {
-                const meta = CATEGORY_META[template.category] || { name: template.category, icon: '📄' };
+                const meta = CATEGORY_META[template.category] || {
+                  name: template.category,
+                  icon: <DocumentTextIcon className={iconClass} aria-hidden="true" />,
+                };
                 return (
                   <button
                     key={template.id}

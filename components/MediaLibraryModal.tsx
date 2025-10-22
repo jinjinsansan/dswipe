@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 interface MediaItem {
   url: string;
@@ -58,7 +59,9 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
         <div className="flex-1 overflow-y-auto p-4">
           {media.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-5xl mb-3">🖼️</div>
+              <div className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-gray-200">
+                <PhotoIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-light text-white mb-2">画像がありません</h3>
               <p className="text-gray-400 text-sm font-light mb-4">
                 メディアページから画像をアップロードしてください

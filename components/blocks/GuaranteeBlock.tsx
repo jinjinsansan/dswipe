@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { LockClosedIcon, ShieldCheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { GuaranteeBlockContent } from '@/types/templates';
 
 interface GuaranteeBlockProps {
@@ -32,7 +33,7 @@ export default function GuaranteeBlock({ content }: GuaranteeBlockProps) {
             {/* 保証バッジ */}
             <div className="flex justify-center mb-8">
               <div className="bg-gradient-to-r rounded-full p-6 shadow-2xl" style={{ backgroundImage: `linear-gradient(to right, ${accentColor}, ${accentColor})` }}>
-                <span className="text-6xl">🛡️</span>
+                <ShieldCheckIcon className="h-12 w-12 text-white" aria-hidden="true" />
               </div>
             </div>
 
@@ -113,19 +114,21 @@ export default function GuaranteeBlock({ content }: GuaranteeBlockProps) {
                     color: '#111827',
                   }}
                 >
-                  <span>🔒</span>
+                  <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
                   <span>{content.badgeText}</span>
-                  <span>🔒</span>
+                  <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
             )}
 
             {/* リスクフリー訴求 */}
             <p 
-              className="text-center text-xl md:text-2xl font-semibold mt-8"
+              className="flex items-center justify-center gap-2 text-center text-xl md:text-2xl font-semibold mt-8"
               style={{ color: accentColor }}
             >
-              ✨ あなたにリスクは一切ありません ✨
+              <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+              あなたにリスクは一切ありません
+              <SparklesIcon className="h-5 w-5" aria-hidden="true" />
             </p>
           </div>
         </div>

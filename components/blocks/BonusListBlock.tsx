@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { GiftIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { BonusListBlockContent } from '@/types/templates';
 
 interface BonusListBlockProps {
@@ -58,8 +59,12 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
             >
               <div className="flex items-start gap-4">
                 {/* アイコン */}
-                <div className="flex-shrink-0 text-4xl">
-                  {bonus.icon || '🎁'}
+                <div className="flex-shrink-0">
+                  {bonus.icon ? (
+                    <span className="text-4xl" aria-hidden="true">{bonus.icon}</span>
+                  ) : (
+                    <GiftIcon className="h-10 w-10" aria-hidden="true" />
+                  )}
                 </div>
 
                 {/* コンテンツ */}
@@ -103,8 +108,10 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
             className="mt-12 rounded-2xl p-8 text-center shadow-2xl"
             style={{ backgroundImage: `linear-gradient(to right, ${accentColor}, ${accentColor})` }}
           >
-            <p className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#111827' }}>
-              🎉 特典総額 🎉
+            <p className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-bold mb-2" style={{ color: '#111827' }}>
+              <SparklesIcon className="h-7 w-7" aria-hidden="true" />
+              特典総額
+              <SparklesIcon className="h-7 w-7" aria-hidden="true" />
             </p>
             <p className="text-5xl md:text-6xl font-bold" style={{ color: '#111827' }}>
               {content.totalValue}

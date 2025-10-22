@@ -15,6 +15,15 @@ import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowDownTrayIcon,
+  EyeIcon,
+  LinkIcon,
+  RocketLaunchIcon,
+  Squares2X2Icon,
+  SwatchIcon,
+} from '@heroicons/react/24/outline';
 import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
 
@@ -118,9 +127,9 @@ export default function EditLPNewPage() {
           // 使用後は削除
           sessionStorage.removeItem('aiSuggestion');
           
-          console.log('🤖 AI提案を適用中...');
+        console.log('AI提案を適用中...');
           const aiBlocks = convertAIResultToBlocks(aiResult);
-          console.log('📦 Converted to blocks:', aiBlocks);
+        console.log('Converted to blocks:', aiBlocks);
           
           if (aiBlocks.length === 0) {
             console.error('❌ No blocks generated from AI result');
@@ -129,7 +138,7 @@ export default function EditLPNewPage() {
           }
           
           // AI提案から生成したブロックをDBに保存
-          console.log('💾 Saving AI-generated blocks to database...');
+        console.log('Saving AI-generated blocks to database...');
           let savedCount = 0;
           let failedCount = 0;
           
@@ -328,7 +337,7 @@ export default function EditLPNewPage() {
             : prev
         );
         console.log('✅ テーマが正常に保存されました');
-        console.log('📊 11段階のシェードを全ブロックに適用しました');
+    console.log('11段階のシェードを全ブロックに適用しました');
       }
     } catch (err: any) {
       console.error('❌ テーマ保存エラー:', err);
@@ -580,7 +589,14 @@ export default function EditLPNewPage() {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               )}
-              {isSaving ? '保存中...' : '💾 保存'}
+              {isSaving ? (
+                '保存中...'
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <ArrowDownTrayIcon className="h-4 w-4" aria-hidden="true" />
+                  保存
+                </span>
+              )}
             </button>
           </div>
 
@@ -675,7 +691,12 @@ export default function EditLPNewPage() {
                       <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
                     </svg>
                   )}
-                  {isSaving ? '保存中...' : '💾 保存'}
+                  {isSaving ? '保存中...' : (
+                    <span className="inline-flex items-center gap-2">
+                      <ArrowDownTrayIcon className="h-5 w-5" aria-hidden="true" />
+                      保存
+                    </span>
+                  )}
                 </button>
 
                 {/* Publish/Preview Button */}
@@ -687,10 +708,8 @@ export default function EditLPNewPage() {
                     }}
                     className="w-full px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                    🚀 公開
+                    <RocketLaunchIcon className="h-5 w-5" aria-hidden="true" />
+                    公開
                   </button>
                 )}
                 {lp.status === 'published' && (
@@ -700,11 +719,8 @@ export default function EditLPNewPage() {
                     rel="noopener noreferrer"
                     className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                    </svg>
-                    👁️ プレビュー
+                    <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                    プレビュー
                   </a>
                 )}
               </div>
@@ -721,10 +737,8 @@ export default function EditLPNewPage() {
                     }}
                     className="w-full px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 transition-colors min-h-[44px] flex items-center justify-center gap-2 text-sm"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M12.586 4.586a2 2 0 112.828 2.828l-.793.793-2.828-2.829.793-.793zM12.539 12.539L9.404 9.404m9.146-5.404a2 2 0 010 2.828l-.793.793m2.828 2.828a4 4 0 01-5.656 0l-4-4a4 4 0 015.656-5.656l1.102 1.101m-.758 4.899a2 2 0 001.768-3.468A2 2 0 0014 6l1.586 1.586" />
-                    </svg>
-                    🔗 URLをコピー
+                    <LinkIcon className="h-4 w-4" aria-hidden="true" />
+                    URLをコピー
                   </button>
                 </div>
               )}
@@ -752,7 +766,10 @@ export default function EditLPNewPage() {
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
-              📋 ブロック
+              <span className="inline-flex items-center gap-2">
+                <Squares2X2Icon className="h-4 w-4" aria-hidden="true" />
+                ブロック
+              </span>
             </button>
             <button
               onClick={() => setMobileTab('preview')}
@@ -762,7 +779,10 @@ export default function EditLPNewPage() {
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
-              👁️ プレビュー
+              <span className="inline-flex items-center gap-2">
+                <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                プレビュー
+              </span>
             </button>
             <button
               onClick={() => setMobileTab('properties')}
@@ -772,7 +792,10 @@ export default function EditLPNewPage() {
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
-              ⚙️ 設定
+              <span className="inline-flex items-center gap-2">
+                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
+                設定
+              </span>
             </button>
           </div>
         </div>
@@ -797,9 +820,10 @@ export default function EditLPNewPage() {
 
               <button
                 onClick={() => setShowColorGenerator(true)}
-                className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors"
+                className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors flex items-center justify-center gap-2"
               >
-                🎨 テーマカラー生成
+                <SwatchIcon className="h-4 w-4" aria-hidden="true" />
+                テーマカラー生成
               </button>
 
               <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
@@ -1057,28 +1081,28 @@ export default function EditLPNewPage() {
                     value={metaSettings.title}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                   <textarea
                     value={metaSettings.description}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="OGPディスクリプション（120文字程度の紹介文）"
                     rows={3}
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   />
                   <input
                     type="text"
                     value={metaSettings.imageUrl}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="OGP画像URL（1200x630推奨）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                   <input
                     type="text"
                     value={metaSettings.siteName}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                     placeholder="サイト名（例：ABC情報局）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 leading-relaxed">

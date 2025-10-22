@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/store/authStore";
 import { lpApi, productApi } from "@/lib/api";
 import DSwipeLogo from "@/components/DSwipeLogo";
@@ -434,7 +435,9 @@ export default function ProductManagementPage() {
               <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 {products.length === 0 ? (
                   <div className="p-12 text-center text-slate-500">
-                    <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500 text-xl">🛍️</div>
+                    <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                      <ShoppingBagIcon className="h-6 w-6" aria-hidden="true" />
+                    </div>
                     <h2 className="text-lg font-semibold text-slate-900 mb-2">まだ商品がありません</h2>
                     <p className="text-sm text-slate-600 mb-4">
                       CTAに紐づける商品を作成し、決済モーダルで販売しましょう。

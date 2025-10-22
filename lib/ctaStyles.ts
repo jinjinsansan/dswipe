@@ -223,9 +223,9 @@ export function getStyleById(styleId: string) {
  * カテゴリ一覧
  */
 export const CTA_CATEGORIES = [
-  { id: 'primary', name: 'プライマリー', icon: '🔵' },
-  { id: 'accent', name: 'アクセント', icon: '🔴' },
+  { id: 'primary', name: 'プライマリー', icon: 'Primary' },
+  { id: 'accent', name: 'アクセント', icon: 'Accent' },
   { id: 'outline', name: 'アウトライン', icon: '⚪' },
-  { id: 'gradient', name: 'グラデーション', icon: '🌈' },
+  { id: 'gradient', name: 'グラデーション', icon: 'Gradient' },
   { id: 'special', name: 'スペシャル', icon: '✨' },
 ];
