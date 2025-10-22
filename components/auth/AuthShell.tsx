@@ -65,8 +65,6 @@ export default function AuthShell({
         >
           <source src="/videos/pixta.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-slate-950/70" />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-950/60 to-slate-900/85" />
         <div className="absolute -left-36 top-24 h-72 w-72 rounded-full bg-blue-500/20 blur-[120px]" />
         <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-emerald-400/10 blur-[140px]" />
       </div>
