@@ -748,7 +748,7 @@ export default function EditLPNewPage() {
       )}
 
       {/* Main Content - 3 Column Layout (Desktop) / Tab-based Layout (Mobile) */}
-      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden px-2 sm:px-4 lg:px-6 lg:gap-6">
         {error && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
@@ -801,9 +801,9 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Left: Block List */}
-        <div className={`flex-col min-h-0 bg-slate-100/50 border-slate-200 overflow-hidden flex ${
+        <div className={`flex-col min-h-0 bg-slate-100/60 border-slate-200 overflow-hidden flex ${
           mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
-        } flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
+        } flex-shrink-0 w-full lg:w-72 lg:max-w-[19rem] lg:border lg:border-slate-200/80 lg:rounded-2xl lg:bg-white/70 lg:shadow-sm border-b lg:border-b-0`}>
           <div className="py-3 lg:py-3 border-b border-slate-200">
             <button
               onClick={() => setShowTemplateSelector(true)}
