@@ -18,6 +18,7 @@ import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
+  Cog6ToothIcon,
   EyeIcon,
   LinkIcon,
   RocketLaunchIcon,
@@ -28,7 +29,7 @@ import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
 
 // モバイル用タブ型定義
-type TabType = 'blocks' | 'preview' | 'properties';
+type TabType = 'blocks' | 'edit' | 'preview' | 'settings';
 // UUID生成のヘルパー関数
 function generateId() {
   return `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -368,6 +369,13 @@ export default function EditLPNewPage() {
 
     setAiGeneratorConfig({ type, field, context });
     setShowAIGenerator(true);
+  };
+
+  const handleClosePropertyPanel = () => {
+    setSelectedBlockId(null);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setMobileTab('blocks');
+    }
   };
 
   const handleAITextSelect = (text: string) => {
@@ -772,6 +780,19 @@ export default function EditLPNewPage() {
               </span>
             </button>
             <button
+              onClick={() => setMobileTab('edit')}
+              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
+                mobileTab === 'edit'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span className="inline-flex items-center gap-2">
+                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
+                編集
+              </span>
+            </button>
+            <button
               onClick={() => setMobileTab('preview')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'preview'
@@ -785,15 +806,15 @@ export default function EditLPNewPage() {
               </span>
             </button>
             <button
-              onClick={() => setMobileTab('properties')}
+              onClick={() => setMobileTab('settings')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
-                mobileTab === 'properties'
+                mobileTab === 'settings'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
               <span className="inline-flex items-center gap-2">
-                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
+                <Cog6ToothIcon className="h-4 w-4" aria-hidden="true" />
                 設定
               </span>
             </button>
@@ -924,9 +945,9 @@ export default function EditLPNewPage() {
                       key={block.id}
                       draggable
                       onClick={() => {
-                        // モバイル表示ではブロッククリック時に自動的に設定タブに切り替え
+                        // モバイル表示ではブロッククリック時に自動的に編集タブに切り替え
                         if (window.innerWidth < 1024) {
-                          setMobileTab('properties');
+                          setMobileTab('edit');
                         }
                         setSelectedBlockId(block.id);
                       }}
@@ -1007,7 +1028,7 @@ export default function EditLPNewPage() {
             <PropertyPanel
               block={blocks.find(b => b.id === selectedBlockId) || null}
               onUpdateContent={handleUpdateSelectedBlock}
-              onClose={() => setSelectedBlockId(null)}
+              onClose={handleClosePropertyPanel}
               onGenerateAI={handleGenerateAI}
             />
           ) : (
@@ -1017,9 +1038,9 @@ export default function EditLPNewPage() {
           )}
         </div>
 
-        {/* モバイル表示: Settings タブ (LP設定 + SNSメタ情報 + ブロック編集) */}
+        {/* モバイル表示: Settings タブ (LP設定 + SNSメタ情報) */}
         <div className={`flex-col min-h-0 bg-slate-100/50 border-t border-slate-200 lg:hidden overflow-hidden flex ${
-          mobileTab === 'properties' ? 'flex' : 'hidden'
+          mobileTab === 'settings' ? 'flex' : 'hidden'
         }`}>
           <div className="overflow-y-auto flex-1 min-h-0">
             {/* LP設定 + SNSメタ情報 */}
@@ -1111,15 +1132,24 @@ export default function EditLPNewPage() {
               </div>
             </div>
 
-            {/* ブロック編集パネル */}
-            {selectedBlockId && (
-              <div className="border-t border-gray-800">
-                <PropertyPanel
-                  block={blocks.find(b => b.id === selectedBlockId) || null}
-                  onUpdateContent={handleUpdateSelectedBlock}
-                  onClose={() => setSelectedBlockId(null)}
-                  onGenerateAI={handleGenerateAI}
-                />
+          </div>
+        </div>
+
+        {/* モバイル表示: 編集タブ（ブロック編集パネル） */}
+        <div className={`flex-col min-h-0 bg-white lg:hidden overflow-hidden ${
+          mobileTab === 'edit' ? 'flex' : 'hidden'
+        }`}>
+          <div className="flex-1 overflow-y-auto">
+            {selectedBlockId ? (
+              <PropertyPanel
+                block={blocks.find(b => b.id === selectedBlockId) || null}
+                onUpdateContent={handleUpdateSelectedBlock}
+                onClose={handleClosePropertyPanel}
+                onGenerateAI={handleGenerateAI}
+              />
+            ) : (
+              <div className="p-6 text-center text-slate-500 text-sm font-medium">
+                ブロックを選択すると編集内容が表示されます
               </div>
             )}
           </div>
