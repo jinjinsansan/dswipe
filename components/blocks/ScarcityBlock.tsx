@@ -101,7 +101,7 @@ export default function ScarcityBlock({ content }: ScarcityBlockProps) {
                     }}
                   >
                     <FireIcon 
-                      className="h-5 w-5 sm:h-6 sm:w-6 animate-pulse" 
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 animate-pulse" 
                       style={{ color: accentColor }}
                       aria-hidden="true"
                     />
@@ -185,7 +185,7 @@ export default function ScarcityBlock({ content }: ScarcityBlockProps) {
                 }}
               >
                 <ExclamationTriangleIcon 
-                  className="h-5 w-5 sm:h-6 sm:w-6" 
+                  className="h-6 w-6 sm:h-7 sm:w-7" 
                   style={{ color: accentColor }}
                   aria-hidden="true"
                 />
@@ -196,7 +196,7 @@ export default function ScarcityBlock({ content }: ScarcityBlockProps) {
                   定員に達し次第、予告なく募集終了
                 </span>
                 <ExclamationTriangleIcon 
-                  className="h-5 w-5 sm:h-6 sm:w-6" 
+                  className="h-6 w-6 sm:h-7 sm:w-7" 
                   style={{ color: accentColor }}
                   aria-hidden="true"
                 />
