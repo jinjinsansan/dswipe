@@ -419,7 +419,19 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
-          mousewheel={{ releaseOnEdges: true, forceToAxis: true }}
+          speed={400}
+          touchRatio={1.5}
+          threshold={5}
+          shortSwipes={true}
+          longSwipes={true}
+          longSwipesRatio={0.3}
+          resistance={true}
+          resistanceRatio={0.5}
+          touchStartPreventDefault={false}
+          simulateTouch={true}
+          followFinger={true}
+          touchStartForcePreventDefault={false}
+          mousewheel={{ releaseOnEdges: true, forceToAxis: true, sensitivity: 1 }}
           keyboard={true}
           pagination={{ clickable: true }}
           modules={[Pagination, Mousewheel, Keyboard]}
@@ -429,6 +441,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           }}
           onSlideChange={handleSlideChange}
           className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-16 sm:pb-14 md:pb-12' : 'pb-6 sm:pb-5 md:pb-4'}`}
+          style={{ touchAction: 'pan-y pan-x' }}
         >
           {lp.steps.length > 0 && (() => {
             return null;

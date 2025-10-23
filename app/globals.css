@@ -187,3 +187,36 @@ body {
 
 
 }
+
+/* スムーズなスワイプ体験のための最適化 */
+.swiper {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.swiper-slide {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* タッチデバイスでのスムーズなスクロール */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .swiper {
+    touch-action: pan-y pan-x;
+  }
+  
+  .swiper-vertical {
+    touch-action: pan-y;
+  }
+  
+  .swiper-horizontal {
+    touch-action: pan-x;
+  }
+}
