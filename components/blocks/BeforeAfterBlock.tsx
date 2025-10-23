@@ -90,7 +90,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
                   }}
                 >
                   <XCircleIcon 
-                    className="h-5 w-5 sm:h-6 sm:w-6" 
+                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: primaryColor }}
                     aria-hidden="true"
                   />
@@ -139,7 +139,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
                   }}
                 >
                   <CheckCircleIcon 
-                    className="h-5 w-5 sm:h-6 sm:w-6" 
+                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: accentColor }}
                     aria-hidden="true"
                   />
