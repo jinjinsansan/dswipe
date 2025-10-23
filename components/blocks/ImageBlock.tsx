@@ -57,7 +57,7 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
           </div>
           {caption && (
             <figcaption 
-              className="text-sm tracking-wide"
+              className="text-sm sm:text-base md:text-lg tracking-wide"
               style={{ color: textColor ? textColor + 'CC' : '#ffffff' }}
             >
               {caption}
@@ -73,11 +73,11 @@ export default function ImageBlock({ content, isEditing }: ImageBlockProps) {
             color: textColor || '#ffffff',
           }}
         >
-          <div className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
-            <PhotoIcon className="h-7 w-7" aria-hidden="true" />
+          <div className="mx-auto mb-3 inline-flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-white/10">
+            <PhotoIcon className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10" aria-hidden="true" />
           </div>
           <p 
-            className="text-base"
+            className="text-sm sm:text-base md:text-lg"
             style={{ color: textColor ? `${textColor}CC` : '#E5E7EB' }}
           >
             {isEditing ? '画像をアップロードすると、ここに表示されます。' : '画像が設定されていません。'}
