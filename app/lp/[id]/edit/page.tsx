@@ -85,6 +85,13 @@ export default function EditLPNewPage() {
   const [showColorGenerator, setShowColorGenerator] = useState(false);
   const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
   const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
+  
+  // サイドバー可変幅の状態管理
+  const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(384); // 初期値: 24rem = 384px
+  const [isLeftSidebarVisible, setIsLeftSidebarVisible] = useState(true);
+  const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true);
+  const [isResizing, setIsResizing] = useState<'left' | 'right' | null>(null);
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -96,6 +103,27 @@ export default function EditLPNewPage() {
     }
     fetchLP();
   }, [isAuthenticated, isInitialized, lpId]);
+
+  // サイドバーの状態をlocalStorageから復元
+  useEffect(() => {
+    const savedLeftWidth = localStorage.getItem('leftSidebarWidth');
+    const savedRightWidth = localStorage.getItem('rightSidebarWidth');
+    const savedLeftVisible = localStorage.getItem('isLeftSidebarVisible');
+    const savedRightVisible = localStorage.getItem('isRightSidebarVisible');
+    
+    if (savedLeftWidth) setLeftSidebarWidth(Number(savedLeftWidth));
+    if (savedRightWidth) setRightSidebarWidth(Number(savedRightWidth));
+    if (savedLeftVisible) setIsLeftSidebarVisible(savedLeftVisible === 'true');
+    if (savedRightVisible) setIsRightSidebarVisible(savedRightVisible === 'true');
+  }, []);
+
+  // サイドバーの状態をlocalStorageに保存
+  useEffect(() => {
+    localStorage.setItem('leftSidebarWidth', String(leftSidebarWidth));
+    localStorage.setItem('rightSidebarWidth', String(rightSidebarWidth));
+    localStorage.setItem('isLeftSidebarVisible', String(isLeftSidebarVisible));
+    localStorage.setItem('isRightSidebarVisible', String(isRightSidebarVisible));
+  }, [leftSidebarWidth, rightSidebarWidth, isLeftSidebarVisible, isRightSidebarVisible]);
 
   const fetchLP = async () => {
     try {
@@ -505,6 +533,44 @@ export default function EditLPNewPage() {
     }
   };
 
+  // サイドバーリサイズハンドラー
+  const handleMouseDownResize = (side: 'left' | 'right') => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(side);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      
+      if (isResizing === 'left') {
+        const newWidth = Math.max(200, Math.min(500, e.clientX));
+        setLeftSidebarWidth(newWidth);
+      } else if (isResizing === 'right') {
+        const newWidth = Math.max(300, Math.min(600, window.innerWidth - e.clientX));
+        setRightSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(null);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing]);
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -831,9 +897,15 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Left: Block List */}
-        <div className={`flex-col min-h-0 bg-slate-100/60 border-slate-200 overflow-hidden flex ${
-          mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
-        } flex-shrink-0 w-full lg:w-72 lg:max-w-[19rem] lg:border lg:border-slate-200/80 lg:rounded-2xl lg:bg-white/70 lg:shadow-sm border-b lg:border-b-0`}>
+        {isLeftSidebarVisible && (
+          <div 
+            className={`flex-col min-h-0 bg-slate-100/60 border-slate-200 overflow-hidden flex ${
+              mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
+            } flex-shrink-0 w-full lg:border lg:border-slate-200/80 lg:rounded-2xl lg:bg-white/70 lg:shadow-sm border-b lg:border-b-0 relative`}
+            style={{ 
+              width: window.innerWidth >= 1024 ? `${leftSidebarWidth}px` : '100%' 
+            }}
+          >
           <div className="py-3 lg:py-3 border-b border-slate-200">
             <button
               onClick={() => setShowTemplateSelector(true)}
@@ -1012,7 +1084,38 @@ export default function EditLPNewPage() {
               )}
             </div>
           </div>
+          
+          {/* リサイズハンドル */}
+          <div
+            className="hidden lg:block absolute top-0 right-0 w-1 h-full bg-slate-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+            onMouseDown={handleMouseDownResize('left')}
+          />
+          
+          {/* 折りたたみボタン */}
+          <button
+            onClick={() => setIsLeftSidebarVisible(false)}
+            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
+            title="左サイドバーを閉じる"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
         </div>
+        )}
+        
+        {/* 左サイドバー折りたたみ時の開くボタン */}
+        {!isLeftSidebarVisible && (
+          <button
+            onClick={() => setIsLeftSidebarVisible(true)}
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
+            title="左サイドバーを開く"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
 
         {/* Center: Preview */}
         <div className={`flex-1 min-w-0 bg-white overflow-y-auto flex flex-col ${
@@ -1030,22 +1133,57 @@ export default function EditLPNewPage() {
           />
         </div>
 
+        {/* 右サイドバー折りたたみ時の開くボタン */}
+        {!isRightSidebarVisible && (
+          <button
+            onClick={() => setIsRightSidebarVisible(true)}
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
+            title="右サイドバーを開く"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+
         {/* Right: Properties Panel (Desktop) / Bottom Drawer (Mobile) */}
         {/* デスクトップ表示 */}
-        <div className={`hidden lg:flex w-96 bg-slate-100/50 border-l border-slate-200 overflow-hidden flex-shrink-0 flex-col`}>
-          {selectedBlockId ? (
-            <PropertyPanel
-              block={blocks.find(b => b.id === selectedBlockId) || null}
-              onUpdateContent={handleUpdateSelectedBlock}
-              onClose={handleClosePropertyPanel}
-              onGenerateAI={handleGenerateAI}
+        {isRightSidebarVisible && (
+          <div 
+            className={`hidden lg:flex bg-slate-100/50 border-l border-slate-200 overflow-hidden flex-shrink-0 flex-col relative`}
+            style={{ width: `${rightSidebarWidth}px` }}
+          >
+            {/* リサイズハンドル */}
+            <div
+              className="absolute top-0 left-0 w-1 h-full bg-slate-300 hover:bg-blue-500 cursor-col-resize transition-colors z-10"
+              onMouseDown={handleMouseDownResize('right')}
             />
-          ) : (
-            <div className="p-6 text-center text-slate-500 font-medium text-sm">
-              ブロックを選択して編集
-            </div>
-          )}
-        </div>
+            
+            {selectedBlockId ? (
+              <PropertyPanel
+                block={blocks.find(b => b.id === selectedBlockId) || null}
+                onUpdateContent={handleUpdateSelectedBlock}
+                onClose={handleClosePropertyPanel}
+                onGenerateAI={handleGenerateAI}
+              />
+            ) : (
+              <div className="p-6 text-center text-slate-500 font-medium text-sm">
+                ブロックを選択して編集
+              </div>
+            )}
+            
+            {/* 折りたたみボタン */}
+            <button
+              onClick={() => setIsRightSidebarVisible(false)}
+              className="absolute bottom-4 left-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors z-10"
+              title="右サイドバーを閉じる"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* モバイル表示: Settings タブ (LP設定 + SNSメタ情報) */}
         <div className={`flex-col min-h-0 bg-slate-100/50 border-t border-slate-200 lg:hidden overflow-hidden flex ${
