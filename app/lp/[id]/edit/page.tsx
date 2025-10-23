@@ -12,6 +12,7 @@ import DraggableBlockEditor from '@/components/DraggableBlockEditor';
 import PropertyPanel from '@/components/PropertyPanel';
 import AITextGenerator from '@/components/AITextGenerator';
 import ColorThemeGenerator from '@/components/ColorThemeGenerator';
+import LivePreview from '@/components/LivePreview';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
@@ -85,6 +86,10 @@ export default function EditLPNewPage() {
   const [showColorGenerator, setShowColorGenerator] = useState(false);
   const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
   const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
+  
+  // ライブプレビュー設定
+  const [showLivePreview, setShowLivePreview] = useState(false);
+  const [previewDeviceSize, setPreviewDeviceSize] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
   
   // サイドバー可変幅の状態管理
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
@@ -1118,19 +1123,91 @@ export default function EditLPNewPage() {
         )}
 
         {/* Center: Preview */}
-        <div className={`flex-1 min-w-0 bg-white overflow-y-auto flex flex-col ${
+        <div className={`flex-1 min-w-0 bg-white overflow-hidden flex flex-col ${
           mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
         }`}>
-          <DraggableBlockEditor
-            blocks={blocks}
-            onUpdateBlock={() => {}}
-            onDeleteBlock={() => {}}
-            onReorderBlocks={handleReorderBlocks}
-            isEditing={false}
-            onSelectBlock={setSelectedBlockId}
-            selectedBlockId={selectedBlockId || undefined}
-            withinEditor
-          />
+          {/* プレビューツールバー */}
+          <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowLivePreview(!showLivePreview)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  showLivePreview
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <EyeIcon className="w-4 h-4 inline mr-1" />
+                {showLivePreview ? 'ライブプレビュー' : 'エディタ'}
+              </button>
+              
+              {showLivePreview && (
+                <div className="flex gap-1 ml-2">
+                  <button
+                    onClick={() => setPreviewDeviceSize('mobile')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      previewDeviceSize === 'mobile'
+                        ? 'bg-slate-700 text-white'
+                        : 'bg-white text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    📱 Mobile
+                  </button>
+                  <button
+                    onClick={() => setPreviewDeviceSize('tablet')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      previewDeviceSize === 'tablet'
+                        ? 'bg-slate-700 text-white'
+                        : 'bg-white text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    📱 Tablet
+                  </button>
+                  <button
+                    onClick={() => setPreviewDeviceSize('desktop')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      previewDeviceSize === 'desktop'
+                        ? 'bg-slate-700 text-white'
+                        : 'bg-white text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    💻 Desktop
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            <div className="text-xs text-slate-500">
+              {blocks.length} ブロック
+            </div>
+          </div>
+
+          {/* プレビューエリア */}
+          <div className="flex-1 overflow-hidden">
+            {showLivePreview ? (
+              <LivePreview
+                blocks={blocks}
+                deviceSize={previewDeviceSize}
+                lpSettings={{
+                  fullscreenMedia: lpSettings.fullscreenMedia,
+                  swipeDirection: 'vertical',
+                }}
+              />
+            ) : (
+              <div className="h-full overflow-y-auto">
+                <DraggableBlockEditor
+                  blocks={blocks}
+                  onUpdateBlock={() => {}}
+                  onDeleteBlock={() => {}}
+                  onReorderBlocks={handleReorderBlocks}
+                  isEditing={false}
+                  onSelectBlock={setSelectedBlockId}
+                  selectedBlockId={selectedBlockId || undefined}
+                  withinEditor
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 右サイドバー折りたたみ時の開くボタン */}
