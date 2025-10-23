@@ -5,7 +5,7 @@ import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
-import { Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+import { Pagination, Mousewheel, Keyboard, FreeMode, Virtual, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
 import { LPDetail, CTA, RequiredActionsStatus } from '@/types';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
@@ -13,6 +13,9 @@ import { useAuthStore } from '@/store/authStore';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'swiper/css/free-mode';
+import 'swiper/css/virtual';
+import 'swiper/css/effect-creative';
 
 interface LPViewerClientProps {
   slug: string;
@@ -37,6 +40,26 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [fixedCta, setFixedCta] = useState<any>(null);
   const [stickyCtaStep, setStickyCtaStep] = useState<any>(null);
   const swiperRef = useRef<SwiperType | null>(null);
+
+  // ハプティックフィードバック（振動）
+  const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
+    if ('vibrate' in navigator) {
+      const patterns = {
+        light: 10,
+        medium: 20,
+        heavy: 30,
+      };
+      navigator.vibrate(patterns[style]);
+    }
+    // iOS用のハプティックフィードバック（iOS 13+）
+    if ('ontouchstart' in window && (window as any).Taptic) {
+      try {
+        (window as any).Taptic.impact(style);
+      } catch (e) {
+        // Taptic APIが利用できない場合は無視
+      }
+    }
+  };
 
   useEffect(() => {
     fetchLP();
@@ -256,6 +279,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const handleSlideChange = async (swiper: SwiperType) => {
     if (!lp) return;
     
+    // ハプティックフィードバック（スライド切り替え時）
+    if (swiper.previousIndex !== swiper.activeIndex) {
+      triggerHapticFeedback('light');
+    }
+    
     const currentStep = lp.steps[swiper.activeIndex];
     if (currentStep) {
       try {
@@ -419,27 +447,88 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
-          speed={400}
-          touchRatio={1.5}
-          threshold={5}
+          speed={350}
+          touchRatio={1.8}
+          threshold={3}
           shortSwipes={true}
           longSwipes={true}
-          longSwipesRatio={0.3}
+          longSwipesRatio={0.25}
           resistance={true}
-          resistanceRatio={0.5}
+          resistanceRatio={0.65}
           touchStartPreventDefault={false}
           simulateTouch={true}
           followFinger={true}
           touchStartForcePreventDefault={false}
-          mousewheel={{ releaseOnEdges: true, forceToAxis: true, sensitivity: 1 }}
-          keyboard={true}
-          pagination={{ clickable: true }}
-          modules={[Pagination, Mousewheel, Keyboard]}
+          
+          // 慣性スクロール（惰性）- Instagram/TikTok風
+          freeMode={{
+            enabled: false, // 通常はfalse、必要に応じてtrueに
+            momentum: true,
+            momentumRatio: 0.8,
+            momentumVelocityRatio: 0.8,
+            sticky: true,
+          }}
+          
+          // パフォーマンス最適化
+          watchSlidesProgress={true}
+          preloadImages={false}
+          lazy={{
+            enabled: true,
+            loadPrevNext: true,
+            loadPrevNextAmount: 2,
+          }}
+          
+          // 視覚的エフェクト
+          effect="creative"
+          creativeEffect={{
+            prev: {
+              translate: lp.swipe_direction === 'vertical' ? [0, '-20%', -1] : ['-20%', 0, -1],
+              scale: 0.95,
+              opacity: 0.8,
+            },
+            next: {
+              translate: lp.swipe_direction === 'vertical' ? [0, '100%', 0] : ['100%', 0, 0],
+            },
+          }}
+          
+          // Virtual slides（大量スライド対応）
+          virtual={lp.steps.length > 10 ? {
+            enabled: true,
+            addSlidesAfter: 3,
+            addSlidesBefore: 2,
+          } : false}
+          
+          mousewheel={{ 
+            releaseOnEdges: true, 
+            forceToAxis: true, 
+            sensitivity: 0.8,
+            thresholdDelta: 10,
+          }}
+          keyboard={{
+            enabled: true,
+            onlyInViewport: true,
+          }}
+          pagination={{ 
+            clickable: true,
+            dynamicBullets: true,
+            dynamicMainBullets: 3,
+          }}
+          modules={[Pagination, Mousewheel, Keyboard, FreeMode, Virtual, EffectCreative]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
+          onProgress={(swiper, progress) => {
+            // スワイプの進行度に応じた処理（将来の拡張用）
+            if (progress > 0.1 && progress < 0.9) {
+              // 中間状態での処理
+            }
+          }}
+          onTouchStart={() => {
+            // タッチ開始時の軽いフィードバック
+            triggerHapticFeedback('light');
+          }}
           className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-16 sm:pb-14 md:pb-12' : 'pb-6 sm:pb-5 md:pb-4'}`}
           style={{ touchAction: 'pan-y pan-x' }}
         >

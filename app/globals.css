@@ -192,6 +192,8 @@ body {
 .swiper {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .swiper-slide {
@@ -200,6 +202,75 @@ body {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   will-change: transform;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* アクティブなスライドのスケールアニメーション */
+.swiper-slide-active {
+  transform: scale(1) translateZ(0);
+}
+
+.swiper-slide-prev,
+.swiper-slide-next {
+  opacity: 0.7;
+}
+
+/* プログレスバーのスタイル改善 */
+.swiper-pagination {
+  bottom: 1rem !important;
+  z-index: 20;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  width: 24px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 動的バレットのスタイル */
+.swiper-pagination-bullets-dynamic {
+  overflow: visible;
+}
+
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transform: scale(0.8);
+}
+
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active {
+  transform: scale(1.2);
+}
+
+/* Lazy loadingのプレースホルダー */
+.swiper-lazy-preloader {
+  width: 42px;
+  height: 42px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -21px;
+  margin-top: -21px;
+  z-index: 10;
+  transform-origin: 50%;
+  animation: swiper-preloader-spin 1s infinite linear;
+  box-sizing: border-box;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes swiper-preloader-spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* タッチデバイスでのスムーズなスクロール */
@@ -210,6 +281,11 @@ body {
   
   .swiper {
     touch-action: pan-y pan-x;
+    cursor: grab;
+  }
+  
+  .swiper:active {
+    cursor: grabbing;
   }
   
   .swiper-vertical {
@@ -219,4 +295,31 @@ body {
   .swiper-horizontal {
     touch-action: pan-x;
   }
+  
+  /* モバイルでのパフォーマンス最適化 */
+  .swiper-slide {
+    contain: layout style paint;
+  }
+}
+
+/* スワイプエリアの拡大 */
+.swiper-wrapper {
+  padding: 0 !important;
+  height: 100%;
+}
+
+/* プリロードアニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.swiper-slide-visible {
+  animation: fadeIn 0.4s ease-out;
 }
