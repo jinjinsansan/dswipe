@@ -32,11 +32,11 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
       <div className="space-y-0.5 sm:space-y-6" style={{ paddingInline: 0 }}>
-        <div className={`grid grid-cols-1 ${gridCols} gap-0.5 md:gap-3 lg:gap-4`}>
+        <div className={`grid grid-cols-1 ${gridCols} gap-3 sm:gap-4 md:gap-5 lg:gap-6`}>
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="rounded-lg p-1.5 transition-all shadow-lg sm:p-3 md:p-5"
+              className="rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-8 transition-all shadow-lg"
               style={{
                 backgroundColor: plan.highlighted ? accentColor : '#FFFFFF',
                 color: plan.highlighted ? '#FFFFFF' : textColor,
@@ -47,7 +47,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
             >
               {/* プラン名 */}
               <h3
-                className="text-xs font-bold mb-0 sm:text-lg"
+                className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3"
                 style={{ color: titleColor || (plan.highlighted ? '#FFFFFF' : textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -65,7 +65,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               {/* 説明 */}
               {plan.description && (
                 <p
-                  className="text-[0.55rem] mb-0"
+                  className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4"
                   style={{ color: descriptionColor || (plan.highlighted ? '#FFFFFF' : textColor), opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -82,9 +82,9 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
               )}
 
               {/* 価格 */}
-              <div className="mb-0.5">
+              <div className="mb-4 sm:mb-5">
                 <span
-                  className="text-[1.3rem] font-bold sm:text-[1.9rem]"
+                  className="text-3xl sm:text-4xl md:text-5xl font-bold"
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={(e) => {
@@ -98,21 +98,21 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
                   {plan.price}
                 </span>
                 {plan.period && (
-                  <span className="ml-1 text-[0.65rem] sm:text-sm" style={{ opacity: 0.7 }}>
+                  <span className="ml-2 text-sm sm:text-base md:text-lg" style={{ opacity: 0.7 }}>
                     / {plan.period}
                   </span>
                 )}
               </div>
 
               {/* 機能リスト */}
-              <ul className="mb-0.5 space-y-0 sm:space-y-2 sm:mb-6">
+              <ul className="mb-5 sm:mb-6 md:mb-8 space-y-2 sm:space-y-3">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}
                     className="flex items-center"
                   >
                     <svg
-                      className="w-3.5 h-3.5 mr-1"
+                      className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -126,6 +126,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
                       />
                     </svg>
                     <span
+                      className="text-sm sm:text-base md:text-lg"
                       contentEditable={isEditing}
                       suppressContentEditableWarning
                       onBlur={(e) => {
@@ -144,7 +145,7 @@ export default function PricingBlock({ content, isEditing, onEdit }: PricingBloc
 
               {/* ボタン */}
               <button
-                className="w-full rounded-lg px-3 py-1.5 text-[0.65rem] font-semibold transition-colors sm:px-4.5 sm:py-2 sm:text-sm"
+                className="w-full rounded-lg sm:rounded-xl px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base md:text-lg font-semibold transition-colors"
                 style={{
                   backgroundColor: plan.highlighted ? '#FFFFFF' : accentColor,
                   color: plan.highlighted ? accentColor : '#FFFFFF',
