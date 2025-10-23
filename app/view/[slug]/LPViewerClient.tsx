@@ -471,7 +471,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           
           // パフォーマンス最適化
           watchSlidesProgress={true}
-          preloadImages={false}
           lazy={{
             enabled: true,
             loadPrevNext: true,
