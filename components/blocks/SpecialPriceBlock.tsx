@@ -101,7 +101,7 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
                   }}
                 >
                   <TagIcon 
-                    className="h-5 w-5 sm:h-6 sm:w-6" 
+                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: accentColor }}
                     aria-hidden="true"
                   />
@@ -157,7 +157,7 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
                   }}
                 >
                   <SparklesIcon 
-                    className="h-4 w-4 sm:h-5 sm:w-5" 
+                    className="h-5 w-5 sm:h-6 sm:w-6" 
                     style={{ color: accentColor }}
                     aria-hidden="true"
                   />
@@ -191,7 +191,7 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
                       }}
                     >
                       <CheckIcon 
-                        className="h-4 w-4 sm:h-5 sm:w-5" 
+                        className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" 
                         style={{ color: accentColor }}
                         aria-hidden="true"
                       />
