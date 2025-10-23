@@ -43,7 +43,7 @@ export default function SpecialPriceBlock({ content }: SpecialPriceBlockProps) {
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-center scale-[0.88] pt-9 pb-8 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
+      className="transform origin-center pt-9 pb-8 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
       style={{
         backgroundColor,
         color: textColor,
