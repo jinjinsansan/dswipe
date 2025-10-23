@@ -446,28 +446,26 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
-          speed={600}
-          touchRatio={1.5}
-          threshold={5}
+          speed={350}
+          touchRatio={1.8}
+          threshold={3}
           shortSwipes={true}
           longSwipes={true}
-          longSwipesRatio={0.3}
+          longSwipesRatio={0.25}
           resistance={true}
-          resistanceRatio={0.75}
+          resistanceRatio={0.65}
           touchStartPreventDefault={false}
           simulateTouch={true}
           followFinger={true}
           touchStartForcePreventDefault={false}
           
-          // 慣性スクロール（惰性）- TOPページと同じ滑らかさ
+          // 慣性スクロール（惰性）- TOPページと同じ設定
           freeMode={{
-            enabled: true,
+            enabled: false,
             momentum: true,
-            momentumRatio: 1.2,
-            momentumVelocityRatio: 1.0,
-            momentumBounce: false,
-            minimumVelocity: 0.02,
-            sticky: false,
+            momentumRatio: 0.8,
+            momentumVelocityRatio: 0.8,
+            sticky: true,
           }}
           
           // パフォーマンス最適化
@@ -489,8 +487,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           mousewheel={{ 
             releaseOnEdges: true, 
             forceToAxis: true, 
-            sensitivity: 1.0,
-            thresholdDelta: 8,
+            sensitivity: 0.8,
+            thresholdDelta: 10,
           }}
           keyboard={{
             enabled: true,
@@ -506,11 +504,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
           }}
-          onSlideChange={(swiper) => {
-            handleSlideChange(swiper);
-            // スライド変更時のハプティックフィードバック
-            triggerHapticFeedback('medium');
-          }}
+          onSlideChange={handleSlideChange}
           onProgress={(swiper, progress) => {
             // スワイプの進行度に応じた処理（将来の拡張用）
             if (progress > 0.1 && progress < 0.9) {
