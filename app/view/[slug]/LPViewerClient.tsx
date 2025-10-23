@@ -446,32 +446,34 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
-          speed={350}
-          touchRatio={1.8}
-          threshold={3}
+          speed={600}
+          touchRatio={1.5}
+          threshold={5}
           shortSwipes={true}
           longSwipes={true}
-          longSwipesRatio={0.25}
+          longSwipesRatio={0.3}
           resistance={true}
-          resistanceRatio={0.65}
+          resistanceRatio={0.75}
           touchStartPreventDefault={false}
           simulateTouch={true}
           followFinger={true}
           touchStartForcePreventDefault={false}
           
-          // 慣性スクロール（惰性）- Instagram/TikTok風
+          // 慣性スクロール（惰性）- TOPページと同じ滑らかさ
           freeMode={{
-            enabled: false,
+            enabled: true,
             momentum: true,
-            momentumRatio: 0.8,
-            momentumVelocityRatio: 0.8,
-            sticky: true,
+            momentumRatio: 1.2,
+            momentumVelocityRatio: 1.0,
+            momentumBounce: false,
+            minimumVelocity: 0.02,
+            sticky: false,
           }}
           
           // パフォーマンス最適化
           watchSlidesProgress={true}
           
-          // 視覚的エフェクト
+          // 視覚的エフェクト - TOPページと同じ残像効果
           effect="creative"
           creativeEffect={{
             prev: {
@@ -487,8 +489,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           mousewheel={{ 
             releaseOnEdges: true, 
             forceToAxis: true, 
-            sensitivity: 0.8,
-            thresholdDelta: 10,
+            sensitivity: 1.0,
+            thresholdDelta: 8,
           }}
           keyboard={{
             enabled: true,
@@ -504,7 +506,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
           }}
-          onSlideChange={handleSlideChange}
+          onSlideChange={(swiper) => {
+            handleSlideChange(swiper);
+            // スライド変更時のハプティックフィードバック
+            triggerHapticFeedback('medium');
+          }}
           onProgress={(swiper, progress) => {
             // スワイプの進行度に応じた処理（将来の拡張用）
             if (progress > 0.1 && progress < 0.9) {
