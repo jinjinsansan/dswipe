@@ -143,7 +143,7 @@ export default function GuaranteeBlock({ content }: GuaranteeBlockProps) {
                     }}
                   >
                     <CheckCircleIcon 
-                      className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" 
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 flex-shrink-0" 
                       style={{ color: accentColor }}
                       aria-hidden="true"
                     />
@@ -168,7 +168,7 @@ export default function GuaranteeBlock({ content }: GuaranteeBlockProps) {
                   }}
                 >
                   <ShieldCheckIcon 
-                    className="h-5 w-5 sm:h-6 sm:w-6 text-white"
+                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                     aria-hidden="true"
                   />
                   <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white">
