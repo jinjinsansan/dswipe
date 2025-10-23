@@ -85,7 +85,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
             >
               <div className="flex items-start gap-3 sm:gap-4">
                 <div 
-                  className="flex-shrink-0 rounded-full p-2 sm:p-2.5"
+                  className="flex-shrink-0 rounded-full p-2 sm:p-2.5 md:p-3"
                   style={{
                     backgroundColor: `${primaryColor}1a`,
                     borderWidth: '1px',
@@ -93,7 +93,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
                   }}
                 >
                   <XCircleIcon 
-                    className="h-5 w-5 sm:h-6 sm:w-6" 
+                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: primaryColor }}
                     aria-hidden="true"
                   />
