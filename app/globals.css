@@ -14,12 +14,19 @@
   --shadow-glow: 0 22px 60px -32px rgba(15, 23, 42, 0.28);
   --shadow-glow-strong: 0 35px 90px -48px rgba(30, 64, 175, 0.28);
   --space-section: 6rem;
-  --space-section-sm: 4.5rem;
+  --space-section-sm: 0.5rem;  /* Mobile: 8px for better centering */
   --space-section-lg: 7.5rem;
   --radius-card: 1.5rem;
   --radius-button: 0.75rem;
   --font-body: var(--font-roboto), var(--font-noto-sans-jp), var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-roboto), var(--font-noto-sans-jp), var(--font-inter), system-ui, sans-serif;
+}
+
+/* Tablet and above: restore original section padding */
+@media (min-width: 640px) {
+  :root {
+    --space-section-sm: 4.5rem;  /* Tablet+: 72px */
+  }
 }
 
 @theme inline {
