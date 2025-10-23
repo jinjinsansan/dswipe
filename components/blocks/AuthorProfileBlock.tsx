@@ -128,7 +128,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <TrophyIcon 
-                      className="h-6 w-6 sm:h-7 sm:w-7" 
+                      className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9" 
                       style={{ color: accentColor }}
                       aria-hidden="true"
                     />
