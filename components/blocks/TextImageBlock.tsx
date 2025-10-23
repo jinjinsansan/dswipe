@@ -32,14 +32,14 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
                 type="text"
                 value={content.title}
                 onChange={(e) => onEdit?.('title', e.target.value)}
-                className="w-full text-3xl md:text-4xl font-bold mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
+                className="w-full text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-transparent border-2 border-dashed px-4 py-2 rounded"
                 style={{ borderColor: content.textColor, color: content.textColor }}
                 placeholder="タイトルを入力"
               />
               <textarea
                 value={content.text}
                 onChange={(e) => onEdit?.('text', e.target.value)}
-                className="w-full text-lg bg-transparent border-2 border-dashed px-4 py-2 rounded resize-none"
+                className="w-full text-base sm:text-lg md:text-xl bg-transparent border-2 border-dashed px-4 py-2 rounded resize-none"
                 style={{ borderColor: content.textColor, color: content.textColor }}
                 rows={6}
                 placeholder="説明文を入力"
@@ -47,10 +47,10 @@ export default function TextImageBlock({ content, isEditing, onEdit }: TextImage
             </>
           ) : (
             <>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
                 {content.title || 'タイトルをここに入力'}
               </h2>
-              <p className="text-lg leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl leading-relaxed">
                 {content.text || '説明文をここに入力してください。商品やサービスの特徴を詳しく説明します。'}
               </p>
             </>
