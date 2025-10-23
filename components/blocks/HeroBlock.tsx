@@ -60,10 +60,10 @@ export default function HeroBlock({ content, isEditing, onEdit, productId, onPro
           </>
         ) : (
           <>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
               {content.title || '見出しをここに入力'}
             </h1>
-            <p className="text-base sm:text-lg md:text-2xl lg:text-[1.65rem] max-w-4xl mx-auto" style={{ lineHeight: 1.6 }}>
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto" style={{ lineHeight: 1.6 }}>
               {content.subtitle || 'サブタイトルをここに入力'}
             </p>
           </>
