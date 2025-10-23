@@ -39,7 +39,7 @@ export const FONT_OPTIONS: FontOption[] = [
   },
 ];
 
-export const DEFAULT_FONT_KEY: FontKey = 'system';
+export const DEFAULT_FONT_KEY: FontKey = 'serif';
 
 const FONT_STACK_MAP: Record<FontKey, string> = FONT_OPTIONS.reduce(
   (acc, option) => {
