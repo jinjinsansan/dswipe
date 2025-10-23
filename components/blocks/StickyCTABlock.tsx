@@ -44,7 +44,7 @@ export default function StickyCTABlock({ content, withinEditor, productId, onPro
             <div className="relative z-[1] flex items-center justify-between gap-4 flex-wrap px-5 py-4">
               {content.subText && (
                 <div className="hidden md:block text-left">
-                  <p className="text-lg font-semibold" style={{ color: content.descriptionColor || textColor }}>
+                  <p className="text-base sm:text-lg md:text-xl font-semibold" style={{ color: content.descriptionColor || textColor }}>
                     {content.subText}
                   </p>
                 </div>
@@ -52,7 +52,7 @@ export default function StickyCTABlock({ content, withinEditor, productId, onPro
 
               <div className="flex-1 md:flex-none md:min-w-[300px]">
                 <div
-                  className="w-full py-4 px-8 text-xl font-bold text-center shadow-2xl"
+                  className="w-full py-3 px-6 sm:py-4 sm:px-8 text-lg sm:text-xl md:text-2xl font-bold text-center shadow-2xl"
                   style={{
                     background: `linear-gradient(135deg, ${accentColor}, ${glowAccent})`,
                     color: '#FFFFFF',
