@@ -69,7 +69,7 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
         {/* タイトル */}
         {title && (
           <h2
-            className="text-4xl font-bold text-center mb-8"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8"
             contentEditable={isEditing}
             suppressContentEditableWarning
             onBlur={(e) => {
@@ -88,7 +88,7 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
             <div key={index}>
               <label
                 htmlFor={field.name}
-                className="block text-sm font-medium mb-2"
+                className="block text-sm sm:text-base md:text-lg font-medium mb-2"
                 style={{ color: labelColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -215,7 +215,7 @@ export default function FormBlock({ content, isEditing, onEdit, productId }: For
           <button
             type="submit"
             disabled={isSubmitting || isEditing}
-            className="w-full py-3 px-6 font-semibold rounded-lg transition-colors shadow-lg"
+            className="w-full py-3 px-6 sm:py-4 sm:px-8 text-base sm:text-lg md:text-xl font-semibold rounded-lg transition-colors shadow-lg"
             style={{
               backgroundColor: buttonBgColor,
               color: '#FFFFFF',
