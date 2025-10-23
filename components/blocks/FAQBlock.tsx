@@ -52,9 +52,9 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
             </h2>
           )}
           
-          <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+          <div className="grid gap-4 sm:gap-5 md:grid-cols-2 md:gap-6 lg:gap-8">
             {faqs.map((faq, index) => (
-              <div key={index} className="rounded-lg p-5 shadow-md sm:p-6" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
+              <div key={index} className="rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-7 shadow-md" style={{ backgroundColor: accentColor + '11', borderLeft: `4px solid ${accentColor}` }}>
                 <h3
                   className="mb-2 text-lg font-semibold sm:text-xl"
                   style={{ color: titleColor || textColor }}
@@ -71,7 +71,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                   {faq.question}
                 </h3>
                 <p
-                  className="text-sm leading-relaxed sm:text-base"
+                  className="text-sm sm:text-base md:text-lg leading-relaxed"
                   style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -130,7 +130,7 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
                 style={{ backgroundColor: backgroundColor + 'F0' }}
               >
                 <h3
-                  className="flex-1 text-base font-semibold sm:text-lg"
+                  className="flex-1 text-base sm:text-lg md:text-xl font-semibold"
                   style={{ color: titleColor || textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -164,9 +164,9 @@ export default function FAQBlock({ content, isEditing, onEdit }: FAQBlockProps) 
               </button>
               
               {openIndex === index && (
-                <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+                <div className="px-5 pb-5 sm:px-6 sm:pb-6 md:px-7 md:pb-7">
                   <p
-                    className="text-sm leading-relaxed sm:text-base"
+                    className="text-sm sm:text-base md:text-lg leading-relaxed"
                     style={{ color: descriptionColor || textColor, opacity: 0.8 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
