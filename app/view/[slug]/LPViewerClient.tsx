@@ -5,7 +5,7 @@ import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
-import { Pagination, Mousewheel, Keyboard, FreeMode, Virtual, EffectCreative } from 'swiper/modules';
+import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
 import { LPDetail, CTA, RequiredActionsStatus } from '@/types';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
@@ -14,7 +14,6 @@ import { useAuthStore } from '@/store/authStore';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/free-mode';
-import 'swiper/css/virtual';
 import 'swiper/css/effect-creative';
 
 interface LPViewerClientProps {
@@ -462,7 +461,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           
           // 慣性スクロール（惰性）- Instagram/TikTok風
           freeMode={{
-            enabled: false, // 通常はfalse、必要に応じてtrueに
+            enabled: false,
             momentum: true,
             momentumRatio: 0.8,
             momentumVelocityRatio: 0.8,
@@ -471,11 +470,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           
           // パフォーマンス最適化
           watchSlidesProgress={true}
-          lazy={{
-            enabled: true,
-            loadPrevNext: true,
-            loadPrevNextAmount: 2,
-          }}
           
           // 視覚的エフェクト
           effect="creative"
@@ -489,13 +483,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               translate: lp.swipe_direction === 'vertical' ? [0, '100%', 0] : ['100%', 0, 0],
             },
           }}
-          
-          // Virtual slides（大量スライド対応）
-          virtual={lp.steps.length > 10 ? {
-            enabled: true,
-            addSlidesAfter: 3,
-            addSlidesBefore: 2,
-          } : false}
           
           mousewheel={{ 
             releaseOnEdges: true, 
@@ -512,7 +499,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             dynamicBullets: true,
             dynamicMainBullets: 3,
           }}
-          modules={[Pagination, Mousewheel, Keyboard, FreeMode, Virtual, EffectCreative]}
+          modules={[Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
