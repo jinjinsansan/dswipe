@@ -154,7 +154,7 @@ export default function Home() {
     {
       icon: BoltIcon,
       label: 'Speed',
-      title: 'LP作成がわずか1分',
+      title: 'LP作成がわずか５分',
       description: 'AIアシスタントがヒアリングしながら最適な構成を即時生成。試作品づくりの時間を大幅に短縮します。',
       cardClass: 'bg-gradient-to-br from-blue-50 via-white to-white border border-blue-100/60',
       iconClass: 'bg-gradient-to-br from-blue-600 to-indigo-500',
@@ -466,7 +466,7 @@ export default function Home() {
 
   const faqItems = [
     {
-      question: '本当に1分でLP作成できますか？',
+      question: '本当に５分でLP作成できますか？',
       answer: 'はい。AIの質問に答えるだけで構成案とコピーまで自動生成されます。画像や細かな文言を調整しても 5〜10 分程度で公開できます。'
     },
     {
@@ -543,7 +543,7 @@ export default function Home() {
               </span>
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
-                1分でLP公開。
+                ５分でLP公開。
               </span>
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 drop-shadow-lg px-4">
@@ -703,7 +703,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-sm uppercase tracking-[0.28em] text-blue-200/80 mb-1">Speed</p>
-                      <p className="text-white text-lg font-medium">LP作成がわずか1分</p>
+                      <p className="text-white text-lg font-medium">LP作成がわずか５分</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
