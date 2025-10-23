@@ -36,7 +36,9 @@ export default function GoogleSignInButton({
     setError('');
 
     try {
+      console.log('🔐 Google認証開始...');
       const { data } = await authApi.loginWithGoogle(credentialResponse.credential);
+      console.log('✅ Google認証成功:', data);
       const { access_token, user } = data;
 
       setToken(access_token);
@@ -45,7 +47,14 @@ export default function GoogleSignInButton({
 
       router.push(redirectPath);
     } catch (err: unknown) {
-      setError(getErrorMessage(err));
+      console.error('❌ Google認証エラー:', err);
+      console.error('詳細:', {
+        message: (err as any)?.message,
+        response: (err as any)?.response?.data,
+        status: (err as any)?.response?.status,
+      });
+      const errorMsg = getErrorMessage(err);
+      setError(`${errorMsg} (詳細はコンソールを確認してください)`);
     } finally {
       setIsLoading(false);
     }
