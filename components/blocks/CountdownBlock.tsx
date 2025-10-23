@@ -134,7 +134,7 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
                 }}
               >
                 <ClockIcon 
-                  className="h-8 w-8 sm:h-10 sm:w-10 animate-pulse" 
+                  className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 animate-pulse" 
                   style={{ color: accentColor }}
                   aria-hidden="true"
                 />
@@ -200,7 +200,7 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
               }}
             >
               <ExclamationTriangleIcon 
-                className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" 
+                className="h-5 w-5 sm:h-6 sm:w-6 animate-pulse" 
                 style={{ color: accentColor }}
                 aria-hidden="true"
               />
@@ -211,7 +211,7 @@ export default function CountdownBlock({ content }: CountdownBlockProps) {
                 締切間近です
               </span>
               <ExclamationTriangleIcon 
-                className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" 
+                className="h-5 w-5 sm:h-6 sm:w-6 animate-pulse" 
                 style={{ color: accentColor }}
                 aria-hidden="true"
               />
