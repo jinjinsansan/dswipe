@@ -67,22 +67,20 @@ export default function LivePreview({ blocks, deviceSize = 'mobile', lpSettings 
           <Swiper
             direction={direction}
             slidesPerView={1}
-            speed={600}
-            touchRatio={1.5}
-            threshold={5}
+            speed={350}
+            touchRatio={1.8}
+            threshold={3}
             shortSwipes={true}
             longSwipes={true}
-            longSwipesRatio={0.3}
+            longSwipesRatio={0.25}
             resistance={true}
-            resistanceRatio={0.75}
+            resistanceRatio={0.65}
             freeMode={{
-              enabled: true,
+              enabled: false,
               momentum: true,
-              momentumRatio: 1.2,
-              momentumVelocityRatio: 1.0,
-              momentumBounce: false,
-              minimumVelocity: 0.02,
-              sticky: false,
+              momentumRatio: 0.8,
+              momentumVelocityRatio: 0.8,
+              sticky: true,
             }}
             watchSlidesProgress={true}
             effect="creative"
@@ -96,15 +94,13 @@ export default function LivePreview({ blocks, deviceSize = 'mobile', lpSettings 
                 translate: direction === 'vertical' ? [0, '100%', 0] : ['100%', 0, 0],
               },
             }}
-            mousewheel={{ releaseOnEdges: true, forceToAxis: true, sensitivity: 1.0, thresholdDelta: 8 }}
+            mousewheel={{ releaseOnEdges: true, forceToAxis: true, sensitivity: 0.8, thresholdDelta: 10 }}
             keyboard={{ enabled: true, onlyInViewport: true }}
             pagination={{ clickable: true, dynamicBullets: true, dynamicMainBullets: 3 }}
             modules={[Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]}
             onSwiper={(swiper) => { swiperRef.current = swiper; }}
-            onSlideChange={() => triggerHapticFeedback('medium')}
             onTouchStart={() => triggerHapticFeedback('light')}
             className="h-full"
-            style={{ touchAction: 'pan-y pan-x' }}
           >
             {blocks.length === 0 ? (
               <SwiperSlide className="flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
