@@ -100,7 +100,7 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
                   }}
                 >
                   <GiftIcon 
-                    className="h-7 w-7 sm:h-8 sm:w-8" 
+                    className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10" 
                     style={{ color: accentColor }}
                     aria-hidden="true"
                   />
@@ -123,7 +123,7 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
                           color: backgroundColor,
                         }}
                       >
-                        <SparklesIcon className="h-4 w-4" aria-hidden="true" />
+                        <SparklesIcon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
                         {bonus.value}
                       </span>
                     )}
