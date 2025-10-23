@@ -30,7 +30,7 @@ export default function FeaturesBlock({ content, isEditing, onEdit }: FeaturesBl
     <Section
       tone="none"
       padding="compact"
-      className="pt-12 pb-16 sm:pt-16 sm:pb-20 md:pt-20 md:pb-24 lg:pt-24 lg:pb-28"
+      className="pt-2 pb-16 sm:pt-16 sm:pb-20 md:pt-20 md:pb-24 lg:pt-24 lg:pb-28"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="space-y-6 sm:space-y-8 md:space-y-10">

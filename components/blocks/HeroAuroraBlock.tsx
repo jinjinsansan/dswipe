@@ -130,7 +130,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit, productId,
         }}
       >
         <div
-          className="pt-[8rem] space-y-3 sm:pt-0 sm:space-y-4 md:space-y-5"
+          className="pt-8 space-y-3 sm:pt-0 sm:space-y-4 md:space-y-5"
           style={{ color: bodyTextColor }}
         >
           {isEditing ? (
