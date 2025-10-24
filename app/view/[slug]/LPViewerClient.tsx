@@ -8,7 +8,7 @@ import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
 import { LPDetail, RequiredActionsStatus } from '@/types';
-import BlockRenderer from '@/components/blocks/BlockRenderer';
+import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 
 import 'swiper/css';
@@ -457,10 +457,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                 >
                   <div className="lp-slide-clean-content">
                     {step.block_type && step.content_data ? (
-                      <BlockRenderer
+                      <ViewerBlockRenderer
                         blockType={step.block_type}
                         content={step.content_data}
-                        isEditing={false}
                         productId={lp.product_id}
                         onProductClick={handleProductButtonClick}
                       />
