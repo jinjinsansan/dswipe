@@ -73,7 +73,7 @@ export default function EditLPNewPage() {
   const [lpSettings, setLpSettings] = useState({
     showSwipeHint: false,
     fullscreenMedia: false,
-    floatingCta: true,
+    floatingCta: false,
   });
   const [metaSettings, setMetaSettings] = useState({
     title: '',
@@ -138,7 +138,7 @@ export default function EditLPNewPage() {
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
         fullscreenMedia: Boolean(response.data.fullscreen_media),
-        floatingCta: true,
+        floatingCta: Boolean(response.data.floating_cta),
       });
       setMetaSettings({
         title: response.data.meta_title ?? '',
@@ -346,7 +346,7 @@ export default function EditLPNewPage() {
       'stats-1', 'timeline-1', 'team-1',
       'countdown-1', 'special-price-1', 'bonus-list-1',
       'guarantee-1', 'problem-1', 'before-after-1',
-      'author-profile-1', 'urgency-1', 'scarcity-1', 'sticky-cta-1',
+      'author-profile-1', 'urgency-1', 'scarcity-1', 'cta-inline-1',
       'comparison-1', 'logo-grid-1'
     ];
     
@@ -465,7 +465,7 @@ export default function EditLPNewPage() {
         title: lpTitle.trim() || undefined,
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
-        floating_cta: true,
+        floating_cta: false,
         meta_title: normalizeMetaValue(metaSettings.title),
         meta_description: normalizeMetaValue(metaSettings.description),
         meta_image_url: normalizeMetaValue(metaSettings.imageUrl),

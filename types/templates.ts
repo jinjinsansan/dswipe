@@ -47,7 +47,7 @@ export type BlockType =
   | 'author-profile-1' // 著者プロフィール
   | 'urgency-1'    // 緊急性訴求
   | 'scarcity-1'   // 限定性訴求
-  | 'sticky-cta-1'; // スティッキーCTA
+  | 'cta-inline-1'; // インラインCTA
 
 // カテゴリ
 export type BlockCategory =
@@ -430,13 +430,14 @@ export interface ScarcityBlockContent extends BaseBlockContent {
   themeKey?: TemplateThemeKey;
 }
 
-// スティッキーCTA
-export interface StickyCTABlockContent extends BaseBlockContent {
-  buttonText: string;
-  buttonColor?: string;
+// インラインCTA
+export interface InlineCTABlockContent extends BaseBlockContent {
   subText?: string;
-  position?: 'top' | 'bottom';
-  titleColor?: string;
+  title: string;
+  subtitle?: string;
+  buttonText: string;
+  buttonUrl?: string;
+  buttonColor?: string;
   descriptionColor?: string;
   themeKey?: TemplateThemeKey;
 }
@@ -468,7 +469,7 @@ export type BlockContent =
   | AuthorProfileBlockContent
   | UrgencyBlockContent
   | ScarcityBlockContent
-  | StickyCTABlockContent;
+  | InlineCTABlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

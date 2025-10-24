@@ -17,7 +17,7 @@ import BeforeAfterBlock from './BeforeAfterBlock';
 import AuthorProfileBlock from './AuthorProfileBlock';
 import UrgencyBlock from './UrgencyBlock';
 import ScarcityBlock from './ScarcityBlock';
-import StickyCTABlock from './StickyCTABlock';
+import InlineCTABlock from './InlineCTABlock';
 import ImageBlock from './ImageBlock';
 import HeroAuroraBlock from './HeroAuroraBlock';
 import { getFontStack } from '@/lib/fonts';
@@ -179,9 +179,10 @@ export default function BlockRenderer({
       element = <ScarcityBlock content={content} />;
       break;
     
+    case 'cta-inline-1':
     case 'sticky-cta-1':
       element = (
-        <StickyCTABlock
+        <InlineCTABlock
           content={content}
           withinEditor={withinEditor}
           productId={productId}

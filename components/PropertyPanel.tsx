@@ -188,7 +188,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   }
 
   const content = block.content;
-  const supportsThemeSelection = ['hero-aurora', 'features-aurora', 'sticky-cta-1', 'cta-1', 'cta-2', 'cta-3'].includes(block.blockType);
+  const supportsThemeSelection = ['hero-aurora', 'features-aurora', 'cta-inline-1', 'sticky-cta-1', 'cta-1', 'cta-2', 'cta-3'].includes(block.blockType);
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
   const textFieldCandidates = [
     'tagline',

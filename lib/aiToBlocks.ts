@@ -37,7 +37,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
 
     if (!template) {
       console.warn(`Skipping unknown block type: ${blockType}`);
-      console.log('Available block types:', ['countdown-1', 'problem-1', 'before-after-1', 'special-price-1', 'bonus-list-1', 'guarantee-1', 'author-profile-1', 'scarcity-1', 'urgency-1', 'sticky-cta-1']);
+      console.log('Available block types:', ['countdown-1', 'problem-1', 'before-after-1', 'special-price-1', 'bonus-list-1', 'guarantee-1', 'author-profile-1', 'scarcity-1', 'urgency-1', 'cta-inline-1']);
       return; // スキップして次のブロックへ
     }
     

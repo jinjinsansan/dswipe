@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
-import { LPDetail, CTA, RequiredActionsStatus } from '@/types';
+import { LPDetail, RequiredActionsStatus } from '@/types';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 
@@ -36,8 +36,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [fixedCta, setFixedCta] = useState<any>(null);
-  const [stickyCtaStep, setStickyCtaStep] = useState<any>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
   // ハプティックフィードバック（振動）
@@ -81,37 +79,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         const hasValidImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
         return hasValidBlockType || hasValidImageUrl;
       });
-      const shouldUseFloating = Boolean(response.data.floating_cta);
-      const stickySteps = shouldUseFloating
-        ? validSteps.filter((step) => step.block_type === 'sticky-cta-1')
-        : [];
-      setStickyCtaStep(stickySteps.length > 0 ? stickySteps[stickySteps.length - 1] : null);
-
-      const ctaBlock = [...validSteps]
-        .reverse()
-        .find((step: any) =>
-          step.block_type &&
-          step.block_type !== 'sticky-cta-1' &&
-          (step.block_type.startsWith('cta') || step.block_type === 'form')
-        );
-
-      const displaySteps = validSteps
-        .filter((step) => (shouldUseFloating ? step.block_type !== 'sticky-cta-1' : true))
-        .filter((step) => (ctaBlock ? step.id !== ctaBlock.id : true));
-
-      if (ctaBlock) {
-        setFixedCta({
-          blockType: ctaBlock.block_type,
-          content: ctaBlock.content_data,
-          productId: response.data.product_id,
-        });
-      } else {
-        setFixedCta(null);
-      }
-
       const newLp = {
         ...response.data,
-        steps: displaySteps,
+        steps: validSteps,
       };
       setLp(newLp);
       
@@ -275,53 +245,49 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
   };
 
-  const handleSlideChange = async (swiper: SwiperType) => {
+  const enqueueAnalyticsTask = (task: () => Promise<void>, label: string) => {
+    const runner = () => {
+      task().catch((err) => {
+        console.error(label, err);
+      });
+    };
+
+    if (typeof window !== 'undefined' && typeof (window as any).requestIdleCallback === 'function') {
+      (window as any).requestIdleCallback(runner);
+    } else {
+      setTimeout(runner, 0);
+    }
+  };
+
+  const handleSlideChange = (swiper: SwiperType) => {
     if (!lp) return;
-    
-    // ハプティックフィードバック（スライド切り替え時）
+
     if (swiper.previousIndex !== swiper.activeIndex) {
       triggerHapticFeedback('light');
     }
-    
+
     const currentStep = lp.steps[swiper.activeIndex];
     if (currentStep) {
-      try {
-        await publicApi.recordStepView(slug, {
+      enqueueAnalyticsTask(
+        () => publicApi.recordStepView(slug, {
           step_id: currentStep.id,
           session_id: sessionId,
-        });
-      } catch (err) {
-        console.error('Failed to record step view:', err);
-      }
+        }),
+        'Failed to record step view:'
+      );
     }
 
     if (swiper.previousIndex !== swiper.activeIndex && swiper.previousIndex < lp.steps.length) {
       const previousStep = lp.steps[swiper.previousIndex];
       if (previousStep) {
-        try {
-          await publicApi.recordStepExit(slug, {
+        enqueueAnalyticsTask(
+          () => publicApi.recordStepExit(slug, {
             step_id: previousStep.id,
             session_id: sessionId,
-          });
-        } catch (err) {
-          console.error('Failed to record step exit:', err);
-        }
+          }),
+          'Failed to record step exit:'
+        );
       }
-    }
-  };
-
-  const handleCtaClick = async (cta: CTA) => {
-    try {
-      await publicApi.recordCtaClick(slug, {
-        cta_id: cta.id,
-        session_id: sessionId,
-      });
-
-      if (cta.cta_type === 'link' && cta.link_url) {
-        window.open(cta.link_url, '_blank');
-      }
-    } catch (err) {
-      console.error('Failed to record CTA click:', err);
     }
   };
 
@@ -340,14 +306,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     } catch (err: any) {
       alert(err.response?.data?.detail || 'メールアドレスの登録に失敗しました');
     }
-  };
-
-  const getCurrentStepCtas = (stepIndex: number): CTA[] => {
-    if (!lp) return [];
-    const currentStep = lp.steps[stepIndex];
-    if (!currentStep) return [];
-    
-    return lp.ctas.filter(cta => !cta.step_id || cta.step_id === currentStep.id);
   };
 
   const getStepBackgroundStyle = (step: any) => {
@@ -373,28 +331,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     );
   };
 
-  const getFixedCtaDecoration = () => {
-    if (!fixedCta?.content) {
-      return {
-        accent: '#3B82F6',
-        background: 'linear-gradient(135deg, rgba(15,23,42,0.96), rgba(8,14,35,0.94))',
-      };
-    }
-
-    const content = fixedCta.content as Record<string, any>;
-    const baseBackground = typeof content.backgroundColor === 'string' && content.backgroundColor.trim().length > 0
-      ? content.backgroundColor
-      : 'rgba(15,23,42,0.96)';
-    const accent = typeof content.buttonColor === 'string' && content.buttonColor.trim().length > 0
-      ? content.buttonColor
-      : '#F97316';
-
-    return {
-      accent,
-      background: `linear-gradient(135deg, ${baseBackground}, rgba(8,14,35,0.94))`,
-    };
-  };
-
   if (isLoading) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
@@ -410,10 +346,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       </div>
     );
   }
-
-  const hasFloatingCta = Boolean(lp.floating_cta && stickyCtaStep);
-  const hasBottomOverlay = Boolean(fixedCta || hasFloatingCta);
-  const shouldShowProductCards = products.length > 0 && !fixedCta && !hasFloatingCta;
 
   return (
     <>
@@ -511,9 +443,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             return null;
           })()}
           {lp.steps.map((step, index) => {
-              const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
-            
+
             return (
               <SwiperSlide key={step.id}>
                 <div 
@@ -541,31 +472,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     )}
                   </div>
                 </div>
-                
-                {stepCtas.length > 0 && (
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
-                    <div className="space-y-4 pointer-events-auto">
-                      {stepCtas.map((cta) => (
-                        <button
-                          key={cta.id}
-                          onClick={() => handleCtaClick(cta)}
-                          className={`block w-full ${
-                            cta.button_position === 'floating'
-                              ? 'fixed bottom-6 left-1/2 -translate-x-1/2 max-w-sm'
-                              : ''
-                          }`}
-                        >
-                          <img
-                            src={cta.button_image_url}
-                            alt="CTA"
-                            className="w-full h-auto rounded-lg shadow-2xl hover:scale-105 transition-transform"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {index === 0 && lp.show_swipe_hint && (
                   <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 gap-1 animate-bounce z-20">
                     <span className="text-4xl">
@@ -585,68 +491,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           })}
         </Swiper>
       </div>
-
-      {fixedCta && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 w-full border-t border-white/10">
-          <BlockRenderer
-            blockType={fixedCta.blockType}
-            content={fixedCta.content}
-            isEditing={false}
-            productId={fixedCta.productId}
-            fullWidth
-          onProductClick={handleProductButtonClick}
-          />
-        </div>
-      )}
-
-      {lp.floating_cta && stickyCtaStep && (
-        <div className="fixed inset-x-0 bottom-0 z-50">
-          <BlockRenderer
-            blockType={stickyCtaStep.block_type}
-            content={stickyCtaStep.content_data}
-            isEditing={false}
-            productId={lp.product_id}
-            fullWidth
-            onProductClick={handleProductButtonClick}
-          />
-        </div>
-      )}
-
-      {shouldShowProductCards && (
-        <div className="fixed bottom-6 right-6 z-50 space-y-4">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-xl shadow-2xl border-2 border-blue-500 p-6 max-w-sm"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-lg font-bold text-gray-900">{product.title}</h3>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
-                  {product.price_in_points.toLocaleString()} P
-                </span>
-              </div>
-              {product.description && (
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-              )}
-              {product.stock_quantity !== null && (
-                <p className="text-gray-500 text-xs mb-3">残り {product.stock_quantity}個</p>
-              )}
-              <button
-                onClick={() => handleOpenPurchaseModal(product)}
-                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg"
-              >
-                今すぐ購入
-              </button>
-            </div>
-          ))}
-          {isAuthenticated && (
-            <div className="bg-gray-900/90 backdrop-blur-sm text-white rounded-lg px-4 py-2 text-sm text-center">
-              残高: {pointBalance.toLocaleString()} P
-            </div>
-          )}
-        </div>
-      )}
-
       {showPurchaseModal && selectedProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center px-4 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in zoom-in-95 duration-200">

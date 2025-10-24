@@ -37,7 +37,7 @@ export default function CreateLPPage() {
     product_id: '',
     show_swipe_hint: false,
     fullscreen_media: false,
-    floating_cta: true,
+    floating_cta: false,
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
