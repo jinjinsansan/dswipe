@@ -159,7 +159,7 @@ function renderHero(content: HeroBlockContent, shared: SharedRenderArgs): ReactE
   const highlight = pickFirstString([content.highlightText]);
   const tagline = pickFirstString([content.tagline]);
   const subtitle = pickFirstString([content.subtitle]);
-  const stats = Array.isArray(content.stats) 
+  const stats = Array.isArray(content.stats)
     ? content.stats.filter((stat) => stat && (isNonEmptyString(stat.value) || isNonEmptyString(stat.label)))
     : [];
   const secondaryText = pickFirstString([content.secondaryButtonText]);
@@ -167,85 +167,114 @@ function renderHero(content: HeroBlockContent, shared: SharedRenderArgs): ReactE
 
   return (
     <BaseSection content={content}>
-      <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center gap-8">
+      <div className="relative w-full max-w-6xl mx-auto">
         <div
-          className="absolute inset-x-12 -top-24 h-48 opacity-40 blur-[64px] pointer-events-none select-none"
-          style={{ background: 'radial-gradient(circle at 50% 50%, var(--viewer-accent-soft), rgba(15, 23, 42, 0))' }}
+          className="absolute inset-x-0 -top-24 h-[340px] opacity-45 blur-[120px] pointer-events-none select-none"
+          style={{ background: 'radial-gradient(circle at 18% 15%, var(--viewer-accent-soft), rgba(15, 23, 42, 0))' }}
         />
 
-        {highlight && (
-          <span
-            className="relative inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold tracking-[0.14em] uppercase"
-            style={{
-              background: 'var(--viewer-overlay-soft)',
-              border: '1px solid var(--viewer-accent-soft)',
-              color: 'var(--viewer-text)',
-              letterSpacing: '0.14em',
-            }}
-          >
-            {highlight}
-          </span>
-        )}
-
-        <div className="space-y-4 text-center relative z-[1]">
-          <Heading>{content.title}</Heading>
-          {tagline && <Paragraph muted>{tagline}</Paragraph>}
-          {subtitle && <Paragraph>{subtitle}</Paragraph>}
-        </div>
-
-        {content.imageUrl && (
-          <div className="relative w-full max-w-4xl z-[1]">
-            <div
-              className="absolute inset-4 rounded-[1.75rem] opacity-45 blur-3xl pointer-events-none"
-              style={{ background: 'linear-gradient(135deg, var(--viewer-accent), var(--viewer-accent-alt))' }}
-            />
-            <div
-              className="viewer-card-strong overflow-hidden relative"
-              style={{ padding: 0, borderRadius: '1.75rem' }}
-            >
-              <div
-                className="aspect-[16/9] w-full"
-                style={{
-                  backgroundImage: `url(${content.imageUrl})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {(content.buttonText || secondaryText) && (
-          <div className="flex flex-wrap items-center justify-center gap-3 relative z-[1]">
-            {content.buttonText && (
-              <PrimaryButton
-                label={content.buttonText}
-                href={content.buttonUrl}
-                color={content.buttonColor}
-                shared={shared}
-              />
-            )}
-            {secondaryText && <SecondaryButton label={secondaryText} href={secondaryUrl} />}
-          </div>
-        )}
-
-        {stats.length > 0 && (
-          <div className="relative w-full max-w-4xl z-[1] space-y-4">
-            <div className="viewer-divider" />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {stats.map((stat, idx) => (
-                <div
-                  key={idx}
-                  className="viewer-card text-left space-y-1"
-                  style={{ padding: 'clamp(1rem, 3vw, 1.4rem)' }}
+        <div className="relative grid items-center gap-8 md:gap-12 lg:gap-16 md:grid-cols-[minmax(0,1.02fr)_minmax(0,0.9fr)]">
+          <div className="space-y-6 md:space-y-7 text-left relative z-[2]">
+            <div className="space-y-4">
+              {tagline && (
+                <span
+                  className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.32em]"
+                  style={{
+                    background: 'var(--viewer-overlay-soft)',
+                    borderColor: 'var(--viewer-accent-soft)',
+                    color: 'var(--viewer-text)',
+                    letterSpacing: '0.32em',
+                  }}
                 >
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  {stat.label && <div className="text-sm opacity-80">{stat.label}</div>}
-                </div>
-              ))}
+                  {tagline}
+                </span>
+              )}
+
+              <div className="space-y-3">
+                <h1
+                  className="text-[clamp(2.2rem,4vw,3.6rem)] font-bold leading-tight"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, var(--viewer-accent), var(--viewer-accent-alt))',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                  }}
+                >
+                  {content.title}
+                </h1>
+                {highlight && (
+                  <span
+                    className="inline-flex items-center rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em]"
+                    style={{
+                      background: 'var(--viewer-overlay)',
+                      borderColor: 'var(--viewer-accent-soft)',
+                      color: 'var(--viewer-text)',
+                      letterSpacing: '0.28em',
+                    }}
+                  >
+                    {highlight}
+                  </span>
+                )}
+              </div>
+
+              {subtitle && (
+                <p className="max-w-xl text-base md:text-lg leading-relaxed" style={{ color: 'var(--viewer-text)' }}>
+                  {subtitle}
+                </p>
+              )}
             </div>
+
+            {(content.buttonText || secondaryText) && (
+              <div className="flex flex-wrap items-center gap-3">
+                {content.buttonText && (
+                  <PrimaryButton
+                    label={content.buttonText}
+                    href={content.buttonUrl}
+                    color={content.buttonColor}
+                    shared={shared}
+                  />
+                )}
+                {secondaryText && <SecondaryButton label={secondaryText} href={secondaryUrl} />}
+              </div>
+            )}
+
+            {stats.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {stats.map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="viewer-card text-left space-y-1"
+                    style={{ padding: 'clamp(1.1rem, 3vw, 1.6rem)' }}
+                  >
+                    <div className="text-2xl font-semibold" style={{ color: 'var(--viewer-accent)' }}>
+                      {stat.value}
+                    </div>
+                    {stat.label && <div className="text-sm opacity-85">{stat.label}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+
+          {content.imageUrl && (
+            <div className="relative w-full">
+              <div
+                className="absolute -inset-10 md:-inset-12 rounded-[2.8rem] opacity-45 blur-3xl pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, var(--viewer-accent), rgba(15, 23, 42, 0))' }}
+              />
+
+              <div className="relative viewer-card-strong overflow-hidden" style={{ padding: 0, borderRadius: '2rem' }}>
+                <div
+                  className="aspect-[4/5] w-full"
+                  style={{
+                    backgroundImage: `url(${content.imageUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </BaseSection>
   );
