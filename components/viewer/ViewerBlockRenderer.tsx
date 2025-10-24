@@ -423,31 +423,108 @@ function renderProblem(content: ProblemBlockContent): ReactElement {
 }
 
 function renderFeatures(content: FeaturesBlockContent): ReactElement {
-  const tagline = pickFirstString([content.tagline]);
-  const highlight = pickFirstString([content.highlightText]);
+  const badge = pickFirstString([content.highlightText]);
+  const subtitle = pickFirstString([content.tagline]);
+  const features = Array.isArray(content.features) ? content.features : [];
 
   return (
     <BaseSection content={content}>
-      <div className="relative w-full max-w-4xl mx-auto space-y-6">
-        {highlight && (
-          <span
-            className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.18em] uppercase"
-            style={{
-              background: 'var(--viewer-overlay)',
-              border: '1px solid var(--viewer-accent-soft)',
-              letterSpacing: '0.18em',
-            }}
-          >
-            {highlight}
-          </span>
-        )}
+      <div className="relative w-full max-w-6xl mx-auto space-y-10">
+        <div
+          className="absolute inset-x-0 -top-24 h-[320px] opacity-45 blur-[120px] pointer-events-none select-none"
+          style={{ background: 'radial-gradient(circle at 20% 10%, var(--viewer-accent-soft), rgba(15, 23, 42, 0))' }}
+        />
 
-        <div className="space-y-3 text-center">
-          <Heading>{content.title ?? '選ばれる理由'}</Heading>
-          {tagline && <Paragraph muted>{tagline}</Paragraph>}
+        <div className="relative grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          <div className="space-y-6 text-left relative z-[2]">
+            {badge && (
+              <span
+                className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em]"
+                style={{
+                  background: 'var(--viewer-overlay)',
+                  borderColor: 'var(--viewer-accent-soft)',
+                  color: 'var(--viewer-text)',
+                  letterSpacing: '0.28em',
+                }}
+              >
+                {badge}
+              </span>
+            )}
+
+            <div className="space-y-3">
+              <h2
+                className="text-[clamp(2.1rem,3.6vw,3.4rem)] font-bold leading-tight"
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, var(--viewer-accent), var(--viewer-accent-alt))',
+                  WebkitBackgroundClip: 'text',
+                  color: 'transparent',
+                }}
+              >
+                {content.title ?? '選ばれる理由'}
+              </h2>
+              {subtitle && (
+                <p className="max-w-2xl text-base md:text-lg leading-relaxed" style={{ color: 'var(--viewer-text)' }}>
+                  {subtitle}
+                </p>
+              )}
+            </div>
+
+            <div className="relative">
+              <div className="absolute -inset-6 rounded-[2rem] opacity-40 blur-3xl pointer-events-none" style={{ background: 'var(--viewer-overlay)' }} />
+              <div className="viewer-card-strong relative overflow-hidden" style={{ padding: 'clamp(1.8rem, 4vw, 2.4rem)', borderRadius: '1.8rem' }}>
+                <div className="grid gap-3">
+                  {features.slice(0, 3).map((feature, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0"
+                        style={{
+                          background: 'var(--viewer-overlay)',
+                          border: '1px solid var(--viewer-accent-soft)',
+                          color: 'var(--viewer-accent)',
+                        }}
+                      >
+                        {feature.icon ?? String.fromCodePoint(0x2460 + idx)}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs uppercase tracking-[0.24em] text-white/70">STEP {idx + 1}</div>
+                        <div className="text-lg font-semibold" style={{ color: 'var(--viewer-text)' }}>{feature.title}</div>
+                        {feature.description && (
+                          <p className="text-sm leading-relaxed opacity-90" style={{ color: 'var(--viewer-text)' }}>
+                            {feature.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative grid gap-4 sm:grid-cols-2">
+            <div className="absolute -inset-8 rounded-[2.8rem] opacity-30 blur-3xl pointer-events-none" style={{ background: 'linear-gradient(140deg, var(--viewer-accent), rgba(15, 23, 42, 0))' }} />
+
+            {features.map((feature, idx) => (
+              <div
+                key={idx}
+                className="viewer-card space-y-3 relative"
+                style={{
+                  padding: 'clamp(1.6rem, 4vw, 2.2rem)',
+                  borderRadius: '1.6rem',
+                  backdropFilter: 'blur(18px)',
+                }}
+              >
+                <span className="text-xs uppercase tracking-[0.24em] text-white/70">{`Feature ${idx + 1}`}</span>
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--viewer-text)' }}>{feature.title}</h3>
+                {feature.description && (
+                  <p className="text-sm leading-relaxed opacity-90" style={{ color: 'var(--viewer-text)' }}>
+                    {feature.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-
-        <FeatureGrid features={content.features} />
       </div>
     </BaseSection>
   );
