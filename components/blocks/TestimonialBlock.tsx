@@ -49,11 +49,11 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
       <Section
         tone="none"
         padding="condensed"
-        className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100"
+        className="transform origin-center pt-2 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100"
         style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
       >
-        <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
-          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+      <div className="max-w-6xl mx-auto space-y-5" style={{ paddingInline: 0 }}>
+        <div className="grid grid-cols-1 gap-3.5 sm:gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="rounded-lg sm:rounded-xl p-5 sm:p-6 md:p-7 shadow-md" style={{ backgroundColor: backgroundColor, borderLeft: `4px solid ${accentColor}` }}>
                 {testimonial.rating && renderStars(testimonial.rating)}
@@ -100,13 +100,13 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
     <Section
       tone="none"
         padding="condensed"
-        className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100"
+        className="transform origin-center pt-2 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100"
       style={{ backgroundColor, color: textColor, fontFamily: fontStack }}
     >
-      <div className="max-w-6xl mx-auto" style={{ paddingInline: 0 }}>
-        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3 md:gap-6 lg:gap-8">
+      <div className="max-w-6xl mx-auto space-y-4" style={{ paddingInline: 0 }}>
+        <div className="grid grid-cols-1 gap-3.5 sm:gap-5 md:grid-cols-3 md:gap-6 lg:gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
+            <div key={index} className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg" style={{ backgroundColor: backgroundColor, borderTop: `3px solid ${accentColor}` }}>
               {/* 画像 */}
               {testimonial.imageUrl && (
                 <div className="relative w-14 h-14 mx-auto mb-4 sm:w-16 sm:h-16">
@@ -129,7 +129,7 @@ export default function TestimonialBlock({ content, isEditing, onEdit }: Testimo
 
               {/* テキスト */}
               <p
-                className="mb-5 sm:mb-6 text-center text-sm sm:text-base md:text-lg leading-relaxed"
+                className="mb-4 sm:mb-5 text-center text-sm sm:text-base md:text-lg leading-relaxed"
                 style={{ color: descriptionColor || textColor, opacity: 0.9 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning

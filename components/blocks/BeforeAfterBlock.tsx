@@ -37,7 +37,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
+      className="transform origin-center pt-4 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
       style={{
         backgroundColor,
         color: textColor,
@@ -48,7 +48,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
         <div className="absolute inset-x-[-20%] top-[-30%] h-[120%] blur-[140px]" style={blurOverlayStyle} />
       </div>
 
-      <div className="relative max-w-6xl mx-auto space-y-8 sm:space-y-10 md:space-y-12">
+      <div className="relative max-w-6xl mx-auto space-y-6 sm:space-y-10 md:space-y-12">
         {/* Header */}
         {content.title && (
           <div className="text-center">
@@ -63,11 +63,11 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
         )}
 
         {/* Before & After Comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 items-stretch">
           {/* Before Card */}
           <SurfaceCard
             variant="glass"
-            className="p-6 sm:p-7 md:p-8 lg:p-10"
+            className="p-5 sm:p-7 md:p-8 lg:p-10"
             style={{
               backgroundColor: `${textColor}05`,
               borderColor: `${primaryColor}40`,
@@ -79,10 +79,10 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
               style={{ background: `linear-gradient(135deg, ${primaryColor}15, transparent)` }}
             />
             
-            <div className="relative space-y-4 sm:space-y-5">
-              <div className="flex items-center gap-3">
+            <div className="relative space-y-3 sm:space-y-5">
+              <div className="flex items-center gap-2.5">
                 <div 
-                  className="flex items-center justify-center rounded-full p-2"
+                  className="flex items-center justify-center rounded-full p-1.5"
                   style={{
                     backgroundColor: `${primaryColor}1a`,
                     borderWidth: '1px',
@@ -90,13 +90,13 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
                   }}
                 >
                   <XCircleIcon 
-                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
+                    className="h-5 w-5 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: primaryColor }}
                     aria-hidden="true"
                   />
                 </div>
                 <h3 
-                  className="text-xl sm:text-2xl md:text-3xl font-bold"
+                  className="text-lg sm:text-2xl md:text-3xl font-bold"
                   style={{ color: primaryColor }}
                 >
                   {content.beforeTitle || '導入前'}
@@ -116,7 +116,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
           <SurfaceCard
             variant="glass"
             glow
-            className="p-6 sm:p-7 md:p-8 lg:p-10"
+            className="p-5 sm:p-7 md:p-8 lg:p-10"
             style={{
               backgroundColor: `${accentColor}0d`,
               borderColor: `${accentColor}40`,
@@ -128,10 +128,10 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
               style={{ background: `linear-gradient(135deg, ${accentColor}25, ${primaryColor}15)` }}
             />
             
-            <div className="relative space-y-4 sm:space-y-5">
-              <div className="flex items-center gap-3">
+            <div className="relative space-y-3 sm:space-y-5">
+              <div className="flex items-center gap-2.5">
                 <div 
-                  className="flex items-center justify-center rounded-full p-2"
+                  className="flex items-center justify-center rounded-full p-1.5"
                   style={{
                     backgroundColor: `${accentColor}1a`,
                     borderWidth: '1px',
@@ -139,13 +139,13 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
                   }}
                 >
                   <CheckCircleIcon 
-                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
+                    className="h-5 w-5 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: accentColor }}
                     aria-hidden="true"
                   />
                 </div>
                 <h3 
-                  className="text-xl sm:text-2xl md:text-3xl font-bold"
+                  className="text-lg sm:text-2xl md:text-3xl font-bold"
                   style={{ color: accentColor }}
                 >
                   {content.afterTitle || '導入後'}
@@ -165,7 +165,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
         {/* Arrow indicator for mobile */}
         <div className="md:hidden flex justify-center">
           <div 
-            className="flex items-center justify-center rounded-full p-3"
+            className="flex items-center justify-center rounded-full p-2.5"
             style={{
               backgroundColor: `${accentColor}1a`,
               borderWidth: '2px',
@@ -173,7 +173,7 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
             }}
           >
             <ArrowRightIcon 
-              className="h-6 w-6 rotate-90 md:rotate-0" 
+              className="h-5 w-5 rotate-90 md:rotate-0" 
               style={{ color: accentColor }}
               aria-hidden="true"
             />
@@ -181,15 +181,15 @@ export default function BeforeAfterBlock({ content }: BeforeAfterBlockProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center space-y-3 sm:space-y-4">
+        <div className="text-center space-y-2.5 sm:space-y-4">
           <p 
-            className="text-xl sm:text-2xl md:text-3xl font-semibold"
+            className="text-lg sm:text-2xl md:text-3xl font-semibold"
             style={{ color: accentColor }}
           >
             あなたもこの変化を手に入れませんか？
           </p>
           <p 
-            className="text-base sm:text-lg md:text-xl"
+            className="text-sm sm:text-lg md:text-xl"
             style={{ color: `${textColor}B3` }}
           >
             実践者全員が同じ結果を得ています

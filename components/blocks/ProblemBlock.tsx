@@ -37,7 +37,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
+      className="transform origin-center pt-4 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
       style={{
         backgroundColor,
         color: textColor,
@@ -48,9 +48,9 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
         <div className="absolute inset-x-[-20%] top-[-30%] h-[120%] blur-[140px]" style={blurOverlayStyle} />
       </div>
 
-      <div className="relative max-w-5xl mx-auto space-y-8 sm:space-y-10 md:space-y-12">
+      <div className="relative max-w-5xl mx-auto space-y-6 sm:space-y-9 md:space-y-12">
         {/* Header */}
-        <div className="text-center space-y-3 sm:space-y-4">
+        <div className="text-center space-y-2.5 sm:space-y-4">
           {content.title && (
             <GradientHeading 
               as="h2" 
@@ -63,7 +63,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
           
           {content.subtitle && (
             <p 
-              className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto"
+              className="text-sm sm:text-lg md:text-xl max-w-2xl mx-auto"
               style={{ color: `${textColor}CC` }}
             >
               {content.subtitle}
@@ -72,12 +72,12 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
         </div>
 
         {/* Problems Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5 md:gap-6">
           {content.problems.map((problem, index) => (
             <SurfaceCard
               key={index}
               variant="glass"
-              className="p-5 sm:p-6 md:p-7 hover:scale-[1.02] transition-transform duration-300"
+              className="p-4 sm:p-6 md:p-7 hover:scale-[1.02] transition-transform duration-300"
               style={{
                 backgroundColor: `${textColor}05`,
                 borderColor: `${primaryColor}26`,
@@ -85,7 +85,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
             >
               <div className="flex items-start gap-3 sm:gap-4">
                 <div 
-                  className="flex-shrink-0 rounded-full p-2 sm:p-2.5 md:p-3"
+                  className="flex-shrink-0 rounded-full p-1.5 sm:p-2.5 md:p-3"
                   style={{
                     backgroundColor: `${primaryColor}1a`,
                     borderWidth: '1px',
@@ -93,7 +93,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
                   }}
                 >
                   <XCircleIcon 
-                    className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" 
+                    className="h-5 w-5 sm:h-7 sm:w-7 md:h-8 md:w-8" 
                     style={{ color: primaryColor }}
                     aria-hidden="true"
                   />
@@ -113,7 +113,7 @@ export default function ProblemBlock({ content }: ProblemBlockProps) {
         <SurfaceCard
           variant="glass"
           glow
-          className="px-6 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10"
+          className="px-5 py-5 sm:px-8 sm:py-8 md:px-10 md:py-10"
           style={{
             backgroundColor: `${primaryColor}0d`,
             borderColor: `${accentColor}33`,
