@@ -50,13 +50,30 @@ function pickFirstString(values: unknown[]): string | undefined {
 }
 
 function BaseSection({ content, children }: { content?: Partial<BaseBlockContent>; children: ReactNode }): ReactElement {
-  const { backgroundColor, textColor } = resolveSectionColors(content);
+  const { palette, backgroundColor, textColor } = resolveSectionColors(content);
+  const sectionStyle: (CSSProperties & Record<string, string>) = {
+    background: backgroundColor,
+    color: textColor,
+    '--viewer-bg': palette.background,
+    '--viewer-bg-glow': palette.backgroundGlow,
+    '--viewer-surface': palette.surface,
+    '--viewer-surface-strong': palette.surfaceStrong,
+    '--viewer-surface-soft': palette.surfaceSoft,
+    '--viewer-overlay': palette.overlay,
+    '--viewer-overlay-soft': palette.overlaySoft,
+    '--viewer-accent': palette.accent,
+    '--viewer-accent-alt': palette.accentAlt,
+    '--viewer-accent-soft': palette.accentSoft,
+    '--viewer-text': textColor,
+    '--viewer-muted': palette.muted,
+    '--viewer-divider': palette.divider,
+    '--viewer-border': palette.border,
+  };
+
   return (
-    <section
-      className="w-full h-full flex items-center justify-center px-5 py-10 sm:py-14"
-      style={{ backgroundColor, color: textColor }}
-    >
-      <div className="w-full max-w-4xl mx-auto space-y-6 text-center">
+    <section className="viewer-section w-full h-full flex items-center justify-center px-5 py-10 sm:py-14" style={sectionStyle}>
+      <div className="viewer-section__backdrop" aria-hidden />
+      <div className="viewer-section__content w-full max-w-5xl mx-auto space-y-6 text-center">
         {children}
       </div>
     </section>
@@ -153,18 +170,16 @@ function renderHero(content: HeroBlockContent, shared: SharedRenderArgs): ReactE
       <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center gap-8">
         <div
           className="absolute inset-x-12 -top-24 h-48 opacity-40 blur-[64px] pointer-events-none select-none"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0))',
-          }}
+          style={{ background: 'radial-gradient(circle at 50% 50%, var(--viewer-accent-soft), rgba(15, 23, 42, 0))' }}
         />
 
         {highlight && (
           <span
             className="relative inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold tracking-[0.14em] uppercase"
             style={{
-              background: 'rgba(99, 102, 241, 0.18)',
-              border: '1px solid rgba(99, 102, 241, 0.35)',
-              color: viewerTheme.colors.text,
+              background: 'var(--viewer-overlay-soft)',
+              border: '1px solid var(--viewer-accent-soft)',
+              color: 'var(--viewer-text)',
               letterSpacing: '0.14em',
             }}
           >
@@ -182,9 +197,7 @@ function renderHero(content: HeroBlockContent, shared: SharedRenderArgs): ReactE
           <div className="relative w-full max-w-4xl z-[1]">
             <div
               className="absolute inset-4 rounded-[1.75rem] opacity-45 blur-3xl pointer-events-none"
-              style={{
-                background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.45), rgba(99, 102, 241, 0.25))',
-              }}
+              style={{ background: 'linear-gradient(135deg, var(--viewer-accent), var(--viewer-accent-alt))' }}
             />
             <div
               className="viewer-card-strong overflow-hidden relative"
@@ -254,18 +267,16 @@ function renderCTA(content: CTABlockContent | InlineCTABlockContent, shared: Sha
       <div className="relative w-full max-w-3xl mx-auto space-y-6">
         <div
           className="absolute inset-x-12 -top-20 h-32 opacity-45 blur-[72px] pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.4), rgba(99, 102, 241, 0))',
-          }}
+          style={{ background: 'radial-gradient(circle at 50% 50%, var(--viewer-overlay), rgba(15, 23, 42, 0))' }}
         />
 
         {subText && (
           <span
             className="relative inline-flex items-center px-5 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase"
             style={{
-              background: 'rgba(56, 189, 248, 0.18)',
-              border: '1px solid rgba(56, 189, 248, 0.32)',
-              color: viewerTheme.colors.text,
+              background: 'var(--viewer-overlay)',
+              border: '1px solid var(--viewer-accent-soft)',
+              color: 'var(--viewer-text)',
               letterSpacing: '0.18em',
             }}
           >
@@ -284,7 +295,7 @@ function renderCTA(content: CTABlockContent | InlineCTABlockContent, shared: Sha
         </div>
 
         {countdownSummary && (
-          <div className="viewer-card text-center space-y-2">
+          <div className="viewer-card text-center space-y-3">
             <p className="text-xs uppercase tracking-[0.24em] text-white/70">Offer Ends</p>
             <div className="text-2xl font-semibold">{countdownSummary}</div>
             <Paragraph muted>お急ぎください。期限が迫っています。</Paragraph>
@@ -308,8 +319,8 @@ function renderSpecialPrice(content: SpecialPriceBlockContent, shared: SharedRen
           <span
             className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
             style={{
-              background: 'rgba(99, 102, 241, 0.2)',
-              border: '1px solid rgba(99, 102, 241, 0.35)',
+              background: 'var(--viewer-overlay)',
+              border: '1px solid var(--viewer-accent-soft)',
             }}
           >
             {content.discountBadge}
@@ -324,8 +335,8 @@ function renderSpecialPrice(content: SpecialPriceBlockContent, shared: SharedRen
         <div
           className="viewer-card-strong space-y-4 text-left"
           style={{
-            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.14))',
-            border: '1px solid rgba(99, 102, 241, 0.2)',
+            background: 'linear-gradient(135deg, var(--viewer-overlay-soft), rgba(15, 23, 42, 0.25))',
+            border: '1px solid var(--viewer-accent-soft)',
             padding: 'clamp(1.75rem, 5vw, 2.4rem)',
           }}
         >
@@ -344,7 +355,7 @@ function renderSpecialPrice(content: SpecialPriceBlockContent, shared: SharedRen
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm opacity-85">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--viewer-accent)' }} />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -368,9 +379,7 @@ function renderProblem(content: ProblemBlockContent): ReactElement {
       <div className="relative w-full max-w-3xl mx-auto space-y-6">
         <div
           className="absolute inset-x-10 -top-16 h-28 opacity-35 blur-[72px] pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.35), rgba(15, 23, 42, 0))',
-          }}
+          style={{ background: 'radial-gradient(circle at 50% 50%, var(--viewer-overlay), rgba(15, 23, 42, 0))' }}
         />
 
         <div className="relative space-y-4 text-center">
@@ -395,8 +404,8 @@ function renderFeatures(content: FeaturesBlockContent): ReactElement {
           <span
             className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.18em] uppercase"
             style={{
-              background: 'rgba(56, 189, 248, 0.18)',
-              border: '1px solid rgba(56, 189, 248, 0.32)',
+              background: 'var(--viewer-overlay)',
+              border: '1px solid var(--viewer-accent-soft)',
               letterSpacing: '0.18em',
             }}
           >
@@ -604,8 +613,8 @@ function FeatureGrid({ features }: { features?: { title?: string; description?: 
           className="viewer-card text-left space-y-2"
           style={{
             padding: 'clamp(1.4rem, 4vw, 1.8rem)',
-            background: 'linear-gradient(135deg, rgba(56,189,248,0.1), rgba(99,102,241,0.1))',
-            border: '1px solid rgba(99,102,241,0.15)',
+            background: 'linear-gradient(135deg, var(--viewer-overlay-soft), rgba(15, 23, 42, 0.3))',
+            border: '1px solid var(--viewer-accent-soft)',
           }}
         >
           {feature.title && <h3 className="text-lg font-semibold">{feature.title}</h3>}
@@ -637,7 +646,7 @@ function ProblemList({ items }: { items?: string[] }): ReactElement | null {
         >
           <span
             className="mt-1 h-2 w-2 rounded-full"
-            style={{ background: viewerTheme.colors.accentAlt }}
+            style={{ background: 'var(--viewer-accent-alt)' }}
           />
           <span>{problem}</span>
         </li>
@@ -660,9 +669,9 @@ function PricingGrid({ plans, shared }: { plans?: PricingBlockContent['plans']; 
           className="viewer-card text-left space-y-4"
           style={{
             padding: 'clamp(1.75rem, 5vw, 2.2rem)',
-            border: plan.highlighted ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid rgba(248, 250, 252, 0.12)',
+            border: plan.highlighted ? '1px solid var(--viewer-accent-soft)' : undefined,
             background: plan.highlighted
-              ? 'linear-gradient(135deg, rgba(56,189,248,0.16), rgba(99,102,241,0.22))'
+              ? 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.4))'
               : 'var(--viewer-surface)',
             boxShadow: plan.highlighted ? viewerTheme.shadows.card : undefined,
             transform: plan.highlighted ? 'translateY(-4px)' : undefined,
@@ -681,7 +690,7 @@ function PricingGrid({ plans, shared }: { plans?: PricingBlockContent['plans']; 
             <ul className="space-y-2 text-sm opacity-85">
               {plan.features.map((feature, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--viewer-accent)' }} />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -755,8 +764,8 @@ function BonusList({ content }: { content: Partial<BonusListBlockContent> }): Re
             className="viewer-card text-left space-y-3"
             style={{
               padding: 'clamp(1.6rem, 4vw, 2rem)',
-              border: '1px solid rgba(234, 179, 8, 0.35)',
-              background: 'linear-gradient(135deg, rgba(234,179,8,0.12), rgba(234,179,8,0.06))',
+              border: '1px solid var(--viewer-accent-soft)',
+              background: 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.3))',
             }}
           >
             <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold tracking-[0.18em] uppercase bg-white/10">
@@ -816,7 +825,7 @@ function TimelineList({ items }: { items?: TimelineBlockContent['items'] }): Rea
           style={{ padding: 'clamp(1.4rem, 4vw, 1.9rem)' }}
         >
           <div className="flex items-center gap-3">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--viewer-accent)' }} />
             {item.date && <p className="text-xs uppercase tracking-[0.28em] opacity-70">{item.date}</p>}
           </div>
           {item.title && <h3 className="text-lg font-semibold">{item.title}</h3>}
@@ -996,8 +1005,8 @@ function GuaranteeDetails({ content }: { content?: Partial<GuaranteeBlockContent
       className="viewer-card-strong space-y-4 text-left"
       style={{
         padding: 'clamp(1.8rem, 5vw, 2.4rem)',
-        border: '1px solid rgba(16, 185, 129, 0.4)',
-        background: 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.06))',
+        border: '1px solid var(--viewer-accent-soft)',
+        background: 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.25))',
       }}
     >
       {content.badgeText && (
@@ -1010,7 +1019,7 @@ function GuaranteeDetails({ content }: { content?: Partial<GuaranteeBlockContent
         <ul className="space-y-2 text-left text-sm opacity-85">
           {content.features.map((feature, index) => (
             <li key={index} className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accentAlt }} />
+              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--viewer-accent-alt)' }} />
               <span>{feature}</span>
             </li>
           ))}
@@ -1125,7 +1134,7 @@ function CountdownCallout({ content }: { content?: Partial<CountdownBlockContent
       className="viewer-card-strong space-y-4 text-left"
       style={{
         padding: 'clamp(1.8rem, 5vw, 2.4rem)',
-        background: 'linear-gradient(135deg, rgba(99,102,241,0.24), rgba(56,189,248,0.12))',
+        background: 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.25))',
       }}
     >
       <div className="flex items-center justify-between text-xs uppercase tracking-[0.28em] text-white/70">
@@ -1160,7 +1169,13 @@ function SpecialPriceDetails({ content }: { content?: Partial<SpecialPriceBlockC
   return (
     <div className="space-y-3">
       {content.discountBadge && (
-        <div className="inline-flex items-center justify-center px-4 py-1 rounded-full bg-white/10 text-sm font-semibold">
+        <div
+          className="inline-flex items-center justify-center px-4 py-1 rounded-full text-sm font-semibold"
+          style={{
+            background: 'var(--viewer-overlay)',
+            border: '1px solid var(--viewer-accent-soft)',
+          }}
+        >
           {content.discountBadge}
         </div>
       )}
@@ -1188,7 +1203,7 @@ function ScarcityDetails({ content }: { content?: Partial<ScarcityBlockContent> 
   const remaining = content.remainingCount ?? 0;
   const total = content.totalCount ?? 0;
   const percentage = total > 0 ? Math.min(100, Math.max(0, Math.round((remaining / total) * 100))) : undefined;
-  const accent = content.accentColor ?? viewerTheme.colors.accent;
+  const accent = content.accentColor ?? 'var(--viewer-accent)';
   const progressColor = content.progressColor ?? accent;
 
   return (
@@ -1196,7 +1211,7 @@ function ScarcityDetails({ content }: { content?: Partial<ScarcityBlockContent> 
       className="viewer-card-strong space-y-4 text-left"
       style={{
         padding: 'clamp(1.6rem, 4vw, 2.1rem)',
-        background: 'linear-gradient(135deg, rgba(248,113,113,0.22), rgba(239,68,68,0.1))',
+        background: 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.25))',
       }}
     >
       <div className="flex items-end justify-between">
@@ -1233,8 +1248,8 @@ function UrgencyCallout({ content }: { content?: Partial<UrgencyBlockContent> })
       className="viewer-card-strong space-y-3 text-left"
       style={{
         padding: 'clamp(1.6rem, 4vw, 2.1rem)',
-        background: 'linear-gradient(135deg, rgba(248,113,113,0.18), rgba(239,68,68,0.08))',
-        border: '1px solid rgba(248, 113, 113, 0.35)',
+        background: 'linear-gradient(135deg, var(--viewer-overlay), rgba(15, 23, 42, 0.25))',
+        border: '1px solid var(--viewer-accent-soft)',
       }}
     >
       <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.24em] bg-white/10">
@@ -1286,7 +1301,7 @@ function AuthorProfile({ content }: { content?: Partial<AuthorProfileBlockConten
         <ul className="space-y-2 text-left text-sm opacity-85">
           {content.achievements.map((achievement, index) => (
             <li key={index} className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--viewer-accent)' }} />
               <span>{achievement}</span>
             </li>
           ))}
