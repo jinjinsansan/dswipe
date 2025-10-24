@@ -525,8 +525,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
               const slideClass = lp.fullscreen_media
-                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
-                : 'relative overflow-y-auto no-scrollbar';
+                ? 'relative h-full flex items-center justify-center overflow-hidden no-scrollbar'
+                : 'relative h-full flex flex-col items-center overflow-hidden no-scrollbar';
+
+              const slideContentWrapperClass = lp.fullscreen_media
+                ? 'w-full h-full flex items-center justify-center'
+                : 'w-full h-full overflow-y-auto no-scrollbar flex flex-col';
               
               // デバッグログ：ステップの内容を確認
               const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
@@ -564,14 +568,16 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                       }
                       
                       return (
-                        <div className="lp-viewer-block w-full">
-                          <BlockRenderer
-                            blockType={step.block_type}
-                            content={step.content_data}
-                            isEditing={false}
-                            productId={lp.product_id}
-                          onProductClick={handleProductButtonClick}
-                          />
+                        <div className={slideContentWrapperClass}>
+                          <div className="lp-viewer-block w-full">
+                            <BlockRenderer
+                              blockType={step.block_type}
+                              content={step.content_data}
+                              isEditing={false}
+                              productId={lp.product_id}
+                              onProductClick={handleProductButtonClick}
+                            />
+                          </div>
                         </div>
                       );
                     }
@@ -586,8 +592,10 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     }
 
                     return (
-                      <div className="min-h-full bg-gray-900 flex items-center justify-center">
-                        <p className="text-gray-500 text-lg">コンテンツがありません</p>
+                      <div className={slideContentWrapperClass}>
+                        <div className="min-h-full w-full bg-gray-900 flex items-center justify-center">
+                          <p className="text-gray-500 text-lg">コンテンツがありません</p>
+                        </div>
                       </div>
                     );
                   };
