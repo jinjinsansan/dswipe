@@ -442,7 +442,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </div>
       )}
 
-      <div className="relative h-screen w-full overflow-hidden bg-black">
+      <div className="h-screen w-full bg-black overflow-hidden">
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
@@ -459,7 +459,6 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           followFinger={true}
           touchStartForcePreventDefault={false}
           
-          // 慣性スクロール（惰性）- TOPページと同じ設定
           freeMode={{
             enabled: false,
             momentum: true,
@@ -468,10 +467,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             sticky: true,
           }}
           
-          // パフォーマンス最適化
           watchSlidesProgress={true}
           
-          // 視覚的エフェクト - TOPページと同じ残像効果
           effect="creative"
           creativeEffect={{
             prev: {
@@ -505,14 +502,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          onProgress={(swiper, progress) => {
-            // スワイプの進行度に応じた処理（将来の拡張用）
-            if (progress > 0.1 && progress < 0.9) {
-              // 中間状態での処理
-            }
-          }}
           onTouchStart={() => {
-            // タッチ開始時の軽いフィードバック
             triggerHapticFeedback('light');
           }}
           className="h-full w-full"
@@ -523,92 +513,34 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           {lp.steps.map((step, index) => {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
-              const slideClass = lp.fullscreen_media
-                ? 'relative h-full w-full flex items-center justify-center overflow-hidden no-scrollbar'
-                : 'relative h-full w-full overflow-hidden no-scrollbar';
-
-              const slideContentWrapperClass = lp.fullscreen_media
-                ? 'w-full h-full flex items-center justify-center'
-                : 'w-full h-full overflow-y-auto no-scrollbar flex flex-col';
-              
-              // デバッグログ：ステップの内容を確認
-              const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
-              const hasImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
-              const hasContentData = step.content_data && Object.keys(step.content_data).length > 0;
-              
-              if (!hasBlockType && !hasImageUrl) {
-                console.warn('⚠️ 警告：空のステップが検出されました', {
-                  stepId: step.id,
-                  index,
-                  blockType: step.block_type,
-                  imageUrl: step.image_url,
-                  contentData: step.content_data,
-                });
-              } else {
-              }
             
             return (
-              <SwiperSlide
-                key={step.id}
-                className={slideClass}
-                style={slideBackground ? { background: slideBackground } : undefined}
-              >
-                {(() => {
-                  const renderBlock = () => {
-                    if (step.block_type && step.content_data) {
-                      // Debug: Log countdown blocks specifically
-                      if (step.block_type.includes('countdown')) {
-                        console.log('🔍 Rendering countdown block:', {
-                          stepId: step.id,
-                          blockType: step.block_type,
-                          content_data: step.content_data,
-                          targetDate: (step.content_data as any).targetDate,
-                        });
-                      }
-                      
-                      return (
-                        <div className={slideContentWrapperClass}>
-                          <div className="lp-viewer-block w-full">
-                            <BlockRenderer
-                              blockType={step.block_type}
-                              content={step.content_data}
-                              isEditing={false}
-                              productId={lp.product_id}
-                              onProductClick={handleProductButtonClick}
-                            />
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    if (step.image_url) {
-                      return (
-                        <div
-                          className="absolute inset-0 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${step.image_url})` }}
-                        />
-                      );
-                    }
-
-                    return (
-                      <div className={slideContentWrapperClass}>
-                        <div className="min-h-full w-full bg-gray-900 flex items-center justify-center">
-                          <p className="text-gray-500 text-lg">コンテンツがありません</p>
-                        </div>
+              <SwiperSlide key={step.id}>
+                <div 
+                  className="lp-slide-clean"
+                  style={slideBackground ? { background: slideBackground } : undefined}
+                >
+                  <div className="lp-slide-clean-content">
+                    {step.block_type && step.content_data ? (
+                      <BlockRenderer
+                        blockType={step.block_type}
+                        content={step.content_data}
+                        isEditing={false}
+                        productId={lp.product_id}
+                        onProductClick={handleProductButtonClick}
+                      />
+                    ) : step.image_url ? (
+                      <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${step.image_url})` }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                        <p className="text-gray-500 text-lg">コンテンツがありません</p>
                       </div>
-                    );
-                  };
-
-                  if (lp.fullscreen_media) {
-                    return (
-                      <div className="w-full h-full flex items-center justify-center">
-                        {renderBlock()}
-                      </div>
-                    );
-                  }
-
-                  return renderBlock();
-                })()}
+                    )}
+                  </div>
+                </div>
                 
                 {stepCtas.length > 0 && (
                   <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
