@@ -269,10 +269,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     const currentStep = lp.steps[swiper.activeIndex];
     if (currentStep) {
       enqueueAnalyticsTask(
-        () => publicApi.recordStepView(slug, {
-          step_id: currentStep.id,
-          session_id: sessionId,
-        }),
+        async () => {
+          await publicApi.recordStepView(slug, {
+            step_id: currentStep.id,
+            session_id: sessionId,
+          });
+        },
         'Failed to record step view:'
       );
     }
@@ -281,10 +283,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       const previousStep = lp.steps[swiper.previousIndex];
       if (previousStep) {
         enqueueAnalyticsTask(
-          () => publicApi.recordStepExit(slug, {
-            step_id: previousStep.id,
-            session_id: sessionId,
-          }),
+          async () => {
+            await publicApi.recordStepExit(slug, {
+              step_id: previousStep.id,
+              session_id: sessionId,
+            });
+          },
           'Failed to record step exit:'
         );
       }
