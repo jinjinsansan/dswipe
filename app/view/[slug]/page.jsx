@@ -24,7 +24,8 @@ async function fetchLPMetadata(slug) {
 }
 
 export async function generateMetadata({ params }) {
-  const slug = params?.slug;
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
   const lpData = await fetchLPMetadata(slug);
 
   if (!lpData) {
@@ -98,10 +99,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-function LPViewerPageComponent(props) {
-  const slugParam = props?.params?.slug;
+export default async function LPViewerPageComponent({ params }) {
+  const resolvedParams = await params;
+  const slugParam = resolvedParams?.slug;
   const slug = typeof slugParam === 'string' ? slugParam : '';
   return <LPViewerClient slug={slug} />;
 }
-
-export default LPViewerPageComponent;

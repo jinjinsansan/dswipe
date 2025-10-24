@@ -112,7 +112,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit, productId,
     <Section
       tone="none"
       padding="condensed"
-      className="overflow-hidden !-mt-[8rem] sm:!-mt-0 pt-8 pb-0 sm:pt-11 sm:pb-15 md:pt-15 md:pb-15 lg:py-section-lg"
+      className="overflow-hidden -mt-12 sm:mt-0 pt-12 pb-4 sm:pt-11 sm:pb-15 md:pt-15 md:pb-15 lg:py-section-lg"
       style={{
         backgroundColor: surfaceColor,
         color: bodyTextColor,
@@ -130,7 +130,7 @@ export default function HeroAuroraBlock({ content, isEditing, onEdit, productId,
         }}
       >
         <div
-          className="pt-8 space-y-3 sm:pt-0 sm:space-y-4 md:space-y-5"
+          className="pt-6 space-y-3 sm:pt-0 sm:space-y-4 md:space-y-5"
           style={{ color: bodyTextColor }}
         >
           {isEditing ? (
