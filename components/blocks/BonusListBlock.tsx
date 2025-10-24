@@ -37,7 +37,7 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
+      className="transform origin-center pt-2 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
       style={{
         backgroundColor,
         color: textColor,
@@ -48,7 +48,7 @@ export default function BonusListBlock({ content }: BonusListBlockProps) {
         <div className="absolute inset-x-[-20%] top-[-30%] h-[140%] blur-[150px]" style={blurOverlayStyle} />
       </div>
 
-      <div className="relative max-w-5xl mx-auto space-y-8 sm:space-y-10 md:space-y-12">
+      <div className="relative max-w-5xl mx-auto min-h-[70vh] flex flex-col justify-center space-y-6 sm:space-y-9 md:space-y-12">
         {/* Header */}
         <div className="text-center space-y-3 sm:space-y-4">
           {content.title && (

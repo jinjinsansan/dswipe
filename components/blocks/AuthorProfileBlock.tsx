@@ -37,7 +37,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
     <Section
       tone="none"
       padding="condensed"
-      className="transform origin-center pt-2 pb-8 sm:pt-9 sm:scale-[0.94] sm:pb-11 md:pb-13 lg:scale-[0.98] xl:scale-100 overflow-hidden"
+      className="transform origin-center pt-2 pb-7 sm:pt-9 sm:scale-[0.94] sm:pb-10 md:pb-12 lg:scale-[0.98] xl:scale-100 overflow-hidden"
       style={{
         backgroundColor,
         color: textColor,
@@ -52,7 +52,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
         <SurfaceCard
           variant="glass"
           glow
-          className="px-6 py-8 sm:px-8 sm:py-10 md:px-12 md:py-14"
+          className="px-5 py-7 sm:px-8 sm:py-9 md:px-11 md:py-12"
         >
           <GlowHighlight
             className="top-[-30%] h-3/4 opacity-50"
@@ -60,7 +60,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
             style={{ background: `linear-gradient(135deg, ${accentColor}30, ${primaryColor}20)` }}
           />
 
-          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 items-start">
+          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-7 md:gap-9 items-start">
             {/* Profile Image */}
             <div className="md:col-span-1 flex justify-center md:justify-start">
               {content.imageUrl ? (
@@ -91,7 +91,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
             </div>
 
             {/* Profile Details */}
-            <div className="md:col-span-2 space-y-5 sm:space-y-6 md:space-y-8">
+            <div className="md:col-span-2 space-y-4 sm:space-y-6 md:space-y-7">
               {/* Name & Title */}
               <div className="space-y-2 sm:space-y-3">
                 {content.name && (
@@ -125,7 +125,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
 
               {/* Achievements */}
               {content.achievements && content.achievements.length > 0 && (
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-2.5 sm:space-y-3.5">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <TrophyIcon 
                       className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9" 
@@ -139,11 +139,11 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
                       実績
                     </h3>
                   </div>
-                  <div className="space-y-2 sm:space-y-3">
+                  <div className="space-y-1.5 sm:space-y-2.5">
                     {content.achievements.map((achievement, index) => (
                       <div
                         key={index}
-                        className="flex items-start gap-3 px-4 py-3 sm:px-5 sm:py-4 rounded-xl"
+                        className="flex items-start gap-2.5 px-3.5 py-3 sm:px-5 sm:py-4 rounded-xl"
                         style={{
                           backgroundColor: `${textColor}08`,
                           borderWidth: '1px',
@@ -163,7 +163,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
                           />
                         </div>
                         <span 
-                          className="text-sm sm:text-base md:text-lg"
+                          className="text-xs sm:text-base md:text-lg"
                           style={{ color: `${textColor}E6` }}
                         >
                           {achievement}
@@ -176,7 +176,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
 
               {/* Media Logos */}
               {content.mediaLogos && content.mediaLogos.length > 0 && (
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-2.5 sm:space-y-3.5">
                   <h3 
                     className="text-base sm:text-lg md:text-xl font-semibold"
                     style={{ color: `${textColor}CC` }}
@@ -209,7 +209,7 @@ export default function AuthorProfileBlock({ content }: AuthorProfileBlockProps)
 
           {/* Bottom Message */}
           <div 
-            className="relative mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 text-center"
+            className="relative mt-6 sm:mt-9 md:mt-10 pt-5 sm:pt-7 text-center"
             style={{
               borderTopWidth: '1px',
               borderTopColor: `${accentColor}26`,
