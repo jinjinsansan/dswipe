@@ -96,6 +96,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   justify-content: flex-start;
   padding-bottom: clamp(4.5rem, 15vh, 9.5rem);
 }

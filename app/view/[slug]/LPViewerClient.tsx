@@ -442,7 +442,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </div>
       )}
 
-      <div className="h-screen w-full flex flex-col overflow-hidden">
+      <div className="relative h-screen w-full overflow-hidden bg-black">
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
@@ -515,8 +515,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             // タッチ開始時の軽いフィードバック
             triggerHapticFeedback('light');
           }}
-          className={`flex-1 min-h-0 ${hasBottomOverlay ? 'pb-16 sm:pb-14 md:pb-12' : 'pb-6 sm:pb-5 md:pb-4'}`}
-          style={{ touchAction: 'pan-y pan-x' }}
+          className="h-full w-full"
         >
           {lp.steps.length > 0 && (() => {
             return null;
@@ -525,8 +524,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
               const slideClass = lp.fullscreen_media
-                ? 'relative h-full flex items-center justify-center overflow-hidden no-scrollbar'
-                : 'relative h-full flex flex-col items-center overflow-hidden no-scrollbar';
+                ? 'relative h-full w-full flex items-center justify-center overflow-hidden no-scrollbar'
+                : 'relative h-full w-full overflow-hidden no-scrollbar';
 
               const slideContentWrapperClass = lp.fullscreen_media
                 ? 'w-full h-full flex items-center justify-center'
