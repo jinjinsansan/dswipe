@@ -3,6 +3,7 @@
 import React from 'react';
 import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { getAllTemplates } from '@/lib/templates';
+import { resolveViewerPalette } from '@/components/viewer/theme';
 import type { TemplateBlock } from '@/types/templates';
 
 interface TemplateSelectorProps {
@@ -125,6 +126,13 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {templates.map((template) => {
+                const defaultContent = template.defaultContent as Record<string, unknown> & {
+                  themeKey?: string;
+                  accentColor?: string;
+                };
+                const palette = resolveViewerPalette(defaultContent?.themeKey, defaultContent?.accentColor as string | undefined);
+                const accentColor = palette.accent;
+                const accentSoft = palette.accentSoft ?? palette.accent;
                 const meta = CATEGORY_META[template.category] || {
                   name: template.category,
                   icon: <DocumentTextIcon className={iconClass} aria-hidden="true" />,
@@ -141,16 +149,31 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                     <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
 
                     <div className="relative flex items-center justify-between gap-2 sm:gap-3">
-                      <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-blue-500/20 text-blue-100 flex-shrink-0">
+                      <span
+                        className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg flex-shrink-0"
+                        style={{ background: accentSoft, color: palette.text }}
+                      >
                         {meta.icon}
                       </span>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-2 sm:px-3 py-0.5 text-[10px] sm:text-[11px] font-medium text-blue-100/80 truncate">
+                      <span
+                        className="rounded-full px-2 sm:px-3 py-0.5 text-[10px] sm:text-[11px] font-medium truncate"
+                        style={{
+                          border: `1px solid ${accentSoft}`,
+                          background: `${accentSoft}`,
+                          color: palette.text,
+                        }}
+                      >
                         {meta.name}
                       </span>
                     </div>
 
                     <div className="relative mt-2 sm:mt-3 space-y-1">
-                      <h3 className="text-xs sm:text-sm font-semibold text-white line-clamp-1">{template.name}</h3>
+                      <h3
+                        className="text-xs sm:text-sm font-semibold line-clamp-1"
+                        style={{ color: accentColor }}
+                      >
+                        {template.name}
+                      </h3>
                       <p className="text-[10px] sm:text-[11px] text-gray-400 leading-relaxed line-clamp-2">
                         {template.description}
                       </p>
