@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactElement, ReactNode } from 'react';
+import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import type {
   AuthorProfileBlockContent,
   BaseBlockContent,
@@ -8,12 +8,16 @@ import type {
   BonusListBlockContent,
   ComparisonBlockContent,
   CountdownBlockContent,
+  CTABlockContent,
   FAQBlockContent,
   FeaturesBlockContent,
   FormBlockContent,
   GalleryBlockContent,
+  HeroBlockContent,
+  InlineCTABlockContent,
   GuaranteeBlockContent,
   LogoGridBlockContent,
+  ProblemBlockContent,
   PricingBlockContent,
   ScarcityBlockContent,
   SpecialPriceBlockContent,
@@ -23,6 +27,7 @@ import type {
   TimelineBlockContent,
   UrgencyBlockContent,
 } from '@/types/templates';
+import { resolveSectionColors, viewerTheme } from './theme';
 
 type ViewerBlockRendererProps = {
   blockType: string;
@@ -36,9 +41,6 @@ type SharedRenderArgs = {
   onProductClick?: (productId?: string) => void;
 };
 
-const DEFAULT_BG = '#050814';
-const DEFAULT_TEXT = '#F8FAFC';
-
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -47,15 +49,8 @@ function pickFirstString(values: unknown[]): string | undefined {
   return values.find(isNonEmptyString);
 }
 
-function getColors(content?: Partial<BaseBlockContent>) {
-  return {
-    backgroundColor: content?.backgroundColor ?? DEFAULT_BG,
-    textColor: content?.textColor ?? DEFAULT_TEXT,
-  };
-}
-
 function BaseSection({ content, children }: { content?: Partial<BaseBlockContent>; children: ReactNode }): ReactElement {
-  const { backgroundColor, textColor } = getColors(content);
+  const { backgroundColor, textColor } = resolveSectionColors(content);
   return (
     <section
       className="w-full h-full flex items-center justify-center px-5 py-10 sm:py-14"
@@ -69,11 +64,27 @@ function BaseSection({ content, children }: { content?: Partial<BaseBlockContent
 }
 
 function Heading({ children }: { children: ReactNode }): ReactElement {
-  return <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">{children}</h2>;
+  return (
+    <h2
+      className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight"
+      style={{ letterSpacing: viewerTheme.typography.heading.letterSpacing }}
+    >
+      {children}
+    </h2>
+  );
 }
 
 function Paragraph({ children, muted }: { children: ReactNode; muted?: boolean }): ReactElement {
-  return <p className={`text-base sm:text-lg md:text-xl leading-relaxed ${muted ? 'opacity-80' : ''}`}>{children}</p>;
+  const style: CSSProperties = { letterSpacing: viewerTheme.typography.body.letterSpacing };
+  if (muted) {
+    style.color = 'var(--viewer-muted)';
+  }
+
+  return (
+    <p className="text-base sm:text-lg md:text-xl leading-relaxed" style={style}>
+      {children}
+    </p>
+  );
 }
 
 function PrimaryButton({
@@ -87,11 +98,10 @@ function PrimaryButton({
   color?: string;
   shared: SharedRenderArgs;
 }): ReactElement {
-  const className =
-    'inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-lg font-semibold rounded-md shadow-lg transition-transform hover:scale-[1.02]';
+  const className = 'viewer-button-primary';
   const style = color
-    ? { backgroundColor: color, color: '#0B1120' }
-    : { background: 'linear-gradient(135deg, #38bdf8, #6366f1)' };
+    ? { backgroundColor: color, backgroundImage: 'none', color: '#0B1120' }
+    : undefined;
 
   const handleClick = shared.onProductClick && !href ? () => shared.onProductClick?.(shared.productId) : undefined;
 
@@ -119,14 +129,431 @@ function PrimaryButton({
 }
 
 function SecondaryButton({ label, href }: { label: string; href?: string }): ReactElement {
-  const className =
-    'inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-lg font-semibold rounded-md border border-white/40 text-white/90 transition-transform hover:scale-[1.02]';
+  const className = 'viewer-button-secondary';
 
   if (href) {
     return <a href={href} className={className}>{label}</a>;
   }
 
   return <span className={className}>{label}</span>;
+}
+
+function renderHero(content: HeroBlockContent, shared: SharedRenderArgs): ReactElement {
+  const highlight = pickFirstString([content.highlightText]);
+  const tagline = pickFirstString([content.tagline]);
+  const subtitle = pickFirstString([content.subtitle]);
+  const stats = Array.isArray(content.stats) 
+    ? content.stats.filter((stat) => stat && (isNonEmptyString(stat.value) || isNonEmptyString(stat.label)))
+    : [];
+  const secondaryText = pickFirstString([content.secondaryButtonText]);
+  const secondaryUrl = pickFirstString([content.secondaryButtonUrl]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center gap-8">
+        <div
+          className="absolute inset-x-12 -top-24 h-48 opacity-40 blur-[64px] pointer-events-none select-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0))',
+          }}
+        />
+
+        {highlight && (
+          <span
+            className="relative inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold tracking-[0.14em] uppercase"
+            style={{
+              background: 'rgba(99, 102, 241, 0.18)',
+              border: '1px solid rgba(99, 102, 241, 0.35)',
+              color: viewerTheme.colors.text,
+              letterSpacing: '0.14em',
+            }}
+          >
+            {highlight}
+          </span>
+        )}
+
+        <div className="space-y-4 text-center relative z-[1]">
+          <Heading>{content.title}</Heading>
+          {tagline && <Paragraph muted>{tagline}</Paragraph>}
+          {subtitle && <Paragraph>{subtitle}</Paragraph>}
+        </div>
+
+        {content.imageUrl && (
+          <div className="relative w-full max-w-4xl z-[1]">
+            <div
+              className="absolute inset-4 rounded-[1.75rem] opacity-45 blur-3xl pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.45), rgba(99, 102, 241, 0.25))',
+              }}
+            />
+            <div
+              className="viewer-card-strong overflow-hidden relative"
+              style={{ padding: 0, borderRadius: '1.75rem' }}
+            >
+              <div
+                className="aspect-[16/9] w-full"
+                style={{
+                  backgroundImage: `url(${content.imageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {(content.buttonText || secondaryText) && (
+          <div className="flex flex-wrap items-center justify-center gap-3 relative z-[1]">
+            {content.buttonText && (
+              <PrimaryButton
+                label={content.buttonText}
+                href={content.buttonUrl}
+                color={content.buttonColor}
+                shared={shared}
+              />
+            )}
+            {secondaryText && <SecondaryButton label={secondaryText} href={secondaryUrl} />}
+          </div>
+        )}
+
+        {stats.length > 0 && (
+          <div className="relative w-full max-w-4xl z-[1] space-y-4">
+            <div className="viewer-divider" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {stats.map((stat, idx) => (
+                <div
+                  key={idx}
+                  className="viewer-card text-left space-y-1"
+                  style={{ padding: 'clamp(1rem, 3vw, 1.4rem)' }}
+                >
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  {stat.label && <div className="text-sm opacity-80">{stat.label}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderCTA(content: CTABlockContent | InlineCTABlockContent, shared: SharedRenderArgs): ReactElement {
+  const subtitle = pickFirstString([content.subtitle]);
+  const subText = 'subText' in content ? pickFirstString([content.subText]) : undefined;
+  const secondaryText = 'secondaryButtonText' in content ? pickFirstString([content.secondaryButtonText]) : undefined;
+  const secondaryUrl = 'secondaryButtonUrl' in content ? pickFirstString([content.secondaryButtonUrl]) : undefined;
+  const buttonText = pickFirstString([content.buttonText]) ?? '詳しく見る';
+  const buttonUrl = pickFirstString([content.buttonUrl]);
+  const buttonColor = pickFirstString([content.buttonColor]);
+  const countdownDate = 'countdown' in content ? content.countdown?.endDate : undefined;
+  const countdownSummary = countdownDate ? getCountdownSummary(countdownDate) : undefined;
+
+  return (
+    <BaseSection content={content}>
+      <div className="relative w-full max-w-3xl mx-auto space-y-6">
+        <div
+          className="absolute inset-x-12 -top-20 h-32 opacity-45 blur-[72px] pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.4), rgba(99, 102, 241, 0))',
+          }}
+        />
+
+        {subText && (
+          <span
+            className="relative inline-flex items-center px-5 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase"
+            style={{
+              background: 'rgba(56, 189, 248, 0.18)',
+              border: '1px solid rgba(56, 189, 248, 0.32)',
+              color: viewerTheme.colors.text,
+              letterSpacing: '0.18em',
+            }}
+          >
+            {subText}
+          </span>
+        )}
+
+        <div className="relative space-y-4 text-center">
+          <Heading>{content.title}</Heading>
+          {subtitle && <Paragraph muted>{subtitle}</Paragraph>}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <PrimaryButton label={buttonText} href={buttonUrl} color={buttonColor} shared={shared} />
+          {secondaryText && <SecondaryButton label={secondaryText} href={secondaryUrl} />}
+        </div>
+
+        {countdownSummary && (
+          <div className="viewer-card text-center space-y-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-white/70">Offer Ends</p>
+            <div className="text-2xl font-semibold">{countdownSummary}</div>
+            <Paragraph muted>お急ぎください。期限が迫っています。</Paragraph>
+          </div>
+        )}
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderSpecialPrice(content: SpecialPriceBlockContent, shared: SharedRenderArgs): ReactElement {
+  const subtitle = pickFirstString([content.subtitle]);
+  const features = Array.isArray(content.features) ? content.features : [];
+  const buttonLabel = pickFirstString([content.buttonText]) ?? '今すぐ申し込む';
+  const buttonUrl = undefined;
+
+  return (
+    <BaseSection content={content}>
+      <div className="relative w-full max-w-3xl mx-auto space-y-6">
+        {content.discountBadge && (
+          <span
+            className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
+            style={{
+              background: 'rgba(99, 102, 241, 0.2)',
+              border: '1px solid rgba(99, 102, 241, 0.35)',
+            }}
+          >
+            {content.discountBadge}
+          </span>
+        )}
+
+        <div className="space-y-3 text-center">
+          <Heading>{content.title ?? '特別オファー'}</Heading>
+          {subtitle && <Paragraph muted>{subtitle}</Paragraph>}
+        </div>
+
+        <div
+          className="viewer-card-strong space-y-4 text-left"
+          style={{
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.14))',
+            border: '1px solid rgba(99, 102, 241, 0.2)',
+            padding: 'clamp(1.75rem, 5vw, 2.4rem)',
+          }}
+        >
+          <div className="space-y-1">
+            <div className="text-sm uppercase tracking-[0.24em] text-white/70">限定価格</div>
+            <div className="flex flex-wrap items-end gap-3">
+              <span className="text-3xl font-bold">{content.specialPrice}</span>
+              {content.originalPrice && (
+                <span className="text-base line-through opacity-60">{content.originalPrice}</span>
+              )}
+              {content.period && <span className="text-sm opacity-70">（{content.period}）</span>}
+            </div>
+          </div>
+
+          {features.length > 0 && (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm opacity-85">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="pt-2">
+            <PrimaryButton label={buttonLabel} href={buttonUrl} color={content.buttonColor} shared={shared} />
+          </div>
+        </div>
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderProblem(content: ProblemBlockContent): ReactElement {
+  const subtitle = pickFirstString([content.subtitle]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="relative w-full max-w-3xl mx-auto space-y-6">
+        <div
+          className="absolute inset-x-10 -top-16 h-28 opacity-35 blur-[72px] pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.35), rgba(15, 23, 42, 0))',
+          }}
+        />
+
+        <div className="relative space-y-4 text-center">
+          <Heading>{content.title ?? 'こんな悩みはありませんか？'}</Heading>
+          {subtitle && <Paragraph muted>{subtitle}</Paragraph>}
+        </div>
+
+        <ProblemList items={content.problems} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderFeatures(content: FeaturesBlockContent): ReactElement {
+  const tagline = pickFirstString([content.tagline]);
+  const highlight = pickFirstString([content.highlightText]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="relative w-full max-w-4xl mx-auto space-y-6">
+        {highlight && (
+          <span
+            className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.18em] uppercase"
+            style={{
+              background: 'rgba(56, 189, 248, 0.18)',
+              border: '1px solid rgba(56, 189, 248, 0.32)',
+              letterSpacing: '0.18em',
+            }}
+          >
+            {highlight}
+          </span>
+        )}
+
+        <div className="space-y-3 text-center">
+          <Heading>{content.title ?? '選ばれる理由'}</Heading>
+          {tagline && <Paragraph muted>{tagline}</Paragraph>}
+        </div>
+
+        <FeatureGrid features={content.features} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderPricing(content: PricingBlockContent, shared: SharedRenderArgs): ReactElement {
+  const meta = content as unknown as {
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    tagline?: string;
+  };
+  const heading = pickFirstString([meta.title]) ?? '料金プラン';
+  const subtitle = pickFirstString([meta.subtitle, meta.description, meta.tagline]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-5xl mx-auto space-y-6">
+        <div className="space-y-3 text-center">
+          <Heading>{heading}</Heading>
+          {subtitle && <Paragraph muted>{subtitle}</Paragraph>}
+        </div>
+
+        <PricingGrid plans={content.plans} shared={shared} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderTestimonials(content: TestimonialBlockContent): ReactElement {
+  const meta = content as unknown as {
+    title?: string;
+    description?: string;
+    subtitle?: string;
+  };
+  const heading = pickFirstString([meta.title, meta.subtitle]);
+  const description = pickFirstString([meta.description]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-4xl mx-auto space-y-6">
+        {heading && (
+          <div className="text-center space-y-3">
+            <Heading>{heading}</Heading>
+            {description && <Paragraph muted>{description}</Paragraph>}
+          </div>
+        )}
+        <TestimonialList testimonials={content.testimonials} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderFAQ(content: FAQBlockContent): ReactElement {
+  const meta = content as unknown as {
+    description?: string;
+    subtitle?: string;
+  };
+  const description = pickFirstString([meta.description, meta.subtitle]);
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-3xl mx-auto space-y-6">
+        {content.title && (
+          <div className="text-center space-y-3">
+            <Heading>{content.title}</Heading>
+            {description && <Paragraph muted>{description}</Paragraph>}
+          </div>
+        )}
+        <FAQList faqs={content.faqs} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderCountdown(content: CountdownBlockContent): ReactElement {
+  const heading = pickFirstString([content.title]) ?? '締切まで残りわずか';
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-3xl mx-auto space-y-6">
+        {heading && (
+          <div className="text-center space-y-3">
+            <Heading>{heading}</Heading>
+          </div>
+        )}
+        <CountdownCallout content={content} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderScarcity(content: ScarcityBlockContent): ReactElement {
+  const heading = pickFirstString([content.title]) ?? '残りわずかの枠です';
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-3xl mx-auto space-y-6">
+        {heading && (
+          <div className="text-center space-y-3">
+            <Heading>{heading}</Heading>
+          </div>
+        )}
+        <ScarcityDetails content={content} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderUrgency(content: UrgencyBlockContent): ReactElement {
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-3xl mx-auto space-y-5">
+        <UrgencyCallout content={content} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderBeforeAfter(content: BeforeAfterBlockContent): ReactElement {
+  const heading = pickFirstString([content.title]) ?? 'Before / After';
+
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-4xl mx-auto space-y-6">
+        {heading && (
+          <div className="text-center space-y-3">
+            <Heading>{heading}</Heading>
+          </div>
+        )}
+        <BeforeAfterColumns content={content} />
+      </div>
+    </BaseSection>
+  );
+}
+
+function renderAuthor(content: AuthorProfileBlockContent): ReactElement {
+  return (
+    <BaseSection content={content}>
+      <div className="w-full max-w-3xl mx-auto">
+        <AuthorProfile content={content} />
+      </div>
+    </BaseSection>
+  );
 }
 
 function ImagePreview({ url, caption }: { url?: string; caption?: string }): ReactElement | null {
@@ -172,7 +599,15 @@ function FeatureGrid({ features }: { features?: { title?: string; description?: 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
       {safeFeatures.map((feature, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-5 py-5">
+        <div
+          key={index}
+          className="viewer-card text-left space-y-2"
+          style={{
+            padding: 'clamp(1.4rem, 4vw, 1.8rem)',
+            background: 'linear-gradient(135deg, rgba(56,189,248,0.1), rgba(99,102,241,0.1))',
+            border: '1px solid rgba(99,102,241,0.15)',
+          }}
+        >
           {feature.title && <h3 className="text-lg font-semibold">{feature.title}</h3>}
           {feature.description && <p className="text-sm opacity-80 mt-2">{feature.description}</p>}
         </div>
@@ -190,8 +625,21 @@ function ProblemList({ items }: { items?: string[] }): ReactElement | null {
   return (
     <ul className="space-y-3 text-left">
       {safeItems.map((problem, index) => (
-        <li key={index} className="rounded-md bg-white/10 px-4 py-3 text-sm md:text-base">
-          {problem}
+        <li
+          key={index}
+          className="viewer-card text-sm md:text-base text-left"
+          style={{
+            padding: 'clamp(1.25rem, 3.2vw, 1.7rem)',
+            display: 'flex',
+            gap: '0.75rem',
+            alignItems: 'flex-start',
+          }}
+        >
+          <span
+            className="mt-1 h-2 w-2 rounded-full"
+            style={{ background: viewerTheme.colors.accentAlt }}
+          />
+          <span>{problem}</span>
         </li>
       ))}
     </ul>
@@ -207,7 +655,20 @@ function PricingGrid({ plans, shared }: { plans?: PricingBlockContent['plans']; 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
       {safePlans.map((plan, index) => (
-        <div key={index} className="rounded-xl bg-white/12 px-5 py-6 space-y-4">
+        <div
+          key={index}
+          className="viewer-card text-left space-y-4"
+          style={{
+            padding: 'clamp(1.75rem, 5vw, 2.2rem)',
+            border: plan.highlighted ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid rgba(248, 250, 252, 0.12)',
+            background: plan.highlighted
+              ? 'linear-gradient(135deg, rgba(56,189,248,0.16), rgba(99,102,241,0.22))'
+              : 'var(--viewer-surface)',
+            boxShadow: plan.highlighted ? viewerTheme.shadows.card : undefined,
+            transform: plan.highlighted ? 'translateY(-4px)' : undefined,
+            transition: 'transform 0.25s ease',
+          }}
+        >
           <div>
             <h3 className="text-xl font-semibold">{plan.name}</h3>
             {plan.description && <p className="text-sm opacity-80 mt-2">{plan.description}</p>}
@@ -217,9 +678,12 @@ function PricingGrid({ plans, shared }: { plans?: PricingBlockContent['plans']; 
             {plan.period && <span className="text-sm font-normal opacity-70 ml-1">/{plan.period}</span>}
           </div>
           {plan.features?.length ? (
-            <ul className="space-y-1 text-sm opacity-80">
+            <ul className="space-y-2 text-sm opacity-85">
               {plan.features.map((feature, idx) => (
-                <li key={idx}>• {feature}</li>
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+                  <span>{feature}</span>
+                </li>
               ))}
             </ul>
           ) : null}
@@ -239,10 +703,15 @@ function TestimonialList({ testimonials }: { testimonials?: TestimonialBlockCont
   }
 
   return (
-    <div className="space-y-4 text-left">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
       {safeTestimonials.map((testimonial, index) => (
-        <blockquote key={index} className="rounded-xl bg-white/10 px-5 py-5 space-y-2">
-          <p className="text-sm md:text-base opacity-90">“{testimonial.text}”</p>
+        <blockquote
+          key={index}
+          className="viewer-card text-left space-y-3"
+          style={{ padding: 'clamp(1.4rem, 4vw, 1.9rem)' }}
+        >
+          <div className="text-sm uppercase tracking-[0.24em] text-white/60">VOICE</div>
+          <p className="text-sm md:text-base opacity-90 leading-relaxed">“{testimonial.text}”</p>
           <footer className="text-sm font-semibold">
             {testimonial.name}
             {testimonial.role && <span className="opacity-70"> ・{testimonial.role}</span>}
@@ -262,7 +731,7 @@ function FAQList({ faqs }: { faqs?: FAQBlockContent['faqs'] }): ReactElement | n
   return (
     <div className="space-y-4 text-left">
       {safeFaqs.map((faq, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-5 py-4 space-y-2">
+        <div key={index} className="viewer-card text-left space-y-2" style={{ padding: 'clamp(1.1rem, 3.5vw, 1.6rem)' }}>
           <h3 className="font-semibold">Q. {faq.question}</h3>
           <p className="text-sm opacity-80">A. {faq.answer}</p>
         </div>
@@ -278,15 +747,33 @@ function BonusList({ content }: { content: Partial<BonusListBlockContent> }): Re
   }
 
   return (
-    <div className="space-y-4 text-left">
-      {safeBonuses.map((bonus, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-5 py-4">
-          {bonus.title && <h3 className="text-lg font-semibold">{bonus.title}</h3>}
-          {bonus.description && <p className="text-sm opacity-80 mt-2">{bonus.description}</p>}
-          {bonus.value && <p className="text-sm opacity-70 mt-1">価値: {bonus.value}</p>}
+    <div className="space-y-5 text-left">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {safeBonuses.map((bonus, index) => (
+          <div
+            key={index}
+            className="viewer-card text-left space-y-3"
+            style={{
+              padding: 'clamp(1.6rem, 4vw, 2rem)',
+              border: '1px solid rgba(234, 179, 8, 0.35)',
+              background: 'linear-gradient(135deg, rgba(234,179,8,0.12), rgba(234,179,8,0.06))',
+            }}
+          >
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold tracking-[0.18em] uppercase bg-white/10">
+              BONUS {index + 1}
+            </div>
+            {bonus.title && <h3 className="text-lg font-semibold">{bonus.title}</h3>}
+            {bonus.description && <p className="text-sm opacity-80">{bonus.description}</p>}
+            {bonus.value && <p className="text-sm font-semibold text-white/80">価値: {bonus.value}</p>}
+          </div>
+        ))}
+      </div>
+      {content.totalValue && (
+        <div className="viewer-card text-center" style={{ padding: 'clamp(1.4rem, 4vw, 1.9rem)' }}>
+          <p className="text-xs uppercase tracking-[0.24em] text-white/70">合計特典価値</p>
+          <div className="text-2xl font-semibold mt-2">{content.totalValue}</div>
         </div>
-      ))}
-      {content.totalValue && <div className="text-lg font-semibold text-center">総額: {content.totalValue}</div>}
+      )}
     </div>
   );
 }
@@ -300,9 +787,14 @@ function StatsGrid({ stats }: { stats?: StatsBlockContent['stats'] }): ReactElem
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
       {safeStats.map((stat, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-4 py-5">
-          <div className="text-2xl font-bold">{stat.value}</div>
-          {stat.label && <div className="text-sm opacity-80 mt-1">{stat.label}</div>}
+        <div
+          key={index}
+          className="viewer-card text-left space-y-1"
+          style={{ padding: 'clamp(1.3rem, 3vw, 1.7rem)' }}
+        >
+          <div className="text-xs uppercase tracking-[0.28em] text-white/60">STAT</div>
+          <div className="text-3xl font-bold">{stat.value}</div>
+          {stat.label && <div className="text-sm opacity-80">{stat.label}</div>}
         </div>
       ))}
     </div>
@@ -318,10 +810,17 @@ function TimelineList({ items }: { items?: TimelineBlockContent['items'] }): Rea
   return (
     <div className="space-y-4 text-left">
       {safeItems.map((item, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-5 py-4 space-y-1">
-          {item.date && <p className="text-xs uppercase tracking-wide opacity-70">{item.date}</p>}
+        <div
+          key={index}
+          className="viewer-card text-left space-y-2"
+          style={{ padding: 'clamp(1.4rem, 4vw, 1.9rem)' }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+            {item.date && <p className="text-xs uppercase tracking-[0.28em] opacity-70">{item.date}</p>}
+          </div>
           {item.title && <h3 className="text-lg font-semibold">{item.title}</h3>}
-          {item.description && <p className="text-sm opacity-80">{item.description}</p>}
+          {item.description && <p className="text-sm opacity-80 leading-relaxed">{item.description}</p>}
         </div>
       ))}
     </div>
@@ -337,10 +836,21 @@ function TeamGrid({ members }: { members?: TeamBlockContent['members'] }): React
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
       {safeMembers.map((member, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-5 py-5 space-y-2">
-          <h3 className="text-lg font-semibold">{member.name}</h3>
-          {member.role && <p className="text-sm opacity-80">{member.role}</p>}
-          {member.bio && <p className="text-sm opacity-70">{member.bio}</p>}
+        <div
+          key={index}
+          className="viewer-card text-left space-y-3"
+          style={{ padding: 'clamp(1.4rem, 4vw, 1.9rem)' }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm font-semibold">
+              {member.name.slice(0, 1)}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">{member.name}</h3>
+              {member.role && <p className="text-sm opacity-70">{member.role}</p>}
+            </div>
+          </div>
+          {member.bio && <p className="text-sm opacity-75 leading-relaxed">{member.bio}</p>}
         </div>
       ))}
     </div>
@@ -356,8 +866,14 @@ function LogoGrid({ logos }: { logos?: LogoGridBlockContent['logos'] }): ReactEl
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm opacity-80">
       {safeLogos.map((logo, index) => (
-        <div key={index} className="rounded-xl bg-white/10 px-4 py-3 flex items-center justify-center text-center">
-          {logo.alt || logo.url}
+        <div
+          key={index}
+          className="viewer-card flex items-center justify-center text-center"
+          style={{ padding: 'clamp(1.1rem, 3vw, 1.6rem)' }}
+        >
+          <span className="text-sm font-semibold tracking-[0.18em] uppercase opacity-80">
+            {logo.alt || logo.url}
+          </span>
         </div>
       ))}
     </div>
@@ -417,14 +933,27 @@ function GalleryGrid({ images }: { images?: GalleryBlockContent['images'] }): Re
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
       {safeImages.map((image, index) => (
-        <figure key={index} className="space-y-2">
-          <div
-            className="aspect-square w-full rounded-xl bg-white/10"
-            style={{ backgroundImage: `url(${image.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-          />
-          {image.caption && <figcaption className="text-xs opacity-70">{image.caption}</figcaption>}
+        <figure
+          key={index}
+          className="viewer-card overflow-hidden"
+          style={{ padding: 0, borderRadius: '1.25rem' }}
+        >
+          <div className="relative aspect-square w-full">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${image.url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'brightness(0.95)',
+              }}
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 text-left">
+              {image.caption && <figcaption className="text-xs font-semibold tracking-wide text-white/80">{image.caption}</figcaption>}
+            </div>
+          </div>
         </figure>
       ))}
     </div>
@@ -445,11 +974,11 @@ function BeforeAfterColumns({ content }: { content?: Partial<BeforeAfterBlockCon
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-      <div className="rounded-xl bg-white/10 px-5 py-5 space-y-2">
+      <div className="viewer-card text-left space-y-2">
         <h3 className="text-lg font-semibold">{content.beforeTitle ?? 'Before'}</h3>
         {content.beforeText && <p className="text-sm opacity-80">{content.beforeText}</p>}
       </div>
-      <div className="rounded-xl bg-white/10 px-5 py-5 space-y-2">
+      <div className="viewer-card text-left space-y-2">
         <h3 className="text-lg font-semibold">{content.afterTitle ?? 'After'}</h3>
         {content.afterText && <p className="text-sm opacity-80">{content.afterText}</p>}
       </div>
@@ -463,17 +992,27 @@ function GuaranteeDetails({ content }: { content?: Partial<GuaranteeBlockContent
   }
 
   return (
-    <div className="space-y-3">
+    <div
+      className="viewer-card-strong space-y-4 text-left"
+      style={{
+        padding: 'clamp(1.8rem, 5vw, 2.4rem)',
+        border: '1px solid rgba(16, 185, 129, 0.4)',
+        background: 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.06))',
+      }}
+    >
       {content.badgeText && (
-        <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/10 text-sm font-semibold">
+        <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.24em] uppercase bg-white/10">
           {content.badgeText}
         </div>
       )}
       {content.description && <Paragraph>{content.description}</Paragraph>}
       {content.features?.length ? (
-        <ul className="space-y-2 text-left text-sm opacity-80">
+        <ul className="space-y-2 text-left text-sm opacity-85">
           {content.features.map((feature, index) => (
-            <li key={index}>• {feature}</li>
+            <li key={index} className="flex items-start gap-2">
+              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accentAlt }} />
+              <span>{feature}</span>
+            </li>
           ))}
         </ul>
       ) : null}
@@ -556,11 +1095,58 @@ function CountdownCallout({ content }: { content?: Partial<CountdownBlockContent
   const summary = getCountdownSummary(content.targetDate);
   const formatted = new Date(content.targetDate);
   const formattedDate = Number.isNaN(formatted.getTime()) ? undefined : formatted.toLocaleString('ja-JP');
+  const target = new Date(content.targetDate);
+  const diff = Math.max(0, target.getTime() - Date.now());
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+
+  const parts: { key: string; label: string; value: number }[] = [];
+  if (content.showDays ?? true) {
+    parts.push({ key: 'days', label: '日', value: days });
+  }
+  if (content.showHours ?? true) {
+    parts.push({ key: 'hours', label: '時間', value: hours });
+  }
+  if (content.showMinutes ?? true) {
+    parts.push({ key: 'minutes', label: '分', value: minutes });
+  }
+  if (content.showSeconds ?? false) {
+    parts.push({ key: 'seconds', label: '秒', value: seconds });
+  }
+
+  const columnCount = Math.max(1, parts.length || 3);
+  const gridStyle: CSSProperties = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
 
   return (
-    <div className="space-y-3">
-      <div className="text-3xl font-bold tracking-wide">{summary}</div>
-      {formattedDate && <div className="text-sm opacity-70">締切: {formattedDate}</div>}
+    <div
+      className="viewer-card-strong space-y-4 text-left"
+      style={{
+        padding: 'clamp(1.8rem, 5vw, 2.4rem)',
+        background: 'linear-gradient(135deg, rgba(99,102,241,0.24), rgba(56,189,248,0.12))',
+      }}
+    >
+      <div className="flex items-center justify-between text-xs uppercase tracking-[0.28em] text-white/70">
+        <span>Deadline</span>
+        {formattedDate && <span>{formattedDate}</span>}
+      </div>
+
+      {parts.length > 0 && (
+        <div className="grid gap-3 text-center" style={gridStyle}>
+          {parts.map((part) => (
+            <div key={part.key} className="viewer-card" style={{ padding: 'clamp(1rem, 3vw, 1.4rem)' }}>
+              <div className="text-3xl font-bold tracking-tight">
+                {String(Math.max(0, part.value)).padStart(2, '0')}
+              </div>
+              <div className="text-xs uppercase tracking-[0.24em] opacity-70">{part.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="text-lg font-semibold">{summary}</div>
       {content.urgencyText && <Paragraph>{content.urgencyText}</Paragraph>}
     </div>
   );
@@ -602,20 +1188,36 @@ function ScarcityDetails({ content }: { content?: Partial<ScarcityBlockContent> 
   const remaining = content.remainingCount ?? 0;
   const total = content.totalCount ?? 0;
   const percentage = total > 0 ? Math.min(100, Math.max(0, Math.round((remaining / total) * 100))) : undefined;
+  const accent = content.accentColor ?? viewerTheme.colors.accent;
+  const progressColor = content.progressColor ?? accent;
 
   return (
-    <div className="space-y-3">
-      {typeof content.remainingCount === 'number' && (
-        <div className="text-2xl font-bold">
-          残り {remaining}
-          {total > 0 && <span className="text-base font-normal opacity-70 ml-2">/ {total}</span>}
-        </div>
-      )}
+    <div
+      className="viewer-card-strong space-y-4 text-left"
+      style={{
+        padding: 'clamp(1.6rem, 4vw, 2.1rem)',
+        background: 'linear-gradient(135deg, rgba(248,113,113,0.22), rgba(239,68,68,0.1))',
+      }}
+    >
+      <div className="flex items-end justify-between">
+        {typeof content.remainingCount === 'number' ? (
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/70">残り枠</p>
+            <div className="text-3xl font-bold">
+              {remaining}
+              {total > 0 && <span className="text-base font-normal opacity-70 ml-2">/ {total}</span>}
+            </div>
+          </div>
+        ) : null}
+        {percentage !== undefined && <div className="text-sm font-semibold text-white/80">{percentage}%</div>}
+      </div>
+
       {percentage !== undefined && (
-        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-          <div className="h-full bg-white/70" style={{ width: `${percentage}%` }} />
+        <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+          <div className="h-full" style={{ width: `${percentage}%`, background: progressColor }} />
         </div>
       )}
+
       {content.message && <Paragraph>{content.message}</Paragraph>}
     </div>
   );
@@ -627,9 +1229,19 @@ function UrgencyCallout({ content }: { content?: Partial<UrgencyBlockContent> })
   }
 
   return (
-    <div className="rounded-xl bg-white/10 px-5 py-4 space-y-2 text-left">
+    <div
+      className="viewer-card-strong space-y-3 text-left"
+      style={{
+        padding: 'clamp(1.6rem, 4vw, 2.1rem)',
+        background: 'linear-gradient(135deg, rgba(248,113,113,0.18), rgba(239,68,68,0.08))',
+        border: '1px solid rgba(248, 113, 113, 0.35)',
+      }}
+    >
+      <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.24em] bg-white/10">
+        ALERT
+      </div>
       {content.title && <h3 className="text-lg font-semibold">{content.title}</h3>}
-      <p className="text-sm opacity-90">{content.message}</p>
+      <p className="text-sm opacity-90 leading-relaxed">{content.message}</p>
     </div>
   );
 }
@@ -639,17 +1251,56 @@ function AuthorProfile({ content }: { content?: Partial<AuthorProfileBlockConten
     return null;
   }
 
+  const initials = content.name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-semibold">{content.name}</h3>
-      {content.title && <Paragraph muted>{content.title}</Paragraph>}
+    <div className="viewer-card-strong space-y-5 text-left" style={{ padding: 'clamp(1.8rem, 5vw, 2.4rem)' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="relative h-16 w-16 rounded-full overflow-hidden bg-white/15 flex items-center justify-center text-2xl font-semibold">
+          {content.imageUrl ? (
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${content.imageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          ) : null}
+          {!content.imageUrl && <span>{initials}</span>}
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-xl font-semibold">{content.name}</h3>
+          {content.title && <Paragraph muted>{content.title}</Paragraph>}
+        </div>
+      </div>
+
       {content.bio && <Paragraph>{content.bio}</Paragraph>}
+
       {content.achievements?.length ? (
-        <ul className="space-y-1 text-left text-sm opacity-80">
+        <ul className="space-y-2 text-left text-sm opacity-85">
           {content.achievements.map((achievement, index) => (
-            <li key={index}>• {achievement}</li>
+            <li key={index} className="flex items-start gap-2">
+              <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: viewerTheme.colors.accent }} />
+              <span>{achievement}</span>
+            </li>
           ))}
         </ul>
+      ) : null}
+
+      {content.mediaLogos?.length ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs uppercase tracking-[0.18em] opacity-70">
+          {content.mediaLogos.map((logo, index) => (
+            <div key={index} className="viewer-card text-center" style={{ padding: '0.75rem' }}>
+              {logo}
+            </div>
+          ))}
+        </div>
       ) : null}
     </div>
   );
@@ -673,6 +1324,59 @@ export default function ViewerBlockRenderer({
 
   const data = content as Record<string, unknown> & Partial<BaseBlockContent>;
   const shared: SharedRenderArgs = { productId, onProductClick };
+
+  if (['hero', 'hero-1', 'hero-2', 'hero-3', 'hero-aurora'].includes(blockType)) {
+    return renderHero(content as unknown as HeroBlockContent, shared);
+  }
+
+  if (['cta', 'cta-1', 'cta-2', 'cta-3', 'cta-inline-1', 'sticky-cta-1'].includes(blockType)) {
+    const ctaContent = content as unknown as CTABlockContent | InlineCTABlockContent;
+    return renderCTA(ctaContent, shared);
+  }
+
+  if (['special-price', 'special-price-1'].includes(blockType)) {
+    return renderSpecialPrice(content as unknown as SpecialPriceBlockContent, shared);
+  }
+
+  if (['problem', 'problem-1'].includes(blockType)) {
+    return renderProblem(content as unknown as ProblemBlockContent);
+  }
+
+  if (['features', 'features-1', 'features-2', 'features-aurora'].includes(blockType)) {
+    return renderFeatures(content as unknown as FeaturesBlockContent);
+  }
+
+  if (['pricing', 'pricing-1', 'pricing-2', 'pricing-3'].includes(blockType)) {
+    return renderPricing(content as unknown as PricingBlockContent, shared);
+  }
+
+  if (['testimonial', 'testimonial-1', 'testimonial-2', 'testimonial-3'].includes(blockType)) {
+    return renderTestimonials(content as unknown as TestimonialBlockContent);
+  }
+
+  if (['faq', 'faq-1', 'faq-2'].includes(blockType)) {
+    return renderFAQ(content as unknown as FAQBlockContent);
+  }
+
+  if (['countdown', 'countdown-1'].includes(blockType)) {
+    return renderCountdown(content as unknown as CountdownBlockContent);
+  }
+
+  if (['scarcity', 'scarcity-1'].includes(blockType)) {
+    return renderScarcity(content as unknown as ScarcityBlockContent);
+  }
+
+  if (['urgency', 'urgency-1'].includes(blockType)) {
+    return renderUrgency(content as unknown as UrgencyBlockContent);
+  }
+
+  if (['before-after', 'before-after-1'].includes(blockType)) {
+    return renderBeforeAfter(content as unknown as BeforeAfterBlockContent);
+  }
+
+  if (['author-profile', 'author-profile-1'].includes(blockType)) {
+    return renderAuthor(content as unknown as AuthorProfileBlockContent);
+  }
 
   const title = pickFirstString([data.title, data.heading, data.headline]);
   const subtitle = pickFirstString([data.subtitle, data.tagline, data.subText]);
