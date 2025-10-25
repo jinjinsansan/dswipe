@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { CountdownBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 
@@ -32,7 +33,20 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
   const urgencyText = content?.urgencyText ?? '締切までに参加いただいた方限定で、追加特典と返金保証をご提供します。';
   const targetDate = content?.targetDate ?? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
 
-  const timeLeft = getTimeLeft(targetDate);
+  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(targetDate));
+
+  useEffect(() => {
+    const update = () => {
+      setTimeLeft(getTimeLeft(targetDate));
+    };
+
+    update();
+    const intervalId = setInterval(update, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [targetDate]);
   const backgroundColor = content?.backgroundColor ?? '#B91C1C';
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#F97316';
