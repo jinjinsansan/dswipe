@@ -1159,6 +1159,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {/* ハイライトブロック設定 */}
+        {block.blockType === 'top-highlights-1' && (
+          <div className="space-y-4 pb-4 border-b border-slate-200">
+            <div>
+              <SectionHeader icon={Square2StackIcon} label="ハイライト設定" />
+              <div className="space-y-4">
+                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
+                {renderColorPicker('textColor', (content as any).textColor)}
+                {renderColorPicker('accentColor', (content as any).accentColor)}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* CTAブロック設定 */}
         {block.blockType.includes('cta') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">

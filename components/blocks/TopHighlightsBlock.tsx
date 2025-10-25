@@ -9,6 +9,7 @@ interface TopHighlightsBlockProps {
 export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHighlightsBlockProps) {
   const title = content?.title ?? 'こんな課題、ありませんか？';
   const tagline = content?.tagline ?? 'Pain Points';
+  const accentColor = content?.accentColor ?? '#2563EB';
   const features = Array.isArray(content?.features) && content.features.length > 0 ? content.features : [
     {
       icon: '🎨',
@@ -35,8 +36,11 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
   return (
     <section
-      className="relative w-full bg-gradient-to-br from-cyan-50 via-blue-50 to-sky-100 py-16 text-slate-800"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-16"
+      style={{
+        backgroundColor: content?.backgroundColor ?? '#F1F5F9',
+        color: content?.textColor,
+      }}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
         {isEditing ? (
@@ -57,8 +61,15 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
         ) : null}
 
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">{tagline}</p>
-          <h2 className="mt-2 text-3xl font-bold sm:text-4xl">{title}</h2>
+          <p
+            className="text-xs font-semibold uppercase tracking-[0.35em]"
+            style={{ color: accentColor }}
+          >
+            {tagline}
+          </p>
+          <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ color: content?.textColor ?? '#0F172A' }}>
+            {title}
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -69,6 +80,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={handleFeatureChange(index, 'icon')}
+                style={{ color: accentColor }}
               >
                 {feature.icon}
               </div>
@@ -85,6 +97,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={handleFeatureChange(index, 'description')}
+                style={{ color: content?.textColor ? `${content.textColor}B3` : undefined }}
               >
                 {feature.description}
               </p>

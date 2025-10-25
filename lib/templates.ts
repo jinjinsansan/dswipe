@@ -344,6 +344,131 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       ],
       backgroundColor: '#F1F5F9',
       textColor: '#0F172A',
+      accentColor: '#2563EB',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'top-highlights-mint',
+    templateId: 'top-highlights-1',
+    name: 'ハイライト（ミント）',
+    category: 'content',
+    description: '爽やかなミントトーンで、ウェルネスや自己啓発向けの課題訴求に最適。',
+    defaultContent: {
+      title: '新しい習慣が続かない理由',
+      tagline: 'Lifestyle Shift',
+      features: [
+        {
+          icon: '🌿',
+          title: '行動が三日坊主で終わる',
+          description: '継続の仕組みがなく、気合と根性に頼ってしまう。',
+        },
+        {
+          icon: '🧘‍♀️',
+          title: 'メンタルの切り替えが難しい',
+          description: '自分に合ったリズムを知らず、ストレスでリバウンドしてしまう。',
+        },
+        {
+          icon: '📊',
+          title: '成果が可視化できない',
+          description: '感覚だけで取り組み、伸びている実感が持てずモチベが続かない。',
+        },
+      ],
+      backgroundColor: '#E0F7F4',
+      textColor: '#064E3B',
+      accentColor: '#0D9488',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'top-highlights-amber',
+    templateId: 'top-highlights-1',
+    name: 'ハイライト（アンバー）',
+    category: 'content',
+    description: '温かみのあるアンバー配色で、ビジネスや教育商材の課題訴求に。',
+    defaultContent: {
+      title: 'ビジネス成長が頭打ちになる原因',
+      tagline: 'Growth Issues',
+      features: [
+        {
+          icon: '📈',
+          title: '戦略が属人化している',
+          description: 'トッププレイヤーのノウハウが共有されず、再現性が低い。',
+        },
+        {
+          icon: '🧭',
+          title: '改善指標が曖昧',
+          description: 'KPIの設定が曖昧で、何から手を付けるべきか判断できない。',
+        },
+        {
+          icon: '🤝',
+          title: 'チーム連携が機能していない',
+          description: '部署間で情報共有ができず、施策のスピードが落ちている。',
+        },
+      ],
+      backgroundColor: '#FFF7ED',
+      textColor: '#7C2D12',
+      accentColor: '#F97316',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'top-highlights-violet',
+    templateId: 'top-highlights-1',
+    name: 'ハイライト（バイオレット）',
+    category: 'content',
+    description: '落ち着いたバイオレットで、権威性や信頼を訴求する情報商材向け。',
+    defaultContent: {
+      title: '学びが成果につながらない理由',
+      tagline: 'Insight Points',
+      features: [
+        {
+          icon: '🧠',
+          title: '情報が頭でっかちになる',
+          description: 'インプット偏重で、実践に落とし込むフレームがない。',
+        },
+        {
+          icon: '🪜',
+          title: '段階設計が不十分',
+          description: '初級〜上級の橋渡しがなく、途中で挫折してしまう。',
+        },
+        {
+          icon: '🔍',
+          title: '本質的な課題が見えていない',
+          description: '現状分析が甘く、施策が的外れになってしまう。',
+        },
+      ],
+      backgroundColor: '#F3E8FF',
+      textColor: '#2E1065',
+      accentColor: '#8B5CF6',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'top-highlights-slate',
+    templateId: 'top-highlights-1',
+    name: 'ハイライト（モノトーン）',
+    category: 'content',
+    description: 'シックなモノトーンで、汎用性の高いビジネスシーン向け課題訴求。',
+    defaultContent: {
+      title: 'プロジェクトが停滞する兆候',
+      tagline: 'Project Risks',
+      features: [
+        {
+          icon: '🕒',
+          title: '意思決定が遅い',
+          description: '判断基準が不明瞭で、会議だけが増えてしまう。',
+        },
+        {
+          icon: '🧾',
+          title: 'タスクが散らばっている',
+          description: '情報が複数のツールに散在し、全体最適ができていない。',
+        },
+        {
+          icon: '🧩',
+          title: '責任領域が曖昧',
+          description: '誰が何をやるのか定義されず、成果が属人化している。',
+        },
+      ],
+      backgroundColor: '#F8FAFC',
+      textColor: '#111827',
+      accentColor: '#475569',
     } as FeaturesBlockContent,
   },
   {
