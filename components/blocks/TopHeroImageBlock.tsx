@@ -58,7 +58,7 @@ export default function TopHeroImageBlock({
 
   return (
     <section
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
+      className="relative flex h-full w-full items-center justify-center overflow-hidden"
       style={{ color: textColor, backgroundColor: overlayBase }}
     >
       {backgroundImageUrl ? (

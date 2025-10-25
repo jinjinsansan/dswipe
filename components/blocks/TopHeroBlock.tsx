@@ -56,13 +56,12 @@ export default function TopHeroBlock({
 
   return (
     <section
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
+      className="relative flex h-full w-full items-center justify-center overflow-hidden"
       style={{ color: textColor, backgroundColor: overlayBase }}
     >
       <div className="absolute inset-0">
         {videoUrl ? (
           <video
-            key={videoUrl}
             className="absolute inset-0 h-full w-full object-cover"
             autoPlay
             loop
