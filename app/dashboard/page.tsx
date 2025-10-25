@@ -121,9 +121,39 @@ export default function DashboardPage() {
 
             const extractMediaFromStep = (step: any): HeroMedia | null => {
               if (!step) return null;
-              const content = step?.content_data ?? {};
 
-              const imageCandidates = [
+              const normalizeContent = (raw: unknown): Record<string, any> => {
+                if (!raw) return {};
+                let parsed = raw;
+                if (typeof parsed === 'string') {
+                  try {
+                    parsed = JSON.parse(parsed);
+                  } catch (error) {
+                    console.warn('Failed to parse content_data JSON for hero preview:', error);
+                    return {};
+                  }
+                }
+                if (parsed && typeof parsed === 'object' && 'content' in (parsed as Record<string, any>)) {
+                  const inner = (parsed as Record<string, any>).content;
+                  if (inner && typeof inner === 'object') {
+                    return inner as Record<string, any>;
+                  }
+                }
+                return (parsed && typeof parsed === 'object') ? (parsed as Record<string, any>) : {};
+              };
+
+              const content = normalizeContent(step?.content_data);
+
+              const pickFirstString = (candidates: unknown[]): string | null => {
+                for (const candidate of candidates) {
+                  if (typeof candidate === 'string' && candidate.trim().length > 0) {
+                    return candidate;
+                  }
+                }
+                return null;
+              };
+
+              const imageUrl = pickFirstString([
                 content?.imageUrl,
                 content?.image_url,
                 content?.heroImage,
@@ -133,27 +163,33 @@ export default function DashboardPage() {
                 content?.backgroundImageUrl,
                 content?.background_image_url,
                 content?.backgroundImage,
+                content?.media?.imageUrl,
+                content?.media?.image_url,
+                content?.visual?.imageUrl,
+                content?.visual?.image_url,
                 step?.image_url,
                 step?.imageUrl,
-              ];
+              ]);
 
-              const imageUrl = imageCandidates.find((value) => typeof value === 'string' && value.trim().length > 0);
               if (imageUrl) {
                 return { type: 'image', url: imageUrl };
               }
 
-              const videoCandidates = [
+              const videoUrl = pickFirstString([
                 content?.backgroundVideoUrl,
                 content?.background_video_url,
                 content?.videoUrl,
                 content?.video_url,
+                content?.media?.videoUrl,
+                content?.media?.video_url,
+                content?.visual?.videoUrl,
+                content?.visual?.video_url,
                 step?.backgroundVideoUrl,
                 step?.background_video_url,
                 step?.videoUrl,
                 step?.video_url,
-              ];
+              ]);
 
-              const videoUrl = videoCandidates.find((value) => typeof value === 'string' && value.trim().length > 0);
               if (videoUrl) {
                 return { type: 'video', url: videoUrl };
               }
@@ -341,7 +377,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
       {/* Sidebar - Hidden on Mobile */}
-      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm border-r border-slate-200 flex-col flex-shrink-0">
+      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
         {/* Logo */}
         <div className="px-6 h-16 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
