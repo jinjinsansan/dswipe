@@ -8,6 +8,7 @@ export type BlockType =
   | 'hero-2'       // 左右分割ヒーロー
   | 'hero-3'       // フルスクリーン画像 + オーバーレイテキスト
   | 'hero-aurora'  // グラデーションヒーロー
+  | 'top-hero-1'   // TOPページ風ヒーロー
   | 'text-img-1'   // 左テキスト右画像
   | 'text-img-2'   // 右テキスト左画像
   | 'text-img-3'   // 上テキスト下画像
@@ -22,6 +23,7 @@ export type BlockType =
   | 'features-1'   // アイコン付き3カラム特徴
   | 'features-2'   // 横並び特徴リスト
   | 'features-aurora' // プレミアム特徴セクション
+  | 'top-highlights-1' // TOPページ風ハイライト
   | 'cta-1'        // シンプルCTA
   | 'cta-2'        // 2ボタンCTA
   | 'cta-3'        // カウントダウン付きCTA
@@ -47,7 +49,8 @@ export type BlockType =
   | 'author-profile-1' // 著者プロフィール
   | 'urgency-1'    // 緊急性訴求
   | 'scarcity-1'   // 限定性訴求
-  | 'cta-inline-1'; // インラインCTA
+  | 'cta-inline-1' // インラインCTA
+  | 'top-cta-1'; // TOPページ風CTA
 
 // カテゴリ
 export type BlockCategory =
@@ -94,6 +97,7 @@ export interface HeroBlockContent extends BaseBlockContent {
     value: string;
   }[];
   themeKey?: TemplateThemeKey;
+  backgroundVideoUrl?: string;
 }
 
 // テキスト+画像ブロックコンテンツ

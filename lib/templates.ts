@@ -87,7 +87,90 @@ export const COLOR_THEMES: Record<ColorThemeKey, ThemeDefinition> = {
   },
 };
 
-export const TEMPLATE_LIBRARY: TemplateBlock[] = [];
+export const TEMPLATE_LIBRARY: TemplateBlock[] = [
+  {
+    id: "top-hero-landing",
+    templateId: "top-hero-1",
+    name: "TOPスタイルヒーロー",
+    category: "header",
+    description: "TOPページのヒーローセクションを再現した軽量テンプレート",
+    defaultContent: {
+      title: "情報には鮮度がある。",
+      subtitle: "スワイプ型LP作成プラットフォームで、今すぐ情報商材を販売",
+      tagline: "NEXT LAUNCH",
+      highlightText: "５分でLP公開",
+      buttonText: "無料で始める",
+      buttonUrl: "/register",
+      secondaryButtonText: "ログイン",
+      secondaryButtonUrl: "/login",
+      backgroundVideoUrl: "/videos/pixta.mp4",
+      textColor: "#FFFFFF",
+      backgroundColor: "#050814",
+    } as HeroBlockContent,
+  },
+  {
+    id: "top-highlights-grid",
+    templateId: "top-highlights-1",
+    name: "TOPスタイルハイライト",
+    category: "content",
+    description: "TOPページのペインポイント/ソリューションスライド風の特徴ブロック",
+    defaultContent: {
+      title: "こんな課題、ありませんか？",
+      tagline: "Pain Points",
+      features: [
+        {
+          icon: "🎨",
+          title: "デザイン設計に時間を奪われる",
+          description: "ゼロから構成やビジュアルを整えるのは非効率で差別化も難しい。",
+        },
+        {
+          icon: "🌐",
+          title: "ドメイン・サーバー整備が面倒",
+          description: "取得・SSL対応まで段取りに追われ、初動が遅れる。",
+        },
+        {
+          icon: "💳",
+          title: "決済機能の実装ハードル",
+          description: "安全な決済フローの準備には高い技術とセキュリティ知識が必要。",
+        },
+        {
+          icon: "⏱️",
+          title: "スピード感が阻害される",
+          description: "調整項目が多く、旬な情報を発信するタイミングを逃しがち。",
+        },
+        {
+          icon: "💹",
+          title: "販売手数料がかさむ",
+          description: "高いプラットフォーム手数料で利益率が圧迫される。",
+        },
+        {
+          icon: "🧠",
+          title: "仕組み化が追いつかない",
+          description: "運用が属人化し、制作から改善までのサイクルが重い。",
+        },
+      ],
+      backgroundColor: "#F1F5F9",
+      textColor: "#0F172A",
+    } as FeaturesBlockContent,
+  },
+  {
+    id: "top-cta-gradient",
+    templateId: "top-cta-1",
+    name: "TOPスタイルCTA",
+    category: "conversion",
+    description: "TOPページ終盤の最終CTAを再現したブロック",
+    defaultContent: {
+      title: "今すぐ始めよう",
+      subtitle: "情報には鮮度がある。５分でLPを公開して、今すぐ販売を開始。",
+      buttonText: "無料で始める",
+      buttonUrl: "/register",
+      secondaryButtonText: "デモを見る",
+      secondaryButtonUrl: "/demo",
+      backgroundColor: "#E0F2FE",
+      textColor: "#0F172A",
+    } as CTABlockContent,
+  },
+];
 
 export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [
   {

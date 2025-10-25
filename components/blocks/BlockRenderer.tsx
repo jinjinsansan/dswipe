@@ -20,6 +20,9 @@ import ScarcityBlock from './ScarcityBlock';
 import InlineCTABlock from './InlineCTABlock';
 import ImageBlock from './ImageBlock';
 import HeroAuroraBlock from './HeroAuroraBlock';
+import TopHeroBlock from './TopHeroBlock';
+import TopHighlightsBlock from './TopHighlightsBlock';
+import TopCTASection from './TopCTASection';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -72,6 +75,17 @@ export default function BlockRenderer({
         />
       );
       break;
+    case 'top-hero-1':
+      element = (
+        <TopHeroBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
+      break;
     
     // テキスト+画像系
     case 'text-image':
@@ -112,6 +126,9 @@ export default function BlockRenderer({
       break;
     case 'features-aurora':
       element = <FeatureAuroraBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-highlights-1':
+      element = <TopHighlightsBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     
     // フォーム系
@@ -185,6 +202,17 @@ export default function BlockRenderer({
         <InlineCTABlock
           content={content}
           withinEditor={withinEditor}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
+      break;
+    case 'top-cta-1':
+      element = (
+        <TopCTASection
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
         />
