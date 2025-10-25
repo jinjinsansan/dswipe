@@ -448,15 +448,21 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           })()}
           {lp.steps.map((step, index) => {
               const slideBackground = getStepBackgroundStyle(step);
+              const blockType = typeof step.block_type === 'string' ? step.block_type : '';
+              const isFullBleedBlock = blockType === 'top-hero-1' || blockType === 'top-hero-image-1';
+
+              const slideClassName = `lp-slide-clean${isFullBleedBlock ? ' lp-slide-clean--full' : ''}`;
+              const contentClassName = `lp-slide-clean-content${isFullBleedBlock ? ' lp-slide-clean-content--full' : ''}`;
+              const innerClassName = `lp-slide-clean-inner${isFullBleedBlock ? ' lp-slide-clean-inner--full' : ''}`;
 
             return (
               <SwiperSlide key={step.id}>
                 <div
-                  className="lp-slide-clean"
+                  className={slideClassName}
                   style={slideBackground ? { background: slideBackground } : undefined}
                 >
-                  <div className="lp-slide-clean-content">
-                    <div className="lp-slide-clean-inner">
+                  <div className={contentClassName}>
+                    <div className={innerClassName}>
                       {step.block_type && step.content_data ? (
                         <ViewerBlockRenderer
                           blockType={step.block_type}
