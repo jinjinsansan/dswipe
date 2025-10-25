@@ -1,4 +1,5 @@
 import { TestimonialsBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopTestimonialsBlockProps {
   content: TestimonialsBlockContent;
@@ -24,6 +25,10 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
         },
       ];
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const textColor = content?.textColor ?? '#0F172A';
+  const accentColor = content?.accentColor ?? '#2563EB';
+
   const updateTestimonial = (index: number, field: 'quote' | 'name' | 'role') =>
     (event: React.FocusEvent<HTMLDivElement>) => {
       const next = [...testimonials];
@@ -35,10 +40,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
     };
 
   return (
-    <section
-      className="relative w-full bg-white py-16 text-slate-900 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
-    >
+    <section className="relative w-full py-16 sm:py-20" style={{ backgroundColor, color: textColor }}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
@@ -58,17 +60,30 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-base text-slate-600 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+            {title}
+          </h2>
+          <p
+            className="mt-3 text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {testimonials.map((item, index) => (
-            <div key={index} className="flex h-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+            <div
+              key={index}
+              className="flex h-full flex-col gap-4 rounded-2xl border p-6 shadow-sm"
+              style={{
+                borderColor: withAlpha(accentColor, 0.2, accentColor),
+                backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
+              }}
+            >
               <div
-                className="text-base leading-relaxed text-slate-700"
+                className="text-base leading-relaxed"
+                style={{ color: withAlpha(textColor, 0.82, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateTestimonial(index, 'quote')}
@@ -76,9 +91,10 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
                 {item.quote}
               </div>
 
-              <div className="flex flex-col gap-1 border-t border-slate-100 pt-4">
+              <div className="flex flex-col gap-1 border-t border-white/40 pt-4">
                 <span
-                  className="text-sm font-semibold text-slate-900"
+                  className="text-sm font-semibold"
+                  style={{ color: accentColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateTestimonial(index, 'name')}
@@ -86,7 +102,8 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
                   {item.name}
                 </span>
                 <span
-                  className="text-xs uppercase tracking-wide text-slate-500"
+                  className="text-xs uppercase tracking-wide"
+                  style={{ color: withAlpha(textColor, 0.6, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateTestimonial(index, 'role')}

@@ -1,4 +1,5 @@
 import { FeaturesBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopHighlightsBlockProps {
   content: FeaturesBlockContent;
@@ -74,7 +75,15 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <div key={index} className="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div
+              key={index}
+              className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
+              style={{
+                borderColor: withAlpha(accentColor, 0.2, accentColor),
+                backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
+                color: content?.textColor ?? '#0F172A',
+              }}
+            >
               <div
                 className="text-3xl"
                 contentEditable={isEditing}
@@ -93,11 +102,11 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                 {feature.title}
               </h3>
               <p
-                className="text-sm text-slate-600"
+                className="text-sm"
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={handleFeatureChange(index, 'description')}
-                style={{ color: content?.textColor ? `${content.textColor}B3` : undefined }}
+                style={{ color: content?.textColor ? `${content.textColor}B3` : withAlpha('#0F172A', 0.75, '#0F172A') }}
               >
                 {feature.description}
               </p>

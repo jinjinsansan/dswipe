@@ -1,4 +1,5 @@
 import { BonusListBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopBonusBlockProps {
   content: BonusListBlockContent;
@@ -35,10 +36,14 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
       onEdit?.('bonuses', next);
     };
 
+  const backgroundColor = content?.backgroundColor ?? '#EEF2FF';
+  const textColor = content?.textColor ?? '#0F172A';
+  const accentColor = content?.accentColor ?? '#2563EB';
+
   return (
     <section
-      className="relative w-full bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-100 py-16 text-slate-900 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-16 sm:py-20"
+      style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
         {isEditing ? (
@@ -65,17 +70,28 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-base text-slate-600 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+          <p
+            className="mt-3 text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {bonuses.map((bonus, index) => (
-            <div key={index} className="flex h-full flex-col gap-3 rounded-2xl border border-white/70 bg-white/90 p-5 shadow-sm">
+            <div
+              key={index}
+              className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
+              style={{
+                borderColor: withAlpha(accentColor, 0.2, accentColor),
+                backgroundColor: withAlpha(accentColor, 0.08, '#FFFFFF'),
+              }}
+            >
               <div
-                className="text-sm font-semibold text-blue-600"
+                className="text-sm font-semibold"
+                style={{ color: accentColor }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateBonusField(index, 'title')}
@@ -83,7 +99,8 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
                 {bonus.title}
               </div>
               <div
-                className="flex-1 text-sm leading-relaxed text-slate-700"
+                className="flex-1 text-sm leading-relaxed"
+                style={{ color: withAlpha(textColor, 0.8, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateBonusField(index, 'description')}
@@ -91,7 +108,11 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
                 {bonus.description ?? ''}
               </div>
               <div
-                className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700"
+                className="rounded-full px-3 py-1 text-xs font-semibold"
+                style={{
+                  backgroundColor: withAlpha(accentColor, 0.18, accentColor),
+                  color: accentColor,
+                }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateBonusField(index, 'value')}
@@ -102,7 +123,14 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           ))}
         </div>
 
-        <div className="rounded-2xl border border-blue-300 bg-blue-600/10 px-6 py-4 text-center text-sm font-semibold text-blue-800">
+        <div
+          className="rounded-2xl border px-6 py-4 text-center text-sm font-semibold"
+          style={{
+            borderColor: withAlpha(accentColor, 0.35, accentColor),
+            backgroundColor: withAlpha(accentColor, 0.12, accentColor),
+            color: accentColor,
+          }}
+        >
           {totalValue}
         </div>
       </div>

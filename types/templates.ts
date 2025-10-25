@@ -55,6 +55,9 @@ export interface HeroBlockContent extends BaseBlockContent {
   backgroundVideoUrl?: string;
   backgroundImageUrl?: string;
   alignment?: 'left' | 'center';
+  buttonColor?: string;
+  secondaryButtonColor?: string;
+  overlayColor?: string;
 }
 
 // 特徴・ハイライト
@@ -77,6 +80,11 @@ export interface CTABlockContent extends BaseBlockContent {
   buttonUrl?: string;
   secondaryButtonText?: string;
   secondaryButtonUrl?: string;
+  eyebrow?: string;
+  buttonColor?: string;
+  secondaryButtonColor?: string;
+  surfaceColor?: string;
+  backgroundGradient?: string;
 }
 
 // お客様の声
@@ -115,6 +123,7 @@ export interface PricingBlockContent extends BaseBlockContent {
     buttonUrl?: string;
     highlighted?: boolean;
   }[];
+  buttonColor?: string;
 }
 
 // ビフォーアフター
@@ -172,6 +181,7 @@ export interface InlineCTABlockContent extends BaseBlockContent {
   subtitle?: string;
   buttonText: string;
   buttonUrl?: string;
+  buttonColor?: string;
 }
 
 // ブロックコンテンツのUnion

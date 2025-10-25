@@ -1,4 +1,5 @@
 import { GuaranteeBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopGuaranteeBlockProps {
   content: GuaranteeBlockContent;
@@ -25,10 +26,14 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
     onEdit?.('bulletPoints', next);
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#020617';
+  const textColor = content?.textColor ?? '#F8FAFC';
+  const accentColor = content?.accentColor ?? '#34D399';
+
   return (
     <section
-      className="relative w-full bg-slate-950 py-16 text-slate-100 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-16 sm:py-20"
+      style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {isEditing ? (
@@ -61,18 +66,35 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
         ) : null}
 
         <div className="flex flex-col items-center gap-4 text-center">
-          <span className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-emerald-200">
+          <span
+            className="rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em]"
+            style={{
+              borderColor: withAlpha(accentColor, 0.6, accentColor),
+              backgroundColor: withAlpha(accentColor, 0.12, accentColor),
+              color: withAlpha(accentColor, 0.9, accentColor),
+            }}
+          >
             {badgeText}
           </span>
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="max-w-2xl text-base text-slate-300 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+          <p
+            className="max-w-2xl text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.75, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur">
+        <div
+          className="rounded-3xl border p-6 backdrop-blur"
+          style={{
+            borderColor: withAlpha(textColor, 0.12, textColor),
+            backgroundColor: withAlpha(textColor, 0.08, textColor),
+          }}
+        >
           <p
-            className="text-sm leading-relaxed text-slate-200"
+            className="text-sm leading-relaxed"
+            style={{ color: withAlpha(textColor, 0.85, textColor) }}
             contentEditable={isEditing}
             suppressContentEditableWarning
             onBlur={(event) => onEdit?.('guaranteeDetails', event.currentTarget.textContent ?? '')}
@@ -80,10 +102,16 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
             {guaranteeDetails}
           </p>
 
-          <ul className="mt-6 flex flex-col gap-3 text-sm text-slate-200">
+          <ul className="mt-6 flex flex-col gap-3 text-sm" style={{ color: withAlpha(textColor, 0.85, textColor) }}>
             {bulletPoints.map((point, index) => (
               <li key={index} className="flex items-start gap-2">
-                <span className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-semibold text-white">
+                <span
+                  className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                  style={{
+                    backgroundColor: accentColor,
+                    color: '#0F172A',
+                  }}
+                >
                   ✓
                 </span>
                 <div

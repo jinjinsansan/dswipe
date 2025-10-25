@@ -1,4 +1,6 @@
+import type { CSSProperties } from 'react';
 import { PricingBlockContent } from '@/types/templates';
+import { getContrastColor, withAlpha } from '@/lib/color';
 
 interface TopPricingBlockProps {
   content: PricingBlockContent;
@@ -31,6 +33,11 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
         },
       ];
 
+  const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
+  const textColor = content?.textColor ?? '#0F172A';
+  const accentColor = content?.accentColor ?? '#2563EB';
+  const buttonColor = content?.buttonColor ?? accentColor;
+
   const updatePlanField = (index: number, field: keyof (typeof plans)[number]) =>
     (event: React.FocusEvent<HTMLDivElement>) => {
       const next = [...plans];
@@ -47,10 +54,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
   };
 
   return (
-    <section
-      className="relative w-full bg-slate-50 py-16 text-slate-900 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
-    >
+    <section className="relative w-full py-16 sm:py-20" style={{ backgroundColor, color: textColor }}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
@@ -70,8 +74,13 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-base text-slate-600 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+            {title}
+          </h2>
+          <p
+            className="mt-3 text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.7, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
@@ -79,18 +88,33 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {plans.map((plan, index) => {
             const isHighlighted = plan.highlighted ?? false;
+            const cardStyle: CSSProperties = {
+              borderColor: isHighlighted ? accentColor : withAlpha(textColor, 0.12, textColor),
+              backgroundColor: isHighlighted ? withAlpha(accentColor, 0.08, '#FFFFFF') : '#FFFFFF',
+              color: textColor,
+              boxShadow: isHighlighted
+                ? `0 24px 50px -28px ${withAlpha(accentColor, 0.45, accentColor)}`
+                : undefined,
+            };
+
+            const buttonStyle: CSSProperties = isHighlighted
+              ? {
+                  backgroundColor: buttonColor,
+                  color: getContrastColor(buttonColor),
+                  border: `1px solid ${buttonColor}`,
+                }
+              : {
+                  backgroundColor: withAlpha(buttonColor, 0.12, buttonColor),
+                  color: buttonColor,
+                  border: `1px solid ${withAlpha(buttonColor, 0.35, buttonColor)}`,
+                };
+
             return (
-              <div
-                key={index}
-                className={`flex h-full flex-col gap-5 rounded-2xl border p-6 transition ${
-                  isHighlighted
-                    ? 'border-blue-400 bg-white shadow-lg shadow-blue-100'
-                    : 'border-slate-200 bg-white/90 shadow-sm'
-                }`}
-              >
+              <div key={index} className="flex h-full flex-col gap-5 rounded-2xl border p-6 transition" style={cardStyle}>
                 <div className="flex items-center justify-between">
                   <div
-                    className="text-sm font-medium uppercase tracking-wide text-blue-500"
+                    className="text-sm font-medium uppercase tracking-wide"
+                    style={{ color: accentColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={updatePlanField(index, 'name')}
@@ -101,9 +125,11 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                     <button
                       type="button"
                       onClick={() => toggleHighlight(index)}
-                      className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-                        isHighlighted ? 'border-blue-500 text-blue-500' : 'border-slate-300 text-slate-400'
-                      }`}
+                      className="rounded-full border px-3 py-1 text-xs font-semibold"
+                      style={{
+                        borderColor: isHighlighted ? accentColor : withAlpha(textColor, 0.25, textColor),
+                        color: isHighlighted ? accentColor : withAlpha(textColor, 0.6, textColor),
+                      }}
                     >
                       注目
                     </button>
@@ -113,6 +139,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                 <div className="flex items-baseline gap-2">
                   <span
                     className="text-3xl font-bold"
+                    style={{ color: textColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={updatePlanField(index, 'price')}
@@ -120,7 +147,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                     {plan.price}
                   </span>
                   <span
-                    className="text-sm text-slate-500"
+                    className="text-sm"
+                    style={{ color: withAlpha(textColor, 0.6, textColor) }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={updatePlanField(index, 'period')}
@@ -130,7 +158,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                 </div>
 
                 <p
-                  className="text-sm text-slate-600"
+                  className="text-sm"
+                  style={{ color: withAlpha(textColor, 0.7, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updatePlanField(index, 'description')}
@@ -138,10 +167,13 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                   {plan.description ?? ''}
                 </p>
 
-                <ul className="flex flex-1 flex-col gap-2 text-sm text-slate-600">
+                <ul className="flex flex-1 flex-col gap-2 text-sm" style={{ color: withAlpha(textColor, 0.75, textColor) }}>
                   {(plan.features ?? []).map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-2">
-                      <span className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-400" />
+                      <span
+                        className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                        style={{ backgroundColor: accentColor }}
+                      />
                       <div
                         className="flex-1"
                         contentEditable={isEditing}
@@ -160,7 +192,14 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                   ))}
                 </ul>
 
-                <button className="w-full rounded-lg bg-slate-900 py-2 text-sm font-semibold text-white transition hover:bg-slate-800" type="button">
+                <button
+                  className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  type="button"
+                  style={{
+                    ...buttonStyle,
+                    outlineColor: withAlpha(accentColor, 0.45, accentColor),
+                  }}
+                >
                   <span
                     contentEditable={isEditing}
                     suppressContentEditableWarning

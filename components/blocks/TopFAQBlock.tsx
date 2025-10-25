@@ -1,4 +1,5 @@
 import { FAQBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopFAQBlockProps {
   content: FAQBlockContent;
@@ -21,6 +22,9 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
           answer: 'Stripe・メール配信・会員サイトへのWebhook連携を標準装備。APIキーを登録するだけで即日稼働できます。',
         },
       ];
+  const backgroundColor = content?.backgroundColor ?? '#0F172A';
+  const textColor = content?.textColor ?? '#F8FAFC';
+  const accentColor = content?.accentColor ?? '#38BDF8';
 
   const updateItem = (index: number, field: 'question' | 'answer') =>
     (event: React.FocusEvent<HTMLDivElement | HTMLTextAreaElement>) => {
@@ -36,8 +40,8 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
 
   return (
     <section
-      className="relative w-full bg-slate-900 py-16 text-slate-100 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-16 sm:py-20"
+      style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
@@ -58,17 +62,27 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-base text-slate-300 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+          <p
+            className="mt-3 text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
 
-        <div className="flex flex-col divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur">
+        <div
+          className="flex flex-col overflow-hidden rounded-2xl border backdrop-blur"
+          style={{
+            borderColor: withAlpha(textColor, 0.16, textColor),
+            backgroundColor: withAlpha(textColor, 0.05, textColor),
+          }}
+        >
           {items.map((item, index) => (
             <div key={index} className="group">
               <button
-                className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left text-base font-medium text-slate-100"
+                className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left text-base font-medium"
+                style={{ color: textColor }}
                 type="button"
               >
                 <span
@@ -79,9 +93,17 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
                 >
                   {item.question}
                 </span>
-                <span className="text-lg text-slate-400">＋</span>
+                <span
+                  className="text-lg"
+                  style={{ color: accentColor }}
+                >
+                  ＋
+                </span>
               </button>
-              <div className="px-5 pb-6 text-sm leading-relaxed text-slate-300">
+              <div
+                className="px-5 pb-6 text-sm leading-relaxed"
+                style={{ color: withAlpha(textColor, 0.78, textColor) }}
+              >
                 <div
                   contentEditable={isEditing}
                   suppressContentEditableWarning

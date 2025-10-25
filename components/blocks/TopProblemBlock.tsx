@@ -1,4 +1,5 @@
 import { ProblemBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 
 interface TopProblemBlockProps {
   content: ProblemBlockContent;
@@ -24,10 +25,14 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
     onEdit?.('problems', next);
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const textColor = content?.textColor ?? '#0F172A';
+  const accentColor = content?.accentColor ?? '#2563EB';
+
   return (
     <section
-      className="relative w-full bg-white py-16 text-slate-900 sm:py-20"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-16 sm:py-20"
+      style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
@@ -48,20 +53,39 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-base text-slate-600 sm:text-lg" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+            {title}
+          </h2>
+          <p
+            className="mt-3 text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.7, textColor) }}
+          >
             {subtitle}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {problems.map((problem, index) => (
-            <div key={index} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+            <div
+              key={index}
+              className="flex items-start gap-3 rounded-2xl border p-4 shadow-sm"
+              style={{
+                borderColor: withAlpha(textColor, 0.12, textColor),
+                backgroundColor: withAlpha(accentColor, 0.05, '#FFFFFF'),
+              }}
+            >
+              <span
+                className="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+                style={{
+                  backgroundColor: accentColor,
+                  color: '#FFFFFF',
+                }}
+              >
                 {index + 1}
               </span>
               <div
-                className="text-sm leading-relaxed text-slate-700"
+                className="text-sm leading-relaxed"
+                style={{ color: withAlpha(textColor, 0.85, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateProblem(index)}

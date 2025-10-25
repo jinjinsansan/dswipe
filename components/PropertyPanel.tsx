@@ -1,29 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ArrowPathIcon,
-  BoltIcon,
-  ChartBarIcon,
-  ClipboardDocumentCheckIcon,
-  CloudArrowUpIcon,
-  ExclamationTriangleIcon,
-  GiftIcon,
-  InboxStackIcon,
-  InformationCircleIcon,
-  MegaphoneIcon,
-  PaintBrushIcon,
-  PhotoIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-  Square2StackIcon,
-  TagIcon,
-  TrashIcon,
-  UsersIcon,
-  VideoCameraIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, PaintBrushIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
-import { BlockContent } from '@/types/templates';
+import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
@@ -94,13 +74,31 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   // 色フィールドと表示名のマッピング
   const colorFields = {
     backgroundColor: { label: '背景色', defaultColor: '#FFFFFF' },
-    textColor: { label: 'テキスト色', defaultColor: '#000000' },
-    buttonColor: { label: 'ボタン色', defaultColor: '#3B82F6' },
-    accentColor: { label: 'アクセントカラー', defaultColor: '#ffffff' },
+    textColor: { label: 'テキスト色', defaultColor: '#0F172A' },
+    accentColor: { label: 'アクセントカラー', defaultColor: '#38BDF8' },
+    buttonColor: { label: 'ボタン色', defaultColor: '#2563EB' },
+    secondaryButtonColor: { label: 'セカンダリーボタン色', defaultColor: '#64748B' },
+    surfaceColor: { label: 'カード背景色', defaultColor: '#10233F' },
+    overlayColor: { label: 'オーバーレイ色', defaultColor: '#0B1120' },
     titleColor: { label: '見出し色', defaultColor: '#111827' },
     descriptionColor: { label: '説明テキスト色', defaultColor: '#666666' },
     iconColor: { label: 'アイコン色', defaultColor: '#3B82F6' },
   } as const;
+
+  const COLOR_FIELD_MAP: Partial<Record<BlockType, Array<keyof typeof colorFields>>> = {
+    'top-hero-1': ['backgroundColor', 'overlayColor', 'textColor', 'accentColor', 'buttonColor', 'secondaryButtonColor'],
+    'top-highlights-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor', 'secondaryButtonColor', 'surfaceColor'],
+    'top-testimonials-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-faq-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-pricing-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
+    'top-before-after-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-problem-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-bonus-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-guarantee-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-countdown-1': ['backgroundColor', 'textColor', 'accentColor'],
+    'top-inline-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
+  };
 
   // 色ピッカーのレンダリング関数（DRY原則）
   const renderColorPicker = (fieldName: keyof typeof colorFields, contentValue: any) => {
@@ -161,6 +159,44 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               </button>
             </div>
           )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderColorSection = () => {
+    const blockType = block?.blockType as BlockType | undefined;
+    if (!blockType) return null;
+
+    const fields = COLOR_FIELD_MAP[blockType];
+    if (!fields || fields.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="space-y-4 pb-4 border-b border-slate-200">
+        <div>
+          <SectionHeader icon={PaintBrushIcon} label="カラー設定" />
+          <div className="space-y-4">
+            {fields.map((field) => renderColorPicker(field, (content as any)[field]))}
+          </div>
+          {blockType === 'top-cta-1' ? (
+            <div className="mt-4 space-y-2">
+              <label className="block text-sm lg:text-sm font-medium text-slate-700">
+                背景グラデーション
+              </label>
+              <input
+                type="text"
+                value={(content as any).backgroundGradient || ''}
+                onChange={(e) => onUpdateContent('backgroundGradient', e.target.value)}
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                placeholder="linear-gradient(...)"
+              />
+              <p className="text-xs text-slate-500">
+                CSSの linear-gradient 形式で指定できます。空欄にするとグラデーションなしになります。
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -375,6 +411,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             />
           </div>
         )}
+
+        {renderColorSection()}
 
         {('subText' in content) && (
           <div>
@@ -1045,32 +1083,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
-        {/* 色フィールドセクション */}
-        <div className="border-t border-slate-200 pt-3 mt-3">
-          <h4 className="text-xs font-bold text-slate-700 uppercase mb-3">色設定</h4>
-          
-          {/* 背景色 */}
-          {content.backgroundColor !== undefined && renderColorPicker('backgroundColor', content.backgroundColor)}
-          
-          {/* テキスト色 */}
-          {content.textColor !== undefined && renderColorPicker('textColor', content.textColor)}
-          
-          {/* ボタン色 */}
-          {('buttonColor' in content) && renderColorPicker('buttonColor', (content as any).buttonColor)}
-          
-          {/* アクセントカラー */}
-          {('accentColor' in content) && renderColorPicker('accentColor', (content as any).accentColor)}
-          
-          {/* 見出し色 */}
-          {('titleColor' in content) && renderColorPicker('titleColor', (content as any).titleColor)}
-          
-          {/* 説明テキスト色 */}
-          {('descriptionColor' in content) && renderColorPicker('descriptionColor', (content as any).descriptionColor)}
-          
-          {/* アイコン色 */}
-          {('iconColor' in content) && renderColorPicker('iconColor', (content as any).iconColor)}
-        </div>
-
         {/* パディング */}
         {content.padding !== undefined && (
           <div>
@@ -1130,158 +1142,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               onChange={(e) => onUpdateContent('shadow', e.target.checked)}
             />
           </label>
-        )}
-
-        {/* ヒーローブロック設定 */}
-        {block.blockType === 'top-hero-1' && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={PhotoIcon} label="ヒーロー設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('buttonColor', (content as any).buttonColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* テキスト+画像ブロック設定 */}
-        {(block.blockType.includes('text-image') || block.blockType.includes('text-img')) && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={Square2StackIcon} label="テキスト+画像設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ハイライトブロック設定 */}
-        {block.blockType === 'top-highlights-1' && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={Square2StackIcon} label="ハイライト設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('accentColor', (content as any).accentColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* CTAブロック設定 */}
-        {block.blockType.includes('cta') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={SparklesIcon} label="CTA設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('buttonColor', (content as any).buttonColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 価格表ブロック設定 */}
-        {block.blockType.includes('pricing') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={TagIcon} label="価格表設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('buttonColor', (content as any).buttonColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 特徴ブロック設定 */}
-        {block.blockType.includes('features') && !block.blockType.includes('aurora') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={BoltIcon} label="特徴設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* FAQブロック設定 */}
-        {block.blockType.includes('faq') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={InformationCircleIcon} label="FAQ設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* お客様の声ブロック設定 */}
-        {block.blockType.includes('testimonial') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={UsersIcon} label="お客様の声設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('accentColor', (content as any).accentColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* フォームブロック設定 */}
-        {block.blockType.includes('form') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={ClipboardDocumentCheckIcon} label="フォーム設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('buttonColor', (content as any).buttonColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 情報商材特化ブロック設定 */}
-        {block.blockType === 'top-countdown-1' && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={BoltIcon} label="特殊ブロック設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('buttonColor', (content as any).buttonColor)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 情報商材その他ブロック設定 */}
-        {(block.blockType === 'top-bonus-1' || block.blockType === 'top-guarantee-1' ||
-          block.blockType === 'top-problem-1' || block.blockType === 'top-before-after-1') && (
-          <div className="space-y-4 pb-4 border-b border-slate-200">
-            <div>
-              <SectionHeader icon={GiftIcon} label="コンテンツブロック設定" />
-              <div className="space-y-4">
-                {renderColorPicker('backgroundColor', (content as any).backgroundColor)}
-                {renderColorPicker('textColor', (content as any).textColor)}
-                {renderColorPicker('accentColor', (content as any).accentColor)}
-              </div>
-            </div>
-          </div>
         )}
 
         {/* 配置（ヒーローブロック等） */}

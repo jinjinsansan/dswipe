@@ -1,5 +1,7 @@
+import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { InlineCTABlockContent } from '@/types/templates';
-import { GlowButton } from '@/components/ui/GlowButton';
+import { getContrastColor, withAlpha } from '@/lib/color';
 
 interface TopInlineCTABlockProps {
   content: InlineCTABlockContent;
@@ -15,13 +17,29 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   const subtitle = content?.subtitle ?? 'アカウント作成から公開までを最短5分で完了。初月の成果創出まで伴走します。';
   const buttonText = content?.buttonText ?? '無料で始める';
   const buttonUrl = content?.buttonUrl ?? '/register';
+  const textColor = content?.textColor ?? '#0F172A';
+  const accentColor = content?.accentColor ?? '#2563EB';
+  const buttonColor = content?.buttonColor ?? accentColor;
+
+  const primaryButtonStyle: CSSProperties = {
+    backgroundColor: buttonColor,
+    color: getContrastColor(buttonColor),
+    border: `1px solid ${buttonColor}`,
+    outlineColor: withAlpha(accentColor, 0.5, accentColor),
+  };
 
   return (
     <section
-      className="relative w-full bg-white py-12 text-slate-900"
-      style={{ backgroundColor: content?.backgroundColor, color: content?.textColor }}
+      className="relative w-full py-12"
+      style={{ backgroundColor: content?.backgroundColor ?? '#FFFFFF', color: textColor }}
     >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-3xl border border-slate-200 bg-white/90 px-6 py-10 text-center shadow-sm sm:px-10">
+      <div
+        className="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-3xl border px-6 py-10 text-center shadow-sm sm:px-10"
+        style={{
+          borderColor: withAlpha(accentColor, 0.25, accentColor),
+          backgroundColor: withAlpha(accentColor, 0.06, accentColor),
+        }}
+      >
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
             <input
@@ -57,21 +75,38 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           </div>
         ) : null}
 
-        <span className="text-xs font-semibold uppercase tracking-[0.35em] text-blue-500">{eyebrow}</span>
-        <h2 className="text-2xl font-bold sm:text-3xl">{title}</h2>
-        <p className="text-sm leading-relaxed text-slate-600 sm:text-base" style={{ color: content?.textColor ? `${content.textColor}cc` : undefined }}>
+        <span
+          className="text-xs font-semibold uppercase tracking-[0.35em]"
+          style={{ color: accentColor }}
+        >
+          {eyebrow}
+        </span>
+        <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: textColor }}>{title}</h2>
+        <p
+          className="text-sm leading-relaxed sm:text-base"
+          style={{ color: withAlpha(textColor, 0.75, textColor) }}
+        >
           {subtitle}
         </p>
 
         <div className="mt-2 flex justify-center">
           {onProductClick ? (
-            <GlowButton onClick={() => onProductClick(productId)} className="px-8 py-3 text-base">
+            <button
+              type="button"
+              onClick={() => onProductClick(productId)}
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={primaryButtonStyle}
+            >
               {buttonText}
-            </GlowButton>
+            </button>
           ) : (
-            <GlowButton href={buttonUrl} className="px-8 py-3 text-base">
+            <Link
+              href={buttonUrl}
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={primaryButtonStyle}
+            >
               {buttonText}
-            </GlowButton>
+            </Link>
           )}
         </div>
       </div>

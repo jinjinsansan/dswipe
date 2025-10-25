@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
-import { GlowButton } from '@/components/ui/GlowButton';
+import { getContrastColor, withAlpha } from '@/lib/color';
 
 interface TopHeroBlockProps {
   content: HeroBlockContent;
@@ -26,13 +27,38 @@ export default function TopHeroBlock({
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? 'ログイン';
   const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
+  const textColor = content?.textColor ?? '#FFFFFF';
+  const accentColor = content?.accentColor ?? '#38BDF8';
+  const buttonColor = content?.buttonColor ?? '#38BDF8';
+  const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
+  const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+
+  const overlayStyle: CSSProperties = {
+    background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.45, accentColor)}, ${withAlpha(overlayBase, 0.88, overlayBase)})`,
+  };
+
+  const primaryButtonStyle: CSSProperties = {
+    backgroundColor: buttonColor,
+    color: getContrastColor(buttonColor),
+    border: `1px solid ${buttonColor}`,
+  };
+
+  const secondaryStrokeColor = secondaryButtonColor;
+  const secondaryButtonStyle: CSSProperties = {
+    backgroundColor: withAlpha(secondaryStrokeColor, 0.12, secondaryStrokeColor),
+    color: secondaryStrokeColor,
+    border: `1px solid ${withAlpha(secondaryStrokeColor, 0.6, secondaryStrokeColor)}`,
+  };
 
   const handleEdit = (field: keyof HeroBlockContent) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onEdit?.(field as string, e.target.value);
   };
 
   return (
-    <section className="relative flex min-h-[70vh] w-full items-center justify-center overflow-hidden bg-black text-white">
+    <section
+      className="relative flex min-h-[70vh] w-full items-center justify-center overflow-hidden"
+      style={{ color: textColor, backgroundColor: overlayBase }}
+    >
       <div className="absolute inset-0">
         {videoUrl ? (
           <video
@@ -45,7 +71,7 @@ export default function TopHeroBlock({
           />
         ) : null}
       </div>
-      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute inset-0" style={overlayStyle} />
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-20 text-center">
         {isEditing ? (
           <div className="mb-6 grid w-full gap-3 rounded-xl bg-black/30 p-4 text-left">
@@ -106,47 +132,66 @@ export default function TopHeroBlock({
           </div>
         ) : null}
 
-        <div className="space-y-6 text-white">
-          <div className="inline-flex items-center justify-center rounded-full border border-white/30 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-white/80">
+        <div className="space-y-6">
+          <div
+            className="inline-flex items-center justify-center rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]"
+            style={{
+              color: accentColor,
+              borderColor: withAlpha(accentColor, 0.4, accentColor),
+              backgroundColor: withAlpha(accentColor, 0.12, accentColor),
+            }}
+          >
             {tagline}
           </div>
 
-          <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl" style={{ color: textColor }}>
             {title}
           </h1>
 
-          <div className="text-lg font-medium tracking-widest text-cyan-300 sm:text-xl">
+          <div
+            className="text-lg font-medium tracking-widest sm:text-xl"
+            style={{ color: accentColor }}
+          >
             {highlightText}
           </div>
 
-          <p className="mx-auto max-w-3xl text-base text-white/85 sm:text-lg">
+          <p
+            className="mx-auto max-w-3xl text-base sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.85, textColor) }}
+          >
             {subtitle}
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             {primaryText ? (
               onProductClick ? (
-                <GlowButton
+                <button
+                  type="button"
                   onClick={() => onProductClick(productId)}
-                  className="px-8 py-3 text-base"
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  style={primaryButtonStyle}
                 >
                   {primaryText}
-                </GlowButton>
+                </button>
               ) : (
-                <GlowButton href={content?.buttonUrl ?? '#'} className="px-8 py-3 text-base">
+                <Link
+                  href={content?.buttonUrl ?? '#'}
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  style={primaryButtonStyle}
+                >
                   {primaryText}
-                </GlowButton>
+                </Link>
               )
             ) : null}
 
             {secondaryText ? (
-              <GlowButton
+              <Link
                 href={content?.secondaryButtonUrl ?? '#'}
-                variant="secondary"
-                className="px-8 py-3 text-base"
+                className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
+                style={secondaryButtonStyle}
               >
                 {secondaryText}
-              </GlowButton>
+              </Link>
             ) : null}
           </div>
         </div>
