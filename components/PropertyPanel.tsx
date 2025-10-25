@@ -188,7 +188,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   }
 
   const content = block.content;
-  const supportsThemeSelection = ['hero-aurora', 'features-aurora', 'cta-inline-1', 'sticky-cta-1', 'cta-1', 'cta-2', 'cta-3'].includes(block.blockType);
+  const supportsThemeSelection = false;
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
   const textFieldCandidates = [
     'tagline',
@@ -1133,7 +1133,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* ヒーローブロック設定 */}
-        {(block.blockType === 'hero' || block.blockType === 'hero-1' || block.blockType === 'hero-2' || block.blockType === 'hero-3') && (
+        {block.blockType === 'top-hero-1' && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
               <SectionHeader icon={PhotoIcon} label="ヒーロー設定" />
@@ -1242,8 +1242,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 情報商材特化ブロック設定 */}
-        {(block.blockType.includes('countdown') || block.blockType.includes('urgency') || 
-          block.blockType.includes('scarcity') || block.blockType.includes('sticky-cta')) && (
+        {block.blockType === 'top-countdown-1' && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
               <SectionHeader icon={BoltIcon} label="特殊ブロック設定" />
@@ -1257,9 +1256,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 情報商材その他ブロック設定 */}
-        {(block.blockType.includes('special-price') || block.blockType.includes('bonus-list') || 
-          block.blockType.includes('guarantee') || block.blockType.includes('problem') || 
-          block.blockType.includes('before-after') || block.blockType.includes('author-profile')) && (
+        {(block.blockType === 'top-bonus-1' || block.blockType === 'top-guarantee-1' ||
+          block.blockType === 'top-problem-1' || block.blockType === 'top-before-after-1') && (
           <div className="space-y-4 pb-4 border-b border-slate-200">
             <div>
               <SectionHeader icon={GiftIcon} label="コンテンツブロック設定" />

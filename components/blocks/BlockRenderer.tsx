@@ -2,6 +2,15 @@ import React from 'react';
 import TopHeroBlock from './TopHeroBlock';
 import TopHighlightsBlock from './TopHighlightsBlock';
 import TopCTASection from './TopCTASection';
+import TopTestimonialsBlock from './TopTestimonialsBlock';
+import TopFAQBlock from './TopFAQBlock';
+import TopPricingBlock from './TopPricingBlock';
+import TopBeforeAfterBlock from './TopBeforeAfterBlock';
+import TopProblemBlock from './TopProblemBlock';
+import TopBonusBlock from './TopBonusBlock';
+import TopGuaranteeBlock from './TopGuaranteeBlock';
+import TopCountdownBlock from './TopCountdownBlock';
+import TopInlineCTABlock from './TopInlineCTABlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -45,6 +54,41 @@ export default function BlockRenderer({
     case 'top-cta-1':
       element = (
         <TopCTASection
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
+      break;
+    case 'top-testimonials-1':
+      element = <TopTestimonialsBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-faq-1':
+      element = <TopFAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-pricing-1':
+      element = <TopPricingBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-before-after-1':
+      element = <TopBeforeAfterBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-problem-1':
+      element = <TopProblemBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-bonus-1':
+      element = <TopBonusBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-guarantee-1':
+      element = <TopGuaranteeBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-countdown-1':
+      element = <TopCountdownBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'top-inline-cta-1':
+      element = (
+        <TopInlineCTABlock
           content={content}
           isEditing={isEditing}
           onEdit={onEdit}

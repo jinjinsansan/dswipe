@@ -42,6 +42,24 @@ const CATEGORY_META: Record<string, { name: string; icon: React.ReactNode }> = {
       </svg>
     ),
   },
+  trust: {
+    name: '信頼・実績',
+    icon: (
+      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13.5 9.5 18l9-12" />
+        <path strokeLinecap="round" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10" />
+      </svg>
+    ),
+  },
+  urgency: {
+    name: '緊急性',
+    icon: (
+      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 3" />
+      </svg>
+    ),
+  },
 };
 
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {

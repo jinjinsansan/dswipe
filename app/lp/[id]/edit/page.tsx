@@ -237,7 +237,7 @@ export default function EditLPNewPage() {
 
         return {
           id: step.id,
-          blockType: (step.block_type || 'hero-1') as BlockType,
+          blockType: (step.block_type || 'top-hero-1') as BlockType,
           content,
           order: step.step_order,
         };
@@ -336,18 +336,18 @@ export default function EditLPNewPage() {
     
     // ブロックタイプによってカラー適用するかを判定
     const colorableBlockTypes = [
-      'hero-1', 'hero-2', 'hero-3', 'hero-aurora',
-      'text-img-1', 'text-img-2', 'text-img-3',
-      'pricing-1', 'pricing-2', 'pricing-3',
-      'testimonial-1', 'testimonial-2', 'testimonial-3',
-      'faq-1', 'faq-2',
-      'features-1', 'features-2', 'features-aurora',
-      'cta-1', 'cta-2', 'cta-3',
-      'stats-1', 'timeline-1', 'team-1',
-      'countdown-1', 'special-price-1', 'bonus-list-1',
-      'guarantee-1', 'problem-1', 'before-after-1',
-      'author-profile-1', 'urgency-1', 'scarcity-1', 'cta-inline-1',
-      'comparison-1', 'logo-grid-1'
+      'top-hero-1',
+      'top-highlights-1',
+      'top-cta-1',
+      'top-testimonials-1',
+      'top-faq-1',
+      'top-pricing-1',
+      'top-before-after-1',
+      'top-problem-1',
+      'top-bonus-1',
+      'top-guarantee-1',
+      'top-countdown-1',
+      'top-inline-cta-1',
     ];
     
     // 11段階のシェードをブロックごとに適用

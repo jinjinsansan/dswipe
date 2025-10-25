@@ -102,7 +102,7 @@ function evaluateBlock(block: { blockType: string; content: Record<string, unkno
   }
 
   const subtitle = getString(content, "subtitle");
-  if (blockType === "hero-aurora" && subtitle) {
+  if (blockType === "top-hero-1" && subtitle) {
     const sentenceCount = subtitle.split("。").filter(Boolean).length;
     if (sentenceCount > 2) {
       issues.push({
