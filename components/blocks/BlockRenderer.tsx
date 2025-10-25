@@ -82,7 +82,15 @@ export default function BlockRenderer({
       element = <TopFAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     case 'top-pricing-1':
-      element = <TopPricingBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = (
+        <TopPricingBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
       break;
     case 'top-before-after-1':
       element = <TopBeforeAfterBlock content={content} isEditing={isEditing} onEdit={onEdit} />;

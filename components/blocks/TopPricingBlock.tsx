@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { PricingBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
@@ -6,9 +7,11 @@ interface TopPricingBlockProps {
   content: PricingBlockContent;
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
+  productId?: string;
+  onProductClick?: (productId?: string) => void;
 }
 
-export default function TopPricingBlock({ content, isEditing, onEdit }: TopPricingBlockProps) {
+export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick }: TopPricingBlockProps) {
   const title = content?.title ?? 'プランと料金';
   const subtitle = content?.subtitle ?? 'ローンチの規模に合わせて選べる柔軟なプランをご用意しています。';
   const plans = Array.isArray(content?.plans) && content.plans.length > 0
@@ -192,26 +195,74 @@ export default function TopPricingBlock({ content, isEditing, onEdit }: TopPrici
                   ))}
                 </ul>
 
-                <button
-                  className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  type="button"
-                  style={{
-                    ...buttonStyle,
-                    outlineColor: withAlpha(accentColor, 0.45, accentColor),
-                  }}
-                >
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning
-                    onBlur={(event) => {
-                      const next = [...plans];
-                      next[index] = { ...next[index], buttonText: event.currentTarget.textContent ?? '' };
-                      onEdit?.('plans', next);
+                {onProductClick ? (
+                  <button
+                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    type="button"
+                    style={{
+                      ...buttonStyle,
+                      outlineColor: withAlpha(accentColor, 0.45, accentColor),
+                    }}
+                    onClick={() => onProductClick(productId)}
+                  >
+                    <span
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning
+                      onBlur={(event) => {
+                        const next = [...plans];
+                        next[index] = { ...next[index], buttonText: event.currentTarget.textContent ?? '' };
+                        onEdit?.('plans', next);
+                      }}
+                    >
+                      {plan.buttonText}
+                    </span>
+                  </button>
+                ) : plan.buttonUrl ? (
+                  <Link
+                    href={plan.buttonUrl}
+                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center"
+                    style={{
+                      ...buttonStyle,
+                      outlineColor: withAlpha(accentColor, 0.45, accentColor),
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    {plan.buttonText}
-                  </span>
-                </button>
+                    <span
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning
+                      onBlur={(event) => {
+                        const next = [...plans];
+                        next[index] = { ...next[index], buttonText: event.currentTarget.textContent ?? '' };
+                        onEdit?.('plans', next);
+                      }}
+                    >
+                      {plan.buttonText}
+                    </span>
+                  </Link>
+                ) : (
+                  <button
+                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    type="button"
+                    style={{
+                      ...buttonStyle,
+                      outlineColor: withAlpha(accentColor, 0.45, accentColor),
+                    }}
+                  >
+                    <span
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning
+                      onBlur={(event) => {
+                        const next = [...plans];
+                        next[index] = { ...next[index], buttonText: event.currentTarget.textContent ?? '' };
+                        onEdit?.('plans', next);
+                      }}
+                    >
+                      {plan.buttonText}
+                    </span>
+                  </button>
+                )}
               </div>
             );
           })}

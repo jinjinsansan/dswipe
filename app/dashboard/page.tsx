@@ -106,7 +106,8 @@ export default function DashboardPage() {
         ? lpsResponse.data 
         : [];
 
-      const heroImageMap = new Map<string, string | null>();
+      type HeroMedia = { type: 'image' | 'video'; url: string };
+      const heroMediaMap = new Map<string, HeroMedia | null>();
 
       await Promise.all(
         lpsData.map(async (lpItem) => {
@@ -118,25 +119,52 @@ export default function DashboardPage() {
               return typeof type === 'string' && type.includes('hero');
             }) || steps.find((step: any) => step?.block_type === 'image-aurora-1') || steps[0];
 
-            const extractImageFromStep = (step: any): string | null => {
+            const extractMediaFromStep = (step: any): HeroMedia | null => {
               if (!step) return null;
-              const sources = [
-                step?.content_data?.imageUrl,
-                step?.content_data?.image_url,
-                step?.content_data?.heroImage,
-                step?.content_data?.hero_image,
-                step?.content_data?.primaryImageUrl,
-                step?.content_data?.primary_image_url,
+              const content = step?.content_data ?? {};
+
+              const imageCandidates = [
+                content?.imageUrl,
+                content?.image_url,
+                content?.heroImage,
+                content?.hero_image,
+                content?.primaryImageUrl,
+                content?.primary_image_url,
+                content?.backgroundImageUrl,
+                content?.background_image_url,
+                content?.backgroundImage,
                 step?.image_url,
                 step?.imageUrl,
               ];
-              return sources.find((value) => typeof value === 'string' && value.trim().length > 0) || null;
+
+              const imageUrl = imageCandidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+              if (imageUrl) {
+                return { type: 'image', url: imageUrl };
+              }
+
+              const videoCandidates = [
+                content?.backgroundVideoUrl,
+                content?.background_video_url,
+                content?.videoUrl,
+                content?.video_url,
+                step?.backgroundVideoUrl,
+                step?.background_video_url,
+                step?.videoUrl,
+                step?.video_url,
+              ];
+
+              const videoUrl = videoCandidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+              if (videoUrl) {
+                return { type: 'video', url: videoUrl };
+              }
+
+              return null;
             };
 
-            heroImageMap.set(lpItem.id, extractImageFromStep(heroStep));
+            heroMediaMap.set(lpItem.id, extractMediaFromStep(heroStep));
           } catch (detailError) {
             console.error('Failed to fetch LP detail for hero image:', detailError);
-            heroImageMap.set(lpItem.id, null);
+            heroMediaMap.set(lpItem.id, null);
           }
         })
       );
@@ -147,10 +175,15 @@ export default function DashboardPage() {
         ? productsResponse.data
         : [];
       
-      const enrichedLps = lpsData.map((lpItem: any) => ({
-        ...lpItem,
-        heroImage: heroImageMap.get(lpItem.id) || lpItem.image_url || null,
-      }));
+      const enrichedLps = lpsData.map((lpItem: any) => {
+        const heroMedia = heroMediaMap.get(lpItem.id);
+        return {
+          ...lpItem,
+          heroMedia,
+          heroImage: heroMedia?.type === 'image' ? heroMedia.url : lpItem.image_url || null,
+          heroVideo: heroMedia?.type === 'video' ? heroMedia.url : null,
+        };
+      });
 
       setLps(enrichedLps);
       setProducts(productsData);
@@ -503,7 +536,7 @@ export default function DashboardPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {lps.map((lp: any) => {
-                  const heroImage = lp.heroImage;
+                  const heroMedia = lp.heroMedia as { type: 'image' | 'video'; url: string } | undefined;
 
                   return (
                   <div
@@ -511,12 +544,22 @@ export default function DashboardPage() {
                     className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-blue-200 transition-all flex flex-col shadow-sm"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0">
-                      {heroImage ? (
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {heroMedia?.type === 'image' ? (
                         <img
-                          src={heroImage}
+                          src={heroMedia.url}
                           alt={lp.title}
                           className="w-full h-full object-cover"
+                        />
+                      ) : heroMedia?.type === 'video' ? (
+                        <video
+                          src={heroMedia.url}
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls={false}
                         />
                       ) : (
                         <DocumentIcon className="h-12 w-12 text-white/80" aria-hidden="true" />

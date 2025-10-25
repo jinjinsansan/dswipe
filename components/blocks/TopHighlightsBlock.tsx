@@ -11,6 +11,8 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
   const title = content?.title ?? 'こんな課題、ありませんか？';
   const tagline = content?.tagline ?? 'Pain Points';
   const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundColor = content?.backgroundColor ?? '#F1F5F9';
+  const textColor = content?.textColor ?? '#0F172A';
   const features = Array.isArray(content?.features) && content.features.length > 0 ? content.features : [
     {
       icon: '🎨',
@@ -37,13 +39,14 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
   return (
     <section
-      className="relative w-full py-16"
+      className="relative flex w-full"
       style={{
-        backgroundColor: content?.backgroundColor ?? '#F1F5F9',
-        color: content?.textColor,
+        backgroundColor,
+        color: textColor,
+        minHeight: '100%',
       }}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-14 sm:px-6 md:py-16">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/70 p-4 text-sm text-slate-700">
             <input
