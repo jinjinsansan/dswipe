@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { lpApi } from '@/lib/api';
+import { lpApi, productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPDetail } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
@@ -86,6 +86,7 @@ export default function EditLPNewPage() {
   const [showColorGenerator, setShowColorGenerator] = useState(false);
   const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
   const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
+  const [linkedProduct, setLinkedProduct] = useState<{ id: string; title?: string | null } | null>(null);
   
   // ライブプレビュー設定
   const [showLivePreview, setShowLivePreview] = useState(false);
@@ -130,6 +131,31 @@ export default function EditLPNewPage() {
     localStorage.setItem('isRightSidebarVisible', String(isRightSidebarVisible));
   }, [leftSidebarWidth, rightSidebarWidth, isLeftSidebarVisible, isRightSidebarVisible]);
 
+  const fetchLinkedProduct = async (lpIdValue: string) => {
+    try {
+      const response = await productApi.list({ lp_id: lpIdValue });
+      const productsData = Array.isArray(response.data?.data)
+        ? response.data.data
+        : Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      const availableProducts = productsData.filter((product: any) => product && product.is_available !== false);
+      if (availableProducts.length > 0) {
+        const primaryProduct = availableProducts[0];
+        setLinkedProduct({ id: String(primaryProduct.id), title: primaryProduct.title });
+      } else if (productsData.length > 0) {
+        const firstProduct = productsData[0];
+        setLinkedProduct({ id: String(firstProduct.id), title: firstProduct.title });
+      } else {
+        setLinkedProduct(null);
+      }
+    } catch (error) {
+      console.error('Failed to fetch linked product for LP:', error);
+      setLinkedProduct(null);
+    }
+  };
+
   const fetchLP = async () => {
     try {
       const response = await lpApi.get(lpId);
@@ -154,6 +180,8 @@ export default function EditLPNewPage() {
       if (response.data.custom_theme_shades) {
         setCustomThemeShades(response.data.custom_theme_shades as unknown as ColorShades);
       }
+
+      await fetchLinkedProduct(lpId);
       
       // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
@@ -1194,6 +1222,8 @@ export default function EditLPNewPage() {
                   fullscreenMedia: lpSettings.fullscreenMedia,
                   swipeDirection: 'vertical',
                 }}
+                linkedProductId={linkedProduct?.id ?? null}
+                onProductPreviewClick={() => alert('商品モーダルは公開ページで表示されます。プレビューでは開きません。')}
               />
             ) : (
               <div className="h-full overflow-y-auto">
@@ -1244,6 +1274,7 @@ export default function EditLPNewPage() {
                 onUpdateContent={handleUpdateSelectedBlock}
                 onClose={handleClosePropertyPanel}
                 onGenerateAI={handleGenerateAI}
+                linkedProduct={linkedProduct}
               />
             ) : (
               <div className="p-6 text-center text-slate-500 font-medium text-sm">
@@ -1367,12 +1398,13 @@ export default function EditLPNewPage() {
         }`}>
           <div className="flex-1 overflow-y-auto">
             {selectedBlockId ? (
-              <PropertyPanel
-                block={blocks.find(b => b.id === selectedBlockId) || null}
-                onUpdateContent={handleUpdateSelectedBlock}
-                onClose={handleClosePropertyPanel}
-                onGenerateAI={handleGenerateAI}
-              />
+            <PropertyPanel
+              block={blocks.find(b => b.id === selectedBlockId) || null}
+              onUpdateContent={handleUpdateSelectedBlock}
+              onClose={handleClosePropertyPanel}
+              onGenerateAI={handleGenerateAI}
+              linkedProduct={linkedProduct}
+            />
             ) : (
               <div className="p-6 text-center text-slate-500 text-sm font-medium">
                 ブロックを選択すると編集内容が表示されます

@@ -24,6 +24,8 @@ interface LivePreviewProps {
     fullscreenMedia?: boolean;
     swipeDirection?: 'vertical' | 'horizontal';
   };
+  linkedProductId?: string | null;
+  onProductPreviewClick?: () => void;
 }
 
 const DEVICE_SIZES = {
@@ -32,7 +34,13 @@ const DEVICE_SIZES = {
   desktop: { width: 1440, height: 900 },
 };
 
-export default function LivePreview({ blocks, deviceSize = 'mobile', lpSettings }: LivePreviewProps) {
+export default function LivePreview({
+  blocks,
+  deviceSize = 'mobile',
+  lpSettings,
+  linkedProductId,
+  onProductPreviewClick,
+}: LivePreviewProps) {
   const swiperRef = useRef<SwiperType | null>(null);
   const direction = lpSettings?.swipeDirection || 'vertical';
   const fullscreenMedia = lpSettings?.fullscreenMedia || false;
@@ -45,6 +53,16 @@ export default function LivePreview({ blocks, deviceSize = 'mobile', lpSettings 
   };
 
   const device = DEVICE_SIZES[deviceSize];
+
+  const handlePreviewProductClick = () => {
+    if (onProductPreviewClick) {
+      onProductPreviewClick();
+    } else {
+      alert('公開ページでは商品購入モーダルが開きます。プレビューではリンクのみ確認できます。');
+    }
+  };
+
+  const productClickHandler = linkedProductId ? handlePreviewProductClick : undefined;
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-slate-100">
@@ -117,7 +135,14 @@ export default function LivePreview({ blocks, deviceSize = 'mobile', lpSettings 
                   className={fullscreenMedia ? 'relative flex items-center justify-center overflow-hidden' : 'relative overflow-y-auto'}
                 >
                   <div className="w-full h-full">
-                    <BlockRenderer blockType={block.blockType} content={block.content} isEditing={false} withinEditor={false} />
+                    <BlockRenderer
+                      blockType={block.blockType}
+                      content={block.content}
+                      isEditing={false}
+                      withinEditor={false}
+                      productId={linkedProductId ?? undefined}
+                      onProductClick={productClickHandler}
+                    />
                   </div>
                 </SwiperSlide>
               ))

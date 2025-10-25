@@ -14,6 +14,15 @@ const THEME_ENTRIES = Object.entries(COLOR_THEMES) as Array<[
   (typeof COLOR_THEMES)[ColorThemeKey]
 ]>;
 
+const PRODUCT_CTA_BLOCKS: BlockType[] = [
+  'top-hero-1',
+  'top-hero-image-1',
+  'top-cta-1',
+  'top-inline-cta-1',
+  'top-media-spotlight-1',
+  'top-pricing-1',
+];
+
 interface PropertyPanelProps {
   block: {
     id: string;
@@ -23,6 +32,7 @@ interface PropertyPanelProps {
   onUpdateContent: (field: string, value: any) => void;
   onClose: () => void;
   onGenerateAI?: (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => void;
+  linkedProduct?: { id: string; title?: string | null } | null;
 }
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -36,7 +46,7 @@ function SectionHeader({ icon: Icon, label }: { icon: IconComponent; label: stri
   );
 }
 
-export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI }: PropertyPanelProps) {
+export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI, linkedProduct }: PropertyPanelProps) {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -227,6 +237,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   }
 
   const content = block.content;
+  const blockType = block.blockType as BlockType;
+  const supportsProductLink = PRODUCT_CTA_BLOCKS.includes(blockType);
+  const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
   const supportsThemeSelection = false;
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
   const textFieldCandidates = [
@@ -265,6 +278,19 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
       {/* プロパティ */}
       <div className="p-3 lg:p-4 space-y-4 overflow-y-auto flex-1">
+        {isProductLinked && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-xs leading-relaxed text-blue-800">
+            <p className="font-semibold text-blue-900">
+              商品と連動しています
+            </p>
+            <p className="mt-1">
+              公開ページではこのブロックの一次CTAを押すと、
+              「{linkedProduct?.title || `商品ID: ${linkedProduct?.id}`}」の購入モーダルが開きます。
+              プレビューではリンク先を表示していますが、公開時は商品モーダルが優先されます。
+            </p>
+          </div>
+        )}
+
         {/* テキストコンテンツ */}
         {('tagline' in content) && (
           <div>
@@ -387,9 +413,15 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).buttonUrl || ''}
               onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              readOnly={isProductLinked}
+              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isProductLinked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
               placeholder="https://..."
             />
+            {isProductLinked && (
+              <p className="mt-2 text-xs text-blue-600">
+                商品に連動しているため、公開時はこのURLではなく購入モーダルが開きます。
+              </p>
+            )}
           </div>
         )}
 
@@ -859,10 +891,16 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.buttonUrl || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.buttonUrl`, e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    readOnly={isProductLinked}
+                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 ${isProductLinked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
                     placeholder="ボタンURL"
                   />
                 </div>
+                {isProductLinked && (
+                  <p className="text-xs text-blue-600">
+                    商品連携中は公開ページでモーダルが表示され、プランごとのURL設定は無視されます。
+                  </p>
+                )}
                 <label className="flex items-center justify-between gap-3 bg-white border border-slate-300 rounded px-3 py-2 text-xs text-slate-700">
                   <span>おすすめ表示（ハイライト）</span>
                   <input
