@@ -4,64 +4,15 @@
 
 // ブロックタイプ
 export type BlockType = 
-  | 'hero-1'       // センター配置ヒーロー
-  | 'hero-2'       // 左右分割ヒーロー
-  | 'hero-3'       // フルスクリーン画像 + オーバーレイテキスト
-  | 'hero-aurora'  // グラデーションヒーロー
-  | 'top-hero-1'   // TOPページ風ヒーロー
-  | 'text-img-1'   // 左テキスト右画像
-  | 'text-img-2'   // 右テキスト左画像
-  | 'text-img-3'   // 上テキスト下画像
-  | 'pricing-1'    // 3カラム価格表
-  | 'pricing-2'    // 2カラム価格表（対比型）
-  | 'pricing-3'    // シングルカラム価格表
-  | 'testimonial-1' // カード型お客様の声
-  | 'testimonial-2' // スライダー型お客様の声
-  | 'testimonial-3' // グリッド型お客様の声
-  | 'faq-1'        // アコーディオン型FAQ
-  | 'faq-2'        // 2カラムFAQ
-  | 'features-1'   // アイコン付き3カラム特徴
-  | 'features-2'   // 横並び特徴リスト
-  | 'features-aurora' // プレミアム特徴セクション
-  | 'top-highlights-1' // TOPページ風ハイライト
-  | 'cta-1'        // シンプルCTA
-  | 'cta-2'        // 2ボタンCTA
-  | 'cta-3'        // カウントダウン付きCTA
-  | 'image-1'      // フル幅画像ブロック
-  | 'gallery-1'    // グリッドギャラリー
-  | 'gallery-2'    // マソンリーギャラリー
-  | 'video-1'      // 埋め込み動画
-  | 'video-2'      // 動画 + テキスト説明
-  | 'form-1'       // シンプルフォーム
-  | 'form-2'       // 多項目フォーム
-  | 'stats-1'      // 統計数値表示
-  | 'timeline-1'   // タイムライン
-  | 'team-1'       // チームメンバー紹介
-  | 'logo-grid-1'  // ロゴグリッド（取引先等）
-  | 'comparison-1' // 比較表
-  // 情報商材特化ブロック
-  | 'countdown-1'  // カウントダウンタイマー
-  | 'special-price-1' // 特別価格（打ち消し線）
-  | 'bonus-list-1' // ボーナス特典リスト
-  | 'guarantee-1'  // 保証セクション
-  | 'problem-1'    // 問題提起（チェックリスト）
-  | 'before-after-1' // ビフォーアフター
-  | 'author-profile-1' // 著者プロフィール
-  | 'urgency-1'    // 緊急性訴求
-  | 'scarcity-1'   // 限定性訴求
-  | 'cta-inline-1' // インラインCTA
-  | 'top-cta-1'; // TOPページ風CTA
+  | 'top-hero-1'
+  | 'top-highlights-1'
+  | 'top-cta-1';
 
 // カテゴリ
 export type BlockCategory =
   | 'header'        // ヒーロー系
   | 'content'       // コンテンツ系
-  | 'conversion'    // コンバージョン系
-  | 'social-proof'  // 社会的証明
-  | 'media'         // メディア系
-  | 'form'         // フォーム系
-  | 'image'        // 画像ブロック
-  | 'info-product'; // 情報商材特化
+  | 'conversion';
 
 export type TemplateThemeKey =
   | 'urgent_red'
@@ -449,31 +400,8 @@ export interface InlineCTABlockContent extends BaseBlockContent {
 // ブロックコンテンツの型（Union型）
 export type BlockContent =
   | HeroBlockContent
-  | TextImageBlockContent
-  | PricingBlockContent
-  | TestimonialBlockContent
-  | FAQBlockContent
   | FeaturesBlockContent
-  | CTABlockContent
-  | ImageBlockContent
-  | GalleryBlockContent
-  | VideoBlockContent
-  | FormBlockContent
-  | StatsBlockContent
-  | TimelineBlockContent
-  | TeamBlockContent
-  | LogoGridBlockContent
-  | ComparisonBlockContent
-  | CountdownBlockContent
-  | SpecialPriceBlockContent
-  | BonusListBlockContent
-  | GuaranteeBlockContent
-  | ProblemBlockContent
-  | BeforeAfterBlockContent
-  | AuthorProfileBlockContent
-  | UrgencyBlockContent
-  | ScarcityBlockContent
-  | InlineCTABlockContent;
+  | CTABlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

@@ -43,8 +43,8 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
     
     console.log(`Found template for ${blockType}:`, template.name);
 
-    const defaultContent = structuredClone(template.defaultContent) as Record<string, unknown>;
-    const overrides = (aiBlock.content ?? {}) as Record<string, unknown>;
+    const defaultContent = structuredClone(template.defaultContent) as unknown as Record<string, unknown>;
+    const overrides = (aiBlock.content ?? {}) as unknown as Record<string, unknown>;
     const content: Record<string, unknown> = {
       ...defaultContent,
       ...overrides,
@@ -75,7 +75,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
     const newBlock = {
       id: `ai-block-${index}-${Date.now()}`,
       blockType,
-      content: content as BlockContent,
+      content: content as unknown as BlockContent,
       order: index,
     };
     

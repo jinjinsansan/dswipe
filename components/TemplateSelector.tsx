@@ -42,53 +42,6 @@ const CATEGORY_META: Record<string, { name: string; icon: React.ReactNode }> = {
       </svg>
     ),
   },
-  'social-proof': {
-    name: '社会的証明',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <path d="M12 3 4 7v5c0 5 4 9 8 9s8-4 8-9V7l-8-4Z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 12 1.5 1.5L15 9.5" />
-      </svg>
-    ),
-  },
-  media: {
-    name: 'メディア',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <rect x="4" y="5" width="16" height="14" rx="2" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="m10 9 6 4-6 4V9Z" />
-      </svg>
-    ),
-  },
-  form: {
-    name: 'フォーム',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <path d="M8 3h8l3 4v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
-        <path strokeLinecap="round" d="M9 12h6M9 16h4M9 7h3" />
-      </svg>
-    ),
-  },
-  'info-product': {
-    name: '情報商材特化',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <path d="m12 3 8 4-8 4-8-4 8-4Z" />
-        <path d="m4 11 8 4 8-4" />
-        <path d="m4 15 8 4 8-4" />
-      </svg>
-    ),
-  },
-  image: {
-    name: '画像',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="m8 14 3-3 4 4 3-3" />
-        <circle cx="9" cy="10" r="1" />
-      </svg>
-    ),
-  },
 };
 
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {
@@ -126,7 +79,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {templates.map((template) => {
-                const defaultContent = template.defaultContent as Record<string, unknown> & {
+                const defaultContent = template.defaultContent as unknown as {
                   themeKey?: string;
                   accentColor?: string;
                 };
