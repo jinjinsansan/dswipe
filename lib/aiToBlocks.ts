@@ -39,6 +39,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
       console.warn(`Skipping unknown block type: ${blockType}`);
       console.log('Available block types:', [
         'top-hero-1',
+        'top-hero-image-1',
         'top-highlights-1',
         'top-cta-1',
         'top-testimonials-1',
@@ -50,6 +51,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
         'top-guarantee-1',
         'top-countdown-1',
         'top-inline-cta-1',
+        'top-media-spotlight-1',
       ]);
       return; // スキップして次のブロックへ
     }

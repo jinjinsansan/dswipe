@@ -5,6 +5,7 @@
 // ブロックタイプ
 export type BlockType =
   | 'top-hero-1'
+  | 'top-hero-image-1'
   | 'top-highlights-1'
   | 'top-cta-1'
   | 'top-testimonials-1'
@@ -15,7 +16,8 @@ export type BlockType =
   | 'top-bonus-1'
   | 'top-guarantee-1'
   | 'top-countdown-1'
-  | 'top-inline-cta-1';
+  | 'top-inline-cta-1'
+  | 'top-media-spotlight-1';
 
 // カテゴリ
 export type BlockCategory =
@@ -184,6 +186,19 @@ export interface InlineCTABlockContent extends BaseBlockContent {
   buttonColor?: string;
 }
 
+// メディアスポットライト
+export interface MediaSpotlightBlockContent extends BaseBlockContent {
+  tagline?: string;
+  title: string;
+  subtitle?: string;
+  caption?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  buttonColor?: string;
+}
+
 // ブロックコンテンツのUnion
 export type BlockContent =
   | HeroBlockContent
@@ -197,7 +212,8 @@ export type BlockContent =
   | BonusListBlockContent
   | GuaranteeBlockContent
   | CountdownBlockContent
-  | InlineCTABlockContent;
+  | InlineCTABlockContent
+  | MediaSpotlightBlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

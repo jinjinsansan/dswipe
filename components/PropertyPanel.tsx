@@ -40,6 +40,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [activeImageField, setActiveImageField] = useState<string | null>(null);
   const [copiedColorField, setCopiedColorField] = useState<string | null>(null);
   const copyResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -87,6 +88,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
   const COLOR_FIELD_MAP: Partial<Record<BlockType, Array<keyof typeof colorFields>>> = {
     'top-hero-1': ['backgroundColor', 'overlayColor', 'textColor', 'accentColor', 'buttonColor', 'secondaryButtonColor'],
+    'top-hero-image-1': ['backgroundColor', 'overlayColor', 'textColor', 'accentColor', 'buttonColor', 'secondaryButtonColor'],
     'top-highlights-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor', 'secondaryButtonColor', 'surfaceColor'],
     'top-testimonials-1': ['backgroundColor', 'textColor', 'accentColor'],
@@ -98,6 +100,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'top-guarantee-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-countdown-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-inline-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
+    'top-media-spotlight-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
   };
 
   // 色ピッカーのレンダリング関数（DRY原則）
@@ -202,7 +205,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     );
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (fieldName: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -210,7 +213,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     try {
       const response = await mediaApi.upload(file);
       const imageUrl = response.data.url;
-      onUpdateContent('imageUrl', imageUrl);
+      onUpdateContent(fieldName, imageUrl);
     } catch (error) {
       console.error('画像アップロードエラー:', error);
       alert('画像のアップロードに失敗しました');
@@ -1181,90 +1184,101 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 画像アップロード */}
-        {('imageUrl' in content) && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
-              画像
-            </label>
-            {(content as any).imageUrl ? (
-              <div className="space-y-2">
-                <div className="relative w-full h-32 bg-slate-100 rounded-lg overflow-hidden border border-slate-300">
-                  <img 
-                    src={(content as any).imageUrl} 
-                    alt="Preview" 
-                    className="w-full h-full object-cover"
-                  />
+        {('imageUrl' in content || 'backgroundImageUrl' in content) && (() => {
+          const imageField = 'backgroundImageUrl' in content ? 'backgroundImageUrl' : 'imageUrl';
+          const currentImage = ((content as any)[imageField] as string) || '';
+          const label = imageField === 'backgroundImageUrl' ? '背景画像' : '画像';
+
+          const openMediaLibrary = () => {
+            setActiveImageField(imageField);
+            setShowMediaLibrary(true);
+          };
+
+          return (
+            <div>
+              <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+                {label}
+              </label>
+              {currentImage ? (
+                <div className="space-y-2">
+                  <div className="relative w-full h-32 bg-slate-100 rounded-lg overflow-hidden border border-slate-300">
+                    <img
+                      src={currentImage}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium text-center cursor-pointer">
+                      <span className="inline-flex items-center justify-center gap-2">
+                        {isUploading ? (
+                          <>
+                            <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                            アップロード中...
+                          </>
+                        ) : (
+                          <>
+                            <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                            変更
+                          </>
+                        )}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload(imageField)}
+                        disabled={isUploading}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      onClick={openMediaLibrary}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    >
+                      <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                      ライブラリ
+                    </button>
+                    <button
+                      onClick={() => onUpdateContent(imageField, '')}
+                      className="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                    >
+                      <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                      削除
+                    </button>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <label className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium text-center cursor-pointer">
-                    <span className="inline-flex items-center justify-center gap-2">
-                      {isUploading ? (
-                        <>
-                          <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
-                          アップロード中...
-                        </>
-                      ) : (
-                        <>
-                          <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
-                          変更
-                        </>
-                      )}
-                    </span>
+              ) : (
+                <div className="space-y-2">
+                  <label className="block w-full px-4 py-8 bg-white border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 transition-colors cursor-pointer text-center">
+                    <div className="mx-auto mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                      <PhotoIcon className="h-6 w-6" aria-hidden="true" />
+                    </div>
+                    <div className="text-slate-600 text-sm mb-1">
+                      {isUploading ? 'アップロード中...' : 'クリックして画像をアップロード'}
+                    </div>
+                    <div className="text-slate-500 text-xs">
+                      PNG, JPG, GIF (最大5MB)
+                    </div>
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={handleImageUpload(imageField)}
                       disabled={isUploading}
                       className="hidden"
                     />
                   </label>
                   <button
-                    onClick={() => setShowMediaLibrary(true)}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    onClick={openMediaLibrary}
+                    className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
                     <PhotoIcon className="h-4 w-4" aria-hidden="true" />
-                    ライブラリ
-                  </button>
-                  <button
-                    onClick={() => onUpdateContent('imageUrl', '')}
-                    className="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
-                  >
-                    <TrashIcon className="h-4 w-4" aria-hidden="true" />
-                    削除
+                    メディアライブラリから選択
                   </button>
                 </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <label className="block w-full px-4 py-8 bg-white border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 transition-colors cursor-pointer text-center">
-                  <div className="mx-auto mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                    <PhotoIcon className="h-6 w-6" aria-hidden="true" />
-                  </div>
-                  <div className="text-slate-600 text-sm mb-1">
-                    {isUploading ? 'アップロード中...' : 'クリックして画像をアップロード'}
-                  </div>
-                  <div className="text-slate-500 text-xs">
-                    PNG, JPG, GIF (最大5MB)
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={isUploading}
-                    className="hidden"
-                  />
-                </label>
-                <button
-                  onClick={() => setShowMediaLibrary(true)}
-                  className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  <PhotoIcon className="h-4 w-4" aria-hidden="true" />
-                  メディアライブラリから選択
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          );
+        })()}
 
         {/* レイアウト（Testimonial, FAQ等） */}
         {('layout' in content) && (
@@ -1312,8 +1326,17 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       {/* メディアライブラリモーダル */}
       <MediaLibraryModal
         isOpen={showMediaLibrary}
-        onClose={() => setShowMediaLibrary(false)}
-        onSelect={(url) => onUpdateContent('imageUrl', url)}
+        onClose={() => {
+          setShowMediaLibrary(false);
+          setActiveImageField(null);
+        }}
+        onSelect={(url) => {
+          if (activeImageField) {
+            onUpdateContent(activeImageField, url);
+          }
+          setShowMediaLibrary(false);
+          setActiveImageField(null);
+        }}
       />
     </div>
   );

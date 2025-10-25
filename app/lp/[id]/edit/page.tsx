@@ -348,6 +348,8 @@ export default function EditLPNewPage() {
       'top-guarantee-1',
       'top-countdown-1',
       'top-inline-cta-1',
+      'top-hero-image-1',
+      'top-media-spotlight-1',
     ];
     
     // 11段階のシェードをブロックごとに適用

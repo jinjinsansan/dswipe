@@ -1,5 +1,6 @@
 import React from 'react';
 import TopHeroBlock from './TopHeroBlock';
+import TopHeroImageBlock from './TopHeroImageBlock';
 import TopHighlightsBlock from './TopHighlightsBlock';
 import TopCTASection from './TopCTASection';
 import TopTestimonialsBlock from './TopTestimonialsBlock';
@@ -11,6 +12,7 @@ import TopBonusBlock from './TopBonusBlock';
 import TopGuaranteeBlock from './TopGuaranteeBlock';
 import TopCountdownBlock from './TopCountdownBlock';
 import TopInlineCTABlock from './TopInlineCTABlock';
+import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -39,6 +41,17 @@ export default function BlockRenderer({
     case 'top-hero-1':
       element = (
         <TopHeroBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
+      break;
+    case 'top-hero-image-1':
+      element = (
+        <TopHeroImageBlock
           content={content}
           isEditing={isEditing}
           onEdit={onEdit}
@@ -89,6 +102,17 @@ export default function BlockRenderer({
     case 'top-inline-cta-1':
       element = (
         <TopInlineCTABlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+        />
+      );
+      break;
+    case 'top-media-spotlight-1':
+      element = (
+        <TopMediaSpotlightBlock
           content={content}
           isEditing={isEditing}
           onEdit={onEdit}
