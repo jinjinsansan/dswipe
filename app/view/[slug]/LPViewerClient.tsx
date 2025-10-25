@@ -451,28 +451,30 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
             return (
               <SwiperSlide key={step.id}>
-                <div 
+                <div
                   className="lp-slide-clean"
                   style={slideBackground ? { background: slideBackground } : undefined}
                 >
                   <div className="lp-slide-clean-content">
-                    {step.block_type && step.content_data ? (
-                      <ViewerBlockRenderer
-                        blockType={step.block_type}
-                        content={step.content_data}
-                        productId={lp.product_id}
-                        onProductClick={handleProductButtonClick}
-                      />
-                    ) : step.image_url ? (
-                      <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${step.image_url})` }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                        <p className="text-gray-500 text-lg">コンテンツがありません</p>
-                      </div>
-                    )}
+                    <div className="lp-slide-clean-inner">
+                      {step.block_type && step.content_data ? (
+                        <ViewerBlockRenderer
+                          blockType={step.block_type}
+                          content={step.content_data}
+                          productId={lp.product_id}
+                          onProductClick={handleProductButtonClick}
+                        />
+                      ) : step.image_url ? (
+                        <div
+                          className="absolute inset-0 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${step.image_url})` }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                          <p className="text-gray-500 text-lg">コンテンツがありません</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 {index === 0 && lp.show_swipe_hint && (
