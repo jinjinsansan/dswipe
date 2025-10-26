@@ -15,6 +15,7 @@ import {
   MediaSpotlightBlockContent,
   ContactBlockContent,
   TokushoBlockContent,
+  NewsletterBlockContent,
   TemplateThemeKey,
 } from '@/types/templates';
 
@@ -2059,17 +2060,17 @@ export const TEMPLATE_CATEGORIES = [
 ];
 
 export function getTemplatesByCategory(category: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
   return allTemplates.filter((template) => template.category === category);
 }
 
 export function getTemplateById(templateId: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
   return allTemplates.find((template) => template.templateId === templateId);
 }
 
 export function getAllTemplates() {
-  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
+  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
 }
 
 // 特定商取引法ブロック（新規追加）
@@ -2279,5 +2280,60 @@ export const CONTACT_BLOCKS: TemplateBlock[] = [
       buttonColor: '#10B981',
       buttonTextColor: '#FFFFFF',
     } as ContactBlockContent,
+  },
+];
+
+// メルマガ購読ブロック（新規追加）
+export const NEWSLETTER_BLOCKS: TemplateBlock[] = [
+  {
+    id: 'top-newsletter-blue',
+    templateId: 'top-newsletter-1',
+    name: 'メルマガ購読（ブルー）',
+    category: 'conversion',
+    description: '美しいメルマガ購読申込ブロック。説明文とボタンを自由にカスタマイズ可能。',
+    defaultContent: {
+      title: 'メールマガジン',
+      description: 'ただ今お得なメルマガ配信中です！下記のボタンをクリックして今すぐお使いのメールアドレスをご入力ください',
+      buttonText: 'メルマガ購読',
+      buttonUrl: 'https://example.com/newsletter',
+      backgroundColor: '#EFF6FF',
+      textColor: '#1E3A8A',
+      buttonColor: '#2563EB',
+      buttonTextColor: '#FFFFFF',
+    } as NewsletterBlockContent,
+  },
+  {
+    id: 'top-newsletter-green',
+    templateId: 'top-newsletter-1',
+    name: 'メルマガ購読（グリーン）',
+    category: 'conversion',
+    description: 'グリーンカラーのメルマガ購読ブロック。信頼感と安心感を演出。',
+    defaultContent: {
+      title: '最新情報をお届け',
+      description: '最新のお得な情報やキャンペーンをいち早くお届けします。今すぐ無料登録してください！',
+      buttonText: '今すぐ登録',
+      buttonUrl: 'https://example.com/subscribe',
+      backgroundColor: '#ECFDF5',
+      textColor: '#065F46',
+      buttonColor: '#10B981',
+      buttonTextColor: '#FFFFFF',
+    } as NewsletterBlockContent,
+  },
+  {
+    id: 'top-newsletter-purple',
+    templateId: 'top-newsletter-1',
+    name: 'メルマガ購読（パープル）',
+    category: 'conversion',
+    description: 'プレミアム感のあるパープルカラー。高級商材向け。',
+    defaultContent: {
+      title: 'VIP会員限定情報',
+      description: '特別なあなただけにお届けする、プレミアムな情報をメールマガジンで配信しています。',
+      buttonText: 'VIP登録する',
+      buttonUrl: 'https://example.com/vip-newsletter',
+      backgroundColor: '#FAF5FF',
+      textColor: '#6B21A8',
+      buttonColor: '#9333EA',
+      buttonTextColor: '#FFFFFF',
+    } as NewsletterBlockContent,
   },
 ];

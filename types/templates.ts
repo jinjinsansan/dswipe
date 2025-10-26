@@ -19,7 +19,8 @@ export type BlockType =
   | 'top-inline-cta-1'
   | 'top-media-spotlight-1'
   | 'top-contact-1'
-  | 'top-tokusho-1';
+  | 'top-tokusho-1'
+  | 'top-newsletter-1';
 
 // カテゴリ
 export type BlockCategory =
@@ -228,6 +229,16 @@ export interface TokushoBlockContent extends BaseBlockContent {
   borderColor?: string;
 }
 
+// メルマガ購読ブロック
+export interface NewsletterBlockContent extends BaseBlockContent {
+  title?: string;
+  description: string;
+  buttonText: string;
+  buttonUrl: string;
+  buttonColor?: string;
+  buttonTextColor?: string;
+}
+
 // ブロックコンテンツのUnion
 export type BlockContent =
   | HeroBlockContent
@@ -244,7 +255,8 @@ export type BlockContent =
   | InlineCTABlockContent
   | MediaSpotlightBlockContent
   | ContactBlockContent
-  | TokushoBlockContent;
+  | TokushoBlockContent
+  | NewsletterBlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

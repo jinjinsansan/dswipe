@@ -15,6 +15,7 @@ import TopInlineCTABlock from './TopInlineCTABlock';
 import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
 import ContactBlock from './ContactBlock';
 import TokushoBlock from './TokushoBlock';
+import NewsletterBlock from './NewsletterBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -152,6 +153,9 @@ export default function BlockRenderer({
       break;
     case 'top-tokusho-1':
       element = <TokushoBlock content={content} />;
+      break;
+    case 'top-newsletter-1':
+      element = <NewsletterBlock content={content} />;
       break;
     
     default:
