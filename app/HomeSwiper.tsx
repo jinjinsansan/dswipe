@@ -803,17 +803,21 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-cyan-500 rounded-full flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-lg">
                       1
                     </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
-                      <RocketLaunchIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <RocketLaunchIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-0.5">無料登録</h3>
+                        <p className="text-xs text-slate-600 leading-tight">
+                          メールアドレスだけで30秒で登録完了
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">無料登録</h3>
-                    <p className="text-xs text-slate-700 leading-tight">
-                      メールアドレスだけで<br />30秒で登録完了
-                    </p>
                   </div>
                   <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400" />
                 </motion.div>
@@ -824,17 +828,21 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-blue-500 rounded-full flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-lg">
                       2
                     </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
-                      <SparklesIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <SparklesIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-0.5">AI自動生成</h3>
+                        <p className="text-xs text-slate-600 leading-tight">
+                          質問に答えるだけでLPが自動完成
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">AI自動生成</h3>
-                    <p className="text-xs text-slate-700 leading-tight">
-                      質問に答えるだけで<br />LPが自動完成
-                    </p>
                   </div>
                   <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400" />
                 </motion.div>
@@ -845,17 +853,21 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.3 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-purple-500 rounded-full flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-lg">
                       3
                     </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
-                      <CheckCircleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <CheckCircleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-0.5">即座に公開</h3>
+                        <p className="text-xs text-slate-600 leading-tight">
+                          ワンクリックで公開、すぐに販売開始
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">即座に公開</h3>
-                    <p className="text-xs text-slate-700 leading-tight">
-                      ワンクリックで公開<br />すぐに販売開始
-                    </p>
                   </div>
                 </motion.div>
               </div>
