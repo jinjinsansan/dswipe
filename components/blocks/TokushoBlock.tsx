@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TokushoBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 import {
@@ -14,6 +14,7 @@ import {
   TruckIcon,
   ArrowPathIcon,
   DocumentTextIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 
 interface TokushoBlockProps {
@@ -52,9 +53,16 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
   // 表示する項目のみフィルタリング
   const visibleItems = items.filter(item => item.show);
 
+  // アコーディオンの開閉状態（初期状態: 全て閉じる）
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   // アイコン名からコンポーネントを取得
   const getIconComponent = (iconName: string) => {
     return iconMap[iconName] || DocumentTextIcon;
+  };
+
+  const toggleItem = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
@@ -62,7 +70,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
       className="relative w-full py-16 sm:py-20"
       style={{ backgroundColor, color: textColor }}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {/* ヘッダー */}
         <div className="text-center">
           {subtitle && (
@@ -81,46 +89,71 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
           </h2>
         </div>
 
-        {/* カードグリッド */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* アコーディオンリスト */}
+        <div
+          className="flex flex-col overflow-hidden rounded-2xl border backdrop-blur"
+          style={{
+            borderColor: withAlpha(textColor, 0.16, textColor),
+            backgroundColor: withAlpha(textColor, 0.05, cardBackgroundColor),
+          }}
+        >
           {visibleItems.map((item, index) => {
             const IconComponent = getIconComponent(item.icon);
+            const isOpen = openIndex === index;
             
             return (
               <div
                 key={index}
-                className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
-                style={{
-                  backgroundColor: withAlpha(textColor, 0.03, cardBackgroundColor),
-                  borderColor: withAlpha(textColor, 0.12, borderColor),
-                }}
+                className="border-b last:border-b-0"
+                style={{ borderColor: withAlpha(textColor, 0.12, borderColor) }}
               >
-                {/* アイコンとラベル */}
-                <div className="flex items-center gap-3">
-                  <IconComponent
-                    className="w-6 h-6 flex-shrink-0"
-                    style={{ color: textColor, opacity: 0.7 }}
-                  />
-                  <h3
-                    className="text-sm font-bold uppercase tracking-wide"
-                    style={{ color: withAlpha(textColor, 0.7, textColor) }}
-                  >
-                    {item.label}
-                  </h3>
-                </div>
-
-                {/* 値 */}
-                <p
-                  className="text-sm leading-relaxed whitespace-pre-wrap"
-                  style={{ color: withAlpha(textColor, 0.85, textColor) }}
+                {/* アコーディオンヘッダー */}
+                <button
+                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors hover:bg-black/5"
+                  style={{ color: textColor }}
+                  type="button"
+                  onClick={() => toggleItem(index)}
                 >
-                  {item.value}
-                </p>
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <IconComponent
+                      className="w-5 h-5 flex-shrink-0"
+                      style={{ color: textColor, opacity: 0.6 }}
+                    />
+                    <span className="text-sm font-bold uppercase tracking-wide">
+                      {item.label}
+                    </span>
+                  </div>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                    style={{ color: textColor, opacity: 0.6 }}
+                  />
+                </button>
+
+                {/* アコーディオン内容 */}
+                {isOpen && (
+                  <div
+                    className="px-5 pb-5 pt-2 text-sm leading-relaxed whitespace-pre-wrap"
+                    style={{ color: withAlpha(textColor, 0.78, textColor) }}
+                  >
+                    {item.value}
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
 
+        {/* フッター注釈 */}
+        <div className="text-center">
+          <p
+            className="text-xs opacity-60"
+            style={{ color: textColor }}
+          >
+            ※ この表記は特定商取引法に基づき義務付けられています
+          </p>
+        </div>
       </div>
     </section>
   );
