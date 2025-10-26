@@ -227,60 +227,49 @@ export default function DashboardPage() {
       };
 
       const extractMediaFromStep = (step: any, title: string, accent?: string | null): HeroMedia => {
-        console.log(`🔍 [Thumbnail Debug] LP: "${title}"`, {
-          step_id: step?.id,
-          block_type: step?.block_type,
-          image_url: step?.image_url,
-          video_url: step?.video_url,
-          content_data_keys: step?.content_data ? Object.keys(step.content_data) : null,
-        });
-
         if (!step) {
-          console.log(`⚠️ [Thumbnail] No step found, using placeholder for "${title}"`);
           return createPlaceholderThumbnail(title, accent);
         }
 
-        // Priority 1: Check step-level video_url (direct DB field)
-        const stepVideo = typeof step?.video_url === 'string' && step.video_url.trim().length > 0 ? step.video_url : undefined;
-        if (stepVideo) {
-          console.log(`✅ [Thumbnail] Found step.video_url: ${stepVideo}`);
-          return { type: 'video', url: stepVideo };
+        // SIMPLE APPROACH: Direct access to content_data
+        const contentData = step?.content_data;
+        
+        // Check 1: content_data.backgroundVideoUrl (most common for hero blocks)
+        if (contentData?.backgroundVideoUrl && typeof contentData.backgroundVideoUrl === 'string') {
+          return { type: 'video', url: contentData.backgroundVideoUrl };
         }
 
-        // Priority 2: Check step-level image_url (direct DB field), but skip placeholder
-        const stepImage = typeof step?.image_url === 'string' 
-          && step.image_url.trim().length > 0 
-          && step.image_url !== '/placeholder.jpg'  // Skip invalid placeholder
-          ? step.image_url : undefined;
-        if (stepImage) {
-          console.log(`✅ [Thumbnail] Found step.image_url: ${stepImage}`);
-          return { type: 'image', url: stepImage };
+        // Check 2: content_data.backgroundImageUrl (for image-based heroes)
+        if (contentData?.backgroundImageUrl && typeof contentData.backgroundImageUrl === 'string') {
+          return { type: 'image', url: contentData.backgroundImageUrl };
         }
 
-        // Priority 3: Extract from content_data (nested content)
-        const content = normalizeContent(step?.content_data);
-        console.log(`🔍 [Thumbnail] Normalized content:`, content);
-        const media = extractMediaFromContent(content, step);
-        if (media) {
-          console.log(`✅ [Thumbnail] Found media in content_data:`, media);
-          return media;
+        // Check 3: step.video_url (direct DB field)
+        if (step.video_url && typeof step.video_url === 'string') {
+          return { type: 'video', url: step.video_url };
         }
 
-        // Priority 4: Fallback to template default media
-        const blockType = typeof step?.block_type === 'string' ? (step.block_type as BlockType) : undefined;
-        console.log(`🔍 [Thumbnail] Checking template fallback for block_type: ${blockType}`);
+        // Check 4: step.image_url (direct DB field, but skip placeholder)
+        if (step.image_url && typeof step.image_url === 'string' && step.image_url !== '/placeholder.jpg') {
+          return { type: 'image', url: step.image_url };
+        }
+
+        // Check 5: Fallback to template default media by ID
+        const blockType = step?.block_type;
         if (blockType) {
-          const fallback = getTemplateMediaFallback(blockType);
-          if (fallback) {
-            console.log(`✅ [Thumbnail] Found template fallback:`, fallback);
-            return fallback;
-          } else {
-            console.log(`⚠️ [Thumbnail] No template found for block_type: ${blockType}`);
+          const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
+          if (template?.defaultContent) {
+            const defaultContent = template.defaultContent as any;
+            if (defaultContent.backgroundVideoUrl) {
+              return { type: 'video', url: defaultContent.backgroundVideoUrl };
+            }
+            if (defaultContent.backgroundImageUrl) {
+              return { type: 'image', url: defaultContent.backgroundImageUrl };
+            }
           }
         }
 
-        // Priority 5: Generate placeholder SVG as last resort
-        console.log(`⚠️ [Thumbnail] No media found, generating placeholder for "${title}"`);
+        // Last resort: placeholder
         return createPlaceholderThumbnail(title, accent);
       };
 
