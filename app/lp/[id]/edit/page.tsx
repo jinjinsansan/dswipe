@@ -944,7 +944,7 @@ export default function EditLPNewPage() {
               width: window.innerWidth >= 1024 ? `${leftSidebarWidth}px` : '100%' 
             }}
           >
-          <div className="py-3 lg:py-3">
+          <div className="py-3 lg:py-3 px-3">
             <button
               onClick={() => setShowTemplateSelector(true)}
               className="w-full px-3 py-2.5 lg:py-2 bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors min-h-[44px] lg:min-h-auto"
@@ -955,7 +955,7 @@ export default function EditLPNewPage() {
 
           <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
             {/* モバイルではLP設定とSNSメタ情報を非表示 */}
-            <div className="hidden lg:block py-3 border-b border-slate-200 space-y-3 bg-white/50 flex-shrink-0">
+            <div className="hidden lg:block py-3 px-3 border-b border-slate-200 space-y-3 bg-white/50 flex-shrink-0">
               <h4 className="text-xs font-bold text-slate-700 tracking-wide">LP設定</h4>
 
               <button
@@ -1080,7 +1080,7 @@ export default function EditLPNewPage() {
             </div>
 
             {/* Block List - モバイルではブロック一覧のみ */}
-            <div className={`py-3 lg:py-4 flex-1 min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
+            <div className={`py-3 px-3 lg:py-4 flex-1 min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
               {blocks.length === 0 ? (
                 <div className="text-center py-8 text-slate-500 text-sm font-medium">
                   ブロックを追加してください

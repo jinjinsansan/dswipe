@@ -111,6 +111,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'top-countdown-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-inline-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
     'top-media-spotlight-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
+    'top-newsletter-1': ['backgroundColor', 'textColor', 'buttonColor'],
+    'top-contact-1': ['backgroundColor', 'textColor', 'buttonColor'],
+    'top-tokusho-1': ['backgroundColor', 'textColor'],
   };
 
   // 色ピッカーのレンダリング関数（DRY原則）
@@ -367,6 +370,36 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('description' in content && blockType === 'top-newsletter-1') && (
+          <div>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              説明文
+            </label>
+            <textarea
+              value={(content as any).description || ''}
+              onChange={(e) => onUpdateContent('description', e.target.value)}
+              rows={4}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm"
+              placeholder="メルマガの説明文を入力"
+            />
+          </div>
+        )}
+
+        {('description' in content && blockType === 'top-contact-1') && (
+          <div>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              説明文
+            </label>
+            <textarea
+              value={(content as any).description || ''}
+              onChange={(e) => onUpdateContent('description', e.target.value)}
+              rows={3}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm"
+              placeholder="お問い合わせの説明文を入力"
+            />
+          </div>
+        )}
+
         {('buttonText' in content) && (
           <div>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
@@ -379,6 +412,97 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
+          </div>
+        )}
+
+        {('buttonUrl' in content) && (
+          <div>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              ボタンリンク先URL
+            </label>
+            <input
+              type="text"
+              value={(content as any).buttonUrl || ''}
+              onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="https://example.com"
+            />
+          </div>
+        )}
+
+        {/* 特定商取引法ブロックの項目編集 */}
+        {blockType === 'top-tokusho-1' && 'items' in content && Array.isArray((content as any).items) && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-slate-700">特商法項目</h4>
+              <span className="text-xs text-slate-500">{(content as any).items.length}項目</span>
+            </div>
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+              {(content as any).items.map((item: any, index: number) => (
+                <div key={index} className="p-3 bg-white border border-slate-200 rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-600">項目 {index + 1}</span>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={item.show !== false}
+                        onChange={(e) => {
+                          const newItems = [...(content as any).items];
+                          newItems[index] = { ...newItems[index], show: e.target.checked };
+                          onUpdateContent('items', newItems);
+                        }}
+                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-xs text-slate-600">表示</span>
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    value={item.label || ''}
+                    onChange={(e) => {
+                      const newItems = [...(content as any).items];
+                      newItems[index] = { ...newItems[index], label: e.target.value };
+                      onUpdateContent('items', newItems);
+                    }}
+                    placeholder="項目名（例：販売業者名）"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                  />
+                  <textarea
+                    value={item.value || ''}
+                    onChange={(e) => {
+                      const newItems = [...(content as any).items];
+                      newItems[index] = { ...newItems[index], value: e.target.value };
+                      onUpdateContent('items', newItems);
+                    }}
+                    placeholder="内容（例：株式会社〇〇）"
+                    rows={2}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 resize-none"
+                  />
+                  <select
+                    value={item.icon || 'document'}
+                    onChange={(e) => {
+                      const newItems = [...(content as any).items];
+                      newItems[index] = { ...newItems[index], icon: e.target.value };
+                      onUpdateContent('items', newItems);
+                    }}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="building">🏢 建物（販売業者名）</option>
+                    <option value="user">👤 人物（代表者名）</option>
+                    <option value="map">📍 地図（所在地）</option>
+                    <option value="phone">📞 電話</option>
+                    <option value="email">✉️ メール</option>
+                    <option value="yen">💴 価格</option>
+                    <option value="card">💳 カード</option>
+                    <option value="banknotes">💵 支払方法</option>
+                    <option value="clock">⏰ 時間</option>
+                    <option value="truck">🚚 配送</option>
+                    <option value="refresh">🔄 返品</option>
+                    <option value="document">📄 書類</option>
+                  </select>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
