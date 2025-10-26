@@ -337,7 +337,7 @@ export default function ProductManagementPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex">
-      <aside className="hidden sm:flex w-52 bg-white border-r border-slate-200 flex flex-col">
+      <aside className="hidden sm:flex w-52 bg-white border-r border-slate-200 flex-col">
         <div className="px-6 h-16 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
@@ -389,6 +389,24 @@ export default function ProductManagementPage() {
 
       <div className="flex-1 flex flex-col">
         <div className="sm:hidden border-b border-slate-200 bg-white">
+          <div className="px-3 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                {user?.username?.charAt(0).toUpperCase() || "U"}
+              </div>
+              <div className="min-w-0">
+                <div className="text-slate-900 text-sm font-semibold truncate">
+                  {user?.username || "ユーザー"}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-xs font-semibold"
+            >
+              ログアウト
+            </button>
+          </div>
           <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
             {navLinks.map((link) => {
               const active = isDashboardLinkActive(pathname, link.href);
@@ -614,8 +632,8 @@ export default function ProductManagementPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex.items-center justify-center bg-slate-900/40 px-4">
-          <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-4 overflow-y-auto">
+          <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl my-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-slate-900">
                 {editingProduct ? "商品を編集" : "新しい商品を作成"}
