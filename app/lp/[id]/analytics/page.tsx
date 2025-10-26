@@ -291,7 +291,11 @@ export default function LPAnalyticsPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {stepFunnel.map((step) => {
+                  {stepFunnel.map((step, index) => {
+                    if (!step || !step.step_id) {
+                      console.error('Invalid step at index', index, step);
+                      return null;
+                    }
                     const base = stepFunnel[0]?.step_views || 1;
                     const safeStepViews = Math.max(0, Number(step.step_views || 0));
                     const width = base > 0 ? Math.min(100, Math.max((safeStepViews / base) * 100, 4)) : 0;
@@ -341,8 +345,12 @@ export default function LPAnalyticsPage() {
               ) : (
                 <div className="space-y-4">
                   {(() => {
-                    const maxClicks = Math.max(...ctaClicks.map((c) => Number(c.click_count || 0)));
+                    const maxClicks = Math.max(...ctaClicks.map((c) => Number(c.click_count || 0)), 1);
                     return ctaClicks.map((cta, index) => {
+                      if (!cta) {
+                        console.error('Invalid CTA at index', index);
+                        return null;
+                      }
                       const key = cta.cta_id ?? `${cta.step_id ?? 'unknown'}-${index}`;
                       const clickCount = Number(cta.click_count || 0);
                       const width = maxClicks > 0 ? Math.max((clickCount / maxClicks) * 100, 4) : 0;
