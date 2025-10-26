@@ -12,6 +12,7 @@ import {
   CreditCardIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
+  CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 
 const POINT_PACKAGES = [
@@ -22,6 +23,7 @@ const POINT_PACKAGES = [
 ];
 
 const PAYMENT_METHODS = [
+  { id: 'one_lat', name: 'USDT決済（ONE.lat）', icon: <CurrencyDollarIcon className="h-6 w-6" aria-hidden="true" />, status: 'active', description: '仮想通貨で即座に決済' },
   { id: 'stripe', name: 'クレジットカード', icon: <CreditCardIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'paypal', name: 'PayPal', icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'bank', name: '銀行振込', icon: <BuildingLibraryIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
@@ -77,8 +79,46 @@ export default function PointPurchasePage() {
     router.push('/');
   };
 
-  const handlePurchase = () => {
-    alert('決済機能は準備中です。\n決済サービス（Stripe、PayPal等）との連携は近日公開予定です。');
+  const [isPurchasing, setIsPurchasing] = useState(false);
+
+  const handlePurchase = async () => {
+    if (selectedPaymentMethod.status === 'coming_soon') {
+      alert('この決済方法は準備中です。\nUSDT決済（ONE.lat）をご利用ください。');
+      return;
+    }
+
+    if (selectedPaymentMethod.id === 'one_lat') {
+      try {
+        setIsPurchasing(true);
+        
+        // ONE.lat決済を開始
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+        const response = await fetch(`${apiUrl}/points/purchase/one-lat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            amount: selectedPackage.points + selectedPackage.bonus,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('決済の開始に失敗しました');
+        }
+
+        const data = await response.json();
+        
+        // ONE.latの決済ページにリダイレクト
+        window.location.href = data.checkout_url;
+        
+      } catch (error: any) {
+        console.error('Purchase error:', error);
+        alert(`決済エラー: ${error.message}`);
+        setIsPurchasing(false);
+      }
+    }
   };
 
   if (isLoading) {
@@ -292,13 +332,21 @@ export default function PointPurchasePage() {
               </div>
               <button
                 onClick={handlePurchase}
-                className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-xl bg-blue-600 text-white text-sm sm:text-base font-semibold hover:bg-blue-700 transition-colors"
+                disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
+                className="w-full px-5 sm:px-6 py-3 sm:py-4 rounded-xl bg-blue-600 text-white text-sm sm:text-base font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                購入手続きへ進む
+                {isPurchasing ? '処理中...' : '購入手続きへ進む'}
               </button>
-              <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
-                オンライン決済との連携は現在準備中です。公開まで今しばらくお待ちください。
-              </p>
+              {selectedPaymentMethod.id === 'one_lat' && (
+                <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
+                  ONE.latの安全な決済ページに移動します
+                </p>
+              )}
+              {selectedPaymentMethod.status === 'coming_soon' && (
+                <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
+                  この決済方法は現在準備中です。USDT決済をご利用ください。
+                </p>
+              )}
             </div>
           </div>
 
