@@ -88,7 +88,17 @@ export default function LPAnalyticsPage() {
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
   const rawStepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
   const rawCtaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
-  const stepFunnel = rawStepFunnel.filter((step): step is StepFunnelData => step && typeof step === 'object' && 'step_order' in step);
+  
+  // 安全なデータフィルタリング（異常値をクランプ）
+  const stepFunnel = rawStepFunnel
+    .filter((step): step is StepFunnelData => step && typeof step === 'object' && 'step_order' in step)
+    .map(step => ({
+      ...step,
+      step_views: Math.max(0, Number(step.step_views || 0)),
+      step_exits: Math.max(0, Number(step.step_exits || 0)),
+      conversion_rate: Math.max(0, Math.min(100, Number(step.conversion_rate || 0)))
+    }));
+  
   const ctaClicks = rawCtaClicks.filter((cta): cta is CTAClickData => cta && typeof cta === 'object');
 
   const stepOrderMap = useMemo(() => {
@@ -282,10 +292,11 @@ export default function LPAnalyticsPage() {
               ) : (
                 <div className="space-y-4">
                   {stepFunnel.map((step) => {
-                    const base = stepFunnel[0]?.step_views || 0;
-                    const width = base > 0 ? Math.max((step.step_views / base) * 100, 4) : 0;
+                    const base = stepFunnel[0]?.step_views || 1;
+                    const safeStepViews = Math.max(0, Number(step.step_views || 0));
+                    const width = base > 0 ? Math.min(100, Math.max((safeStepViews / base) * 100, 4)) : 0;
                     const conversionLabel = typeof step.conversion_rate === 'number'
-                      ? step.conversion_rate.toFixed(1)
+                      ? Math.min(100, Math.max(0, step.conversion_rate)).toFixed(1)
                       : '0.0';
                     return (
                       <div key={step.step_id} className="space-y-2">
