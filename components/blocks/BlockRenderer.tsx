@@ -152,7 +152,7 @@ export default function BlockRenderer({
       element = <ContactBlock content={content} />;
       break;
     case 'top-tokusho-1':
-      element = <TokushoBlock content={content} />;
+      element = <TokushoBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     case 'top-newsletter-1':
       element = <NewsletterBlock content={content} />;
