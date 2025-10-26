@@ -17,7 +17,8 @@ export type BlockType =
   | 'top-guarantee-1'
   | 'top-countdown-1'
   | 'top-inline-cta-1'
-  | 'top-media-spotlight-1';
+  | 'top-media-spotlight-1'
+  | 'top-contact-1';
 
 // カテゴリ
 export type BlockCategory =
@@ -199,6 +200,17 @@ export interface MediaSpotlightBlockContent extends BaseBlockContent {
   buttonColor?: string;
 }
 
+// お問い合わせブロック
+export interface ContactBlockContent extends BaseBlockContent {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  buttonText: string;
+  buttonUrl: string;
+  buttonColor?: string;
+  buttonTextColor?: string;
+}
+
 // ブロックコンテンツのUnion
 export type BlockContent =
   | HeroBlockContent
@@ -213,7 +225,8 @@ export type BlockContent =
   | GuaranteeBlockContent
   | CountdownBlockContent
   | InlineCTABlockContent
-  | MediaSpotlightBlockContent;
+  | MediaSpotlightBlockContent
+  | ContactBlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

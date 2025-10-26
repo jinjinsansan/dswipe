@@ -13,6 +13,7 @@ import {
   CountdownBlockContent,
   InlineCTABlockContent,
   MediaSpotlightBlockContent,
+  ContactBlockContent,
   TemplateThemeKey,
 } from '@/types/templates';
 
@@ -75,6 +76,8 @@ export const COLOR_THEMES: Record<ColorThemeKey, ThemeDefinition> = {
     description: '恋愛・美容に最適',
   },
 };
+
+import type { ContactBlockContent } from '@/types/templates';
 
 export const TEMPLATE_LIBRARY: TemplateBlock[] = [
   {
@@ -2055,15 +2058,73 @@ export const TEMPLATE_CATEGORIES = [
 ];
 
 export function getTemplatesByCategory(category: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
   return allTemplates.filter((template) => template.category === category);
 }
 
 export function getTemplateById(templateId: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
   return allTemplates.find((template) => template.templateId === templateId);
 }
 
 export function getAllTemplates() {
-  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
 }
+
+// お問い合わせブロック（新規追加）
+export const CONTACT_BLOCKS: TemplateBlock[] = [
+  {
+    id: 'top-contact-line',
+    templateId: 'top-contact-1',
+    name: 'お問い合わせ（LINE）',
+    category: 'conversion',
+    description: 'LINEへの誘導に最適化されたお問い合わせブロック。営業時間や説明文をカスタマイズ可能。',
+    defaultContent: {
+      title: 'お問い合わせはこちら',
+      subtitle: 'Contact Us',
+      description: '営業時間は平日10:00-18:00です。お気軽にご連絡ください。',
+      buttonText: 'LINEで問い合わせる',
+      buttonUrl: 'https://line.me/R/ti/p/@example',
+      backgroundColor: '#F8FAFC',
+      textColor: '#0F172A',
+      buttonColor: '#06C755',
+      buttonTextColor: '#FFFFFF',
+    } as ContactBlockContent,
+  },
+  {
+    id: 'top-contact-newsletter',
+    templateId: 'top-contact-1',
+    name: 'お問い合わせ（メルマガ）',
+    category: 'conversion',
+    description: 'メルマガ登録フォームへの誘導に最適化されたブロック。',
+    defaultContent: {
+      title: 'メルマガ購読はこちら',
+      subtitle: 'Newsletter',
+      description: '最新情報やお得なキャンペーン情報を週1回お届けします。',
+      buttonText: 'メルマガに登録する',
+      buttonUrl: 'https://example.com/newsletter',
+      backgroundColor: '#EFF6FF',
+      textColor: '#1E3A8A',
+      buttonColor: '#2563EB',
+      buttonTextColor: '#FFFFFF',
+    } as ContactBlockContent,
+  },
+  {
+    id: 'top-contact-form',
+    templateId: 'top-contact-1',
+    name: 'お問い合わせ（フォーム）',
+    category: 'conversion',
+    description: 'お問い合わせフォームへの誘導。シンプルで汎用性の高いデザイン。',
+    defaultContent: {
+      title: 'お問い合わせ',
+      subtitle: 'Get in Touch',
+      description: 'ご質問・ご相談はお気軽にお問い合わせください。24時間以内にご返信いたします。',
+      buttonText: 'お問い合わせフォーム',
+      buttonUrl: 'https://example.com/contact',
+      backgroundColor: '#FFFFFF',
+      textColor: '#111827',
+      buttonColor: '#10B981',
+      buttonTextColor: '#FFFFFF',
+    } as ContactBlockContent,
+  },
+];

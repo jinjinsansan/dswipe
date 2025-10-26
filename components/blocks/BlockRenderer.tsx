@@ -13,6 +13,7 @@ import TopGuaranteeBlock from './TopGuaranteeBlock';
 import TopCountdownBlock from './TopCountdownBlock';
 import TopInlineCTABlock from './TopInlineCTABlock';
 import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
+import ContactBlock from './ContactBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -144,6 +145,9 @@ export default function BlockRenderer({
           onCtaClick={onCtaClick}
         />
       );
+      break;
+    case 'top-contact-1':
+      element = <ContactBlock content={content} />;
       break;
     
     default:
