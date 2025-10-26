@@ -336,8 +336,8 @@ export default function ProductManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex">
-      <aside className="hidden sm:flex w-52 bg-white border-r border-slate-200 flex-col">
+    <div className="min-h-screen bg-slate-100 flex overflow-x-hidden">
+      <aside className="hidden sm:flex w-52 flex-shrink-0 bg-white border-r border-slate-200 flex-col">
         <div className="px-6 h-16 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="medium" showFullName={true} />
@@ -387,9 +387,9 @@ export default function ProductManagementPage() {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col">
-        <div className="sm:hidden border-b border-slate-200 bg-white">
-          <div className="px-3 py-3 border-b border-slate-100 flex items-center justify-between">
+      <div className="flex-1 flex flex-col min-w-0 w-full">
+        <div className="sm:hidden border-b border-slate-200 bg-white w-full">
+          <div className="px-3 py-3 border-b border-slate-100 flex items-center justify-between w-full">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
                 {user?.username?.charAt(0).toUpperCase() || "U"}
@@ -428,8 +428,8 @@ export default function ProductManagementPage() {
           </nav>
         </div>
 
-        <main className="flex-1 overflow-auto bg-slate-100 px-3 sm:px-6 py-6">
-          <div className="max-w-5xl mx-auto space-y-6">
+        <main className="flex-1 overflow-auto bg-slate-100 px-3 sm:px-6 py-6 w-full min-w-0">
+          <div className="max-w-5xl mx-auto space-y-6 w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-semibold text-slate-900">商品管理</h1>
@@ -439,7 +439,7 @@ export default function ProductManagementPage() {
               </div>
               <button
                 onClick={openCreateModal}
-                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 shadow"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 shadow whitespace-nowrap"
               >
                 + 新しい商品を追加
               </button>
@@ -469,7 +469,7 @@ export default function ProductManagementPage() {
                   </div>
                 ) : (
                   <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">登録済み商品</p>
                         <p className="mt-2 text-2xl font-semibold text-slate-900">{productStats.total}</p>
