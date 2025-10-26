@@ -186,7 +186,8 @@ export default function DashboardPage() {
       };
 
       const getTemplateMediaFallback = (blockType: BlockType): HeroMedia | null => {
-        const template = TEMPLATE_LIBRARY.find((item) => item.templateId === blockType);
+        // Check both 'id' (unique template identifier) and 'templateId' (component type)
+        const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
         if (!template) return null;
 
         const templateContent = normalizeContent(template.defaultContent);
