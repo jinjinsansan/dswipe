@@ -227,13 +227,23 @@ export default function DashboardPage() {
       };
 
       const extractMediaFromStep = (step: any, title: string, accent?: string | null): HeroMedia => {
+        console.log(`🔍 [Thumbnail Debug] LP: "${title}"`, {
+          step_id: step?.id,
+          block_type: step?.block_type,
+          image_url: step?.image_url,
+          video_url: step?.video_url,
+          content_data_keys: step?.content_data ? Object.keys(step.content_data) : null,
+        });
+
         if (!step) {
+          console.log(`⚠️ [Thumbnail] No step found, using placeholder for "${title}"`);
           return createPlaceholderThumbnail(title, accent);
         }
 
         // Priority 1: Check step-level video_url (direct DB field)
         const stepVideo = typeof step?.video_url === 'string' && step.video_url.trim().length > 0 ? step.video_url : undefined;
         if (stepVideo) {
+          console.log(`✅ [Thumbnail] Found step.video_url: ${stepVideo}`);
           return { type: 'video', url: stepVideo };
         }
 
@@ -243,26 +253,34 @@ export default function DashboardPage() {
           && step.image_url !== '/placeholder.jpg'  // Skip invalid placeholder
           ? step.image_url : undefined;
         if (stepImage) {
+          console.log(`✅ [Thumbnail] Found step.image_url: ${stepImage}`);
           return { type: 'image', url: stepImage };
         }
 
         // Priority 3: Extract from content_data (nested content)
         const content = normalizeContent(step?.content_data);
+        console.log(`🔍 [Thumbnail] Normalized content:`, content);
         const media = extractMediaFromContent(content, step);
         if (media) {
+          console.log(`✅ [Thumbnail] Found media in content_data:`, media);
           return media;
         }
 
         // Priority 4: Fallback to template default media
         const blockType = typeof step?.block_type === 'string' ? (step.block_type as BlockType) : undefined;
+        console.log(`🔍 [Thumbnail] Checking template fallback for block_type: ${blockType}`);
         if (blockType) {
           const fallback = getTemplateMediaFallback(blockType);
           if (fallback) {
+            console.log(`✅ [Thumbnail] Found template fallback:`, fallback);
             return fallback;
+          } else {
+            console.log(`⚠️ [Thumbnail] No template found for block_type: ${blockType}`);
           }
         }
 
         // Priority 5: Generate placeholder SVG as last resort
+        console.log(`⚠️ [Thumbnail] No media found, generating placeholder for "${title}"`);
         return createPlaceholderThumbnail(title, accent);
       };
 
