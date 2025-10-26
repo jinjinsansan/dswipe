@@ -93,11 +93,17 @@ export default function PointPurchasePage() {
         
         // ONE.lat決済を開始
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+        const token = localStorage.getItem('access_token');
+        
+        if (!token) {
+          throw new Error('認証トークンが見つかりません。再ログインしてください。');
+        }
+        
         const response = await fetch(`${apiUrl}/points/purchase/one-lat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             amount: selectedPackage.points + selectedPackage.bonus,
