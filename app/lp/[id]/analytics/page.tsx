@@ -78,10 +78,11 @@ export default function LPAnalyticsPage() {
     );
   }
 
-  const totalViews = analytics.total_views.toLocaleString();
-  const totalSessions = analytics.total_sessions.toLocaleString();
-  const totalCtaClicks = analytics.total_cta_clicks.toLocaleString();
-  const conversionRate = `${analytics.cta_conversion_rate.toFixed(1)}%`;
+  const totalViews = Number(analytics.total_views || 0).toLocaleString();
+  const totalSessions = Number(analytics.total_sessions || 0).toLocaleString();
+  const totalCtaClicks = Number(analytics.total_cta_clicks || 0).toLocaleString();
+  const conversionRateValue = typeof analytics.cta_conversion_rate === 'number' ? analytics.cta_conversion_rate : 0;
+  const conversionRate = `${conversionRateValue.toFixed(1)}%`;
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
   const stepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
   const ctaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
@@ -279,6 +280,9 @@ export default function LPAnalyticsPage() {
                   {stepFunnel.map((step) => {
                     const base = stepFunnel[0]?.step_views || 0;
                     const width = base > 0 ? Math.max((step.step_views / base) * 100, 4) : 0;
+                    const conversionLabel = typeof step.conversion_rate === 'number'
+                      ? step.conversion_rate.toFixed(1)
+                      : '0.0';
                     return (
                       <div key={step.step_id} className="space-y-2">
                         <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
@@ -291,7 +295,7 @@ export default function LPAnalyticsPage() {
                           <div className="flex items-center gap-4">
                             <span>閲覧 {step.step_views}</span>
                             <span>離脱 {step.step_exits}</span>
-                            <span className="text-emerald-300 font-medium">転換率 {step.conversion_rate.toFixed(1)}%</span>
+                            <span className="text-emerald-300 font-medium">転換率 {conversionLabel}%</span>
                           </div>
                         </div>
                         <div className="relative h-8 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
@@ -322,10 +326,11 @@ export default function LPAnalyticsPage() {
               ) : (
                 <div className="space-y-4">
                   {(() => {
-                    const maxClicks = Math.max(...ctaClicks.map((c) => c.click_count));
+                    const maxClicks = Math.max(...ctaClicks.map((c) => Number(c.click_count || 0)));
                     return ctaClicks.map((cta, index) => {
                       const key = cta.cta_id ?? `${cta.step_id ?? 'unknown'}-${index}`;
-                      const width = maxClicks > 0 ? Math.max((cta.click_count / maxClicks) * 100, 4) : 0;
+                      const clickCount = Number(cta.click_count || 0);
+                      const width = maxClicks > 0 ? Math.max((clickCount / maxClicks) * 100, 4) : 0;
                       const stepOrder = cta.step_id ? stepOrderMap.get(cta.step_id) : undefined;
                       const baseLabel = cta.cta_id
                         ? `CTA #${index + 1}`
@@ -341,7 +346,7 @@ export default function LPAnalyticsPage() {
                               {baseLabel}
                               {typeLabel}
                             </span>
-                            <span className="text-emerald-300 font-medium">{cta.click_count} クリック</span>
+                            <span className="text-emerald-300 font-medium">{clickCount} クリック</span>
                           </div>
                           <div className="relative h-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
                             <div
