@@ -697,7 +697,7 @@ export default function DashboardPage() {
                           編集
                         </Link>
                         <Link
-                          href={`/lp/${lp.id}/analytics`}
+                          href={`/lp/${lp.id}/analytics-simple`}
                           className="px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded hover:bg-slate-300 transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           分析
