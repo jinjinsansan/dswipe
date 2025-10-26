@@ -174,28 +174,15 @@ const extractSellerUsername = (source: SellerInfo): string | null => {
 
 export const resolveSellerUsername = (lp: LandingPageLike | null | undefined): string | null => {
   if (!lp) {
-    console.log('[resolveSellerUsername] LP is null/undefined');
     return null;
   }
 
-  console.log('[resolveSellerUsername] Checking LP:', {
-    id: lp.id,
-    title: lp.title,
-    owner: lp.owner,
-    user: lp.user,
-    seller_username: lp.seller_username,
-    username: lp.username,
-  });
-
-  const result = (
+  return (
     extractSellerUsername(lp.owner) ??
     extractSellerUsername(lp.user) ??
     asString(lp.seller_username) ??
     asString(lp.username)
   );
-
-  console.log('[resolveSellerUsername] Result:', result);
-  return result;
 };
 
 type EnrichedLandingPage = LandingPageLike & {
@@ -208,21 +195,9 @@ type EnrichedLandingPage = LandingPageLike & {
 export const enrichLpsWithHeroMedia = async (
   lps: LandingPageLike[]
 ): Promise<EnrichedLandingPage[]> => {
-  console.log(`[enrichLpsWithHeroMedia] Processing ${lps.length} LPs`);
-  
   const results = await Promise.all(
-    lps.map(async (lp, index) => {
+    lps.map(async (lp) => {
       try {
-        console.log(`[enrichLpsWithHeroMedia] LP ${index + 1}/${lps.length}:`, {
-          id: lp.id,
-          slug: lp.slug,
-          title: lp.title,
-          hasOwner: !!lp.owner,
-          hasUser: !!lp.user,
-          seller_username: lp.seller_username,
-          username: lp.username,
-        });
-
         let detailData: LandingPageLike | null = null;
         let steps: StepLike[] = [];
 
@@ -232,9 +207,8 @@ export const enrichLpsWithHeroMedia = async (
             const publicData = publicResponse.data as LandingPageLike;
             detailData = publicData;
             steps = asStepArray(publicData.steps);
-            console.log(`[enrichLpsWithHeroMedia] Fetched public data for LP ${lp.id}`);
           } catch (publicError) {
-            console.warn(`[enrichLpsWithHeroMedia] Failed to fetch public LP data for ${lp.id}:`, publicError);
+            console.warn('Failed to fetch public LP data for preview:', publicError);
           }
         }
 
@@ -242,7 +216,6 @@ export const enrichLpsWithHeroMedia = async (
           const detailResponse = await lpApi.get(lp.id);
           detailData = detailResponse.data as LandingPageLike;
           steps = asStepArray(detailData.steps);
-          console.log(`[enrichLpsWithHeroMedia] Fetched authenticated data for LP ${lp.id}`);
         }
 
         const heroStep = selectHeroStep(steps);
@@ -250,12 +223,6 @@ export const enrichLpsWithHeroMedia = async (
         const sellerUsername = resolveSellerUsername(detailData) ?? resolveSellerUsername(lp);
         const fallbackImage = asString(lp.heroImage) ?? asString(lp.image_url);
         const sellerSlug = sellerUsername ?? asString(lp.seller_username) ?? undefined;
-
-        console.log(`[enrichLpsWithHeroMedia] Enriched LP ${lp.id}:`, {
-          sellerUsername,
-          sellerSlug,
-          hasHeroMedia: !!media,
-        });
 
         const enriched: EnrichedLandingPage = {
           ...lp,

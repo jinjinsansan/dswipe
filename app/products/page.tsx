@@ -347,18 +347,6 @@ function ProductsContent() {
 
                     {/* LP Info */}
                     <div className="p-4">
-                      {/* DEBUG: Show all user fields */}
-                      <div className="mb-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-xs">
-                        <div><strong>DEBUG:</strong></div>
-                        <div>seller_username: {lp.seller_username || 'null'}</div>
-                        <div>username: {lp.username || 'null'}</div>
-                        <div>owner: {lp.owner ? JSON.stringify(lp.owner) : 'null'}</div>
-                        <div>user: {lp.user ? JSON.stringify(lp.user) : 'null'}</div>
-                        <div>user_id: {lp.user_id || 'null'}</div>
-                        <div>seller_id: {lp.seller_id || 'null'}</div>
-                        <div><strong>Resolved:</strong> {sellerUsername || 'NULL'}</div>
-                      </div>
-                      
                       {/* Seller Info */}
                       {sellerUsername && (
                         <Link

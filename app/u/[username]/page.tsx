@@ -47,37 +47,15 @@ export default function UserProfilePage() {
   }, [username]);
 
   const fetchUserLps = async () => {
-    console.log(`[/u/${username}] fetchUserLps 開始 - 検索対象ユーザー名: "${username}"`);
     try {
       setIsLoading(true);
       setError('');
 
-      console.log('[/u/${username}] API呼び出し: lpApi.list');
       const response = await lpApi.list();
-
-      console.log('[/u/${username}] API レスポンス取得成功');
       const allLps = response.data?.data || response.data || [];
-      console.log(`[/u/${username}] 全LP数: ${allLps.length}`);
-
       const publishedLps = allLps.filter((lp: any) => lp.status === 'published');
-      console.log(`[/u/${username}] 公開LP数: ${publishedLps.length}`);
-
       const enriched = await enrichLpsWithHeroMedia(publishedLps);
-      console.log(`[/u/${username}] Enriched LPs:`, enriched.map((lp: any) => ({
-        id: lp.id,
-        title: lp.title,
-        seller_username: lp.seller_username,
-        resolvedUsername: resolveSellerUsername(lp),
-      })));
-
-      const userLps = enriched.filter((lp: any) => {
-        const lpUsername = resolveSellerUsername(lp);
-        const matches = lpUsername === username;
-        console.log(`[/u/${username}] LP "${lp.title}" - Username: "${lpUsername}" - Matches: ${matches}`);
-        return matches;
-      });
-
-      console.log(`[/u/${username}] ユーザー "${username}" の公開LP数: ${userLps.length}`);
+      const userLps = enriched.filter((lp: any) => resolveSellerUsername(lp) === username);
 
       setLandingPages(userLps);
       setStats({
@@ -85,11 +63,9 @@ export default function UserProfilePage() {
         totalViews: userLps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0),
       });
     } catch (error: any) {
-      console.error(`[/u/${username}] ❌ LPの取得に失敗:`, error);
-      console.error(`[/u/${username}] ❌ エラー詳細:`, error.response?.data || error.message);
+      console.error('Failed to fetch user LPs:', error);
       setError(error.message || 'LPの取得に失敗しました');
     } finally {
-      console.log(`[/u/${username}] fetchUserLps 完了`);
       setIsLoading(false);
     }
   };
