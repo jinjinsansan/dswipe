@@ -1,10 +1,11 @@
 import { lpApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
+import type { LandingPage, LPStep } from '@/types';
 import type { BlockType } from '@/types/templates';
 
 export type HeroMedia = { type: 'image' | 'video'; url: string };
 
-interface StepLike {
+type StepLike = Partial<LPStep> & {
   block_type?: string | null;
   content_data?: Record<string, unknown>;
   image_url?: string | null;
@@ -21,26 +22,20 @@ interface StepLike {
   primary_image_url?: string | null;
   media?: Record<string, unknown>;
   visual?: Record<string, unknown>;
-  [key: string]: unknown;
-}
+};
 
 type SellerInfo = { username?: string | null } | null | undefined;
 
-type LandingPageLike = {
-  id: string;
-  title: string;
-  custom_theme_hex?: string | null;
+type LandingPageLike = LandingPage & {
   heroMedia?: HeroMedia;
   heroImage?: string | null;
   heroVideo?: string | null;
   image_url?: string | null;
-  slug?: string;
   owner?: SellerInfo;
   user?: SellerInfo;
   seller_username?: string | null;
   username?: string | null;
   steps?: StepLike[];
-  [key: string]: unknown;
 };
 
 const pickFirstString = (values: Array<string | null | undefined>): string | null => {
@@ -153,21 +148,21 @@ const extractMediaFromStep = (step: StepLike | null | undefined, title: string, 
   if (blockType) {
     const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
     if (template?.defaultContent) {
-      const defaultContent = template.defaultContent as Record<string, unknown>;
+      const defaultContent = asRecord(template.defaultContent);
       const fallbackImage = pickFirstString([
-        asString(defaultContent.backgroundImageUrl),
-        asString(defaultContent.background_image_url),
-        asString(defaultContent.imageUrl),
-        asString(defaultContent.image_url),
+        asString(defaultContent?.backgroundImageUrl),
+        asString(defaultContent?.background_image_url),
+        asString(defaultContent?.imageUrl),
+        asString(defaultContent?.image_url),
       ]);
       if (fallbackImage) {
         return { type: 'image', url: fallbackImage };
       }
       const fallbackVideo = pickFirstString([
-        asString(defaultContent.backgroundVideoUrl),
-        asString(defaultContent.background_video_url),
-        asString(defaultContent.videoUrl),
-        asString(defaultContent.video_url),
+        asString(defaultContent?.backgroundVideoUrl),
+        asString(defaultContent?.background_video_url),
+        asString(defaultContent?.videoUrl),
+        asString(defaultContent?.video_url),
       ]);
       if (fallbackVideo) {
         return { type: 'video', url: fallbackVideo };
@@ -222,9 +217,16 @@ export const resolveSellerUsername = (lp: LandingPageLike | null | undefined): s
   );
 };
 
-export const enrichLpsWithHeroMedia = async <T extends LandingPageLike>(
-  lps: T[]
-): Promise<Array<T & { heroMedia: HeroMedia; heroImage: string | null; heroVideo: string | null; seller_username?: string }>> => {
+type EnrichedLandingPage = LandingPageLike & {
+  heroMedia: HeroMedia;
+  heroImage: string | null;
+  heroVideo: string | null;
+  seller_username?: string;
+};
+
+export const enrichLpsWithHeroMedia = async (
+  lps: LandingPageLike[]
+): Promise<EnrichedLandingPage[]> => {
   const results = await Promise.all(
     lps.map(async (lp) => {
       try {
@@ -235,24 +237,28 @@ export const enrichLpsWithHeroMedia = async <T extends LandingPageLike>(
         const media = extractMediaFromStep(heroStep, lp.title, lp.custom_theme_hex ?? null);
         const sellerUsername = resolveSellerUsername(detailData) ?? resolveSellerUsername(lp);
         const fallbackImage = asString(lp.heroImage) ?? asString(lp.image_url);
+        const sellerSlug = sellerUsername ?? asString(lp.seller_username) ?? undefined;
 
-        return {
+        const enriched: EnrichedLandingPage = {
           ...lp,
           heroMedia: media,
           heroImage: media.type === 'image' ? media.url : fallbackImage,
           heroVideo: media.type === 'video' ? media.url : null,
-          seller_username: sellerUsername ?? lp.seller_username,
+          seller_username: sellerSlug,
         };
+        return enriched;
       } catch {
         const media = createPlaceholderThumbnail(lp.title, lp.custom_theme_hex ?? null);
         const sellerUsername = resolveSellerUsername(lp);
-        return {
+        const sellerSlug = sellerUsername ?? asString(lp.seller_username) ?? undefined;
+        const enriched: EnrichedLandingPage = {
           ...lp,
           heroMedia: media,
           heroImage: media.url,
           heroVideo: null,
-          seller_username: sellerUsername ?? lp.seller_username,
+          seller_username: sellerSlug,
         };
+        return enriched;
       }
     })
   );
