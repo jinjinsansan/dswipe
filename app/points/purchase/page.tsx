@@ -24,6 +24,7 @@ const POINT_PACKAGES = [
 
 const PAYMENT_METHODS = [
   { id: 'one_lat', name: 'カード・USDT決済（ONE.lat）', icon: <CurrencyDollarIcon className="h-6 w-6" aria-hidden="true" />, status: 'active', description: 'クレジットカード・仮想通貨対応' },
+  { id: 'jpyc', name: 'JPYC決済', icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon', description: '日本円ステーブルコイン・手数料無料' },
   { id: 'stripe', name: 'クレジットカード', icon: <CreditCardIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'paypal', name: 'PayPal', icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'bank', name: '銀行振込', icon: <BuildingLibraryIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
@@ -82,6 +83,11 @@ export default function PointPurchasePage() {
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const handlePurchase = async () => {
+    if (selectedPaymentMethod.id === 'jpyc') {
+      alert('JPYC決済は近日公開予定です。\n\n実装予定機能：\n- ウォレット接続（MetaMask等）\n- ガスレス決済（手数料無料）\n- 1 JPYC = 1円\n\n現在はONE.lat決済をご利用ください。');
+      return;
+    }
+    
     if (selectedPaymentMethod.status === 'coming_soon') {
       alert('この決済方法は準備中です。\nONE.lat決済（カード・USDT対応）をご利用ください。');
       return;
@@ -355,7 +361,12 @@ export default function PointPurchasePage() {
                   ONE.latの安全な決済ページに移動します（クレジットカード・USDT・その他決済方法対応）
                 </p>
               )}
-              {selectedPaymentMethod.status === 'coming_soon' && (
+              {selectedPaymentMethod.id === 'jpyc' && (
+                <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
+                  JPYC決済は近日公開予定です。ウォレット接続でガスレス決済（手数料無料）を実現します。
+                </p>
+              )}
+              {selectedPaymentMethod.status === 'coming_soon' && selectedPaymentMethod.id !== 'jpyc' && (
                 <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
                   この決済方法は現在準備中です。ONE.lat決済をご利用ください。
                 </p>
