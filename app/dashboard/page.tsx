@@ -231,12 +231,29 @@ export default function DashboardPage() {
           return createPlaceholderThumbnail(title, accent);
         }
 
+        // Priority 1: Check step-level video_url (direct DB field)
+        const stepVideo = typeof step?.video_url === 'string' && step.video_url.trim().length > 0 ? step.video_url : undefined;
+        if (stepVideo) {
+          return { type: 'video', url: stepVideo };
+        }
+
+        // Priority 2: Check step-level image_url (direct DB field), but skip placeholder
+        const stepImage = typeof step?.image_url === 'string' 
+          && step.image_url.trim().length > 0 
+          && step.image_url !== '/placeholder.jpg'  // Skip invalid placeholder
+          ? step.image_url : undefined;
+        if (stepImage) {
+          return { type: 'image', url: stepImage };
+        }
+
+        // Priority 3: Extract from content_data (nested content)
         const content = normalizeContent(step?.content_data);
         const media = extractMediaFromContent(content, step);
         if (media) {
           return media;
         }
 
+        // Priority 4: Fallback to template default media
         const blockType = typeof step?.block_type === 'string' ? (step.block_type as BlockType) : undefined;
         if (blockType) {
           const fallback = getTemplateMediaFallback(blockType);
@@ -245,11 +262,7 @@ export default function DashboardPage() {
           }
         }
 
-        const stepImage = typeof step?.image_url === 'string' && step.image_url.trim().length > 0 ? step.image_url : undefined;
-        if (stepImage) {
-          return { type: 'image', url: stepImage };
-        }
-
+        // Priority 5: Generate placeholder SVG as last resort
         return createPlaceholderThumbnail(title, accent);
       };
 
