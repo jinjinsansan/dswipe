@@ -1,5 +1,6 @@
 import React from 'react';
 import { TokushoBlockContent } from '@/types/templates';
+import { withAlpha } from '@/lib/color';
 import {
   BuildingOfficeIcon,
   UserIcon,
@@ -57,52 +58,52 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
   };
 
   return (
-    <div
-      className="h-screen w-full flex items-center justify-center px-6 overflow-hidden"
-      style={{ backgroundColor }}
+    <section
+      className="relative w-full py-16 sm:py-20"
+      style={{ backgroundColor, color: textColor }}
     >
-      <div className="max-w-6xl w-full">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
         {/* ヘッダー */}
-        <div className="text-center mb-6">
+        <div className="text-center">
           {subtitle && (
-            <p
-              className="text-xs font-semibold tracking-wider uppercase mb-2 opacity-60"
+            <span
+              className="text-xs font-semibold tracking-wider uppercase opacity-60"
               style={{ color: textColor }}
             >
               {subtitle}
-            </p>
+            </span>
           )}
           <h2
-            className="text-2xl md:text-3xl font-bold"
+            className="text-3xl font-bold sm:text-4xl mt-3"
             style={{ color: textColor }}
           >
             {title}
           </h2>
         </div>
 
-        {/* カードグリッド - コンパクト版 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[65vh] overflow-hidden">
+        {/* カードグリッド */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {visibleItems.map((item, index) => {
             const IconComponent = getIconComponent(item.icon);
             
             return (
               <div
                 key={index}
-                className="rounded-lg p-3 border"
+                className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
                 style={{
-                  backgroundColor: cardBackgroundColor,
-                  borderColor: borderColor,
+                  backgroundColor: withAlpha(textColor, 0.03, cardBackgroundColor),
+                  borderColor: withAlpha(textColor, 0.12, borderColor),
                 }}
               >
                 {/* アイコンとラベル */}
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex items-center gap-3">
                   <IconComponent
-                    className="w-5 h-5 flex-shrink-0"
-                    style={{ color: textColor, opacity: 0.6 }}
+                    className="w-6 h-6 flex-shrink-0"
+                    style={{ color: textColor, opacity: 0.7 }}
                   />
                   <h3
-                    className="text-xs font-bold uppercase tracking-wide opacity-60"
-                    style={{ color: textColor }}
+                    className="text-sm font-bold uppercase tracking-wide"
+                    style={{ color: withAlpha(textColor, 0.7, textColor) }}
                   >
                     {item.label}
                   </h3>
@@ -110,8 +111,8 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
 
                 {/* 値 */}
                 <p
-                  className="text-sm font-medium leading-snug whitespace-pre-wrap line-clamp-3"
-                  style={{ color: textColor }}
+                  className="text-sm leading-relaxed whitespace-pre-wrap"
+                  style={{ color: withAlpha(textColor, 0.85, textColor) }}
                 >
                   {item.value}
                 </p>
@@ -120,16 +121,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
           })}
         </div>
 
-        {/* フッター注釈 */}
-        <div className="mt-4 text-center">
-          <p
-            className="text-xs opacity-50"
-            style={{ color: textColor }}
-          >
-            ※ 特定商取引法に基づく表記
-          </p>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }
