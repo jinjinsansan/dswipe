@@ -1,4 +1,4 @@
-import { lpApi } from '@/lib/api';
+import { lpApi, publicApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import type { LandingPage, LPStep } from '@/types';
 import type { BlockType } from '@/types/templates';
@@ -230,9 +230,26 @@ export const enrichLpsWithHeroMedia = async (
   const results = await Promise.all(
     lps.map(async (lp) => {
       try {
-        const detailResponse = await lpApi.get(lp.id);
-        const detailData = detailResponse.data as LandingPageLike;
-        const steps = asStepArray(detailData.steps);
+        let detailData: LandingPageLike | null = null;
+        let steps: StepLike[] = [];
+
+        if (lp.slug) {
+          try {
+            const publicResponse = await publicApi.getLP(lp.slug, { trackView: false });
+            const publicData = publicResponse.data as LandingPageLike;
+            detailData = publicData;
+            steps = asStepArray(publicData.steps);
+          } catch (publicError) {
+            console.warn('Failed to fetch public LP data for preview:', publicError);
+          }
+        }
+
+        if (!detailData) {
+          const detailResponse = await lpApi.get(lp.id);
+          detailData = detailResponse.data as LandingPageLike;
+          steps = asStepArray(detailData.steps);
+        }
+
         const heroStep = selectHeroStep(steps);
         const media = extractMediaFromStep(heroStep, lp.title, lp.custom_theme_hex ?? null);
         const sellerUsername = resolveSellerUsername(detailData) ?? resolveSellerUsername(lp);
