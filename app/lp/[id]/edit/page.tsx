@@ -74,6 +74,7 @@ export default function EditLPNewPage() {
     showSwipeHint: false,
     fullscreenMedia: false,
     floatingCta: false,
+    swipeDirection: 'vertical' as 'vertical' | 'horizontal',
   });
   const [metaSettings, setMetaSettings] = useState({
     title: '',
@@ -165,6 +166,7 @@ export default function EditLPNewPage() {
         showSwipeHint: Boolean(response.data.show_swipe_hint),
         fullscreenMedia: Boolean(response.data.fullscreen_media),
         floatingCta: Boolean(response.data.floating_cta),
+        swipeDirection: response.data.swipe_direction || 'vertical',
       });
       setMetaSettings({
         title: response.data.meta_title ?? '',
@@ -496,6 +498,7 @@ export default function EditLPNewPage() {
         show_swipe_hint: lpSettings.showSwipeHint,
         fullscreen_media: lpSettings.fullscreenMedia,
         floating_cta: false,
+        swipe_direction: lpSettings.swipeDirection,
         meta_title: normalizeMetaValue(metaSettings.title),
         meta_description: normalizeMetaValue(metaSettings.description),
         meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
@@ -963,6 +966,34 @@ export default function EditLPNewPage() {
                 テーマカラー生成
               </button>
 
+              {/* スワイプ方向選択 */}
+              <div className="space-y-2">
+                <p className="text-sm lg:text-xs text-slate-900 font-semibold">スワイプ方向</p>
+                <div className="flex gap-3 lg:gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="swipeDirection"
+                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.swipeDirection === 'vertical'}
+                      onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'vertical' }))}
+                    />
+                    <span className="text-sm lg:text-xs text-slate-700">縦スクロール</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="swipeDirection"
+                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.swipeDirection === 'horizontal'}
+                      onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'horizontal' }))}
+                    />
+                    <span className="text-sm lg:text-xs text-slate-700">横スワイプ</span>
+                  </label>
+                </div>
+                <p className="text-xs lg:text-[11px] text-slate-500">LPの閲覧方向を選択できます</p>
+              </div>
+
               <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
                   type="checkbox"
@@ -1220,7 +1251,7 @@ export default function EditLPNewPage() {
                 deviceSize={previewDeviceSize}
                 lpSettings={{
                   fullscreenMedia: lpSettings.fullscreenMedia,
-                  swipeDirection: 'vertical',
+                  swipeDirection: lpSettings.swipeDirection,
                 }}
                 linkedProductId={linkedProduct?.id ?? null}
                 onProductPreviewClick={() => alert('商品モーダルは公開ページで表示されます。プレビューでは開きません。')}
@@ -1303,6 +1334,34 @@ export default function EditLPNewPage() {
             {/* LP設定 + SNSメタ情報 */}
             <div className="px-3 py-3 border-b border-slate-200 space-y-3 bg-white/50">
               <h4 className="text-xs font-bold text-slate-700 tracking-wide">LP設定</h4>
+
+              {/* スワイプ方向選択 */}
+              <div className="space-y-2">
+                <p className="text-sm text-slate-900 font-semibold">スワイプ方向</p>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="swipeDirectionMobile"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.swipeDirection === 'vertical'}
+                      onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'vertical' }))}
+                    />
+                    <span className="text-sm text-slate-700">縦スクロール</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="swipeDirectionMobile"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.swipeDirection === 'horizontal'}
+                      onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'horizontal' }))}
+                    />
+                    <span className="text-sm text-slate-700">横スワイプ</span>
+                  </label>
+                </div>
+                <p className="text-xs text-slate-500">LPの閲覧方向を選択できます</p>
+              </div>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
