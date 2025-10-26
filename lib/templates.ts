@@ -2228,12 +2228,12 @@ export const CONTACT_BLOCKS: TemplateBlock[] = [
   {
     id: 'top-contact-line',
     templateId: 'top-contact-1',
-    name: 'お問い合わせ（LINE）',
+    name: '公式LINEボタン',
     category: 'conversion',
-    description: 'LINEへの誘導に最適化されたお問い合わせブロック。営業時間や説明文をカスタマイズ可能。',
+    description: 'LINEへの誘導に最適化された公式LINEボタンブロック。営業時間や説明文をカスタマイズ可能。',
     defaultContent: {
-      title: 'お問い合わせはこちら',
-      subtitle: 'Contact Us',
+      title: '公式LINE',
+      subtitle: 'Official LINE',
       description: '営業時間は平日10:00-18:00です。お気軽にご連絡ください。',
       buttonText: 'LINEで問い合わせる',
       buttonUrl: 'https://line.me/R/ti/p/@example',
