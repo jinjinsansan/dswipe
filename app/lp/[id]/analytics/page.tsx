@@ -33,8 +33,10 @@ export default function LPAnalyticsPage() {
     try {
       setError('');
       const response = await analyticsApi.getLPAnalytics(lpId);
+      console.log('Analytics API response:', response.data);
       setAnalytics(response.data);
-    } catch {
+    } catch (error) {
+      console.error('Analytics fetch error:', error);
       setError('分析データの読み込みに失敗しました');
     } finally {
       setIsLoading(false);
