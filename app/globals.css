@@ -539,3 +539,30 @@ body {
 .swiper-slide-visible {
   animation: fadeIn 0.4s ease-out;
 }
+
+/* カスタムローディングアニメーション */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.animate-progress-slide {
+  animation: progress-slide 1.5s ease-in-out infinite;
+}
