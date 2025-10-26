@@ -18,7 +18,8 @@ export type BlockType =
   | 'top-countdown-1'
   | 'top-inline-cta-1'
   | 'top-media-spotlight-1'
-  | 'top-contact-1';
+  | 'top-contact-1'
+  | 'top-tokusho-1';
 
 // カテゴリ
 export type BlockCategory =
@@ -211,6 +212,22 @@ export interface ContactBlockContent extends BaseBlockContent {
   buttonTextColor?: string;
 }
 
+// 特定商取引法ブロック
+export interface TokushoItem {
+  label: string;
+  value: string;
+  icon: string;
+  show: boolean;
+}
+
+export interface TokushoBlockContent extends BaseBlockContent {
+  title: string;
+  subtitle?: string;
+  items: TokushoItem[];
+  cardBackgroundColor?: string;
+  borderColor?: string;
+}
+
 // ブロックコンテンツのUnion
 export type BlockContent =
   | HeroBlockContent
@@ -226,7 +243,8 @@ export type BlockContent =
   | CountdownBlockContent
   | InlineCTABlockContent
   | MediaSpotlightBlockContent
-  | ContactBlockContent;
+  | ContactBlockContent
+  | TokushoBlockContent;
 
 // テンプレートブロック定義
 export interface TemplateBlock {

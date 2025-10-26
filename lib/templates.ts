@@ -14,6 +14,7 @@ import {
   InlineCTABlockContent,
   MediaSpotlightBlockContent,
   ContactBlockContent,
+  TokushoBlockContent,
   TemplateThemeKey,
 } from '@/types/templates';
 
@@ -2058,18 +2059,170 @@ export const TEMPLATE_CATEGORIES = [
 ];
 
 export function getTemplatesByCategory(category: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
   return allTemplates.filter((template) => template.category === category);
 }
 
 export function getTemplateById(templateId: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
   return allTemplates.find((template) => template.templateId === templateId);
 }
 
 export function getAllTemplates() {
-  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS];
+  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS];
 }
+
+// 特定商取引法ブロック（新規追加）
+export const TOKUSHO_BLOCKS: TemplateBlock[] = [
+  {
+    id: 'top-tokusho-modern',
+    templateId: 'top-tokusho-1',
+    name: '特定商取引法（モダン）',
+    category: 'content',
+    description: 'モダンなカード形式の特商法表記。各項目の表示/非表示を自由に設定可能。',
+    defaultContent: {
+      title: '特定商取引法に基づく表記',
+      subtitle: 'Legal Information',
+      items: [
+        {
+          label: '販売業者名',
+          value: '株式会社〇〇〇〇',
+          icon: '🏢',
+          show: true,
+        },
+        {
+          label: '代表者名',
+          value: '山田 太郎',
+          icon: '👤',
+          show: true,
+        },
+        {
+          label: '所在地',
+          value: '〒123-4567\n東京都渋谷区〇〇 1-2-3\n〇〇ビル 4F',
+          icon: '📍',
+          show: true,
+        },
+        {
+          label: '電話番号',
+          value: '03-1234-5678\n（受付時間：平日10:00-18:00）',
+          icon: '📞',
+          show: true,
+        },
+        {
+          label: 'メールアドレス',
+          value: 'info@example.com',
+          icon: '✉️',
+          show: true,
+        },
+        {
+          label: '販売価格',
+          value: '各商品ページをご参照ください',
+          icon: '💰',
+          show: true,
+        },
+        {
+          label: '商品代金以外の料金',
+          value: '消費税、送料、振込手数料',
+          icon: '💳',
+          show: true,
+        },
+        {
+          label: '支払方法',
+          value: 'クレジットカード決済\n銀行振込\nコンビニ決済',
+          icon: '💴',
+          show: true,
+        },
+        {
+          label: '支払時期',
+          value: '各決済方法により異なります\nクレジットカード：即時\n銀行振込：ご注文後7日以内',
+          icon: '⏰',
+          show: true,
+        },
+        {
+          label: '商品引渡時期',
+          value: 'デジタルコンテンツ：決済確認後即時\n物理商品：入金確認後3-7営業日以内に発送',
+          icon: '📦',
+          show: true,
+        },
+        {
+          label: '返品・交換について',
+          value: 'デジタルコンテンツの性質上、原則として返品・返金はお受けできません。\n不良品の場合は、商品到着後7日以内にご連絡ください。',
+          icon: '🔄',
+          show: true,
+        },
+      ],
+      backgroundColor: '#F9FAFB',
+      textColor: '#111827',
+      cardBackgroundColor: '#FFFFFF',
+      borderColor: '#E5E7EB',
+    } as TokushoBlockContent,
+  },
+  {
+    id: 'top-tokusho-minimal',
+    templateId: 'top-tokusho-1',
+    name: '特定商取引法（ミニマル）',
+    category: 'content',
+    description: '必要最小限の項目のみ表示したシンプルな特商法表記。',
+    defaultContent: {
+      title: '特定商取引法に基づく表記',
+      subtitle: 'Legal Notice',
+      items: [
+        {
+          label: '販売業者名',
+          value: '株式会社〇〇〇〇',
+          icon: '🏢',
+          show: true,
+        },
+        {
+          label: '代表者名',
+          value: '山田 太郎',
+          icon: '👤',
+          show: true,
+        },
+        {
+          label: '所在地',
+          value: '〒123-4567 東京都渋谷区〇〇 1-2-3',
+          icon: '📍',
+          show: true,
+        },
+        {
+          label: '電話番号',
+          value: '03-1234-5678',
+          icon: '📞',
+          show: false,
+        },
+        {
+          label: 'メールアドレス',
+          value: 'info@example.com',
+          icon: '✉️',
+          show: true,
+        },
+        {
+          label: '販売価格',
+          value: '商品ページに記載',
+          icon: '💰',
+          show: true,
+        },
+        {
+          label: '支払方法',
+          value: 'クレジットカード決済',
+          icon: '💴',
+          show: true,
+        },
+        {
+          label: '返品について',
+          value: 'デジタルコンテンツのため返品不可',
+          icon: '🔄',
+          show: true,
+        },
+      ],
+      backgroundColor: '#FFFFFF',
+      textColor: '#1F2937',
+      cardBackgroundColor: '#F9FAFB',
+      borderColor: '#D1D5DB',
+    } as TokushoBlockContent,
+  },
+];
 
 // お問い合わせブロック（新規追加）
 export const CONTACT_BLOCKS: TemplateBlock[] = [

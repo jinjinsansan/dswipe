@@ -14,6 +14,7 @@ import TopCountdownBlock from './TopCountdownBlock';
 import TopInlineCTABlock from './TopInlineCTABlock';
 import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
 import ContactBlock from './ContactBlock';
+import TokushoBlock from './TokushoBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -148,6 +149,9 @@ export default function BlockRenderer({
       break;
     case 'top-contact-1':
       element = <ContactBlock content={content} />;
+      break;
+    case 'top-tokusho-1':
+      element = <TokushoBlock content={content} />;
       break;
     
     default:
