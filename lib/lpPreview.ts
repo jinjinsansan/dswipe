@@ -99,77 +99,45 @@ const extractMediaFromStep = (step: StepLike | null | undefined, title: string, 
     return createPlaceholderThumbnail(title, accent);
   }
 
-  const content = asRecord(step.content_data);
-  const media = asRecord(content?.media);
-  const visual = asRecord(content?.visual);
+  // SIMPLE APPROACH: Direct access to content_data (same as dashboard)
+  const contentData = step?.content_data;
 
-  const imageUrl = pickFirstString([
-    asString(content?.imageUrl),
-    asString(content?.image_url),
-    asString(content?.heroImage),
-    asString(content?.hero_image),
-    asString(content?.primaryImageUrl),
-    asString(content?.primary_image_url),
-    asString(content?.backgroundImageUrl),
-    asString(content?.background_image_url),
-    asString(content?.backgroundImage),
-    asString(media?.imageUrl),
-    asString(media?.image_url),
-    asString(visual?.imageUrl),
-    asString(visual?.image_url),
-    asString(step.image_url),
-    asString(step.imageUrl),
-  ]);
-
-  if (imageUrl) {
-    return { type: 'image', url: imageUrl };
+  // Check 1: content_data.backgroundVideoUrl (most common for hero blocks)
+  if (contentData?.backgroundVideoUrl && typeof contentData.backgroundVideoUrl === 'string') {
+    return { type: 'video', url: contentData.backgroundVideoUrl };
   }
 
-  const videoUrl = pickFirstString([
-    asString(content?.backgroundVideoUrl),
-    asString(content?.background_video_url),
-    asString(content?.videoUrl),
-    asString(content?.video_url),
-    asString(media?.videoUrl),
-    asString(media?.video_url),
-    asString(visual?.videoUrl),
-    asString(visual?.video_url),
-    asString(step.backgroundVideoUrl),
-    asString(step.background_video_url),
-    asString(step.videoUrl),
-    asString(step.video_url),
-  ]);
-
-  if (videoUrl) {
-    return { type: 'video', url: videoUrl };
+  // Check 2: content_data.backgroundImageUrl (for image-based heroes)
+  if (contentData?.backgroundImageUrl && typeof contentData.backgroundImageUrl === 'string') {
+    return { type: 'image', url: contentData.backgroundImageUrl };
   }
 
-  const blockType = asString(step.block_type) as BlockType | null;
+  // Check 3: step.video_url (direct DB field)
+  if (step.video_url && typeof step.video_url === 'string') {
+    return { type: 'video', url: step.video_url };
+  }
+
+  // Check 4: step.image_url (direct DB field, but skip placeholder)
+  if (step.image_url && typeof step.image_url === 'string' && step.image_url !== '/placeholder.jpg') {
+    return { type: 'image', url: step.image_url };
+  }
+
+  // Check 5: Fallback to template default media by ID
+  const blockType = step?.block_type;
   if (blockType) {
     const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
     if (template?.defaultContent) {
-      const defaultContent = asRecord(template.defaultContent);
-      const fallbackImage = pickFirstString([
-        asString(defaultContent?.backgroundImageUrl),
-        asString(defaultContent?.background_image_url),
-        asString(defaultContent?.imageUrl),
-        asString(defaultContent?.image_url),
-      ]);
-      if (fallbackImage) {
-        return { type: 'image', url: fallbackImage };
+      const defaultContent = template.defaultContent as any;
+      if (defaultContent.backgroundVideoUrl) {
+        return { type: 'video', url: defaultContent.backgroundVideoUrl };
       }
-      const fallbackVideo = pickFirstString([
-        asString(defaultContent?.backgroundVideoUrl),
-        asString(defaultContent?.background_video_url),
-        asString(defaultContent?.videoUrl),
-        asString(defaultContent?.video_url),
-      ]);
-      if (fallbackVideo) {
-        return { type: 'video', url: fallbackVideo };
+      if (defaultContent.backgroundImageUrl) {
+        return { type: 'image', url: defaultContent.backgroundImageUrl };
       }
     }
   }
 
+  // Last resort: placeholder
   return createPlaceholderThumbnail(title, accent);
 };
 
