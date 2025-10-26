@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { analyticsApi } from '@/lib/api';
@@ -32,11 +34,7 @@ export default function AnalyticsTestPage() {
   }
 
   if (!data) {
-    return (
-      <div className="min-h-screen bg-black text-white p-8">
-        読み込み中...
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (

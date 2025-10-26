@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useCallback, useEffect, useMemo, useState, type ComponentType, type SVGProps, Component, ErrorInfo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -100,11 +102,7 @@ export default function LPAnalyticsPage() {
   }, []);
 
   if (isLoading || !isInitialized) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-white text-lg">分析データを読み込み中です…</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!analytics) {

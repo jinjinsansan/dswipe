@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
@@ -397,11 +399,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   if (isLoading) {
-    return (
-      <div className="h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">読み込み中...</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (error || !lp) {

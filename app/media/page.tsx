@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -119,11 +121,7 @@ export default function MediaPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-slate-600 text-lg">読み込み中...</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (

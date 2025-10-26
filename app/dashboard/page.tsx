@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -454,11 +456,7 @@ export default function DashboardPage() {
     : '未購入';
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-slate-700 text-xl">読み込み中...</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (

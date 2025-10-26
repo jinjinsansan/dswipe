@@ -1,5 +1,7 @@
 'use client';
 
+import { PageLoader } from '@/components/LoadingSpinner';
+
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -161,11 +163,7 @@ function ProductsContent() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-slate-600 text-lg">読み込み中...</div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (
@@ -425,11 +423,7 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-slate-600 text-lg">読み込み中...</div>
-      </div>
-    }>
+    <Suspense fallback={<PageLoader />}>
       <ProductsContent />
     </Suspense>
   );
