@@ -8,6 +8,8 @@ interface ViewerBlockRendererProps {
   content: Record<string, unknown> | undefined;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
 export default function ViewerBlockRenderer({
@@ -15,6 +17,8 @@ export default function ViewerBlockRenderer({
   content,
   productId,
   onProductClick,
+  ctaIds,
+  onCtaClick,
 }: ViewerBlockRendererProps): ReactElement | null {
   if (!content) {
     return null;
@@ -28,6 +32,8 @@ export default function ViewerBlockRenderer({
       productId={productId}
       withinEditor={false}
       onProductClick={onProductClick}
+      ctaIds={ctaIds}
+      onCtaClick={onCtaClick}
     />
   );
 }

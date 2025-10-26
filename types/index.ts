@@ -135,8 +135,9 @@ export interface StepFunnelData {
 }
 
 export interface CTAClickData {
-  cta_id: string;
-  cta_type: string;
+  cta_id?: string | null;
+  step_id?: string | null;
+  cta_type?: string | null;
   click_count: number;
 }
 

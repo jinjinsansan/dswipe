@@ -9,6 +9,8 @@ interface TopHeroImageBlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80';
@@ -19,6 +21,8 @@ export default function TopHeroImageBlock({
   onEdit,
   productId,
   onProductClick,
+  ctaIds,
+  onCtaClick,
 }: TopHeroImageBlockProps) {
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '最新プロジェクトの裏側を公開';
@@ -34,6 +38,8 @@ export default function TopHeroImageBlock({
   const buttonColor = content?.buttonColor ?? accentColor;
   const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+  const primaryCtaId = ctaIds?.[0];
+  const secondaryCtaId = ctaIds?.[1];
 
   const overlayStyle: CSSProperties = {
     background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.35, accentColor)}, ${withAlpha(overlayBase, 0.85, overlayBase)})`,
@@ -173,7 +179,10 @@ export default function TopHeroImageBlock({
               onProductClick ? (
                 <button
                   type="button"
-                  onClick={() => onProductClick(productId)}
+                  onClick={() => {
+                    onCtaClick?.(primaryCtaId, 'primary');
+                    onProductClick(productId);
+                  }}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -182,6 +191,7 @@ export default function TopHeroImageBlock({
               ) : (
                 <Link
                   href={content?.buttonUrl ?? '#'}
+                  onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -193,6 +203,7 @@ export default function TopHeroImageBlock({
             {secondaryText ? (
               <Link
                 href={content?.secondaryButtonUrl ?? '#'}
+                onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
                 className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
                 style={secondaryButtonStyle}
               >

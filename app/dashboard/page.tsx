@@ -5,6 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi, announcementApi } from '@/lib/api';
+import { TEMPLATE_LIBRARY } from '@/lib/templates';
+import { BlockType } from '@/types/templates';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
   getDashboardNavLinks,
@@ -107,7 +109,148 @@ export default function DashboardPage() {
         : [];
 
       type HeroMedia = { type: 'image' | 'video'; url: string };
-      const heroMediaMap = new Map<string, HeroMedia | null>();
+      const heroMediaMap = new Map<string, HeroMedia>();
+
+      const normalizeContent = (raw: unknown): Record<string, any> => {
+        if (!raw) return {};
+        let parsed = raw;
+        if (typeof parsed === 'string') {
+          try {
+            parsed = JSON.parse(parsed);
+          } catch (error) {
+            console.warn('Failed to parse content_data JSON for hero preview:', error);
+            return {};
+          }
+        }
+        if (parsed && typeof parsed === 'object' && 'content' in (parsed as Record<string, any>)) {
+          const inner = (parsed as Record<string, any>).content;
+          if (inner && typeof inner === 'object') {
+            return inner as Record<string, any>;
+          }
+        }
+        return (parsed && typeof parsed === 'object') ? (parsed as Record<string, any>) : {};
+      };
+
+      const pickFirstString = (candidates: unknown[]): string | null => {
+        for (const candidate of candidates) {
+          if (typeof candidate === 'string' && candidate.trim().length > 0) {
+            return candidate;
+          }
+        }
+        return null;
+      };
+
+      const extractMediaFromContent = (content: Record<string, any>, step?: any): HeroMedia | null => {
+        const imageUrl = pickFirstString([
+          content?.imageUrl,
+          content?.image_url,
+          content?.heroImage,
+          content?.hero_image,
+          content?.primaryImageUrl,
+          content?.primary_image_url,
+          content?.backgroundImageUrl,
+          content?.background_image_url,
+          content?.backgroundImage,
+          content?.media?.imageUrl,
+          content?.media?.image_url,
+          content?.visual?.imageUrl,
+          content?.visual?.image_url,
+          step?.image_url,
+          step?.imageUrl,
+        ]);
+
+        if (imageUrl) {
+          return { type: 'image', url: imageUrl };
+        }
+
+        const videoUrl = pickFirstString([
+          content?.backgroundVideoUrl,
+          content?.background_video_url,
+          content?.videoUrl,
+          content?.video_url,
+          content?.media?.videoUrl,
+          content?.media?.video_url,
+          content?.visual?.videoUrl,
+          content?.visual?.video_url,
+          step?.backgroundVideoUrl,
+          step?.background_video_url,
+          step?.videoUrl,
+          step?.video_url,
+        ]);
+
+        if (videoUrl) {
+          return { type: 'video', url: videoUrl };
+        }
+
+        return null;
+      };
+
+      const getTemplateMediaFallback = (blockType: BlockType): HeroMedia | null => {
+        const template = TEMPLATE_LIBRARY.find((item) => item.templateId === blockType);
+        if (!template) return null;
+
+        const templateContent = normalizeContent(template.defaultContent);
+        return extractMediaFromContent(templateContent);
+      };
+
+      const createPlaceholderThumbnail = (title: string, accentHex?: string | null): HeroMedia => {
+        const safeTitle = (title || '').trim() || 'Launch Page';
+        const initials = safeTitle.replace(/\s+/g, '').slice(0, 2).toUpperCase() || 'LP';
+        const sanitizedAccent = (accentHex || '').trim();
+        const accent = /^#([0-9A-Fa-f]{3}){1,2}$/.test(sanitizedAccent) ? sanitizedAccent : '#2563EB';
+        const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360" viewBox="0 0 600 360">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${accent}" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="${accent}" stop-opacity="0.65" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="360" fill="url(#grad)" rx="32" ry="32" />
+  <text x="48" y="118" font-family="'Inter', 'Noto Sans JP', sans-serif" font-weight="600" font-size="40" fill="rgba(248, 250, 252, 0.92)">
+    ${safeTitle.replace(/[<>]/g, '')}
+  </text>
+  <text x="48" y="204" font-family="'Inter', 'Noto Sans JP', sans-serif" font-weight="300" font-size="24" fill="rgba(248, 250, 252, 0.78)">
+    Custom LP Preview
+  </text>
+  <circle cx="520" cy="86" r="52" fill="rgba(248, 250, 252, 0.2)" />
+  <text x="520" y="100" text-anchor="middle" font-family="'Inter', 'Noto Sans JP', sans-serif" font-weight="700" font-size="34" fill="#0F172A">
+    ${initials}
+  </text>
+</svg>`;
+
+        return {
+          type: 'image',
+          url: `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`,
+        };
+      };
+
+      const extractMediaFromStep = (step: any, title: string, accent?: string | null): HeroMedia => {
+        if (!step) {
+          return createPlaceholderThumbnail(title, accent);
+        }
+
+        const content = normalizeContent(step?.content_data);
+        const media = extractMediaFromContent(content, step);
+        if (media) {
+          return media;
+        }
+
+        const blockType = typeof step?.block_type === 'string' ? (step.block_type as BlockType) : undefined;
+        if (blockType) {
+          const fallback = getTemplateMediaFallback(blockType);
+          if (fallback) {
+            return fallback;
+          }
+        }
+
+        const stepImage = typeof step?.image_url === 'string' && step.image_url.trim().length > 0 ? step.image_url : undefined;
+        if (stepImage) {
+          return { type: 'image', url: stepImage };
+        }
+
+        return createPlaceholderThumbnail(title, accent);
+      };
 
       await Promise.all(
         lpsData.map(async (lpItem) => {
@@ -119,88 +262,11 @@ export default function DashboardPage() {
               return typeof type === 'string' && type.includes('hero');
             }) || steps.find((step: any) => step?.block_type === 'image-aurora-1') || steps[0];
 
-            const extractMediaFromStep = (step: any): HeroMedia | null => {
-              if (!step) return null;
-
-              const normalizeContent = (raw: unknown): Record<string, any> => {
-                if (!raw) return {};
-                let parsed = raw;
-                if (typeof parsed === 'string') {
-                  try {
-                    parsed = JSON.parse(parsed);
-                  } catch (error) {
-                    console.warn('Failed to parse content_data JSON for hero preview:', error);
-                    return {};
-                  }
-                }
-                if (parsed && typeof parsed === 'object' && 'content' in (parsed as Record<string, any>)) {
-                  const inner = (parsed as Record<string, any>).content;
-                  if (inner && typeof inner === 'object') {
-                    return inner as Record<string, any>;
-                  }
-                }
-                return (parsed && typeof parsed === 'object') ? (parsed as Record<string, any>) : {};
-              };
-
-              const content = normalizeContent(step?.content_data);
-
-              const pickFirstString = (candidates: unknown[]): string | null => {
-                for (const candidate of candidates) {
-                  if (typeof candidate === 'string' && candidate.trim().length > 0) {
-                    return candidate;
-                  }
-                }
-                return null;
-              };
-
-              const imageUrl = pickFirstString([
-                content?.imageUrl,
-                content?.image_url,
-                content?.heroImage,
-                content?.hero_image,
-                content?.primaryImageUrl,
-                content?.primary_image_url,
-                content?.backgroundImageUrl,
-                content?.background_image_url,
-                content?.backgroundImage,
-                content?.media?.imageUrl,
-                content?.media?.image_url,
-                content?.visual?.imageUrl,
-                content?.visual?.image_url,
-                step?.image_url,
-                step?.imageUrl,
-              ]);
-
-              if (imageUrl) {
-                return { type: 'image', url: imageUrl };
-              }
-
-              const videoUrl = pickFirstString([
-                content?.backgroundVideoUrl,
-                content?.background_video_url,
-                content?.videoUrl,
-                content?.video_url,
-                content?.media?.videoUrl,
-                content?.media?.video_url,
-                content?.visual?.videoUrl,
-                content?.visual?.video_url,
-                step?.backgroundVideoUrl,
-                step?.background_video_url,
-                step?.videoUrl,
-                step?.video_url,
-              ]);
-
-              if (videoUrl) {
-                return { type: 'video', url: videoUrl };
-              }
-
-              return null;
-            };
-
-            heroMediaMap.set(lpItem.id, extractMediaFromStep(heroStep));
+            const media = extractMediaFromStep(heroStep, lpItem.title, lpItem.custom_theme_hex);
+            heroMediaMap.set(lpItem.id, media);
           } catch (detailError) {
             console.error('Failed to fetch LP detail for hero image:', detailError);
-            heroMediaMap.set(lpItem.id, null);
+            heroMediaMap.set(lpItem.id, createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex));
           }
         })
       );
@@ -212,7 +278,7 @@ export default function DashboardPage() {
         : [];
       
       const enrichedLps = lpsData.map((lpItem: any) => {
-        const heroMedia = heroMediaMap.get(lpItem.id);
+        const heroMedia = heroMediaMap.get(lpItem.id) ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
         return {
           ...lpItem,
           heroMedia,

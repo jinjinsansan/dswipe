@@ -5,7 +5,7 @@ const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_
 
 async function fetchLPMetadata(slug) {
   try {
-    const response = await fetch(`${API_BASE_URL}/public/${slug}`, {
+    const response = await fetch(`${API_BASE_URL}/public/${slug}?track_view=false`, {
       next: { revalidate: 60 },
       headers: {
         Accept: 'application/json',

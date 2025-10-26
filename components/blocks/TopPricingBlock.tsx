@@ -9,9 +9,11 @@ interface TopPricingBlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
-export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick }: TopPricingBlockProps) {
+export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopPricingBlockProps) {
   const title = content?.title ?? 'プランと料金';
   const subtitle = content?.subtitle ?? 'ローンチの規模に合わせて選べる柔軟なプランをご用意しています。';
   const plans = Array.isArray(content?.plans) && content.plans.length > 0
@@ -112,6 +114,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   border: `1px solid ${withAlpha(buttonColor, 0.35, buttonColor)}`,
                 };
 
+            const mappedCtaId = ctaIds?.[index];
+
             return (
               <div key={index} className="flex h-full flex-col gap-5 rounded-2xl border p-6 transition" style={cardStyle}>
                 <div className="flex items-center justify-between">
@@ -203,7 +207,10 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                       ...buttonStyle,
                       outlineColor: withAlpha(accentColor, 0.45, accentColor),
                     }}
-                    onClick={() => onProductClick(productId)}
+                    onClick={() => {
+                      onCtaClick?.(mappedCtaId, `plan-${index}`);
+                      onProductClick(productId);
+                    }}
                   >
                     <span
                       contentEditable={isEditing}
@@ -220,6 +227,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                 ) : plan.buttonUrl ? (
                   <Link
                     href={plan.buttonUrl}
+                    onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
                     className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center"
                     style={{
                       ...buttonStyle,
@@ -249,6 +257,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                       ...buttonStyle,
                       outlineColor: withAlpha(accentColor, 0.45, accentColor),
                     }}
+                    onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
                   >
                     <span
                       contentEditable={isEditing}

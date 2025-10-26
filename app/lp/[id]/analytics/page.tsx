@@ -83,6 +83,15 @@ export default function LPAnalyticsPage() {
   const totalCtaClicks = analytics.total_cta_clicks.toLocaleString();
   const conversionRate = `${analytics.cta_conversion_rate.toFixed(1)}%`;
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
+  const stepOrderMap = useMemo(() => {
+    const map = new Map<string, number>();
+    analytics.step_funnel.forEach((step) => {
+      if (step.step_id) {
+        map.set(step.step_id, step.step_order);
+      }
+    });
+    return map;
+  }, [analytics.step_funnel]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
@@ -309,26 +318,38 @@ export default function LPAnalyticsPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {analytics.cta_clicks.map((cta, index) => {
-                    const max = Math.max(...analytics.cta_clicks.map((c) => c.click_count));
-                    const width = max > 0 ? Math.max((cta.click_count / max) * 100, 4) : 0;
-                    return (
-                      <div key={cta.cta_id} className="space-y-2">
-                        <div className="flex items-center justify-between text-xs text-slate-400">
-                          <span className="text-slate-300">
-                            CTA #{index + 1}（{cta.cta_type}）
-                          </span>
-                          <span className="text-emerald-300 font-medium">{cta.click_count} クリック</span>
+                  {(() => {
+                    const maxClicks = Math.max(...analytics.cta_clicks.map((c) => c.click_count));
+                    return analytics.cta_clicks.map((cta, index) => {
+                      const key = cta.cta_id ?? `${cta.step_id ?? 'unknown'}-${index}`;
+                      const width = maxClicks > 0 ? Math.max((cta.click_count / maxClicks) * 100, 4) : 0;
+                      const stepOrder = cta.step_id ? stepOrderMap.get(cta.step_id) : undefined;
+                      const baseLabel = cta.cta_id
+                        ? `CTA #${index + 1}`
+                        : stepOrder !== undefined
+                        ? `ステップ ${stepOrder + 1}`
+                        : `CTA #${index + 1}`;
+                      const typeLabel = cta.cta_type ? `（${cta.cta_type}）` : '';
+
+                      return (
+                        <div key={key} className="space-y-2">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span className="text-slate-300">
+                              {baseLabel}
+                              {typeLabel}
+                            </span>
+                            <span className="text-emerald-300 font-medium">{cta.click_count} クリック</span>
+                          </div>
+                          <div className="relative h-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
+                            <div
+                              className="absolute inset-y-0 left-0 rounded-r-xl bg-gradient-to-r from-emerald-500/80 to-emerald-300/80"
+                              style={{ width: `${width}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="relative h-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
-                          <div
-                            className="absolute inset-y-0 left-0 rounded-r-xl bg-gradient-to-r from-emerald-500/80 to-emerald-300/80"
-                            style={{ width: `${width}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
               )}
             </section>

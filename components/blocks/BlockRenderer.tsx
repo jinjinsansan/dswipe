@@ -23,6 +23,8 @@ interface BlockRendererProps {
   productId?: string;
   withinEditor?: boolean;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
 export default function BlockRenderer({
@@ -33,6 +35,8 @@ export default function BlockRenderer({
   productId,
   withinEditor, // eslint-disable-line @typescript-eslint/no-unused-vars
   onProductClick,
+  ctaIds,
+  onCtaClick,
 }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   let element: React.ReactElement;
@@ -46,6 +50,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;
@@ -57,6 +63,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;
@@ -72,6 +80,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;
@@ -89,6 +99,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;
@@ -115,6 +127,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;
@@ -126,6 +140,8 @@ export default function BlockRenderer({
           onEdit={onEdit}
           productId={productId}
           onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
         />
       );
       break;

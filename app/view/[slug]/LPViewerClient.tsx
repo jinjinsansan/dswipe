@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef, FormEvent } from 'react';
+import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
-import { LPDetail, RequiredActionsStatus } from '@/types';
+import { LPDetail, RequiredActionsStatus, CTA } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 
@@ -27,6 +27,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [sessionId] = useState(`session-${Date.now()}-${Math.random()}`);
+  const viewTrackedRef = useRef(false);
+  const viewedStepsRef = useRef<Set<string>>(new Set());
   const [requiredActions, setRequiredActions] = useState<RequiredActionsStatus | null>(null);
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [email, setEmail] = useState('');
@@ -37,6 +39,21 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const swiperRef = useRef<SwiperType | null>(null);
+
+  const ctasByStep = useMemo(() => {
+    if (!lp?.ctas || !Array.isArray(lp.ctas)) {
+      return {} as Record<string, CTA[]>;
+    }
+    const map: Record<string, CTA[]> = {};
+    for (const cta of lp.ctas) {
+      if (!cta?.step_id) continue;
+      if (!map[cta.step_id]) {
+        map[cta.step_id] = [];
+      }
+      map[cta.step_id].push(cta);
+    }
+    return map;
+  }, [lp?.ctas]);
 
   // ハプティックフィードバック（振動）
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -59,32 +76,51 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   useEffect(() => {
+    viewTrackedRef.current = false;
+    viewedStepsRef.current = new Set();
+
     fetchLP();
     checkRequiredActions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchPointBalance();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug, isAuthenticated]);
+  }, [isAuthenticated, slug]);
 
   const fetchLP = async () => {
     try {
-      const response = await publicApi.getLP(slug);
+      const response = await publicApi.getLP(slug, {
+        trackView: !viewTrackedRef.current,
+        sessionId,
+      });
       const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
-      
+
       // 第1層フィルタ：有効なコンテンツを持つステップのみ
       const validSteps = sortedSteps.filter((step) => {
         const hasValidBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
         const hasValidImageUrl = typeof step.image_url === 'string' && step.image_url.trim().length > 0;
         return hasValidBlockType || hasValidImageUrl;
       });
+
+      if (!viewTrackedRef.current) {
+        viewTrackedRef.current = true;
+      }
+
       const newLp = {
         ...response.data,
         steps: validSteps,
       };
+
+      if (validSteps[0]) {
+        recordStepViewOnce(validSteps[0].id);
+      }
+
       setLp(newLp);
-      
 
       if (response.data.id) {
         fetchProducts(response.data.id);
@@ -259,6 +295,35 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
   };
 
+  const recordStepViewOnce = (stepId: string | undefined) => {
+    if (!stepId) return;
+    if (viewedStepsRef.current.has(stepId)) return;
+    viewedStepsRef.current.add(stepId);
+    enqueueAnalyticsTask(
+      async () => {
+        await publicApi.recordStepView(slug, {
+          step_id: stepId,
+          session_id: sessionId,
+        });
+      },
+      'Failed to record step view:'
+    );
+  };
+
+  const recordCtaClick = (stepId: string | undefined, ctaId?: string) => {
+    if (!stepId) return;
+    enqueueAnalyticsTask(
+      async () => {
+        await publicApi.recordCtaClick(slug, {
+          step_id: stepId,
+          cta_id: ctaId,
+          session_id: sessionId,
+        });
+      },
+      'Failed to record CTA click:'
+    );
+  };
+
   const handleSlideChange = (swiper: SwiperType) => {
     if (!lp) return;
 
@@ -268,18 +333,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
     const currentStep = lp.steps[swiper.activeIndex];
     if (currentStep) {
-      enqueueAnalyticsTask(
-        async () => {
-          await publicApi.recordStepView(slug, {
-            step_id: currentStep.id,
-            session_id: sessionId,
-          });
-        },
-        'Failed to record step view:'
-      );
+      recordStepViewOnce(currentStep.id);
     }
 
-    if (swiper.previousIndex !== swiper.activeIndex && swiper.previousIndex < lp.steps.length) {
+    if (
+      swiper.previousIndex !== swiper.activeIndex &&
+      swiper.previousIndex >= 0 &&
+      swiper.previousIndex < lp.steps.length
+    ) {
       const previousStep = lp.steps[swiper.previousIndex];
       if (previousStep) {
         enqueueAnalyticsTask(
@@ -469,6 +530,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                           content={step.content_data}
                           productId={lp.product_id}
                           onProductClick={handleProductButtonClick}
+                          ctaIds={(ctasByStep[step.id] ?? []).map((cta) => cta.id)}
+                          onCtaClick={(ctaId) => recordCtaClick(step.id, ctaId)}
                         />
                       ) : step.image_url ? (
                         <div

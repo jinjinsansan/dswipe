@@ -8,6 +8,8 @@ interface TopMediaSpotlightBlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
 export default function TopMediaSpotlightBlock({
@@ -16,6 +18,8 @@ export default function TopMediaSpotlightBlock({
   onEdit,
   productId,
   onProductClick,
+  ctaIds,
+  onCtaClick,
 }: TopMediaSpotlightBlockProps) {
   const tagline = content?.tagline ?? '制作事例ハイライト';
   const title = content?.title ?? '制作の裏側に迫る、最新プロジェクトレポート';
@@ -24,6 +28,7 @@ export default function TopMediaSpotlightBlock({
   const imageUrl = content?.imageUrl;
   const imageAlt = content?.imageAlt ?? 'プロジェクトイメージ';
   const buttonText = content?.buttonText ?? '';
+  const primaryCtaId = ctaIds?.[0];
 
   const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
   const textColor = content?.textColor ?? '#0F172A';
@@ -53,7 +58,10 @@ export default function TopMediaSpotlightBlock({
       return (
         <button
           type="button"
-          onClick={() => onProductClick(productId)}
+          onClick={() => {
+            onCtaClick?.(primaryCtaId, 'primary');
+            onProductClick(productId);
+          }}
           className={commonClasses}
           style={{
             backgroundColor: buttonColor,
@@ -69,6 +77,7 @@ export default function TopMediaSpotlightBlock({
     return (
       <Link
         href={content?.buttonUrl ?? '#'}
+        onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
         className={commonClasses}
         style={{
           backgroundColor: buttonColor,

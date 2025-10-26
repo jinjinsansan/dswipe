@@ -9,6 +9,8 @@ interface TopHeroBlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
 const FALLBACK_VIDEO = '/videos/pixta.mp4';
@@ -19,6 +21,8 @@ export default function TopHeroBlock({
   onEdit,
   productId,
   onProductClick,
+  ctaIds,
+  onCtaClick,
 }: TopHeroBlockProps) {
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '５分でLP公開';
@@ -32,6 +36,8 @@ export default function TopHeroBlock({
   const buttonColor = content?.buttonColor ?? '#38BDF8';
   const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+  const primaryCtaId = ctaIds?.[0];
+  const secondaryCtaId = ctaIds?.[1];
 
   const overlayStyle: CSSProperties = {
     background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.45, accentColor)}, ${withAlpha(overlayBase, 0.88, overlayBase)})`,
@@ -167,7 +173,10 @@ export default function TopHeroBlock({
               onProductClick ? (
                 <button
                   type="button"
-                  onClick={() => onProductClick(productId)}
+              onClick={() => {
+                onCtaClick?.(primaryCtaId, 'primary');
+                onProductClick(productId);
+              }}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -176,6 +185,7 @@ export default function TopHeroBlock({
               ) : (
                 <Link
                   href={content?.buttonUrl ?? '#'}
+              onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -187,6 +197,7 @@ export default function TopHeroBlock({
             {secondaryText ? (
               <Link
                 href={content?.secondaryButtonUrl ?? '#'}
+                onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
                 className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
                 style={secondaryButtonStyle}
               >

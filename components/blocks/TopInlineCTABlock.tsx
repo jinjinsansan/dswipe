@@ -9,9 +9,11 @@ interface TopInlineCTABlockProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
-export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick }: TopInlineCTABlockProps) {
+export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopInlineCTABlockProps) {
   const eyebrow = content?.eyebrow ?? '限定プログラム';
   const title = content?.title ?? '今すぐAIローンチを体験する';
   const subtitle = content?.subtitle ?? 'アカウント作成から公開までを最短5分で完了。初月の成果創出まで伴走します。';
@@ -20,6 +22,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
+  const primaryCtaId = ctaIds?.[0];
 
   const primaryButtonStyle: CSSProperties = {
     backgroundColor: buttonColor,
@@ -93,7 +96,10 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           {onProductClick ? (
             <button
               type="button"
-              onClick={() => onProductClick(productId)}
+              onClick={() => {
+                onCtaClick?.(primaryCtaId, 'primary');
+                onProductClick(productId);
+              }}
               className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >
@@ -102,6 +108,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           ) : (
             <Link
               href={buttonUrl}
+              onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
               className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >

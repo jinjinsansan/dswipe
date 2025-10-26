@@ -9,9 +9,11 @@ interface TopCTASectionProps {
   onEdit?: (field: string, value: any) => void;
   productId?: string;
   onProductClick?: (productId?: string) => void;
+  ctaIds?: string[];
+  onCtaClick?: (ctaId?: string, variant?: string) => void;
 }
 
-export default function TopCTASection({ content, isEditing, onEdit, productId, onProductClick }: TopCTASectionProps) {
+export default function TopCTASection({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopCTASectionProps) {
   const textColor = content?.textColor ?? '#ECFEFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? accentColor;
@@ -22,6 +24,8 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const subtitle = content?.subtitle ?? '情報には鮮度がある。５分でLPを公開して、今すぐ販売を開始。';
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? '';
+  const primaryCtaId = ctaIds?.[0];
+  const secondaryCtaId = ctaIds?.[1];
 
   const backgroundStyle: CSSProperties = {
     backgroundColor: content?.backgroundColor ?? '#07182F',
@@ -45,7 +49,10 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
       return (
         <button
           type="button"
-          onClick={() => onProductClick(productId)}
+          onClick={() => {
+            onCtaClick?.(primaryCtaId, 'primary');
+            onProductClick(productId);
+          }}
           className={commonClasses}
           style={{
             backgroundColor: buttonColor,
@@ -61,6 +68,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
     return (
       <Link
         href={content?.buttonUrl ?? '#'}
+        onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
         className={commonClasses}
         style={{
           backgroundColor: buttonColor,
@@ -82,6 +90,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
     return (
       <Link
         href={content?.secondaryButtonUrl ?? '#'}
+        onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
         className={classes}
         style={{
           color: secondaryTextColor,

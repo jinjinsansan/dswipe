@@ -934,14 +934,14 @@ export default function EditLPNewPage() {
         {/* Left: Block List */}
         {isLeftSidebarVisible && (
           <div 
-            className={`flex-col min-h-0 bg-slate-100/60 border-slate-200 overflow-hidden flex ${
+            className={`flex-col min-h-0 bg-transparent overflow-hidden flex ${
               mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
-            } flex-shrink-0 w-full lg:border lg:border-slate-200/80 lg:rounded-2xl lg:bg-white/70 lg:shadow-sm border-b lg:border-b-0 relative`}
+            } flex-shrink-0 w-full lg:rounded-2xl lg:bg-white/70 lg:shadow-sm relative`}
             style={{ 
               width: window.innerWidth >= 1024 ? `${leftSidebarWidth}px` : '100%' 
             }}
           >
-          <div className="py-3 lg:py-3 border-b border-slate-200">
+          <div className="py-3 lg:py-3">
             <button
               onClick={() => setShowTemplateSelector(true)}
               className="w-full px-3 py-2.5 lg:py-2 bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors min-h-[44px] lg:min-h-auto"

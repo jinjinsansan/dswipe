@@ -250,8 +250,16 @@ export const aiApi = {
 
 // 公開API（認証不要）
 export const publicApi = {
-  getLP: (slug: string) =>
-    axios.get(`${API_URL}/public/${slug}`),
+  getLP: (
+    slug: string,
+    options?: { trackView?: boolean; sessionId?: string }
+  ) =>
+    axios.get(`${API_URL}/public/${slug}`, {
+      params: {
+        track_view: options?.trackView ?? undefined,
+        session_id: options?.sessionId ?? undefined,
+      },
+    }),
   
   recordStepView: (slug: string, data: { step_id: string; session_id?: string }) =>
     axios.post(`${API_URL}/public/${slug}/step-view`, data),
@@ -259,7 +267,7 @@ export const publicApi = {
   recordStepExit: (slug: string, data: { step_id: string; session_id?: string }) =>
     axios.post(`${API_URL}/public/${slug}/step-exit`, data),
   
-  recordCtaClick: (slug: string, data: { cta_id: string; session_id?: string }) =>
+  recordCtaClick: (slug: string, data: { cta_id?: string; step_id?: string; session_id?: string }) =>
     axios.post(`${API_URL}/public/${slug}/cta-click`, data),
   
   submitEmail: (slug: string, data: { email: string; session_id?: string }) =>
