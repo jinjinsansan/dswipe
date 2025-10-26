@@ -309,10 +309,22 @@ export default function LPAnalyticsPage() {
             )}
 
             <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              <MetricCard label="総閲覧数" value={totalViews} icon={EyeIcon} />
-              <MetricCard label="総セッション数" value={totalSessions} icon={UsersIcon} />
-              <MetricCard label="CTAクリック" value={totalCtaClicks} icon={CursorArrowRaysIcon} />
-              <MetricCard label="CTA転換率" value={conversionRate} icon={BoltIcon} accent="text-emerald-300" />
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5">
+                <p className="text-2xl font-semibold text-white">{totalViews}</p>
+                <p className="mt-1 text-xs text-slate-400">総閲覧数</p>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5">
+                <p className="text-2xl font-semibold text-white">{totalSessions}</p>
+                <p className="mt-1 text-xs text-slate-400">総セッション数</p>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5">
+                <p className="text-2xl font-semibold text-white">{totalCtaClicks}</p>
+                <p className="mt-1 text-xs text-slate-400">CTAクリック</p>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5">
+                <p className="text-2xl font-semibold text-emerald-300">{conversionRate}</p>
+                <p className="mt-1 text-xs text-slate-400">CTA転換率</p>
+              </div>
             </section>
 
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6">
