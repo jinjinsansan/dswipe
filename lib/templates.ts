@@ -79,8 +79,6 @@ export const COLOR_THEMES: Record<ColorThemeKey, ThemeDefinition> = {
   },
 };
 
-import type { ContactBlockContent } from '@/types/templates';
-
 export const TEMPLATE_LIBRARY: TemplateBlock[] = [
   {
     id: 'top-hero-landing',
