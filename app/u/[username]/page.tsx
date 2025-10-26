@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { lpApi } from '@/lib/api';
 import { enrichLpsWithHeroMedia, resolveSellerUsername } from '@/lib/lpPreview';
 import type { HeroMedia } from '@/lib/lpPreview';
-import { DocumentIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -92,15 +92,15 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-slate-100">
       {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800">
+      <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <Link href="/dashboard" className="text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold">
               ← ダッシュボードに戻る
             </Link>
-            <Link href="/products" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
+            <Link href="/products" className="text-blue-600 hover:text-blue-700 transition-colors text-sm font-semibold">
               全商品を見る →
             </Link>
           </div>
@@ -108,11 +108,11 @@ export default function UserProfilePage() {
       </header>
 
       {/* Profile Header */}
-      <div className="bg-gradient-to-b from-gray-900 to-gray-950 border-b border-gray-800">
+      <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
               <span className="text-white font-bold text-3xl sm:text-4xl">
                 {username.charAt(0).toUpperCase()}
               </span>
@@ -120,15 +120,15 @@ export default function UserProfilePage() {
 
             {/* User Info */}
             <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{username}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">{username}</h1>
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 text-sm sm:text-base">
-                <div className="text-gray-300">
-                  <span className="font-semibold text-white">{stats.totalPublished}</span>
-                  <span className="text-gray-400 ml-1">公開LP</span>
+                <div className="text-slate-600">
+                  <span className="font-semibold text-slate-900">{stats.totalPublished}</span>
+                  <span className="text-slate-500 ml-1">公開LP</span>
                 </div>
-                <div className="text-gray-300">
-                  <span className="font-semibold text-green-400">{stats.totalViews.toLocaleString()}</span>
-                  <span className="text-gray-400 ml-1">総閲覧</span>
+                <div className="text-slate-600">
+                  <span className="font-semibold text-green-600">{stats.totalViews.toLocaleString()}</span>
+                  <span className="text-slate-500 ml-1">総閲覧</span>
                 </div>
               </div>
             </div>
@@ -138,12 +138,12 @@ export default function UserProfilePage() {
 
       {/* LP Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">公開中のLP</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">公開中のLP</h2>
 
         {landingPages.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg mb-4">まだ公開LPがありません</p>
-            <p className="text-gray-500 text-sm">ユーザー名: {username}</p>
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <p className="text-slate-600 text-lg mb-4">まだ公開LPがありません</p>
+            <p className="text-slate-500 text-sm">ユーザー名: {username}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -155,9 +155,9 @@ export default function UserProfilePage() {
                 <Link
                   key={lp.id}
                   href={`/view/${lp.slug}`}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 hover:border-gray-600 transition-all overflow-hidden group"
+                  className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group shadow-sm"
                 >
-                  <div className="aspect-video bg-gray-900 overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
                     {heroMedia?.type === 'image' ? (
                       <img
                         src={heroMedia.url}
@@ -174,27 +174,28 @@ export default function UserProfilePage() {
                         playsInline
                       />
                     ) : (
-                      <div className="flex items-center justify-center h-full text-gray-500">
+                      <div className="flex items-center justify-center h-full text-slate-400">
                         <DocumentIcon className="h-10 w-10" aria-hidden="true" />
                       </div>
                     )}
                   </div>
 
                   <div className="p-4">
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                    <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
                       {lp.title}
                     </h3>
                     {summary && (
-                      <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                      <p className="text-slate-600 text-sm mb-3 line-clamp-2">
                         {summary}
                       </p>
                     )}
 
                     <div className="flex items-center justify-between mb-3 text-sm">
-                      <span className="text-blue-400 font-semibold">
-                        閲覧 {(lp.total_views || 0).toLocaleString()}
+                      <span className="text-slate-600 font-semibold flex items-center gap-1">
+                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                        {(lp.total_views || 0).toLocaleString()} 閲覧
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-slate-500">
                         {lp.created_at ? new Date(lp.created_at).toLocaleDateString('ja-JP') : ''}
                       </span>
                     </div>
