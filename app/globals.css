@@ -566,3 +566,29 @@ body {
 .animate-progress-slide {
   animation: progress-slide 1.5s ease-in-out infinite;
 }
+
+/* iOS Safari対策 */
+@supports (-webkit-touch-callout: none) {
+  /* iPhone/iPad用の最適化 */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* タッチ操作の最適化 */
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+  }
+  
+  /* スクロールのスムーズ化 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* フォントサイズの自動調整を防止 */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
