@@ -15,7 +15,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { LPAnalytics } from '@/types';
+import { LPAnalytics, StepFunnelData, CTAClickData } from '@/types';
 import DSwipeLogo from '@/components/DSwipeLogo';
 
 export default function LPAnalyticsPage() {
@@ -84,8 +84,10 @@ export default function LPAnalyticsPage() {
   const conversionRateValue = typeof analytics.cta_conversion_rate === 'number' ? analytics.cta_conversion_rate : 0;
   const conversionRate = `${conversionRateValue.toFixed(1)}%`;
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
-  const stepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
-  const ctaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
+  const rawStepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
+  const rawCtaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
+  const stepFunnel = rawStepFunnel.filter((step): step is StepFunnelData => step && typeof step === 'object' && 'step_order' in step);
+  const ctaClicks = rawCtaClicks.filter((cta): cta is CTAClickData => cta && typeof cta === 'object');
 
   const stepOrderMap = useMemo(() => {
     const map = new Map<string, number>();
