@@ -66,10 +66,10 @@ export default function GoogleSignInButton({
 
   if (!isConfigured) {
     return (
-      <div className="space-y-4 text-center">
-        <h2 className="text-2xl font-semibold text-slate-900">Google認証を設定してください</h2>
-        <p className="text-sm text-slate-500">
-          管理者は <code className="font-mono text-xs">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> を設定の上、ページを再読み込みしてください。
+      <div className="space-y-4 text-center p-6 bg-red-50 border-2 border-red-200 rounded-xl">
+        <h2 className="text-xl font-bold text-red-900">Google認証を設定してください</h2>
+        <p className="text-sm text-red-700">
+          管理者は <code className="font-mono text-xs bg-red-100 px-2 py-1 rounded">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> を設定の上、ページを再読み込みしてください。
         </p>
       </div>
     );
@@ -77,21 +77,24 @@ export default function GoogleSignInButton({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-semibold text-slate-900">{title}</h2>
-        <p className="text-sm text-slate-500">{description}</p>
-      </div>
-
       <div className={`flex justify-center ${isLoading ? 'pointer-events-none opacity-70' : ''}`}>
         <GoogleLogin onSuccess={handleSuccess} onError={handleError} shape="pill" theme="filled_blue" size="large" text="continue_with" width="280" />
       </div>
 
       {isLoading && (
-        <p className="text-center text-sm text-slate-500">Googleアカウントを検証中です…</p>
+        <div className="flex items-center justify-center gap-2 text-slate-700">
+          <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-sm font-medium">Googleアカウントを検証中です…</span>
+        </div>
       )}
 
       {error && (
-        <p className="text-center text-sm text-red-500">{error}</p>
+        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+          <p className="text-center text-sm text-red-700 font-medium">{error}</p>
+        </div>
       )}
     </div>
   );

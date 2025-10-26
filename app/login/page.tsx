@@ -15,7 +15,7 @@ export default function LoginPage() {
       helper={
         <span>
           アカウントをお持ちでない方は{' '}
-          <Link href="/register" className="font-semibold text-white hover:text-emerald-200">
+          <Link href="/register" className="font-bold text-blue-600 hover:text-cyan-500 underline">
             新規登録
           </Link>
         </span>

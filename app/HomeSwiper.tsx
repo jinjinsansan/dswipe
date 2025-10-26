@@ -258,7 +258,7 @@ export default function HomeSwiper() {
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-cyan-400 mb-1 sm:mb-2 font-semibold">Pain Points</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
                     こんな課題、
                   </span>
@@ -295,7 +295,7 @@ export default function HomeSwiper() {
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-purple-400 mb-1 sm:mb-2 font-semibold">Solution</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
                     全ての課題を
                   </span>
@@ -528,7 +528,7 @@ export default function HomeSwiper() {
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-cyan-400 mb-1 sm:mb-2 font-semibold">Testimonials</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 sm:mb-3">
                   お客様の声
                 </h2>
                 <p className="text-sm sm:text-base text-white font-bold px-4 py-2 bg-slate-900/50 backdrop-blur-sm rounded-lg inline-block">
@@ -655,7 +655,7 @@ export default function HomeSwiper() {
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-blue-400 mb-1 sm:mb-2 font-semibold">Features</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 sm:mb-3">
                   充実の機能で
                   <br className="sm:hidden" />
                   即座に販売開始
@@ -665,7 +665,7 @@ export default function HomeSwiper() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 {[
                   { Icon: SparklesIcon, gradient: 'from-purple-500 to-pink-500', title: 'AIアシスタント', description: 'ヒアリングから自動でLP構成を生成。コピーライティングも提案します。' },
                   { Icon: BoltIcon, gradient: 'from-yellow-500 to-orange-500', title: '５分で公開', description: 'テンプレート選択から公開まで最短５分。スピードが競争力になります。' },
@@ -729,17 +729,16 @@ export default function HomeSwiper() {
                 </div>
 
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight drop-shadow-2xl">
-                  <span className="text-white">このページも</span>
-                  <br />
+                  <span className="text-white">このページも<br className="sm:hidden" /></span>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300">
                     LPエディタで作成
                   </span>
                 </h2>
 
-                <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold leading-relaxed max-w-3xl mx-auto drop-shadow-lg">
-                  あなたが今見ているこのTOPページ自体が、
+                <p className="text-base sm:text-xl md:text-2xl lg:text-3xl text-white font-semibold leading-relaxed max-w-3xl mx-auto drop-shadow-lg px-4">
+                  あなたが今見ている<br className="sm:hidden" />このTOPページ自体が、
                   <br />
-                  <span className="text-cyan-300">LPエディタの実力の証明</span>です。
+                  <span className="text-cyan-300">LPエディタの<br className="sm:hidden" />実力の証明</span>です。
                 </p>
 
                 <div className="flex justify-center">
@@ -754,11 +753,10 @@ export default function HomeSwiper() {
                 </div>
 
                 <div className="pt-4">
-                  <p className="text-base sm:text-lg text-slate-200 font-medium bg-slate-800/50 backdrop-blur-sm rounded-xl px-6 py-3 inline-block border border-white/20">
-                    プログラミング知識不要・デザインツール不要
-                    <br className="hidden sm:inline" />
-                    <span className="hidden sm:inline"> </span>
-                    <span className="text-cyan-300">ブラウザだけで、このクオリティのLPが完成</span>
+                  <p className="text-sm sm:text-base md:text-lg text-slate-200 font-medium bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 inline-block border border-white/20 max-w-2xl">
+                    プログラミング知識不要・<br className="sm:hidden" />デザインツール不要
+                    <br />
+                    <span className="text-cyan-300">ブラウザだけで、<br className="sm:hidden" />このクオリティのLPが完成</span>
                   </p>
                 </div>
               </motion.div>
@@ -805,15 +803,15 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-4 sm:p-6 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-3 -right-3 w-8 h-8 sm:w-10 sm:h-10 bg-cyan-500 rounded-full flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
                       1
                     </div>
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl">
-                      <RocketLaunchIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
+                      <RocketLaunchIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">無料登録</h3>
-                    <p className="text-xs sm:text-sm text-slate-700">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">無料登録</h3>
+                    <p className="text-xs text-slate-700 leading-tight">
                       メールアドレスだけで<br />30秒で登録完了
                     </p>
                   </div>
@@ -826,15 +824,15 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-4 sm:p-6 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-3 -right-3 w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
                       2
                     </div>
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl">
-                      <SparklesIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
+                      <SparklesIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">AI自動生成</h3>
-                    <p className="text-xs sm:text-sm text-slate-700">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">AI自動生成</h3>
+                    <p className="text-xs text-slate-700 leading-tight">
                       質問に答えるだけで<br />LPが自動完成
                     </p>
                   </div>
@@ -847,15 +845,15 @@ export default function HomeSwiper() {
                   transition={{ duration: 0.6, delay: 0.3 }}
                   className="relative"
                 >
-                  <div className="bg-white rounded-xl p-4 sm:p-6 text-center hover:scale-105 transition-transform shadow-2xl">
-                    <div className="absolute -top-3 -right-3 w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-lg">
+                  <div className="bg-white rounded-xl p-3 sm:p-4 text-center hover:scale-105 transition-transform shadow-2xl">
+                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg">
                       3
                     </div>
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-xl">
-                      <CheckCircleIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-xl">
+                      <CheckCircleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">即座に公開</h3>
-                    <p className="text-xs sm:text-sm text-slate-700">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">即座に公開</h3>
+                    <p className="text-xs text-slate-700 leading-tight">
                       ワンクリックで公開<br />すぐに販売開始
                     </p>
                   </div>
