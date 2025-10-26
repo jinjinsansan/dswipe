@@ -45,14 +45,11 @@ export default function TopMediaSpotlightBlock({
     onEdit?.('caption', event.currentTarget.textContent ?? '');
   };
 
-  const mediaCardBackground = withAlpha(accentColor, 0.12, accentColor);
-  const mediaCardBorder = withAlpha(accentColor, 0.35, accentColor);
-
   const renderButton = () => {
     if (!buttonText) return null;
 
     const commonClasses =
-      'inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
+      'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
 
     if (onProductClick) {
       return (
@@ -66,7 +63,8 @@ export default function TopMediaSpotlightBlock({
           style={{
             backgroundColor: buttonColor,
             color: buttonTextColor,
-            outlineColor: withAlpha(buttonColor, 0.45, buttonColor),
+            border: `1px solid ${buttonColor}`,
+            outlineColor: withAlpha(buttonColor, 0.5, buttonColor),
           }}
         >
           {buttonText}
@@ -82,7 +80,8 @@ export default function TopMediaSpotlightBlock({
         style={{
           backgroundColor: buttonColor,
           color: buttonTextColor,
-          outlineColor: withAlpha(buttonColor, 0.45, buttonColor),
+          border: `1px solid ${buttonColor}`,
+          outlineColor: withAlpha(buttonColor, 0.5, buttonColor),
         }}
       >
         {buttonText}
@@ -95,74 +94,83 @@ export default function TopMediaSpotlightBlock({
       className="relative w-full py-16 sm:py-20"
       style={{ backgroundColor, color: textColor }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 lg:flex-row lg:items-center lg:gap-12">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
+        {/* ヘッダー */}
+        <div className="text-center">
+          <span
+            className="text-xs font-semibold uppercase tracking-[0.35em]"
+            style={{ color: accentColor }}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onBlur={handleTextBlur('tagline')}
+          >
+            {tagline}
+          </span>
+          <h2
+            className="text-3xl font-bold sm:text-4xl mt-3"
+            style={{ color: textColor }}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onBlur={handleTextBlur('title')}
+          >
+            {title}
+          </h2>
+          <p
+            className="mt-3 text-base leading-relaxed sm:text-lg"
+            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onBlur={handleTextBlur('subtitle')}
+          >
+            {subtitle}
+          </p>
+        </div>
+
+        {/* 画像カード */}
         <div
-          className="w-full overflow-hidden rounded-3xl border shadow-sm"
-          style={{ borderColor: mediaCardBorder, backgroundColor: mediaCardBackground }}
+          className="rounded-2xl border p-6 shadow-sm"
+          style={{
+            borderColor: withAlpha(accentColor, 0.2, accentColor),
+            backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
+          }}
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[5/3] lg:aspect-square">
+          {/* 画像 */}
+          <div className="w-full overflow-hidden rounded-xl mb-6">
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={imageAlt}
-                className="h-full w-full object-cover"
+                className="w-full h-auto max-h-[600px] object-contain bg-black/5"
               />
             ) : (
               <div
-                className="flex h-full w-full items-center justify-center bg-gradient-to-br from-transparent via-white/10 to-white/20 text-sm font-medium"
-                style={{ color: withAlpha(textColor, 0.7, textColor) }}
+                className="flex h-64 w-full items-center justify-center bg-gradient-to-br from-transparent via-white/10 to-white/20 text-sm font-medium rounded-xl"
+                style={{ color: withAlpha(textColor, 0.5, textColor) }}
               >
                 画像を設定してください
               </div>
             )}
           </div>
-        </div>
 
-        <div className="flex w-full flex-1 flex-col gap-5">
-          <div className="flex flex-col gap-3">
-            <span
-              className="text-xs font-semibold uppercase tracking-[0.35em]"
-              style={{ color: accentColor }}
+          {/* キャプション */}
+          {caption && (
+            <div
+              className="text-xs uppercase tracking-[0.2em] mb-4 text-center"
+              style={{ color: withAlpha(textColor, 0.6, textColor) }}
               contentEditable={isEditing}
               suppressContentEditableWarning
-              onBlur={handleTextBlur('tagline')}
+              onBlur={handleCaptionBlur}
             >
-              {tagline}
-            </span>
-            <h2
-              className="text-3xl font-bold sm:text-4xl"
-              style={{ color: textColor }}
-              contentEditable={isEditing}
-              suppressContentEditableWarning
-              onBlur={handleTextBlur('title')}
-            >
-              {title}
-            </h2>
-            <p
-              className="text-base leading-relaxed sm:text-lg"
-              style={{ color: withAlpha(textColor, 0.78, textColor) }}
-              contentEditable={isEditing}
-              suppressContentEditableWarning
-              onBlur={handleTextBlur('subtitle')}
-            >
-              {subtitle}
-            </p>
-          </div>
+              {caption}
+            </div>
+          )}
 
-          <div className="flex flex-wrap items-center gap-4">
-            {renderButton()}
-            {caption ? (
-              <div
-                className="text-xs uppercase tracking-[0.2em]"
-                style={{ color: withAlpha(textColor, 0.6, textColor) }}
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={handleCaptionBlur}
-              >
-                {caption}
-              </div>
-            ) : null}
-          </div>
+          {/* ボタン */}
+          {buttonText && (
+            <div className="flex justify-center">
+              {renderButton()}
+            </div>
+          )}
         </div>
       </div>
     </section>
