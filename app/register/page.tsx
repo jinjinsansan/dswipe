@@ -29,7 +29,7 @@ export default function RegisterPage() {
         highlights: [
           { title: '数分でローンチ', description: 'テンプレート選択→AI生成→公開までをワンフローで完結。' },
           { title: '豊富なコンポーネント', description: '動画・証言・FAQなどコンバージョンに効く要素を自由に組み合わせ。' },
-          { title: 'チームコラボレーション', description: '役割に応じた権限管理と共有リンクでスムーズに連携。' },
+          { title: '即座に収益化', description: '決済機能標準搭載で公開と同時に販売開始。手数料7.5%のみ。' },
         ],
       }}
     >

@@ -267,7 +267,7 @@ export default function HomeSwiper() {
                 </h2>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5 max-h-[75vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 {painPoints.map((point, index) => {
                   const Icon = point.icon;
                   return (
@@ -304,7 +304,7 @@ export default function HomeSwiper() {
                 </h2>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5 max-h-[75vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 {solutionHighlights.map((item, index) => {
                   const Icon = item.icon;
                   return (
@@ -536,7 +536,7 @@ export default function HomeSwiper() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 max-h-[75vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -665,7 +665,7 @@ export default function HomeSwiper() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 {[
                   { Icon: SparklesIcon, gradient: 'from-purple-500 to-pink-500', title: 'AIアシスタント', description: 'ヒアリングから自動でLP構成を生成。コピーライティングも提案します。' },
                   { Icon: BoltIcon, gradient: 'from-yellow-500 to-orange-500', title: '５分で公開', description: 'テンプレート選択から公開まで最短５分。スピードが競争力になります。' },
