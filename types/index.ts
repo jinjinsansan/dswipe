@@ -19,6 +19,7 @@ export interface AuthResponse {
 export interface LandingPage {
   id: string;
   seller_id: string;
+  user_id?: string;
   title: string;
   slug: string;
   status: 'draft' | 'published' | 'archived';
@@ -38,6 +39,11 @@ export interface LandingPage {
   custom_theme_shades?: Record<string, string> | null;
   created_at: string;
   updated_at: string;
+  // ユーザー情報（APIレスポンスに含まれる場合）
+  owner?: { username?: string; email?: string } | null;
+  user?: { username?: string; email?: string } | null;
+  seller_username?: string | null;
+  username?: string | null;
 }
 
 // LPステップ型
