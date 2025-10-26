@@ -83,15 +83,18 @@ export default function LPAnalyticsPage() {
   const totalCtaClicks = analytics.total_cta_clicks.toLocaleString();
   const conversionRate = `${analytics.cta_conversion_rate.toFixed(1)}%`;
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
+  const stepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
+  const ctaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
+
   const stepOrderMap = useMemo(() => {
     const map = new Map<string, number>();
-    analytics.step_funnel.forEach((step) => {
+    stepFunnel.forEach((step) => {
       if (step.step_id) {
         map.set(step.step_id, step.step_order);
       }
     });
     return map;
-  }, [analytics.step_funnel]);
+  }, [stepFunnel]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
@@ -267,14 +270,14 @@ export default function LPAnalyticsPage() {
                 <span className="text-xs text-slate-500">各ステップの閲覧と離脱状況</span>
               </div>
 
-              {analytics.step_funnel.length === 0 ? (
+            {stepFunnel.length === 0 ? (
                 <div className="rounded-xl border border-slate-800/70 bg-slate-950/60 py-12 text-center text-sm text-slate-400">
                   データがまだ蓄積されていません。
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {analytics.step_funnel.map((step) => {
-                    const base = analytics.step_funnel[0]?.step_views || 0;
+                  {stepFunnel.map((step) => {
+                    const base = stepFunnel[0]?.step_views || 0;
                     const width = base > 0 ? Math.max((step.step_views / base) * 100, 4) : 0;
                     return (
                       <div key={step.step_id} className="space-y-2">
@@ -312,15 +315,15 @@ export default function LPAnalyticsPage() {
                 <span className="text-xs text-slate-500">CTAごとのクリック分布</span>
               </div>
 
-              {analytics.cta_clicks.length === 0 ? (
+              {ctaClicks.length === 0 ? (
                 <div className="rounded-xl border border-slate-800/70 bg-slate-950/60 py-12 text-center text-sm text-slate-400">
                   クリックデータがまだありません。
                 </div>
               ) : (
                 <div className="space-y-4">
                   {(() => {
-                    const maxClicks = Math.max(...analytics.cta_clicks.map((c) => c.click_count));
-                    return analytics.cta_clicks.map((cta, index) => {
+                    const maxClicks = Math.max(...ctaClicks.map((c) => c.click_count));
+                    return ctaClicks.map((cta, index) => {
                       const key = cta.cta_id ?? `${cta.step_id ?? 'unknown'}-${index}`;
                       const width = maxClicks > 0 ? Math.max((cta.click_count / maxClicks) * 100, 4) : 0;
                       const stepOrder = cta.step_id ? stepOrderMap.get(cta.step_id) : undefined;
