@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, type ComponentType, type SVGProps } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ComponentType, type SVGProps, Component, ErrorInfo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -17,6 +17,41 @@ import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPAnalytics, StepFunnelData, CTAClickData } from '@/types';
 import DSwipeLogo from '@/components/DSwipeLogo';
+
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-950 p-8">
+          <div className="max-w-4xl mx-auto bg-red-900/20 border border-red-500 rounded-lg p-6">
+            <h1 className="text-2xl font-bold text-red-400 mb-4">🔍 エラー詳細</h1>
+            <div className="bg-slate-900 p-4 rounded text-red-300 font-mono text-sm overflow-auto">
+              <p className="mb-2"><strong>エラーメッセージ:</strong></p>
+              <pre className="whitespace-pre-wrap">{this.state.error?.message || 'Unknown error'}</pre>
+              <p className="mt-4 mb-2"><strong>スタックトレース:</strong></p>
+              <pre className="whitespace-pre-wrap text-xs">{this.state.error?.stack || 'No stack trace'}</pre>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function LPAnalyticsPage() {
   const router = useRouter();
@@ -112,6 +147,7 @@ export default function LPAnalyticsPage() {
   }, [stepFunnel]);
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-slate-950 flex">
       <aside className="hidden md:flex w-60 bg-slate-900/70 backdrop-blur-sm border-r border-slate-800 flex-col">
         <div className="px-6 h-16 border-b border-slate-800 flex items-center">
@@ -419,6 +455,7 @@ export default function LPAnalyticsPage() {
         </div>
       </main>
     </div>
+    </ErrorBoundary>
   );
 }
 
