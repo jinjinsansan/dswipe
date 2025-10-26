@@ -105,7 +105,9 @@ export default function PointPurchasePage() {
         });
 
         if (!response.ok) {
-          throw new Error('決済の開始に失敗しました');
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          throw new Error(`決済の開始に失敗しました (${response.status}): ${errorBody}`);
         }
 
         const data = await response.json();
@@ -115,7 +117,12 @@ export default function PointPurchasePage() {
         
       } catch (error: any) {
         console.error('Purchase error:', error);
-        alert(`決済エラー: ${error.message}`);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack
+        });
+        
+        alert(`決済エラー:\n${error.message}`);
         setIsPurchasing(false);
       }
     }
