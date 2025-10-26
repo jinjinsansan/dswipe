@@ -6,6 +6,8 @@ import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi } from '@/lib/api';
+import { enrichLpsWithHeroMedia, resolveSellerUsername } from '@/lib/lpPreview';
+import type { HeroMedia } from '@/lib/lpPreview';
 import {
   ArrowLeftIcon,
   BuildingStorefrontIcon,
@@ -58,7 +60,7 @@ function ProductsContent() {
     console.log('/products ページ - 公開LP取得開始');
     try {
       setIsLoading(true);
-      console.log('API呼び出し: lpApi.getPublicLPs');
+      console.log('API呼び出し: lpApi.list');
       // 公開されているLPを取得
       const response = await lpApi.list();
       console.log('API レスポンス取得成功');
@@ -85,7 +87,8 @@ function ProductsContent() {
         console.log('steps:', firstLP.steps);
       }
       
-      setProducts(publishedLPs);
+      const enrichedLPs = await enrichLpsWithHeroMedia(publishedLPs);
+      setProducts(enrichedLPs);
     } catch (error: any) {
       console.error('商品の取得に失敗:', error);
       console.error('エラー詳細:', error.response?.data || error.message);
@@ -96,10 +99,21 @@ function ProductsContent() {
     }
   };
 
-  // LPからプレビュー画像を取得する関数（ダッシュボードと同じロジック）
-  const getLPPreviewImage = (lp: any): string | null => {
-    // heroImage を使用（ダッシュボードと同じ）
-    return lp.heroImage || null;
+  const getHeroMedia = (lp: any): HeroMedia | null => {
+    const media = lp.heroMedia;
+    if (media && typeof media === 'object' && 'type' in media && 'url' in media) {
+      return media as HeroMedia;
+    }
+    if (lp.heroImage) {
+      return { type: 'image', url: lp.heroImage };
+    }
+    if (lp.image_url) {
+      return { type: 'image', url: lp.image_url };
+    }
+    if (lp.heroVideo) {
+      return { type: 'video', url: lp.heroVideo };
+    }
+    return null;
   };
 
   const applyFiltersAndSort = () => {
@@ -116,7 +130,11 @@ function ProductsContent() {
 
     // 販売者フィルター
     if (sellerFilter) {
-      filtered = filtered.filter((p) => p.seller_username === sellerFilter);
+      const normalizedFilter = sellerFilter.trim().toLowerCase();
+      filtered = filtered.filter((p) => {
+        const sellerName = resolveSellerUsername(p);
+        return sellerName ? sellerName.toLowerCase().includes(normalizedFilter) : false;
+      });
     }
 
     // 価格帯フィルター
@@ -291,71 +309,85 @@ function ProductsContent() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
               {currentProducts.map((lp) => {
-                const previewImage = getLPPreviewImage(lp);
-                
+                const heroMedia = getHeroMedia(lp);
+                const sellerUsername = resolveSellerUsername(lp);
+
                 return (
-                <Link
-                  key={lp.id}
-                  href={`/view/${lp.slug}`}
-                  className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
-                >
-                  {/* LP Preview Image */}
-                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
-                    {previewImage ? (
-                      <img
-                        src={previewImage}
-                        alt={lp.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center p-4 text-slate-600">
-                          <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
-                          <div className="text-sm font-semibold line-clamp-2">{lp.title}</div>
+                  <Link
+                    key={lp.id}
+                    href={`/view/${lp.slug}`}
+                    className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
+                  >
+                    {/* LP Preview Image */}
+                    <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
+                      {heroMedia?.type === 'image' ? (
+                        <img
+                          src={heroMedia.url}
+                          alt={lp.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : heroMedia?.type === 'video' ? (
+                        <video
+                          src={heroMedia.url}
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center p-4 text-slate-600">
+                            <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
+                            <div className="text-sm font-semibold line-clamp-2">{lp.title}</div>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  {/* LP Info */}
-                  <div className="p-4">
-                    {/* Seller Info */}
-                    {(lp.owner?.username || lp.user?.username || lp.seller_username) && (
-                      <Link
-                        href={`/u/${lp.owner?.username || lp.user?.username || lp.seller_username}`}
-                        className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
-                          {(lp.owner?.username || lp.user?.username || lp.seller_username)?.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-blue-600 hover:text-blue-500 text-xs">
-                          {lp.owner?.username || lp.user?.username || lp.seller_username}
+                    {/* LP Info */}
+                    <div className="p-4">
+                      {/* Seller Info */}
+                      {sellerUsername && (
+                        <Link
+                          href={`/u/${sellerUsername}`}
+                          className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
+                            {sellerUsername.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-blue-600 hover:text-blue-500 text-xs">
+                            {sellerUsername}
+                          </span>
+                        </Link>
+                      )}
+
+                      <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                        {lp.title}
+                      </h3>
+
+                      <div className="flex items-center justify-between mb-3 text-sm">
+                        <span className="inline-flex items-center gap-1 text-slate-500">
+                          <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                          {lp.total_views || 0} 閲覧
                         </span>
-                      </Link>
-                    )}
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            lp.status === 'published'
+                              ? 'bg-emerald-100 text-emerald-600'
+                              : 'bg-slate-200 text-slate-600'
+                          }`}
+                        >
+                          {lp.status === 'published' ? '公開中' : '下書き'}
+                        </span>
+                      </div>
 
-                    <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
-                      {lp.title}
-                    </h3>
-
-                    <div className="flex items-center justify-between mb-3 text-sm">
-                      <span className="inline-flex items-center gap-1 text-slate-500">
-                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                        {lp.total_views || 0} 閲覧
-                      </span>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        lp.status === 'published' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'
-                      }`}>
-                        {lp.status === 'published' ? '公開中' : '下書き'}
-                      </span>
+                      <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
+                        LPを見る
+                      </div>
                     </div>
-
-                    <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
-                      LPを見る
-                    </div>
-                  </div>
-                </Link>
+                  </Link>
                 );
               })}
             </div>
