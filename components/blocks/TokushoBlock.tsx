@@ -58,50 +58,50 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
 
   return (
     <div
-      className="min-h-screen w-full py-16 px-6"
+      className="h-screen w-full flex items-center justify-center px-6 overflow-hidden"
       style={{ backgroundColor }}
     >
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl w-full">
         {/* ヘッダー */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           {subtitle && (
             <p
-              className="text-sm font-semibold tracking-wider uppercase mb-3 opacity-60"
+              className="text-xs font-semibold tracking-wider uppercase mb-2 opacity-60"
               style={{ color: textColor }}
             >
               {subtitle}
             </p>
           )}
           <h2
-            className="text-3xl md:text-4xl font-bold"
+            className="text-2xl md:text-3xl font-bold"
             style={{ color: textColor }}
           >
             {title}
           </h2>
         </div>
 
-        {/* カードグリッド */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* カードグリッド - コンパクト版 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[65vh] overflow-hidden">
           {visibleItems.map((item, index) => {
             const IconComponent = getIconComponent(item.icon);
             
             return (
               <div
                 key={index}
-                className="rounded-2xl p-6 shadow-sm border transition-all duration-300 hover:shadow-md"
+                className="rounded-lg p-3 border"
                 style={{
                   backgroundColor: cardBackgroundColor,
                   borderColor: borderColor,
                 }}
               >
                 {/* アイコンとラベル */}
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-2 mb-1.5">
                   <IconComponent
-                    className="w-8 h-8 flex-shrink-0"
-                    style={{ color: textColor, opacity: 0.7 }}
+                    className="w-5 h-5 flex-shrink-0"
+                    style={{ color: textColor, opacity: 0.6 }}
                   />
                   <h3
-                    className="text-sm font-bold uppercase tracking-wide opacity-70"
+                    className="text-xs font-bold uppercase tracking-wide opacity-60"
                     style={{ color: textColor }}
                   >
                     {item.label}
@@ -110,7 +110,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
 
                 {/* 値 */}
                 <p
-                  className="text-base md:text-lg font-medium leading-relaxed whitespace-pre-wrap"
+                  className="text-sm font-medium leading-snug whitespace-pre-wrap line-clamp-3"
                   style={{ color: textColor }}
                 >
                   {item.value}
@@ -121,12 +121,12 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
         </div>
 
         {/* フッター注釈 */}
-        <div className="mt-12 text-center">
+        <div className="mt-4 text-center">
           <p
-            className="text-sm opacity-60"
+            className="text-xs opacity-50"
             style={{ color: textColor }}
           >
-            ※ この表記は特定商取引法に基づき義務付けられています
+            ※ 特定商取引法に基づく表記
           </p>
         </div>
       </div>

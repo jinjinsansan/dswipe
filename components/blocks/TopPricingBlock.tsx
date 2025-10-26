@@ -90,7 +90,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className={`grid grid-cols-1 gap-6 ${plans.length === 1 ? 'sm:grid-cols-1 max-w-md mx-auto' : plans.length === 2 ? 'sm:grid-cols-2 max-w-4xl mx-auto' : 'sm:grid-cols-3'}`}>
           {plans.map((plan, index) => {
             const isHighlighted = plan.highlighted ?? false;
             const cardStyle: CSSProperties = {
