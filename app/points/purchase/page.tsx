@@ -23,7 +23,7 @@ const POINT_PACKAGES = [
 ];
 
 const PAYMENT_METHODS = [
-  { id: 'one_lat', name: 'USDT決済（ONE.lat）', icon: <CurrencyDollarIcon className="h-6 w-6" aria-hidden="true" />, status: 'active', description: '仮想通貨で即座に決済' },
+  { id: 'one_lat', name: 'カード・USDT決済（ONE.lat）', icon: <CurrencyDollarIcon className="h-6 w-6" aria-hidden="true" />, status: 'active', description: 'クレジットカード・仮想通貨対応' },
   { id: 'stripe', name: 'クレジットカード', icon: <CreditCardIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'paypal', name: 'PayPal', icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
   { id: 'bank', name: '銀行振込', icon: <BuildingLibraryIcon className="h-6 w-6" aria-hidden="true" />, status: 'coming_soon' },
@@ -83,7 +83,7 @@ export default function PointPurchasePage() {
 
   const handlePurchase = async () => {
     if (selectedPaymentMethod.status === 'coming_soon') {
-      alert('この決済方法は準備中です。\nUSDT決済（ONE.lat）をご利用ください。');
+      alert('この決済方法は準備中です。\nONE.lat決済（カード・USDT対応）をご利用ください。');
       return;
     }
 
@@ -339,12 +339,12 @@ export default function PointPurchasePage() {
               </button>
               {selectedPaymentMethod.id === 'one_lat' && (
                 <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
-                  ONE.latの安全な決済ページに移動します
+                  ONE.latの安全な決済ページに移動します（クレジットカード・USDT・その他決済方法対応）
                 </p>
               )}
               {selectedPaymentMethod.status === 'coming_soon' && (
                 <p className="mt-3 sm:mt-4 text-center text-slate-500 text-xs sm:text-sm">
-                  この決済方法は現在準備中です。USDT決済をご利用ください。
+                  この決済方法は現在準備中です。ONE.lat決済をご利用ください。
                 </p>
               )}
             </div>
