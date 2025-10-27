@@ -334,11 +334,28 @@ export default function DashboardPage() {
       
       const enrichedLps = lpsData.map((lpItem: any) => {
         const heroMedia = heroMediaMap.get(lpItem.id) ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
+        const normalizedStatus = typeof lpItem.status === 'string' ? lpItem.status.toLowerCase() : '';
+        const isPublished = normalizedStatus === 'published';
+        const hasProduct = typeof lpItem.product_id === 'string' && lpItem.product_id.trim().length > 0;
+        const statusLabel = normalizedStatus === 'published'
+          ? '公開中'
+          : normalizedStatus === 'archived'
+          ? 'アーカイブ'
+          : '下書き';
+        const statusVariant = normalizedStatus === 'published'
+          ? 'published'
+          : normalizedStatus === 'archived'
+          ? 'archived'
+          : 'draft';
         return {
           ...lpItem,
           heroMedia,
           heroImage: heroMedia?.type === 'image' ? heroMedia.url : lpItem.image_url || null,
           heroVideo: heroMedia?.type === 'video' ? heroMedia.url : null,
+          isPublished,
+          hasProduct,
+          statusLabel,
+          statusVariant,
         };
       });
 
@@ -802,6 +819,11 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {lps.map((lp: any) => {
                   const heroMedia = lp.heroMedia as { type: 'image' | 'video'; url: string } | undefined;
+                  const statusBadgeClass = lp.statusVariant === 'published'
+                    ? 'bg-green-500 text-white'
+                    : lp.statusVariant === 'archived'
+                    ? 'bg-slate-500 text-white'
+                    : 'bg-slate-400 text-white';
 
                   return (
                   <div
@@ -830,14 +852,13 @@ export default function DashboardPage() {
                         <DocumentIcon className="h-12 w-12 text-white/80" aria-hidden="true" />
                       )}
                       {/* Status Badge */}
-                      <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
-                        {lp.is_published ? (
-                          <span className="px-1.5 py-0.5 bg-green-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
-                            公開中
-                          </span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 bg-slate-400 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
-                            下書き
+                      <div className="absolute top-1 right-1 sm:top-2 sm:right-2 flex flex-col items-end gap-1">
+                        <span className={`px-1.5 py-0.5 text-[9px] sm:text-[10px] rounded-full font-semibold ${statusBadgeClass}`}>
+                          {lp.statusLabel}
+                        </span>
+                        {!lp.hasProduct && (
+                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
+                            商品未登録
                           </span>
                         )}
                       </div>
@@ -881,7 +902,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Public URL */}
-                      {lp.is_published && lp.slug && (
+                      {lp.isPublished && lp.slug && (
                         <div className="border-t border-slate-200 pt-1.5">
                           <div className="flex gap-1">
                             <input
@@ -937,7 +958,10 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
-                公開中: {lps.filter(lp => lp.is_published).length}本
+                公開中: {lps.filter(lp => lp.isPublished).length}本
+              </p>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
+                商品未登録: {lps.filter(lp => !lp.hasProduct).length}本
               </p>
             </div>
 
