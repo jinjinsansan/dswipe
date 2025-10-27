@@ -1346,7 +1346,7 @@ export default function DashboardPage() {
                               <button
                                 type="button"
                                 onClick={handleRemoveProfileImage}
-                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200"
+                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold bg-white text-red-600 border border-red-200 hover:bg-red-50"
                               >
                                 画像をクリア
                               </button>
