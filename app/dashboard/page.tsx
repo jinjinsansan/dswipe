@@ -625,14 +625,14 @@ export default function DashboardPage() {
               const isLineBonus = link.href === '/line/bonus';
               const isExternal = Boolean(link.external);
               const linkStyle = isLineBonus
-                ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
+                ? 'text-slate-900 bg-white border border-slate-200 hover:bg-slate-100'
                 : isActive
                 ? 'text-white bg-blue-600'
                 : isExternal
                 ? 'text-blue-600 bg-blue-50 hover:bg-blue-100'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100';
               const iconStyle = isLineBonus
-                ? 'text-white'
+                ? 'text-[#06C755]'
                 : isActive
                 ? 'text-white'
                 : isExternal
@@ -658,7 +658,7 @@ export default function DashboardPage() {
                     <span
                       className={
                         isLineBonus
-                          ? 'px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded'
+                          ? 'px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded border border-[#06C755]/30'
                           : 'px-1.5 py-0.5 bg-slate-200 text-slate-600 text-xs font-semibold rounded'
                       }
                     >
@@ -765,7 +765,7 @@ export default function DashboardPage() {
                   {...linkProps}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
                     isLineBonus
-                      ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
+                      ? 'border border-slate-200 bg-white text-slate-900 hover:bg-slate-100'
                       : isActive
                       ? 'bg-blue-600 text-white'
                       : isExternal
