@@ -93,6 +93,12 @@ function ProductsContent() {
     return null;
   };
 
+  const isVideoUrl = (url: string | null): boolean => {
+    if (!url) return false;
+    const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.m4v'];
+    return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
+  };
+
   const applyFiltersAndSort = () => {
     let filtered = [...products];
 
@@ -300,11 +306,22 @@ function ProductsContent() {
                     {/* サムネイル */}
                     <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
                       {thumbnailUrl ? (
-                        <img
-                          src={thumbnailUrl}
-                          alt={product.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                        isVideoUrl(thumbnailUrl) ? (
+                          <video
+                            src={thumbnailUrl}
+                            className="w-full h-full object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={thumbnailUrl}
+                            alt={product.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        )
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <div className="text-center p-4 text-slate-600">
