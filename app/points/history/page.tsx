@@ -174,9 +174,9 @@ export default function PointHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* サイドバー（デスクトップ） */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 border-r border-slate-800 bg-slate-900/50">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 border-r border-gray-200 bg-white">
         <div className="p-6">
           <Link href="/dashboard">
             <DSwipeLogo size="large" showFullName={true} />
@@ -193,7 +193,7 @@ export default function PointHistoryPage() {
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-blue-600 text-white'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 {link.icon}
@@ -208,15 +208,15 @@ export default function PointHistoryPage() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-gray-200">
           <div className="mb-3 px-3">
-            <p className="text-xs text-slate-400">ログイン中</p>
-            <p className="text-sm font-semibold text-white truncate">{user?.username}</p>
-            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+            <p className="text-xs text-gray-500">ログイン中</p>
+            <p className="text-sm font-semibold text-gray-900 truncate">{user?.username}</p>
+            <p className="text-xs text-gray-600 truncate">{user?.email}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-slate-800 rounded-lg transition-colors"
+            className="w-full px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
           >
             ログアウト
           </button>
@@ -226,14 +226,14 @@ export default function PointHistoryPage() {
       {/* メインコンテンツ */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* ヘッダー（モバイル） */}
-        <header className="lg:hidden border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm p-4">
+        <header className="lg:hidden border-b border-gray-200 bg-white p-4">
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
               <DSwipeLogo size="medium" showFullName={true} />
             </Link>
             <button
               onClick={handleLogout}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-red-600/15 text-red-300 hover:bg-red-600/25 transition-colors"
+              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
             >
               ログアウト
             </button>
@@ -247,14 +247,14 @@ export default function PointHistoryPage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">ポイント履歴</h1>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">ポイント履歴</h1>
+                  <p className="mt-1 text-sm text-gray-600">
                     {total}件のトランザクション
                   </p>
                 </div>
                 <button
                   onClick={fetchTransactions}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
                 >
                   <ArrowPathIcon className="w-4 h-4" />
                   <span className="hidden sm:inline">更新</span>
@@ -267,8 +267,8 @@ export default function PointHistoryPage() {
                   onClick={() => setFilterType(null)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filterType === null
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   すべて
@@ -277,8 +277,8 @@ export default function PointHistoryPage() {
                   onClick={() => setFilterType('purchase')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filterType === 'purchase'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   ポイント購入
@@ -287,8 +287,8 @@ export default function PointHistoryPage() {
                   onClick={() => setFilterType('product_purchase')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filterType === 'product_purchase'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   LP購入
@@ -297,8 +297,8 @@ export default function PointHistoryPage() {
                   onClick={() => setFilterType('bonus')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filterType === 'bonus'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   ボーナス
@@ -308,22 +308,22 @@ export default function PointHistoryPage() {
 
             {/* エラー表示 */}
             {error && (
-              <div className="mb-6 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+              <div className="mb-6 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800">
                 {error}
               </div>
             )}
 
             {/* トランザクションリスト */}
             {transactions.length === 0 ? (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-12 text-center">
-                <p className="text-slate-400">トランザクション履歴がありません</p>
+              <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-12 text-center">
+                <p className="text-gray-500">トランザクション履歴がありません</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {transactions.map((tx) => (
                   <div
                     key={tx.id}
-                    className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 hover:bg-slate-800/70 transition-colors"
+                    className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
@@ -343,14 +343,14 @@ export default function PointHistoryPage() {
                               </span>
                             </div>
                             {tx.description && (
-                              <p className="text-sm text-slate-300">{tx.description}</p>
+                              <p className="text-sm text-gray-700">{tx.description}</p>
                             )}
                           </div>
 
                           <div className="text-right flex-shrink-0">
                             <div
                               className={`text-lg font-bold ${
-                                tx.amount > 0 ? 'text-green-400' : 'text-red-400'
+                                tx.amount > 0 ? 'text-green-600' : 'text-red-600'
                               }`}
                             >
                               {tx.amount > 0 ? '+' : ''}
@@ -359,9 +359,9 @@ export default function PointHistoryPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
                           <span>{formatDate(tx.created_at)}</span>
-                          <span className="text-slate-600">ID: {tx.id.slice(0, 8)}...</span>
+                          <span className="text-gray-400">ID: {tx.id.slice(0, 8)}...</span>
                         </div>
                       </div>
                     </div>
