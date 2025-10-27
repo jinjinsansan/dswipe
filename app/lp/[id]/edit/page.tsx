@@ -514,40 +514,45 @@ export default function EditLPNewPage() {
           : prev
       );
 
-      const latestStepsResponse = await lpApi.get(lpId);
-      const latestSteps = latestStepsResponse.data?.steps ?? [];
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-      // 既存ステップを一度全削除してから最新順序で再作成
-      if (latestSteps.length > 0) {
-        for (const step of latestSteps) {
-          await lpApi.deleteStep(lpId, step.id);
-        }
-      }
+      const bulkPayload = orderedBlocks.map((block, index) => {
+        const clonedContent = JSON.parse(JSON.stringify(block.content)) as Record<string, unknown>;
+        const rawImageUrl = (clonedContent as any)?.imageUrl;
+        const imageUrl = typeof rawImageUrl === 'string' && rawImageUrl.trim().length > 0
+          ? rawImageUrl
+          : '/placeholder.jpg';
+        const rawVideoUrl = (clonedContent as any)?.videoUrl;
+        const videoUrl = typeof rawVideoUrl === 'string' && rawVideoUrl.trim().length > 0 ? rawVideoUrl : null;
 
-      const recreatedBlocks: LPBlock[] = [];
-      for (const block of orderedBlocks) {
-        const stepData = {
-          step_order: block.order,
-          image_url: 'imageUrl' in block.content ? (block.content as any).imageUrl || '/placeholder.jpg' : '/placeholder.jpg',
+        return {
+          id: block.id && uuidRegex.test(block.id) ? block.id : undefined,
           block_type: block.blockType,
-          content_data: block.content as unknown as Record<string, unknown>,
+          content_data: clonedContent,
+          step_order: index,
+          image_url: imageUrl,
+          video_url: videoUrl,
         };
+      });
 
-        const response = await lpApi.addStep(lpId, stepData);
-        const createdStep = response?.data;
-        recreatedBlocks.push({
-          ...block,
-          id: createdStep?.id ?? block.id,
-          order: stepData.step_order,
-        });
-      }
-      
-      setBlocks(recreatedBlocks);
+      const bulkResponse = await lpApi.updateBlocks(lpId, bulkPayload);
+      const updatedSteps = bulkResponse.data?.steps ?? [];
+
+      const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
+        const contentData = (step.content_data || {}) as BlockContent;
+        const blockType = (step.block_type || contentData?.block_type || 'top-hero-1') as BlockType;
+        return {
+          id: step.id,
+          blockType,
+          content: contentData,
+          order: step.step_order ?? 0,
+        };
+      });
+
+      setBlocks(normalizedBlocks);
       // 成功通知を表示
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-      // ページを再読み込みして最新データを取得
-      await fetchLP();
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || '保存に失敗しました';
       setError(errorMessage);

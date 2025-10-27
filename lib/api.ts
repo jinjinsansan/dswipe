@@ -100,8 +100,17 @@ export const lpApi = {
     api.delete(`/lp/${lpId}/steps/${stepId}`),
   
   // ブロック一括更新（テンプレートシステム用）
-  updateBlocks: (lpId: string, blocks: Array<{ id?: string; block_type: string; content_data: Record<string, unknown>; order: number }>) =>
-    api.post(`/lp/${lpId}/blocks`, { blocks }),
+  updateBlocks: (
+    lpId: string,
+    blocks: Array<{
+      id?: string;
+      block_type?: string;
+      content_data: Record<string, unknown>;
+      step_order: number;
+      image_url?: string | null;
+      video_url?: string | null;
+    }>,
+  ) => api.post(`/lp/${lpId}/blocks`, { blocks }),
   
   // CTA管理
   addCta: (lpId: string, data: any) =>
