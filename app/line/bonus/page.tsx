@@ -33,6 +33,12 @@ interface LineLinkStatus {
   connection: LineConnection | null;
 }
 
+interface LineLinkToken {
+  token: string;
+  line_add_url: string;
+  expires_at: string;
+}
+
 export default function LineBonusPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -40,6 +46,9 @@ export default function LineBonusPage() {
   const [linkStatus, setLinkStatus] = useState<LineLinkStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [linkToken, setLinkToken] = useState<LineLinkToken | null>(null);
+  const [isGeneratingToken, setIsGeneratingToken] = useState(false);
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
 
@@ -104,6 +113,53 @@ export default function LineBonusPage() {
   const handleLogout = () => {
     logout();
     router.push('/login');
+  };
+
+  const generateLinkToken = async () => {
+    setIsGeneratingToken(true);
+    setError(null);
+    setTokenCopied(false);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const token = localStorage.getItem('access_token');
+
+      if (!token) {
+        throw new Error('認証トークンが見つかりません');
+      }
+
+      const response = await fetch(`${apiUrl}/line/generate-link-token`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('トークンの生成に失敗しました');
+      }
+
+      const data = await response.json();
+      setLinkToken(data);
+    } catch (err: any) {
+      console.error('Error generating link token:', err);
+      setError(err.message || 'エラーが発生しました');
+    } finally {
+      setIsGeneratingToken(false);
+    }
+  };
+
+  const copyToken = async () => {
+    if (!linkToken) return;
+
+    try {
+      await navigator.clipboard.writeText(linkToken.token);
+      setTokenCopied(true);
+      setTimeout(() => setTokenCopied(false), 3000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      alert('コピーに失敗しました');
+    }
   };
 
   if (!isInitialized || isLoading) {
@@ -269,58 +325,93 @@ export default function LineBonusPage() {
                       )}
                     </div>
                   ) : (
-                    <a
-                      href={lineAddUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors shadow-lg"
-                    >
-                      <span>LINE公式アカウントを追加</span>
-                      <ArrowTopRightOnSquareIcon className="w-5 h-5" />
-                    </a>
+                    <div className="space-y-4">
+                      {!linkToken ? (
+                        <button
+                          onClick={generateLinkToken}
+                          disabled={isGeneratingToken}
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isGeneratingToken ? (
+                            <>
+                              <span className="animate-spin">⏳</span>
+                              <span>生成中...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>連携コードを生成</span>
+                              <ArrowTopRightOnSquareIcon className="w-5 h-5" />
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <div className="bg-white rounded-xl p-6 border-2 border-green-500 space-y-4">
+                          <div className="flex items-center gap-2 text-green-700 mb-2">
+                            <CheckCircleIcon className="w-6 h-6" />
+                            <span className="font-semibold text-lg">連携コード生成完了！</span>
+                          </div>
+
+                          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                            <p className="text-xs text-slate-500 mb-2">あなたの連携コード：</p>
+                            <div className="flex items-center gap-2">
+                              <code className="flex-1 text-lg font-mono font-bold text-slate-900 break-all">
+                                {linkToken.token}
+                              </code>
+                              <button
+                                onClick={copyToken}
+                                className="flex-shrink-0 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                              >
+                                {tokenCopied ? '✓ コピー済み' : 'コピー'}
+                              </button>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-2">
+                              有効期限: {new Date(linkToken.expires_at).toLocaleString('ja-JP')}
+                            </p>
+                          </div>
+
+                          <div className="space-y-3">
+                            <p className="text-sm font-semibold text-slate-700">次の手順で連携を完了してください：</p>
+                            <ol className="space-y-2 text-sm text-slate-600">
+                              <li className="flex gap-2">
+                                <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                <span>上の連携コードをコピー</span>
+                              </li>
+                              <li className="flex gap-2">
+                                <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                <span>
+                                  <a
+                                    href={lineAddUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-green-600 font-semibold hover:underline"
+                                  >
+                                    LINE公式アカウントを友達追加
+                                  </a>
+                                </span>
+                              </li>
+                              <li className="flex gap-2">
+                                <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                <span>LINEトークに連携コードを貼り付けて送信</span>
+                              </li>
+                              <li className="flex gap-2">
+                                <span className="flex-shrink-0 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                                <span className="font-semibold text-green-700">自動で{bonusPoints}ポイント付与！🎉</span>
+                              </li>
+                            </ol>
+                          </div>
+
+                          <a
+                            href={lineAddUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-center px-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors shadow-lg"
+                          >
+                            LINE公式アカウントを追加する
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   )}
-                </div>
-              </div>
-            </div>
-
-            {/* 使い方ガイド */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">ボーナスの受け取り方</h3>
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
-                    1
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">LINE公式アカウントを追加</h4>
-                    <p className="text-sm text-slate-600">
-                      上記のボタンからD-swipe公式LINEアカウントを友達追加してください。
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
-                    2
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">自動連携</h4>
-                    <p className="text-sm text-slate-600">
-                      友達追加すると、自動的にあなたのアカウントと連携されます。
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
-                    3
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">ポイント自動付与</h4>
-                    <p className="text-sm text-slate-600">
-                      連携が完了すると、{bonusPoints}ポイントが自動的にあなたのアカウントに付与されます！
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -330,8 +421,9 @@ export default function LineBonusPage() {
               <h4 className="font-semibold text-slate-900 mb-2 text-sm">注意事項</h4>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li>• ボーナスポイントは1アカウントにつき1回のみ付与されます</li>
+                <li>• 連携コードの有効期限は24時間です（期限切れの場合は再生成してください）</li>
+                <li>• LINEトークに連携コードを送信すると即座にポイントが付与されます</li>
                 <li>• LINE連携を解除してもポイントは減算されません</li>
-                <li>• ポイントの付与には数分かかる場合があります</li>
                 <li>• 既に連携済みの場合は、追加でポイントは付与されません</li>
               </ul>
             </div>
