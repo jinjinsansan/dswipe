@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import AutoPlayVideo from '@/components/AutoPlayVideo';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
@@ -195,19 +196,14 @@ export default function HomeSwiper() {
           <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
             {/* 背景ビデオ */}
             <div className="absolute inset-0">
-              <video
+              <AutoPlayVideo
                 className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-              >
-                <source src="/videos/pixta.mp4" type="video/mp4" />
-              </video>
+                src="/videos/pixta.mp4"
+              />
             </div>
             
             {/* オーバーレイ */}
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/30 pointer-events-none" />
             
             {/* コンテンツ */}
             <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
@@ -701,19 +697,14 @@ export default function HomeSwiper() {
           <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
             {/* ビデオ背景 */}
             <div className="absolute inset-0">
-              <video
+              <AutoPlayVideo
                 className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-              >
-                <source src="/videos/hero-keyboard.mp4" type="video/mp4" />
-              </video>
+                src="/videos/hero-keyboard.mp4"
+              />
             </div>
             
             {/* より濃いグラデーションオーバーレイ */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-blue-900/93 to-purple-900/95" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-blue-900/93 to-purple-900/95 pointer-events-none" />
             
             {/* コンテンツ */}
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 text-center">

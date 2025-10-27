@@ -1,3 +1,4 @@
+import AutoPlayVideo from '@/components/AutoPlayVideo';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
@@ -67,17 +68,13 @@ export default function TopHeroBlock({
     >
       <div className="absolute inset-0">
         {videoUrl ? (
-          <video
+          <AutoPlayVideo
             className="absolute inset-0 h-full w-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
             src={videoUrl}
           />
         ) : null}
       </div>
-      <div className="absolute inset-0" style={overlayStyle} />
+      <div className="absolute inset-0 pointer-events-none" style={overlayStyle} />
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-20 text-center">
         {isEditing ? (
           <div className="mb-6 grid w-full gap-3 rounded-xl bg-black/30 p-4 text-left">
