@@ -196,7 +196,7 @@ export default function PointHistoryPage() {
                     : 'text-slate-300 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <link.icon className="w-5 h-5" />
+                {link.icon}
                 <span>{link.label}</span>
                 {link.badge && (
                   <span className="ml-auto rounded-full bg-blue-500 px-2 py-0.5 text-xs text-white">
