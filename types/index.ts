@@ -110,6 +110,101 @@ export interface Product {
   updated_at: string;
 }
 
+export type NoteStatus = 'draft' | 'published';
+export type NoteAccessLevel = 'public' | 'paid';
+export type NoteBlockType = 'paragraph' | 'heading' | 'quote' | 'image' | 'divider' | 'list';
+
+export interface NoteBlock {
+  id?: string;
+  type: NoteBlockType;
+  access: NoteAccessLevel;
+  data: Record<string, unknown>;
+}
+
+export interface NoteSummary {
+  id: string;
+  author_id: string;
+  title: string;
+  slug: string;
+  cover_image_url?: string | null;
+  excerpt?: string | null;
+  is_paid: boolean;
+  price_points: number;
+  status: NoteStatus;
+  published_at?: string | null;
+  updated_at: string;
+}
+
+export interface NoteDetail extends NoteSummary {
+  content_blocks: NoteBlock[];
+}
+
+export interface NoteListResult {
+  data: NoteSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface PublicNoteSummary {
+  id: string;
+  title: string;
+  slug: string;
+  cover_image_url?: string | null;
+  excerpt?: string | null;
+  is_paid: boolean;
+  price_points: number;
+  author_username?: string | null;
+  published_at?: string | null;
+}
+
+export interface PublicNoteListResult {
+  data: PublicNoteSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface PublicNoteDetail {
+  id: string;
+  title: string;
+  slug: string;
+  author_id: string;
+  author_username?: string | null;
+  cover_image_url?: string | null;
+  excerpt?: string | null;
+  is_paid: boolean;
+  price_points: number;
+  has_access: boolean;
+  content_blocks: NoteBlock[];
+  published_at?: string | null;
+}
+
+export interface NotePurchaseResult {
+  note_id: string;
+  points_spent: number;
+  remaining_points: number;
+  purchased_at: string;
+}
+
+export interface NoteCreateRequest {
+  title: string;
+  cover_image_url?: string | null;
+  excerpt?: string | null;
+  content_blocks: NoteBlock[];
+  is_paid: boolean;
+  price_points?: number | null;
+}
+
+export interface NoteUpdateRequest {
+  title?: string;
+  cover_image_url?: string | null;
+  excerpt?: string | null;
+  content_blocks?: NoteBlock[];
+  is_paid?: boolean;
+  price_points?: number | null;
+}
+
 // ポイント残高型
 export interface PointBalance {
   user_id: string;
@@ -188,6 +283,10 @@ export interface AdminUserSummary {
   blocked_reason?: string | null;
   blocked_at?: string | null;
   total_lp_count: number;
+  total_note_count: number;
+  published_note_count: number;
+  latest_note_title?: string | null;
+  latest_note_updated_at?: string | null;
   line_connected?: boolean;
   line_display_name?: string | null;
   line_bonus_awarded?: boolean;
@@ -218,6 +317,19 @@ export interface AdminUserLandingPage {
   updated_at: string;
 }
 
+export interface AdminUserNote {
+  id: string;
+  title: string;
+  status: NoteStatus;
+  slug: string;
+  is_paid: boolean;
+  price_points: number;
+  created_at: string;
+  updated_at: string;
+  published_at?: string | null;
+  total_purchases: number;
+}
+
 export interface AdminUserPurchase {
   transaction_id: string;
   product_id?: string | null;
@@ -231,6 +343,7 @@ export interface AdminUserDetail extends AdminUserSummary {
   transactions: AdminPointTransaction[];
   landing_pages: AdminUserLandingPage[];
   purchase_history: AdminUserPurchase[];
+  notes: AdminUserNote[];
 }
 
 export interface AdminMarketplaceLP {

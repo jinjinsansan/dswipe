@@ -11,6 +11,16 @@ export type {
   LPStep,
   CTA,
   PublicUserProfile,
+  NoteBlock,
+  NoteSummary,
+  NoteDetail,
+  NoteListResult,
+  PublicNoteSummary,
+  PublicNoteListResult,
+  PublicNoteDetail,
+  NotePurchaseResult,
+  NoteCreateRequest,
+  NoteUpdateRequest,
 } from './index';
 
 export interface PointsBalance {

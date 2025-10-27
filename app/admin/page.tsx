@@ -10,6 +10,8 @@ import {
   ChartBarIcon,
   DocumentTextIcon,
   MegaphoneIcon,
+  EyeSlashIcon,
+  TrashIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -127,6 +129,8 @@ export default function AdminPanelPage() {
   const [grantAmount, setGrantAmount] = useState<number>(1000);
   const [grantDescription, setGrantDescription] = useState('');
   const [blockReason, setBlockReason] = useState('');
+  const [noteActionLoading, setNoteActionLoading] = useState(false);
+  const [noteActionTarget, setNoteActionTarget] = useState<string | null>(null);
 
   const [marketplaceItems, setMarketplaceItems] = useState<AdminMarketplaceLP[]>([]);
   const [marketSearch, setMarketSearch] = useState('');
@@ -412,6 +416,57 @@ export default function AdminPanelPage() {
     }
   };
 
+  const getNoteTitle = (noteId: string) =>
+    selectedUserDetail?.notes.find((note) => note.id === noteId)?.title ?? 'NOTE';
+
+  const handleUnpublishNote = async (noteId: string) => {
+    if (!selectedUserId) return;
+    const title = getNoteTitle(noteId);
+    const confirmed = window.confirm(`${title} を非公開にしますか？`);
+    if (!confirmed) return;
+    setNoteActionTarget(noteId);
+    setNoteActionLoading(true);
+    try {
+      await adminApi.unpublishUserNote(selectedUserId, noteId, {});
+      await Promise.all([
+        fetchUserDetail(selectedUserId),
+        fetchUsers(userSearch ? userSearch : undefined),
+      ]);
+      setUserActionError(null);
+    } catch (error) {
+      const message = getErrorMessage(error, 'NOTEの非公開化に失敗しました');
+      console.error(error);
+      setUserActionError(message);
+    } finally {
+      setNoteActionLoading(false);
+      setNoteActionTarget(null);
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!selectedUserId) return;
+    const title = getNoteTitle(noteId);
+    const confirmed = window.confirm(`${title} を削除しますか？この操作は取り消せません。`);
+    if (!confirmed) return;
+    setNoteActionTarget(noteId);
+    setNoteActionLoading(true);
+    try {
+      await adminApi.deleteUserNote(selectedUserId, noteId, {});
+      await Promise.all([
+        fetchUserDetail(selectedUserId),
+        fetchUsers(userSearch ? userSearch : undefined),
+      ]);
+      setUserActionError(null);
+    } catch (error) {
+      const message = getErrorMessage(error, 'NOTEの削除に失敗しました');
+      console.error(error);
+      setUserActionError(message);
+    } finally {
+      setNoteActionLoading(false);
+      setNoteActionTarget(null);
+    }
+  };
+
   const handleBlockUser = async () => {
     if (!selectedUserId) return;
     setUserActionLoading(true);
@@ -632,10 +687,11 @@ export default function AdminPanelPage() {
                 )}
 
                 <div className="hidden xl:block border border-slate-800 rounded-xl overflow-hidden">
-                  <div className="bg-slate-900/60 grid grid-cols-7 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <div className="bg-slate-900/60 grid grid-cols-8 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                     <span>ユーザー</span>
                     <span className="col-span-2">メール</span>
                     <span>ポイント</span>
+                    <span>NOTE</span>
                     <span>LP</span>
                     <span>LINE</span>
                     <span>ステータス</span>
@@ -656,13 +712,22 @@ export default function AdminPanelPage() {
                           <button
                             key={summary.id}
                             onClick={() => handleSelectUser(summary.id)}
-                            className={`grid grid-cols-7 gap-3 px-4 py-3 text-left transition-colors ${
+                            className={`grid grid-cols-8 gap-3 px-4 py-3 text-left transition-colors ${
                               isSelected ? 'bg-blue-600/20 text-white' : 'hover:bg-slate-900/70 text-slate-200'
                             }`}
                           >
                             <div className="truncate text-sm font-semibold">{summary.username}</div>
                             <div className="col-span-2 truncate text-xs text-slate-400">{summary.email}</div>
                             <div className="text-sm font-semibold text-slate-100">{formatNumber(summary.point_balance)}</div>
+                            <div className="text-xs text-slate-300">
+                              <div>
+                                {summary.total_note_count} 件
+                                <span className="text-[10px] text-slate-500"> / 公開 {summary.published_note_count}</span>
+                              </div>
+                              <div className="text-[10px] text-slate-500 truncate">
+                                {summary.latest_note_title ? summary.latest_note_title : '最新なし'}
+                              </div>
+                            </div>
                             <div className="text-xs text-slate-300">{summary.total_lp_count} 件</div>
                             <div className="text-xs">
                               {summary.line_connected ? (
@@ -719,7 +784,11 @@ export default function AdminPanelPage() {
                             </div>
                             <div className="text-right text-xs text-slate-300">
                               <div>{formatNumber(summary.point_balance)} P</div>
-                              <div>{summary.total_lp_count} LP</div>
+                                <div>{summary.total_lp_count} LP</div>
+                                <div>
+                                  {summary.total_note_count} NOTE
+                                  <span className="text-[10px] text-slate-500"> / 公開 {summary.published_note_count}</span>
+                                </div>
                             </div>
                           </div>
                           <div className="mt-3 flex items-center justify-between gap-2 text-xs flex-wrap">
@@ -740,6 +809,9 @@ export default function AdminPanelPage() {
                                 }`}
                               >
                                 {summary.is_blocked ? 'BLOCKED' : 'ACTIVE'}
+                              </span>
+                              <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">
+                                最新NOTE: {summary.latest_note_title ? summary.latest_note_title : 'なし'}
                               </span>
                             </div>
                           </div>
@@ -792,6 +864,14 @@ export default function AdminPanelPage() {
                         <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
                           <p className="text-[11px] text-slate-400">管理者付与累計</p>
                           <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_granted)}</p>
+                        </div>
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                          <p className="text-[11px] text-slate-400">NOTE作成数</p>
+                          <p className="text-xl font-semibold text-white mt-1">{formatNumber(selectedUserDetail.total_note_count)} 件</p>
+                          <p className="text-[10px] text-slate-500 mt-1">
+                            公開 {formatNumber(selectedUserDetail.published_note_count)} / 最新{' '}
+                            {selectedUserDetail.latest_note_updated_at ? formatDateTime(selectedUserDetail.latest_note_updated_at) : 'なし'}
+                          </p>
                         </div>
                       </div>
 
@@ -902,6 +982,76 @@ export default function AdminPanelPage() {
                           {userActionError}
                         </div>
                       )}
+
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-white">NOTE 管理</h3>
+                        <div className="space-y-2">
+                          {selectedUserDetail.notes.map((note) => {
+                            const isProcessing = noteActionLoading && noteActionTarget === note.id;
+                            return (
+                              <div key={note.id} className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-200">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <div className="text-sm font-semibold text-white">{note.title || '無題NOTE'}</div>
+                                    <div className="text-[10px] text-slate-500">slug: {note.slug}</div>
+                                  </div>
+                                  <div className="flex flex-col items-end gap-1 text-[10px]">
+                                    <span
+                                      className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold ${
+                                        note.status === 'published' ? 'bg-emerald-500/20 text-emerald-200' : 'bg-slate-700/50 text-slate-300'
+                                      }`}
+                                    >
+                                      {note.status === 'published' ? '公開中' : '下書き'}
+                                    </span>
+                                    <span
+                                      className={`inline-flex items-center rounded-full px-2 py-0.5 ${
+                                        note.is_paid ? 'bg-amber-500/20 text-amber-200' : 'bg-slate-700/40 text-slate-300'
+                                      }`}
+                                    >
+                                      {note.is_paid ? `${formatNumber(note.price_points)} P` : 'FREE'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+                                  <span>購入数: {formatNumber(note.total_purchases)}</span>
+                                  <span>更新: {formatDateTime(note.updated_at)}</span>
+                                </div>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  {note.status === 'published' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleUnpublishNote(note.id)}
+                                      disabled={isProcessing}
+                                      className={`inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200 ${
+                                        isProcessing ? 'opacity-60' : 'hover:border-slate-500'
+                                      }`}
+                                    >
+                                      <EyeSlashIcon className={`h-3.5 w-3.5 ${isProcessing ? 'animate-spin' : ''}`} aria-hidden="true" />
+                                      非公開
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteNote(note.id)}
+                                    disabled={isProcessing}
+                                    className={`inline-flex items-center gap-1 rounded-full border border-red-800 px-3 py-1 text-[11px] font-semibold text-red-200 ${
+                                      isProcessing ? 'opacity-60' : 'hover:border-red-600'
+                                    }`}
+                                  >
+                                    <TrashIcon className={`h-3.5 w-3.5 ${isProcessing ? 'animate-spin' : ''}`} aria-hidden="true" />
+                                    削除
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                          {selectedUserDetail.notes.length === 0 && (
+                            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-center text-xs text-slate-400">
+                              NOTEがまだ作成されていません
+                            </div>
+                          )}
+                        </div>
+                      </div>
 
                       <div className="space-y-3">
                         <h3 className="text-sm font-semibold text-white">最新トランザクション</h3>
@@ -1016,6 +1166,16 @@ export default function AdminPanelPage() {
                         <p className="text-xs text-slate-400">管理者付与累計</p>
                         <p className="text-2xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_granted)}</p>
                       </div>
+                      <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                        <p className="text-xs text-slate-400">NOTE 作成数</p>
+                        <p className="text-2xl font-semibold text-white mt-1">
+                          {formatNumber(selectedUserDetail.total_note_count)} 件
+                        </p>
+                        <p className="text-[11px] text-slate-500 mt-1">
+                          公開 {formatNumber(selectedUserDetail.published_note_count)} / 最新更新{' '}
+                          {selectedUserDetail.latest_note_updated_at ? formatDateTime(selectedUserDetail.latest_note_updated_at) : 'なし'}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="space-y-3">
@@ -1124,6 +1284,97 @@ export default function AdminPanelPage() {
                               <tr>
                                 <td colSpan={4} className="px-3 py-4 text-center text-sm text-slate-400">
                                   トランザクションがありません
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold text-white">NOTE 管理</h3>
+                      <div className="border border-slate-800 rounded-xl overflow-hidden">
+                        <table className="w-full text-sm text-slate-200">
+                          <thead className="bg-slate-900/70 text-xs uppercase tracking-wide text-slate-400">
+                            <tr>
+                              <th className="px-3 py-2 text-left">タイトル</th>
+                              <th className="px-3 py-2 text-left">ステータス</th>
+                              <th className="px-3 py-2 text-right">価格</th>
+                              <th className="px-3 py-2 text-right">購入数</th>
+                              <th className="px-3 py-2 text-left">更新</th>
+                              <th className="px-3 py-2 text-right">操作</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800/70">
+                            {selectedUserDetail.notes.map((note) => {
+                              const isProcessing = noteActionLoading && noteActionTarget === note.id;
+                              return (
+                                <tr key={note.id} className="align-top">
+                                  <td className="px-3 py-2 text-xs text-slate-300">
+                                    <div className="font-semibold text-slate-100">{note.title || '無題NOTE'}</div>
+                                    <div className="text-[10px] text-slate-500">slug: {note.slug}</div>
+                                  </td>
+                                  <td className="px-3 py-2 text-xs">
+                                    <div className="inline-flex items-center gap-1">
+                                      <span
+                                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                                          note.status === 'published'
+                                            ? 'bg-emerald-500/20 text-emerald-200'
+                                            : 'bg-slate-700/50 text-slate-300'
+                                        }`}
+                                      >
+                                        {note.status === 'published' ? '公開中' : '下書き'}
+                                      </span>
+                                      <span
+                                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] ${
+                                          note.is_paid ? 'bg-amber-500/20 text-amber-200' : 'bg-slate-700/40 text-slate-300'
+                                        }`}
+                                      >
+                                        {note.is_paid ? '有料' : '無料'}
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td className="px-3 py-2 text-right text-xs text-slate-200">
+                                    {note.is_paid ? formatNumber(note.price_points) + ' P' : 'FREE'}
+                                  </td>
+                                  <td className="px-3 py-2 text-right text-xs text-slate-200">{formatNumber(note.total_purchases)}</td>
+                                  <td className="px-3 py-2 text-xs text-slate-400">{formatDateTime(note.updated_at)}</td>
+                                  <td className="px-3 py-2 text-right text-xs">
+                                    <div className="flex justify-end gap-2">
+                                      {note.status === 'published' && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleUnpublishNote(note.id)}
+                                          disabled={isProcessing}
+                                          className={`inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200 hover:border-slate-500 ${
+                                            isProcessing ? 'opacity-60' : ''
+                                          }`}
+                                        >
+                                          <EyeSlashIcon className={`h-3.5 w-3.5 ${isProcessing ? 'animate-spin' : ''}`} aria-hidden="true" />
+                                          非公開
+                                        </button>
+                                      )}
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteNote(note.id)}
+                                        disabled={isProcessing}
+                                        className={`inline-flex items-center gap-1 rounded-full border border-red-800 px-3 py-1 text-[11px] font-semibold text-red-200 hover:border-red-600 ${
+                                          isProcessing ? 'opacity-60' : ''
+                                        }`}
+                                      >
+                                        <TrashIcon className={`h-3.5 w-3.5 ${isProcessing ? 'animate-spin' : ''}`} aria-hidden="true" />
+                                        削除
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {selectedUserDetail.notes.length === 0 && (
+                              <tr>
+                                <td colSpan={6} className="px-3 py-4 text-center text-sm text-slate-400">
+                                  NOTEがまだ作成されていません
                                 </td>
                               </tr>
                             )}

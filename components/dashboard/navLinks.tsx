@@ -11,6 +11,9 @@ import {
   DocumentTextIcon,
   LockClosedIcon,
   ChatBubbleLeftRightIcon,
+  DocumentPlusIcon,
+  PencilSquareIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 
@@ -25,7 +28,10 @@ export interface DashboardNavLink {
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/note', label: 'NOTEダッシュボード', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/notes', label: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '300P' },
@@ -40,7 +46,9 @@ export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: s
   const links = [...BASE_DASHBOARD_NAV_LINKS];
 
   if (options?.userType === 'seller' && !links.some((link) => link.href === '/products/manage')) {
-    links.splice(2, 0, { href: '/products/manage', label: '商品管理', icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" /> });
+    const productsIndex = links.findIndex((link) => link.href === '/products');
+    const insertIndex = productsIndex >= 0 ? productsIndex : links.length;
+    links.splice(insertIndex, 0, { href: '/products/manage', label: '商品管理', icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" /> });
   }
 
   if (options?.isAdmin) {

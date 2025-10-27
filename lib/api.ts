@@ -11,6 +11,13 @@ import type {
   AIImprovementRequest,
   AIImprovementResponse,
   LPListResponse,
+  NoteDetail,
+  NoteListResult,
+  NoteCreateRequest,
+  NoteUpdateRequest,
+  NotePurchaseResult,
+  PublicNoteListResult,
+  PublicNoteDetail,
 } from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -177,6 +184,33 @@ export const productApi = {
     api.get('/products/public', { params }),
 };
 
+// NOTE API
+export const noteApi = {
+  create: (data: NoteCreateRequest) =>
+    api.post<NoteDetail>('/notes', data),
+
+  list: (params?: { status_filter?: 'draft' | 'published'; limit?: number; offset?: number }) =>
+    api.get<NoteListResult>('/notes', { params }),
+
+  get: (noteId: string) =>
+    api.get<NoteDetail>(`/notes/${noteId}`),
+
+  update: (noteId: string, data: NoteUpdateRequest) =>
+    api.put<NoteDetail>(`/notes/${noteId}`, data),
+
+  delete: (noteId: string) =>
+    api.delete(`/notes/${noteId}`),
+
+  publish: (noteId: string) =>
+    api.post<NoteDetail>(`/notes/${noteId}/publish`),
+
+  unpublish: (noteId: string) =>
+    api.post<NoteDetail>(`/notes/${noteId}/unpublish`),
+
+  purchase: (noteId: string) =>
+    api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`),
+};
+
 // ポイントAPI
 export const pointsApi = {
   purchase: (amount: number) =>
@@ -211,6 +245,12 @@ export const adminApi = {
 
   deleteUser: (userId: string) =>
     api.delete(`/admin/users/${userId}`),
+
+  unpublishUserNote: (userId: string, noteId: string, data?: { reason?: string }) =>
+    api.post(`/admin/users/${userId}/notes/${noteId}/unpublish`, data ?? {}),
+
+  deleteUserNote: (userId: string, noteId: string, data?: { reason?: string }) =>
+    api.post(`/admin/users/${userId}/notes/${noteId}/delete`, data ?? {}),
 
   listMarketplaceLPs: (params?: { status?: string; search?: string; limit?: number; offset?: number }) =>
     api.get('/admin/marketplace/lps', { params }),
@@ -297,5 +337,15 @@ export const publicApi = {
   getRequiredActions: (slug: string, sessionId?: string) =>
     axios.get(`${API_URL}/public/${slug}/required-actions`, {
       params: sessionId ? { session_id: sessionId } : undefined,
+    }),
+
+  listNotes: (params?: { limit?: number; offset?: number; search?: string }) =>
+    axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, { params }),
+
+  getNote: (slug: string, options?: { accessToken?: string }) =>
+    axios.get<PublicNoteDetail>(`${API_URL}/notes/public/${slug}`, {
+      headers: options?.accessToken
+        ? { Authorization: `Bearer ${options.accessToken}` }
+        : undefined,
     }),
 };
