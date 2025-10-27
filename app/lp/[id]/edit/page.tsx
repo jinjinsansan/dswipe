@@ -540,7 +540,14 @@ export default function EditLPNewPage() {
 
       const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
         const contentData = (step.content_data || {}) as BlockContent;
-        const blockType = (step.block_type || contentData?.block_type || 'top-hero-1') as BlockType;
+        const contentRecord = contentData as unknown as Record<string, unknown>;
+        const blockTypeValue =
+          (typeof step.block_type === 'string' && step.block_type.trim().length > 0
+            ? step.block_type
+            : typeof contentRecord['block_type'] === 'string'
+            ? (contentRecord['block_type'] as string)
+            : undefined) || 'top-hero-1';
+        const blockType = blockTypeValue as BlockType;
         return {
           id: step.id,
           blockType,
