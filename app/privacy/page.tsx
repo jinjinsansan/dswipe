@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
               ← Home
             </Link>
             <h1 className="text-4xl font-bold text-white">プライバシーポリシー</h1>
-            <p className="text-sm text-slate-400">最終更新日：2024年10月22日</p>
+            <p className="text-sm text-slate-400">最終更新日：2025年10月22日</p>
             <p className="text-base leading-relaxed text-slate-300">
               D-swipe（以下「当社」）は、ユーザーの個人情報を適切に保護することを最優先事項と位置づけ、以下の方針に基づき個人情報を取り扱います。
             </p>
@@ -87,7 +87,7 @@ export default function PrivacyPolicyPage() {
               <p>個人情報に関するお問い合わせ先：</p>
               <address className="not-italic">
                 D-swipe 個人情報保護管理担当<br />
-                support@d-swipe.jp
+                info@dlogicai.com
               </address>
             </section>
           </div>

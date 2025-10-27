@@ -19,7 +19,7 @@ export default function TermsPage() {
               ← Home
             </Link>
             <h1 className="text-4xl font-bold text-white">利用規約</h1>
-            <p className="text-sm text-slate-400">最終更新日：2024年10月22日</p>
+            <p className="text-sm text-slate-400">最終更新日：2025年10月22日</p>
             <p className="text-base leading-relaxed text-slate-300">
               この利用規約（以下「本規約」）は、D-swipe（以下「当社」）が提供するサービスの利用条件を定めるものです。ユーザーの皆さまには、本規約に従ってサービスをご利用いただきます。
             </p>
@@ -89,7 +89,7 @@ export default function TermsPage() {
               <p>本規約に関するお問い合わせ先：</p>
               <address className="not-italic">
                 D-swipe カスタマーサポート<br />
-                support@d-swipe.jp
+                info@dlogicai.com
               </address>
             </section>
           </div>
