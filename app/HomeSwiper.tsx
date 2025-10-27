@@ -34,27 +34,14 @@ export default function HomeSwiper() {
   const video1Ref = useRef<HTMLVideoElement>(null);
   const video2Ref = useRef<HTMLVideoElement>(null);
 
-  // ビデオ自動再生を強制
-  useEffect(() => {
-    const playVideo = (videoRef: React.RefObject<HTMLVideoElement | null>) => {
-      if (videoRef.current) {
-        videoRef.current.play().catch((error) => {
-          console.log('Video autoplay prevented:', error);
-          // フォールバック: ユーザーインタラクション後に再生を試みる
-          const attemptPlay = () => {
-            videoRef.current?.play().catch(err => console.log('Retry play failed:', err));
-            document.removeEventListener('click', attemptPlay);
-            document.removeEventListener('touchstart', attemptPlay);
-          };
-          document.addEventListener('click', attemptPlay, { once: true });
-          document.addEventListener('touchstart', attemptPlay, { once: true });
-        });
-      }
-    };
-
-    playVideo(video1Ref);
-    playVideo(video2Ref);
-  }, []);
+  // ビデオ読み込み完了時に再生
+  const handleVideoLoaded = (videoRef: React.RefObject<HTMLVideoElement | null>) => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log('Video autoplay prevented:', error);
+      });
+    }
+  };
 
   // ハプティックフィードバック
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -227,6 +214,7 @@ export default function HomeSwiper() {
                 muted
                 playsInline
                 preload="auto"
+                onLoadedData={() => handleVideoLoaded(video1Ref)}
               >
                 <source src="/videos/pixta.mp4" type="video/mp4" />
               </video>
@@ -735,6 +723,7 @@ export default function HomeSwiper() {
                 muted
                 playsInline
                 preload="auto"
+                onLoadedData={() => handleVideoLoaded(video2Ref)}
               >
                 <source src="/videos/hero-keyboard.mp4" type="video/mp4" />
               </video>

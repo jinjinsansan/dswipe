@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useRef, useEffect, type CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
 
@@ -34,22 +34,14 @@ export default function TopHeroBlock({
   const secondaryText = content?.secondaryButtonText ?? 'ログイン';
   const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
 
-  // ビデオ自動再生を強制
-  useEffect(() => {
-    if (videoRef.current && videoUrl) {
+  // ビデオ読み込み完了時に再生
+  const handleVideoLoaded = () => {
+    if (videoRef.current) {
       videoRef.current.play().catch((error) => {
         console.log('Video autoplay prevented:', error);
-        // フォールバック: ユーザーインタラクション後に再生を試みる
-        const attemptPlay = () => {
-          videoRef.current?.play().catch(err => console.log('Retry play failed:', err));
-          document.removeEventListener('click', attemptPlay);
-          document.removeEventListener('touchstart', attemptPlay);
-        };
-        document.addEventListener('click', attemptPlay, { once: true });
-        document.addEventListener('touchstart', attemptPlay, { once: true });
       });
     }
-  }, [videoUrl]);
+  };
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? '#38BDF8';
@@ -94,6 +86,7 @@ export default function TopHeroBlock({
             muted
             playsInline
             preload="auto"
+            onLoadedData={handleVideoLoaded}
             src={videoUrl}
           />
         ) : null}
