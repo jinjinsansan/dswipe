@@ -92,14 +92,14 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           {testimonials.map((item, index) => (
             <div
               key={index}
-              className="flex h-full flex-col gap-4 rounded-2xl border p-6 shadow-sm"
+              className="flex h-full flex-row gap-4 rounded-2xl border p-5 shadow-sm sm:flex-col sm:p-6"
               style={{
                 borderColor: withAlpha(accentColor, 0.2, accentColor),
                 backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
               }}
             >
               <div
-                className="text-base leading-relaxed"
+                className="flex-1 text-sm leading-relaxed sm:text-base"
                 style={{ color: withAlpha(textColor, 0.82, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -108,7 +108,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
                 {item.quote}
               </div>
 
-              <div className="flex flex-col gap-1 border-t border-white/40 pt-4">
+              <div className="flex w-36 flex-col gap-1 border-l border-white/40 pl-4 sm:w-full sm:border-l-0 sm:border-t sm:pl-0 sm:pt-4">
                 <span
                   className="text-sm font-semibold"
                   style={{ color: accentColor }}

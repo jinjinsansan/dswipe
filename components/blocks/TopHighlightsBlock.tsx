@@ -189,61 +189,74 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
-              style={{
-                borderColor: withAlpha(accentColor, 0.2, accentColor),
-                backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
-                color: content?.textColor ?? '#0F172A',
-              }}
-            >
-              <div className="flex items-center justify-between">
+          {features.map((feature, index) => {
+            const IconComponent = resolveIcon(feature.icon);
+            return (
+              <div
+                key={index}
+                className="flex h-full flex-row flex-wrap items-start gap-4 rounded-2xl border p-4 shadow-sm sm:flex-col sm:flex-nowrap sm:items-center sm:text-center sm:p-5 sm:gap-3 md:p-6 md:gap-4"
+                style={{
+                  borderColor: withAlpha(accentColor, 0.2, accentColor),
+                  backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
+                  color: content?.textColor ?? '#0F172A',
+                }}
+              >
                 <div
-                  className="flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-white/80 shadow-sm"
+                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-white/40 bg-white/80 shadow-sm sm:h-14 sm:w-14"
                   style={{ color: accentColor }}
                 >
-                  {(() => {
-                    const IconComponent = resolveIcon(feature.icon);
-                    if (IconComponent) {
-                      return <IconComponent className="h-6 w-6" />;
-                    }
-                    return (
-                      <span className="text-sm font-semibold uppercase tracking-wide">
-                        {getFallbackLabel(feature.icon)}
-                      </span>
-                    );
-                  })()}
+                  {IconComponent ? (
+                    <IconComponent className="h-6 w-6 sm:h-7 sm:w-7" />
+                  ) : (
+                    <span className="text-sm font-semibold uppercase tracking-wide sm:text-base">
+                      {getFallbackLabel(feature.icon)}
+                    </span>
+                  )}
                 </div>
+
+                <div className="flex-1 sm:flex-none sm:w-full">
+                  <h3
+                    className="text-base font-semibold sm:text-lg"
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning
+                    onBlur={handleFeatureBlur(index, 'title')}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p
+                    className="mt-1 text-sm leading-relaxed sm:text-base"
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning
+                    onBlur={handleFeatureBlur(index, 'description')}
+                    style={{ color: content?.textColor ? `${content.textColor}B3` : withAlpha('#0F172A', 0.75, '#0F172A') }}
+                  >
+                    {feature.description}
+                  </p>
+                </div>
+
                 {isEditing ? (
-                  <input
-                    className="ml-3 w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
-                    value={feature.icon ?? ''}
-                    onChange={handleIconChange(index)}
-                    placeholder="アイコンキー例: rocket"
-                  />
+                  <div className="basis-full">
+                    <div className="hidden w-full sm:block">
+                      <input
+                        className="mt-4 w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
+                        value={feature.icon ?? ''}
+                        onChange={handleIconChange(index)}
+                        placeholder="icon"
+                      />
+                    </div>
+                    <div className="mt-3 w-full sm:hidden">
+                      <input
+                        className="w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
+                        value={feature.icon ?? ''}
+                        onChange={handleIconChange(index)}
+                        placeholder="icon"
+                      />
+                    </div>
+                  </div>
                 ) : null}
               </div>
-              <h3
-                className="text-lg font-semibold"
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={handleFeatureBlur(index, 'title')}
-              >
-                {feature.title}
-              </h3>
-              <p
-                className="text-sm"
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={handleFeatureBlur(index, 'description')}
-                style={{ color: content?.textColor ? `${content.textColor}B3` : withAlpha('#0F172A', 0.75, '#0F172A') }}
-              >
-                {feature.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

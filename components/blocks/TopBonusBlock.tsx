@@ -100,41 +100,45 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           {bonuses.map((bonus, index) => (
             <div
               key={index}
-              className="flex h-full flex-col gap-3 rounded-2xl border p-5 shadow-sm"
+              className="flex h-full flex-row items-start gap-4 rounded-2xl border p-4 shadow-sm sm:flex-col sm:p-5"
               style={{
                 borderColor: withAlpha(accentColor, 0.2, accentColor),
                 backgroundColor: withAlpha(accentColor, 0.08, '#FFFFFF'),
               }}
             >
-              <div
-                className="text-sm font-semibold"
-                style={{ color: accentColor }}
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={updateBonusField(index, 'title')}
-              >
-                {bonus.title}
+              <div className="flex-1">
+                <div
+                  className="text-sm font-semibold sm:text-base"
+                  style={{ color: accentColor }}
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning
+                  onBlur={updateBonusField(index, 'title')}
+                >
+                  {bonus.title}
+                </div>
+                <div
+                  className="mt-2 text-sm leading-relaxed sm:text-base"
+                  style={{ color: withAlpha(textColor, 0.8, textColor) }}
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning
+                  onBlur={updateBonusField(index, 'description')}
+                >
+                  {bonus.description ?? ''}
+                </div>
               </div>
-              <div
-                className="flex-1 text-sm leading-relaxed"
-                style={{ color: withAlpha(textColor, 0.8, textColor) }}
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={updateBonusField(index, 'description')}
-              >
-                {bonus.description ?? ''}
-              </div>
-              <div
-                className="rounded-full px-3 py-1 text-xs font-semibold"
-                style={{
-                  backgroundColor: withAlpha(accentColor, 0.18, accentColor),
-                  color: accentColor,
-                }}
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={updateBonusField(index, 'value')}
-              >
-                {bonus.value ?? ''}
+              <div className="flex flex-shrink-0 items-center sm:w-full sm:justify-center">
+                <div
+                  className="rounded-full px-3 py-1 text-xs font-semibold sm:px-4 sm:py-1.5 sm:text-sm"
+                  style={{
+                    backgroundColor: withAlpha(accentColor, 0.18, accentColor),
+                    color: accentColor,
+                  }}
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning
+                  onBlur={updateBonusField(index, 'value')}
+                >
+                  {bonus.value ?? ''}
+                </div>
               </div>
             </div>
           ))}
