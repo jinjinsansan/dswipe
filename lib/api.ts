@@ -110,7 +110,7 @@ export const lpApi = {
       image_url?: string | null;
       video_url?: string | null;
     }>,
-  ) => api.post(`/lp/${lpId}/blocks`, { blocks }),
+  ) => api.post(`/lp/${lpId}/blocks`, { steps: blocks }),
   
   // CTA管理
   addCta: (lpId: string, data: any) =>
