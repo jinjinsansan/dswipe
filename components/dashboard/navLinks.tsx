@@ -8,6 +8,9 @@ import {
   ShieldCheckIcon,
   GiftIcon,
   ClipboardDocumentListIcon,
+  DocumentTextIcon,
+  LockClosedIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 
@@ -16,6 +19,7 @@ export interface DashboardNavLink {
   label: string;
   icon: ReactNode;
   badge?: string;
+  external?: boolean;
 }
 
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
@@ -26,6 +30,10 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '白背景300P' },
   { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/privacy', label: 'プライバシーポリシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: 'https://www.dlogicai.in/', label: '競馬予想AIDlogic', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, external: true },
+  { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, external: true },
 ];
 
 export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: string }): DashboardNavLink[] => {

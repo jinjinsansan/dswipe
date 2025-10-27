@@ -41,6 +41,16 @@ const formatAnnouncementDate = (value?: string) => {
   }).format(date);
 };
 
+const formatAccountDate = (value?: string | null, includeTime = false) => {
+  if (!value) return '記録なし';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '記録なし';
+  const options: Intl.DateTimeFormatOptions = includeTime
+    ? { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
+    : { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Intl.DateTimeFormat('ja-JP', options).format(date);
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
@@ -74,6 +84,15 @@ export default function DashboardPage() {
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
   const [activeAnnouncement, setActiveAnnouncement] = useState<DashboardAnnouncement | null>(null);
+  const formattedCreatedAt = formatAccountDate(user?.created_at);
+  const formattedLastLogin = formatAccountDate(user?.last_login_at ?? null, true);
+  const continuityDays = user?.created_at
+    ? Math.max(
+        0,
+        Math.floor((Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24))
+      )
+    : null;
+  const continuityLabel = continuityDays !== null ? `${continuityDays}日` : '記録なし';
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -604,32 +623,48 @@ export default function DashboardPage() {
             {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               const isLineBonus = link.href === '/line/bonus';
+              const isExternal = Boolean(link.external);
+              const linkStyle = isLineBonus
+                ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
+                : isActive
+                ? 'text-white bg-blue-600'
+                : isExternal
+                ? 'text-blue-600 bg-blue-50 hover:bg-blue-100'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+              const iconStyle = isLineBonus
+                ? 'text-white'
+                : isActive
+                ? 'text-white'
+                : isExternal
+                ? 'text-blue-500'
+                : 'text-slate-500';
+              const linkProps = link.external
+                ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                : { href: link.href };
               
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
-                    isLineBonus
-                      ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
-                      : isActive
-                      ? 'text-white bg-blue-600'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
+                  {...linkProps}
+                  className={`flex items-center justify-between gap-2 px-3 py-2 rounded transition-colors text-sm font-medium ${linkStyle}`}
                 >
-                  <span className={`flex h-5 w-5 items-center justify-center ${
-                    isLineBonus ? 'text-white' : isActive ? 'text-white' : 'text-slate-500'
-                  }`}>
-                    {link.icon}
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className={`flex h-5 w-5 items-center justify-center ${iconStyle}`}>
+                      {link.icon}
+                    </span>
+                    <span className="truncate">{link.label}</span>
                   </span>
-                  <span className="flex items-center gap-2">
-                    {link.label}
-                    {isLineBonus && (
-                      <span className="px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded">
-                        300P
-                      </span>
-                    )}
-                  </span>
+                  {link.badge && (
+                    <span
+                      className={
+                        isLineBonus
+                          ? 'px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded'
+                          : 'px-1.5 py-0.5 bg-slate-200 text-slate-600 text-xs font-semibold rounded'
+                      }
+                    >
+                      {link.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -719,16 +754,22 @@ export default function DashboardPage() {
             {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
               const isLineBonus = link.href === '/line/bonus';
+              const isExternal = Boolean(link.external);
+              const linkProps = link.external
+                ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                : { href: link.href };
               
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  {...linkProps}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
                     isLineBonus
                       ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
                       : isActive
                       ? 'bg-blue-600 text-white'
+                      : isExternal
+                      ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                       : 'bg-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-300'
                   }`}
                 >
@@ -945,13 +986,15 @@ export default function DashboardPage() {
                   <ChartBarIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">ご利用中のプラン</div>
-                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">無料プラン</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">アカウントステータス</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{user?.username || 'ゲストユーザー'}</div>
                 </div>
               </div>
-              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
-                LP作成数: 無制限
-              </p>
+              <div className="space-y-1 text-[10px] sm:text-xs text-slate-600 font-medium">
+                <p className="flex justify-between gap-3"><span>直近ログイン</span><span className="text-slate-900">{formattedLastLogin}</span></p>
+                <p className="flex justify-between gap-3"><span>登録日</span><span className="text-slate-900">{formattedCreatedAt}</span></p>
+                <p className="flex justify-between gap-3"><span>利用継続</span><span className="text-slate-900">{continuityLabel}</span></p>
+              </div>
             </div>
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">

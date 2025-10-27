@@ -10,6 +10,7 @@ export interface User {
   sns_url?: string | null;
   line_url?: string | null;
   profile_image_url?: string | null;
+  last_login_at?: string | null;
 }
 
 export interface PublicUserProfile {
