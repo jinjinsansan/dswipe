@@ -6,6 +6,7 @@ import {
   PhotoIcon,
   WrenchScrewdriverIcon,
   ShieldCheckIcon,
+  GiftIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 
@@ -13,6 +14,7 @@ export interface DashboardNavLink {
   href: string;
   label: string;
   icon: ReactNode;
+  badge?: string;
 }
 
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
@@ -20,6 +22,7 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" /> },
+  { href: '/line/bonus', label: 'LINE連携で300P', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '300P' },
   { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" /> },
 ];
 
