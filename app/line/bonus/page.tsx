@@ -61,7 +61,7 @@ export default function LineBonusPage() {
       const token = localStorage.getItem('access_token');
 
       if (!token) {
-        throw new Error('認証トークンが見つかりません');
+        throw new Error('認証トークンが見つかりません。ログインし直してください。');
       }
 
       const response = await fetch(`${apiUrl}/line/status`, {
@@ -71,14 +71,33 @@ export default function LineBonusPage() {
       });
 
       if (!response.ok) {
-        throw new Error('LINE連携状態の取得に失敗しました');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API Error:', response.status, errorData);
+        throw new Error(errorData.detail || `LINE連携状態の取得に失敗しました (${response.status})`);
       }
 
       const data = await response.json();
+      console.log('LINE Status:', data);
       setLinkStatus(data);
+      setError(null);
     } catch (err: any) {
       console.error('Error fetching LINE link status:', err);
       setError(err.message || 'エラーが発生しました');
+      
+      // エラーが発生してもデフォルトの設定を表示できるようにする
+      setLinkStatus({
+        is_connected: false,
+        bonus_settings: {
+          id: '',
+          bonus_points: 300,
+          is_enabled: true,
+          description: 'LINE公式アカウントを追加して300ポイントGET！',
+          line_add_url: 'https://lin.ee/JFvc4dE',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        connection: null,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -196,9 +215,17 @@ export default function LineBonusPage() {
               </p>
             </div>
 
-            {error && (
+            {error && !error.includes('認証トークン') && (
+              <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-700">
+                <p className="font-semibold mb-1">ℹ️ 情報</p>
+                <p>接続エラーが発生しましたが、LINE連携は利用できます。詳細: {error}</p>
+              </div>
+            )}
+            
+            {error && error.includes('認証トークン') && (
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-                {error}
+                <p className="font-semibold mb-1">❌ 認証エラー</p>
+                <p>{error}</p>
               </div>
             )}
 
