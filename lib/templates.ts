@@ -659,17 +659,17 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       tagline: 'Pain Points',
       features: [
         {
-          icon: '🎨',
+          icon: 'rocket',
           title: 'デザイン設計に時間を奪われる',
           description: 'ゼロから構成やビジュアルを整えるのは非効率で差別化も難しい。',
         },
         {
-          icon: '🌐',
+          icon: 'global',
           title: 'ドメイン・サーバー整備が面倒',
           description: '取得・SSL対応まで段取りに追われ、初動が遅れる。',
         },
         {
-          icon: '💳',
+          icon: 'payment',
           title: '決済機能の実装ハードル',
           description: '安全な決済フローの準備には高い技術とセキュリティ知識が必要。',
         },
@@ -690,17 +690,17 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       tagline: 'Lifestyle Shift',
       features: [
         {
-          icon: '🌿',
+          icon: 'leaf',
           title: '行動が三日坊主で終わる',
           description: '継続の仕組みがなく、気合と根性に頼ってしまう。',
         },
         {
-          icon: '🧘‍♀️',
+          icon: 'wellness',
           title: 'メンタルの切り替えが難しい',
           description: '自分に合ったリズムを知らず、ストレスでリバウンドしてしまう。',
         },
         {
-          icon: '📊',
+          icon: 'analytics',
           title: '成果が可視化できない',
           description: '感覚だけで取り組み、伸びている実感が持てずモチベが続かない。',
         },
@@ -721,17 +721,17 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       tagline: 'Growth Issues',
       features: [
         {
-          icon: '📈',
+          icon: 'growth',
           title: '戦略が属人化している',
           description: 'トッププレイヤーのノウハウが共有されず、再現性が低い。',
         },
         {
-          icon: '🧭',
+          icon: 'navigation',
           title: '改善指標が曖昧',
           description: 'KPIの設定が曖昧で、何から手を付けるべきか判断できない。',
         },
         {
-          icon: '🤝',
+          icon: 'partnership',
           title: 'チーム連携が機能していない',
           description: '部署間で情報共有ができず、施策のスピードが落ちている。',
         },
@@ -752,17 +752,17 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       tagline: 'Insight Points',
       features: [
         {
-          icon: '🧠',
+          icon: 'insight',
           title: '情報が頭でっかちになる',
           description: 'インプット偏重で、実践に落とし込むフレームがない。',
         },
         {
-          icon: '🪜',
+          icon: 'momentum',
           title: '段階設計が不十分',
           description: '初級〜上級の橋渡しがなく、途中で挫折してしまう。',
         },
         {
-          icon: '🔍',
+          icon: 'search',
           title: '本質的な課題が見えていない',
           description: '現状分析が甘く、施策が的外れになってしまう。',
         },
@@ -783,17 +783,17 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       tagline: 'Project Risks',
       features: [
         {
-          icon: '🕒',
+          icon: 'time',
           title: '意思決定が遅い',
           description: '判断基準が不明瞭で、会議だけが増えてしまう。',
         },
         {
-          icon: '🧾',
+          icon: 'documentation',
           title: 'タスクが散らばっている',
           description: '情報が複数のツールに散在し、全体最適ができていない。',
         },
         {
-          icon: '🧩',
+          icon: 'puzzle',
           title: '責任領域が曖昧',
           description: '誰が何をやるのか定義されず、成果が属人化している。',
         },

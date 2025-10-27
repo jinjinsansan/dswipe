@@ -1,5 +1,6 @@
 import { TestimonialsBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { useMemo } from 'react';
 
 interface TopTestimonialsBlockProps {
   content: TestimonialsBlockContent;
@@ -10,20 +11,36 @@ interface TopTestimonialsBlockProps {
 export default function TopTestimonialsBlock({ content, isEditing, onEdit }: TopTestimonialsBlockProps) {
   const title = content?.title ?? 'お客様の声';
   const subtitle = content?.subtitle ?? '導入企業や受講生のリアルな成果をご紹介します。';
-  const testimonials = Array.isArray(content?.testimonials) && content.testimonials.length > 0
-    ? content.testimonials
-    : [
-        {
-          quote: 'AIがコピー案を提案してくれるので、初稿制作が一気に楽になりました。初月から前年度比180%の売上です。',
-          name: 'オンライン講座運営 / 佐藤様',
-          role: '年間売上1.2億円',
-        },
-        {
-          quote: 'ランディングページ制作の外注費を70%削減。自社メンバーだけで週1ペースのローンチが回せています。',
-          name: 'マーケティング会社 / 山田様',
-          role: 'チーム3名で運用',
-        },
-      ];
+  const testimonials = useMemo(() => (
+    Array.isArray(content?.testimonials) && content.testimonials.length > 0
+      ? content.testimonials
+      : [
+          {
+            quote: 'AIがコピー案を提案してくれるので、初稿制作が一気に楽になりました。初月から前年度比180%の売上です。',
+            name: 'オンライン講座運営 / 佐藤様',
+            role: '年間売上1.2億円',
+          },
+          {
+            quote: 'ランディングページ制作の外注費を70%削減。自社メンバーだけで週1ペースのローンチが回せています。',
+            name: 'マーケティング会社 / 山田様',
+            role: 'チーム3名で運用',
+          },
+        ]
+  ), [content?.testimonials]);
+
+  const columnsClass = useMemo(() => {
+    const count = testimonials.length;
+    if (count <= 1) {
+      return 'grid-cols-1 max-w-xl mx-auto';
+    }
+    if (count === 2) {
+      return 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto';
+    }
+    if (count === 3) {
+      return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+    }
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  }, [testimonials.length]);
 
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
   const textColor = content?.textColor ?? '#0F172A';
@@ -71,7 +88,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className={`grid gap-4 ${columnsClass}`}>
           {testimonials.map((item, index) => (
             <div
               key={index}

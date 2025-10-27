@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
 import { PricingBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
@@ -16,27 +17,45 @@ interface TopPricingBlockProps {
 export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopPricingBlockProps) {
   const title = content?.title ?? 'プランと料金';
   const subtitle = content?.subtitle ?? 'ローンチの規模に合わせて選べる柔軟なプランをご用意しています。';
-  const plans = Array.isArray(content?.plans) && content.plans.length > 0
-    ? content.plans
-    : [
-        {
-          name: 'スターター',
-          price: '¥29,800',
-          period: '/月',
-          description: '個人〜小規模チーム向け。月4本までのローンチを高速化。',
-          features: ['AIコピー生成', 'テンプレートライブラリ', '公開ホスティング', 'Stripe連携'],
-          buttonText: '無料で始める',
-        },
-        {
-          name: 'プロフェッショナル',
-          price: '¥79,800',
-          period: '/月',
-          description: '本格的なローンチ運用に。チームコラボと分析機能を強化。',
-          features: ['スタータープランの全機能', 'チーム編集・コメント', 'アクセス分析ダッシュボード', '優先サポート'],
-          buttonText: '7日間トライアル',
-          highlighted: true,
-        },
-      ];
+  const plans = useMemo(() => (
+    Array.isArray(content?.plans) && content.plans.length > 0
+      ? content.plans
+      : [
+          {
+            name: 'スターター',
+            price: '¥29,800',
+            period: '/月',
+            description: '個人〜小規模チーム向け。月4本までのローンチを高速化。',
+            features: ['AIコピー生成', 'テンプレートライブラリ', '公開ホスティング', 'Stripe連携'],
+            buttonText: '無料で始める',
+          },
+          {
+            name: 'プロフェッショナル',
+            price: '¥79,800',
+            period: '/月',
+            description: '本格的なローンチ運用に。チームコラボと分析機能を強化。',
+            features: ['スタータープランの全機能', 'チーム編集・コメント', 'アクセス分析ダッシュボード', '優先サポート'],
+            buttonText: '7日間トライアル',
+            highlighted: true,
+          },
+        ]
+  ), [content?.plans]);
+
+  const columnLayoutClass = useMemo(() => {
+    const count = plans.length;
+    if (count <= 1) {
+      return 'grid-cols-1 place-items-center max-w-3xl mx-auto';
+    }
+    if (count === 2) {
+      return 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto';
+    }
+    if (count === 3) {
+      return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+    }
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  }, [plans.length]);
+
+  const singlePlan = plans.length === 1;
 
   const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
   const textColor = content?.textColor ?? '#0F172A';
@@ -90,7 +109,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 gap-6 ${plans.length === 1 ? 'sm:grid-cols-1 max-w-2xl mx-auto' : plans.length === 2 ? 'sm:grid-cols-2 max-w-4xl mx-auto' : 'sm:grid-cols-3'}`}>
+        <div className={`grid gap-6 ${columnLayoutClass}`}>
           {plans.map((plan, index) => {
             const isHighlighted = plan.highlighted ?? false;
             const cardStyle: CSSProperties = {
@@ -116,11 +135,16 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
             const mappedCtaId = ctaIds?.[index];
 
+            const isSingle = singlePlan;
             return (
-              <div key={index} className="flex h-full flex-col gap-5 rounded-2xl border p-6 transition" style={cardStyle}>
+              <div
+                key={index}
+                className={`flex h-full flex-col rounded-2xl border transition ${isSingle ? 'w-full p-8 sm:p-10 gap-6 shadow-xl border-2' : 'p-6 gap-5'}`}
+                style={cardStyle}
+              >
                 <div className="flex items-center justify-between">
                   <div
-                    className="text-sm font-medium uppercase tracking-wide"
+                    className={`font-medium uppercase tracking-wide ${isSingle ? 'text-base' : 'text-sm'}`}
                     style={{ color: accentColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
@@ -145,7 +169,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
                 <div className="flex items-baseline gap-2">
                   <span
-                    className="text-3xl font-bold"
+                    className={`${isSingle ? 'text-4xl sm:text-5xl' : 'text-3xl'} font-bold`}
                     style={{ color: textColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
@@ -165,7 +189,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                 </div>
 
                 <p
-                  className="text-sm"
+                  className={`${isSingle ? 'text-base leading-relaxed' : 'text-sm'}`}
                   style={{ color: withAlpha(textColor, 0.7, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -174,11 +198,11 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   {plan.description ?? ''}
                 </p>
 
-                <ul className="flex flex-1 flex-col gap-2 text-sm" style={{ color: withAlpha(textColor, 0.75, textColor) }}>
+                <ul className={`flex flex-1 flex-col ${isSingle ? 'gap-3 text-base' : 'gap-2 text-sm'}`} style={{ color: withAlpha(textColor, 0.75, textColor) }}>
                   {(plan.features ?? []).map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-2">
                       <span
-                        className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                        className={`${isSingle ? 'mt-1.5 h-2 w-2' : 'mt-1 h-1.5 w-1.5'} inline-block flex-shrink-0 rounded-full`}
                         style={{ backgroundColor: accentColor }}
                       />
                       <div
@@ -201,7 +225,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
                 {onProductClick ? (
                   <button
-                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
                     type="button"
                     style={{
                       ...buttonStyle,
@@ -228,7 +252,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   <Link
                     href={plan.buttonUrl}
                     onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
-                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center"
+                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
                     style={{
                       ...buttonStyle,
                       outlineColor: withAlpha(accentColor, 0.45, accentColor),
@@ -251,7 +275,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   </Link>
                 ) : (
                   <button
-                    className="w-full rounded-lg py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
                     type="button"
                     style={{
                       ...buttonStyle,

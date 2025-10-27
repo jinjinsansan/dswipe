@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { BonusListBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 
@@ -11,20 +12,36 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
   const title = content?.title ?? '今だけの参加特典';
   const subtitle = content?.subtitle ?? '成果までの距離を一気に縮める特典を期間限定でご提供します。';
   const totalValue = content?.totalValue ?? '合計109,800円相当';
-  const bonuses = Array.isArray(content?.bonuses) && content.bonuses.length > 0
-    ? content.bonuses
-    : [
-        {
-          title: '特典1：即実践ローンチテンプレ集',
-          description: '成功事例をベースにした構成・コピー例を30種収録。',
-          value: '29,800円相当',
-        },
-        {
-          title: '特典2：AIコピー生成クレジット',
-          description: '月間300クレジットを無償提供。キャッチコピー量産が可能に。',
-          value: '39,800円相当',
-        },
-      ];
+  const bonuses = useMemo(() => (
+    Array.isArray(content?.bonuses) && content.bonuses.length > 0
+      ? content.bonuses
+      : [
+          {
+            title: '特典1：即実践ローンチテンプレ集',
+            description: '成功事例をベースにした構成・コピー例を30種収録。',
+            value: '29,800円相当',
+          },
+          {
+            title: '特典2：AIコピー生成クレジット',
+            description: '月間300クレジットを無償提供。キャッチコピー量産が可能に。',
+            value: '39,800円相当',
+          },
+        ]
+  ), [content?.bonuses]);
+
+  const columnsClass = useMemo(() => {
+    const count = bonuses.length;
+    if (count <= 1) {
+      return 'grid-cols-1 max-w-xl mx-auto';
+    }
+    if (count === 2) {
+      return 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto';
+    }
+    if (count === 3) {
+      return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto';
+    }
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  }, [bonuses.length]);
 
   const updateBonusField = (index: number, field: 'title' | 'description' | 'value') =>
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -79,7 +96,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className={`grid gap-4 ${columnsClass}`}>
           {bonuses.map((bonus, index) => (
             <div
               key={index}

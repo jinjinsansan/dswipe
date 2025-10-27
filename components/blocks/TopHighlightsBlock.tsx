@@ -1,5 +1,26 @@
+import { useMemo } from 'react';
 import { FeaturesBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import {
+  AcademicCapIcon,
+  ArrowTrendingUpIcon,
+  BoltIcon,
+  BookOpenIcon,
+  ChartBarIcon,
+  ClockIcon,
+  CreditCardIcon,
+  DocumentTextIcon,
+  GlobeAltIcon,
+  LightBulbIcon,
+  MagnifyingGlassIcon,
+  PaintBrushIcon,
+  PuzzlePieceIcon,
+  RocketLaunchIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import type { ComponentType, SVGProps } from 'react';
 
 interface TopHighlightsBlockProps {
   content: FeaturesBlockContent;
@@ -7,34 +28,125 @@ interface TopHighlightsBlockProps {
   onEdit?: (field: string, value: any) => void;
 }
 
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
+const ICON_MAP: Record<string, IconComponent> = {
+  rocket: RocketLaunchIcon,
+  launch: RocketLaunchIcon,
+  speed: RocketLaunchIcon,
+  '🚀': RocketLaunchIcon,
+  design: PaintBrushIcon,
+  creative: PaintBrushIcon,
+  branding: PaintBrushIcon,
+  '🎨': PaintBrushIcon,
+  global: GlobeAltIcon,
+  world: GlobeAltIcon,
+  network: GlobeAltIcon,
+  '🌐': GlobeAltIcon,
+  payment: CreditCardIcon,
+  billing: CreditCardIcon,
+  checkout: CreditCardIcon,
+  '💳': CreditCardIcon,
+  secure: ShieldCheckIcon,
+  shield: ShieldCheckIcon,
+  protection: ShieldCheckIcon,
+  analytics: ChartBarIcon,
+  data: ChartBarIcon,
+  '📊': ChartBarIcon,
+  growth: ArrowTrendingUpIcon,
+  scale: ArrowTrendingUpIcon,
+  '📈': ArrowTrendingUpIcon,
+  navigation: ArrowTrendingUpIcon,
+  '🧭': ArrowTrendingUpIcon,
+  partnership: UserGroupIcon,
+  team: UserGroupIcon,
+  '🤝': UserGroupIcon,
+  insight: LightBulbIcon,
+  innovation: LightBulbIcon,
+  '🧠': LightBulbIcon,
+  momentum: BoltIcon,
+  leverage: BoltIcon,
+  '🪜': BoltIcon,
+  discovery: MagnifyingGlassIcon,
+  search: MagnifyingGlassIcon,
+  '🔍': MagnifyingGlassIcon,
+  time: ClockIcon,
+  schedule: ClockIcon,
+  '🕒': ClockIcon,
+  documentation: DocumentTextIcon,
+  workflow: DocumentTextIcon,
+  compliance: DocumentTextIcon,
+  '🧾': DocumentTextIcon,
+  puzzle: PuzzlePieceIcon,
+  flexibility: PuzzlePieceIcon,
+  modular: PuzzlePieceIcon,
+  '🧩': PuzzlePieceIcon,
+  knowledge: BookOpenIcon,
+  library: BookOpenIcon,
+  '📚': BookOpenIcon,
+  wellness: SparklesIcon,
+  balance: SparklesIcon,
+  '🧘‍♀️': SparklesIcon,
+  nature: SparklesIcon,
+  sustainable: SparklesIcon,
+  leaf: SparklesIcon,
+  '🌿': SparklesIcon,
+};
+
+const resolveIcon = (value?: string): IconComponent | undefined => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  const lower = trimmed.toLowerCase();
+  return ICON_MAP[lower] ?? ICON_MAP[trimmed];
+};
+
+const getFallbackLabel = (value?: string) => {
+  if (!value) return '★';
+  const text = value.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+  const fallbackSource = text.length > 0 ? text : value;
+  return fallbackSource.slice(0, 2).toUpperCase() || '★';
+};
+
 export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHighlightsBlockProps) {
   const title = content?.title ?? 'こんな課題、ありませんか？';
   const tagline = content?.tagline ?? 'Pain Points';
   const accentColor = content?.accentColor ?? '#2563EB';
   const backgroundColor = content?.backgroundColor ?? '#F1F5F9';
   const textColor = content?.textColor ?? '#0F172A';
-  const features = Array.isArray(content?.features) && content.features.length > 0 ? content.features : [
-    {
-      icon: '🎨',
-      title: 'デザイン設計に時間を奪われる',
-      description: 'ゼロから構成やビジュアルを整えるのは非効率で差別化も難しい。',
-    },
-    {
-      icon: '🌐',
-      title: 'ドメイン・サーバー整備が面倒',
-      description: '取得・SSL対応まで段取りに追われ、初動が遅れる。',
-    },
-    {
-      icon: '💳',
-      title: '決済機能の実装ハードル',
-      description: '安全な決済フローの準備には高い技術とセキュリティ知識が必要。',
-    },
-  ];
+  const features = useMemo(() => (
+    Array.isArray(content?.features) && content.features.length > 0
+      ? content.features
+      : [
+          {
+            icon: 'rocket',
+            title: 'デザイン設計に時間を奪われる',
+            description: 'ゼロから構成やビジュアルを整えるのは非効率で差別化も難しい。',
+          },
+          {
+            icon: 'global',
+            title: 'ドメイン・サーバー整備が面倒',
+            description: '取得・SSL対応まで段取りに追われ、初動が遅れる。',
+          },
+          {
+            icon: 'payment',
+            title: '決済機能の実装ハードル',
+            description: '安全な決済フローの準備には高い技術とセキュリティ知識が必要。',
+          },
+        ]
+  ), [content?.features]);
 
-  const handleFeatureChange = (index: number, field: 'icon' | 'title' | 'description') => (e: React.FocusEvent<HTMLDivElement>) => {
+  const updateFeature = (index: number, value: Record<string, string>) => {
     const next = [...features];
-    next[index] = { ...next[index], [field]: e.currentTarget.textContent ?? '' };
+    next[index] = { ...next[index], ...value };
     onEdit?.('features', next);
+  };
+
+  const handleFeatureBlur = (index: number, field: 'title' | 'description') => (e: React.FocusEvent<HTMLDivElement>) => {
+    updateFeature(index, { [field]: e.currentTarget.textContent ?? '' });
+  };
+
+  const handleIconChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFeature(index, { icon: e.target.value });
   };
 
   return (
@@ -87,20 +199,37 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                 color: content?.textColor ?? '#0F172A',
               }}
             >
-              <div
-                className="text-3xl"
-                contentEditable={isEditing}
-                suppressContentEditableWarning
-                onBlur={handleFeatureChange(index, 'icon')}
-                style={{ color: accentColor }}
-              >
-                {feature.icon}
+              <div className="flex items-center justify-between">
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-white/80 shadow-sm"
+                  style={{ color: accentColor }}
+                >
+                  {(() => {
+                    const IconComponent = resolveIcon(feature.icon);
+                    if (IconComponent) {
+                      return <IconComponent className="h-6 w-6" />;
+                    }
+                    return (
+                      <span className="text-sm font-semibold uppercase tracking-wide">
+                        {getFallbackLabel(feature.icon)}
+                      </span>
+                    );
+                  })()}
+                </div>
+                {isEditing ? (
+                  <input
+                    className="ml-3 w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
+                    value={feature.icon ?? ''}
+                    onChange={handleIconChange(index)}
+                    placeholder="アイコンキー例: rocket"
+                  />
+                ) : null}
               </div>
               <h3
                 className="text-lg font-semibold"
                 contentEditable={isEditing}
                 suppressContentEditableWarning
-                onBlur={handleFeatureChange(index, 'title')}
+                onBlur={handleFeatureBlur(index, 'title')}
               >
                 {feature.title}
               </h3>
@@ -108,7 +237,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                 className="text-sm"
                 contentEditable={isEditing}
                 suppressContentEditableWarning
-                onBlur={handleFeatureChange(index, 'description')}
+                onBlur={handleFeatureBlur(index, 'description')}
                 style={{ color: content?.textColor ? `${content.textColor}B3` : withAlpha('#0F172A', 0.75, '#0F172A') }}
               >
                 {feature.description}
