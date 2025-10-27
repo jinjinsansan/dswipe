@@ -26,6 +26,14 @@ export default function TopHeroBlock({
 }: TopHeroBlockProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const tagline = content?.tagline ?? 'NEXT LAUNCH';
+  const highlightText = content?.highlightText ?? '５分でLP公開';
+  const title = content?.title ?? '情報には鮮度がある。';
+  const subtitle = content?.subtitle ?? 'スワイプ型LP作成プラットフォームで、今すぐ情報商材を販売';
+  const primaryText = content?.buttonText ?? '無料で始める';
+  const secondaryText = content?.secondaryButtonText ?? 'ログイン';
+  const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
+
   // ビデオ自動再生を強制
   useEffect(() => {
     if (videoRef.current && videoUrl) {
@@ -42,14 +50,6 @@ export default function TopHeroBlock({
       });
     }
   }, [videoUrl]);
-
-  const tagline = content?.tagline ?? 'NEXT LAUNCH';
-  const highlightText = content?.highlightText ?? '５分でLP公開';
-  const title = content?.title ?? '情報には鮮度がある。';
-  const subtitle = content?.subtitle ?? 'スワイプ型LP作成プラットフォームで、今すぐ情報商材を販売';
-  const primaryText = content?.buttonText ?? '無料で始める';
-  const secondaryText = content?.secondaryButtonText ?? 'ログイン';
-  const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? '#38BDF8';
