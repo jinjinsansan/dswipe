@@ -58,7 +58,7 @@ function ProductsContent() {
     try {
       setIsLoading(true);
       console.log('API呼び出し: productApi.getPublic');
-      const response = await productApi.getPublic({ sort: 'latest', limit: 100 });
+      const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
       console.log('API レスポンス取得成功');
       console.log('response.data:', response.data);
 
