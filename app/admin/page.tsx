@@ -533,6 +533,12 @@ export default function AdminPanelPage() {
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/admin/line-settings"
+              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-green-600/15 text-green-300 hover:bg-green-600/25 transition-colors whitespace-nowrap"
+            >
+              LINE設定
+            </Link>
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-white text-sm font-semibold">{user?.username}</span>
               <span className="text-xs text-slate-400">{user?.email}</span>
@@ -626,11 +632,12 @@ export default function AdminPanelPage() {
                 )}
 
                 <div className="hidden xl:block border border-slate-800 rounded-xl overflow-hidden">
-                  <div className="bg-slate-900/60 grid grid-cols-6 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <div className="bg-slate-900/60 grid grid-cols-7 gap-3 px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                     <span>ユーザー</span>
                     <span className="col-span-2">メール</span>
                     <span>ポイント</span>
                     <span>LP</span>
+                    <span>LINE</span>
                     <span>ステータス</span>
                   </div>
                   <div className="max-h-[540px] overflow-y-auto divide-y divide-slate-800/60">
@@ -649,7 +656,7 @@ export default function AdminPanelPage() {
                           <button
                             key={summary.id}
                             onClick={() => handleSelectUser(summary.id)}
-                            className={`grid grid-cols-6 gap-3 px-4 py-3 text-left transition-colors ${
+                            className={`grid grid-cols-7 gap-3 px-4 py-3 text-left transition-colors ${
                               isSelected ? 'bg-blue-600/20 text-white' : 'hover:bg-slate-900/70 text-slate-200'
                             }`}
                           >
@@ -657,6 +664,22 @@ export default function AdminPanelPage() {
                             <div className="col-span-2 truncate text-xs text-slate-400">{summary.email}</div>
                             <div className="text-sm font-semibold text-slate-100">{formatNumber(summary.point_balance)}</div>
                             <div className="text-xs text-slate-300">{summary.total_lp_count} 件</div>
+                            <div className="text-xs">
+                              {summary.line_connected ? (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="inline-flex items-center rounded-full bg-green-500/20 px-2 py-0.5 text-green-200 text-[10px]">
+                                    連携済み
+                                  </span>
+                                  {summary.line_bonus_awarded && (
+                                    <span className="text-[10px] text-green-300">🎁 300P</span>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="inline-flex items-center rounded-full bg-slate-700/40 px-2 py-0.5 text-slate-400 text-[10px]">
+                                  未連携
+                                </span>
+                              )}
+                            </div>
                             <div className="text-xs">
                               {summary.is_blocked ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/20 px-2 py-0.5 text-red-200">BLOCKED</span>
@@ -699,15 +722,26 @@ export default function AdminPanelPage() {
                               <div>{summary.total_lp_count} LP</div>
                             </div>
                           </div>
-                          <div className="mt-3 flex items-center justify-between text-xs">
+                          <div className="mt-3 flex items-center justify-between gap-2 text-xs flex-wrap">
                             <span className="text-slate-400">ユーザー種別: {summary.user_type}</span>
-                            <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 ${
-                                summary.is_blocked ? 'bg-red-500/20 text-red-200' : 'bg-emerald-500/15 text-emerald-200'
-                              }`}
-                            >
-                              {summary.is_blocked ? 'BLOCKED' : 'ACTIVE'}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              {summary.line_connected ? (
+                                <span className="inline-flex items-center rounded-full bg-green-500/20 px-2 py-0.5 text-green-200">
+                                  LINE連携 {summary.line_bonus_awarded && '🎁'}
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center rounded-full bg-slate-700/40 px-2 py-0.5 text-slate-400">
+                                  LINE未連携
+                                </span>
+                              )}
+                              <span
+                                className={`inline-flex items-center rounded-full px-2 py-0.5 ${
+                                  summary.is_blocked ? 'bg-red-500/20 text-red-200' : 'bg-emerald-500/15 text-emerald-200'
+                                }`}
+                              >
+                                {summary.is_blocked ? 'BLOCKED' : 'ACTIVE'}
+                              </span>
+                            </div>
                           </div>
                         </button>
                       );
@@ -759,6 +793,35 @@ export default function AdminPanelPage() {
                           <p className="text-[11px] text-slate-400">管理者付与累計</p>
                           <p className="text-xl font-semibold text-white mt-1">{formatPoints(selectedUserDetail.total_point_granted)}</p>
                         </div>
+                      </div>
+
+                      <div className={`rounded-xl border p-3 ${selectedUserDetail.line_connected ? 'border-green-500/40 bg-green-500/10' : 'border-slate-800 bg-slate-950/40'}`}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] text-slate-400">LINE連携状態</p>
+                          {selectedUserDetail.line_connected ? (
+                            <span className="inline-flex items-center rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] text-green-200">
+                              連携済み
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-slate-700/40 px-2 py-0.5 text-[10px] text-slate-400">
+                              未連携
+                            </span>
+                          )}
+                        </div>
+                        {selectedUserDetail.line_connected ? (
+                          <div className="mt-2 space-y-1">
+                            {selectedUserDetail.line_display_name && (
+                              <p className="text-sm text-white">表示名: {selectedUserDetail.line_display_name}</p>
+                            )}
+                            {selectedUserDetail.line_bonus_awarded ? (
+                              <p className="text-xs text-green-300">🎁 ボーナス300P付与済み</p>
+                            ) : (
+                              <p className="text-xs text-yellow-300">⏳ ボーナス未付与</p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="mt-1 text-xs text-slate-500">LINE公式アカウント未連携</p>
+                        )}
                       </div>
 
                       <div className="space-y-2">
