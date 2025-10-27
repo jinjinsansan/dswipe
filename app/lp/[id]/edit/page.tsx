@@ -20,6 +20,7 @@ import { TEMPLATE_LIBRARY, INFO_PRODUCT_BLOCKS } from '@/lib/templates';
 import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
+  CheckCircleIcon,
   Cog6ToothIcon,
   LinkIcon,
   RocketLaunchIcon,
@@ -636,11 +637,16 @@ export default function EditLPNewPage() {
     <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       {/* Toast Notifications */}
       {saveSuccess && (
-        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          <span className="font-semibold">✅ 保存完了！</span>
+        <div className="fixed top-4 right-4 z-50 animate-slide-in">
+          <div className="relative flex items-start gap-3 rounded-2xl border border-emerald-200 bg-white/90 px-4 py-3 shadow-2xl backdrop-blur">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-inner">
+              <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-emerald-900">保存が完了しました</span>
+              <span className="text-xs text-emerald-600">最新の変更がエディタに反映されています</span>
+            </div>
+          </div>
         </div>
       )}
       {error && (
