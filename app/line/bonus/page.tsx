@@ -93,8 +93,6 @@ export default function LineBonusPage() {
           is_enabled: true,
           description: 'LINE公式アカウントを追加して300ポイントGET！',
           line_add_url: 'https://lin.ee/JFvc4dE',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
         },
         connection: null,
       });
