@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
@@ -31,17 +31,6 @@ import 'swiper/css/effect-creative';
 
 export default function HomeSwiper() {
   const [selectedFaq, setSelectedFaq] = useState<number>(0);
-  const video1Ref = useRef<HTMLVideoElement>(null);
-  const video2Ref = useRef<HTMLVideoElement>(null);
-
-  // ビデオ読み込み完了時に再生
-  const handleVideoLoaded = (videoRef: React.RefObject<HTMLVideoElement | null>) => {
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log('Video autoplay prevented:', error);
-      });
-    }
-  };
 
   // ハプティックフィードバック
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -207,14 +196,11 @@ export default function HomeSwiper() {
             {/* 背景ビデオ */}
             <div className="absolute inset-0">
               <video
-                ref={video1Ref}
                 className="absolute inset-0 w-full h-full object-cover"
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="auto"
-                onLoadedData={() => handleVideoLoaded(video1Ref)}
               >
                 <source src="/videos/pixta.mp4" type="video/mp4" />
               </video>
@@ -716,14 +702,11 @@ export default function HomeSwiper() {
             {/* ビデオ背景 */}
             <div className="absolute inset-0">
               <video
-                ref={video2Ref}
                 className="absolute inset-0 w-full h-full object-cover"
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="auto"
-                onLoadedData={() => handleVideoLoaded(video2Ref)}
               >
                 <source src="/videos/hero-keyboard.mp4" type="video/mp4" />
               </video>
