@@ -80,11 +80,12 @@ function ProductsContent() {
     const candidates = [
       product.lp_thumbnail_url,
       product.hero_image_url,
+      product.heroImage, // 後方互換性のため
       product.meta_image_url,
     ];
 
     for (const candidate of candidates) {
-      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      if (typeof candidate === 'string' && candidate.trim().length > 0 && candidate.trim() !== '/placeholder.jpg') {
         return candidate.trim();
       }
     }
