@@ -331,12 +331,19 @@ export default function DashboardPage() {
         : Array.isArray(productsResponse.data)
         ? productsResponse.data
         : [];
+
+      const productLinkedLpIds = new Set(
+        productsData
+          .map((product: any) => product?.lp_id)
+          .filter((lpId: unknown): lpId is string => typeof lpId === 'string' && lpId.trim().length > 0)
+      );
       
       const enrichedLps = lpsData.map((lpItem: any) => {
         const heroMedia = heroMediaMap.get(lpItem.id) ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
         const normalizedStatus = typeof lpItem.status === 'string' ? lpItem.status.toLowerCase() : '';
         const isPublished = normalizedStatus === 'published';
-        const hasProduct = typeof lpItem.product_id === 'string' && lpItem.product_id.trim().length > 0;
+        const hasProductDirect = typeof lpItem.product_id === 'string' && lpItem.product_id.trim().length > 0;
+        const hasProduct = hasProductDirect || productLinkedLpIds.has(lpItem.id);
         const statusLabel = normalizedStatus === 'published'
           ? '公開中'
           : normalizedStatus === 'archived'
