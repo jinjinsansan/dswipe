@@ -2,11 +2,11 @@
 
 import { PageLoader } from '@/components/LoadingSpinner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { lpApi, pointsApi, productApi, authApi, announcementApi } from '@/lib/api';
+import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { BlockType } from '@/types/templates';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -59,6 +59,17 @@ export default function DashboardPage() {
   const [usernameError, setUsernameError] = useState<string>('');
   const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [profileBio, setProfileBio] = useState<string>(user?.bio ?? '');
+  const [profileSnsUrl, setProfileSnsUrl] = useState<string>(user?.sns_url ?? '');
+  const [profileLineUrl, setProfileLineUrl] = useState<string>(user?.line_url ?? '');
+  const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profile_image_url ?? '');
+  const [profileUpdateError, setProfileUpdateError] = useState<string>('');
+  const [profileUpdateSuccess, setProfileUpdateSuccess] = useState<boolean>(false);
+  const [isSavingProfileInfo, setIsSavingProfileInfo] = useState<boolean>(false);
+  const [isUploadingProfileImage, setIsUploadingProfileImage] = useState<boolean>(false);
+  const [profilePageUrl, setProfilePageUrl] = useState<string>('');
+  const profileImageInputRef = useRef<HTMLInputElement | null>(null);
+  const [profileLinkCopied, setProfileLinkCopied] = useState<boolean>(false);
   const [announcements, setAnnouncements] = useState<DashboardAnnouncement[]>([]);
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
@@ -74,6 +85,21 @@ export default function DashboardPage() {
 
     fetchData();
   }, [isAuthenticated, isInitialized]);
+
+  useEffect(() => {
+    setProfileBio(user?.bio ?? '');
+    setProfileSnsUrl(user?.sns_url ?? '');
+    setProfileLineUrl(user?.line_url ?? '');
+    setProfileImageUrl(user?.profile_image_url ?? '');
+    setNewUsername(user?.username ?? '');
+    setProfileLinkCopied(false);
+
+    if (typeof window !== 'undefined' && user?.username) {
+      setProfilePageUrl(`${window.location.origin}/u/${user.username}`);
+    } else {
+      setProfilePageUrl('');
+    }
+  }, [user]);
 
   const loadAnnouncements = async () => {
     setAnnouncementsLoading(true);
@@ -98,11 +124,17 @@ export default function DashboardPage() {
   const fetchData = async () => {
     try {
       const announcementPromise = loadAnnouncements();
-      const [lpsResponse, pointsResponse, productsResponse] = await Promise.all([
+      const [meResponse, lpsResponse, pointsResponse, productsResponse] = await Promise.all([
+        authApi.getMe(),
         lpApi.list(),
         pointsApi.getBalance(),
         productApi.list(),
       ]);
+
+      if (meResponse?.data) {
+        useAuthStore.getState().setUser(meResponse.data);
+        localStorage.setItem('user', JSON.stringify(meResponse.data));
+      }
 
       const lpsData = Array.isArray(lpsResponse.data?.data) 
         ? lpsResponse.data.data 
@@ -381,18 +413,25 @@ export default function DashboardPage() {
       return;
     }
 
-    if (newUsername.length < 3 || newUsername.length > 20) {
+    const trimmedUsername = newUsername.trim();
+
+    if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
       setUsernameError('ユーザー名は3-20文字で入力してください');
       return;
     }
 
-    if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) {
       setUsernameError('ユーザー名は英数字とアンダースコアのみ使用できます');
       return;
     }
 
+    if (trimmedUsername === user?.username) {
+      setUsernameError('現在のユーザー名と同じです');
+      return;
+    }
+
     try {
-      const response = await authApi.updateProfile({ username: newUsername });
+      const response = await authApi.updateProfile({ username: trimmedUsername });
       
       // 更新されたユーザー情報をストアに保存
       const updatedUser = response.data;
@@ -400,11 +439,76 @@ export default function DashboardPage() {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
       setUpdateSuccess(true);
-      setNewUsername('');
+      setNewUsername(updatedUser?.username ?? trimmedUsername);
       setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (error: any) {
       setUsernameError(error.response?.data?.detail || 'ユーザー名の更新に失敗しました');
     }
+  };
+
+  const handleProfileInfoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileUpdateError('');
+    setProfileUpdateSuccess(false);
+
+    const sanitizedBio = profileBio.trim();
+    const sanitizedSnsUrl = profileSnsUrl.trim();
+    const sanitizedLineUrl = profileLineUrl.trim();
+    const sanitizedImageUrl = profileImageUrl.trim();
+
+    const payload = {
+      bio: sanitizedBio ? sanitizedBio : null,
+      sns_url: sanitizedSnsUrl ? sanitizedSnsUrl : null,
+      line_url: sanitizedLineUrl ? sanitizedLineUrl : null,
+      profile_image_url: sanitizedImageUrl ? sanitizedImageUrl : null,
+    } as const;
+
+    setIsSavingProfileInfo(true);
+    try {
+      const response = await authApi.updateProfile(payload);
+      const updatedUser = response.data;
+      useAuthStore.getState().setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setProfileUpdateSuccess(true);
+      setTimeout(() => setProfileUpdateSuccess(false), 3000);
+    } catch (error: any) {
+      setProfileUpdateError(error.response?.data?.detail || 'プロフィールの更新に失敗しました');
+    } finally {
+      setIsSavingProfileInfo(false);
+    }
+  };
+
+  const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setProfileUpdateError('');
+    setIsUploadingProfileImage(true);
+    try {
+      const response = await mediaApi.upload(file, { optimize: true, max_width: 512, max_height: 512 });
+      const imageUrl = response.data?.url;
+      if (imageUrl) {
+        setProfileImageUrl(imageUrl);
+      }
+    } catch (error: any) {
+      setProfileUpdateError(error.response?.data?.detail || '画像のアップロードに失敗しました');
+    } finally {
+      setIsUploadingProfileImage(false);
+      if (profileImageInputRef.current) {
+        profileImageInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveProfileImage = () => {
+    setProfileImageUrl('');
+  };
+
+  const handleCopyProfileLink = () => {
+    if (!profilePageUrl || typeof navigator === 'undefined') return;
+    navigator.clipboard.writeText(profilePageUrl);
+    setProfileLinkCopied(true);
+    setTimeout(() => setProfileLinkCopied(false), 2000);
   };
 
   const handleLogout = () => {
@@ -511,8 +615,12 @@ export default function DashboardPage() {
         {/* User Info */}
         <div className="p-3 border-t border-slate-200">
           <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
+              {user?.profile_image_url ? (
+                <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+              ) : (
+                user?.username?.charAt(0).toUpperCase() || 'U'
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-slate-900 text-sm font-semibold truncate">{user?.username}</div>
@@ -556,8 +664,12 @@ export default function DashboardPage() {
               
               {/* User Avatar */}
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
+                  {user?.profile_image_url ? (
+                    <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                  ) : (
+                    user?.username?.charAt(0).toUpperCase() || 'U'
+                  )}
                 </div>
               </div>
             </div>
@@ -567,8 +679,12 @@ export default function DashboardPage() {
               <div className="text-right">
                 <div className="text-slate-900 text-xs font-semibold">{pointBalance.toLocaleString()}P</div>
               </div>
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0">
+                {user?.profile_image_url ? (
+                  <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                ) : (
+                  user?.username?.charAt(0).toUpperCase() || 'U'
+                )}
               </div>
             </div>
           </div>
@@ -1080,6 +1196,25 @@ export default function DashboardPage() {
                       <label className="text-sm text-slate-400">ポイント残高</label>
                       <div className="text-white font-medium">{pointBalance.toLocaleString()} P</div>
                     </div>
+                    {profilePageUrl && (
+                      <div>
+                        <label className="text-sm text-slate-400">プロフィールページ</label>
+                        <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                          <input
+                            value={profilePageUrl}
+                            readOnly
+                            className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm truncate"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleCopyProfileLink}
+                            className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold"
+                          >
+                            {profileLinkCopied ? 'コピー済み' : 'リンクをコピー'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1123,6 +1258,137 @@ export default function DashboardPage() {
                       className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                     >
                       更新する
+                    </button>
+                  </form>
+                </div>
+
+                <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">公開プロフィール設定</h3>
+
+                  <form onSubmit={handleProfileInfoSubmit} className="space-y-5">
+                    <div>
+                      <label htmlFor="profileBio" className="block text-sm font-medium text-slate-300 mb-2">
+                        自己紹介
+                      </label>
+                      <textarea
+                        id="profileBio"
+                        value={profileBio}
+                        maxLength={600}
+                        onChange={(e) => {
+                          setProfileBio(e.target.value);
+                          setProfileUpdateError('');
+                        }}
+                        placeholder="あなたやビジネスの紹介を入力してください"
+                        className="w-full min-h-[100px] px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
+                      />
+                      <div className="mt-1 text-xs text-slate-500 text-right">{profileBio.length}/600</div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="profileSnsUrl" className="block text-sm font-medium text-slate-300 mb-2">
+                        SNSリンク
+                      </label>
+                      <input
+                        id="profileSnsUrl"
+                        type="url"
+                        value={profileSnsUrl}
+                        onChange={(e) => {
+                          setProfileSnsUrl(e.target.value);
+                          setProfileUpdateError('');
+                        }}
+                        placeholder="https://"
+                        className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      />
+                      <p className="text-xs text-slate-500 mt-1">例: X（旧Twitter）やInstagramなどのプロフィールURL</p>
+                    </div>
+
+                    <div>
+                      <label htmlFor="profileLineUrl" className="block text-sm font-medium text-slate-300 mb-2">
+                        公式LINEリンク
+                      </label>
+                      <input
+                        id="profileLineUrl"
+                        type="url"
+                        value={profileLineUrl}
+                        onChange={(e) => {
+                          setProfileLineUrl(e.target.value);
+                          setProfileUpdateError('');
+                        }}
+                        placeholder="https://"
+                        className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      />
+                      <p className="text-xs text-slate-500 mt-1">例: https://lin.ee/ から始まるリンク</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-2">プロフィール画像</label>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center text-white text-xl">
+                          {profileImageUrl ? (
+                            <img src={profileImageUrl} alt="プロフィール画像プレビュー" className="w-full h-full object-cover" />
+                          ) : (
+                            user?.username?.charAt(0).toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-3">
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <label className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${isUploadingProfileImage ? 'bg-slate-700 text-slate-300' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
+                              <input
+                                ref={profileImageInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleProfileImageUpload}
+                                className="hidden"
+                              />
+                              {isUploadingProfileImage ? 'アップロード中…' : '画像を選択'}
+                            </label>
+                            {profileImageUrl && (
+                              <button
+                                type="button"
+                                onClick={handleRemoveProfileImage}
+                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200"
+                              >
+                                画像をクリア
+                              </button>
+                            )}
+                          </div>
+                          <input
+                            type="text"
+                            value={profileImageUrl}
+                            onChange={(e) => {
+                              setProfileImageUrl(e.target.value);
+                              setProfileUpdateError('');
+                            }}
+                            placeholder="カスタム画像URLを入力することもできます"
+                            className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {profileUpdateError && (
+                      <div className="bg-red-500/10 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm">
+                        {profileUpdateError}
+                      </div>
+                    )}
+
+                    {profileUpdateSuccess && (
+                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/50 text-green-300 px-4 py-3 rounded-lg text-sm">
+                        <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
+                        公開プロフィールを更新しました
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isSavingProfileInfo}
+                      className={`w-full px-6 py-3 rounded-lg font-semibold transition-colors ${
+                        isSavingProfileInfo
+                          ? 'bg-slate-700 text-slate-300'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      {isSavingProfileInfo ? '更新中…' : '保存する'}
                     </button>
                   </form>
                 </div>

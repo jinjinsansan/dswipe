@@ -5,8 +5,9 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { productApi } from '@/lib/api';
-import { DocumentIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { productApi, publicApi } from '@/lib/api';
+import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon } from '@heroicons/react/24/outline';
+import type { PublicUserProfile } from '@/types';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -15,6 +16,7 @@ export default function UserProfilePage() {
   console.log('UserProfilePage レンダリング - ユーザー名:', username);
 
   const [products, setProducts] = useState<any[]>([]);
+  const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [stats, setStats] = useState({
@@ -45,32 +47,44 @@ export default function UserProfilePage() {
   };
 
   useEffect(() => {
-    console.log('useEffect 実行 - fetchUserProducts を呼び出します');
-    fetchUserProducts();
+    console.log('useEffect 実行 - fetchUserData を呼び出します');
+    fetchUserData();
   }, [username]);
 
-  const fetchUserProducts = async () => {
+  const fetchUserData = async () => {
     try {
       setIsLoading(true);
       setError('');
 
-      // 商品登録されているLPのみ取得（マーケットと同じロジック）
-      const response = await productApi.getPublic({ 
-        seller_username: username,
-        sort: 'latest',
-        limit: 50 
-      });
+      const [productsResponse, profileResponse] = await Promise.all([
+        productApi.getPublic({
+          seller_username: username,
+          sort: 'latest',
+          limit: 50,
+        }),
+        publicApi.getUserProfile(username),
+      ]);
 
-      const userProducts = response.data?.data || [];
+      const userProducts = productsResponse.data?.data || [];
 
       setProducts(userProducts);
       setStats({
         totalProducts: userProducts.length,
         totalSales: userProducts.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0),
       });
+
+      setProfile(profileResponse.data as PublicUserProfile);
     } catch (error: any) {
       console.error('Failed to fetch user products:', error);
-      setError(error.message || '商品の取得に失敗しました');
+      const status = error.response?.status;
+      if (status === 404) {
+        setError('このユーザーのプロフィールが見つかりませんでした');
+      } else {
+        setError(error.response?.data?.detail || error.message || 'プロフィール情報の取得に失敗しました');
+      }
+      setProfile(null);
+      setProducts([]);
+      setStats({ totalProducts: 0, totalSales: 0 });
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +101,7 @@ export default function UserProfilePage() {
           <p className="text-red-400 text-lg mb-4">エラーが発生しました</p>
           <p className="text-gray-400 text-sm mb-4">{error}</p>
           <button
-            onClick={() => fetchUserProducts()}
+            onClick={() => fetchUserData()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             再試行
@@ -118,15 +132,28 @@ export default function UserProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
-              <span className="text-white font-bold text-3xl sm:text-4xl">
-                {username.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600">
+              {profile?.profile_image_url ? (
+                <img
+                  src={profile.profile_image_url}
+                  alt={`${username}のプロフィール画像`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-bold text-3xl sm:text-4xl">
+                  {username.charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
 
             {/* User Info */}
             <div className="flex-1 text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">{username}</h1>
+              {profile?.bio && (
+                <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto sm:mx-0 mb-4 whitespace-pre-line">
+                  {profile.bio}
+                </p>
+              )}
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 text-sm sm:text-base">
                 <div className="text-slate-600">
                   <span className="font-semibold text-slate-900">{stats.totalProducts}</span>
@@ -137,6 +164,33 @@ export default function UserProfilePage() {
                   <span className="text-slate-500 ml-1">総販売数</span>
                 </div>
               </div>
+
+              {(profile?.sns_url || profile?.line_url) && (
+                <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-3">
+                  {profile?.sns_url && (
+                    <a
+                      href={profile.sns_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700 text-sm font-semibold transition-colors"
+                    >
+                      <LinkIcon className="h-4 w-4" aria-hidden="true" />
+                      SNSを見る
+                    </a>
+                  )}
+                  {profile?.line_url && (
+                    <a
+                      href={profile.line_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#06C755] text-white text-sm font-semibold hover:bg-[#05B34A] transition-colors"
+                    >
+                      <ChatBubbleLeftRightIcon className="h-4 w-4" aria-hidden="true" />
+                      LINEで友だち追加
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

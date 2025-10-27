@@ -10,6 +10,7 @@ export type {
   LPDetail,
   LPStep,
   CTA,
+  PublicUserProfile,
 } from './index';
 
 export interface PointsBalance {

@@ -24,7 +24,7 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" /> },
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/line/bonus', label: 'LINE連携で300P', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '300P' },
+  { href: '/line/bonus', label: '黒文字でLINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '白背景300P' },
   { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" /> },
 ];
 

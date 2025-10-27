@@ -6,6 +6,18 @@ export interface User {
   user_type: 'seller' | 'buyer';
   point_balance: number;
   created_at: string;
+  bio?: string | null;
+  sns_url?: string | null;
+  line_url?: string | null;
+  profile_image_url?: string | null;
+}
+
+export interface PublicUserProfile {
+  username: string;
+  bio?: string | null;
+  sns_url?: string | null;
+  line_url?: string | null;
+  profile_image_url?: string | null;
 }
 
 // 認証レスポンス

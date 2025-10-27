@@ -56,7 +56,13 @@ export const authApi = {
   getMe: () =>
     api.get('/auth/me'),
   
-  updateProfile: (data: { username?: string }) =>
+  updateProfile: (data: {
+    username?: string;
+    bio?: string | null;
+    sns_url?: string | null;
+    line_url?: string | null;
+    profile_image_url?: string | null;
+  }) =>
     api.put('/auth/profile', data),
 };
 
@@ -260,6 +266,9 @@ export const publicApi = {
         session_id: options?.sessionId ?? undefined,
       },
     }),
+  
+  getUserProfile: (username: string) =>
+    axios.get(`${API_URL}/public/users/${username}`),
   
   recordStepView: (slug: string, data: { step_id: string; session_id?: string }) =>
     axios.post(`${API_URL}/public/${slug}/step-view`, data),
