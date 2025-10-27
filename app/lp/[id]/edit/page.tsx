@@ -21,7 +21,6 @@ import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
   Cog6ToothIcon,
-  EyeIcon,
   LinkIcon,
   RocketLaunchIcon,
   Squares2X2Icon,
@@ -838,9 +837,8 @@ export default function EditLPNewPage() {
                     href={`/view/${lp.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center"
                   >
-                    <EyeIcon className="h-5 w-5" aria-hidden="true" />
                     プレビュー
                   </a>
                 )}
@@ -913,10 +911,7 @@ export default function EditLPNewPage() {
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
-              <span className="inline-flex items-center gap-2">
-                <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                プレビュー
-              </span>
+              <span className="inline-flex items-center">プレビュー</span>
             </button>
             <button
               onClick={() => setMobileTab('settings')}
@@ -1198,7 +1193,6 @@ export default function EditLPNewPage() {
                     : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
-                <EyeIcon className="w-4 h-4 inline mr-1" />
                 {showLivePreview ? 'ライブプレビュー' : 'エディタ'}
               </button>
               
