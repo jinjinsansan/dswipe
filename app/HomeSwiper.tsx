@@ -36,7 +36,7 @@ export default function HomeSwiper() {
 
   // ビデオ自動再生を強制
   useEffect(() => {
-    const playVideo = (videoRef: React.RefObject<HTMLVideoElement>) => {
+    const playVideo = (videoRef: React.RefObject<HTMLVideoElement | null>) => {
       if (videoRef.current) {
         videoRef.current.play().catch((error) => {
           console.log('Video autoplay prevented:', error);
