@@ -176,8 +176,23 @@ export default function LineBonusPage() {
   const description = linkStatus?.bonus_settings?.description || 'LINE公式アカウントを追加して300ポイントGET！';
 
   return (
-    <div className="min-h-screen bg-slate-100 flex overflow-x-hidden">
-      {/* サイドバー */}
+    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row overflow-x-hidden">
+      {/* モバイルヘッダー */}
+      <header className="sm:hidden border-b border-slate-200 bg-white p-4">
+        <div className="flex items-center justify-between">
+          <Link href="/dashboard">
+            <DSwipeLogo size="medium" showFullName={true} />
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1.5 text-xs font-semibold rounded-full bg-red-600/15 text-red-600 hover:bg-red-600/25 transition-colors"
+          >
+            ログアウト
+          </button>
+        </div>
+      </header>
+
+      {/* サイドバー（デスクトップ） */}
       <aside className="hidden sm:flex w-52 flex-shrink-0 bg-white border-r border-slate-200 flex-col">
         <div className="px-6 h-16 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">

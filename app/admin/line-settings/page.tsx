@@ -132,21 +132,21 @@ export default function LineSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+      <header className="border-b border-gray-200 bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/dashboard" className="block">
                 <DSwipeLogo size="medium" showFullName={true} />
               </Link>
-              <span className="text-slate-400">/</span>
-              <span className="text-sm font-semibold text-white">LINE連携設定</span>
+              <span className="text-gray-400">/</span>
+              <span className="text-sm font-semibold text-gray-900">LINE連携設定</span>
             </div>
             <Link
               href="/admin"
-              className="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
             >
               <ArrowLeftIcon className="h-4 w-4" />
               管理者パネルに戻る
@@ -160,21 +160,21 @@ export default function LineSettingsPage() {
         <div className="space-y-6">
           {/* タイトル */}
           <div>
-            <h1 className="text-2xl font-bold text-white">LINE連携ボーナス設定</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <h1 className="text-2xl font-bold text-gray-900">LINE連携ボーナス設定</h1>
+            <p className="mt-1 text-sm text-gray-600">
               LINE公式アカウント連携時のボーナスポイント数や説明文を変更できます
             </p>
           </div>
 
           {/* エラー・成功メッセージ */}
           {error && (
-            <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+            <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800">
               {error}
             </div>
           )}
 
           {successMessage && (
-            <div className="rounded-xl border border-green-500/40 bg-green-500/10 p-4 text-sm text-green-200 flex items-center gap-2">
+            <div className="rounded-xl border border-green-300 bg-green-50 p-4 text-sm text-green-800 flex items-center gap-2">
               <CheckCircleIcon className="h-5 w-5" />
               {successMessage}
             </div>
@@ -182,13 +182,13 @@ export default function LineSettingsPage() {
 
           {/* 設定フォーム */}
           <form onSubmit={handleSave} className="space-y-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 space-y-6">
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 space-y-6">
               {/* 有効/無効 */}
               <div>
                 <label className="flex items-center justify-between">
                   <div>
-                    <span className="text-sm font-semibold text-white">キャンペーン有効化</span>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <span className="text-sm font-semibold text-gray-900">キャンペーン有効化</span>
+                    <p className="mt-1 text-xs text-gray-500">
                       OFFにすると、LINE連携してもボーナスポイントが付与されなくなります
                     </p>
                   </div>
@@ -196,7 +196,7 @@ export default function LineSettingsPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, is_enabled: !formData.is_enabled })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      formData.is_enabled ? 'bg-green-600' : 'bg-slate-700'
+                      formData.is_enabled ? 'bg-green-600' : 'bg-gray-300'
                     }`}
                   >
                     <span
@@ -210,7 +210,7 @@ export default function LineSettingsPage() {
 
               {/* ボーナスポイント数 */}
               <div>
-                <label className="block text-sm font-semibold text-white mb-2">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
                   ボーナスポイント数
                 </label>
                 <input
@@ -219,17 +219,17 @@ export default function LineSettingsPage() {
                   onChange={(e) => setFormData({ ...formData, bonus_points: parseInt(e.target.value) || 0 })}
                   min="0"
                   max="10000"
-                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="300"
                 />
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-gray-500">
                   0〜10,000ポイントの範囲で設定できます
                 </p>
               </div>
 
               {/* 説明文 */}
               <div>
-                <label className="block text-sm font-semibold text-white mb-2">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
                   説明文
                 </label>
                 <textarea
@@ -237,27 +237,27 @@ export default function LineSettingsPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
                   maxLength={500}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
                   placeholder="LINE公式アカウントを追加して300ポイントGET！"
                 />
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-gray-500">
                   ユーザーに表示される説明文です（最大500文字）
                 </p>
               </div>
 
               {/* LINE追加URL */}
               <div>
-                <label className="block text-sm font-semibold text-white mb-2">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
                   LINE追加URL
                 </label>
                 <input
                   type="url"
                   value={formData.line_add_url}
                   onChange={(e) => setFormData({ ...formData, line_add_url: e.target.value })}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="https://lin.ee/JFvc4dE"
                 />
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-gray-500">
                   LINE公式アカウントの友達追加URL
                 </p>
               </div>
@@ -267,14 +267,14 @@ export default function LineSettingsPage() {
             <div className="flex items-center justify-end gap-3">
               <Link
                 href="/admin"
-                className="px-6 py-3 rounded-xl bg-slate-800 text-white font-semibold hover:bg-slate-700 transition-colors"
+                className="px-6 py-3 rounded-xl bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors"
               >
                 キャンセル
               </Link>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {isSaving ? '保存中...' : '設定を保存'}
               </button>
@@ -283,29 +283,29 @@ export default function LineSettingsPage() {
 
           {/* 現在の設定情報 */}
           {settings && (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
-              <h3 className="text-sm font-semibold text-white mb-4">現在の設定情報</h3>
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4">現在の設定情報</h3>
               <dl className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-slate-400">最終更新日時</dt>
-                  <dd className="text-white">{new Date(settings.updated_at).toLocaleString('ja-JP')}</dd>
+                  <dt className="text-gray-600">最終更新日時</dt>
+                  <dd className="text-gray-900 font-medium">{new Date(settings.updated_at).toLocaleString('ja-JP')}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-400">作成日時</dt>
-                  <dd className="text-white">{new Date(settings.created_at).toLocaleString('ja-JP')}</dd>
+                  <dt className="text-gray-600">作成日時</dt>
+                  <dd className="text-gray-900 font-medium">{new Date(settings.created_at).toLocaleString('ja-JP')}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-400">設定ID</dt>
-                  <dd className="text-slate-400 text-xs font-mono">{settings.id}</dd>
+                  <dt className="text-gray-600">設定ID</dt>
+                  <dd className="text-gray-500 text-xs font-mono">{settings.id}</dd>
                 </div>
               </dl>
             </div>
           )}
 
           {/* 注意事項 */}
-          <div className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4">
-            <h4 className="text-sm font-semibold text-yellow-200 mb-2">⚠️ 注意事項</h4>
-            <ul className="space-y-1 text-xs text-yellow-200/80">
+          <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+            <h4 className="text-sm font-semibold text-yellow-900 mb-2">⚠️ 注意事項</h4>
+            <ul className="space-y-1 text-xs text-yellow-800">
               <li>• 設定変更は即座に反映されます</li>
               <li>• 既にボーナスを受け取ったユーザーには影響しません</li>
               <li>• キャンペーンを無効化しても、既存のLINE連携は解除されません</li>
