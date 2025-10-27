@@ -71,7 +71,6 @@ export default function EditLPNewPage() {
   const [lpTitle, setLpTitle] = useState('');
   const [lpSettings, setLpSettings] = useState({
     showSwipeHint: false,
-    fullscreenMedia: false,
     floatingCta: false,
     swipeDirection: 'vertical' as 'vertical' | 'horizontal',
   });
@@ -159,7 +158,6 @@ export default function EditLPNewPage() {
       setLpTitle(response.data.title || '');
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
-        fullscreenMedia: Boolean(response.data.fullscreen_media),
         floatingCta: Boolean(response.data.floating_cta),
         swipeDirection: response.data.swipe_direction || 'vertical',
       });
@@ -491,7 +489,6 @@ export default function EditLPNewPage() {
       const lpUpdateResponse = await lpApi.update(lpId, {
         title: lpTitle.trim() || undefined,
         show_swipe_hint: lpSettings.showSwipeHint,
-        fullscreen_media: lpSettings.fullscreenMedia,
         floating_cta: false,
         swipe_direction: lpSettings.swipeDirection,
         meta_title: normalizeMetaValue(metaSettings.title),
@@ -1016,22 +1013,6 @@ export default function EditLPNewPage() {
                   <p className="text-xs lg:text-[11px] text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
-
-              <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                  checked={lpSettings.fullscreenMedia}
-                  onChange={(e) =>
-                    setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
-                  }
-                />
-                <div>
-                  <p className="text-sm lg:text-xs text-slate-900 font-semibold">メディアの全画面表示</p>
-                  <p className="text-xs lg:text-[11px] text-slate-500">画像やHTMLをブラウザ全体に広げます</p>
-                </div>
-              </label>
-
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">LP名</h5>
@@ -1327,22 +1308,6 @@ export default function EditLPNewPage() {
                   <p className="text-xs text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
-
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                  checked={lpSettings.fullscreenMedia}
-                  onChange={(e) =>
-                    setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
-                  }
-                />
-                <div>
-                  <p className="text-sm text-slate-900 font-semibold">メディアの全画面表示</p>
-                  <p className="text-xs text-slate-500">画像やHTMLをブラウザ全体に広げます</p>
-                </div>
-              </label>
-
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">LP名</h5>
