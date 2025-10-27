@@ -464,9 +464,9 @@ export default function DashboardPage() {
       {/* Sidebar - Hidden on Mobile */}
       <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
         {/* Logo */}
-        <div className="px-6 h-16 border-b border-slate-200 flex items-center">
+        <div className="px-4 h-20 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
-            <DSwipeLogo size="medium" showFullName={true} />
+            <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
           </Link>
         </div>
 
@@ -475,20 +475,33 @@ export default function DashboardPage() {
           <div className="space-y-0.5">
             {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
+              const isLineBonus = link.href === '/line/bonus';
+              
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
-                    isActive
+                    isLineBonus
+                      ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
+                      : isActive
                       ? 'text-white bg-blue-600'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  <span className="flex h-5 w-5 items-center justify-center text-slate-500 group-hover:text-slate-900">
+                  <span className={`flex h-5 w-5 items-center justify-center ${
+                    isLineBonus ? 'text-white' : isActive ? 'text-white' : 'text-slate-500'
+                  }`}>
                     {link.icon}
                   </span>
-                  <span>{link.label}</span>
+                  <span className="flex items-center gap-2">
+                    {link.label}
+                    {isLineBonus && (
+                      <span className="px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded">
+                        300P
+                      </span>
+                    )}
+                  </span>
                 </Link>
               );
             })}
@@ -519,11 +532,17 @@ export default function DashboardPage() {
         {/* Top Navigation Bar */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
           <div className="flex items-center justify-between h-full">
-            {/* Left: Menu Button (Mobile) + Title */}
+            {/* Left: Logo (Mobile) + Title (Desktop) */}
             <div className="flex items-center gap-3 min-w-0">
-              <div className="min-w-0">
+              {/* Mobile Logo */}
+              <Link href="/dashboard" className="sm:hidden">
+                <DSwipeLogo size="small" showFullName={true} textColor="text-slate-900" />
+              </Link>
+              
+              {/* Desktop Title */}
+              <div className="hidden sm:block min-w-0">
                 <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">ダッシュボード</h1>
-                <p className="text-slate-500 text-xs hidden sm:block">ようこそ、{user?.username}さん</p>
+                <p className="text-slate-500 text-xs">ようこそ、{user?.username}さん</p>
               </div>
             </div>
             
@@ -559,18 +578,27 @@ export default function DashboardPage() {
           <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
             {navLinks.map((link) => {
               const isActive = isDashboardLinkActive(pathname, link.href);
+              const isLineBonus = link.href === '/line/bonus';
+              
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
-                    isActive
+                    isLineBonus
+                      ? 'bg-[#06C755] text-white hover:bg-[#05B34A] shadow-md'
+                      : isActive
                       ? 'bg-blue-600 text-white'
                       : 'bg-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-300'
                   }`}
                 >
                   <span>{link.icon}</span>
                   <span>{link.label}</span>
+                  {isLineBonus && (
+                    <span className="px-1.5 py-0.5 bg-white text-[#06C755] text-[10px] font-bold rounded">
+                      300P
+                    </span>
+                  )}
                 </Link>
               );
             })}
