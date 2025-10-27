@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { CSSProperties } from 'react';
+import { useRef, useEffect, type CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
 
@@ -24,6 +24,25 @@ export default function TopHeroBlock({
   ctaIds,
   onCtaClick,
 }: TopHeroBlockProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // ビデオ自動再生を強制
+  useEffect(() => {
+    if (videoRef.current && videoUrl) {
+      videoRef.current.play().catch((error) => {
+        console.log('Video autoplay prevented:', error);
+        // フォールバック: ユーザーインタラクション後に再生を試みる
+        const attemptPlay = () => {
+          videoRef.current?.play().catch(err => console.log('Retry play failed:', err));
+          document.removeEventListener('click', attemptPlay);
+          document.removeEventListener('touchstart', attemptPlay);
+        };
+        document.addEventListener('click', attemptPlay, { once: true });
+        document.addEventListener('touchstart', attemptPlay, { once: true });
+      });
+    }
+  }, [videoUrl]);
+
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '５分でLP公開';
   const title = content?.title ?? '情報には鮮度がある。';
@@ -68,11 +87,13 @@ export default function TopHeroBlock({
       <div className="absolute inset-0">
         {videoUrl ? (
           <video
+            ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             src={videoUrl}
           />
         ) : null}
