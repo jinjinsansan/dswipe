@@ -3,11 +3,9 @@
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { lpApi } from '@/lib/api';
-import { enrichLpsWithHeroMedia, resolveSellerUsername } from '@/lib/lpPreview';
-import type { HeroMedia } from '@/lib/lpPreview';
+import { productApi } from '@/lib/api';
 import {
   ArrowLeftIcon,
   BuildingStorefrontIcon,
@@ -16,11 +14,10 @@ import {
   AdjustmentsHorizontalIcon,
   UserCircleIcon,
   DocumentIcon,
-  EyeIcon,
+  ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
 
 function ProductsContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   console.log('ProductsContent レンダリング');
@@ -57,38 +54,18 @@ function ProductsContent() {
   }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
   const fetchProducts = async () => {
-    console.log('/products ページ - 公開LP取得開始');
+    console.log('/products ページ - 公開商品取得開始');
     try {
       setIsLoading(true);
-      console.log('API呼び出し: lpApi.list');
-      // 公開されているLPを取得
-      const response = await lpApi.list();
+      console.log('API呼び出し: productApi.getPublic');
+      const response = await productApi.getPublic({ sort: 'latest', limit: 100 });
       console.log('API レスポンス取得成功');
       console.log('response.data:', response.data);
-      
-      // バックエンドのレスポンス構造に合わせる
-      const allLPs = response.data?.data || response.data || [];
-      
-      // 公開されているLPのみをフィルタリング
-      const publishedLPs = allLPs.filter((lp: any) => lp.status === 'published');
-      
-      console.log('全LP数:', allLPs.length);
-      console.log('公開LP数:', publishedLPs.length);
-      console.log('公開LPデータ:', publishedLPs);
-      
-      // 最初のLPのstepsを確認
-      if (publishedLPs.length > 0) {
-        const firstLP: any = publishedLPs[0];
-        console.log('最初のLPの構造:', firstLP);
-        console.log('user_id:', firstLP.user_id);
-        console.log('owner:', firstLP.owner);
-        console.log('user:', firstLP.user);
-        console.log('username:', firstLP.username);
-        console.log('steps:', firstLP.steps);
-      }
-      
-      const enrichedLPs = await enrichLpsWithHeroMedia(publishedLPs);
-      setProducts(enrichedLPs);
+
+      const publicProducts = response.data?.data || [];
+      console.log('取得商品数:', publicProducts.length);
+
+      setProducts(publicProducts);
     } catch (error: any) {
       console.error('商品の取得に失敗:', error);
       console.error('エラー詳細:', error.response?.data || error.message);
@@ -99,20 +76,19 @@ function ProductsContent() {
     }
   };
 
-  const getHeroMedia = (lp: any): HeroMedia | null => {
-    const media = lp.heroMedia;
-    if (media && typeof media === 'object' && 'type' in media && 'url' in media) {
-      return media as HeroMedia;
+  const getThumbnailUrl = (product: any): string | null => {
+    const candidates = [
+      product.lp_thumbnail_url,
+      product.hero_image_url,
+      product.meta_image_url,
+    ];
+
+    for (const candidate of candidates) {
+      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+        return candidate.trim();
+      }
     }
-    if (lp.heroImage) {
-      return { type: 'image', url: lp.heroImage };
-    }
-    if (lp.image_url) {
-      return { type: 'image', url: lp.image_url };
-    }
-    if (lp.heroVideo) {
-      return { type: 'video', url: lp.heroVideo };
-    }
+
     return null;
   };
 
@@ -123,8 +99,8 @@ function ProductsContent() {
     if (searchQuery) {
       filtered = filtered.filter(
         (p) =>
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+          (typeof p.title === 'string' && p.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (typeof p.description === 'string' && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
@@ -132,15 +108,15 @@ function ProductsContent() {
     if (sellerFilter) {
       const normalizedFilter = sellerFilter.trim().toLowerCase();
       filtered = filtered.filter((p) => {
-        const sellerName = resolveSellerUsername(p);
-        return sellerName ? sellerName.toLowerCase().includes(normalizedFilter) : false;
+        const sellerName = typeof p.seller_username === 'string' ? p.seller_username : '';
+        return sellerName.toLowerCase().includes(normalizedFilter);
       });
     }
 
     // 価格帯フィルター
     if (priceRange !== 'all') {
       filtered = filtered.filter((p) => {
-        const price = p.price_in_points || 0;
+        const price = Number(p.price_in_points) || 0;
         if (priceRange === 'low') return price < 10000;
         if (priceRange === 'mid') return price >= 10000 && price < 50000;
         if (priceRange === 'high') return price >= 50000;
@@ -151,16 +127,16 @@ function ProductsContent() {
     // ソート
     filtered.sort((a, b) => {
       if (sortBy === 'latest') {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
       }
       if (sortBy === 'popular') {
         return (b.total_sales || 0) - (a.total_sales || 0);
       }
       if (sortBy === 'price_low') {
-        return (a.price_in_points || 0) - (b.price_in_points || 0);
+        return (Number(a.price_in_points) || 0) - (Number(b.price_in_points) || 0);
       }
       if (sortBy === 'price_high') {
-        return (b.price_in_points || 0) - (a.price_in_points || 0);
+        return (Number(b.price_in_points) || 0) - (Number(a.price_in_points) || 0);
       }
       return 0;
     });
@@ -308,46 +284,38 @@ function ProductsContent() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
-              {currentProducts.map((lp) => {
-                const heroMedia = getHeroMedia(lp);
-                const sellerUsername = resolveSellerUsername(lp);
+              {currentProducts.map((product) => {
+                const sellerUsername = typeof product.seller_username === 'string' ? product.seller_username : '';
+                const thumbnailUrl = getThumbnailUrl(product);
+                const lpSlug = typeof product.lp_slug === 'string' ? product.lp_slug : undefined;
+                const targetHref = lpSlug ? `/view/${lpSlug}` : `/products/${product.id}`;
 
                 return (
                   <Link
-                    key={lp.id}
-                    href={`/view/${lp.slug}`}
+                    key={product.id}
+                    href={targetHref}
                     className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
                   >
-                    {/* LP Preview Image */}
+                    {/* サムネイル */}
                     <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
-                      {heroMedia?.type === 'image' ? (
+                      {thumbnailUrl ? (
                         <img
-                          src={heroMedia.url}
-                          alt={lp.title}
+                          src={thumbnailUrl}
+                          alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : heroMedia?.type === 'video' ? (
-                        <video
-                          src={heroMedia.url}
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <div className="text-center p-4 text-slate-600">
                             <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
-                            <div className="text-sm font-semibold line-clamp-2">{lp.title}</div>
+                            <div className="text-sm font-semibold line-clamp-2">{product.title}</div>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* LP Info */}
+                    {/* 商品情報 */}
                     <div className="p-4">
-                      {/* Seller Info */}
                       {sellerUsername && (
                         <Link
                           href={`/u/${sellerUsername}`}
@@ -364,23 +332,32 @@ function ProductsContent() {
                       )}
 
                       <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
-                        {lp.title}
+                        {product.title}
                       </h3>
+
+                      <p className="text-sm text-slate-500 line-clamp-2 mb-3">
+                        {product.description || '詳細情報は商品ページをご確認ください。'}
+                      </p>
 
                       <div className="flex items-center justify-between mb-3 text-sm">
                         <span className="inline-flex items-center gap-1 text-slate-500">
-                          <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                          {lp.total_views || 0} 閲覧
+                          <ShoppingBagIcon className="h-4 w-4" aria-hidden="true" />
+                          {(product.total_sales || 0).toLocaleString()} 件販売
                         </span>
                         <span
                           className={`text-xs px-2 py-1 rounded ${
-                            lp.status === 'published'
+                            product.is_available
                               ? 'bg-emerald-100 text-emerald-600'
                               : 'bg-slate-200 text-slate-600'
                           }`}
                         >
-                          {lp.status === 'published' ? '公開中' : '下書き'}
+                          {product.is_available ? '販売中' : '販売停止'}
                         </span>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-3 text-sm font-semibold text-slate-700">
+                        <span>価格</span>
+                        <span>{(Number(product.price_in_points) || 0).toLocaleString()} P</span>
                       </div>
 
                       <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
