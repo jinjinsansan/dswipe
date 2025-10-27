@@ -175,6 +175,9 @@ export interface AdminUserSummary {
   blocked_reason?: string | null;
   blocked_at?: string | null;
   total_lp_count: number;
+  line_connected?: boolean;
+  line_display_name?: string | null;
+  line_bonus_awarded?: boolean;
   total_product_count: number;
   total_point_purchased: number;
   total_point_spent: number;
