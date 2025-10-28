@@ -181,7 +181,7 @@ export const productApi = {
     api.post(`/products/${id}/purchase`, data),
   
   getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number; seller_username?: string }) =>
-    api.get('/products/public', { params }),
+    axios.get(`${API_URL}/products/public`, { params }),
 };
 
 // NOTE API
