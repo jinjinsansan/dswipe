@@ -133,6 +133,7 @@ export interface NoteSummary {
   status: NoteStatus;
   published_at?: string | null;
   updated_at: string;
+  categories: string[];
 }
 
 export interface NoteDetail extends NoteSummary {
@@ -156,6 +157,7 @@ export interface PublicNoteSummary {
   price_points: number;
   author_username?: string | null;
   published_at?: string | null;
+  categories: string[];
 }
 
 export interface PublicNoteListResult {
@@ -178,6 +180,7 @@ export interface PublicNoteDetail {
   has_access: boolean;
   content_blocks: NoteBlock[];
   published_at?: string | null;
+  categories: string[];
 }
 
 export interface NotePurchaseResult {
@@ -194,6 +197,7 @@ export interface NoteCreateRequest {
   content_blocks: NoteBlock[];
   is_paid: boolean;
   price_points?: number | null;
+  categories: string[];
 }
 
 export interface NoteUpdateRequest {
@@ -203,6 +207,7 @@ export interface NoteUpdateRequest {
   content_blocks?: NoteBlock[];
   is_paid?: boolean;
   price_points?: number | null;
+  categories?: string[];
 }
 
 // ポイント残高型
@@ -328,6 +333,7 @@ export interface AdminUserNote {
   updated_at: string;
   published_at?: string | null;
   total_purchases: number;
+  categories: string[];
 }
 
 export interface AdminUserPurchase {

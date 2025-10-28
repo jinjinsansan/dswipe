@@ -17,6 +17,7 @@ import {
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { adminApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { getCategoryLabel } from '@/lib/noteCategories';
 import type {
   AdminMarketplaceLP,
   AdminPointAnalytics,
@@ -1016,6 +1017,18 @@ export default function AdminPanelPage() {
                                   <span>購入数: {formatNumber(note.total_purchases)}</span>
                                   <span>更新: {formatDateTime(note.updated_at)}</span>
                                 </div>
+                                {Array.isArray(note.categories) && note.categories.length > 0 ? (
+                                  <div className="mt-2 flex flex-wrap gap-1.5">
+                                    {note.categories.map((category) => (
+                                      <span
+                                        key={`${note.id}-${category}`}
+                                        className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-200"
+                                      >
+                                        #{getCategoryLabel(category)}
+                                      </span>
+                                    ))}
+                                  </div>
+                                ) : null}
                                 <div className="mt-2 flex flex-wrap gap-2">
                                   {note.status === 'published' && (
                                     <button
@@ -1314,6 +1327,18 @@ export default function AdminPanelPage() {
                                   <td className="px-3 py-2 text-xs text-slate-300">
                                     <div className="font-semibold text-slate-100">{note.title || '無題NOTE'}</div>
                                     <div className="text-[10px] text-slate-500">slug: {note.slug}</div>
+                                    {Array.isArray(note.categories) && note.categories.length > 0 ? (
+                                      <div className="mt-1 flex flex-wrap gap-1">
+                                        {note.categories.map((category) => (
+                                          <span
+                                            key={`${note.id}-${category}-table`}
+                                            className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-200"
+                                          >
+                                            #{getCategoryLabel(category)}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    ) : null}
                                   </td>
                                   <td className="px-3 py-2 text-xs">
                                     <div className="inline-flex items-center gap-1">

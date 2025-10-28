@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import type { NoteBlock, NoteBlockType } from '@/types';
 import {
   NOTE_BLOCK_TYPE_OPTIONS,
@@ -17,7 +17,24 @@ import {
   LockOpenIcon,
   SquaresPlusIcon,
   DocumentDuplicateIcon,
+  PhotoIcon,
 } from '@heroicons/react/24/outline';
+import MediaLibraryModal from '@/components/MediaLibraryModal';
+import { mediaApi } from '@/lib/api';
+import { DEFAULT_FONT_KEY, FONT_OPTIONS, getFontStack } from '@/lib/fonts';
+
+const TEXT_COLOR_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: '#0f172a', label: 'ダーク (標準)' },
+  { value: '#1e293b', label: 'スレート' },
+  { value: '#334155', label: 'ミッドナイト' },
+  { value: '#0369a1', label: 'スカイブルー' },
+  { value: '#2563eb', label: 'ブルー' },
+  { value: '#9333ea', label: 'パープル' },
+  { value: '#dc2626', label: 'レッド' },
+  { value: '#047857', label: 'エメラルド' },
+  { value: '#d97706', label: 'アンバー' },
+  { value: '#475569', label: 'グレー' },
+];
 
 type NoteEditorProps = {
   value: NoteBlock[];
@@ -39,6 +56,10 @@ const toListItems = (value: string): string[] =>
 
 export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
   const blocks = useMemo(() => value.map((block) => normalizeBlock(block)), [value]);
+  const [mediaTargetIndex, setMediaTargetIndex] = useState<number | null>(null);
+  const [isMediaLibraryOpen, setIsMediaLibraryOpen] = useState(false);
+  const [uploadingBlockId, setUploadingBlockId] = useState<string | null>(null);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const emitChange = (next: NoteBlock[]) => {
     const normalized = next.map((block) => normalizeBlock(block));
@@ -95,19 +116,134 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
     emitChange(next);
   };
 
-  const handleDataChange = (index: number, data: Record<string, unknown>) => {
+  const handleDataChange = (index: number, partialData: Record<string, unknown>) => {
     const next = [...blocks];
-    next[index] = normalizeBlock({ ...next[index], data });
+    const existingData = { ...(next[index].data ?? {}) };
+    next[index] = normalizeBlock({ ...next[index], data: { ...existingData, ...partialData } });
     emitChange(next);
+  };
+
+  const openFilePicker = (index: number) => {
+    if (disabled) return;
+    const block = blocks[index];
+    const key = (block.id ?? `block-${index}`).toString();
+    const input = fileInputRefs.current[key];
+    if (input) {
+      input.value = '';
+      input.click();
+    }
+  };
+
+  const handleBlockFileUpload = async (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || disabled) return;
+    const block = blocks[index];
+    const key = (block.id ?? `block-${index}`).toString();
+    setUploadingBlockId(key);
+    try {
+      const response = await mediaApi.upload(file, { optimize: true, max_width: 1920, max_height: 1080 });
+      const imageUrl: string | undefined = response.data?.url;
+      if (!imageUrl) {
+        throw new Error('アップロード結果にURLが含まれていません');
+      }
+      const caption = typeof block.data?.caption === 'string' ? block.data.caption : '';
+      handleDataChange(index, { url: imageUrl, caption });
+    } catch (error) {
+      console.error('画像のアップロードに失敗しました', error);
+      alert('画像のアップロードに失敗しました。時間をおいて再度お試しください。');
+    } finally {
+      setUploadingBlockId(null);
+      event.target.value = '';
+    }
+  };
+
+  const openMediaLibrary = (index: number) => {
+    if (disabled) return;
+    setMediaTargetIndex(index);
+    setIsMediaLibraryOpen(true);
+  };
+
+  const handleMediaSelect = (url: string) => {
+    if (mediaTargetIndex === null) return;
+    const block = blocks[mediaTargetIndex];
+    const caption = typeof block.data?.caption === 'string' ? block.data.caption : '';
+    handleDataChange(mediaTargetIndex, { url, caption });
+    setIsMediaLibraryOpen(false);
+    setMediaTargetIndex(null);
+  };
+
+  const closeMediaLibrary = () => {
+    setIsMediaLibraryOpen(false);
+    setMediaTargetIndex(null);
+  };
+
+  const renderTextStyleControls = (block: NoteBlock, index: number) => {
+    const data = block.data as Record<string, unknown> | undefined;
+    const currentFontKey = typeof data?.fontKey === 'string' ? data.fontKey : DEFAULT_FONT_KEY;
+    const currentColor = typeof data?.color === 'string' && data.color ? (data.color as string) : '#0f172a';
+
+    return (
+      <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-slate-600">フォント</span>
+            <select
+              value={currentFontKey}
+              onChange={(event) => handleDataChange(index, { fontKey: event.target.value })}
+              disabled={disabled}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 focus:border-blue-500 focus:outline-none"
+            >
+              {FONT_OPTIONS.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleDataChange(index, { fontKey: DEFAULT_FONT_KEY, color: '#0f172a' })}
+            disabled={disabled}
+            className={`inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-500 transition hover:border-slate-300 ${
+              disabled ? 'cursor-not-allowed opacity-60' : ''
+            }`}
+          >
+            リセット
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-semibold text-slate-600">文字色</span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {TEXT_COLOR_OPTIONS.map((option) => {
+              const isActive = option.value.toLowerCase() === currentColor.toLowerCase();
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleDataChange(index, { color: option.value })}
+                  disabled={disabled}
+                  className={`h-6 w-6 rounded-full border-2 transition ${
+                    isActive ? 'border-blue-500 ring-2 ring-blue-300/50' : 'border-slate-200 hover:border-slate-400'
+                  } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
+                  style={{ backgroundColor: option.value }}
+                  title={option.label}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="space-y-4">
       {blocks.map((block, index) => {
+        const blockKey = (block.id ?? `block-${index}`).toString();
         const isPaid = isPaidBlock(block);
         return (
           <div
-            key={block.id ?? index}
+            key={blockKey}
             className={`rounded-2xl border bg-white shadow-sm transition ${
               isPaid ? 'border-amber-400/60 ring-1 ring-amber-300/50' : 'border-slate-200'
             }`}
@@ -249,6 +385,37 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
 
               {block.type === 'image' && (
                 <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openFilePicker(index)}
+                      disabled={disabled}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                      画像をアップロード
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openMediaLibrary(index)}
+                      disabled={disabled}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      メディアから選択
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={(element) => {
+                        fileInputRefs.current[blockKey] = element;
+                      }}
+                      onChange={(event) => handleBlockFileUpload(index, event)}
+                      className="hidden"
+                    />
+                  </div>
+                  {uploadingBlockId === blockKey ? (
+                    <p className="text-xs font-semibold text-blue-600">アップロード中...</p>
+                  ) : null}
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
@@ -293,6 +460,10 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <div className="mx-auto h-px w-full max-w-md bg-slate-200" />
                 </div>
               )}
+
+              {(['paragraph', 'heading', 'quote', 'list'] as NoteBlockType[]).includes(block.type) ? (
+                renderTextStyleControls(block, index)
+              ) : null}
             </div>
           </div>
         );
@@ -315,6 +486,12 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
           ))}
         </div>
       </div>
+
+      <MediaLibraryModal
+        isOpen={isMediaLibraryOpen}
+        onClose={closeMediaLibrary}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 }

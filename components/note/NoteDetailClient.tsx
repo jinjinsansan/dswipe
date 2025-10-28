@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/authStore';
 import { noteApi, publicApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
+import { getCategoryLabel } from '@/lib/noteCategories';
 
 interface NoteDetailClientProps {
   slug: string;
@@ -61,8 +62,22 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       setNote(response.data);
       setLoading('idle');
     } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      setError(typeof detail === 'string' ? detail : 'NOTEの取得に失敗しました');
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        try {
+          const fallback = await publicApi.getNote(slug);
+          setNote(fallback.data);
+          setLoading('idle');
+          setError(null);
+          return;
+        } catch (fallbackError: any) {
+          const fallbackDetail = fallbackError?.response?.data?.detail;
+          setError(typeof fallbackDetail === 'string' ? fallbackDetail : 'NOTEの取得に失敗しました');
+        }
+      } else {
+        const detail = err?.response?.data?.detail;
+        setError(typeof detail === 'string' ? detail : 'NOTEの取得に失敗しました');
+      }
       setLoading('error');
     }
   }, [slug, token]);
@@ -154,6 +169,18 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         {note.excerpt ? (
           <p className="text-base text-slate-600 sm:text-lg">{note.excerpt}</p>
         ) : null}
+        {Array.isArray(note.categories) && note.categories.length > 0 ? (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {note.categories.map((category) => (
+              <span
+                key={category}
+                className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
+              >
+                #{getCategoryLabel(category)}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </header>
 
       <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
@@ -211,6 +238,24 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
           ) : null}
         </div>
       ) : null}
+
+      <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500">
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/notes"
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+          >
+            ← AllNOTEへ戻る
+          </Link>
+          <Link
+            href="/note"
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+          >
+            NOTEダッシュボード
+          </Link>
+        </div>
+        <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>
+      </footer>
     </article>
   );
 }

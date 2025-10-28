@@ -1,18 +1,27 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import {
+  getDashboardNavLinks,
+  getDashboardNavClasses,
+  getDashboardNavGroupMeta,
+  groupDashboardNavLinks,
+  isDashboardLinkActive,
+} from '@/components/dashboard/navLinks';
 import NoteEditor from '@/components/note/NoteEditor';
-import { noteApi } from '@/lib/api';
+import MediaLibraryModal from '@/components/MediaLibraryModal';
+import { mediaApi, noteApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
 import type { NoteBlock, NoteDetail } from '@/types';
+import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 
 const MIN_TITLE_LENGTH = 3;
+const MAX_CATEGORIES = 5;
 
 const formatDateTime = (value?: string | null) => {
   if (!value) return null;
@@ -51,6 +60,10 @@ export default function NoteEditPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const coverFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -72,6 +85,7 @@ export default function NoteEditPage() {
         setExcerpt(detail.excerpt ?? '');
         setIsPaid(Boolean(detail.is_paid));
         setPricePoints(detail.price_points ? String(detail.price_points) : '');
+        setCategories(Array.isArray(detail.categories) ? detail.categories : []);
         setBlocks(
           (detail.content_blocks && detail.content_blocks.length
             ? detail.content_blocks
@@ -95,10 +109,56 @@ export default function NoteEditPage() {
     () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
     [isAdmin, user?.user_type]
   );
+  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
 
   const handleLogout = () => {
     logout();
     router.push('/');
+  };
+
+  const openCoverFilePicker = () => {
+    if (coverFileInputRef.current) {
+      coverFileInputRef.current.value = '';
+      coverFileInputRef.current.click();
+    }
+  };
+
+  const handleCoverFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setIsCoverUploading(true);
+    try {
+      const response = await mediaApi.upload(file, { optimize: true, max_width: 1920, max_height: 1080 });
+      const url: string | undefined = response.data?.url;
+      if (!url) {
+        throw new Error('アップロード結果にURLが含まれていません');
+      }
+      setCoverImageUrl(url);
+    } catch (uploadError) {
+      console.error('カバー画像のアップロードに失敗しました', uploadError);
+      alert('カバー画像のアップロードに失敗しました。時間をおいて再度お試しください。');
+    } finally {
+      setIsCoverUploading(false);
+      event.target.value = '';
+    }
+  };
+
+  const handleCoverMediaSelect = (url: string) => {
+    setCoverImageUrl(url);
+    setIsCoverMediaOpen(false);
+  };
+
+  const toggleCategory = (value: string) => {
+    setCategories((prev) => {
+      if (prev.includes(value)) {
+        return prev.filter((category) => category !== value);
+      }
+      if (prev.length >= MAX_CATEGORIES) {
+        alert(`カテゴリは最大${MAX_CATEGORIES}件まで選択できます`);
+        return prev;
+      }
+      return [...prev, value];
+    });
   };
 
   const handleBlocksChange = useCallback((next: NoteBlock[]) => {
@@ -174,12 +234,14 @@ export default function NoteEditPage() {
         content_blocks: normalizedBlocks,
         is_paid: effectivePaid,
         price_points: effectivePaid ? Number(pricePoints) || 0 : 0,
+        categories,
       };
 
       const response = await noteApi.update(noteId, payload);
       const detail = response.data;
       setStatus(detail.status ?? 'draft');
       setPublishedAt(detail.published_at ?? null);
+      setCategories(Array.isArray(detail.categories) ? detail.categories : categories);
       setInfo('下書きを保存しました');
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
@@ -209,6 +271,7 @@ export default function NoteEditPage() {
       const detail = response.data;
       setStatus(detail.status ?? 'draft');
       setPublishedAt(detail.published_at ?? null);
+      setCategories(Array.isArray(detail.categories) ? detail.categories : categories);
       setInfo(action === 'publish' ? '記事を公開しました' : '記事を下書きに戻しました');
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
@@ -242,25 +305,44 @@ export default function NoteEditPage() {
         </div>
 
         <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            {navLinks.map((link) => {
-              const active = isDashboardLinkActive(pathname, link.href);
+          <div className="flex flex-col gap-4">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
-                    active ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <span className="text-base">{link.icon}</span>
-                  <span>{link.label}</span>
-                  {link.badge ? (
-                    <span className="ml-auto inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold">
-                      {link.badge}
-                    </span>
-                  ) : null}
-                </Link>
+                <div key={group.key} className="space-y-1.5">
+                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((link) => {
+                      const active = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
+                            </span>
+                            <span className="truncate">{link.label}</span>
+                          </span>
+                          {link.badge ? (
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -312,20 +394,42 @@ export default function NoteEditPage() {
         </div>
 
         <div className="sm:hidden border-b border-slate-200 bg-white">
-          <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
-            {navLinks.map((link) => {
-              const active = isDashboardLinkActive(pathname, link.href);
+          <nav className="flex flex-col gap-3 px-3 py-3">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
-                    active ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <span>{link.icon}</span>
-                  <span>{link.label}</span>
-                </Link>
+                <div key={group.key} className="flex flex-col gap-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {group.items.map((link) => {
+                      const active = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                        >
+                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                            {link.icon}
+                          </span>
+                          <span>{link.label}</span>
+                          {link.badge ? (
+                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </nav>
@@ -371,7 +475,35 @@ export default function NoteEditPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">カバー画像URL</label>
+                    <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">カバー画像</label>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={openCoverFilePicker}
+                        disabled={saving || actionLoading}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        画像をアップロード
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsCoverMediaOpen(true)}
+                        disabled={saving || actionLoading}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        メディアから選択
+                      </button>
+                      <input
+                        ref={coverFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleCoverFileSelect}
+                      />
+                    </div>
+                    {isCoverUploading ? (
+                      <p className="mt-2 text-xs font-semibold text-blue-600">アップロード中...</p>
+                    ) : null}
                     <input
                       type="text"
                       value={coverImageUrl}
@@ -393,6 +525,45 @@ export default function NoteEditPage() {
                         ? 'この記事は公開中です。変更を反映するには再度公開状態で保存してください。'
                         : '現在は下書きです。公開するとマーケットに表示されます。'}
                     </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">カテゴリーを選択</p>
+                      <p className="text-xs text-slate-500">最大{MAX_CATEGORIES}件まで選択できます。マーケットでの露出を高めるためにも設定がおすすめです。</p>
+                    </div>
+                    {categories.length > 0 ? (
+                      <div className="flex flex-wrap items-center gap-1 text-[10px] text-slate-500">
+                        <span>選択中:</span>
+                        {categories.map((category) => (
+                          <span key={category} className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 font-semibold text-blue-600">
+                            #{NOTE_CATEGORY_OPTIONS.find((option) => option.value === category)?.label ?? category}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {NOTE_CATEGORY_OPTIONS.map((option) => {
+                      const isActive = categories.includes(option.value);
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => toggleCategory(option.value)}
+                          disabled={saving || actionLoading}
+                          className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                            isActive
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          } ${(saving || actionLoading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -492,6 +663,11 @@ export default function NoteEditPage() {
           </div>
         </div>
       </main>
+      <MediaLibraryModal
+        isOpen={isCoverMediaOpen}
+        onClose={() => setIsCoverMediaOpen(false)}
+        onSelect={handleCoverMediaSelect}
+      />
     </div>
   );
 }

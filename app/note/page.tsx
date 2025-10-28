@@ -14,9 +14,16 @@ import {
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import {
+  getDashboardNavLinks,
+  getDashboardNavClasses,
+  getDashboardNavGroupMeta,
+  groupDashboardNavLinks,
+  isDashboardLinkActive,
+} from '@/components/dashboard/navLinks';
 import { noteApi } from '@/lib/api';
 import type { NoteSummary } from '@/types';
+import { getCategoryLabel } from '@/lib/noteCategories';
 
 type FilterValue = 'all' | 'draft' | 'published';
 
@@ -43,6 +50,7 @@ export default function NoteDashboardPage() {
     () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
     [isAdmin, user?.user_type]
   );
+  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
 
   const handleLogout = () => {
     logout();
@@ -121,27 +129,44 @@ export default function NoteDashboardPage() {
         </div>
 
         <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            {navLinks.map((link) => {
-              const isActive = isDashboardLinkActive(pathname, link.href);
+          <div className="flex flex-col gap-4">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <span className="text-base">{link.icon}</span>
-                  <span>{link.label}</span>
-                  {link.badge ? (
-                    <span className="ml-auto inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold">
-                      {link.badge}
-                    </span>
-                  ) : null}
-                </Link>
+                <div key={group.key} className="space-y-1.5">
+                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
+                            </span>
+                            <span className="truncate">{link.label}</span>
+                          </span>
+                          {link.badge ? (
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -194,22 +219,42 @@ export default function NoteDashboardPage() {
         </div>
 
         <div className="sm:hidden border-b border-slate-200 bg-white">
-          <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
-            {navLinks.map((link) => {
-              const isActive = isDashboardLinkActive(pathname, link.href);
+          <nav className="flex flex-col gap-3 px-3 py-3">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <span>{link.icon}</span>
-                  <span>{link.label}</span>
-                </Link>
+                <div key={group.key} className="flex flex-col gap-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                        >
+                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                            {link.icon}
+                          </span>
+                          <span>{link.label}</span>
+                          {link.badge ? (
+                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </nav>
@@ -314,6 +359,18 @@ export default function NoteDashboardPage() {
                             <h3 className="text-lg font-semibold text-slate-900">{note.title}</h3>
                             {note.excerpt ? (
                               <p className="text-sm text-slate-600 line-clamp-2">{note.excerpt}</p>
+                            ) : null}
+                            {Array.isArray(note.categories) && note.categories.length > 0 ? (
+                              <div className="flex flex-wrap gap-2 pt-1">
+                                {note.categories.map((category) => (
+                                  <span
+                                    key={category}
+                                    className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600"
+                                  >
+                                    #{getCategoryLabel(category)}
+                                  </span>
+                                ))}
+                              </div>
                             ) : null}
                             <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                               <span>更新: {new Date(note.updated_at).toLocaleString('ja-JP')}</span>

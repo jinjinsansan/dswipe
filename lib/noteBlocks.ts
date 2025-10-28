@@ -71,16 +71,24 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
   switch (normalized.type) {
     case 'heading': {
       const level = data.level === 'h2' || data.level === 'h3' ? data.level : 'h2';
+      const fontKey = typeof data.fontKey === 'string' ? data.fontKey : undefined;
+      const color = typeof data.color === 'string' && data.color ? data.color : undefined;
       normalized.data = {
         text: typeof data.text === 'string' ? data.text : '',
         level,
+        ...(fontKey ? { fontKey } : {}),
+        ...(color ? { color } : {}),
       };
       break;
     }
     case 'quote': {
+      const fontKey = typeof data.fontKey === 'string' ? data.fontKey : undefined;
+      const color = typeof data.color === 'string' && data.color ? data.color : undefined;
       normalized.data = {
         text: typeof data.text === 'string' ? data.text : '',
         cite: typeof data.cite === 'string' ? data.cite : '',
+        ...(fontKey ? { fontKey } : {}),
+        ...(color ? { color } : {}),
       };
       break;
     }
@@ -97,8 +105,12 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
         : typeof data.text === 'string'
           ? data.text.split('\n').map((item) => item.trim()).filter(Boolean)
           : [];
+      const fontKey = typeof data.fontKey === 'string' ? data.fontKey : undefined;
+      const color = typeof data.color === 'string' && data.color ? data.color : undefined;
       normalized.data = {
         items,
+        ...(fontKey ? { fontKey } : {}),
+        ...(color ? { color } : {}),
       };
       break;
     }
@@ -108,8 +120,12 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
     }
     case 'paragraph':
     default: {
+      const fontKey = typeof data.fontKey === 'string' ? data.fontKey : undefined;
+      const color = typeof data.color === 'string' && data.color ? data.color : undefined;
       normalized.data = {
         text: typeof data.text === 'string' ? data.text : '',
+        ...(fontKey ? { fontKey } : {}),
+        ...(color ? { color } : {}),
       };
       normalized.type = normalized.type === 'paragraph' || !normalized.type ? 'paragraph' : normalized.type;
       break;

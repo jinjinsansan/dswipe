@@ -189,7 +189,7 @@ export const noteApi = {
   create: (data: NoteCreateRequest) =>
     api.post<NoteDetail>('/notes', data),
 
-  list: (params?: { status_filter?: 'draft' | 'published'; limit?: number; offset?: number }) =>
+  list: (params?: { status_filter?: 'draft' | 'published'; limit?: number; offset?: number; categories?: string[] }) =>
     api.get<NoteListResult>('/notes', { params }),
 
   get: (noteId: string) =>
@@ -339,7 +339,7 @@ export const publicApi = {
       params: sessionId ? { session_id: sessionId } : undefined,
     }),
 
-  listNotes: (params?: { limit?: number; offset?: number; search?: string }) =>
+  listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[] }) =>
     axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, { params }),
 
   getNote: (slug: string, options?: { accessToken?: string }) =>

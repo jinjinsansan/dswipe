@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FunnelIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { publicApi } from '@/lib/api';
 import type { PublicNoteSummary } from '@/types';
+import { NOTE_CATEGORY_OPTIONS, getCategoryLabel } from '@/lib/noteCategories';
 
 const PAGE_SIZE = 60;
 
@@ -20,6 +21,7 @@ export default function NotesMarketplacePage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [loading, setLoading] = useState<LoadingState>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,6 +38,7 @@ export default function NotesMarketplacePage() {
         const response = await publicApi.listNotes({
           limit: PAGE_SIZE,
           search: debouncedSearch || undefined,
+          categories: categoryFilter !== 'all' ? [categoryFilter] : undefined,
         });
         setNotes(response.data?.data ?? []);
         setLoading('idle');
@@ -47,12 +50,15 @@ export default function NotesMarketplacePage() {
     };
 
     fetchNotes();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, categoryFilter]);
 
   const filteredNotes = useMemo(() => {
-    if (filter === 'all') return notes;
-    return notes.filter((note) => (filter === 'paid' ? note.is_paid : !note.is_paid));
-  }, [notes, filter]);
+    const base = categoryFilter === 'all'
+      ? notes
+      : notes.filter((note) => Array.isArray(note.categories) && note.categories.includes(categoryFilter));
+    if (filter === 'all') return base;
+    return base.filter((note) => (filter === 'paid' ? note.is_paid : !note.is_paid));
+  }, [notes, filter, categoryFilter]);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -98,6 +104,33 @@ export default function NotesMarketplacePage() {
                 className="h-8 w-full border-none bg-transparent text-sm text-slate-700 focus:outline-none"
               />
             </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCategoryFilter('all')}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                categoryFilter === 'all'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              全カテゴリー
+            </button>
+            {NOTE_CATEGORY_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setCategoryFilter(option.value)}
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                  categoryFilter === option.value
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                #{option.label}
+              </button>
+            ))}
           </div>
         </section>
 
@@ -161,6 +194,18 @@ export default function NotesMarketplacePage() {
                   ) : (
                     <p className="text-sm text-slate-500">概要未設定の記事です。</p>
                   )}
+                  {Array.isArray(note.categories) && note.categories.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {note.categories.map((category) => (
+                        <span
+                          key={`${note.id}-${category}`}
+                          className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600"
+                        >
+                          #{getCategoryLabel(category)}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
                   <div className="mt-auto flex items-center justify-between text-xs text-slate-500">
                     <span>@{note.author_username ?? 'unknown'}</span>
                     <span>
