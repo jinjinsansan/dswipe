@@ -134,6 +134,7 @@ export interface NoteSummary {
   published_at?: string | null;
   updated_at: string;
   categories: string[];
+  allow_share_unlock?: boolean;
 }
 
 export interface NoteDetail extends NoteSummary {
@@ -206,6 +207,7 @@ export interface PublicNoteDetail {
   content_blocks: NoteBlock[];
   published_at?: string | null;
   categories: string[];
+  allow_share_unlock?: boolean;
 }
 
 export interface NotePurchaseResult {

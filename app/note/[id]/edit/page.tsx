@@ -53,6 +53,7 @@ export default function NoteEditPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
+  const [allowShareUnlock, setAllowShareUnlock] = useState(false);
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
@@ -71,6 +72,7 @@ export default function NoteEditPage() {
         setIsPaid(Boolean(detail.is_paid));
         setPricePoints(detail.price_points ? String(detail.price_points) : '');
         setCategories(Array.isArray(detail.categories) ? detail.categories : []);
+        setAllowShareUnlock(Boolean(detail.allow_share_unlock));
         setBlocks(
           (detail.content_blocks && detail.content_blocks.length
             ? detail.content_blocks
@@ -214,6 +216,7 @@ export default function NoteEditPage() {
         is_paid: effectivePaid,
         price_points: effectivePaid ? Number(pricePoints) || 0 : 0,
         categories,
+        allow_share_unlock: allowShareUnlock,
       };
 
       const response = await noteApi.update(noteId, payload);
@@ -468,6 +471,39 @@ export default function NoteEditPage() {
                 </div>
               </div>
             </div>
+
+            {effectivePaid && (
+              <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-4 py-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-amber-900">Xシェアで無料解放を許可</p>
+                    <p className="text-xs text-amber-700">
+                      読者がXでシェアすることで、ポイント支払いなしで記事を読めるようにします。
+                      シェアされるたびにあなたにポイント報酬が付与されます。
+                    </p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 text-sm font-medium text-amber-900">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                      checked={allowShareUnlock}
+                      onChange={(event) => setAllowShareUnlock(event.target.checked)}
+                      disabled={saving || actionLoading}
+                    />
+                    許可する
+                  </label>
+                </div>
+                {allowShareUnlock && (
+                  <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
+                    <p className="font-semibold">💡 ヒント</p>
+                    <p className="mt-1">
+                      シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
+                      シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/authStore';
 import { publicApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
+import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
 
 interface NoteDetailClientProps {
@@ -189,41 +190,58 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         <NoteRenderer blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} />
 
         {note.is_paid && !note.has_access ? (
-          <div className="mt-10 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6 text-center text-sm text-amber-700">
-            <p className="font-semibold">この続きは有料コンテンツです</p>
-            <p className="mt-2 text-xs text-amber-700/80">
-              購入すると残りのコンテンツがすべて解放されます。
-            </p>
-            <div className="mt-4 flex flex-col items-center gap-3">
-              {purchaseMessage ? (
-                <div className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
-                  {purchaseMessage}
-                </div>
-              ) : null}
-              {purchaseError ? (
-                <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
-                  {purchaseError}
-                </div>
-              ) : null}
-              <button
-                type="button"
-                onClick={handlePurchase}
-                disabled={purchaseState === 'processing'}
-                className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 ${
-                  purchaseState === 'processing' ? 'opacity-70' : ''
-                }`}
-              >
-                <CurrencyYenIcon className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`} aria-hidden="true" />
-                {isAuthenticated ? `${note.price_points.toLocaleString()} ポイントで購入` : 'ログインして購入'}
-              </button>
-              {!isAuthenticated ? (
-                <Link
-                  href="/login"
-                  className="text-xs font-semibold text-blue-600 underline underline-offset-4"
+          <div className="mt-10 space-y-4">
+            {/* Xシェアで無料解放オプション */}
+            {note.allow_share_unlock && (
+              <ShareToUnlockButton
+                noteId={note.id}
+                noteTitle={note.title}
+                noteSlug={note.slug}
+                pricePoints={note.price_points}
+                allowShareUnlock={note.allow_share_unlock}
+                onShareSuccess={() => {
+                  // シェア成功後の処理（ページリロード）
+                }}
+              />
+            )}
+
+            {/* 通常のポイント購入 */}
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6 text-center text-sm text-amber-700">
+              <p className="font-semibold">この続きは有料コンテンツです</p>
+              <p className="mt-2 text-xs text-amber-700/80">
+                購入すると残りのコンテンツがすべて解放されます。
+              </p>
+              <div className="mt-4 flex flex-col items-center gap-3">
+                {purchaseMessage ? (
+                  <div className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
+                    {purchaseMessage}
+                  </div>
+                ) : null}
+                {purchaseError ? (
+                  <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+                    {purchaseError}
+                  </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={handlePurchase}
+                  disabled={purchaseState === 'processing'}
+                  className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 ${
+                    purchaseState === 'processing' ? 'opacity-70' : ''
+                  }`}
                 >
-                  アカウントをお持ちでない場合はこちらからログイン/登録
-                </Link>
-              ) : null}
+                  <CurrencyYenIcon className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`} aria-hidden="true" />
+                  {isAuthenticated ? `${note.price_points.toLocaleString()} ポイントで購入` : 'ログインして購入'}
+                </button>
+                {!isAuthenticated ? (
+                  <Link
+                    href="/login"
+                    className="text-xs font-semibold text-blue-600 underline underline-offset-4"
+                  >
+                    アカウントをお持ちでない場合はこちらからログイン/登録
+                  </Link>
+                ) : null}
+              </div>
             </div>
           </div>
         ) : null}
