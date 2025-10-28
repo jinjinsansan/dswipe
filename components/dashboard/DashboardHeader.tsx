@@ -40,8 +40,9 @@ export default function DashboardHeader({
   const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
   const menuOffset = menuTopOffset || 112;
-  const menuHeight = `calc(100vh - ${menuOffset}px - env(safe-area-inset-bottom, 0px) - 12px)`;
-  const menuPaddingBottom = `calc(1.5rem + env(safe-area-inset-bottom, 0px))`;
+  const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
+  const menuHeight = `calc(100vh - ${menuOffset}px - ${safeAreaBottom} - 64px)`;
+  const menuPaddingBottom = `calc(3rem + ${safeAreaBottom})`;
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -185,7 +186,7 @@ export default function DashboardHeader({
             onClick={() => setIsMenuOpen(false)}
           />
           <div
-            className="sm:hidden fixed inset-x-0 z-50 px-3 pb-6"
+            className="sm:hidden fixed inset-x-0 z-50 px-3 pb-8"
             style={{
               top: menuOffset,
               height: menuHeight,
