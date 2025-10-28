@@ -33,33 +33,57 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
     if (!container) return;
 
     let isDragging = false;
+    let hasDirection = false;
     let startX = 0;
+    let startY = 0;
     let startScrollLeft = 0;
 
     const handleTouchStart = (event: TouchEvent) => {
       if (event.touches.length !== 1) return;
-      isDragging = true;
+      isDragging = false;
+      hasDirection = false;
       startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
       startScrollLeft = container.scrollLeft;
     };
 
     const handleTouchMove = (event: TouchEvent) => {
-      if (!isDragging || event.touches.length !== 1) return;
-      const touchX = event.touches[0].clientX;
-      const deltaX = touchX - startX;
-      const nextScroll = startScrollLeft - deltaX;
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      if (maxScroll <= 0) return;
+      if (event.touches.length !== 1) return;
+      const touch = event.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+
+      if (!hasDirection) {
+        if (Math.abs(deltaX) < 6 && Math.abs(deltaY) < 6) {
+          return;
+        }
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          isDragging = true;
+        }
+        hasDirection = true;
+      }
+
+      if (!isDragging) {
+        return;
+      }
 
       event.preventDefault();
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      if (maxScroll <= 0) {
+        return;
+      }
+
+      const nextScroll = startScrollLeft - deltaX;
       container.scrollLeft = Math.min(Math.max(nextScroll, 0), maxScroll);
     };
 
     const handleTouchEnd = () => {
       isDragging = false;
+      hasDirection = false;
     };
 
-    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchstart", handleTouchStart, { passive: false });
     container.addEventListener("touchmove", handleTouchMove, { passive: false });
     container.addEventListener("touchend", handleTouchEnd, { passive: true });
     container.addEventListener("touchcancel", handleTouchEnd, { passive: true });
@@ -131,7 +155,7 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
     <nav className="flex flex-col gap-2 px-3 py-2">
       <div
         ref={scrollContainerRef}
-        className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-x"
+        className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-y"
       >
         {featuredLinks.map((link) =>
           renderLink({
