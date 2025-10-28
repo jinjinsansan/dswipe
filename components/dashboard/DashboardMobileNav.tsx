@@ -84,7 +84,7 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
 
   return (
     <nav className="flex flex-col gap-2 px-3 py-2">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-contain">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-x">
         {featuredLinks.map((link) =>
           renderLink({
             link,
