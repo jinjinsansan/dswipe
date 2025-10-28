@@ -3,6 +3,7 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
@@ -342,22 +343,37 @@ export default function NoteEditPage() {
         {/* シェア統計セクション */}
         {shareStats && shareStats.total_shares > 0 ? (
           <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm">
-            <h3 className="mb-4 text-base font-semibold text-blue-900">📊 シェア統計</h3>
+            <div className="mb-4 flex items-center gap-2">
+              <ChartBarIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />
+              <h3 className="text-base font-semibold text-blue-900">シェア統計</h3>
+            </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div className="rounded-xl bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">総シェア数</p>
+                <div className="flex items-center gap-2">
+                  <ShareIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">総シェア数</p>
+                </div>
                 <p className="mt-2 text-2xl font-bold text-blue-600">{shareStats.total_shares}回</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">獲得ポイント</p>
+                <div className="flex items-center gap-2">
+                  <CurrencyYenIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">獲得ポイント</p>
+                </div>
                 <p className="mt-2 text-2xl font-bold text-emerald-600">{shareStats.total_reward_points}P</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">検証済み</p>
+                <div className="flex items-center gap-2">
+                  <CheckCircleIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">検証済み</p>
+                </div>
                 <p className="mt-2 text-2xl font-bold text-slate-900">{shareStats.verified_shares}件</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">不正疑い</p>
+                <div className="flex items-center gap-2">
+                  <ExclamationTriangleIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">不正疑い</p>
+                </div>
                 <p className="mt-2 text-2xl font-bold text-amber-600">{shareStats.suspicious_shares}件</p>
               </div>
             </div>
@@ -429,8 +445,18 @@ export default function NoteEditPage() {
                   disabled={saving || actionLoading}
                 />
                 {coverImageUrl.trim() ? (
-                  <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200">
-                    <img src={coverImageUrl} alt="cover preview" className="h-40 w-full object-cover" />
+                  <div className="mt-3 space-y-2">
+                    <div className="overflow-hidden rounded-2xl border border-slate-200">
+                      <img src={coverImageUrl} alt="cover preview" className="h-40 w-full object-cover" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCoverImageUrl('')}
+                      disabled={saving || actionLoading}
+                      className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      カバー画像を削除
+                    </button>
                   </div>
                 ) : null}
               </div>
