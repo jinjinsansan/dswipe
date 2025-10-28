@@ -418,7 +418,7 @@ export default function ProductManagementPage() {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 w-full">
-        <div className="sm:hidden border-b border-slate-200 bg-white w-full">
+        <div className="sm:hidden border-b border-slate-200 bg-white w-full overflow-x-hidden max-w-full">
           <div className="px-3 py-3 border-b border-slate-100 flex items-center justify-between w-full">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">

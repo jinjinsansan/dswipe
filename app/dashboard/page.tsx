@@ -649,7 +649,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
+    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row overflow-x-hidden max-w-full">
       {/* Sidebar - Hidden on Mobile */}
       <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
         {/* Logo */}
@@ -728,7 +728,7 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-x-hidden max-w-full">
         {/* Top Navigation Bar */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
           <div className="flex items-center justify-between h-full">
@@ -782,12 +782,12 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-200 bg-white/80">
+        <div className="sm:hidden border-b border-slate-200 bg-white/80 overflow-x-hidden max-w-full">
           <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto p-3 sm:p-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 max-w-full">
 
           {/* Dashboard Type Tabs */}
           <div className="mb-6">

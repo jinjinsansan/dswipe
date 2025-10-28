@@ -152,10 +152,15 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
   };
 
   return (
-    <nav className="flex flex-col gap-2 px-3 py-2">
+    <nav className="flex flex-col gap-2 px-3 py-2 overflow-x-hidden max-w-full">
       <div
         ref={scrollContainerRef}
-        className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-y"
+        className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-y max-w-full"
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehaviorX: 'contain',
+          touchAction: 'pan-y'
+        }}
       >
         {featuredLinks.map((link) =>
           renderLink({

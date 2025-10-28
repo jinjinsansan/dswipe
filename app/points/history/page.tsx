@@ -267,7 +267,7 @@ export default function PointHistoryPage() {
           </div>
         </header>
 
-        <div className="lg:hidden border-b border-gray-200 bg-white/90">
+        <div className="lg:hidden border-b border-gray-200 bg-white/90 overflow-x-hidden max-w-full">
           <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
         </div>
 

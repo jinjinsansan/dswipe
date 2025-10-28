@@ -394,7 +394,7 @@ export default function NoteEditPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-200 bg-white/90">
+        <div className="sm:hidden border-b border-slate-200 bg-white/90 overflow-x-hidden max-w-full">
           <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
         </div>
 
