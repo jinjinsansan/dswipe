@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: NoteDetailPageProps): Promise
 
   const title = note.title || 'NOTE';
   const description = note.excerpt || '有料NOTEをXでシェアして無料で読もう！';
-  const coverImage = note.cover_image_url || 'https://d-swipe.com/og-default.png';
+  const coverImage = note.cover_image_url || 'https://d-swipe.com/og-default.svg';
   const url = `https://d-swipe.com/notes/${slug}`;
   
   return {
