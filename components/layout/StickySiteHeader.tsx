@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   useEffect,
   useLayoutEffect,
@@ -38,7 +38,7 @@ export default function StickySiteHeader({
   showDashboardLink = false,
 }: StickySiteHeaderProps) {
   const pathname = usePathname();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, isAdmin: isAdminUser, logout } = useAuthStore();
   const userType = (user?.user_type ?? undefined) as 'seller' | 'buyer' | 'admin' | undefined;
   const isAdmin = userType === 'admin';
   const navLinks = useMemo(
@@ -127,16 +127,31 @@ export default function StickySiteHeader({
   ].join(' ');
 
   const defaultRightSlot = (
-    <button
-      type="button"
-      onClick={() => setIsMenuOpen(true)}
-      className={menuButtonClassName}
-      aria-expanded={isMenuOpen}
-      aria-controls="global-menu"
-    >
-      <Bars3Icon className="h-5 w-5" aria-hidden="true" />
-      <span>メニュー</span>
-    </button>
+    <div className="flex items-center gap-3">
+      {isAdminUser && (
+        <Link
+          href="/admin"
+          className={`hidden sm:inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
+            dark
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-600 hover:to-orange-600'
+              : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-600 hover:to-orange-600'
+          }`}
+        >
+          <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
+          <span>管理者パネル</span>
+        </Link>
+      )}
+      <button
+        type="button"
+        onClick={() => setIsMenuOpen(true)}
+        className={menuButtonClassName}
+        aria-expanded={isMenuOpen}
+        aria-controls="global-menu"
+      >
+        <Bars3Icon className="h-5 w-5" aria-hidden="true" />
+        <span>メニュー</span>
+      </button>
+    </div>
   );
 
   return (
@@ -221,6 +236,23 @@ export default function StickySiteHeader({
               )}
 
               <div className="flex flex-col gap-4">
+                {isAdminUser && (
+                  <Link
+                    href="/admin"
+                    onClick={closeMenu}
+                    className={`flex items-center justify-between gap-2 rounded-full px-4 py-3 text-sm font-bold transition-colors ${
+                      dark
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600'
+                        : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600'
+                    }`}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />
+                      <span>管理者パネル</span>
+                    </span>
+                  </Link>
+                )}
+                
                 {navGroups.map((group) => {
                   const meta = getDashboardNavGroupMeta(group.key);
                   return (
