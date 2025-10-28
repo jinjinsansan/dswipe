@@ -8,8 +8,10 @@ interface AuthState {
   isAuthenticated: boolean;
   isInitialized: boolean;
   isAdmin: boolean;
+  pointBalance: number;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
+  setPointBalance: (balance: number) => void;
   logout: () => void;
   initializeAuth: () => void;
 }
@@ -20,8 +22,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isInitialized: false,
   isAdmin: false,
+  pointBalance: 0,
   
-  setUser: (user) => set({ user, isAuthenticated: !!user, isAdmin: isAdminEmail(user?.email) }),
+  setUser: (user) => set({
+    user,
+    isAuthenticated: !!user,
+    isAdmin: isAdminEmail(user?.email),
+    pointBalance: typeof user?.point_balance === 'number' ? user.point_balance : 0,
+  }),
   
   setToken: (token) => {
     if (token) {
@@ -32,10 +40,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ token });
   },
   
+  setPointBalance: (balance) => set({ pointBalance: balance }),
+  
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
-    set({ user: null, token: null, isAuthenticated: false });
+    set({ user: null, token: null, isAuthenticated: false, pointBalance: 0, isAdmin: false });
   },
   
   initializeAuth: () => {
@@ -46,15 +56,22 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (token && userStr) {
         try {
           const user = JSON.parse(userStr);
-          set({ user, token, isAuthenticated: true, isInitialized: true, isAdmin: isAdminEmail(user?.email) });
+          set({
+            user,
+            token,
+            isAuthenticated: true,
+            isInitialized: true,
+            isAdmin: isAdminEmail(user?.email),
+            pointBalance: typeof user?.point_balance === 'number' ? user.point_balance : 0,
+          });
         } catch (error) {
           console.error('Failed to parse user data:', error);
           localStorage.removeItem('access_token');
           localStorage.removeItem('user');
-          set({ isInitialized: true, isAdmin: false });
+          set({ isInitialized: true, isAdmin: false, pointBalance: 0 });
         }
       } else {
-        set({ isInitialized: true, isAdmin: false });
+        set({ isInitialized: true, isAdmin: false, pointBalance: 0 });
       }
     }
   },

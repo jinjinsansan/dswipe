@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
@@ -29,12 +29,29 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
-  const [pointBalance, setPointBalance] = useState<number>(0);
+  const {
+    user,
+    isAuthenticated,
+    isInitialized,
+    logout,
+    isAdmin,
+    pointBalance,
+    setPointBalance,
+  } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
-  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
-  const navGroups = groupDashboardNavLinks(navLinks);
+  const navLinks = useMemo(
+    () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
+    [isAdmin, user?.user_type]
+  );
+  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
+  const activeNavLink = useMemo(
+    () => navLinks.find((link) => isDashboardLinkActive(pathname, link.href)),
+    [navLinks, pathname]
+  );
+  const resolvedPageTitle = pageTitle ?? activeNavLink?.label ?? 'ダッシュボード';
+  const resolvedSubtitle = pageSubtitle;
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
@@ -43,25 +60,39 @@ export default function DashboardLayout({
   }, [isInitialized, isAuthenticated, router]);
 
   useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+
+    if (!isAuthenticated || !user) {
+      setIsLoading(false);
+      return;
+    }
+
+    let isActive = true;
+
     const fetchPointBalance = async () => {
-      if (!user) return;
-      
+      setIsBalanceLoading(true);
       try {
         const response = await pointsApi.getBalance();
-        setPointBalance(response.data.point_balance || 0);
+        if (!isActive) return;
+        setPointBalance(response.data.point_balance ?? 0);
       } catch (error) {
         console.error('Failed to fetch point balance:', error);
       } finally {
-        setIsLoading(false);
+        if (isActive) {
+          setIsBalanceLoading(false);
+          setIsLoading(false);
+        }
       }
     };
 
-    if (isAuthenticated && user) {
-      fetchPointBalance();
-    } else {
-      setIsLoading(false);
-    }
-  }, [isAuthenticated, user]);
+    fetchPointBalance();
+
+    return () => {
+      isActive = false;
+    };
+  }, [isInitialized, isAuthenticated, user, setPointBalance]);
 
   const handleLogout = () => {
     logout();
@@ -79,15 +110,13 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
       {/* Sidebar - Hidden on Mobile */}
-      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
-        {/* Logo */}
+      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0 border-r border-slate-200/80">
         <div className="px-4 h-20 border-b border-slate-200 flex items-center">
           <Link href="/dashboard" className="block">
             <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
           </Link>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-3 overflow-y-auto">
           <div className="flex flex-col gap-4">
             {navGroups.map((group) => {
@@ -132,7 +161,6 @@ export default function DashboardLayout({
           </div>
         </nav>
 
-        {/* User Info */}
         <div className="p-3 border-t border-slate-200">
           <div className="flex items-center space-x-2 mb-2">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
@@ -156,20 +184,19 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen overflow-y-auto">
-        {/* Sticky Header (Navigation + Menu) */}
+      <div className="flex-1 flex flex-col min-h-screen">
         <DashboardHeader
           user={user}
           pointBalance={pointBalance}
-          pageTitle={pageTitle}
-          pageSubtitle={pageSubtitle}
+          pageTitle={resolvedPageTitle}
+          pageSubtitle={resolvedSubtitle}
+          isBalanceLoading={isBalanceLoading}
         />
 
-        {/* Content Area - Scrollable */}
-        <div className="flex-1">
+        <main className="flex-1">
           {children}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
