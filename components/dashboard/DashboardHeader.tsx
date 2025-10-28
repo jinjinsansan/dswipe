@@ -35,6 +35,7 @@ export default function DashboardHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
+  const originalBodyOverflow = useRef<string>('');
 
   const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
@@ -75,6 +76,21 @@ export default function DashboardHeader({
     const rect = headerRef.current.getBoundingClientRect();
     setMenuTopOffset(rect.height);
   }, [isMenuOpen, pageTitle, subtitle]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    if (isMenuOpen) {
+      originalBodyOverflow.current = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalBodyOverflow.current;
+      };
+    }
+
+    document.body.style.overflow = originalBodyOverflow.current;
+  }, [isMenuOpen]);
 
   const renderBalanceValue = () => {
     if (isBalanceLoading) {
@@ -159,14 +175,22 @@ export default function DashboardHeader({
 
       {isMenuOpen && (
         <>
-          <div className="sm:hidden fixed inset-0 z-40 bg-slate-900/15 backdrop-blur-sm transition-opacity pointer-events-none" aria-hidden="true" />
+          <button
+            type="button"
+            aria-hidden="true"
+            className="sm:hidden fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm"
+            onClick={() => setIsMenuOpen(false)}
+          />
           <div
-            className="sm:hidden fixed inset-x-0 z-50 px-3 pb-6 pointer-events-none"
-            style={{ top: menuTopOffset || 112 }}
+            className="sm:hidden fixed inset-x-0 z-50 px-3 pb-6"
+            style={{
+              top: menuTopOffset || 112,
+              maxHeight: `calc(100vh - ${(menuTopOffset || 112) + 24}px)`,
+            }}
           >
             <nav
               id="dashboard-mobile-menu"
-              className="pointer-events-auto rounded-3xl border border-white/60 bg-white/82 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4"
+              className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 max-h-full overflow-y-auto overscroll-contain"
             >
               {navGroups.map((group) => {
                 const meta = getDashboardNavGroupMeta(group.key);
