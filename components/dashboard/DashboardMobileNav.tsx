@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { XMarkIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import type { DashboardNavGroup, DashboardNavLink } from "./navLinks";
@@ -20,12 +20,57 @@ interface LinkRenderOptions {
 
 export default function DashboardMobileNav({ navGroups, pathname }: DashboardMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const featuredLinks = useMemo(() => {
     return navGroups
       .map((group) => group.items[0])
       .filter((link): link is DashboardNavLink => Boolean(link));
   }, [navGroups]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 1) return;
+      isDragging = true;
+      startX = event.touches[0].clientX;
+      startScrollLeft = container.scrollLeft;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (!isDragging || event.touches.length !== 1) return;
+      const touchX = event.touches[0].clientX;
+      const deltaX = touchX - startX;
+      const nextScroll = startScrollLeft - deltaX;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      if (maxScroll <= 0) return;
+
+      event.preventDefault();
+      container.scrollLeft = Math.min(Math.max(nextScroll, 0), maxScroll);
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+    };
+
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
+    container.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+      container.removeEventListener("touchcancel", handleTouchEnd);
+    };
+  }, [featuredLinks.length]);
 
   const renderLink = ({ link, active, variant, onSelect }: LinkRenderOptions) => {
     const classes = getDashboardNavClasses(link, { variant: "mobile", active });
@@ -84,7 +129,10 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
 
   return (
     <nav className="flex flex-col gap-2 px-3 py-2">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-x">
+      <div
+        ref={scrollContainerRef}
+        className="flex items-center gap-2 overflow-x-auto pb-1 overscroll-x-none touch-pan-x"
+      >
         {featuredLinks.map((link) =>
           renderLink({
             link,
