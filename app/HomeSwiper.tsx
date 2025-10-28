@@ -207,11 +207,7 @@ export default function HomeSwiper() {
             
             {/* コンテンツ */}
             <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
+              <div>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
                     情報には鮮度がある。
@@ -243,7 +239,7 @@ export default function HomeSwiper() {
                     ログイン
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
