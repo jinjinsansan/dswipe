@@ -6,6 +6,7 @@ import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/store/authStore";
 import { lpApi, productApi } from "@/lib/api";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { PageLoader } from "@/components/LoadingSpinner";
 
 import type { LandingPage, Product } from "@/types";
 
@@ -316,18 +317,17 @@ export default function ProductManagementPage() {
     }
   };
 
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <DashboardLayout
       pageTitle="商品管理"
       pageSubtitle="CTAで紐づける商品の作成・編集・公開設定をこちらで行えます。"
     >
       <div className="px-3 py-6 sm:px-6">
-        {isLoading ? (
-          <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-600">
-            読み込み中です...
-          </div>
-        ) : (
-          <div className="mx-auto w-full max-w-5xl space-y-6">
+        <div className="mx-auto w-full max-w-5xl space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-slate-900">商品管理</h1>
@@ -509,7 +509,6 @@ export default function ProductManagementPage() {
               </div>
             )}
           </div>
-        )}
       </div>
 
       {isModalOpen && (

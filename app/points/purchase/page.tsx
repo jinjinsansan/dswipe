@@ -181,18 +181,17 @@ export default function PointPurchasePage() {
 
   const projectedBalance = currentBalance + selectedPackage.points + selectedPackage.bonus;
 
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <DashboardLayout
       pageTitle="ポイント購入"
       pageSubtitle="安全な決済でポイントを追加できます"
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <PageLoader />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:gap-8">
             <div className="space-y-6 lg:col-span-2">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -376,7 +375,6 @@ export default function PointPurchasePage() {
               </div>
             </div>
           </div>
-        )}
       </div>
     </DashboardLayout>
   );

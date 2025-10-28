@@ -156,18 +156,17 @@ export default function PointHistoryPage() {
     };
   }, [transactions]);
 
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <DashboardLayout
       pageTitle="ポイント履歴"
       pageSubtitle={total ? `${total}件のトランザクション` : '最新のポイント活動を確認できます'}
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <PageLoader />
-          </div>
-        ) : (
-          <>
+        <>
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-2">
                 {FILTERS.map((filter) => (
@@ -277,7 +276,6 @@ export default function PointHistoryPage() {
               </div>
             )}
           </>
-        )}
       </div>
     </DashboardLayout>
   );
