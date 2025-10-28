@@ -3,8 +3,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { useAuthStore } from '@/store/authStore';
 import {
   getDashboardNavLinks,
   getDashboardNavClasses,
@@ -31,6 +32,7 @@ export default function DashboardHeader({
   requireAuth = true,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
+  const { isAdmin: isAdminUser } = useAuthStore();
   const isAdmin = user?.user_type === 'admin';
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const navGroups = groupDashboardNavLinks(navLinks);
@@ -229,6 +231,19 @@ export default function DashboardHeader({
               className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 h-full overflow-y-auto overscroll-contain"
               style={{ paddingBottom: menuPaddingBottom }}
             >
+              {isAdminUser && (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between gap-2 rounded-full px-4 py-3 text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600 transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />
+                    <span>管理者パネル</span>
+                  </span>
+                </Link>
+              )}
+              
               {navGroups.map((group) => {
                 const meta = getDashboardNavGroupMeta(group.key);
                 return (
