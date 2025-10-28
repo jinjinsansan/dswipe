@@ -33,11 +33,18 @@ const formatDateTime = (value?: string | null) => {
   }
 };
 
+interface NoteShareStats {
+  total_shares: number;
+  total_reward_points: number;
+  verified_shares: number;
+  suspicious_shares: number;
+}
+
 export default function NoteEditPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const noteId = params?.id;
-  const { isAuthenticated, isInitialized } = useAuthStore();
+  const { isAuthenticated, isInitialized, token } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');
@@ -54,6 +61,7 @@ export default function NoteEditPage() {
   const [info, setInfo] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [allowShareUnlock, setAllowShareUnlock] = useState(false);
+  const [shareStats, setShareStats] = useState<NoteShareStats | null>(null);
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
@@ -81,6 +89,9 @@ export default function NoteEditPage() {
         );
         setStatus(detail.status ?? 'draft');
         setPublishedAt(detail.published_at ?? null);
+        
+        // シェア統計を取得
+        fetchShareStats();
       } catch (err: any) {
         const detail = err?.response?.data?.detail;
         setError(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
@@ -91,6 +102,26 @@ export default function NoteEditPage() {
 
     fetchNote();
   }, [noteId, isInitialized]);
+  
+  const fetchShareStats = async () => {
+    if (!noteId || !token) return;
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const response = await fetch(`${apiUrl}/notes/${noteId}/share-stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setShareStats(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch share stats:', error);
+    }
+  };
 
   const handleCoverMediaSelect = (url: string) => {
     setCoverImageUrl(url);
@@ -306,6 +337,31 @@ export default function NoteEditPage() {
         ) : null}
         {info ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{info}</div>
+        ) : null}
+
+        {/* シェア統計セクション */}
+        {shareStats && shareStats.total_shares > 0 ? (
+          <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm">
+            <h3 className="mb-4 text-base font-semibold text-blue-900">📊 シェア統計</h3>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="rounded-xl bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">総シェア数</p>
+                <p className="mt-2 text-2xl font-bold text-blue-600">{shareStats.total_shares}回</p>
+              </div>
+              <div className="rounded-xl bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">獲得ポイント</p>
+                <p className="mt-2 text-2xl font-bold text-emerald-600">{shareStats.total_reward_points}P</p>
+              </div>
+              <div className="rounded-xl bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">検証済み</p>
+                <p className="mt-2 text-2xl font-bold text-slate-900">{shareStats.verified_shares}件</p>
+              </div>
+              <div className="rounded-xl bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">不正疑い</p>
+                <p className="mt-2 text-2xl font-bold text-amber-600">{shareStats.suspicious_shares}件</p>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">

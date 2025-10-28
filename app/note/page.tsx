@@ -19,14 +19,22 @@ import { getCategoryLabel } from '@/lib/noteCategories';
 
 type FilterValue = 'all' | 'draft' | 'published';
 
+interface NoteShareStats {
+  total_shares: number;
+  total_reward_points: number;
+  verified_shares: number;
+  suspicious_shares: number;
+}
+
 export default function NoteDashboardPage() {
-  const { user, isAuthenticated, isInitialized } = useAuthStore();
+  const { user, isAuthenticated, isInitialized, token } = useAuthStore();
   const [notes, setNotes] = useState<NoteSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterValue>('all');
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [shareStats, setShareStats] = useState<Record<string, NoteShareStats>>({});
 
   const fetchNotes = useCallback(
     async (status: FilterValue) => {
@@ -42,7 +50,11 @@ export default function NoteDashboardPage() {
           params.status_filter = status;
         }
         const response = await noteApi.list(params);
-        setNotes(response.data?.data ?? []);
+        const fetchedNotes = response.data?.data ?? [];
+        setNotes(fetchedNotes);
+        
+        // 各NOTEのシェア統計を取得
+        fetchShareStats(fetchedNotes);
       } catch (err: any) {
         const detail = err?.response?.data?.detail;
         setError(typeof detail === 'string' ? detail : 'NOTE一覧の取得に失敗しました');
@@ -53,6 +65,34 @@ export default function NoteDashboardPage() {
     },
     [isAuthenticated]
   );
+
+  const fetchShareStats = async (noteList: NoteSummary[]) => {
+    if (!token) return;
+    
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+    const stats: Record<string, NoteShareStats> = {};
+    
+    // 各NOTEのシェア統計を並行取得
+    await Promise.all(
+      noteList.map(async (note) => {
+        try {
+          const response = await fetch(`${apiUrl}/notes/${note.id}/share-stats`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            stats[note.id] = await response.json();
+          }
+        } catch (error) {
+          console.error(`Failed to fetch share stats for note ${note.id}:`, error);
+        }
+      })
+    );
+    
+    setShareStats(stats);
+  };
 
   useEffect(() => {
     if (!isInitialized || !isAuthenticated) return;
@@ -239,6 +279,20 @@ export default function NoteDashboardPage() {
                           {note.is_paid ? <span>{note.price_points.toLocaleString()} P</span> : <span>無料公開</span>}
                           <span>スラッグ: {note.slug}</span>
                         </div>
+                        
+                        {/* シェア統計 */}
+                        {shareStats[note.id] && shareStats[note.id].total_shares > 0 ? (
+                          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
+                            <span className="text-xs font-semibold text-blue-900">
+                              💰 {shareStats[note.id].total_shares}回シェア → {shareStats[note.id].total_reward_points}P獲得
+                            </span>
+                            {shareStats[note.id].suspicious_shares > 0 ? (
+                              <span className="text-xs font-semibold text-amber-700">
+                                ⚠️ 不正疑い: {shareStats[note.id].suspicious_shares}件
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
 
                       <div className="flex items-center gap-2">
