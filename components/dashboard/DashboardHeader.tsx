@@ -40,7 +40,8 @@ export default function DashboardHeader({
   const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
   const menuOffset = menuTopOffset || 112;
-  const menuHeight = `calc(100vh - ${menuOffset + 24}px)`;
+  const menuHeight = `calc(100vh - ${menuOffset}px - env(safe-area-inset-bottom, 0px) - 12px)`;
+  const menuPaddingBottom = `calc(1.5rem + env(safe-area-inset-bottom, 0px))`;
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -193,6 +194,7 @@ export default function DashboardHeader({
             <nav
               id="dashboard-mobile-menu"
               className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 h-full overflow-y-auto overscroll-contain"
+              style={{ paddingBottom: menuPaddingBottom }}
             >
               {navGroups.map((group) => {
                 const meta = getDashboardNavGroupMeta(group.key);
