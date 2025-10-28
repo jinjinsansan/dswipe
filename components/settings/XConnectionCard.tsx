@@ -53,9 +53,26 @@ export default function XConnectionCard() {
       return;
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
-    // OAuth認証URLにリダイレクト
-    window.location.href = `${apiUrl}/auth/x/authorize`;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      // 認証トークン付きでOAuth認証URLを取得
+      const response = await fetch(`${apiUrl}/auth/x/authorize?redirect=false`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // 認証URLにリダイレクト
+        window.location.href = data.authorization_url;
+      } else {
+        throw new Error('認証URLの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Failed to initiate X connection:', error);
+      alert('X連携の開始に失敗しました。もう一度お試しください。');
+    }
   };
 
   const handleDisconnect = async () => {
