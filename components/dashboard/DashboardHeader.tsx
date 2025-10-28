@@ -39,6 +39,8 @@ export default function DashboardHeader({
 
   const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
+  const menuOffset = menuTopOffset || 112;
+  const menuHeight = `calc(100vh - ${menuOffset + 24}px)`;
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -184,13 +186,13 @@ export default function DashboardHeader({
           <div
             className="sm:hidden fixed inset-x-0 z-50 px-3 pb-6"
             style={{
-              top: menuTopOffset || 112,
-              maxHeight: `calc(100vh - ${(menuTopOffset || 112) + 24}px)`,
+              top: menuOffset,
+              height: menuHeight,
             }}
           >
             <nav
               id="dashboard-mobile-menu"
-              className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 max-h-full overflow-y-auto overscroll-contain"
+              className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 h-full overflow-y-auto overscroll-contain"
             >
               {navGroups.map((group) => {
                 const meta = getDashboardNavGroupMeta(group.key);
