@@ -35,9 +35,9 @@ export default function DashboardHeader({
   const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg shadow-sm">
       {/* Top Navigation Bar */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
+      <div className="border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
         <div className="flex items-center justify-between h-full">
           {/* Left: Logo (Mobile) + Title (Desktop) */}
           <div className="flex items-center gap-3 min-w-0">
@@ -90,7 +90,7 @@ export default function DashboardHeader({
       </div>
 
       {/* Mobile Menu Bar */}
-      <div className="sm:hidden border-b border-slate-200/50 bg-white/70 backdrop-blur-md shadow-sm">
+      <div className="sm:hidden border-b border-slate-200/50">
         {/* メニューボタン */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}

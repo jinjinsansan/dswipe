@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import { pointsApi } from '@/lib/api';
 import {
   getDashboardNavLinks,
   getDashboardNavClasses,
@@ -46,17 +47,8 @@ export default function DashboardLayout({
       if (!user) return;
       
       try {
-        const response = await fetch('/api/points/balance', {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setPointBalance(data.balance || 0);
-        }
+        const response = await pointsApi.getBalance();
+        setPointBalance(response.data.point_balance || 0);
       } catch (error) {
         console.error('Failed to fetch point balance:', error);
       } finally {
@@ -66,6 +58,8 @@ export default function DashboardLayout({
 
     if (isAuthenticated && user) {
       fetchPointBalance();
+    } else {
+      setIsLoading(false);
     }
   }, [isAuthenticated, user]);
 
@@ -162,7 +156,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col min-h-screen overflow-y-auto">
         {/* Sticky Header (Navigation + Menu) */}
         <DashboardHeader
           user={user}
@@ -172,7 +166,7 @@ export default function DashboardLayout({
         />
 
         {/* Content Area - Scrollable */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1">
           {children}
         </div>
       </main>
