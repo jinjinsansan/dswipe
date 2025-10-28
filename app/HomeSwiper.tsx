@@ -208,7 +208,7 @@ export default function HomeSwiper() {
             {/* コンテンツ */}
             <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
@@ -269,7 +269,7 @@ export default function HomeSwiper() {
                   return (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 1 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       className="bg-white border-2 border-slate-200 rounded-lg p-2.5 sm:p-3 hover:border-red-300 hover:shadow-xl transition-all shadow-md"
@@ -306,7 +306,7 @@ export default function HomeSwiper() {
                   return (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 1 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.1 }}
                       className="bg-white border-2 border-purple-200 rounded-lg p-2.5 sm:p-3 hover:border-purple-300 hover:shadow-xl transition-all shadow-md"
@@ -332,7 +332,7 @@ export default function HomeSwiper() {
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-6 sm:py-8">
             <div className="w-full max-w-5xl mx-auto text-center max-h-[90vh] overflow-y-auto px-2">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 1 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="pb-4"
@@ -404,7 +404,7 @@ export default function HomeSwiper() {
                 {faqItems.map((item, index) => (
                   <motion.div
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 1 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className="bg-white border-2 border-indigo-200 rounded-lg sm:rounded-xl overflow-hidden shadow-md"
@@ -454,7 +454,7 @@ export default function HomeSwiper() {
 
               <div className="max-w-2xl mx-auto">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6 }}
                   className="relative bg-gradient-to-br from-white to-blue-50 rounded-2xl p-5 sm:p-8 border-3 border-purple-400 shadow-2xl"
@@ -534,7 +534,7 @@ export default function HomeSwiper() {
 
               <div className="grid grid-cols-2 gap-1.5 sm:gap-2 max-h-[75vh] overflow-y-auto px-1">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   className="bg-white rounded-lg p-3 sm:p-4 shadow-xl border-2 border-cyan-200"
@@ -561,7 +561,7 @@ export default function HomeSwiper() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="bg-white rounded-lg p-3 sm:p-4 shadow-xl border-2 border-cyan-200"
@@ -588,7 +588,7 @@ export default function HomeSwiper() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="bg-white rounded-lg p-3 sm:p-4 shadow-xl border-2 border-cyan-200"
@@ -615,7 +615,7 @@ export default function HomeSwiper() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                   className="bg-white rounded-lg p-3 sm:p-4 shadow-xl border-2 border-cyan-200"
@@ -674,7 +674,7 @@ export default function HomeSwiper() {
                   return (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 1 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.1 }}
                       className="bg-white rounded-lg p-2 sm:p-2.5 shadow-xl border-2 border-blue-200 hover:border-blue-400 transition-all"
@@ -709,7 +709,7 @@ export default function HomeSwiper() {
             {/* コンテンツ */}
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 text-center">
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 1 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 className="space-y-6 sm:space-y-8"
@@ -760,7 +760,7 @@ export default function HomeSwiper() {
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-900 via-violet-900 to-slate-900 overflow-hidden px-4 sm:px-6 py-6 sm:py-8">
             <div className="w-full max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="text-center mb-6 sm:mb-8"
@@ -789,7 +789,7 @@ export default function HomeSwiper() {
               {/* 3ステップ */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8 max-w-4xl mx-auto">
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="relative"
@@ -814,7 +814,7 @@ export default function HomeSwiper() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="relative"
@@ -839,7 +839,7 @@ export default function HomeSwiper() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 1 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                   className="relative"
@@ -865,7 +865,7 @@ export default function HomeSwiper() {
 
               {/* メインCTA */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 1 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-center"
