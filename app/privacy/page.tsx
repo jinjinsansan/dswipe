@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import StickySiteHeader from '@/components/layout/StickySiteHeader';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー | D-swipe',
@@ -9,29 +9,21 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-200">
-      <StickySiteHeader dark showDashboardLink />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(147,197,253,0.22),transparent_60%)]" />
-      <div
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(148,163,184,0.12)_1px,transparent_1px)]"
-        style={{ backgroundSize: '46px 46px' }}
-      />
+    <DashboardLayout pageTitle="プライバシーポリシー" pageSubtitle="最終更新日：2025年10月22日" requireAuth={false}>
+      <div className="relative min-h-screen bg-slate-950 text-slate-200">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(147,197,253,0.22),transparent_60%)]" />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(148,163,184,0.12)_1px,transparent_1px)]"
+          style={{ backgroundSize: '46px 46px' }}
+        />
 
-      <main className="relative z-10 pt-24 pb-20">
-        <div className="container mx-auto max-w-4xl px-4">
-          <div className="mb-12 space-y-4">
-            <Link
-              href="/"
-              className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.32em] text-blue-300 transition-colors hover:text-white"
-            >
-              ← Home
-            </Link>
-            <h1 className="text-4xl font-bold text-white">プライバシーポリシー</h1>
-            <p className="text-sm text-slate-400">最終更新日：2025年10月22日</p>
-            <p className="text-base leading-relaxed text-slate-300">
-              D-swipe（以下「当社」）は、ユーザーの個人情報を適切に保護することを最優先事項と位置づけ、以下の方針に基づき個人情報を取り扱います。
-            </p>
-          </div>
+        <main className="relative z-10 pt-6 pb-20">
+          <div className="container mx-auto max-w-4xl px-4">
+            <div className="mb-12 space-y-4">
+              <p className="text-base leading-relaxed text-slate-300">
+                D-swipe（以下「当社」）は、ユーザーの個人情報を適切に保護することを最優先事項と位置づけ、以下の方針に基づき個人情報を取り扱います。
+              </p>
+            </div>
 
           <div className="space-y-12 text-base leading-relaxed">
             <section className="space-y-4">
@@ -100,7 +92,8 @@ export default function PrivacyPolicyPage() {
             </section>
           </div>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </DashboardLayout>
   );
 }

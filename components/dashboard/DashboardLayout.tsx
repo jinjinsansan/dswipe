@@ -20,12 +20,14 @@ interface DashboardLayoutProps {
   children: ReactNode;
   pageTitle?: string;
   pageSubtitle?: string;
+  requireAuth?: boolean; // 認証を必須とするか（デフォルト: true）
 }
 
 export default function DashboardLayout({
   children,
   pageTitle,
   pageSubtitle,
+  requireAuth = true,
 }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -54,10 +56,10 @@ export default function DashboardLayout({
   const resolvedSubtitle = pageSubtitle;
 
   useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
+    if (requireAuth && isInitialized && !isAuthenticated) {
       router.push('/login');
     }
-  }, [isInitialized, isAuthenticated, router]);
+  }, [requireAuth, isInitialized, isAuthenticated, router]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -103,7 +105,7 @@ export default function DashboardLayout({
     return <PageLoader />;
   }
 
-  if (!isAuthenticated || !user) {
+  if (requireAuth && (!isAuthenticated || !user)) {
     return null;
   }
 
@@ -112,14 +114,50 @@ export default function DashboardLayout({
       {/* Sidebar - Hidden on Mobile */}
       <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0 border-r border-slate-200/80">
         <div className="px-4 h-20 border-b border-slate-200 flex items-center">
-          <Link href="/dashboard" className="block">
+          <Link href={isAuthenticated ? "/dashboard" : "/"} className="block">
             <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
           </Link>
         </div>
 
         <nav className="flex-1 p-3 overflow-y-auto">
-          <div className="flex flex-col gap-4">
-            {navGroups.map((group) => {
+          {!isAuthenticated ? (
+            <div className="flex flex-col gap-3 p-3">
+              <p className="text-xs text-slate-500 mb-2">アカウントをお持ちの方</p>
+              <Link
+                href="/login"
+                className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold text-center hover:bg-blue-700 transition-colors"
+              >
+                ログイン
+              </Link>
+              <Link
+                href="/register"
+                className="w-full px-4 py-2.5 bg-white border-2 border-blue-600 text-blue-600 rounded-lg text-sm font-semibold text-center hover:bg-blue-50 transition-colors"
+              >
+                無料で始める
+              </Link>
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400 mb-3 px-2">
+                  探す
+                </p>
+                <div className="space-y-1">
+                  <Link href="/products" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                    商品マーケット
+                  </Link>
+                  <Link href="/notes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                    AllNOTES
+                  </Link>
+                  <Link href="/terms" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                    利用規約
+                  </Link>
+                  <Link href="/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                    プライバシーポリシー
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {navGroups.map((group) => {
               const meta = getDashboardNavGroupMeta(group.key);
               return (
                 <div key={group.key} className="space-y-1.5">
@@ -159,8 +197,10 @@ export default function DashboardLayout({
               );
             })}
           </div>
+          )}
         </nav>
 
+        {isAuthenticated && user && (
         <div className="p-3 border-t border-slate-200">
           <div className="flex items-center space-x-2 mb-2">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
@@ -181,6 +221,7 @@ export default function DashboardLayout({
             ログアウト
           </button>
         </div>
+        )}
       </aside>
 
       {/* Main Content */}
@@ -191,6 +232,7 @@ export default function DashboardLayout({
           pageTitle={resolvedPageTitle}
           pageSubtitle={resolvedSubtitle}
           isBalanceLoading={isBalanceLoading}
+          requireAuth={requireAuth}
         />
 
         <main className="flex-1">

@@ -7,7 +7,7 @@ import { FunnelIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/
 import { publicApi } from '@/lib/api';
 import type { PublicNoteSummary } from '@/types';
 import { NOTE_CATEGORY_OPTIONS, getCategoryLabel } from '@/lib/noteCategories';
-import StickySiteHeader from '@/components/layout/StickySiteHeader';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 const PAGE_SIZE = 60;
 
@@ -62,24 +62,8 @@ export default function NotesMarketplacePage() {
   }, [notes, filter, categoryFilter]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <StickySiteHeader showDashboardLink />
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 pb-20 pt-24 sm:gap-12 sm:pt-28">
-        <header className="space-y-4 text-center">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400 transition hover:text-slate-700"
-          >
-            ← ダッシュボードに戻る
-          </Link>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">NOTE marketplace</p>
-            <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">AllNOTES</h1>
-          </div>
-          <p className="mx-auto max-w-3xl text-sm text-slate-600 sm:text-base">
-            情報発信者が投稿したNOTE記事をここで発見できます。無料記事はすぐに閲覧でき、有料記事はポイントでアンロック可能です。
-          </p>
-        </header>
+    <DashboardLayout pageTitle="AllNOTES" pageSubtitle="情報発信者が投稿したNOTE記事をここで発見できます" requireAuth={false}>
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 pb-20 pt-6 sm:gap-12">
 
         <section className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -230,7 +214,7 @@ export default function NotesMarketplacePage() {
           </section>
         )}
       </main>
-    </div>
+    </DashboardLayout>
   );
 }
 

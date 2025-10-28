@@ -19,6 +19,7 @@ interface DashboardHeaderProps {
   pageTitle?: string;
   pageSubtitle?: string;
   isBalanceLoading?: boolean;
+  requireAuth?: boolean;
 }
 
 export default function DashboardHeader({
@@ -27,6 +28,7 @@ export default function DashboardHeader({
   pageTitle = 'ダッシュボード',
   pageSubtitle,
   isBalanceLoading = false,
+  requireAuth = true,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const isAdmin = user?.user_type === 'admin';
@@ -37,7 +39,7 @@ export default function DashboardHeader({
   const [menuTopOffset, setMenuTopOffset] = useState(0);
   const originalBodyOverflow = useRef<string>('');
 
-  const subtitle = pageSubtitle || `ようこそ、${user?.username}さん`;
+  const subtitle = pageSubtitle || (user ? `ようこそ、${user?.username}さん` : '');
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
   const menuOffset = menuTopOffset || 112;
   const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
@@ -125,38 +127,68 @@ export default function DashboardHeader({
           </div>
 
           <div className="hidden sm:flex items-center space-x-4">
-            <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200 min-w-[150px] justify-between">
-              <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
-              {renderBalanceValue()}
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm shadow-sm">
-                {user?.profile_image_url ? (
-                  <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
-                ) : (
-                  user?.username?.charAt(0).toUpperCase() || 'U'
-                )}
+            {user ? (
+              <>
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200 min-w-[150px] justify-between">
+                  <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
+                  {renderBalanceValue()}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-9 h-9 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm shadow-sm">
+                    {user?.profile_image_url ? (
+                      <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                    ) : (
+                      user?.username?.charAt(0).toUpperCase() || 'U'
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
+                >
+                  ログイン
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  無料で始める
+                </Link>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="sm:hidden flex items-center space-x-3">
-            <div className="text-right">
-              {isBalanceLoading ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2 w-12 rounded-full bg-slate-300/60 animate-pulse" />
-                </span>
-              ) : (
-                <div className="text-slate-900 text-xs font-semibold">{formattedPointBalance}</div>
-              )}
-            </div>
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0 shadow-sm">
-              {user?.profile_image_url ? (
-                <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
-              ) : (
-                user?.username?.charAt(0).toUpperCase() || 'U'
-              )}
-            </div>
+            {user ? (
+              <>
+                <div className="text-right">
+                  {isBalanceLoading ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="h-2 w-12 rounded-full bg-slate-300/60 animate-pulse" />
+                    </span>
+                  ) : (
+                    <div className="text-slate-900 text-xs font-semibold">{formattedPointBalance}</div>
+                  )}
+                </div>
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0 shadow-sm">
+                  {user?.profile_image_url ? (
+                    <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                  ) : (
+                    user?.username?.charAt(0).toUpperCase() || 'U'
+                  )}
+                </div>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
+              >
+                ログイン
+              </Link>
+            )}
           </div>
         </div>
 

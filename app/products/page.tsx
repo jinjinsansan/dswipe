@@ -16,7 +16,7 @@ import {
   DocumentIcon,
   ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
-import StickySiteHeader from '@/components/layout/StickySiteHeader';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -169,29 +169,7 @@ function ProductsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <StickySiteHeader showDashboardLink />
-      {/* Header */}
-      <header className="sticky top-16 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 text-sm font-semibold transition-colors">
-                <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-                ダッシュボード
-              </Link>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-600">
-                <BuildingStorefrontIcon className="h-4 w-4" aria-hidden="true" />
-                マーケット
-              </div>
-            </div>
-            <div className="text-sm text-slate-500">
-              {filteredProducts.length} 件のLPを表示
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <DashboardLayout pageTitle="商品マーケット" pageSubtitle={`${filteredProducts.length} 件のLPを表示`} requireAuth={false}>
       <div className="max-w-7xl mx-auto px-4 pb-16 pt-6 sm:px-6 lg:px-8">
         {/* Filters */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
@@ -446,7 +424,7 @@ function ProductsContent() {
           </>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 
