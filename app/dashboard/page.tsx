@@ -3,23 +3,15 @@
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi, noteApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { BlockType } from '@/types/templates';
-import DSwipeLogo from '@/components/DSwipeLogo';
 import { getCategoryLabel } from '@/lib/noteCategories';
-import {
-  getDashboardNavLinks,
-  getDashboardNavClasses,
-  getDashboardNavGroupMeta,
-  groupDashboardNavLinks,
-  isDashboardLinkActive,
-} from '@/components/dashboard/navLinks';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import type { DashboardAnnouncement, NoteMetrics } from '@/types';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -62,13 +54,8 @@ const formatAccountDate = (value?: string | null, includeTime = false) => {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
-  const pathname = usePathname();
+  const { user, isAuthenticated, isInitialized } = useAuthStore();
   const [lps, setLps] = useState<any[]>([]);
-  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
-  const navGroups = groupDashboardNavLinks(navLinks);
-  // メニュー全体の開閉状態（デフォルトは閉じている）
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -598,11 +585,6 @@ export default function DashboardPage() {
     setTimeout(() => setProfileLinkCopied(false), 2000);
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
-
   const handleDeleteLP = async (lpId: string) => {
     if (!confirm('本当にこのLPを削除しますか？この操作は取り消せません。')) {
       return;
@@ -651,209 +633,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
-      {/* Sidebar - Hidden on Mobile */}
-      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
-        {/* Logo */}
-        <div className="px-4 h-20 border-b border-slate-200 flex items-center">
-          <Link href="/dashboard" className="block">
-            <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
-          </Link>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-3">
-          <div className="flex flex-col gap-4">
-            {navGroups.map((group) => {
-              const meta = getDashboardNavGroupMeta(group.key);
-              return (
-                <div key={group.key} className="space-y-1.5">
-                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </p>
-                  <div className="space-y-1">
-                    {group.items.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                        : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
-
-                      return (
-                        <Link
-                          key={link.href}
-                          {...linkProps}
-                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
-                              {link.icon}
-                            </span>
-                            <span className="truncate">{link.label}</span>
-                          </span>
-                          {link.badge ? (
-                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
-                              {link.badge}
-                            </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </nav>
-
-        {/* User Info */}
-        <div className="p-3 border-t border-slate-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
-              {user?.profile_image_url ? (
-                <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
-              ) : (
-                user?.username?.charAt(0).toUpperCase() || 'U'
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-slate-900 text-sm font-semibold truncate">{user?.username}</div>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-xs font-semibold"
-          >
-            ログアウト
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navigation Bar */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
-          <div className="flex items-center justify-between h-full">
-            {/* Left: Logo (Mobile) + Title (Desktop) */}
-            <div className="flex items-center gap-3 min-w-0">
-              {/* Mobile Logo */}
-              <Link href="/dashboard" className="sm:hidden">
-                <DSwipeLogo size="small" showFullName={true} textColor="text-slate-900" />
-              </Link>
-              
-              {/* Desktop Title */}
-              <div className="hidden sm:block min-w-0">
-                <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">ダッシュボード</h1>
-                <p className="text-slate-500 text-xs">ようこそ、{user?.username}さん</p>
-              </div>
-            </div>
-            
-            {/* Right: Actions & User Info */}
-            <div className="hidden sm:flex items-center space-x-4">
-              {/* Point Balance */}
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200">
-                <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
-                <span className="text-slate-900 text-sm font-semibold">{pointBalance.toLocaleString()} P</span>
-              </div>
-              
-              {/* User Avatar */}
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
-                  {user?.profile_image_url ? (
-                    <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
-                  ) : (
-                    user?.username?.charAt(0).toUpperCase() || 'U'
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile User Info */}
-            <div className="sm:hidden flex items-center space-x-2">
-              <div className="text-right">
-                <div className="text-slate-900 text-xs font-semibold">{pointBalance.toLocaleString()}P</div>
-              </div>
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0">
-                {user?.profile_image_url ? (
-                  <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
-                ) : (
-                  user?.username?.charAt(0).toUpperCase() || 'U'
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="sm:hidden border-b border-slate-200/50 bg-white/70 backdrop-blur-md shadow-sm">
-          {/* メニューボタン */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors"
-          >
-            <span className="text-sm font-semibold text-slate-700">メニュー</span>
-            {isMenuOpen ? (
-              <ChevronDownIcon className="h-5 w-5 text-slate-500" />
-            ) : (
-              <ChevronRightIcon className="h-5 w-5 text-slate-500" />
-            )}
-          </button>
-
-          {/* メニュー内容（開いている時だけ表示） */}
-          <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              isMenuOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-            }`}
-          >
-            <nav className="flex flex-col gap-2 px-3 pb-3">
-              {navGroups.map((group) => {
-                const meta = getDashboardNavGroupMeta(group.key);
-                
-                return (
-                  <div key={group.key} className="flex flex-col gap-1">
-                    {/* グループラベル */}
-                    <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] px-2 pt-2 ${meta.headingClass}`}>
-                      {meta.label}
-                    </span>
-                    
-                    {/* メニューアイテム */}
-                    <div className="flex gap-2 overflow-x-auto pb-1">
-                      {group.items.map((link) => {
-                        const isActive = isDashboardLinkActive(pathname, link.href);
-                        const linkProps = link.external
-                          ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                          : { href: link.href };
-                        const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
-
-                        return (
-                          <Link
-                            key={link.href}
-                            {...linkProps}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
-                          >
-                            <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
-                              {link.icon}
-                            </span>
-                            <span>{link.label}</span>
-                            {link.badge ? (
-                              <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
-                                {link.badge}
-                              </span>
-                            ) : null}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-auto p-3 sm:p-6">
-
+    <DashboardLayout pageTitle="ダッシュボード">
+      <div className="p-3 sm:p-6">
           {/* Dashboard Type Tabs */}
           <div className="mb-6">
             <div className="flex gap-1 sm:gap-2 border-b border-slate-200 overflow-x-auto">
@@ -1666,7 +1447,6 @@ export default function DashboardPage() {
             </div>
           </section>
         </div>
-      </main>
 
       {activeAnnouncement && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
@@ -1703,6 +1483,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }
