@@ -35,16 +35,7 @@
   --font-sans: var(--font-body);
 }
 
-html {
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
-}
-
 body {
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
   background: var(--color-surface-base);
   color: var(--color-foreground);
   font-family: var(--font-body);
@@ -64,13 +55,6 @@ body {
 }
 
 @layer utilities {
-  /* Prevent horizontal overflow on all screens */
-  .prevent-horizontal-scroll {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    width: 100% !important;
-  }
-  
   .bg-surface-base { background-color: var(--color-surface-base); }
   .bg-surface-tint { background-color: var(--color-surface-tint); }
   .bg-surface-alt { background-color: var(--color-surface-alt); }
@@ -511,20 +495,6 @@ body {
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* モバイルで横スクロールを完全に防止 */
-  html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    width: 100% !important;
-    position: relative;
-  }
-  
-  #__next, [id^="__next"] {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    width: 100% !important;
-  }
-  
   .swiper {
     touch-action: pan-y pan-x;
     cursor: grab;
@@ -600,13 +570,6 @@ body {
 /* iOS Safari対策 */
 @supports (-webkit-touch-callout: none) {
   /* iPhone/iPad用の最適化 */
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-    width: 100%;
-    position: relative;
-  }
-  
   body {
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;

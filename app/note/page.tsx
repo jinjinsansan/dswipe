@@ -21,7 +21,7 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
-import DashboardMobileNav from '@/components/dashboard/DashboardMobileNav';
+
 import { noteApi } from '@/lib/api';
 import type { NoteSummary } from '@/types';
 import { getCategoryLabel } from '@/lib/noteCategories';
@@ -219,8 +219,46 @@ export default function NoteDashboardPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-200 bg-white/90 overflow-x-hidden max-w-full">
-          <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
+        <div className="sm:hidden border-b border-slate-200 bg-white/90">
+          <nav className="flex flex-col gap-3 px-3 py-3">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
+              return (
+                <div key={group.key} className="flex flex-col gap-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                        >
+                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                            {link.icon}
+                          </span>
+                          <span>{link.label}</span>
+                          {link.badge ? (
+                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </nav>
         </div>
 
         <div className="flex-1 overflow-auto bg-slate-100 p-4 sm:p-6">

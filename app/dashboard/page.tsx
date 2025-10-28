@@ -18,7 +18,6 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
-import DashboardMobileNav from '@/components/dashboard/DashboardMobileNav';
 import type { DashboardAnnouncement, NoteMetrics } from '@/types';
 import {
   ArrowPathIcon,
@@ -649,7 +648,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row overflow-x-hidden max-w-full">
+    <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
       {/* Sidebar - Hidden on Mobile */}
       <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0">
         {/* Logo */}
@@ -728,7 +727,7 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-x-hidden max-w-full">
+      <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-3 sm:px-6 h-16 flex-shrink-0">
           <div className="flex items-center justify-between h-full">
@@ -782,12 +781,50 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-200 bg-white/80 overflow-x-hidden max-w-full">
-          <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
+        <div className="sm:hidden border-b border-slate-200 bg-white/80">
+          <nav className="flex flex-col gap-3 px-3 py-3">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
+              return (
+                <div key={group.key} className="flex flex-col gap-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                        >
+                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                            {link.icon}
+                          </span>
+                          <span>{link.label}</span>
+                          {link.badge ? (
+                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </nav>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 max-w-full">
+        <div className="flex-1 overflow-auto p-3 sm:p-6">
 
           {/* Dashboard Type Tabs */}
           <div className="mb-6">
