@@ -13,6 +13,7 @@ import type {
   LPListResponse,
   NoteDetail,
   NoteListResult,
+  NoteMetrics,
   NoteCreateRequest,
   NoteUpdateRequest,
   NotePurchaseResult,
@@ -209,6 +210,9 @@ export const noteApi = {
 
   purchase: (noteId: string) =>
     api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`),
+
+  getMetrics: () =>
+    api.get<NoteMetrics>('/notes/metrics'),
 };
 
 // ポイントAPI

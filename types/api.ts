@@ -15,6 +15,8 @@ export type {
   NoteSummary,
   NoteDetail,
   NoteListResult,
+  NoteMetrics,
+  NoteMetricsTopNote,
   PublicNoteSummary,
   PublicNoteListResult,
   PublicNoteDetail,

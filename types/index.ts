@@ -147,6 +147,31 @@ export interface NoteListResult {
   offset: number;
 }
 
+export interface NoteMetricsTopNote {
+  note_id: string;
+  title: string;
+  slug?: string | null;
+  purchase_count: number;
+  points_earned: number;
+}
+
+export interface NoteMetrics {
+  total_notes: number;
+  published_notes: number;
+  draft_notes: number;
+  paid_notes: number;
+  free_notes: number;
+  total_sales_count: number;
+  total_sales_points: number;
+  monthly_sales_count: number;
+  monthly_sales_points: number;
+  recent_published_count: number;
+  average_paid_price: number;
+  latest_published_at?: string | null;
+  top_categories: string[];
+  top_note?: NoteMetricsTopNote | null;
+}
+
 export interface PublicNoteSummary {
   id: string;
   title: string;

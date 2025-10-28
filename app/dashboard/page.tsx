@@ -6,10 +6,11 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi } from '@/lib/api';
+import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi, noteApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { BlockType } from '@/types/templates';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { getCategoryLabel } from '@/lib/noteCategories';
 import {
   getDashboardNavLinks,
   getDashboardNavClasses,
@@ -18,7 +19,7 @@ import {
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
 import DashboardMobileNav from '@/components/dashboard/DashboardMobileNav';
-import type { DashboardAnnouncement } from '@/types';
+import type { DashboardAnnouncement, NoteMetrics } from '@/types';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -26,12 +27,16 @@ import {
   ChartBarIcon,
   ClipboardDocumentListIcon,
   ClipboardIcon,
+  CurrencyYenIcon,
   DocumentIcon,
+  DocumentTextIcon,
   PhotoIcon,
   ShoppingBagIcon,
   Cog6ToothIcon,
   BriefcaseIcon,
   CheckCircleIcon,
+  SparklesIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline';
 
 const formatAnnouncementDate = (value?: string) => {
@@ -65,7 +70,6 @@ export default function DashboardPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [totalSales, setTotalSales] = useState<number>(0);
   const [dashboardType, setDashboardType] = useState<'seller' | 'buyer' | 'settings'>('seller');
   const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
   const [popularProducts, setPopularProducts] = useState<any[]>([]);
@@ -78,6 +82,7 @@ export default function DashboardPage() {
   const [profileSnsUrl, setProfileSnsUrl] = useState<string>(user?.sns_url ?? '');
   const [profileLineUrl, setProfileLineUrl] = useState<string>(user?.line_url ?? '');
   const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profile_image_url ?? '');
+  const [noteMetrics, setNoteMetrics] = useState<NoteMetrics | null>(null);
   const [profileUpdateError, setProfileUpdateError] = useState<string>('');
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState<boolean>(false);
   const [isSavingProfileInfo, setIsSavingProfileInfo] = useState<boolean>(false);
@@ -98,6 +103,35 @@ export default function DashboardPage() {
       )
     : null;
   const continuityLabel = continuityDays !== null ? `${continuityDays}日` : '記録なし';
+
+  const fallbackNoteMetrics: NoteMetrics = {
+    total_notes: 0,
+    published_notes: 0,
+    draft_notes: 0,
+    paid_notes: 0,
+    free_notes: 0,
+    total_sales_count: 0,
+    total_sales_points: 0,
+    monthly_sales_count: 0,
+    monthly_sales_points: 0,
+    recent_published_count: 0,
+    average_paid_price: 0,
+    latest_published_at: null,
+    top_categories: [],
+    top_note: null,
+  };
+
+  const noteSummary = noteMetrics ?? fallbackNoteMetrics;
+  const latestNotePublishedLabel = noteSummary.latest_published_at
+    ? formatAccountDate(noteSummary.latest_published_at, true)
+    : '未公開';
+  const monthlyNoteSalesLabel = `${noteSummary.monthly_sales_points.toLocaleString()}P / ${noteSummary.monthly_sales_count}件`;
+  const totalNoteSalesLabel = `${noteSummary.total_sales_points.toLocaleString()}P`;
+  const averagePaidPriceLabel = noteSummary.average_paid_price > 0
+    ? `${noteSummary.average_paid_price.toLocaleString()}P`
+    : '—';
+  const topNote = noteSummary.top_note ?? null;
+  const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -148,11 +182,12 @@ export default function DashboardPage() {
   const fetchData = async () => {
     try {
       const announcementPromise = loadAnnouncements();
-      const [meResponse, lpsResponse, pointsResponse, productsResponse] = await Promise.all([
+      const [meResponse, lpsResponse, pointsResponse, productsResponse, noteMetricsResponse] = await Promise.all([
         authApi.getMe(),
         lpApi.list(),
         pointsApi.getBalance(),
         productApi.list(),
+        noteApi.getMetrics(),
       ]);
 
       if (meResponse?.data) {
@@ -392,17 +427,13 @@ export default function DashboardPage() {
 
       setLps(enrichedLps);
       setProducts(productsData);
+      setNoteMetrics(noteMetricsResponse.data ?? null);
       setPointBalance(pointsResponse.data.point_balance);
       
-      // 総売上計算
-      const sales = productsData.reduce((sum: number, p: any) => 
-        sum + (p.total_sales || 0) * (p.price_in_points || 0), 0
-      );
-      setTotalSales(sales);
-
       await announcementPromise;
     } catch (error) {
       console.error('Failed to fetch data:', error);
+      setNoteMetrics(null);
     } finally {
       setIsLoading(false);
     }
@@ -963,33 +994,36 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                  <ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />
+                  <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">登録中のLP数</div>
-                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{lps.length}本</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE概要</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{noteSummary.total_notes}本のNOTE</div>
                 </div>
               </div>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
-                公開中: {lps.filter(lp => lp.isPublished).length}本
+                公開中: {noteSummary.published_notes}本
               </p>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
-                商品未登録: {lps.filter(lp => !lp.hasProduct).length}本
+                下書き: {noteSummary.draft_notes}本
               </p>
             </div>
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                  <BriefcaseIcon className="h-5 w-5" aria-hidden="true" />
+                  <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">販売実績</div>
-                  <div className="text-slate-900 text-xs sm:text-sm font-semibold">{products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE売上</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold">{totalNoteSalesLabel}</div>
                 </div>
               </div>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
-                総売上: {totalSales.toLocaleString()}P
+                累計販売数: {noteSummary.total_sales_count}件
+              </p>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
+                今月: {monthlyNoteSalesLabel}
               </p>
             </div>
           </div>
@@ -997,21 +1031,86 @@ export default function DashboardPage() {
           {/* Usage Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">登録商品数</div>
-              <div className="text-slate-900 text-base sm:text-lg font-semibold">{products.length}商品</div>
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">販売中: {products.filter(p => p.is_available).length}商品</div>
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">LP概要</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{lps.length}本のLP</div>
+                </div>
+              </div>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
+                公開中: {lps.filter((lp) => lp.isPublished).length}本
+              </p>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
+                商品連携済み: {lps.filter((lp) => lp.hasProduct).length}本
+              </p>
             </div>
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">今月の売上</div>
-              <div className="text-slate-900 text-base sm:text-lg font-semibold">{totalSales.toLocaleString()}P</div>
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">販売件数: {products.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0)}件</div>
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE公開トレンド</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{latestNotePublishedLabel}</div>
+                </div>
+              </div>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
+                直近30日: {noteSummary.recent_published_count}本公開
+              </p>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
+                有料NOTE平均価格: {averagePaidPriceLabel}
+              </p>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
+                有料NOTE: {noteSummary.paid_notes}本 / 無料: {noteSummary.free_notes}本
+              </p>
             </div>
 
             <div className="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-sm">
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mb-1">総閲覧数</div>
-              <div className="text-slate-900 text-base sm:text-lg font-semibold">{lps.reduce((sum: number, lp: any) => sum + (lp.total_views || 0), 0)}</div>
-              <div className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">CTAクリック: {lps.reduce((sum: number, lp: any) => sum + (lp.total_cta_clicks || 0), 0)}回</div>
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <TagIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">人気NOTEとカテゴリ</div>
+                  {topNote ? (
+                    topNote.slug ? (
+                      <Link
+                        href={`/notes/${topNote.slug}`}
+                        className="text-slate-900 text-xs sm:text-sm font-semibold truncate text-blue-600 hover:text-blue-700"
+                      >
+                        {topNote.title}
+                      </Link>
+                    ) : (
+                      <p className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{topNote.title}</p>
+                    )
+                  ) : (
+                    <p className="text-slate-500 text-[10px] sm:text-xs font-medium">まだ販売データがありません</p>
+                  )}
+                </div>
+              </div>
+              {topNote ? (
+                <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
+                  販売: {topNote.purchase_count}件 / {topNote.points_earned.toLocaleString()}P
+                </p>
+              ) : null}
+              {resolvedTopCategories.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {resolvedTopCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600"
+                    >
+                      #{category}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">カテゴリデータがまだありません</p>
+              )}
             </div>
           </div>
             </>
