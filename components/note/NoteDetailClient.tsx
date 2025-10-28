@@ -161,7 +161,19 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
           </span>
           <span>公開日: {formatDate(note.published_at)}</span>
           <span>価格: {note.is_paid ? `${note.price_points.toLocaleString()} P` : '無料'}</span>
-          <span>著者: @{note.author_username ?? 'unknown'}</span>
+          <span className="flex items-center gap-1">
+            著者:
+            {note.author_username ? (
+              <Link
+                href={`/u/${note.author_username}`}
+                className="font-semibold text-blue-600 transition hover:text-blue-700"
+              >
+                @{note.author_username}
+              </Link>
+            ) : (
+              <span>@unknown</span>
+            )}
+          </span>
           {isAuthor ? <span className="font-semibold text-emerald-600">あなたの記事です</span> : null}
         </div>
 

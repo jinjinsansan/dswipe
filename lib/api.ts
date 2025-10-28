@@ -339,7 +339,7 @@ export const publicApi = {
       params: sessionId ? { session_id: sessionId } : undefined,
     }),
 
-  listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[] }) =>
+  listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[]; author_username?: string }) =>
     axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, { params }),
 
   getNote: (slug: string, options?: { accessToken?: string }) =>

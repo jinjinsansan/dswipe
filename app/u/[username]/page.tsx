@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { productApi, publicApi } from '@/lib/api';
 import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon } from '@heroicons/react/24/outline';
-import type { PublicUserProfile } from '@/types';
+import type { PublicNoteSummary, PublicUserProfile } from '@/types';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -16,12 +16,14 @@ export default function UserProfilePage() {
   console.log('UserProfilePage レンダリング - ユーザー名:', username);
 
   const [products, setProducts] = useState<any[]>([]);
+  const [notes, setNotes] = useState<PublicNoteSummary[]>([]);
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalSales: 0,
+    totalNotes: 0,
   });
 
   const getThumbnailUrl = (product: any): string | null => {
@@ -56,21 +58,25 @@ export default function UserProfilePage() {
       setIsLoading(true);
       setError('');
 
-      const [productsResponse, profileResponse] = await Promise.all([
+      const [productsResponse, profileResponse, notesResponse] = await Promise.all([
         productApi.getPublic({
           seller_username: username,
           sort: 'latest',
           limit: 50,
         }),
         publicApi.getUserProfile(username),
+        publicApi.listNotes({ limit: 100, author_username: username }),
       ]);
 
       const userProducts = productsResponse.data?.data || [];
+      const userNotes = (notesResponse.data?.data || []).filter((note: PublicNoteSummary) => note.author_username === username);
 
       setProducts(userProducts);
+      setNotes(userNotes);
       setStats({
         totalProducts: userProducts.length,
         totalSales: userProducts.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0),
+        totalNotes: userNotes.length,
       });
 
       setProfile(profileResponse.data as PublicUserProfile);
@@ -84,7 +90,8 @@ export default function UserProfilePage() {
       }
       setProfile(null);
       setProducts([]);
-      setStats({ totalProducts: 0, totalSales: 0 });
+      setNotes([]);
+      setStats({ totalProducts: 0, totalSales: 0, totalNotes: 0 });
     } finally {
       setIsLoading(false);
     }
@@ -162,6 +169,10 @@ export default function UserProfilePage() {
                 <div className="text-slate-600">
                   <span className="font-semibold text-green-600">{stats.totalSales.toLocaleString()}</span>
                   <span className="text-slate-500 ml-1">総販売数</span>
+                </div>
+                <div className="text-slate-600">
+                  <span className="font-semibold text-amber-600">{stats.totalNotes}</span>
+                  <span className="text-slate-500 ml-1">公開NOTE</span>
                 </div>
               </div>
 
@@ -269,6 +280,70 @@ export default function UserProfilePage() {
                 </Link>
               );
             })}
+          </div>
+        )}
+      </div>
+
+      {/* Notes Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">公開されたNOTE</h2>
+
+        {notes.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <p className="text-slate-600 text-lg mb-3">公開NOTEはまだありません</p>
+            <p className="text-slate-500 text-sm">ユーザー名: {username}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {notes.map((note) => (
+              <Link
+                key={note.id}
+                href={`/notes/${note.slug}`}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+              >
+                <div className="relative h-40 w-full overflow-hidden bg-slate-100">
+                  {note.cover_image_url ? (
+                    <img
+                      src={note.cover_image_url}
+                      alt={note.title}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                      <DocumentIcon className="h-8 w-8" aria-hidden="true" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-3 px-5 py-6">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
+                        note.is_paid ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                      }`}
+                    >
+                      {note.is_paid ? '有料' : '無料'}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
+                    </span>
+                  </div>
+                  <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">{note.title}</h3>
+                  {note.excerpt ? (
+                    <p className="line-clamp-3 text-sm text-slate-600">{note.excerpt}</p>
+                  ) : (
+                    <p className="text-sm text-slate-500">概要未設定の記事です。</p>
+                  )}
+                  <div className="mt-auto flex items-center justify-between text-xs text-slate-500">
+                    <span>
+                      {note.is_paid ? `${note.price_points.toLocaleString()} P` : 'FREE'}
+                    </span>
+                    <span className="truncate">
+                      @{note.author_username ?? username}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>
