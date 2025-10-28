@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 export default function PurchaseSuccessPage() {
   const router = useRouter();
@@ -25,9 +26,11 @@ export default function PurchaseSuccessPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+      <StickySiteHeader showDashboardLink />
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md items-center justify-center px-4 py-10">
+        <div className="w-full">
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           {/* Success Icon */}
           <div className="mb-6 flex justify-center">
             <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -76,6 +79,7 @@ export default function PurchaseSuccessPage() {
             >
               ダッシュボードへ
             </Link>
+          </div>
           </div>
         </div>
       </div>

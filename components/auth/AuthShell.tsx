@@ -70,7 +70,7 @@ export default function AuthShell({
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col">
-        <header className="flex items-center justify-between px-6 py-6 lg:px-10">
+        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-6 backdrop-blur-xl bg-slate-900/70 lg:px-10">
           <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.4em] text-white">
             <span className="h-2 w-2 rounded-full bg-cyan-400" aria-hidden="true" />
             Ｄ－swipe

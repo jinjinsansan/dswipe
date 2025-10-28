@@ -16,6 +16,7 @@ import {
   DocumentIcon,
   ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -169,8 +170,9 @@ function ProductsContent() {
 
   return (
     <div className="min-h-screen bg-slate-100">
+      <StickySiteHeader showDashboardLink />
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10">
+      <header className="sticky top-16 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
@@ -190,7 +192,7 @@ function ProductsContent() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 pb-16 pt-6 sm:px-6 lg:px-8">
         {/* Filters */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

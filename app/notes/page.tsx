@@ -7,6 +7,7 @@ import { FunnelIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/
 import { publicApi } from '@/lib/api';
 import type { PublicNoteSummary } from '@/types';
 import { NOTE_CATEGORY_OPTIONS, getCategoryLabel } from '@/lib/noteCategories';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 const PAGE_SIZE = 60;
 
@@ -61,8 +62,9 @@ export default function NotesMarketplacePage() {
   }, [notes, filter, categoryFilter]);
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 sm:gap-12 sm:py-20">
+    <div className="min-h-screen bg-slate-50">
+      <StickySiteHeader showDashboardLink />
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 pb-20 pt-24 sm:gap-12 sm:pt-28">
         <header className="space-y-4 text-center">
           <Link
             href="/dashboard"
@@ -227,8 +229,8 @@ export default function NotesMarketplacePage() {
             ))}
           </section>
         )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 

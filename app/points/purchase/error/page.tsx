@@ -1,16 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { XCircleIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 export default function PurchaseErrorPage() {
-  const router = useRouter();
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
+      <StickySiteHeader showDashboardLink />
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md items-center justify-center px-4 py-10">
+        <div className="w-full">
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           {/* Error Icon */}
           <div className="mb-6 flex justify-center">
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
@@ -70,6 +70,7 @@ export default function PurchaseErrorPage() {
             >
               サポートに問い合わせ
             </button>
+          </div>
           </div>
         </div>
       </div>

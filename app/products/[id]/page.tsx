@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ArchiveBoxIcon, CubeTransparentIcon, FireIcon } from '@heroicons/react/24/outline';
 import { productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -84,12 +85,15 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-lg mb-4">商品が見つかりませんでした</p>
-          <Link href="/products" className="text-blue-400 hover:text-blue-300">
-            商品一覧に戻る
-          </Link>
+      <div className="min-h-screen bg-gray-950 text-slate-200">
+        <StickySiteHeader dark showDashboardLink />
+        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-16">
+          <div className="text-center">
+            <p className="mb-4 text-lg text-red-400">商品が見つかりませんでした</p>
+            <Link href="/products" className="text-blue-400 transition-colors hover:text-blue-300">
+              商品一覧に戻る
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -98,9 +102,10 @@ export default function ProductDetailPage() {
   const totalPrice = product.price_in_points * quantity;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-950 text-slate-100">
+      <StickySiteHeader dark showDashboardLink />
       {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800">
+      <header className="sticky top-16 z-40 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">
@@ -111,7 +116,7 @@ export default function ProductDetailPage() {
       </header>
 
       {/* Product Detail */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left: Image */}
           <div>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 export const metadata: Metadata = {
   title: '利用規約 | D-swipe',
@@ -8,14 +9,21 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="relative min-h-screen bg-slate-950 py-24 text-slate-200">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.12)_1px,transparent_1px)]" style={{ backgroundSize: '44px 44px' }} />
+    <div className="relative min-h-screen bg-slate-950 text-slate-200">
+      <StickySiteHeader dark showDashboardLink />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.12)_1px,transparent_1px)]"
+        style={{ backgroundSize: '44px 44px' }}
+      />
 
-      <div className="relative z-10">
+      <main className="relative z-10 pt-24 pb-20">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="mb-12 space-y-4">
-            <Link href="/" className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.32em] text-blue-300 hover:text-white transition-colors">
+            <Link
+              href="/"
+              className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.32em] text-blue-300 transition-colors hover:text-white"
+            >
               ← Home
             </Link>
             <h1 className="text-4xl font-bold text-white">利用規約</h1>
@@ -94,7 +102,7 @@ export default function TermsPage() {
             </section>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

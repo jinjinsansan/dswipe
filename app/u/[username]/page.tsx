@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { productApi, publicApi } from '@/lib/api';
 import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon } from '@heroicons/react/24/outline';
 import type { PublicNoteSummary, PublicUserProfile } from '@/types';
+import StickySiteHeader from '@/components/layout/StickySiteHeader';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -120,8 +121,9 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-screen bg-slate-100">
+      <StickySiteHeader showDashboardLink />
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10">
+      <header className="sticky top-16 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/dashboard" className="text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold">

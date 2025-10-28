@@ -132,8 +132,9 @@ export default function HomeSwiper() {
   ];
 
   return (
-    <div className="h-screen w-full bg-black overflow-hidden">
+    <div className="relative h-full min-h-screen w-full bg-black overflow-hidden">
       <Swiper
+        className="h-full"
         direction="vertical"
         slidesPerView={1}
         speed={350}
@@ -189,7 +190,6 @@ export default function HomeSwiper() {
         modules={[Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]}
         onSlideChange={handleSlideChange}
         onTouchStart={() => triggerHapticFeedback('light')}
-        className="h-full w-full"
       >
         {/* スライド1: Hero */}
         <SwiperSlide>
