@@ -36,7 +36,7 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
     const content = (
       <span className="flex min-w-0 items-center gap-2">
         <span className={`flex h-4 w-4 items-center justify-center ${classes.icon}`}>{link.icon}</span>
-        <span className="truncate text-xs font-semibold">{link.label}</span>
+        <span className="truncate text-[11px] font-semibold">{link.label}</span>
       </span>
     );
 
@@ -48,11 +48,13 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
           onClick={() => {
             if (onSelect) onSelect();
           }}
-          className={`inline-flex min-w-[7rem] items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 ${classes.container}`}
+          className={`inline-flex h-9 min-w-[6.5rem] items-center gap-2 whitespace-nowrap rounded-lg border border-slate-200/70 bg-white/70 px-3 ${
+            classes.container
+          }`}
         >
           {content}
           {link.badge ? (
-            <span className={`text-[10px] font-semibold ${classes.badge}`}>{link.badge}</span>
+            <span className={`text-[9px] font-semibold ${classes.badge}`}>{link.badge}</span>
           ) : null}
         </Link>
       );
@@ -81,7 +83,7 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
   };
 
   return (
-    <nav className="flex flex-col gap-3 px-3 py-3">
+    <nav className="flex flex-col gap-2 px-3 py-2">
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {featuredLinks.map((link) =>
           renderLink({
@@ -93,10 +95,10 @@ export default function DashboardMobileNav({ navGroups, pathname }: DashboardMob
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
         >
           <Squares2X2Icon className="h-4 w-4" aria-hidden="true" />
-          もっと見る
+          <span className="sr-only">すべてのメニューを表示</span>
         </button>
       </div>
 
