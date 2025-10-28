@@ -1,19 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/store/authStore";
 import { lpApi, productApi } from "@/lib/api";
-import DSwipeLogo from "@/components/DSwipeLogo";
-import {
-  getDashboardNavLinks,
-  getDashboardNavClasses,
-  getDashboardNavGroupMeta,
-  groupDashboardNavLinks,
-  isDashboardLinkActive,
-} from "@/components/dashboard/navLinks";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 import type { LandingPage, Product } from "@/types";
 
@@ -39,13 +31,7 @@ type LpOption = Pick<LandingPage, "id" | "title">;
 
 export default function ProductManagementPage() {
   const router = useRouter();
-  const pathname = usePathname();
-  const { user, isAuthenticated, isInitialized, logout, isAdmin } = useAuthStore();
-  const navLinks = useMemo(
-    () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
-    [isAdmin, user?.user_type]
-  );
-  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
+  const { user, isAuthenticated, isInitialized } = useAuthStore();
 
   const [products, setProducts] = useState<ManageProduct[]>([]);
   const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
@@ -330,175 +316,35 @@ export default function ProductManagementPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-slate-600 text-xl">読み込み中...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-slate-100 flex overflow-x-hidden">
-      <aside className="hidden sm:flex w-52 flex-shrink-0 bg-white border-r border-slate-200 flex-col">
-        <div className="px-6 h-16 border-b border-slate-200 flex items-center">
-          <Link href="/dashboard" className="block">
-            <DSwipeLogo size="medium" showFullName={true} />
-          </Link>
-        </div>
-
-        <nav className="flex-1 p-3">
-          <div className="flex flex-col gap-4">
-            {navGroups.map((group) => {
-              const meta = getDashboardNavGroupMeta(group.key);
-              return (
-                <div key={group.key} className="space-y-1.5">
-                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </p>
-                  <div className="space-y-1">
-                    {group.items.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: "_blank", rel: "noopener noreferrer" }
-                        : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: "desktop", active: isActive });
-
-                      return (
-                        <Link
-                          key={link.href}
-                          {...linkProps}
-                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
-                              {link.icon}
-                            </span>
-                            <span className="truncate">{link.label}</span>
-                          </span>
-                          {link.badge ? (
-                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
-                              {link.badge}
-                            </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+    <DashboardLayout
+      pageTitle="商品管理"
+      pageSubtitle="CTAで紐づける商品の作成・編集・公開設定をこちらで行えます。"
+    >
+      <div className="px-3 py-6 sm:px-6">
+        {isLoading ? (
+          <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-600">
+            読み込み中です...
           </div>
-        </nav>
-
-        <div className="p-3 border-t border-slate-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-              {user?.username?.charAt(0).toUpperCase() || "U"}
-            </div>
-            <div className="min-w-0">
-              <div className="text-slate-900 text-sm font-semibold truncate">
-                {user?.username || "ユーザー"}
-              </div>
-              <div className="text-slate-500 text-xs truncate">{user?.email}</div>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-2 rounded bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-sm font-semibold"
-          >
-            ログアウト
-          </button>
-        </div>
-      </aside>
-
-      <div className="flex-1 flex flex-col min-w-0 w-full">
-        <div className="sm:hidden border-b border-slate-200 bg-white w-full">
-          <div className="px-3 py-3 border-b border-slate-100 flex items-center justify-between w-full">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                {user?.username?.charAt(0).toUpperCase() || "U"}
-              </div>
-              <div className="min-w-0">
-                <div className="text-slate-900 text-sm font-semibold truncate">
-                  {user?.username || "ユーザー"}
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-3 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-xs font-semibold"
-            >
-              ログアウト
-            </button>
-          </div>
-          <nav className="flex flex-col gap-3 px-3 py-3">
-            {navGroups.map((group) => {
-              const meta = getDashboardNavGroupMeta(group.key);
-              return (
-                <div key={group.key} className="flex flex-col gap-1">
-                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </span>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {group.items.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                        : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
-
-                      return (
-                        <Link
-                          key={link.href}
-                          {...linkProps}
-                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
-                        >
-                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
-                            {link.icon}
-                          </span>
-                          <span>{link.label}</span>
-                          {link.badge ? (
-                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
-                              {link.badge}
-                            </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </nav>
-        </div>
-
-        <main className="flex-1 overflow-auto bg-slate-100 px-3 sm:px-6 py-6 w-full min-w-0">
-          <div className="max-w-5xl mx-auto space-y-6 w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        ) : (
+          <div className="mx-auto w-full max-w-5xl space-y-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-slate-900">商品管理</h1>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="mt-1 text-sm text-slate-600">
                   CTAで紐づける商品の作成・編集・公開設定をこちらで行えます。
                 </p>
               </div>
               <button
                 onClick={openCreateModal}
-                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 shadow whitespace-nowrap"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-blue-700"
               >
                 + 新しい商品を追加
               </button>
             </div>
 
             {error ? (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-                {error}
-              </div>
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">{error}</div>
             ) : (
               <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 {products.length === 0 ? (
@@ -506,20 +352,20 @@ export default function ProductManagementPage() {
                     <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
                       <ShoppingBagIcon className="h-6 w-6" aria-hidden="true" />
                     </div>
-                    <h2 className="text-lg font-semibold text-slate-900 mb-2">まだ商品がありません</h2>
-                    <p className="text-sm text-slate-600 mb-4">
+                    <h2 className="mb-2 text-lg font-semibold text-slate-900">まだ商品がありません</h2>
+                    <p className="mb-4 text-sm text-slate-600">
                       CTAに紐づける商品を作成し、決済モーダルで販売しましょう。
                     </p>
                     <button
                       onClick={openCreateModal}
-                      className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 shadow"
+                      className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-blue-700"
                     >
                       商品を作成する
                     </button>
                   </div>
                 ) : (
-                  <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="space-y-6 p-6">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">登録済み商品</p>
                         <p className="mt-2 text-2xl font-semibold text-slate-900">{productStats.total}</p>
@@ -542,7 +388,7 @@ export default function ProductManagementPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                       {products.map((product) => {
                         const lpTitle = product.lp_id ? lpTitleMap.get(product.lp_id) : undefined;
                         const isLimitedStock =
@@ -558,32 +404,26 @@ export default function ProductManagementPage() {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <h3 className="text-base font-semibold text-slate-900 line-clamp-2">
-                                  {product.title}
-                                </h3>
+                                <h3 className="text-base font-semibold text-slate-900 line-clamp-2">{product.title}</h3>
                                 {product.description && (
-                                  <p className="mt-2 text-xs text-slate-600 line-clamp-3">
-                                    {product.description}
-                                  </p>
+                                  <p className="mt-2 text-xs text-slate-600 line-clamp-3">{product.description}</p>
                                 )}
                               </div>
                               <span
                                 className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide ${
                                   product.is_available
-                                    ? "border border-emerald-400 bg-emerald-50 text-emerald-600"
-                                    : "border border-slate-300 bg-slate-100 text-slate-600"
+                                    ? 'border border-emerald-400 bg-emerald-50 text-emerald-600'
+                                    : 'border border-slate-300 bg-slate-100 text-slate-600'
                                 }`}
                               >
-                                {product.is_available ? "販売中" : "非公開"}
+                                {product.is_available ? '販売中' : '非公開'}
                               </span>
                             </div>
 
                             <div className="mt-4 grid grid-cols-1 gap-3 text-sm text-slate-600">
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                 <span className="text-xs text-slate-500">価格</span>
-                                <span className="font-semibold text-slate-900">
-                                  {product.price_in_points.toLocaleString()} P
-                                </span>
+                                <span className="font-semibold text-slate-900">{product.price_in_points.toLocaleString()} P</span>
                               </div>
 
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
@@ -591,44 +431,34 @@ export default function ProductManagementPage() {
                                 <span
                                   className={`font-semibold ${
                                     product.stock_quantity === null || product.stock_quantity === undefined
-                                      ? "text-slate-900"
+                                      ? 'text-slate-900'
                                       : isLimitedStock
-                                      ? "text-amber-600"
-                                      : "text-slate-900"
+                                      ? 'text-amber-600'
+                                      : 'text-slate-900'
                                   }`}
                                 >
                                   {product.stock_quantity === null || product.stock_quantity === undefined
-                                    ? "無制限"
+                                    ? '無制限'
                                     : `${product.stock_quantity.toLocaleString()} 個`}
                                 </span>
                               </div>
 
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                 <span className="text-xs text-slate-500">累計成約</span>
-                                <span className="font-semibold text-blue-600">
-                                  {product.total_sales.toLocaleString()} 件
-                                </span>
+                                <span className="font-semibold text-blue-600">{product.total_sales.toLocaleString()} 件</span>
                               </div>
 
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                 <span className="text-xs text-slate-500">紐づけLP</span>
-                                <span className="truncate text-right text-sm text-slate-700">
-                                  {lpTitle ?? "-"}
-                                </span>
+                                <span className="truncate text-right text-sm text-slate-700">{lpTitle ?? '-'}</span>
                               </div>
                             </div>
 
                             {(product.redirect_url || product.thanks_lp_id) && (
                               <div className="mt-3 space-y-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
-                                {product.redirect_url && (
-                                  <p className="truncate">
-                                    リダイレクト: {product.redirect_url}
-                                  </p>
-                                )}
+                                {product.redirect_url && <p className="truncate">リダイレクト: {product.redirect_url}</p>}
                                 {product.thanks_lp_id && (
-                                  <p className="truncate">
-                                    サンクスLP: {lpTitleMap.get(product.thanks_lp_id) ?? product.thanks_lp_id}
-                                  </p>
+                                  <p className="truncate">サンクスLP: {lpTitleMap.get(product.thanks_lp_id) ?? product.thanks_lp_id}</p>
                                 )}
                               </div>
                             )}
@@ -638,7 +468,7 @@ export default function ProductManagementPage() {
                                 onClick={() => handleToggleAvailability(product)}
                                 className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100"
                               >
-                                {product.is_available ? "非公開にする" : "販売を再開"}
+                                {product.is_available ? '非公開にする' : '販売を再開'}
                               </button>
                               <button
                                 onClick={() => openEditModal(product)}
@@ -656,12 +486,13 @@ export default function ProductManagementPage() {
 
                             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
                               <span>
-                                更新日: {product.updated_at
-                                  ? new Date(product.updated_at).toLocaleDateString("ja-JP", {
-                                      month: "short",
-                                      day: "numeric",
+                                更新日:{' '}
+                                {product.updated_at
+                                  ? new Date(product.updated_at).toLocaleDateString('ja-JP', {
+                                      month: 'short',
+                                      day: 'numeric',
                                     })
-                                  : "-"}
+                                  : '-'}
                               </span>
                               {isLimitedStock && (
                                 <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-600">
@@ -678,26 +509,21 @@ export default function ProductManagementPage() {
               </div>
             )}
           </div>
-        </main>
+        )}
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-4 overflow-y-auto">
-          <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl my-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">
-                {editingProduct ? "商品を編集" : "新しい商品を作成"}
-              </h2>
-              <button
-                onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
-              >
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/40 px-4 py-4">
+          <div className="my-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">{editingProduct ? '商品を編集' : '新しい商品を作成'}</h2>
+              <button onClick={closeModal} className="text-slate-400 transition-colors hover:text-slate-600">
                 ✕
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">商品タイトル *</label>
+                <label className="mb-2 block text-xs font-semibold text-slate-600">商品タイトル *</label>
                 <input
                   name="title"
                   value={form.title}
@@ -709,7 +535,7 @@ export default function ProductManagementPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">商品説明</label>
+                <label className="mb-2 block text-xs font-semibold text-slate-600">商品説明</label>
                 <textarea
                   name="description"
                   value={form.description}
@@ -720,9 +546,9 @@ export default function ProductManagementPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-2">価格（ポイント） *</label>
+                  <label className="mb-2 block text-xs font-semibold text-slate-600">価格（ポイント） *</label>
                   <input
                     name="price"
                     value={form.price}
@@ -735,7 +561,7 @@ export default function ProductManagementPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-2">在庫数</label>
+                  <label className="mb-2 block text-xs font-semibold text-slate-600">在庫数</label>
                   <input
                     name="stock"
                     value={form.stock}
@@ -749,7 +575,7 @@ export default function ProductManagementPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">紐づけるLP</label>
+                <label className="mb-2 block text-xs font-semibold text-slate-600">紐づけるLP</label>
                 <select
                   name="lpId"
                   value={form.lpId}
@@ -765,9 +591,9 @@ export default function ProductManagementPage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-2">購入後リダイレクトURL</label>
+                  <label className="mb-2 block text-xs font-semibold text-slate-600">購入後リダイレクトURL</label>
                   <input
                     name="redirectUrl"
                     value={form.redirectUrl}
@@ -777,7 +603,7 @@ export default function ProductManagementPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-2">サンクスページLP</label>
+                  <label className="mb-2 block text-xs font-semibold text-slate-600">サンクスページLP</label>
                   <select
                     name="thanksLpId"
                     value={form.thanksLpId}
@@ -807,37 +633,36 @@ export default function ProductManagementPage() {
                     onChange={handleInputChange}
                     className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
                   />
-                  {form.isAvailable ? "販売中" : "非公開"}
+                  {form.isAvailable ? '販売中' : '非公開'}
                 </label>
               </div>
 
               {formError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                  {formError}
-                </div>
+                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{formError}</div>
               )}
 
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
                   disabled={saving}
                 >
                   キャンセル
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-60"
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
                   disabled={saving}
                 >
-                  {saving ? "保存中..." : editingProduct ? "更新する" : "作成する"}
+                  {saving ? '保存中...' : editingProduct ? '更新する' : '作成する'}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }
+
