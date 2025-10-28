@@ -64,8 +64,16 @@ export default function NotesMarketplacePage() {
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 sm:gap-12 sm:py-20">
         <header className="space-y-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">NOTE marketplace</p>
-          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">AllNOTES</h1>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400 transition hover:text-slate-700"
+          >
+            ← ダッシュボードに戻る
+          </Link>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">NOTE marketplace</p>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">AllNOTES</h1>
+          </div>
           <p className="mx-auto max-w-3xl text-sm text-slate-600 sm:text-base">
             情報発信者が投稿したNOTE記事をここで発見できます。無料記事はすぐに閲覧でき、有料記事はポイントでアンロック可能です。
           </p>

@@ -12,7 +12,7 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
-import { noteApi, publicApi } from '@/lib/api';
+import { publicApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import { getCategoryLabel } from '@/lib/noteCategories';
@@ -42,7 +42,7 @@ const formatDate = (value?: string | null) => {
 
 export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const router = useRouter();
-  const { token, isAuthenticated, isInitialized, user, setUser } = useAuthStore();
+  const { token, isAuthenticated, isInitialized, user } = useAuthStore();
 
   const [note, setNote] = useState<PublicNoteDetail | null>(null);
   const [loading, setLoading] = useState<LoadingState>('loading');
@@ -97,19 +97,9 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     setPurchaseMessage(null);
     setPurchaseError(null);
     try {
-      const response = await noteApi.purchase(note.id);
-      setPurchaseState('success');
-      setPurchaseMessage(
-        `購入が完了しました。消費ポイント: ${response.data.points_spent.toLocaleString()}P / 残高: ${response.data.remaining_points.toLocaleString()}P`
-      );
-      if (user) {
-        const nextUser = { ...user, point_balance: response.data.remaining_points };
-        setUser(nextUser);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('user', JSON.stringify(nextUser));
-        }
-      }
-      await fetchNote();
+      // 購入APIは認証が必要なためUIではログインに誘導
+      setPurchaseState('error');
+      setPurchaseError('購入にはログインが必要です。ログイン後に再度お試しください。');
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
       setPurchaseState('error');
