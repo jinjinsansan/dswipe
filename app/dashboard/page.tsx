@@ -182,12 +182,11 @@ export default function DashboardPage() {
   const fetchData = async () => {
     try {
       const announcementPromise = loadAnnouncements();
-      const [meResponse, lpsResponse, pointsResponse, productsResponse, noteMetricsResponse] = await Promise.all([
+      const [meResponse, lpsResponse, pointsResponse, productsResponse] = await Promise.all([
         authApi.getMe(),
         lpApi.list(),
         pointsApi.getBalance(),
         productApi.list(),
-        noteApi.getMetrics(),
       ]);
 
       if (meResponse?.data) {
@@ -427,9 +426,16 @@ export default function DashboardPage() {
 
       setLps(enrichedLps);
       setProducts(productsData);
-      setNoteMetrics(noteMetricsResponse.data ?? null);
       setPointBalance(pointsResponse.data.point_balance);
       
+      try {
+        const metricsResponse = await noteApi.getMetrics();
+        setNoteMetrics(metricsResponse.data ?? null);
+      } catch (metricsError) {
+        console.error('Failed to fetch note metrics:', metricsError);
+        setNoteMetrics(null);
+      }
+
       await announcementPromise;
     } catch (error) {
       console.error('Failed to fetch data:', error);
