@@ -40,7 +40,7 @@ export default function DashboardLayout({
     pointBalance,
     setPointBalance,
   } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // ページ遷移時はローディングを表示しない
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
   const navLinks = useMemo(
@@ -62,49 +62,44 @@ export default function DashboardLayout({
   }, [requireAuth, isInitialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (!isInitialized || !isAuthenticated || !user) {
       return;
     }
 
-    if (!isAuthenticated || !user) {
-      setIsLoading(false);
-      return;
-    }
-
+    // ポイント残高を取得（バックグラウンドで更新、ローディングは表示しない）
     let isActive = true;
 
     const fetchPointBalance = async () => {
-      setIsBalanceLoading(true);
       try {
         const response = await pointsApi.getBalance();
         if (!isActive) return;
         setPointBalance(response.data.point_balance ?? 0);
       } catch (error) {
         console.error('Failed to fetch point balance:', error);
-      } finally {
-        if (isActive) {
-          setIsBalanceLoading(false);
-          setIsLoading(false);
-        }
       }
     };
 
-    fetchPointBalance();
+    // 初回またはポイント残高が0の場合のみ取得
+    if (pointBalance === 0) {
+      fetchPointBalance();
+    }
 
     return () => {
       isActive = false;
     };
-  }, [isInitialized, isAuthenticated, user, setPointBalance]);
+  }, [isInitialized, isAuthenticated, user, pointBalance, setPointBalance]);
 
   const handleLogout = () => {
     logout();
     router.push('/');
   };
 
-  if (isLoading || !isInitialized) {
+  // 初回認証チェック中のみローディング表示
+  if (!isInitialized) {
     return <PageLoader />;
   }
 
+  // 認証が必要なページで未認証の場合は何も表示しない（リダイレクト処理が実行される）
   if (requireAuth && (!isAuthenticated || !user)) {
     return null;
   }
