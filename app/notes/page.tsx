@@ -113,32 +113,34 @@ export default function NotesMarketplacePage() {
               />
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setCategoryFilter('all')}
-              className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
-                categoryFilter === 'all'
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              全カテゴリー
-            </button>
-            {NOTE_CATEGORY_OPTIONS.map((option) => (
+          <div className="mt-4 -mx-3">
+            <div className="flex flex-nowrap items-center gap-2 overflow-x-auto px-3 pb-2 sm:flex-wrap sm:overflow-visible">
               <button
-                key={option.value}
                 type="button"
-                onClick={() => setCategoryFilter(option.value)}
-                className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
-                  categoryFilter === option.value
-                    ? 'bg-blue-600 text-white shadow-sm'
+                onClick={() => setCategoryFilter('all')}
+                className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                  categoryFilter === 'all'
+                    ? 'bg-slate-900 text-white shadow-sm'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                #{option.label}
+                全カテゴリー
               </button>
-            ))}
+              {NOTE_CATEGORY_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setCategoryFilter(option.value)}
+                  className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                    categoryFilter === option.value
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  #{option.label}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
