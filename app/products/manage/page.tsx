@@ -14,6 +14,7 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from "@/components/dashboard/navLinks";
+import DashboardMobileNav from "@/components/dashboard/DashboardMobileNav";
 import type { LandingPage, Product } from "@/types";
 
 interface ProductFormState {
@@ -436,45 +437,7 @@ export default function ProductManagementPage() {
               ログアウト
             </button>
           </div>
-          <nav className="flex flex-col gap-3 px-3 py-3">
-            {navGroups.map((group) => {
-              const meta = getDashboardNavGroupMeta(group.key);
-              return (
-                <div key={group.key} className="flex flex-col gap-1">
-                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </span>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {group.items.map((link) => {
-                      const active = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: "_blank", rel: "noopener noreferrer" }
-                        : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: "mobile", active });
-
-                      return (
-                        <Link
-                          key={link.href}
-                          {...linkProps}
-                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
-                        >
-                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
-                            {link.icon}
-                          </span>
-                          <span>{link.label}</span>
-                          {link.badge ? (
-                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
-                              {link.badge}
-                            </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </nav>
+          <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
         </div>
 
         <main className="flex-1 overflow-auto bg-slate-100 px-3 sm:px-6 py-6 w-full min-w-0">

@@ -13,6 +13,7 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+import DashboardMobileNav from '@/components/dashboard/DashboardMobileNav';
 import { 
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -265,6 +266,10 @@ export default function PointHistoryPage() {
             </button>
           </div>
         </header>
+
+        <div className="lg:hidden border-b border-gray-200 bg-white/90">
+          <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
+        </div>
 
         {/* コンテンツエリア */}
         <main className="flex-1 overflow-y-auto">

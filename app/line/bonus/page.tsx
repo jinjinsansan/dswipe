@@ -12,6 +12,7 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+import DashboardMobileNav from '@/components/dashboard/DashboardMobileNav';
 import { GiftIcon, CheckCircleIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { PageLoader } from '@/components/LoadingSpinner';
 
@@ -294,6 +295,10 @@ export default function LineBonusPage() {
               ログアウト
             </button>
           </div>
+        </div>
+
+        <div className="sm:hidden border-b border-slate-200 bg-white/90">
+          <DashboardMobileNav navGroups={navGroups} pathname={pathname} />
         </div>
 
         <main className="flex-1 overflow-auto bg-slate-100 px-3 sm:px-6 py-6 w-full min-w-0">
