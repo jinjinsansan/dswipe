@@ -132,10 +132,9 @@ export default function HomeSwiper() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden bg-black">
+    <div className="relative h-full min-h-screen w-full bg-black overflow-hidden">
       <Swiper
-        className="h-full min-h-[calc(100vh-4rem)]"
-        style={{ minHeight: 'calc(100vh - 4rem)' }}
+        className="h-full"
         direction="vertical"
         slidesPerView={1}
         speed={350}
@@ -194,7 +193,7 @@ export default function HomeSwiper() {
       >
         {/* スライド1: Hero */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center overflow-hidden">
+          <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
             {/* 背景ビデオ */}
             <div className="absolute inset-0">
               <AutoPlayVideo
@@ -251,7 +250,7 @@ export default function HomeSwiper() {
 
         {/* スライド2: Pain Points */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-cyan-400 mb-1 sm:mb-2 font-semibold">Pain Points</p>
@@ -288,7 +287,7 @@ export default function HomeSwiper() {
 
         {/* スライド3: Solution */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-purple-400 mb-1 sm:mb-2 font-semibold">Solution</p>
@@ -330,7 +329,7 @@ export default function HomeSwiper() {
 
         {/* スライド4: 審査なし即スタート */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-6 sm:py-8">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-6 sm:py-8">
             <div className="w-full max-w-5xl mx-auto text-center max-h-[90vh] overflow-y-auto px-2">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -392,7 +391,7 @@ export default function HomeSwiper() {
 
         {/* スライド5: FAQ */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-8 sm:py-12">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-8 sm:py-12">
             <div className="w-full max-w-4xl mx-auto">
               <div className="text-center mb-6 sm:mb-8">
                 <p className="text-xs sm:text-sm uppercase tracking-widest text-indigo-400 mb-2 sm:mb-4 font-semibold">FAQ</p>
@@ -441,7 +440,7 @@ export default function HomeSwiper() {
 
         {/* スライド6: 料金プラン */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-8 sm:py-12">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden px-4 sm:px-6 md:px-8 py-8 sm:py-12">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-6 sm:mb-10">
                 <p className="text-xs sm:text-sm uppercase tracking-widest text-purple-400 mb-2 sm:mb-4 font-semibold">Pricing</p>
@@ -521,7 +520,7 @@ export default function HomeSwiper() {
 
         {/* スライド7: お客様の声 */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-cyan-400 mb-1 sm:mb-2 font-semibold">Testimonials</p>
@@ -648,7 +647,7 @@ export default function HomeSwiper() {
 
         {/* スライド8: 主要機能 */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden px-3 sm:px-4 py-4 sm:py-6">
             <div className="w-full max-w-6xl mx-auto">
               <div className="text-center mb-3 sm:mb-4">
                 <p className="text-xs uppercase tracking-widest text-blue-400 mb-1 sm:mb-2 font-semibold">Features</p>
@@ -695,7 +694,7 @@ export default function HomeSwiper() {
 
         {/* スライド9: エディタ実力証明（ビデオ背景ヒーロー） */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center overflow-hidden">
+          <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
             {/* ビデオ背景 */}
             <div className="absolute inset-0">
               <AutoPlayVideo
@@ -758,7 +757,7 @@ export default function HomeSwiper() {
 
         {/* スライド10: 最終CTA - リスクゼロ + 3ステップ */}
         <SwiperSlide>
-          <div className="relative min-h-[calc(100vh-4rem)] h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-900 via-violet-900 to-slate-900 overflow-hidden px-4 sm:px-6 py-6 sm:py-8">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-900 via-violet-900 to-slate-900 overflow-hidden px-4 sm:px-6 py-6 sm:py-8">
             <div className="w-full max-w-5xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
