@@ -19,6 +19,7 @@ import {
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
 import type { DashboardAnnouncement, NoteMetrics } from '@/types';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -66,6 +67,8 @@ export default function DashboardPage() {
   const [lps, setLps] = useState<any[]>([]);
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const navGroups = groupDashboardNavLinks(navLinks);
+  // アコーディオンの開閉状態（LP と NOTE はデフォルトで開く）
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['lp', 'note']));
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -781,41 +784,70 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="sm:hidden border-b border-slate-200 bg-white/80">
-          <nav className="flex flex-col gap-3 px-3 py-3">
+        <div className="sm:hidden border-b border-slate-200/50 bg-white/70 backdrop-blur-md">
+          <nav className="flex flex-col gap-2 px-3 py-2">
             {navGroups.map((group) => {
               const meta = getDashboardNavGroupMeta(group.key);
+              const isExpanded = expandedGroups.has(group.key);
+              
               return (
-                <div key={group.key} className="flex flex-col gap-1">
-                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </span>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {group.items.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                        : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
+                <div key={group.key} className="flex flex-col">
+                  {/* グループヘッダー（クリックで開閉） */}
+                  <button
+                    onClick={() => {
+                      const newExpanded = new Set(expandedGroups);
+                      if (isExpanded) {
+                        newExpanded.delete(group.key);
+                      } else {
+                        newExpanded.add(group.key);
+                      }
+                      setExpandedGroups(newExpanded);
+                    }}
+                    className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-slate-100/50 transition-colors"
+                  >
+                    <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                      {meta.label}
+                    </span>
+                    {isExpanded ? (
+                      <ChevronDownIcon className="h-4 w-4 text-slate-400" />
+                    ) : (
+                      <ChevronRightIcon className="h-4 w-4 text-slate-400" />
+                    )}
+                  </button>
+                  
+                  {/* メニューアイテム（開いている時だけ表示） */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="flex gap-2 overflow-x-auto pb-2 pt-1 px-1">
+                      {group.items.map((link) => {
+                        const isActive = isDashboardLinkActive(pathname, link.href);
+                        const linkProps = link.external
+                          ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                          : { href: link.href };
+                        const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
 
-                      return (
-                        <Link
-                          key={link.href}
-                          {...linkProps}
-                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
-                        >
-                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
-                            {link.icon}
-                          </span>
-                          <span>{link.label}</span>
-                          {link.badge ? (
-                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
-                              {link.badge}
+                        return (
+                          <Link
+                            key={link.href}
+                            {...linkProps}
+                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                          >
+                            <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
                             </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
+                            <span>{link.label}</span>
+                            {link.badge ? (
+                              <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                                {link.badge}
+                              </span>
+                            ) : null}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );
