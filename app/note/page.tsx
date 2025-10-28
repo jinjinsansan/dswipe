@@ -195,7 +195,7 @@ export default function NoteDashboardPage() {
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="bg-white border-b border-slate-200 px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2">
           <div className="hidden sm:block flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0.5">NOTEダッシュボード</h1>
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0.5">NOTE編集</h1>
             <p className="text-slate-500 text-[11px] sm:text-xs font-medium truncate">作成したNOTE記事を管理・公開できます</p>
           </div>
           <div className="flex items-center gap-2">

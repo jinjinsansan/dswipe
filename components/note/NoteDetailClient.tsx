@@ -253,7 +253,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
             href="/note"
             className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
           >
-            NOTEダッシュボード
+            NOTE編集
           </Link>
         </div>
         <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>

@@ -25,7 +25,7 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
               href="/note"
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
             >
-              NOTEダッシュボード
+              NOTE編集
             </Link>
           </nav>
         </header>
