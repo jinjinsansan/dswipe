@@ -12,6 +12,9 @@ import { BlockType } from '@/types/templates';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
   getDashboardNavLinks,
+  getDashboardNavClasses,
+  getDashboardNavGroupMeta,
+  groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
 import type { DashboardAnnouncement } from '@/types';
@@ -57,6 +60,7 @@ export default function DashboardPage() {
   const pathname = usePathname();
   const [lps, setLps] = useState<any[]>([]);
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
+  const navGroups = groupDashboardNavLinks(navLinks);
   const [products, setProducts] = useState<any[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -619,53 +623,44 @@ export default function DashboardPage() {
 
         {/* Navigation */}
         <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            {navLinks.map((link) => {
-              const isActive = isDashboardLinkActive(pathname, link.href);
-              const isLineBonus = link.href === '/line/bonus';
-              const isExternal = Boolean(link.external);
-              const linkStyle = isLineBonus
-                ? 'text-slate-900 bg-white border border-slate-200 hover:bg-slate-100'
-                : isActive
-                ? 'text-white bg-blue-600'
-                : isExternal
-                ? 'text-blue-600 bg-blue-50 hover:bg-blue-100'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100';
-              const iconStyle = isLineBonus
-                ? 'text-[#06C755]'
-                : isActive
-                ? 'text-white'
-                : isExternal
-                ? 'text-blue-500'
-                : 'text-slate-500';
-              const linkProps = link.external
-                ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                : { href: link.href };
-              
+          <div className="flex flex-col gap-4">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  {...linkProps}
-                  className={`flex items-center justify-between gap-2 px-3 py-2 rounded transition-colors text-sm font-medium ${linkStyle}`}
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <span className={`flex h-5 w-5 items-center justify-center ${iconStyle}`}>
-                      {link.icon}
-                    </span>
-                    <span className="truncate">{link.label}</span>
-                  </span>
-                  {link.badge && (
-                    <span
-                      className={
-                        isLineBonus
-                          ? 'px-1.5 py-0.5 bg-white text-[#06C755] text-xs font-bold rounded border border-[#06C755]/30'
-                          : 'px-1.5 py-0.5 bg-slate-200 text-slate-600 text-xs font-semibold rounded'
-                      }
-                    >
-                      {link.badge}
-                    </span>
-                  )}
-                </Link>
+                <div key={group.key} className="space-y-1.5">
+                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
+                            </span>
+                            <span className="truncate">{link.label}</span>
+                          </span>
+                          {link.badge ? (
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -750,37 +745,42 @@ export default function DashboardPage() {
         </div>
 
         <div className="sm:hidden border-b border-slate-200 bg-white/80">
-          <nav className="flex items-center gap-2 overflow-x-auto px-3 py-2">
-            {navLinks.map((link) => {
-              const isActive = isDashboardLinkActive(pathname, link.href);
-              const isLineBonus = link.href === '/line/bonus';
-              const isExternal = Boolean(link.external);
-              const linkProps = link.external
-                ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                : { href: link.href };
-              
+          <nav className="flex flex-col gap-3 px-3 py-3">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  {...linkProps}
-                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap ${
-                    isLineBonus
-                      ? 'border border-slate-200 bg-white text-slate-900 hover:bg-slate-100'
-                      : isActive
-                      ? 'bg-blue-600 text-white'
-                      : isExternal
-                      ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                      : 'bg-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-300'
-                  }`}
-                >
-                  <span>{link.icon}</span>
-                  <span>{link.label}</span>
-                  {isLineBonus && (
-                    <span className="px-1.5 py-0.5 bg-white text-[#06C755] text-[10px] font-bold rounded">
-                      300P
-                    </span>
-                  )}
-                </Link>
+                <div key={group.key} className="flex flex-col gap-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${styles.container}`}
+                        >
+                          <span className={`inline-flex h-4 w-4 items-center justify-center ${styles.icon}`}>
+                            {link.icon}
+                          </span>
+                          <span>{link.label}</span>
+                          {link.badge ? (
+                            <span className={`ml-1 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </nav>

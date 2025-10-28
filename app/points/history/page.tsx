@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { PageLoader } from '@/components/LoadingSpinner';
-import { getDashboardNavLinks } from '@/components/dashboard/navLinks';
+import {
+  getDashboardNavLinks,
+  getDashboardNavClasses,
+  getDashboardNavGroupMeta,
+  groupDashboardNavLinks,
+  isDashboardLinkActive,
+} from '@/components/dashboard/navLinks';
 import { 
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -105,6 +111,7 @@ export default function PointHistoryPage() {
   const [total, setTotal] = useState(0);
 
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
+  const navGroups = groupDashboardNavLinks(navLinks);
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
@@ -183,29 +190,48 @@ export default function PointHistoryPage() {
           </Link>
         </div>
 
-        <nav className="flex-1 px-3 space-y-1">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                {link.icon}
-                <span>{link.label}</span>
-                {link.badge && (
-                  <span className="ml-auto rounded-full bg-blue-500 px-2 py-0.5 text-xs text-white">
-                    {link.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-3 pb-4">
+          <div className="flex flex-col gap-4">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
+              return (
+                <div key={group.key} className="space-y-1.5">
+                  <p className={`px-2 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`flex items-center justify-between gap-2 rounded px-3 py-2.5 text-sm font-medium transition-colors ${styles.container}`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
+                            </span>
+                            <span className="truncate">{link.label}</span>
+                          </span>
+                          {link.badge ? (
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="p-4 border-t border-gray-200">

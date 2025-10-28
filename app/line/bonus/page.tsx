@@ -5,7 +5,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
+import {
+  getDashboardNavLinks,
+  getDashboardNavClasses,
+  getDashboardNavGroupMeta,
+  groupDashboardNavLinks,
+  isDashboardLinkActive,
+} from '@/components/dashboard/navLinks';
 import { GiftIcon, CheckCircleIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { PageLoader } from '@/components/LoadingSpinner';
 
@@ -51,6 +57,7 @@ export default function LineBonusPage() {
   const [tokenCopied, setTokenCopied] = useState(false);
 
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
+  const navGroups = groupDashboardNavLinks(navLinks);
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
@@ -201,29 +208,44 @@ export default function LineBonusPage() {
         </div>
 
         <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            {navLinks.map((link) => {
-              const isActive = isDashboardLinkActive(pathname, link.href);
+          <div className="flex flex-col gap-4">
+            {navGroups.map((group) => {
+              const meta = getDashboardNavGroupMeta(group.key);
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center justify-between space-x-2 px-3 py-2 rounded transition-colors text-sm font-medium ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-base">{link.icon}</span>
-                    <span>{link.label}</span>
+                <div key={group.key} className="space-y-1.5">
+                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
+                    {meta.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
+
+                      return (
+                        <Link
+                          key={link.href}
+                          {...linkProps}
+                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                              {link.icon}
+                            </span>
+                            <span className="truncate">{link.label}</span>
+                          </span>
+                          {link.badge ? (
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </Link>
+                      );
+                    })}
                   </div>
-                  {link.badge && !isActive && (
-                    <span className="px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
-                      {link.badge}
-                    </span>
-                  )}
-                </Link>
+                </div>
               );
             })}
           </div>

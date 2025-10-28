@@ -17,44 +17,254 @@ import {
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 
+export type DashboardNavGroupKey =
+  | 'core'
+  | 'lp'
+  | 'note'
+  | 'points'
+  | 'line'
+  | 'media'
+  | 'info';
+
 export interface DashboardNavLink {
   href: string;
   label: string;
   icon: ReactNode;
+  group: DashboardNavGroupKey;
+  order?: number;
   badge?: string;
   external?: boolean;
 }
 
+type DashboardNavGroupMeta = {
+  label: string;
+  headingClass: string;
+  desktop: {
+    base: string;
+    active: string;
+    icon: string;
+    iconActive: string;
+    badge: string;
+    badgeActive?: string;
+  };
+  mobile: {
+    base: string;
+    active: string;
+    badge: string;
+    badgeActive?: string;
+  };
+};
+
+const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'points', 'line', 'media', 'info'];
+
+const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
+  core: {
+    label: 'ホーム',
+    headingClass: 'text-slate-500',
+    desktop: {
+      base: 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+      active: 'bg-slate-900 text-white shadow-sm',
+      icon: 'text-slate-500',
+      iconActive: 'text-white',
+      badge: 'bg-white/70 text-slate-600 border border-slate-200/70',
+    },
+    mobile: {
+      base: 'bg-slate-200 text-slate-700 hover:bg-slate-300',
+      active: 'bg-slate-900 text-white shadow-sm',
+      badge: 'bg-white/70 text-inherit',
+    },
+  },
+  lp: {
+    label: 'LPメニュー',
+    headingClass: 'text-blue-500',
+    desktop: {
+      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100',
+      active: 'bg-blue-600 text-white border border-blue-600 shadow-sm',
+      icon: 'text-blue-500',
+      iconActive: 'text-white',
+      badge: 'bg-blue-100 text-blue-700 border border-blue-200',
+    },
+    mobile: {
+      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
+      active: 'bg-blue-600 text-white shadow-sm',
+      badge: 'bg-white/80 text-blue-600',
+    },
+  },
+  note: {
+    label: 'NOTEメニュー',
+    headingClass: 'text-amber-500',
+    desktop: {
+      base: 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100',
+      active: 'bg-amber-500 text-white border border-amber-500 shadow-sm',
+      icon: 'text-amber-500',
+      iconActive: 'text-white',
+      badge: 'bg-amber-100 text-amber-700 border border-amber-200',
+    },
+    mobile: {
+      base: 'bg-amber-50 text-amber-700 hover:bg-amber-100',
+      active: 'bg-amber-500 text-white shadow-sm',
+      badge: 'bg-white/80 text-amber-600',
+    },
+  },
+  points: {
+    label: 'ポイント',
+    headingClass: 'text-violet-500',
+    desktop: {
+      base: 'bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-100',
+      active: 'bg-violet-500 text-white border border-violet-500 shadow-sm',
+      icon: 'text-violet-500',
+      iconActive: 'text-white',
+      badge: 'bg-violet-100 text-violet-700 border border-violet-200',
+    },
+    mobile: {
+      base: 'bg-violet-50 text-violet-700 hover:bg-violet-100',
+      active: 'bg-violet-500 text-white shadow-sm',
+      badge: 'bg-white/80 text-violet-600',
+    },
+  },
+  line: {
+    label: 'LINE連携',
+    headingClass: 'text-emerald-500',
+    desktop: {
+      base: 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100',
+      active: 'bg-emerald-500 text-white border border-emerald-500 shadow-sm',
+      icon: 'text-emerald-500',
+      iconActive: 'text-white',
+      badge: 'bg-white text-emerald-600 border border-emerald-200',
+      badgeActive: 'bg-white text-emerald-600 border border-emerald-200',
+    },
+    mobile: {
+      base: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200',
+      active: 'bg-emerald-500 text-white shadow-sm border border-emerald-500',
+      badge: 'bg-white text-emerald-600',
+      badgeActive: 'bg-white text-emerald-600',
+    },
+  },
+  media: {
+    label: 'メディア',
+    headingClass: 'text-indigo-500',
+    desktop: {
+      base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100',
+      active: 'bg-indigo-500 text-white border border-indigo-500 shadow-sm',
+      icon: 'text-indigo-500',
+      iconActive: 'text-white',
+      badge: 'bg-indigo-100 text-indigo-700 border border-indigo-200',
+    },
+    mobile: {
+      base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100',
+      active: 'bg-indigo-500 text-white shadow-sm',
+      badge: 'bg-white/80 text-indigo-600',
+    },
+  },
+  info: {
+    label: 'サポート',
+    headingClass: 'text-slate-400',
+    desktop: {
+      base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
+      active: 'bg-slate-500 text-white border border-slate-500 shadow-sm',
+      icon: 'text-slate-500',
+      iconActive: 'text-white',
+      badge: 'bg-white/80 text-slate-600 border border-slate-200',
+    },
+    mobile: {
+      base: 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+      active: 'bg-slate-500 text-white shadow-sm',
+      badge: 'bg-white/70 text-slate-600',
+    },
+  },
+};
+
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
-  { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/note', label: 'NOTEダッシュボード', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/notes', label: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, badge: '300P' },
-  { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: '/privacy', label: 'プライバシーポリシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" /> },
-  { href: 'https://www.dlogicai.in/', label: '競馬予想AIDlogic', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, external: true },
-  { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, external: true },
+  { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
+  { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
+  { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
+  { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
+  { href: '/note', label: 'NOTEダッシュボード', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
+  { href: '/notes', label: 'AllNOTE', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
+  { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
+  { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
+  { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
+  { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
+  { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
+  { href: '/privacy', label: 'プライバシーポリシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
+  { href: 'https://www.dlogicai.in/', label: '競馬予想AIDlogic', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 30, external: true },
+  { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
 ];
 
 export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: string }): DashboardNavLink[] => {
   const links = [...BASE_DASHBOARD_NAV_LINKS];
 
   if (options?.userType === 'seller' && !links.some((link) => link.href === '/products/manage')) {
-    const productsIndex = links.findIndex((link) => link.href === '/products');
-    const insertIndex = productsIndex >= 0 ? productsIndex : links.length;
-    links.splice(insertIndex, 0, { href: '/products/manage', label: '商品管理', icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" /> });
+    const productsManageLink: DashboardNavLink = {
+      href: '/products/manage',
+      label: '商品管理',
+      icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" />,
+      group: 'lp',
+      order: 20,
+    };
+    links.push(productsManageLink);
   }
 
-  if (options?.isAdmin) {
-    links.push({ href: '/admin', label: '管理者パネル', icon: <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" /> });
+  if (options?.isAdmin && !links.some((link) => link.href === '/admin')) {
+    links.push({
+      href: '/admin',
+      label: '管理者パネル',
+      icon: <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />,
+      group: 'core',
+      order: 50,
+    });
   }
+
   return links;
+};
+
+export interface DashboardNavGroup {
+  key: DashboardNavGroupKey;
+  label: string;
+  items: DashboardNavLink[];
+}
+
+export const groupDashboardNavLinks = (links: DashboardNavLink[]): DashboardNavGroup[] => {
+  return GROUP_ORDER.map((group) => {
+    const items = links
+      .filter((link) => link.group === group)
+      .sort((a, b) => {
+        const aOrder = a.order ?? Number.MAX_SAFE_INTEGER;
+        const bOrder = b.order ?? Number.MAX_SAFE_INTEGER;
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return a.label.localeCompare(b.label, 'ja');
+      });
+    if (items.length === 0) {
+      return null;
+    }
+    return {
+      key: group,
+      label: GROUP_META[group].label,
+      items,
+    };
+  }).filter((group): group is DashboardNavGroup => Boolean(group));
+};
+
+export const getDashboardNavGroupMeta = (group: DashboardNavGroupKey): DashboardNavGroupMeta => GROUP_META[group];
+
+export const getDashboardNavClasses = (
+  link: DashboardNavLink,
+  options: { variant: 'desktop' | 'mobile'; active: boolean }
+) => {
+  const meta = GROUP_META[link.group];
+  if (options.variant === 'desktop') {
+    return {
+      container: options.active ? meta.desktop.active : meta.desktop.base,
+      icon: options.active ? meta.desktop.iconActive : meta.desktop.icon,
+      badge: options.active && meta.desktop.badgeActive ? meta.desktop.badgeActive : meta.desktop.badge,
+    };
+  }
+
+  return {
+    container: options.active ? meta.mobile.active : meta.mobile.base,
+    icon: options.active ? meta.desktop.iconActive : meta.desktop.icon,
+    badge: options.active && meta.mobile.badgeActive ? meta.mobile.badgeActive : meta.mobile.badge,
+  };
 };
 
 export const isDashboardLinkActive = (pathname: string, href: string) => {
