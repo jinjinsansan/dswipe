@@ -11,7 +11,7 @@ import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { BlockType } from '@/types/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import type { DashboardAnnouncement, NoteMetrics } from '@/types';
+import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -72,6 +72,7 @@ export default function DashboardPage() {
   const [profileLineUrl, setProfileLineUrl] = useState<string>(user?.line_url ?? '');
   const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profile_image_url ?? '');
   const [noteMetrics, setNoteMetrics] = useState<NoteMetrics | null>(null);
+  const [noteOverview, setNoteOverview] = useState<NoteSummary[]>([]);
   const [profileUpdateError, setProfileUpdateError] = useState<string>('');
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState<boolean>(false);
   const [isSavingProfileInfo, setIsSavingProfileInfo] = useState<boolean>(false);
@@ -109,6 +110,27 @@ export default function DashboardPage() {
     top_categories: [],
     top_note: null,
   };
+
+const deriveNoteCounts = (notes: NoteSummary[]) => {
+  const total = notes.length;
+  const published = notes.filter((note) => note.status === 'published').length;
+  const draft = notes.filter((note) => note.status === 'draft').length;
+  const paid = notes.filter((note) => note.is_paid).length;
+  const free = total - paid;
+  const latestPublished = notes
+    .map((note) => (note.published_at ? new Date(note.published_at) : null))
+    .filter((value): value is Date => value instanceof Date && !Number.isNaN(value.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0] ?? null;
+  const latestPublishedIso = latestPublished ? latestPublished.toISOString() : null;
+  return {
+    total,
+    published,
+    draft,
+    paid,
+    free,
+    latestPublishedIso,
+  };
+};
 
   const noteSummary = noteMetrics ?? fallbackNoteMetrics;
   const latestNotePublishedLabel = noteSummary.latest_published_at
@@ -417,13 +439,48 @@ export default function DashboardPage() {
       setProducts(productsData);
       setPointBalance(pointsResponse.data.point_balance);
       
+      let metrics: NoteMetrics | null = null;
       try {
         const metricsResponse = await noteApi.getMetrics();
-        setNoteMetrics(metricsResponse.data ?? null);
+        metrics = metricsResponse.data ?? null;
       } catch (metricsError) {
         console.error('Failed to fetch note metrics:', metricsError);
-        setNoteMetrics(null);
       }
+
+      try {
+        const notesResponse = await noteApi.list({ limit: 200, offset: 0 });
+        const notesData = Array.isArray(notesResponse.data?.data)
+          ? notesResponse.data.data
+          : [];
+        setNoteOverview(notesData);
+
+        const counts = deriveNoteCounts(notesData);
+        if (metrics) {
+          metrics = {
+            ...metrics,
+            total_notes: counts.total,
+            published_notes: counts.published,
+            draft_notes: counts.draft,
+            paid_notes: counts.paid,
+            free_notes: counts.free,
+            latest_published_at: counts.latestPublishedIso ?? metrics.latest_published_at ?? null,
+          };
+        } else {
+          metrics = {
+            ...fallbackNoteMetrics,
+            total_notes: counts.total,
+            published_notes: counts.published,
+            draft_notes: counts.draft,
+            paid_notes: counts.paid,
+            free_notes: counts.free,
+            latest_published_at: counts.latestPublishedIso,
+          };
+        }
+      } catch (notesError) {
+        console.error('Failed to fetch note overview list:', notesError);
+      }
+
+      setNoteMetrics(metrics);
 
       await announcementPromise;
     } catch (error) {

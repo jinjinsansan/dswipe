@@ -699,19 +699,19 @@ export default function NoteEditPage() {
             </div>
 
             {effectivePaid && (
-              <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-4 py-4">
+              <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 via-blue-50 to-indigo-50 px-4 py-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-amber-900">Xシェアで無料解放を許可</p>
-                    <p className="text-xs text-amber-700">
+                    <p className="text-sm font-semibold text-blue-900">Xシェアで無料解放を許可</p>
+                    <p className="text-xs text-blue-700">
                       読者がXでシェアすることで、ポイント支払いなしで記事を読めるようにします。
                       シェアされるたびにあなたにポイント報酬が付与されます。
                     </p>
                   </div>
-                  <label className="inline-flex items-center gap-2 text-sm font-medium text-amber-900">
+                  <label className="inline-flex items-center gap-2 text-sm font-medium text-blue-900">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                      className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
                       checked={allowShareUnlock}
                       onChange={(event) => setAllowShareUnlock(event.target.checked)}
                       disabled={saving || actionLoading}
@@ -721,17 +721,14 @@ export default function NoteEditPage() {
                 </div>
                 {allowShareUnlock && (
                   <>
-                    <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
+                    <div className="mt-3 rounded-xl border border-blue-300 bg-white/80 px-3 py-2 text-xs text-blue-800">
                       <p className="font-semibold">💡 ヒント</p>
-                      <p className="mt-1">
-                        シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
-                        シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
-                      </p>
+                      <p className="mt-1">シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。</p>
                     </div>
-                    <div className="mt-4 space-y-3 rounded-xl border border-amber-300 bg-white/90 px-4 py-4 text-xs text-amber-900">
+                    <div className="mt-4 space-y-3 rounded-xl border border-blue-300 bg-white/90 px-4 py-4 text-xs text-blue-900">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
                         <div className="flex-1">
-                          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                          <label className="text-[11px] font-semibold uppercase tracking-wider text-blue-700">
                             公式ポストURLまたはツイートID
                           </label>
                           <input
@@ -740,7 +737,7 @@ export default function NoteEditPage() {
                             onChange={(event) => setOfficialShareInput(event.target.value)}
                             placeholder="https://x.com/... または 1234567890"
                             disabled={officialShareLoading}
-                            className="mt-1 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900 placeholder:text-amber-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 disabled:opacity-60"
+                            className="mt-1 w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-blue-900 placeholder:text-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
                           />
                         </div>
                         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
@@ -748,7 +745,7 @@ export default function NoteEditPage() {
                             type="button"
                             onClick={handleOfficialShareSave}
                             disabled={officialShareLoading || !officialShareInput.trim()}
-                            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             {officialShareLoading ? '保存中...' : '公式ポストを設定'}
                           </button>
@@ -757,7 +754,7 @@ export default function NoteEditPage() {
                               type="button"
                               onClick={handleOfficialShareClear}
                               disabled={officialShareLoading}
-                              className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="rounded-lg border border-blue-300 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               解除する
                             </button>
@@ -765,38 +762,40 @@ export default function NoteEditPage() {
                         </div>
                       </div>
                       {officialShareLoading ? (
-                        <div className="flex items-center gap-2 text-amber-600">
+                        <div className="flex items-center gap-2 text-blue-600">
                           <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
                           <span>設定情報を更新しています...</span>
                         </div>
                       ) : null}
                       {derivedOfficialTweetUrl ? (
-                        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                          <p className="font-semibold text-amber-900">現在の公式ポスト</p>
-                          <a
-                            href={derivedOfficialTweetUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-1 inline-block text-amber-700 underline underline-offset-2 hover:text-amber-800"
-                          >
-                            {derivedOfficialTweetUrl}
-                          </a>
+                        <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                          <p className="font-semibold text-blue-900">現在の公式ポスト</p>
+                          <div className="mt-1 overflow-hidden rounded-lg border border-blue-100 bg-white/70">
+                            <a
+                              href={derivedOfficialTweetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block truncate px-3 py-2 text-blue-700 underline underline-offset-2 hover:text-blue-800"
+                            >
+                              {derivedOfficialTweetUrl}
+                            </a>
+                          </div>
                           {officialShareConfig?.tweet_text ? (
-                            <p className="mt-1 line-clamp-3 text-amber-800/80">“{officialShareConfig.tweet_text}”</p>
+                            <p className="mt-1 line-clamp-3 text-blue-800/80">“{officialShareConfig.tweet_text}”</p>
                           ) : null}
                           {officialShareConfig?.configured_at ? (
-                            <p className="mt-2 text-[10px] text-amber-600/70">
+                            <p className="mt-2 text-[10px] text-blue-600/70">
                               設定日時: {formatDateTime(officialShareConfig.configured_at) ?? '---'}
                             </p>
                           ) : null}
                           {officialShareConfig?.author_x_username ? (
-                            <p className="text-[10px] text-amber-600/70">
+                            <p className="text-[10px] text-blue-600/70">
                               投稿者: @{officialShareConfig.author_x_username}
                             </p>
                           ) : null}
                         </div>
                       ) : (!officialShareLoading ? (
-                        <p className="text-amber-700">
+                        <p className="text-blue-700">
                           公式ポストが未設定です。上記にURLまたはツイートIDを入力して設定してください。
                         </p>
                       ) : null)}

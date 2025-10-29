@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import {
   ArrowPathIcon,
   ShieldCheckIcon,
-  LockClosedIcon,
   CurrencyYenIcon,
   SparklesIcon,
 } from '@heroicons/react/24/outline';
@@ -36,9 +35,25 @@ const formatDate = (value?: string | null) => {
       hour: '2-digit',
       minute: '2-digit',
     });
-  } catch (error) {
+  } catch {
     return value;
   }
+};
+
+const extractErrorInfo = (error: unknown) => {
+  if (typeof error === 'object' && error) {
+    const response = (error as {
+      response?: {
+        status?: number;
+        data?: { detail?: unknown };
+      };
+    }).response;
+    return {
+      status: response?.status,
+      detail: response?.data?.detail,
+    };
+  }
+  return { status: undefined, detail: undefined };
 };
 
 export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
@@ -62,8 +77,8 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       });
       setNote(response.data);
       setLoading('idle');
-    } catch (err: any) {
-      const status = err?.response?.status;
+    } catch (err: unknown) {
+      const { status, detail } = extractErrorInfo(err);
       if (status === 401 || status === 403) {
         try {
           const fallback = await publicApi.getNote(slug);
@@ -71,12 +86,11 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
           setLoading('idle');
           setError(null);
           return;
-        } catch (fallbackError: any) {
-          const fallbackDetail = fallbackError?.response?.data?.detail;
+        } catch (fallbackError: unknown) {
+          const { detail: fallbackDetail } = extractErrorInfo(fallbackError);
           setError(typeof fallbackDetail === 'string' ? fallbackDetail : 'NOTEの取得に失敗しました');
         }
       } else {
-        const detail = err?.response?.data?.detail;
         setError(typeof detail === 'string' ? detail : 'NOTEの取得に失敗しました');
       }
       setLoading('error');
@@ -101,8 +115,8 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       // 購入APIは認証が必要なためUIではログインに誘導
       setPurchaseState('error');
       setPurchaseError('購入にはログインが必要です。ログイン後に再度お試しください。');
-    } catch (err: any) {
-      const detail = err?.response?.data?.detail;
+    } catch (err: unknown) {
+      const { detail } = extractErrorInfo(err);
       setPurchaseState('error');
       setPurchaseError(typeof detail === 'string' ? detail : '購入に失敗しました。もう一度お試しください。');
     }
@@ -139,8 +153,17 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       {note.cover_image_url ? (
-        <div className="relative h-60 w-full overflow-hidden rounded-3xl bg-slate-200">
-          <Image src={note.cover_image_url} alt={note.title} fill className="object-cover" />
+        <div className="relative w-full overflow-hidden rounded-3xl bg-slate-200">
+          <div className="relative aspect-[16/9] sm:aspect-[21/9]">
+            <Image
+              src={note.cover_image_url}
+              alt={note.title}
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 640px) 100vw, 640px"
+              priority
+            />
+          </div>
         </div>
       ) : null}
 
@@ -255,7 +278,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
           <div className="flex items-center gap-2">
             <SparklesIcon className="h-4 w-4" aria-hidden="true" />
-            <span>有料コンテンツを解放済みです。ありがとうございます！</span>
+            <span>現在あなたは有料エリアを閲覧中です。</span>
           </div>
           {purchaseMessage ? (
             <p className="mt-2 text-xs text-emerald-600/80">{purchaseMessage}</p>

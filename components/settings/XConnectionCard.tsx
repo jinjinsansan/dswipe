@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { XMarkIcon, CheckCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
@@ -18,11 +18,7 @@ export default function XConnectionCard() {
   const [loading, setLoading] = useState(true);
   const [disconnecting, setDisconnecting] = useState(false);
 
-  useEffect(() => {
-    fetchConnectionStatus();
-  }, []);
-
-  const fetchConnectionStatus = async () => {
+  const fetchConnectionStatus = useCallback(async () => {
     if (!token) {
       setLoading(false);
       return;
@@ -45,7 +41,11 @@ export default function XConnectionCard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchConnectionStatus();
+  }, [fetchConnectionStatus]);
 
   const handleConnect = async () => {
     if (!token) {
@@ -117,19 +117,34 @@ export default function XConnectionCard() {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">X (Twitter) 連携</h3>
           <p className="mt-1 text-sm text-slate-600">
             有料NOTEをXでシェアして無料で読めるようにします
           </p>
         </div>
-        
-        {status?.is_connected ? (
-          <CheckCircleIcon className="h-6 w-6 text-emerald-500" />
-        ) : (
-          <XMarkIcon className="h-6 w-6 text-slate-300" />
-        )}
+        <div className="flex flex-col items-end gap-2">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold ${
+              status?.is_connected
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border-slate-200 bg-slate-50 text-slate-600'
+            }`}
+          >
+            {status?.is_connected ? (
+              <CheckCircleIcon className="h-4 w-4" />
+            ) : (
+              <XMarkIcon className="h-4 w-4" />
+            )}
+            {status?.is_connected ? '連携済み' : '未連携'}
+          </span>
+          {status?.is_connected ? (
+            <CheckCircleIcon className="h-6 w-6 text-emerald-500" />
+          ) : (
+            <XMarkIcon className="h-6 w-6 text-slate-300" />
+          )}
+        </div>
       </div>
 
       {status?.is_connected ? (
