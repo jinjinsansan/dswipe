@@ -232,12 +232,6 @@ export default function ShareToUnlockButton({
           </div>
         </div>
       )}
-
-      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <p className="text-xs text-slate-600">
-          <span className="font-semibold">注意:</span> シェアは1記事につき1回までです。シェア後にツイートを削除しても記事は読めます。
-        </p>
-      </div>
     </div>
   );
 }
