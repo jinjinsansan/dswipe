@@ -112,7 +112,7 @@ export interface Product {
 
 export type NoteStatus = 'draft' | 'published';
 export type NoteAccessLevel = 'public' | 'paid';
-export type NoteBlockType = 'paragraph' | 'heading' | 'quote' | 'image' | 'divider' | 'list';
+export type NoteBlockType = 'paragraph' | 'heading' | 'quote' | 'image' | 'divider' | 'list' | 'link';
 
 export interface NoteBlock {
   id?: string;

@@ -1,9 +1,9 @@
 'use client';
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
@@ -44,6 +44,7 @@ interface NoteShareStats {
 export default function NoteEditPage() {
   const params = useParams<{ id: string }>();
   const noteId = params?.id;
+  const router = useRouter();
   const { isAuthenticated, isInitialized, token } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
@@ -435,6 +436,23 @@ export default function NoteEditPage() {
             : '非公開に失敗しました'
       );
     } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!noteId || actionLoading) return;
+    const confirmed = confirm('この記事を削除してもよろしいですか？この操作は取り消せません。');
+    if (!confirmed) return;
+
+    setActionLoading(true);
+    setErrorMessage(null);
+    try {
+      await noteApi.delete(noteId);
+      router.push('/note');
+    } catch (err: unknown) {
+      const detail = extractErrorDetail(err);
+      setErrorMessage(typeof detail === 'string' ? detail : '削除に失敗しました');
       setActionLoading(false);
     }
   };
@@ -843,6 +861,15 @@ export default function NoteEditPage() {
                 : status === 'published'
                   ? '非公開にする'
                   : '公開する'}
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={actionLoading}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-red-300 bg-red-50 px-5 py-2 text-sm font-semibold text-red-600 transition hover:border-red-400 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <TrashIcon className="h-4 w-4" aria-hidden="true" />
+              削除
             </button>
           </div>
           <div className="flex items-center gap-2">

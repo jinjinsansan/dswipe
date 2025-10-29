@@ -89,6 +89,33 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
           }
           case 'divider':
             return <div key={key} className="h-px w-full bg-slate-200" />;
+          case 'link': {
+            const title = typeof data.title === 'string' ? data.title : '';
+            const url = typeof data.url === 'string' ? data.url : '';
+            const description = typeof data.description === 'string' ? data.description : '';
+            const href = url?.trim().length ? url : undefined;
+            const content = (
+              <div className="flex flex-col gap-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40">
+                <span className="text-sm font-semibold text-blue-700">{title || 'リンク'}</span>
+                {href ? (
+                  <span className="break-all text-xs text-blue-500">{href}</span>
+                ) : null}
+                {description ? <span className="text-xs text-slate-600">{description}</span> : null}
+              </div>
+            );
+            if (href) {
+              return (
+                <a key={key} href={href} target="_blank" rel="noopener noreferrer" className="block">
+                  {content}
+                </a>
+              );
+            }
+            return (
+              <div key={key} className="block">
+                {content}
+              </div>
+            );
+          }
           case 'paragraph':
           default:
             return (

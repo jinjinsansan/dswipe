@@ -7,6 +7,7 @@ const BLOCK_TYPE_LABELS: Record<NoteBlockType, string> = {
   image: '画像',
   divider: '区切り線',
   list: 'リスト',
+  link: 'リンク',
 };
 
 export const NOTE_BLOCK_TYPE_OPTIONS = (Object.keys(BLOCK_TYPE_LABELS) as NoteBlockType[]).map((type) => ({
@@ -48,6 +49,9 @@ export const createEmptyBlock = (type: NoteBlockType): NoteBlock => {
       break;
     case 'list':
       base.data = { items: [] };
+      break;
+    case 'link':
+      base.data = { title: '', url: '', description: '' };
       break;
     case 'divider':
     default:
@@ -111,6 +115,17 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
         items,
         ...(fontKey ? { fontKey } : {}),
         ...(color ? { color } : {}),
+      };
+      break;
+    }
+    case 'link': {
+      const title = typeof data.title === 'string' ? data.title : '';
+      const url = typeof data.url === 'string' ? data.url : '';
+      const description = typeof data.description === 'string' ? data.description : '';
+      normalized.data = {
+        title,
+        url,
+        description,
       };
       break;
     }

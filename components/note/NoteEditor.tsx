@@ -461,6 +461,35 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 </div>
               )}
 
+              {block.type === 'link' && (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    placeholder="リンクタイトル"
+                    value={typeof block.data?.title === 'string' ? block.data.title : ''}
+                    onChange={(event) => handleDataChange(index, { title: event.target.value })}
+                    disabled={disabled}
+                  />
+                  <input
+                    type="url"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    placeholder="https://example.com"
+                    value={typeof block.data?.url === 'string' ? block.data.url : ''}
+                    onChange={(event) => handleDataChange(index, { url: event.target.value })}
+                    disabled={disabled}
+                  />
+                  <textarea
+                    rows={3}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    placeholder="リンクの説明 (任意)"
+                    value={typeof block.data?.description === 'string' ? block.data.description : ''}
+                    onChange={(event) => handleDataChange(index, { description: event.target.value })}
+                    disabled={disabled}
+                  />
+                </div>
+              )}
+
               {(['paragraph', 'heading', 'quote', 'list'] as NoteBlockType[]).includes(block.type) ? (
                 renderTextStyleControls(block, index)
               ) : null}
