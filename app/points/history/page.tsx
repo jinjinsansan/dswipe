@@ -40,6 +40,7 @@ const formatDate = (value: string) => {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'Asia/Tokyo',
   }).format(date);
 };
 
@@ -127,9 +128,10 @@ export default function PointHistoryPage() {
       setTransactions(rows);
       const reportedTotal = (payload as TransactionListResponse)?.total;
       setTotal(typeof reportedTotal === 'number' ? reportedTotal : rows.length);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching transactions:', err);
-      setError(err?.message ?? 'トランザクション履歴の取得に失敗しました');
+      const message = err instanceof Error ? err.message : undefined;
+      setError(message ?? 'トランザクション履歴の取得に失敗しました');
     } finally {
       setIsLoading(false);
     }
