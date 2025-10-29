@@ -32,7 +32,9 @@ interface TransactionListResponse {
 }
 
 const formatDate = (value: string) => {
-  const date = new Date(value);
+  if (!value) return value;
+  const normalized = value.includes('Z') || value.includes('+') ? value : `${value}Z`;
+  const date = new Date(normalized);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',
@@ -41,6 +43,7 @@ const formatDate = (value: string) => {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: 'Asia/Tokyo',
+    timeZoneName: 'short',
   }).format(date);
 };
 
