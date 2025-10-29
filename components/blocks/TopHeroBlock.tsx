@@ -28,7 +28,7 @@ export default function TopHeroBlock({
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '５分でLP公開';
   const title = content?.title ?? '情報には鮮度がある。';
-  const subtitle = content?.subtitle ?? 'スワイプ型LP作成プラットフォームで、今すぐ情報商材を販売';
+  const subtitle = content?.subtitle ?? 'スワイプ型LP作成プラットフォームで、今すぐデジタルコンテンツを販売';
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? 'ログイン';
   const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;

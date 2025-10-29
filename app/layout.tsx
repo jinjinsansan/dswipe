@@ -101,8 +101,8 @@ const fontConfig = {
 };
 
 export const metadata: Metadata = {
-  title: "D-swipe - 情報商材特化LP作成プラットフォーム",
-  description: "情報商材に特化したランディングページを簡単に作成・公開できるプラットフォーム",
+  title: "D-swipe - デジタルコンテンツ特化型LP作成プラットフォーム",
+  description: "デジタルコンテンツに特化したランディングページを簡単に作成・公開できるプラットフォーム",
   viewport: {
     width: 'device-width',
     initialScale: 1,

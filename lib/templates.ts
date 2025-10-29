@@ -88,7 +88,7 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
     description: 'TOPページのヒーローセクションを再現した軽量テンプレート',
     defaultContent: {
       title: '情報には鮮度がある。',
-      subtitle: 'スワイプ型LP作成プラットフォームで、今すぐ情報商材を販売',
+      subtitle: 'スワイプ型LP作成プラットフォームで、今すぐデジタルコンテンツを販売',
       tagline: 'NEXT LAUNCH',
       highlightText: '５分でLP公開',
       buttonText: '無料で始める',
@@ -746,7 +746,7 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
     templateId: 'top-highlights-1',
     name: 'ハイライト（バイオレット）',
     category: 'content',
-    description: '落ち着いたバイオレットで、権威性や信頼を訴求する情報商材向け。',
+    description: '落ち着いたバイオレットで、権威性や信頼を訴求するデジタルコンテンツ向け。',
     defaultContent: {
       title: '学びが成果につながらない理由',
       tagline: 'Insight Points',

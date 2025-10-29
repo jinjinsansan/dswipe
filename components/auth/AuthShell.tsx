@@ -28,7 +28,7 @@ const defaultHero: HeroContent = {
   eyebrow: 'SWIPE-STYLE LP PLATFORM',
   title: '情報の鮮度を逃がさない体験をつくる',
   description:
-    'Ｄ－swipeは高速なスワイプ体験とデータドリブンな改善機能で、情報商材インフォプレナーの成長を支えます。',
+    'Ｄ－swipeは高速なスワイプ体験とデータドリブンな改善機能で、デジタルコンテンツクリエイターの成長を支えます。',
   highlights: [
     {
       title: 'AIによる構成アシスト',

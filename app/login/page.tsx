@@ -24,7 +24,7 @@ export default function LoginPage() {
         eyebrow: 'SWIPE LP PLATFORM',
         title: '引き込むスワイプ体験で、ファン化を加速させる',
         description:
-          'Ｄ－swipeは情報商材インフォプレナー向けに最適化されたフローで、LP制作から分析までを一気通貫で支援します。',
+          'Ｄ－swipeはデジタルコンテンツクリエイター向けに最適化されたフローで、LP制作から分析までを一気通貫で支援します。',
         highlights: [
           { title: '高速な構成生成', description: 'ターゲットに響くコピーと構成をAIが瞬時にサジェスト。' },
           { title: 'エモーショナルな演出', description: '動画と演出が一体となったヒーロー体験で興味を最大化。' },

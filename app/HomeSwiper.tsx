@@ -222,7 +222,7 @@ export default function HomeSwiper() {
                   </span>
                 </h1>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-8 sm:mb-12 drop-shadow-lg px-2 sm:px-4">
-                  スワイプ型LP作成プラットフォームで、<br className="hidden sm:inline" />今すぐ情報商材を販売
+                  スワイプ型LP作成プラットフォームで、<br className="hidden sm:inline" />今すぐデジタルコンテンツを販売
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
@@ -554,7 +554,7 @@ export default function HomeSwiper() {
                       A
                     </div>
                     <div>
-                      <div className="text-slate-900 font-bold text-xs sm:text-sm">情報商材販売 / Aさん</div>
+                      <div className="text-slate-900 font-bold text-xs sm:text-sm">デジタルコンテンツ販売 / Aさん</div>
                       <div className="text-slate-600 text-xs">月商300万円達成</div>
                     </div>
                   </div>

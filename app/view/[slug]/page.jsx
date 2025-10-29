@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
   }
 
   const fallbackTitle = `${lpData.title ?? 'ランディングページ'} | D-swipe`;
-  const fallbackDescription = lpData.description || lpData.meta_description || '情報商材向けランディングページをD-swipeで作成。';
+  const fallbackDescription = lpData.description || lpData.meta_description || 'デジタルコンテンツ向けランディングページをD-swipeで作成。';
 
   const heroStep = Array.isArray(lpData.steps)
     ? lpData.steps.find((step) => {
