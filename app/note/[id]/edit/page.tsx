@@ -82,58 +82,6 @@ export default function NoteEditPage() {
     return undefined;
   };
 
-  useEffect(() => {
-    const fetchNote = async () => {
-      if (!noteId || !isInitialized) return;
-      setLoading(true);
-      setErrorMessage(null);
-      try {
-        const response = await noteApi.get(noteId);
-        const detail: NoteDetail = response.data;
-        setTitle(detail.title ?? '');
-        setCoverImageUrl(detail.cover_image_url ?? '');
-        setExcerpt(detail.excerpt ?? '');
-        setIsPaid(Boolean(detail.is_paid));
-        setPricePoints(detail.price_points ? String(detail.price_points) : '');
-        setCategories(Array.isArray(detail.categories) ? detail.categories : []);
-        setAllowShareUnlock(Boolean(detail.allow_share_unlock));
-        setBlocks(
-          (detail.content_blocks && detail.content_blocks.length
-            ? detail.content_blocks
-            : [createEmptyBlock('paragraph')]
-          ).map((block) => normalizeBlock(block))
-        );
-        setStatus(detail.status ?? 'draft');
-        setPublishedAt(detail.published_at ?? null);
-        setOfficialShareConfig({
-          note_id: detail.id,
-          tweet_id: detail.official_share_tweet_id ?? undefined,
-          tweet_url: detail.official_share_tweet_url ?? undefined,
-          author_x_user_id: detail.official_share_x_user_id ?? undefined,
-          author_x_username: detail.official_share_x_username ?? undefined,
-          configured_at: detail.official_share_set_at ?? undefined,
-        });
-        setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
-        if (detail.allow_share_unlock) {
-          loadOfficialShareConfig();
-        } else {
-          setOfficialShareError(null);
-          setOfficialShareMessage(null);
-        }
-        
-        // シェア統計を取得
-        fetchShareStats();
-      } catch (err: unknown) {
-        const detail = extractErrorDetail(err);
-        setErrorMessage(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNote();
-  }, [noteId, isInitialized, loadOfficialShareConfig, fetchShareStats]);
-  
   const fetchShareStats = useCallback(async () => {
     if (!noteId || !token) return;
 
@@ -179,6 +127,57 @@ export default function NoteEditPage() {
       setOfficialShareLoading(false);
     }
   }, [noteId, token]);
+
+  useEffect(() => {
+    const fetchNote = async () => {
+      if (!noteId || !isInitialized) return;
+      setLoading(true);
+      setErrorMessage(null);
+      try {
+        const response = await noteApi.get(noteId);
+        const detail: NoteDetail = response.data;
+        setTitle(detail.title ?? '');
+        setCoverImageUrl(detail.cover_image_url ?? '');
+        setExcerpt(detail.excerpt ?? '');
+        setIsPaid(Boolean(detail.is_paid));
+        setPricePoints(detail.price_points ? String(detail.price_points) : '');
+        setCategories(Array.isArray(detail.categories) ? detail.categories : []);
+        setAllowShareUnlock(Boolean(detail.allow_share_unlock));
+        setBlocks(
+          (detail.content_blocks && detail.content_blocks.length
+            ? detail.content_blocks
+            : [createEmptyBlock('paragraph')]
+          ).map((block) => normalizeBlock(block))
+        );
+        setStatus(detail.status ?? 'draft');
+        setPublishedAt(detail.published_at ?? null);
+        setOfficialShareConfig({
+          note_id: detail.id,
+          tweet_id: detail.official_share_tweet_id ?? undefined,
+          tweet_url: detail.official_share_tweet_url ?? undefined,
+          author_x_user_id: detail.official_share_x_user_id ?? undefined,
+          author_x_username: detail.official_share_x_username ?? undefined,
+          configured_at: detail.official_share_set_at ?? undefined,
+        });
+        setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
+        if (detail.allow_share_unlock) {
+          loadOfficialShareConfig();
+        } else {
+          setOfficialShareError(null);
+          setOfficialShareMessage(null);
+        }
+
+        fetchShareStats();
+      } catch (err: unknown) {
+        const detail = extractErrorDetail(err);
+        setErrorMessage(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNote();
+  }, [noteId, isInitialized, loadOfficialShareConfig, fetchShareStats]);
 
   const handleOfficialShareSave = useCallback(async () => {
     if (!noteId || !token) return;
