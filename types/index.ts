@@ -135,6 +135,11 @@ export interface NoteSummary {
   updated_at: string;
   categories: string[];
   allow_share_unlock?: boolean;
+  official_share_tweet_id?: string | null;
+  official_share_tweet_url?: string | null;
+  official_share_x_user_id?: string | null;
+  official_share_x_username?: string | null;
+  official_share_set_at?: string | null;
 }
 
 export interface NoteDetail extends NoteSummary {
@@ -184,6 +189,10 @@ export interface PublicNoteSummary {
   author_username?: string | null;
   published_at?: string | null;
   categories: string[];
+  allow_share_unlock?: boolean;
+  official_share_tweet_id?: string | null;
+  official_share_tweet_url?: string | null;
+  official_share_x_username?: string | null;
 }
 
 export interface PublicNoteListResult {
@@ -208,6 +217,11 @@ export interface PublicNoteDetail {
   published_at?: string | null;
   categories: string[];
   allow_share_unlock?: boolean;
+  official_share_tweet_id?: string | null;
+  official_share_tweet_url?: string | null;
+  official_share_x_username?: string | null;
+  official_share_x_user_id?: string | null;
+  official_share_set_at?: string | null;
 }
 
 export interface NotePurchaseResult {
@@ -235,6 +249,16 @@ export interface NoteUpdateRequest {
   is_paid?: boolean;
   price_points?: number | null;
   categories?: string[];
+}
+
+export interface OfficialShareConfig {
+  note_id: string;
+  tweet_id?: string | null;
+  tweet_url?: string | null;
+  tweet_text?: string | null;
+  author_x_user_id?: string | null;
+  author_x_username?: string | null;
+  configured_at?: string | null;
 }
 
 // ポイント残高型

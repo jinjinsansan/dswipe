@@ -1,15 +1,15 @@
 'use client';
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { NoteBlock, NoteDetail } from '@/types';
+import type { NoteBlock, NoteDetail, OfficialShareConfig } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -29,7 +29,7 @@ const formatDateTime = (value?: string | null) => {
       hour: '2-digit',
       minute: '2-digit',
     });
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -42,7 +42,6 @@ interface NoteShareStats {
 }
 
 export default function NoteEditPage() {
-  const router = useRouter();
   const params = useParams<{ id: string }>();
   const noteId = params?.id;
   const { isAuthenticated, isInitialized, token } = useAuthStore();
@@ -58,20 +57,36 @@ export default function NoteEditPage() {
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [allowShareUnlock, setAllowShareUnlock] = useState(false);
   const [shareStats, setShareStats] = useState<NoteShareStats | null>(null);
+  const [officialShareConfig, setOfficialShareConfig] = useState<OfficialShareConfig | null>(null);
+  const [officialShareInput, setOfficialShareInput] = useState('');
+  const [officialShareLoading, setOfficialShareLoading] = useState(false);
+  const [officialShareError, setOfficialShareError] = useState<string | null>(null);
+  const [officialShareMessage, setOfficialShareMessage] = useState<string | null>(null);
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
+
+  const extractErrorDetail = (err: unknown): string | undefined => {
+    if (typeof err === 'object' && err) {
+      const maybeResponse = (err as { response?: { data?: { detail?: unknown } } }).response;
+      const detail = maybeResponse?.data?.detail;
+      if (typeof detail === 'string') {
+        return detail;
+      }
+    }
+    return undefined;
+  };
 
   useEffect(() => {
     const fetchNote = async () => {
       if (!noteId || !isInitialized) return;
       setLoading(true);
-      setError(null);
+      setErrorMessage(null);
       try {
         const response = await noteApi.get(noteId);
         const detail: NoteDetail = response.data;
@@ -90,23 +105,38 @@ export default function NoteEditPage() {
         );
         setStatus(detail.status ?? 'draft');
         setPublishedAt(detail.published_at ?? null);
+        setOfficialShareConfig({
+          note_id: detail.id,
+          tweet_id: detail.official_share_tweet_id ?? undefined,
+          tweet_url: detail.official_share_tweet_url ?? undefined,
+          author_x_user_id: detail.official_share_x_user_id ?? undefined,
+          author_x_username: detail.official_share_x_username ?? undefined,
+          configured_at: detail.official_share_set_at ?? undefined,
+        });
+        setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
+        if (detail.allow_share_unlock) {
+          loadOfficialShareConfig();
+        } else {
+          setOfficialShareError(null);
+          setOfficialShareMessage(null);
+        }
         
         // シェア統計を取得
         fetchShareStats();
-      } catch (err: any) {
-        const detail = err?.response?.data?.detail;
-        setError(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
+      } catch (err: unknown) {
+        const detail = extractErrorDetail(err);
+        setErrorMessage(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
       } finally {
         setLoading(false);
       }
     };
 
     fetchNote();
-  }, [noteId, isInitialized]);
+  }, [noteId, isInitialized, loadOfficialShareConfig, fetchShareStats]);
   
-  const fetchShareStats = async () => {
+  const fetchShareStats = useCallback(async () => {
     if (!noteId || !token) return;
-    
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
       const response = await fetch(`${apiUrl}/notes/${noteId}/share-stats`, {
@@ -114,7 +144,7 @@ export default function NoteEditPage() {
           'Authorization': `Bearer ${token}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setShareStats(data);
@@ -122,7 +152,110 @@ export default function NoteEditPage() {
     } catch (error) {
       console.error('Failed to fetch share stats:', error);
     }
-  };
+  }, [noteId, token]);
+
+  const loadOfficialShareConfig = useCallback(async () => {
+    if (!noteId || !token) return;
+    setOfficialShareLoading(true);
+    setOfficialShareError(null);
+    setOfficialShareMessage(null);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const response = await fetch(`${apiUrl}/notes/${noteId}/official-share`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data: OfficialShareConfig = await response.json();
+        setOfficialShareConfig(data);
+        setOfficialShareInput(data.tweet_url ?? data.tweet_id ?? '');
+      }
+    } catch (error) {
+      console.error('Failed to load official share config:', error);
+      setOfficialShareError('公式ポスト設定の取得に失敗しました。');
+    } finally {
+      setOfficialShareLoading(false);
+    }
+  }, [noteId, token]);
+
+  const handleOfficialShareSave = useCallback(async () => {
+    if (!noteId || !token) return;
+    const value = officialShareInput.trim();
+    if (!value) {
+      setOfficialShareError('ツイートURLまたはIDを入力してください。');
+      return;
+    }
+
+    setOfficialShareLoading(true);
+    setOfficialShareError(null);
+    setOfficialShareMessage(null);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const payload = value.startsWith('http') ? { tweet_url: value } : { tweet_id: value };
+      const response = await fetch(`${apiUrl}/notes/${noteId}/official-share`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        setOfficialShareConfig(data as OfficialShareConfig);
+        setOfficialShareInput((data as OfficialShareConfig).tweet_url ?? (data as OfficialShareConfig).tweet_id ?? '');
+        setOfficialShareMessage('公式ポストを設定しました。');
+      } else {
+        const detail = data?.detail;
+        setOfficialShareError(typeof detail === 'string' ? detail : '公式ポストの設定に失敗しました。');
+      }
+    } catch (error) {
+      console.error('Failed to set official share config:', error);
+      setOfficialShareError('公式ポストの設定に失敗しました。');
+    } finally {
+      setOfficialShareLoading(false);
+    }
+  }, [noteId, token, officialShareInput]);
+
+  const handleOfficialShareClear = useCallback(async () => {
+    if (!noteId || !token) return;
+    setOfficialShareLoading(true);
+    setOfficialShareError(null);
+    setOfficialShareMessage(null);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const response = await fetch(`${apiUrl}/notes/${noteId}/official-share`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setOfficialShareConfig({ note_id: noteId });
+        setOfficialShareInput('');
+        setOfficialShareMessage('公式ポスト設定を解除しました。');
+      } else {
+        setOfficialShareError('公式ポスト設定の解除に失敗しました。');
+      }
+    } catch (error) {
+      console.error('Failed to clear official share config:', error);
+      setOfficialShareError('公式ポスト設定の解除に失敗しました。');
+    } finally {
+      setOfficialShareLoading(false);
+    }
+  }, [noteId, token]);
+
+  useEffect(() => {
+    if (!allowShareUnlock) return;
+    loadOfficialShareConfig();
+  }, [allowShareUnlock, loadOfficialShareConfig]);
 
   const handleCoverMediaSelect = (url: string) => {
     setCoverImageUrl(url);
@@ -176,6 +309,18 @@ export default function NoteEditPage() {
   const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
   const effectivePaid = isPaid || paidBlockExists;
 
+  const derivedOfficialTweetUrl = useMemo(() => {
+    if (!officialShareConfig) return null;
+    if (officialShareConfig.tweet_url) return officialShareConfig.tweet_url;
+    if (officialShareConfig.tweet_id) {
+      if (officialShareConfig.author_x_username) {
+        return `https://x.com/${officialShareConfig.author_x_username}/status/${officialShareConfig.tweet_id}`;
+      }
+      return `https://x.com/i/web/status/${officialShareConfig.tweet_id}`;
+    }
+    return null;
+  }, [officialShareConfig]);
+
   const handlePaidToggle = (checked: boolean) => {
     setIsPaid(checked);
     if (!checked) {
@@ -223,17 +368,17 @@ export default function NoteEditPage() {
 
   const handleSave = async () => {
     if (saving) return;
-    setError(null);
+    setErrorMessage(null);
     setInfo(null);
 
     const validationError = validate();
     if (validationError) {
-      setError(validationError);
+      setErrorMessage(validationError);
       return;
     }
 
     if (!noteId) {
-      setError('NOTE IDが見つかりません');
+      setErrorMessage('NOTE IDが見つかりません');
       return;
     }
 
@@ -255,9 +400,9 @@ export default function NoteEditPage() {
       setInfo('下書きとして保存しました。最新情報に更新されました。');
       setStatus(response.data?.status ?? status);
       setPublishedAt(response.data?.published_at ?? publishedAt);
-    } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      setError(typeof detail === 'string' ? detail : 'NOTEの保存に失敗しました');
+    } catch (err: unknown) {
+      const detail = extractErrorDetail(err);
+      setErrorMessage(typeof detail === 'string' ? detail : 'NOTEの保存に失敗しました');
     } finally {
       setSaving(false);
     }
@@ -265,7 +410,7 @@ export default function NoteEditPage() {
 
   const handlePublishToggle = async (action: 'publish' | 'unpublish') => {
     if (!noteId || actionLoading) return;
-    setError(null);
+    setErrorMessage(null);
     setInfo(null);
 
     try {
@@ -281,9 +426,9 @@ export default function NoteEditPage() {
         setPublishedAt(null);
         setInfo('記事を下書きに戻しました');
       }
-    } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      setError(
+    } catch (err: unknown) {
+      const detail = extractErrorDetail(err);
+      setErrorMessage(
         typeof detail === 'string'
           ? detail
           : action === 'publish'
@@ -333,8 +478,8 @@ export default function NoteEditPage() {
           </div>
         </div>
 
-        {error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        {errorMessage ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{errorMessage}</div>
         ) : null}
         {info ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{info}</div>
@@ -576,13 +721,94 @@ export default function NoteEditPage() {
                   </label>
                 </div>
                 {allowShareUnlock && (
-                  <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
-                    <p className="font-semibold">💡 ヒント</p>
-                    <p className="mt-1">
-                      シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
-                      シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
-                    </p>
-                  </div>
+                  <>
+                    <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
+                      <p className="font-semibold">💡 ヒント</p>
+                      <p className="mt-1">
+                        シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
+                        シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
+                      </p>
+                    </div>
+                    <div className="mt-4 space-y-3 rounded-xl border border-amber-300 bg-white/90 px-4 py-4 text-xs text-amber-900">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                        <div className="flex-1">
+                          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                            公式ポストURLまたはツイートID
+                          </label>
+                          <input
+                            type="text"
+                            value={officialShareInput}
+                            onChange={(event) => setOfficialShareInput(event.target.value)}
+                            placeholder="https://x.com/... または 1234567890"
+                            disabled={officialShareLoading}
+                            className="mt-1 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-900 placeholder:text-amber-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 disabled:opacity-60"
+                          />
+                        </div>
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                          <button
+                            type="button"
+                            onClick={handleOfficialShareSave}
+                            disabled={officialShareLoading || !officialShareInput.trim()}
+                            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {officialShareLoading ? '保存中...' : '公式ポストを設定'}
+                          </button>
+                          {officialShareConfig?.tweet_id ? (
+                            <button
+                              type="button"
+                              onClick={handleOfficialShareClear}
+                              disabled={officialShareLoading}
+                              className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              解除する
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                      {officialShareLoading ? (
+                        <div className="flex items-center gap-2 text-amber-600">
+                          <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
+                          <span>設定情報を更新しています...</span>
+                        </div>
+                      ) : null}
+                      {derivedOfficialTweetUrl ? (
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                          <p className="font-semibold text-amber-900">現在の公式ポスト</p>
+                          <a
+                            href={derivedOfficialTweetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 inline-block text-amber-700 underline underline-offset-2 hover:text-amber-800"
+                          >
+                            {derivedOfficialTweetUrl}
+                          </a>
+                          {officialShareConfig?.tweet_text ? (
+                            <p className="mt-1 line-clamp-3 text-amber-800/80">“{officialShareConfig.tweet_text}”</p>
+                          ) : null}
+                          {officialShareConfig?.configured_at ? (
+                            <p className="mt-2 text-[10px] text-amber-600/70">
+                              設定日時: {formatDateTime(officialShareConfig.configured_at) ?? '---'}
+                            </p>
+                          ) : null}
+                          {officialShareConfig?.author_x_username ? (
+                            <p className="text-[10px] text-amber-600/70">
+                              投稿者: @{officialShareConfig.author_x_username}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : (!officialShareLoading ? (
+                        <p className="text-amber-700">
+                          公式ポストが未設定です。上記にURLまたはツイートIDを入力して設定してください。
+                        </p>
+                      ) : null)}
+                      {officialShareMessage ? (
+                        <p className="text-xs font-semibold text-emerald-600">{officialShareMessage}</p>
+                      ) : null}
+                      {officialShareError ? (
+                        <p className="text-xs font-semibold text-red-600">{officialShareError}</p>
+                      ) : null}
+                    </div>
+                  </>
                 )}
               </div>
             )}

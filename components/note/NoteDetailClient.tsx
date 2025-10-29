@@ -198,10 +198,11 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
             {note.allow_share_unlock && (
               <ShareToUnlockButton
                 noteId={note.id}
-                noteTitle={note.title}
-                noteSlug={note.slug}
                 pricePoints={note.price_points}
                 allowShareUnlock={note.allow_share_unlock}
+                officialTweetId={note.official_share_tweet_id}
+                officialTweetUrl={note.official_share_tweet_url}
+                officialXUsername={note.official_share_x_username}
                 onShareSuccess={() => {
                   // シェア成功後の処理（ページリロード）
                 }}

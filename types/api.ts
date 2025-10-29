@@ -23,6 +23,7 @@ export type {
   NotePurchaseResult,
   NoteCreateRequest,
   NoteUpdateRequest,
+  OfficialShareConfig,
 } from './index';
 
 export interface PointsBalance {
