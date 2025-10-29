@@ -15,8 +15,9 @@ import { useAuthStore } from '@/store/authStore';
 import { publicApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
-import ShareToUnlockButton from './ShareToUnlockButton';
+import ShareUnlockModal from './ShareUnlockModal';
 import { getCategoryLabel } from '@/lib/noteCategories';
+import { calculateBlocksTextLength } from '@/lib/noteUtils';
 
 interface NoteDetailClientProps {
   slug: string;
@@ -51,6 +52,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const [purchaseState, setPurchaseState] = useState<PurchaseState>('idle');
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const fetchNote = useCallback(async () => {
     if (!slug) return;
@@ -112,6 +114,13 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     if (!note || !user) return false;
     return note.author_id === user.id;
   }, [note, user]);
+
+  // 有料ブロックの文字数を計算
+  const paidTextLength = useMemo(() => {
+    if (!note || !Array.isArray(note.content_blocks)) return 0;
+    const paidBlocks = note.content_blocks.filter(block => block.access === 'paid');
+    return calculateBlocksTextLength(paidBlocks);
+  }, [note]);
 
   if (!isInitialized) {
     return (
@@ -190,62 +199,22 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         <NoteRenderer 
           blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
           showPaidSeparator={note.is_paid && note.has_access}
+          showPaidPreview={note.is_paid && !note.has_access}
+          paidTextLength={paidTextLength}
         />
 
         {note.is_paid && !note.has_access ? (
-          <div className="mt-10 space-y-4">
-            {/* Xシェアで無料解放オプション */}
-            {note.allow_share_unlock && (
-              <ShareToUnlockButton
-                noteId={note.id}
-                noteTitle={note.title}
-                noteSlug={note.slug}
-                pricePoints={note.price_points}
-                allowShareUnlock={note.allow_share_unlock}
-                onShareSuccess={() => {
-                  // シェア成功後の処理（ページリロード）
-                }}
-              />
-            )}
-
-            {/* 通常のポイント購入 */}
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6 text-center text-sm text-amber-700">
-              <p className="font-semibold">この続きは有料コンテンツです</p>
-              <p className="mt-2 text-xs text-amber-700/80">
-                購入すると残りのコンテンツがすべて解放されます。
-              </p>
-              <div className="mt-4 flex flex-col items-center gap-3">
-                {purchaseMessage ? (
-                  <div className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
-                    {purchaseMessage}
-                  </div>
-                ) : null}
-                {purchaseError ? (
-                  <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
-                    {purchaseError}
-                  </div>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={handlePurchase}
-                  disabled={purchaseState === 'processing'}
-                  className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 ${
-                    purchaseState === 'processing' ? 'opacity-70' : ''
-                  }`}
-                >
-                  <CurrencyYenIcon className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`} aria-hidden="true" />
-                  {isAuthenticated ? `${note.price_points.toLocaleString()} ポイントで購入` : 'ログインして購入'}
-                </button>
-                {!isAuthenticated ? (
-                  <Link
-                    href="/login"
-                    className="text-xs font-semibold text-blue-600 underline underline-offset-4"
-                  >
-                    アカウントをお持ちでない場合はこちらからログイン/登録
-                  </Link>
-                ) : null}
-              </div>
-            </div>
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setIsShareModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            >
+              <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
+              この記事を読む
+            </button>
+            <p className="mt-3 text-xs text-slate-500">
+              Xシェアで無料 または ポイントで購入
+            </p>
           </div>
         ) : null}
       </section>
@@ -279,6 +248,19 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         </div>
         <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>
       </footer>
+
+      {/* シェア/購入モーダル */}
+      <ShareUnlockModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        noteId={note.id}
+        noteTitle={note.title}
+        noteSlug={note.slug}
+        pricePoints={note.price_points}
+        allowShareUnlock={note.allow_share_unlock ?? false}
+        isAuthenticated={isAuthenticated}
+        onPurchase={handlePurchase}
+      />
     </article>
   );
 }

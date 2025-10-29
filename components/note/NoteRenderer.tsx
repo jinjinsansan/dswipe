@@ -4,17 +4,28 @@ import type { CSSProperties } from 'react';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import type { NoteBlock } from '@/types';
 import { getFontStack } from '@/lib/fonts';
+import { calculateBlocksTextLength, getPaidBlocksPreview } from '@/lib/noteUtils';
 
 interface NoteRendererProps {
   blocks: NoteBlock[];
   showPaidSeparator?: boolean;
+  showPaidPreview?: boolean; // ぼかしプレビュー表示
+  paidTextLength?: number; // 有料エリアの文字数
 }
 
-export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRendererProps) {
+export function NoteRenderer({ 
+  blocks, 
+  showPaidSeparator = false,
+  showPaidPreview = false,
+  paidTextLength = 0
+}: NoteRendererProps) {
   // 無料エリアと有料エリアを分ける
   const freeBlocks = blocks.filter(block => block.access !== 'paid');
   const paidBlocks = blocks.filter(block => block.access === 'paid');
   const hasPaidContent = paidBlocks.length > 0;
+  
+  // ぼかしプレビュー用（最初の1-2ブロック）
+  const paidPreviewBlocks = showPaidPreview ? getPaidBlocksPreview(paidBlocks, 2) : [];
 
   const renderBlock = (block: NoteBlock) => {
         const key = block.id ?? `${block.type}-${Math.random().toString(16).slice(2, 8)}`;
@@ -108,7 +119,30 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       {/* 無料エリア */}
       {freeBlocks.map((block) => renderBlock(block))}
 
-      {/* 有料エリア区切り（有料コンテンツがある場合のみ表示） */}
+      {/* 有料エリアぼかしプレビュー（未購入時） */}
+      {hasPaidContent && showPaidPreview && paidPreviewBlocks.length > 0 && (
+        <div className="relative my-10">
+          {/* ぼかしコンテンツ */}
+          <div className="pointer-events-none select-none space-y-8 blur-sm">
+            {paidPreviewBlocks.map((block) => renderBlock(block))}
+          </div>
+          
+          {/* グラデーションオーバーレイ */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white"></div>
+          
+          {/* 文字数表示 */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+            <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
+              <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
+              <span className="text-sm font-bold text-amber-900">
+                ここから先は約{paidTextLength.toLocaleString()}字
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 有料エリア区切り（購入済み時） */}
       {hasPaidContent && showPaidSeparator && (
         <div className="my-10 flex items-center justify-center">
           <div className="relative w-full max-w-2xl">
@@ -127,8 +161,8 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
         </div>
       )}
 
-      {/* 有料エリア */}
-      {paidBlocks.map((block) => renderBlock(block))}
+      {/* 有料エリア（購入済み時のみ表示） */}
+      {showPaidSeparator && paidBlocks.map((block) => renderBlock(block))}
     </div>
   );
 }
