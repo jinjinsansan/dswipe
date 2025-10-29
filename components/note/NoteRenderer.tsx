@@ -1,17 +1,22 @@
 'use client';
 
 import type { CSSProperties } from 'react';
+import { LockClosedIcon } from '@heroicons/react/24/outline';
 import type { NoteBlock } from '@/types';
 import { getFontStack } from '@/lib/fonts';
 
 interface NoteRendererProps {
   blocks: NoteBlock[];
+  showPaidSeparator?: boolean;
 }
 
-export function NoteRenderer({ blocks }: NoteRendererProps) {
-  return (
-    <div className="space-y-8">
-      {blocks.map((block) => {
+export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRendererProps) {
+  // 無料エリアと有料エリアを分ける
+  const freeBlocks = blocks.filter(block => block.access !== 'paid');
+  const paidBlocks = blocks.filter(block => block.access === 'paid');
+  const hasPaidContent = paidBlocks.length > 0;
+
+  const renderBlock = (block: NoteBlock) => {
         const key = block.id ?? `${block.type}-${Math.random().toString(16).slice(2, 8)}`;
         const data = (block.data ?? {}) as Record<string, unknown>;
         const fontFamily = typeof data.fontKey === 'string' ? getFontStack(data.fontKey) : undefined;
@@ -96,7 +101,34 @@ export function NoteRenderer({ blocks }: NoteRendererProps) {
               </p>
             );
         }
-      })}
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* 無料エリア */}
+      {freeBlocks.map((block) => renderBlock(block))}
+
+      {/* 有料エリア区切り（有料コンテンツがある場合のみ表示） */}
+      {hasPaidContent && showPaidSeparator && (
+        <div className="my-10 flex items-center justify-center">
+          <div className="relative w-full max-w-2xl">
+            {/* 区切り線 */}
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-dashed border-amber-300"></div>
+            </div>
+            {/* ラベル */}
+            <div className="relative flex justify-center">
+              <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
+                <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
+                <span className="text-sm font-bold text-amber-900">ここから先は有料エリアです</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 有料エリア */}
+      {paidBlocks.map((block) => renderBlock(block))}
     </div>
   );
 }

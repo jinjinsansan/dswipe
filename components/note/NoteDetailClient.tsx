@@ -187,7 +187,10 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       </header>
 
       <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
-        <NoteRenderer blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} />
+        <NoteRenderer 
+          blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
+          showPaidSeparator={note.is_paid && note.has_access}
+        />
 
         {note.is_paid && !note.has_access ? (
           <div className="mt-10 space-y-4">
