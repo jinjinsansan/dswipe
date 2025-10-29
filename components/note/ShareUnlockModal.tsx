@@ -1,9 +1,11 @@
 'use client';
 
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckCircleIcon, ArrowTopRightOnSquareIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import ShareToUnlockButton from './ShareToUnlockButton';
+import { noteApi, api } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 
 interface ShareUnlockModalProps {
   isOpen: boolean;
@@ -17,6 +19,13 @@ interface ShareUnlockModalProps {
   onPurchase?: () => void;
 }
 
+interface OfficialPost {
+  official_post_id: string;
+  tweet_id: string;
+  tweet_url: string;
+  tweet_text: string;
+}
+
 export default function ShareUnlockModal({
   isOpen,
   onClose,
@@ -28,6 +37,72 @@ export default function ShareUnlockModal({
   isAuthenticated,
   onPurchase,
 }: ShareUnlockModalProps) {
+  const { token } = useAuthStore();
+  const [officialPost, setOfficialPost] = useState<OfficialPost | null>(null);
+  const [loadingPost, setLoadingPost] = useState(false);
+  const [reposting, setReposting] = useState(false);
+  const [repostError, setRepostError] = useState<string | null>(null);
+  const [repostSuccess, setRepostSuccess] = useState(false);
+
+  // 公式シェア投稿を取得
+  useEffect(() => {
+    if (isOpen && allowShareUnlock) {
+      fetchOfficialPost();
+    }
+  }, [isOpen, noteId, allowShareUnlock]);
+
+  const fetchOfficialPost = async () => {
+    setLoadingPost(true);
+    try {
+      const response = await api.get(`/notes/${noteId}/official-share-post`);
+      const data = response.data as unknown as OfficialPost | null;
+      if (data && data.tweet_id) {
+        setOfficialPost(data);
+      } else {
+        setOfficialPost(null);
+      }
+    } catch (error) {
+      console.error('Failed to fetch official post:', error);
+      setOfficialPost(null);
+    } finally {
+      setLoadingPost(false);
+    }
+  };
+
+  const handleRepost = async () => {
+    if (!token || !isAuthenticated) {
+      return;
+    }
+
+    setReposting(true);
+    setRepostError(null);
+
+    try {
+      const response = await api.post(
+        `/notes/${noteId}/share-by-repost`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setRepostSuccess(true);
+        // 1.5秒後にページリロード
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.detail || 'リポストに失敗しました';
+      setRepostError(errorMsg);
+    } finally {
+      setReposting(false);
+    }
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -85,36 +160,108 @@ export default function ShareUnlockModal({
                           Xでシェアして無料で読む
                         </h4>
                       </div>
-                      
-                      <div className="space-y-3 text-sm text-blue-700">
-                        <div className="flex items-start gap-2">
-                          <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                          <span>X（Twitter）と連携</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                          <span>記事をシェア（自動投稿）</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                          <span>7日間無料で読める</span>
-                        </div>
-                      </div>
 
-                      <div className="mt-4">
-                        <ShareToUnlockButton
-                          noteId={noteId}
-                          noteTitle={noteTitle}
-                          noteSlug={noteSlug}
-                          pricePoints={pricePoints}
-                          allowShareUnlock={allowShareUnlock}
-                          onShareSuccess={onClose}
-                        />
-                      </div>
+                      {loadingPost ? (
+                        <div className="flex items-center justify-center py-4 text-sm text-blue-600">
+                          <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                          読み込み中...
+                        </div>
+                      ) : officialPost ? (
+                        // リポスト方式（公式投稿あり）
+                        <>
+                          <div className="space-y-3 text-sm text-blue-700">
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>X（Twitter）と連携</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>↓の投稿をリポスト</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>7日間無料で読める</span>
+                            </div>
+                          </div>
 
-                      <p className="mt-3 text-xs text-blue-600/80">
-                        ※ シェアから7日間、記事を読むことができます
-                      </p>
+                          {/* 対象の投稿を表示 */}
+                          <a
+                            href={officialPost.tweet_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 flex items-center justify-center gap-2 rounded-lg border border-blue-300 bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                          >
+                            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                            対象の投稿を表示
+                          </a>
+
+                          {/* リポストボタン */}
+                          {repostSuccess ? (
+                            <div className="mt-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-700">
+                              <CheckCircleIcon className="mx-auto mb-1 h-6 w-6" />
+                              リポスト完了！記事を読み込んでいます...
+                            </div>
+                          ) : (
+                            <button
+                              onClick={handleRepost}
+                              disabled={reposting || !isAuthenticated}
+                              className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {reposting ? (
+                                <span className="flex items-center justify-center gap-2">
+                                  <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                                  リポスト中...
+                                </span>
+                              ) : (
+                                'リポストして無料で読む'
+                              )}
+                            </button>
+                          )}
+
+                          {repostError && (
+                            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                              {repostError}
+                            </div>
+                          )}
+
+                          <p className="mt-3 text-xs text-blue-600/80">
+                            ※ シェアから7日間、記事を読むことができます
+                          </p>
+                        </>
+                      ) : (
+                        // 従来のツイート投稿方式（公式投稿なし）
+                        <>
+                          <div className="space-y-3 text-sm text-blue-700">
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>X（Twitter）と連携</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>記事をシェア（自動投稿）</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span>7日間無料で読める</span>
+                            </div>
+                          </div>
+
+                          <div className="mt-4">
+                            <ShareToUnlockButton
+                              noteId={noteId}
+                              noteTitle={noteTitle}
+                              noteSlug={noteSlug}
+                              pricePoints={pricePoints}
+                              allowShareUnlock={allowShareUnlock}
+                              onShareSuccess={onClose}
+                            />
+                          </div>
+
+                          <p className="mt-3 text-xs text-blue-600/80">
+                            ※ シェアから7日間、記事を読むことができます
+                          </p>
+                        </>
+                      )}
                     </div>
                   )}
 
