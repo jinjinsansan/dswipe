@@ -3,7 +3,7 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
@@ -66,6 +66,16 @@ export default function NoteEditPage() {
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
+  
+  // 公式シェア投稿管理
+  const [officialPost, setOfficialPost] = useState<{
+    official_post_id: string;
+    tweet_id: string;
+    tweet_url: string;
+    tweet_text: string;
+  } | null>(null);
+  const [creatingOfficialPost, setCreatingOfficialPost] = useState(false);
+  const [officialPostError, setOfficialPostError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -123,6 +133,70 @@ export default function NoteEditPage() {
       console.error('Failed to fetch share stats:', error);
     }
   };
+  
+  // 公式シェア投稿を取得
+  const fetchOfficialPost = async () => {
+    if (!noteId || !token) return;
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const response = await fetch(`${apiUrl}/notes/${noteId}/official-share-post`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setOfficialPost(data);
+      } else {
+        setOfficialPost(null);
+      }
+    } catch (error) {
+      console.error('Failed to fetch official post:', error);
+      setOfficialPost(null);
+    }
+  };
+  
+  // 公式シェア投稿を作成
+  const createOfficialPost = async () => {
+    if (!noteId || !token) return;
+    
+    setCreatingOfficialPost(true);
+    setOfficialPostError(null);
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+      const response = await fetch(`${apiUrl}/notes/${noteId}/create-official-share-post`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setOfficialPost(data);
+        setInfo('公式シェア投稿を作成しました！');
+        setTimeout(() => setInfo(null), 3000);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || '公式シェア投稿の作成に失敗しました');
+      }
+    } catch (error: any) {
+      setOfficialPostError(error.message || '公式シェア投稿の作成に失敗しました');
+    } finally {
+      setCreatingOfficialPost(false);
+    }
+  };
+  
+  // NOTE読み込み時に公式シェア投稿も取得
+  useEffect(() => {
+    if (noteId && token && isPaid && allowShareUnlock) {
+      fetchOfficialPost();
+    }
+  }, [noteId, token, isPaid, allowShareUnlock]);
 
   const handleCoverMediaSelect = (url: string) => {
     setCoverImageUrl(url);
@@ -576,13 +650,72 @@ export default function NoteEditPage() {
                   </label>
                 </div>
                 {allowShareUnlock && (
-                  <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
-                    <p className="font-semibold">💡 ヒント</p>
-                    <p className="mt-1">
-                      シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
-                      シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
-                    </p>
-                  </div>
+                  <>
+                    <div className="mt-3 rounded-xl border border-amber-300 bg-white/80 px-3 py-2 text-xs text-amber-800">
+                      <p className="font-semibold">💡 ヒント</p>
+                      <p className="mt-1">
+                        シェア解放を許可すると、拡散力が高まり多くの読者に届きやすくなります。
+                        シェア数に応じてポイント報酬も獲得できます（レートは管理者が設定）。
+                      </p>
+                    </div>
+                    
+                    {/* 公式シェア投稿管理 */}
+                    <div className="mt-4 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-4">
+                      <h4 className="text-sm font-bold text-blue-900">🔄 公式シェア投稿（note.com方式）</h4>
+                      <p className="mt-1 text-xs text-blue-700">
+                        公式投稿を作成すると、読者がその投稿をリポスト（RT）するだけで記事を無料解放できます。
+                        拡散力が高まります！
+                      </p>
+                      
+                      {officialPost ? (
+                        <div className="mt-3 space-y-2">
+                          <div className="rounded-lg border border-blue-300 bg-white px-3 py-2">
+                            <p className="text-xs font-semibold text-blue-900">✅ 公式投稿作成済み</p>
+                            <p className="mt-1 text-xs text-blue-700 line-clamp-2">
+                              {officialPost.tweet_text}
+                            </p>
+                            <a
+                              href={officialPost.tweet_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700"
+                            >
+                              <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+                              Xで確認
+                            </a>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={createOfficialPost}
+                            disabled={creatingOfficialPost || saving || actionLoading}
+                            className="w-full rounded-lg border border-blue-300 bg-white px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {creatingOfficialPost ? '作成中...' : '再作成する'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            onClick={createOfficialPost}
+                            disabled={creatingOfficialPost || saving || actionLoading}
+                            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {creatingOfficialPost ? '作成中...' : '公式シェア投稿を作成'}
+                          </button>
+                          <p className="mt-2 text-xs text-blue-600/80">
+                            ※ X連携が必要です。未連携の場合は先に設定ページで連携してください。
+                          </p>
+                        </div>
+                      )}
+                      
+                      {officialPostError && (
+                        <div className="mt-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700">
+                          {officialPostError}
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             )}
