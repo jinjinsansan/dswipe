@@ -87,6 +87,7 @@ body {
   .text-gradient-primary { background-image: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent)); color: transparent; background-clip: text; }
   .text-gradient-aqua { background-image: linear-gradient(135deg, #38bdf8, #6366f1); color: transparent; background-clip: text; }
   .text-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); color: transparent; background-clip: text; }
+  .text-pure-white { color: #ffffff !important; }
 }
 
 

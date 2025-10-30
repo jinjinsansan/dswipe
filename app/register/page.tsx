@@ -23,7 +23,7 @@ export default function RegisterPage() {
       }
       hero={{
         eyebrow: 'FOR INFO-PRENEUR',
-        title: '狙ったマーケットへ、最短距離で届けるLP制作',
+        title: 'デジタルコンテンツ特化型LP作成プラットフォーム',
         description:
           'Ｄ－swipeに登録すると、テンプレート・分析・メディア管理が一体となったワークフローで高速に検証が回せます。',
         highlights: [

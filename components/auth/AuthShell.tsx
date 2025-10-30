@@ -53,20 +53,18 @@ export default function AuthShell({
   children,
 }: AuthShellProps) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-slate-50">
+    <div className="relative min-h-screen overflow-hidden bg-black text-slate-50">
       <div className="pointer-events-none absolute inset-0">
         <video
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-30"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
         >
-          <source src="/videos/pixta.mp4" type="video/mp4" />
+          <source src="/videos/hero-keyboard-2.mp4" type="video/mp4" />
         </video>
-        <div className="absolute -left-36 top-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-[120px]" />
-        <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-purple-400/10 blur-[140px]" />
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col">
