@@ -37,19 +37,19 @@ export default function HandwrittenHeroBlock({
       style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* ワイヤーフレーム風ブラウザフレーム */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl">
-        <div className="border-4 border-black rounded-3xl bg-white p-8" style={{ fontFamily: "'Architects Daughter', 'Indie Flower', cursive" }}>
+      <div className="relative md:absolute md:top-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-2 md:px-0">
+        <div className="border-2 md:border-4 border-black rounded-lg md:rounded-3xl bg-white p-2 md:p-8" style={{ fontFamily: "'Architects Daughter', 'Indie Flower', cursive" }}>
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-black">
+          <div className="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-6 pb-1.5 md:pb-4 border-b-2 border-black">
             <div className="flex gap-2">
-              <div className="w-4 h-4 rounded-full border-2 border-black"></div>
-              <div className="w-4 h-4 rounded-full border-2 border-black"></div>
-              <div className="w-4 h-4 rounded-full border-2 border-black"></div>
+              <div className="w-2 h-2 md:w-4 md:h-4 rounded-full border-2 border-black"></div>
+              <div className="w-2 h-2 md:w-4 md:h-4 rounded-full border-2 border-black"></div>
+              <div className="w-2 h-2 md:w-4 md:h-4 rounded-full border-2 border-black"></div>
             </div>
-            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 text-sm text-gray-500">https://your-url.com</div>
+            <div className="flex-1 border-2 border-black rounded-full px-1.5 md:px-4 py-0.5 md:py-1 text-[9px] md:text-sm text-gray-500">https://your-url.com</div>
           </div>
 
-      <div className="container relative z-10 mx-auto px-6 py-12 text-center">
+      <div className="container relative z-10 mx-auto px-3 md:px-6 py-3 md:py-12 text-center">
         {content.tagline && (
           <div className="mb-6 inline-block">
             <span

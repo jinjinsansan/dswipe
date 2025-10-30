@@ -37,9 +37,9 @@ export default function HandwrittenPricingBlock({
       style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-6xl">
-        <div className="border-2 md:border-4 border-black rounded-lg md:rounded-2xl bg-white p-2 md:p-8">
+        <div className="border-2 md:border-4 border-black rounded-lg md:rounded-2xl bg-white p-1.5 md:p-8">
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-1.5 md:gap-3 mb-3 md:mb-8 pb-2 md:pb-4 border-b-2 md:border-b-3 border-black">
+          <div className="flex items-center gap-1 md:gap-3 mb-2 md:mb-8 pb-1.5 md:pb-4 border-b-2 md:border-b-3 border-black">
             <div className="flex gap-2">
               <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
               <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
@@ -52,7 +52,7 @@ export default function HandwrittenPricingBlock({
 
           {content.title && (
             <h2
-              className="text-center text-lg md:text-4xl lg:text-5xl font-black mb-4 md:mb-12 text-black"
+              className="text-center text-base md:text-4xl lg:text-5xl font-black mb-3 md:mb-12 text-black"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.title}
@@ -63,7 +63,7 @@ export default function HandwrittenPricingBlock({
             {content.plans.map((plan, index) => (
               <div
                 key={index}
-                className={`border-2 md:border-3 border-black bg-white p-1.5 md:p-6 relative ${plan.highlighted ? 'md:border-4' : ''}`}
+                className={`border-2 md:border-3 border-black bg-white p-1 md:p-6 relative ${plan.highlighted ? 'md:border-4' : ''}`}
               >
                 {plan.highlighted && (
                   <div
@@ -75,15 +75,15 @@ export default function HandwrittenPricingBlock({
                 )}
 
                 <h3
-                  className="text-xs md:text-2xl font-bold mb-1 md:mb-4 text-black"
+                  className="text-[11px] md:text-2xl font-bold mb-0.5 md:mb-4 text-black"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                 >
                   {plan.name}
                 </h3>
 
-                <div className="mb-1.5 md:mb-6">
+                <div className="mb-1 md:mb-6">
                   <p
-                    className="text-base md:text-4xl font-black text-black"
+                    className="text-sm md:text-4xl font-black text-black"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {plan.price}
@@ -97,14 +97,14 @@ export default function HandwrittenPricingBlock({
 
                 {plan.description && (
                   <p
-                    className="mb-1.5 md:mb-6 text-[8px] md:text-base leading-tight text-gray-700"
+                    className="mb-1 md:mb-6 text-[7px] md:text-base leading-tight text-gray-700"
                     style={{ fontFamily: "'Indie Flower', cursive" }}
                   >
                     {plan.description}
                   </p>
                 )}
 
-                <ul className="space-y-0.5 md:space-y-3 mb-1.5 md:mb-6">
+                <ul className="space-y-0.5 md:space-y-3 mb-1 md:mb-6">
                   {plan.features.map((feature, fIndex) => (
                     <li key={fIndex} className="flex items-start gap-0.5 md:gap-2">
                       <svg width="10" height="10" viewBox="0 0 20 20" className="flex-shrink-0 mt-0.5 md:w-5 md:h-5">
@@ -117,7 +117,7 @@ export default function HandwrittenPricingBlock({
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <span className="text-[8px] md:text-sm leading-tight" style={{ fontFamily: "'Indie Flower', cursive" }}>
+                      <span className="text-[7px] md:text-sm leading-tight" style={{ fontFamily: "'Indie Flower', cursive" }}>
                         {feature}
                       </span>
                     </li>
