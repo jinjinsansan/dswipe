@@ -64,7 +64,7 @@ export default function HandwrittenHeroBlock({
         )}
 
         <h1
-          className="mx-auto max-w-4xl text-5xl md:text-7xl font-black mb-6 leading-tight text-black"
+          className="mx-auto max-w-4xl text-2xl md:text-5xl lg:text-7xl font-black mb-2 md:mb-6 leading-tight text-black"
           style={{
             fontFamily: "'Architects Daughter', cursive",
           }}
@@ -74,7 +74,7 @@ export default function HandwrittenHeroBlock({
 
         {content.subtitle && (
           <p
-            className="mx-auto max-w-2xl text-xl md:text-2xl mb-10 leading-relaxed text-gray-700"
+            className="mx-auto max-w-2xl text-xs md:text-xl lg:text-2xl mb-2 md:mb-10 leading-snug md:leading-relaxed text-gray-700"
             style={{
               fontFamily: "'Indie Flower', cursive",
             }}
@@ -84,7 +84,7 @@ export default function HandwrittenHeroBlock({
         )}
 
         {content.highlightText && (
-          <div className="mb-10">
+          <div className="mb-2 md:mb-10">
             <div className="inline-block relative">
               {/* ハッチングパターン背景 */}
               <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
@@ -96,7 +96,7 @@ export default function HandwrittenHeroBlock({
                 <rect width="100%" height="100%" fill="url(#hash-pattern)" />
               </svg>
               <span
-                className="relative z-10 inline-block px-6 py-3 text-lg font-bold border-3 border-black"
+                className="relative z-10 inline-block px-2 md:px-6 py-1 md:py-3 text-xs md:text-lg font-bold border-2 md:border-3 border-black"
                 style={{
                   fontFamily: "'Architects Daughter', cursive",
                 }}
@@ -107,10 +107,10 @@ export default function HandwrittenHeroBlock({
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center items-center">
           <button
             onClick={() => handleButtonClick('primary')}
-            className="px-8 py-4 text-lg font-bold border-3 border-black bg-white"
+            className="px-3 md:px-8 py-1.5 md:py-4 text-xs md:text-lg font-bold border-2 md:border-3 border-black bg-white"
             style={{
               fontFamily: "'Architects Daughter', cursive",
             }}
@@ -122,7 +122,7 @@ export default function HandwrittenHeroBlock({
           {content.secondaryButtonText && (
             <button
               onClick={() => handleButtonClick('secondary')}
-              className="px-8 py-4 text-lg font-bold border-3 border-black bg-white"
+              className="px-3 md:px-8 py-1.5 md:py-4 text-xs md:text-lg font-bold border-2 md:border-3 border-black bg-white"
               style={{
                 fontFamily: "'Architects Daughter', cursive",
               }}
@@ -134,9 +134,9 @@ export default function HandwrittenHeroBlock({
         </div>
 
         {/* 手書き風アイコン装飾 */}
-        <div className="mt-6 md:mt-12 flex justify-center gap-4 md:gap-8">
+        <div className="mt-3 md:mt-12 flex justify-center gap-3 md:gap-8">
           {/* 星 - ハッチング */}
-          <svg width="40" height="40" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
+          <svg width="30" height="30" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
             <defs>
               <pattern id="star-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>
@@ -145,7 +145,7 @@ export default function HandwrittenHeroBlock({
             <path d="M30,10 L35,25 L50,25 L38,35 L43,50 L30,40 L17,50 L22,35 L10,25 L25,25 Z" stroke="#000" strokeWidth="2" fill="url(#star-hash)" />
           </svg>
           {/* 三角形 - ハッチング */}
-          <svg width="40" height="40" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
+          <svg width="30" height="30" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
             <defs>
               <pattern id="triangle-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>
@@ -154,7 +154,7 @@ export default function HandwrittenHeroBlock({
             <path d="M30,10 L50,50 L10,50 Z" stroke="#000" strokeWidth="2" fill="url(#triangle-hash)" />
           </svg>
           {/* 雲 - ハッチング */}
-          <svg width="60" height="45" viewBox="0 0 80 60" className="md:w-20 md:h-[60px]">
+          <svg width="45" height="34" viewBox="0 0 80 60" className="md:w-20 md:h-[60px]">
             <defs>
               <pattern id="cloud-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>

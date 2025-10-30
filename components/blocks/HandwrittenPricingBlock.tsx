@@ -63,11 +63,11 @@ export default function HandwrittenPricingBlock({
             {content.plans.map((plan, index) => (
               <div
                 key={index}
-                className={`border-2 md:border-3 border-black bg-white p-3 md:p-6 relative ${plan.highlighted ? 'md:border-4' : ''}`}
+                className={`border-2 md:border-3 border-black bg-white p-2 md:p-6 relative ${plan.highlighted ? 'md:border-4' : ''}`}
               >
                 {plan.highlighted && (
                   <div
-                    className="absolute -top-2 md:-top-3 left-1/2 transform -translate-x-1/2 px-2 md:px-4 py-0.5 md:py-1 border-2 border-black bg-white text-xs md:text-sm font-bold"
+                    className="absolute -top-1.5 md:-top-3 left-1/2 transform -translate-x-1/2 px-1.5 md:px-4 py-0.5 md:py-1 border-2 border-black bg-white text-[10px] md:text-sm font-bold"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     おすすめ
@@ -75,21 +75,21 @@ export default function HandwrittenPricingBlock({
                 )}
 
                 <h3
-                  className="text-base md:text-2xl font-bold mb-2 md:mb-4 text-black"
+                  className="text-sm md:text-2xl font-bold mb-1.5 md:mb-4 text-black"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                 >
                   {plan.name}
                 </h3>
 
-                <div className="mb-3 md:mb-6">
+                <div className="mb-2 md:mb-6">
                   <p
-                    className="text-2xl md:text-4xl font-black text-black"
+                    className="text-xl md:text-4xl font-black text-black"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {plan.price}
                   </p>
                   {plan.period && (
-                    <p className="text-xs md:text-sm text-gray-600" style={{ fontFamily: "'Indie Flower', cursive" }}>
+                    <p className="text-[10px] md:text-sm text-gray-600" style={{ fontFamily: "'Indie Flower', cursive" }}>
                       {plan.period}
                     </p>
                   )}
@@ -97,17 +97,17 @@ export default function HandwrittenPricingBlock({
 
                 {plan.description && (
                   <p
-                    className="mb-3 md:mb-6 text-xs md:text-base text-gray-700"
+                    className="mb-2 md:mb-6 text-[10px] md:text-base text-gray-700"
                     style={{ fontFamily: "'Indie Flower', cursive" }}
                   >
                     {plan.description}
                   </p>
                 )}
 
-                <ul className="space-y-1.5 md:space-y-3 mb-3 md:mb-6">
+                <ul className="space-y-1 md:space-y-3 mb-2 md:mb-6">
                   {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-start gap-1.5 md:gap-2">
-                      <svg width="16" height="16" viewBox="0 0 20 20" className="flex-shrink-0 mt-0.5 md:w-5 md:h-5">
+                    <li key={fIndex} className="flex items-start gap-1 md:gap-2">
+                      <svg width="14" height="14" viewBox="0 0 20 20" className="flex-shrink-0 mt-0.5 md:w-5 md:h-5">
                         <path
                           d="M3 10 L8 15 L17 5"
                           stroke="#000"
@@ -117,7 +117,7 @@ export default function HandwrittenPricingBlock({
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <span className="text-xs md:text-sm leading-tight" style={{ fontFamily: "'Indie Flower', cursive" }}>
+                      <span className="text-[10px] md:text-sm leading-tight" style={{ fontFamily: "'Indie Flower', cursive" }}>
                         {feature}
                       </span>
                     </li>
@@ -126,7 +126,7 @@ export default function HandwrittenPricingBlock({
 
                 <button
                   onClick={() => handleClick(index)}
-                  className="w-full px-4 md:px-6 py-2 md:py-3 text-sm md:text-base font-bold border-2 md:border-3 border-black bg-white"
+                  className="w-full px-3 md:px-6 py-1.5 md:py-3 text-xs md:text-base font-bold border-2 md:border-3 border-black bg-white"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                   disabled={isEditing}
                 >

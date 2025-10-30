@@ -44,11 +44,11 @@ export default function HandwrittenBonusBlock({
             {content.bonuses.map((bonus, index) => (
               <div
                 key={index}
-                className="border-2 md:border-3 border-black bg-white p-4 md:p-6 flex items-start gap-4 md:gap-6"
+                className="border-2 md:border-3 border-black bg-white p-2 md:p-6 flex items-start gap-2 md:gap-6"
               >
                 {/* ボーナス番号 */}
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 md:w-16 md:h-16 border-2 md:border-3 border-black flex items-center justify-center relative">
+                  <div className="w-10 h-10 md:w-16 md:h-16 border-2 md:border-3 border-black flex items-center justify-center relative">
                     <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
                       <defs>
                         <pattern id={`bonus-hash-${index}`} x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
@@ -58,7 +58,7 @@ export default function HandwrittenBonusBlock({
                       <rect width="100%" height="100%" fill={`url(#bonus-hash-${index})`} />
                     </svg>
                     <span
-                      className="relative z-10 text-xl md:text-2xl font-black"
+                      className="relative z-10 text-base md:text-2xl font-black"
                       style={{ fontFamily: "'Architects Daughter', cursive" }}
                     >
                       {index + 1}
@@ -68,14 +68,14 @@ export default function HandwrittenBonusBlock({
 
                 <div className="flex-1">
                   <h3
-                    className="text-lg md:text-2xl font-bold mb-2 text-black"
+                    className="text-sm md:text-2xl font-bold mb-1 text-black"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {bonus.title}
                   </h3>
                   {bonus.description && (
                     <p
-                      className="mb-2 md:mb-3 text-sm md:text-base text-gray-700"
+                      className="mb-1.5 md:mb-3 text-[10px] md:text-base leading-tight text-gray-700"
                       style={{ fontFamily: "'Indie Flower', cursive" }}
                     >
                       {bonus.description}
@@ -83,7 +83,7 @@ export default function HandwrittenBonusBlock({
                   )}
                   {bonus.value && (
                     <p
-                      className="text-base md:text-lg font-bold text-black"
+                      className="text-xs md:text-lg font-bold text-black"
                       style={{ fontFamily: "'Architects Daughter', cursive" }}
                     >
                       価値: {bonus.value}
@@ -95,9 +95,9 @@ export default function HandwrittenBonusBlock({
           </div>
 
           {content.totalValue && (
-            <div className="mt-8 text-center border-t-3 border-black pt-6">
+            <div className="mt-4 md:mt-8 text-center border-t-2 md:border-t-3 border-black pt-3 md:pt-6">
               <p
-                className="text-2xl md:text-3xl font-black text-black"
+                className="text-lg md:text-3xl font-black text-black"
                 style={{ fontFamily: "'Architects Daughter', cursive" }}
               >
                 合計価値: {content.totalValue}
