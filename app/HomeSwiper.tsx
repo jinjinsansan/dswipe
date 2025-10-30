@@ -48,17 +48,17 @@ export default function HomeSwiper() {
       <Swiper
         direction="vertical"
         slidesPerView={1}
-        speed={280}
-        touchRatio={1.5}
-        threshold={8}
+        speed={350}
+        touchRatio={1.8}
+        threshold={3}
         resistance={true}
-        resistanceRatio={0.85}
+        resistanceRatio={0.65}
         effect="creative"
         creativeEffect={{
           prev: {
-            translate: [0, '-8%', 0],
-            scale: 0.98,
-            opacity: 0.92,
+            translate: [0, '-20%', -1],
+            scale: 0.95,
+            opacity: 0.8,
           },
           next: {
             translate: [0, '100%', 0],
@@ -67,7 +67,7 @@ export default function HomeSwiper() {
         mousewheel={{ 
           releaseOnEdges: true, 
           forceToAxis: true, 
-          sensitivity: 1,
+          sensitivity: 0.8,
         }}
         keyboard={{
           enabled: true,
