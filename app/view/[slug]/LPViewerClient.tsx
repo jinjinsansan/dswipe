@@ -380,6 +380,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       return undefined;
     }
 
+    // 手書き風ブロックは常に白背景
+    const blockType = typeof step.block_type === 'string' ? step.block_type : '';
+    if (blockType.startsWith('handwritten-')) {
+      return '#FFFFFF';
+    }
+
     const content = step.content_data as Record<string, any>;
     const candidates = [
       content.background,
