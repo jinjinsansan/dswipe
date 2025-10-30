@@ -21,11 +21,23 @@ export default function HandwrittenFAQBlock({
   return (
     <section
       className="py-20 px-6"
-      style={{ backgroundColor: '#FFFFFF' }}
+      style={{ backgroundColor: '#F8F9FA' }}
     >
       <div className="container mx-auto max-w-4xl">
-        {/* ワイヤーフレーム風ボックス */}
-        <div className="border-4 border-black bg-white p-8">
+        {/* ワイヤーフレーム風ブラウザボックス */}
+        <div className="border-4 border-black rounded-2xl bg-white p-8">
+          {/* ブラウザトップバー */}
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b-3 border-black">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+            </div>
+            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 bg-white">
+              <span className="text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
+            </div>
+          </div>
+
           {content.title && (
             <h2
               className="text-center text-4xl md:text-5xl font-black mb-4 text-black"
@@ -48,35 +60,35 @@ export default function HandwrittenFAQBlock({
             </p>
           )}
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {content.items.map((item, index) => {
               const isOpen = openIndex === index;
               return (
                 <div
                   key={index}
-                  className="border-3 border-black bg-white overflow-hidden"
+                  className="border-3 border-black bg-white"
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full text-left p-6 flex items-start gap-4"
+                    className="w-full text-left p-5 flex items-start gap-4"
                   >
                     <div className="flex-shrink-0 mt-1">
                       {/* ハッチング付きの開閉ボタン */}
-                      <div className="w-8 h-8 border-2 border-black flex items-center justify-center font-bold text-lg relative">
+                      <div className="w-7 h-7 border-2 border-black flex items-center justify-center font-bold text-lg relative bg-white">
                         <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
                           <defs>
                             <pattern id={`btn-hash-${index}`} x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-                              <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5" opacity={isOpen ? "0.1" : "0.05"}/>
+                              <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5" opacity={isOpen ? "0.15" : "0.08"}/>
                             </pattern>
                           </defs>
                           <rect width="100%" height="100%" fill={`url(#btn-hash-${index})`} />
                         </svg>
-                        <span className="relative z-10">{isOpen ? '−' : '+'}</span>
+                        <span className="relative z-10 text-black">{isOpen ? '−' : '+'}</span>
                       </div>
                     </div>
                     <div className="flex-1">
                       <h3
-                        className="text-xl font-bold pr-4 text-black"
+                        className="text-lg font-bold pr-4 text-black"
                         style={{
                           fontFamily: "'Architects Daughter', cursive",
                         }}
@@ -86,7 +98,7 @@ export default function HandwrittenFAQBlock({
                       {isOpen && (
                         <div className="mt-4">
                           <p
-                            className="text-lg leading-relaxed text-gray-700"
+                            className="text-base leading-relaxed text-gray-700"
                             style={{
                               fontFamily: "'Indie Flower', cursive",
                             }}
@@ -95,11 +107,11 @@ export default function HandwrittenFAQBlock({
                           </p>
                           {/* チェックマーク */}
                           <div className="mt-4 flex items-center gap-2">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                               <path
-                                d="M4 12 L10 18 L20 6"
+                                d="M3 10 L8 15 L17 5"
                                 stroke="#000"
-                                strokeWidth="3"
+                                strokeWidth="2.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               />
@@ -120,39 +132,6 @@ export default function HandwrittenFAQBlock({
                 </div>
               );
             })}
-          </div>
-
-          {/* 吹き出し装飾 */}
-          <div className="flex justify-center mt-12">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-              <ellipse
-                cx="40"
-                cy="35"
-                rx="30"
-                ry="25"
-                stroke="#000"
-                strokeWidth="2"
-                strokeDasharray="3 3"
-              />
-              <path
-                d="M30 55 L25 70 L35 60"
-                stroke="#000"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <text
-                x="40"
-                y="43"
-                textAnchor="middle"
-                fontSize="28"
-                fontWeight="bold"
-                fill="#000"
-                fontFamily="'Architects Daughter', cursive"
-              >
-                ?
-              </text>
-            </svg>
           </div>
         </div>
       </div>
