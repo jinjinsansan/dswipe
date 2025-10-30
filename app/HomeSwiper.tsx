@@ -24,6 +24,8 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-creative';
 
+const serifFont = '"Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", "Times New Roman", serif';
+
 export default function HomeSwiper() {
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
     if ('vibrate' in navigator) {
@@ -43,7 +45,7 @@ export default function HomeSwiper() {
   };
 
   return (
-    <div className="h-screen w-full bg-white overflow-hidden">
+    <div className="h-screen w-full bg-white overflow-hidden" style={{ fontFamily: serifFont }}>
       <Swiper
         direction="vertical"
         slidesPerView={1}
@@ -84,48 +86,47 @@ export default function HomeSwiper() {
       >
         {/* スライド1: Hero */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
-            <div className="absolute inset-0 opacity-10">
+          <div className="relative h-full w-full flex items-center justify-center overflow-hidden bg-white">
+            <div className="absolute inset-0">
               <AutoPlayVideo
                 className="absolute inset-0 w-full h-full object-cover"
-                src="/videos/pixta.mp4"
+                src="/videos/hero-keyboard-2.mp4"
               />
             </div>
             
-            <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
+            <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
               >
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black mb-6 sm:mb-8 leading-tight">
-                  <span className="text-slate-900">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-5 sm:mb-6 leading-tight text-white drop-shadow-2xl">
+                  <span className="block mb-2">
                     情報には鮮度がある
                   </span>
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700">
+                  <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
                     ５分でLP公開
                   </span>
                 </h1>
-                <p className="text-xl sm:text-2xl md:text-3xl text-slate-700 mb-10 sm:mb-16 font-semibold">
+                <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 sm:mb-12 font-light drop-shadow-lg">
                   スワイプ型LP作成プラットフォームで<br className="hidden sm:inline" />
                   今すぐデジタルコンテンツを販売
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
                     href="/register"
-                    className="group relative px-10 py-6 sm:px-12 sm:py-7 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 text-white rounded-2xl font-bold text-xl shadow-2xl hover:shadow-blue-500/50 transition-all hover:scale-105"
+                    className="group relative px-8 py-4 sm:px-10 sm:py-5 bg-slate-900/90 backdrop-blur-sm text-white rounded-lg font-medium text-lg shadow-xl hover:bg-slate-900 transition-all hover:scale-105"
                   >
-                    <span className="relative flex items-center justify-center gap-3">
-                      <SparklesIcon className="w-7 h-7" />
+                    <span className="relative flex items-center justify-center gap-2">
+                      <SparklesIcon className="w-5 h-5" />
                       無料で始める
-                      <ArrowRightIcon className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </Link>
                   
                   <Link
                     href="/login"
-                    className="px-10 py-6 sm:px-12 sm:py-7 bg-white text-blue-600 border-3 border-blue-600 rounded-2xl font-bold text-xl hover:bg-blue-50 hover:shadow-xl transition-all"
+                    className="px-8 py-4 sm:px-10 sm:py-5 bg-white/90 backdrop-blur-sm text-slate-900 border border-slate-200 rounded-lg font-medium text-lg hover:bg-white hover:shadow-xl transition-all"
                   >
                     ログイン
                   </Link>
@@ -137,31 +138,30 @@ export default function HomeSwiper() {
 
         {/* スライド2: 360%上昇 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
-            <div className="w-full max-w-5xl mx-auto text-center">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
+            <div className="w-full max-w-4xl mx-auto text-center">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
               >
-                <p className="text-lg sm:text-xl text-slate-600 mb-6 font-medium">
+                <p className="text-base sm:text-lg text-slate-600 mb-5 font-light">
                   縦長のHPは読者には一切読まれていません。
                 </p>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-slate-900 leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 text-slate-900 leading-tight">
                   スワイプ型LPにすることで<br />
-                  <span className="text-blue-600">伝えたいことがダイレクトに伝わります</span>
+                  <span className="text-slate-700">伝えたいことがダイレクトに伝わります</span>
                 </h2>
                 
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-cyan-100 to-blue-100 rounded-3xl blur-3xl opacity-50" />
-                  <div className="relative bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 rounded-3xl p-12 sm:p-16 shadow-2xl">
-                    <p className="text-white text-xl sm:text-2xl font-semibold mb-4">
+                <div className="relative max-w-2xl mx-auto">
+                  <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-10 sm:p-12 shadow-xl border border-slate-700/30">
+                    <p className="text-white/80 text-lg sm:text-xl font-light mb-3">
                       コンバージョン率
                     </p>
-                    <div className="text-8xl sm:text-9xl md:text-[12rem] font-black text-white mb-4">
-                      360<span className="text-7xl sm:text-8xl">%</span>
+                    <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-3">
+                      360<span className="text-5xl sm:text-6xl">%</span>
                     </div>
-                    <p className="text-white text-2xl sm:text-3xl font-bold">
+                    <p className="text-white text-xl sm:text-2xl font-light">
                       上昇
                     </p>
                   </div>
@@ -173,53 +173,51 @@ export default function HomeSwiper() {
 
         {/* スライド3: 価格比較 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 overflow-hidden px-6 py-12">
-            <div className="w-full max-w-6xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
+            <div className="w-full max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 leading-tight">
-                  スワイプ型LP作成は<br className="sm:hidden" />初心者には難しい
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 text-slate-900 leading-tight">
+                  スワイプ型LP作成は初心者には難しい
                 </h2>
-                <p className="text-xl sm:text-2xl text-slate-700 font-medium">
+                <p className="text-lg sm:text-xl text-slate-600 font-light">
                   大手企業がサービスを提供しているが<br />
-                  <span className="text-red-600 font-bold">非常に高額</span>
+                  <span className="text-red-600 font-medium">非常に高額</span>
                 </p>
               </motion.div>
 
-              <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                {/* 大手企業 */}
+              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white border-4 border-slate-300 rounded-3xl p-8 shadow-xl"
+                  className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
-                  <p className="text-2xl font-bold text-slate-700 mb-6">大手企業</p>
-                  <div className="text-6xl font-black text-red-600 mb-2">
+                  <p className="text-lg font-medium text-slate-600 mb-4">大手企業</p>
+                  <div className="text-5xl font-bold text-red-600 mb-2">
                     ¥50,000
                   </div>
-                  <p className="text-xl text-slate-600 font-semibold">月額〜</p>
+                  <p className="text-base text-slate-500 font-light">月額〜</p>
                 </motion.div>
 
-                {/* D-swipe */}
                 <motion.div
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 border-4 border-blue-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg relative overflow-hidden"
                 >
-                  <div className="absolute -top-4 -right-4 w-32 h-32 bg-yellow-400 rounded-full flex items-center justify-center transform rotate-12">
-                    <span className="text-2xl font-black text-slate-900">NEW</span>
+                  <div className="absolute -top-2 -right-2 w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center transform rotate-12">
+                    <span className="text-sm font-bold text-slate-900">NEW</span>
                   </div>
-                  <p className="text-2xl font-bold text-white mb-6">D-swipe</p>
-                  <div className="text-6xl font-black text-white mb-2">
+                  <p className="text-lg font-medium text-white/80 mb-4">D-swipe</p>
+                  <div className="text-5xl font-bold text-white mb-2">
                     ¥0
                   </div>
-                  <p className="text-xl text-white font-bold">何個作成しても無料</p>
+                  <p className="text-base text-white/70 font-light">何個作成しても無料</p>
                 </motion.div>
               </div>
             </div>
@@ -228,79 +226,77 @@ export default function HomeSwiper() {
 
         {/* スライド4: 差別化 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
-            <div className="w-full max-w-5xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
+            <div className="w-full max-w-4xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 leading-tight">
                   他社との決定的な違い
                 </h2>
               </motion.div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* 他社 */}
+              <div className="grid md:grid-cols-2 gap-6">
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-slate-100 border-3 border-slate-300 rounded-2xl p-8"
+                  className="bg-white border border-slate-200 rounded-xl p-6"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
-                      <XMarkIcon className="w-8 h-8 text-white" />
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center">
+                      <XMarkIcon className="w-5 h-5 text-red-600" />
                     </div>
-                    <p className="text-2xl font-bold text-slate-800">他社サービス</p>
+                    <p className="text-lg font-medium text-slate-800">他社サービス</p>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <XMarkIcon className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-slate-700">ほとんど画像をスワイプ型にしている</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <XMarkIcon className="w-4 h-4 text-red-500 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-slate-600 font-light">ほとんど画像をスワイプ型にしている</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <XMarkIcon className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-slate-700">１ページごとに画像を作成する手間</p>
+                    <div className="flex items-start gap-2">
+                      <XMarkIcon className="w-4 h-4 text-red-500 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-slate-600 font-light">１ページごとに画像を作成する手間</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <XMarkIcon className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-slate-700">スワイプの感触もゴツゴツ</p>
+                    <div className="flex items-start gap-2">
+                      <XMarkIcon className="w-4 h-4 text-red-500 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-slate-600 font-light">スワイプの感触もゴツゴツ</p>
                     </div>
                   </div>
                 </motion.div>
 
-                {/* D-swipe */}
                 <motion.div
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 border-3 border-blue-700 rounded-2xl p-8 shadow-xl"
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center">
-                      <CheckCircleIcon className="w-8 h-8 text-white" />
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-8 h-8 bg-green-400/20 rounded-full flex items-center justify-center">
+                      <CheckCircleIcon className="w-5 h-5 text-green-400" />
                     </div>
-                    <p className="text-2xl font-bold text-white">D-swipe</p>
+                    <p className="text-lg font-medium text-white">D-swipe</p>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircleIcon className="w-6 h-6 text-green-300 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-white font-semibold">画像も対応</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-white/80 font-light">画像も対応</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircleIcon className="w-6 h-6 text-green-300 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-white font-semibold">AIアシスタントが５分で基礎を作成</p>
+                    <div className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-white/80 font-light">AIアシスタントが５分で基礎を作成</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircleIcon className="w-6 h-6 text-green-300 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-white font-semibold">Webサイト感がそのままスワイプ型へ</p>
+                    <div className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-white/80 font-light">Webサイト感がそのままスワイプ型へ</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircleIcon className="w-6 h-6 text-green-300 flex-shrink-0 mt-1" />
-                      <p className="text-lg text-white font-semibold">スワイプ時の感触も◎</p>
+                    <div className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-1" />
+                      <p className="text-sm text-white/80 font-light">スワイプ時の感触も◎</p>
                     </div>
                   </div>
                 </motion.div>
@@ -311,63 +307,63 @@ export default function HomeSwiper() {
 
         {/* スライド5: 販売者メリット1 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50 overflow-hidden px-6 py-12">
-            <div className="w-full max-w-4xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
+            <div className="w-full max-w-3xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <p className="text-lg text-blue-600 font-bold mb-4">SELLER BENEFITS</p>
-                <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-6">
+                <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">SELLER BENEFITS</p>
+                <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   販売者側メリット
                 </h2>
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-3xl p-8 sm:p-12 shadow-2xl border-2 border-blue-200"
+                className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-8 shadow-sm border border-slate-200"
               >
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircleIcon className="w-7 h-7 text-white" />
+                <div className="space-y-5">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircleIcon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">無料で無制限にLP作成</h3>
-                      <p className="text-lg text-slate-600">いくつ作っても完全無料</p>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-1">無料で無制限にLP作成</h3>
+                      <p className="text-sm text-slate-600 font-light">いくつ作っても完全無料</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircleIcon className="w-7 h-7 text-white" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircleIcon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">有料・無料NOTE記事作成</h3>
-                      <p className="text-lg text-slate-600">記事型コンテンツも販売可能</p>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-1">有料・無料NOTE記事作成</h3>
+                      <p className="text-sm text-slate-600 font-light">記事型コンテンツも販売可能</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircleIcon className="w-7 h-7 text-white" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircleIcon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">使用料は半永久無料</h3>
-                      <p className="text-lg text-slate-600">月額費用・初期費用なし</p>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-1">使用料は半永久無料</h3>
+                      <p className="text-sm text-slate-600 font-light">月額費用・初期費用なし</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CurrencyDollarIcon className="w-7 h-7 text-white" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CurrencyDollarIcon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">10日間おきにUSDTでお支払い</h3>
-                      <p className="text-lg text-slate-600">手数料は業界最安の7.5%のみ</p>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-1">10日間おきにUSDTでお支払い</h3>
+                      <p className="text-sm text-slate-600 font-light">手数料は業界最安の7.5%のみ</p>
                     </div>
                   </div>
                 </div>
@@ -378,61 +374,61 @@ export default function HomeSwiper() {
 
         {/* スライド6: 販売者メリット2 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
-            <div className="w-full max-w-5xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
+            <div className="w-full max-w-4xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <p className="text-lg text-blue-600 font-bold mb-4">SELLER BENEFITS 2</p>
-                <h2 className="text-4xl sm:text-5xl font-black text-slate-900">
+                <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">SELLER BENEFITS 2</p>
+                <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   やることはシンプル
                 </h2>
               </motion.div>
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-8 shadow-xl"
+                  className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-black text-blue-600">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-lg font-bold text-white">
                       1
                     </div>
-                    <h3 className="text-3xl font-bold text-white">スワイプLPかNOTEを作成</h3>
+                    <h3 className="text-2xl font-semibold text-slate-900">スワイプLPかNOTEを作成</h3>
                   </div>
-                  <p className="text-xl text-white font-medium">AIアシスタントで5分で完成</p>
+                  <p className="text-base text-slate-600 font-light">AIアシスタントで5分で完成</p>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 shadow-xl"
+                  className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl font-black text-purple-600">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-lg font-bold text-white">
                       2
                     </div>
-                    <h3 className="text-3xl font-bold text-white">宣伝するだけ</h3>
+                    <h3 className="text-2xl font-semibold text-slate-900">宣伝するだけ</h3>
                   </div>
-                  <p className="text-xl text-white font-medium">マーケットエリアからもお客様が流入</p>
+                  <p className="text-base text-slate-600 font-light">マーケットエリアからもお客様が流入</p>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-8 shadow-xl text-center"
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-lg text-center border border-slate-700"
                 >
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <ShieldCheckIcon className="w-12 h-12 text-white" />
-                    <h3 className="text-3xl font-bold text-white">審査なし・即宣伝可能</h3>
+                  <div className="flex items-center justify-center gap-3 mb-3">
+                    <ShieldCheckIcon className="w-10 h-10 text-white" />
+                    <h3 className="text-2xl font-semibold text-white">審査なし・即宣伝可能</h3>
                   </div>
-                  <p className="text-xl text-white font-medium">デジタルコンテンツに煩わしい審査なし</p>
+                  <p className="text-base text-white/80 font-light">デジタルコンテンツに煩わしい審査なし</p>
                 </motion.div>
               </div>
             </div>
@@ -441,70 +437,70 @@ export default function HomeSwiper() {
 
         {/* スライド7: 購入者メリット */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 overflow-hidden px-6 py-12">
-            <div className="w-full max-w-5xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
+            <div className="w-full max-w-4xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <p className="text-lg text-purple-600 font-bold mb-4">BUYER BENEFITS</p>
-                <h2 className="text-4xl sm:text-5xl font-black text-slate-900">
+                <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">BUYER BENEFITS</p>
+                <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   購入者側メリット
                 </h2>
               </motion.div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-5">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-white rounded-2xl p-8 shadow-xl border-2 border-purple-200"
+                  className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <BoltIcon className="w-9 h-9 text-white" />
+                  <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BoltIcon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">登録はわずか30秒</h3>
-                  <p className="text-lg text-slate-600 text-center">すぐに購入開始</p>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">登録はわずか30秒</h3>
+                  <p className="text-sm text-slate-600 text-center font-light">すぐに購入開始</p>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white rounded-2xl p-8 shadow-xl border-2 border-purple-200"
+                  className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CreditCardIcon className="w-9 h-9 text-white" />
+                  <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CreditCardIcon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">決済方法が豊富</h3>
-                  <p className="text-lg text-slate-600 text-center">クレカ・USDT対応</p>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">決済方法が豊富</h3>
+                  <p className="text-sm text-slate-600 text-center font-light">クレカ・USDT対応</p>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-white rounded-2xl p-8 shadow-xl border-2 border-purple-200"
+                  className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <SparklesIcon className="w-9 h-9 text-white" />
+                  <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <SparklesIcon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">様々なポイント獲得企画</h3>
-                  <p className="text-lg text-slate-600 text-center">お得に購入可能</p>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">様々なポイント獲得企画</h3>
+                  <p className="text-sm text-slate-600 text-center font-light">お得に購入可能</p>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="bg-white rounded-2xl p-8 shadow-xl border-2 border-purple-200"
+                  className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <RocketLaunchIcon className="w-9 h-9 text-white" />
+                  <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <RocketLaunchIcon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">デジタルコンテンツを即座に購入</h3>
-                  <p className="text-lg text-slate-600 text-center">待ち時間なし</p>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">デジタルコンテンツを即座に購入</h3>
+                  <p className="text-sm text-slate-600 text-center font-light">待ち時間なし</p>
                 </motion.div>
               </div>
             </div>
@@ -521,36 +517,32 @@ export default function HomeSwiper() {
               />
             </div>
             
-            <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-blue-50/95 to-slate-100/95" />
+            <div className="absolute inset-0 bg-white/90" />
             
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 text-center">
+            <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
                 className="space-y-8"
               >
-                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
-                  <span className="text-slate-900">このページも</span>
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700">
-                    LPエディタで作成
-                  </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
+                  <span className="block mb-2">このページも</span>
+                  <span className="block">LPエディタで作成</span>
                 </h2>
 
-                <p className="text-2xl sm:text-3xl md:text-4xl text-slate-800 font-bold leading-relaxed">
-                  あなたが見ている<br className="sm:hidden" />このTOPページ自体が
-                  <br />
-                  <span className="text-blue-600">LPエディタの実力の証明</span>です
+                <p className="text-xl sm:text-2xl md:text-3xl text-slate-700 font-light leading-relaxed">
+                  あなたが見ているこのTOPページ自体が<br />
+                  <span className="font-medium">LPエディタの実力の証明</span>です
                 </p>
 
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center gap-3 px-12 py-7 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 text-white rounded-2xl font-bold text-2xl shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transition-all"
+                  className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-slate-900 text-white rounded-lg font-medium text-lg shadow-xl hover:bg-slate-800 hover:scale-105 transition-all"
                 >
-                  <RocketLaunchIcon className="w-8 h-8" />
+                  <RocketLaunchIcon className="w-6 h-6" />
                   今すぐエディタを試す
-                  <ArrowRightIcon className="w-7 h-7" />
+                  <ArrowRightIcon className="w-5 h-5" />
                 </Link>
               </motion.div>
             </div>
@@ -560,7 +552,6 @@ export default function HomeSwiper() {
         {/* スライド9: ビデオ背景映像 */}
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
-            {/* 走る男のビデオ背景 */}
             <div className="absolute inset-0">
               <AutoPlayVideo
                 className="absolute inset-0 w-full h-full object-cover"
@@ -568,32 +559,27 @@ export default function HomeSwiper() {
               />
             </div>
             
-            {/* 白グラデーションオーバーレイ */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-blue-50/85 to-slate-100/90" />
+            <div className="absolute inset-0 bg-white/85" />
             
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 text-center">
+            <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="space-y-8"
+                transition={{ duration: 0.6 }}
+                className="space-y-6"
               >
-                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
-                  <span className="text-slate-900">ビデオ背景映像ページも</span>
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700">
-                    ご用意しております
-                  </span>
+                <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-slate-900">
+                  <span className="block mb-2">ビデオ背景映像ページも</span>
+                  <span className="block">ご用意しております</span>
                 </h2>
 
-                <p className="text-3xl sm:text-4xl md:text-5xl text-slate-800 font-bold leading-relaxed">
-                  スワイプ型LPで
-                  <br />
-                  <span className="text-blue-600">動くビデオ背景</span>
+                <p className="text-2xl sm:text-3xl text-slate-700 font-light leading-relaxed">
+                  スワイプ型LPで<br />
+                  <span className="font-medium">動くビデオ背景</span>
                 </p>
 
-                <div className="inline-block bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-2xl border-2 border-blue-200">
-                  <p className="text-xl sm:text-2xl text-slate-700 font-semibold">
+                <div className="inline-block bg-white/90 backdrop-blur-sm rounded-xl px-8 py-5 shadow-lg border border-slate-200">
+                  <p className="text-lg sm:text-xl text-slate-700 font-light">
                     このページも走る男のビデオ背景で作成
                   </p>
                 </div>
@@ -604,93 +590,91 @@ export default function HomeSwiper() {
 
         {/* スライド10: 手書き風テンプレート */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
-            <div className="w-full max-w-6xl mx-auto">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-white overflow-hidden px-6 py-12">
+            <div className="w-full max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-center mb-12"
+                className="text-center mb-10"
               >
-                <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 mb-8">
+                <h2 className="text-4xl sm:text-5xl font-semibold text-slate-900 mb-6">
                   手書き風も完備
                 </h2>
-                <p className="text-2xl sm:text-3xl text-slate-700 font-bold">
+                <p className="text-xl sm:text-2xl text-slate-600 font-light">
                   手書き風のテンプレートもご用意
                 </p>
               </motion.div>
 
-              {/* 手書き風テンプレートのプレビュー */}
-              <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-white rounded-2xl p-6 shadow-xl border-4 border-black"
+                  className="bg-white rounded-xl p-5 shadow-md border-3 border-slate-800"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                 >
-                  {/* ブラウザフレーム風 */}
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-black">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-slate-800">
                     <div className="flex gap-1">
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
                     </div>
-                    <div className="flex-1 border-2 border-black rounded-full px-3 py-1 text-xs">
+                    <div className="flex-1 border-2 border-slate-800 rounded-full px-2 py-0.5 text-xs">
                       手書き風LP
                     </div>
                   </div>
                   
-                  <div className="text-center py-8">
-                    <h3 className="text-3xl font-black mb-4 text-slate-900">
+                  <div className="text-center py-6">
+                    <h3 className="text-2xl font-black mb-3 text-slate-900">
                       手書き風ヒーロー
                     </h3>
-                    <p className="text-lg text-slate-700 mb-6">
+                    <p className="text-base text-slate-700 mb-4 font-light">
                       親しみやすいデザインで<br />
                       読者の心をつかむ
                     </p>
-                    <div className="inline-block px-6 py-3 border-3 border-black bg-white font-bold text-lg">
+                    <div className="inline-block px-5 py-2 border-3 border-slate-800 bg-white font-bold text-base">
                       今すぐチェック
                     </div>
                   </div>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white rounded-2xl p-6 shadow-xl border-4 border-black"
+                  className="bg-white rounded-xl p-5 shadow-md border-3 border-slate-800"
                   style={{ fontFamily: "'Indie Flower', cursive" }}
                 >
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-black">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-slate-800">
                     <div className="flex gap-1">
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
-                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
+                      <div className="w-2 h-2 rounded-full border-2 border-slate-800"></div>
                     </div>
-                    <div className="flex-1 border-2 border-black rounded-full px-3 py-1 text-xs">
+                    <div className="flex-1 border-2 border-slate-800 rounded-full px-2 py-0.5 text-xs">
                       手書き風LP
                     </div>
                   </div>
                   
-                  <div className="py-6 space-y-4">
-                    <div className="border-2 border-black rounded-lg p-4 bg-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <svg width="30" height="30" viewBox="0 0 60 60" className="flex-shrink-0">
+                  <div className="py-5 space-y-3">
+                    <div className="border-2 border-slate-800 rounded-lg p-3 bg-white">
+                      <div className="flex items-center gap-2 mb-1">
+                        <svg width="24" height="24" viewBox="0 0 60 60" className="flex-shrink-0">
                           <path d="M30,10 L35,25 L50,25 L38,35 L43,50 L30,40 L17,50 L22,35 L10,25 L25,25 Z" stroke="#000" strokeWidth="2" fill="none" />
                         </svg>
-                        <h4 className="text-xl font-bold">特徴1</h4>
+                        <h4 className="text-base font-bold">特徴1</h4>
                       </div>
-                      <p className="text-sm text-slate-700">手書き風の温かみあるデザイン</p>
+                      <p className="text-xs text-slate-700 font-light">手書き風の温かみあるデザイン</p>
                     </div>
                     
-                    <div className="border-2 border-black rounded-lg p-4 bg-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <svg width="30" height="30" viewBox="0 0 60 60" className="flex-shrink-0">
+                    <div className="border-2 border-slate-800 rounded-lg p-3 bg-white">
+                      <div className="flex items-center gap-2 mb-1">
+                        <svg width="24" height="24" viewBox="0 0 60 60" className="flex-shrink-0">
                           <circle cx="30" cy="30" r="20" stroke="#000" strokeWidth="2" fill="none" />
                         </svg>
-                        <h4 className="text-xl font-bold">特徴2</h4>
+                        <h4 className="text-base font-bold">特徴2</h4>
                       </div>
-                      <p className="text-sm text-slate-700">親しみやすく読みやすい</p>
+                      <p className="text-xs text-slate-700 font-light">親しみやすく読みやすい</p>
                     </div>
                   </div>
                 </motion.div>
@@ -700,10 +684,10 @@ export default function HomeSwiper() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-center mt-12"
+                className="text-center mt-10"
               >
-                <div className="inline-block bg-gradient-to-r from-slate-800 to-slate-900 text-white px-8 py-4 rounded-2xl shadow-xl">
-                  <p className="text-xl font-bold">
+                <div className="inline-block bg-slate-900 text-white px-8 py-4 rounded-xl shadow-lg">
+                  <p className="text-lg font-medium">
                     全10種類の手書き風テンプレートを完備
                   </p>
                 </div>
@@ -714,14 +698,14 @@ export default function HomeSwiper() {
 
         {/* スライド11: 最終CTA */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 overflow-hidden px-6 py-12">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight text-white">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold mb-8 leading-tight text-white">
                   たった５分で
                   <br />
                   あなたのLPが完成
@@ -729,14 +713,14 @@ export default function HomeSwiper() {
 
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center gap-4 px-14 py-8 bg-white text-blue-600 rounded-3xl font-black text-3xl shadow-2xl hover:shadow-white/50 hover:scale-105 transition-all"
+                  className="inline-flex items-center justify-center gap-3 px-12 py-6 bg-white text-slate-900 rounded-xl font-semibold text-2xl shadow-2xl hover:shadow-white/30 hover:scale-105 transition-all"
                 >
-                  <SparklesIcon className="w-10 h-10" />
+                  <SparklesIcon className="w-8 h-8" />
                   今すぐ無料で始める
-                  <ArrowRightIcon className="w-9 h-9" />
+                  <ArrowRightIcon className="w-7 h-7" />
                 </Link>
 
-                <p className="mt-8 text-xl text-white font-semibold">
+                <p className="mt-6 text-base text-white/80 font-light">
                   クレジットカード不要・いつでも解約可能
                 </p>
               </motion.div>
