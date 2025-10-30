@@ -19,6 +19,13 @@ import NewsletterBlock from './NewsletterBlock';
 import HandwrittenHeroBlock from './HandwrittenHeroBlock';
 import HandwrittenFeaturesBlock from './HandwrittenFeaturesBlock';
 import HandwrittenFAQBlock from './HandwrittenFAQBlock';
+import HandwrittenCTABlock from './HandwrittenCTABlock';
+import HandwrittenTestimonialsBlock from './HandwrittenTestimonialsBlock';
+import HandwrittenPricingBlock from './HandwrittenPricingBlock';
+import HandwrittenProblemBlock from './HandwrittenProblemBlock';
+import HandwrittenBonusBlock from './HandwrittenBonusBlock';
+import HandwrittenGuaranteeBlock from './HandwrittenGuaranteeBlock';
+import HandwrittenContactBlock from './HandwrittenContactBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -180,6 +187,47 @@ export default function BlockRenderer({
       break;
     case 'handwritten-faq-1':
       element = <HandwrittenFAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-cta-1':
+      element = (
+        <HandwrittenCTABlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
+        />
+      );
+      break;
+    case 'handwritten-testimonials-1':
+      element = <HandwrittenTestimonialsBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-pricing-1':
+      element = (
+        <HandwrittenPricingBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
+        />
+      );
+      break;
+    case 'handwritten-problem-1':
+      element = <HandwrittenProblemBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-bonus-1':
+      element = <HandwrittenBonusBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-guarantee-1':
+      element = <HandwrittenGuaranteeBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-contact-1':
+      element = <HandwrittenContactBlock content={content} />;
       break;
     
     default:

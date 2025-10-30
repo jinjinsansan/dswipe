@@ -23,7 +23,14 @@ export type BlockType =
   | 'top-newsletter-1'
   | 'handwritten-hero-1'
   | 'handwritten-features-1'
-  | 'handwritten-faq-1';
+  | 'handwritten-faq-1'
+  | 'handwritten-cta-1'
+  | 'handwritten-testimonials-1'
+  | 'handwritten-pricing-1'
+  | 'handwritten-problem-1'
+  | 'handwritten-bonus-1'
+  | 'handwritten-guarantee-1'
+  | 'handwritten-contact-1';
 
 // カテゴリ
 export type BlockCategory =
