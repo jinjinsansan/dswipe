@@ -12,127 +12,114 @@ interface HandwrittenFeaturesBlockProps {
 export default function HandwrittenFeaturesBlock({
   content,
 }: HandwrittenFeaturesBlockProps) {
-  const bgColor = content.backgroundColor || '#FFFFFF';
-  const textColor = content.textColor || '#1F2937';
-
   return (
     <section
       className="py-20 px-6"
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-6xl">
-        {content.tagline && (
-          <p
-            className="text-center text-sm font-bold uppercase tracking-widest mb-4"
-            style={{
-              color: textColor,
-              opacity: 0.6,
-              fontFamily: "'Patrick Hand', cursive",
-            }}
-          >
-            {content.tagline}
-          </p>
-        )}
-
-        {content.title && (
-          <h2
-            className="text-center text-4xl md:text-5xl font-black mb-16"
-            style={{
-              color: textColor,
-              fontFamily: "'Caveat', cursive",
-            }}
-          >
-            {content.title}
-          </h2>
-        )}
-
-        <div className={`grid gap-8 ${content.layout === 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
-          {content.features.map((feature, index) => (
-            <div
-              key={index}
-              className="group relative p-8 rounded-3xl border-3 border-dashed transform transition-all duration-300 hover:scale-105 hover:-rotate-1"
+        {/* ワイヤーフレーム風ボックス */}
+        <div className="border-4 border-black bg-white p-8">
+          {content.tagline && (
+            <p
+              className="text-center text-sm font-bold uppercase tracking-widest mb-4 text-black"
               style={{
-                borderColor: textColor,
-                backgroundColor: index % 2 === 0 ? '#FEF3C7' : '#DBEAFE',
-                boxShadow: '4px 4px 0px rgba(0,0,0,0.05)',
+                fontFamily: "'Indie Flower', cursive",
               }}
             >
-              {/* 手書き風のコーナー装飾 */}
+              {content.tagline}
+            </p>
+          )}
+
+          {content.title && (
+            <h2
+              className="text-center text-4xl md:text-5xl font-black mb-16 text-black"
+              style={{
+                fontFamily: "'Architects Daughter', cursive",
+              }}
+            >
+              {content.title}
+            </h2>
+          )}
+
+          <div className={`grid gap-8 ${content.layout === 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
+            {content.features.map((feature, index) => (
               <div
-                className="absolute top-4 right-4 w-8 h-8 opacity-20"
-                style={{ color: textColor }}
+                key={index}
+                className="relative border-3 border-black bg-white p-6"
               >
-                <svg viewBox="0 0 32 32" fill="none">
+                {/* ハッチングパターン背景 */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                  <defs>
+                    <pattern id={`feature-hash-${index}`} x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                      <path d="M0,6 L6,0" stroke="#000" strokeWidth="0.5" opacity="0.05"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill={`url(#feature-hash-${index})`} />
+                </svg>
+
+                {/* コーナー装飾 */}
+                <div className="absolute top-2 right-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path d="M2,2 L18,2 M18,2 L18,18" stroke="#000" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                  </svg>
+                </div>
+
+                {feature.icon && (
+                  <div className="relative z-10 text-5xl mb-4">
+                    {feature.icon}
+                  </div>
+                )}
+
+                <h3
+                  className="relative z-10 text-2xl font-bold mb-3 text-black"
+                  style={{
+                    fontFamily: "'Architects Daughter', cursive",
+                  }}
+                >
+                  {feature.title}
+                </h3>
+
+                <p
+                  className="relative z-10 text-lg leading-relaxed text-gray-700"
+                  style={{
+                    fontFamily: "'Indie Flower', cursive",
+                  }}
+                >
+                  {feature.description}
+                </p>
+
+                {/* 手書き風アンダーライン */}
+                <svg
+                  className="absolute bottom-4 left-6 right-6 h-1"
+                  viewBox="0 0 100 5"
+                  preserveAspectRatio="none"
+                >
                   <path
-                    d="M2 2 L30 2 M30 2 L30 30"
-                    stroke="currentColor"
-                    strokeWidth="3"
+                    d="M0,2 Q25,4 50,2 T100,3"
+                    stroke="#000"
+                    strokeWidth="2"
+                    fill="none"
                     strokeLinecap="round"
-                    strokeLinejoin="round"
+                    opacity="0.2"
                   />
                 </svg>
               </div>
+            ))}
+          </div>
 
-              {feature.icon && (
-                <div className="text-6xl mb-4 transform -rotate-6">
-                  {feature.icon}
-                </div>
-              )}
-
-              <h3
-                className="text-2xl font-bold mb-3"
-                style={{
-                  color: textColor,
-                  fontFamily: "'Patrick Hand', cursive",
-                }}
-              >
-                {feature.title}
-              </h3>
-
-              <p
-                className="text-lg leading-relaxed"
-                style={{
-                  color: textColor,
-                  opacity: 0.8,
-                  fontFamily: "'Patrick Hand', cursive",
-                }}
-              >
-                {feature.description}
-              </p>
-
-              {/* 手書き風アンダーライン */}
-              <svg
-                className="absolute bottom-4 left-8 right-8 h-2 opacity-30"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M0,5 Q25,7 50,5 T100,6"
-                  stroke={textColor}
-                  strokeWidth="2"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-          ))}
-        </div>
-
-        {/* スケッチ風装飾 */}
-        <div className="flex justify-center mt-16 gap-8 opacity-20">
-          {[0, 1, 2].map((i) => (
-            <svg key={i} width="60" height="60" viewBox="0 0 60 60" fill="none">
-              <circle
-                cx="30"
-                cy="30"
-                r="25"
-                stroke={textColor}
-                strokeWidth="2"
-                strokeDasharray="3 3"
-                transform={`rotate(${i * 30} 30 30)`}
-              />
+          {/* 装飾図形 */}
+          <div className="flex justify-center mt-12 gap-8">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="15" stroke="#000" strokeWidth="2" fill="none" strokeDasharray="2 3"/>
             </svg>
-          ))}
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <rect x="10" y="10" width="20" height="20" stroke="#000" strokeWidth="2" fill="none" strokeDasharray="2 3"/>
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <polygon points="20,10 30,30 10,30" stroke="#000" strokeWidth="2" fill="none" strokeDasharray="2 3"/>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
