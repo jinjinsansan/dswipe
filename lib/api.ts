@@ -227,6 +227,20 @@ export const pointsApi = {
     api.get('/points/transactions', { params }),
 };
 
+export const subscriptionApi = {
+  getPlans: () => api.get('/subscriptions/plans'),
+  getSubscriptions: () => api.get('/subscriptions'),
+  createCheckout: (data: {
+    plan_key: string;
+    seller_id?: string;
+    seller_username?: string;
+    success_path?: string;
+    error_path?: string;
+    metadata?: Record<string, unknown>;
+  }) => api.post('/subscriptions/checkout', data),
+  cancel: (subscriptionId: string) => api.post(`/subscriptions/${subscriptionId}/cancel`),
+};
+
 // 管理者API
 export const adminApi = {
   grantPoints: (data: { user_id: string; amount: number; description?: string }) =>

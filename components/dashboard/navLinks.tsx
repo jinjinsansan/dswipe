@@ -14,6 +14,7 @@ import {
   DocumentPlusIcon,
   PencilSquareIcon,
   BookOpenIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
@@ -183,6 +184,7 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/note', label: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
   { href: '/notes', label: 'AllNOTE', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
+  { href: '/points/subscriptions', label: 'サブスク自動チャージ', icon: <ArrowPathIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 15 },
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
   { href: '/settings', label: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 20 },

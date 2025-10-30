@@ -246,3 +246,44 @@ export interface LPListResponse {
 export interface APIError {
   detail: string;
 }
+
+export interface SubscriptionPlan {
+  plan_key: string;
+  label: string;
+  points: number;
+  usd_amount: number;
+}
+
+export interface SubscriptionPlanListResponse {
+  data: SubscriptionPlan[];
+}
+
+export interface SubscriptionCheckoutResponse {
+  checkout_url: string;
+  checkout_preference_id: string;
+  external_id: string;
+}
+
+export interface UserSubscription {
+  id: string;
+  plan_key: string;
+  label: string;
+  status: string;
+  points_per_cycle: number;
+  usd_amount: number;
+  subscription_plan_id: string;
+  recurrent_payment_id?: string;
+  next_charge_at?: string;
+  last_charge_at?: string;
+  last_event_type?: string;
+  seller_id?: string;
+  seller_username?: string;
+  metadata?: Record<string, unknown>;
+  cancelable: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserSubscriptionListResponse {
+  data: UserSubscription[];
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
@@ -191,6 +192,22 @@ export default function PointPurchasePage() {
       pageSubtitle="安全な決済でポイントを追加できます"
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
+        <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-4 sm:items-center sm:justify-between sm:flex-row">
+            <div>
+              <p className="text-sm font-semibold text-blue-800">毎月の自動チャージで安心</p>
+              <p className="mt-1 text-xs text-blue-700 sm:text-sm">
+                「サブスク自動チャージ」なら決済のたびにポイントが自動付与されます。更新忘れが心配な場合はサブスクをご活用ください。
+              </p>
+            </div>
+            <Link
+              href="/points/subscriptions"
+              className="inline-flex items-center justify-center rounded-xl border border-blue-500 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-600 hover:text-white"
+            >
+              サブスクを申し込む
+            </Link>
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:gap-8">
             <div className="space-y-6 lg:col-span-2">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
