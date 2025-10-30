@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, EffectCreative } from 'swiper/modules';
-import { motion } from 'framer-motion';
 import {
   SparklesIcon,
   ArrowRightIcon,
@@ -95,11 +94,7 @@ export default function HomeSwiper() {
             </div>
             
             <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
+              <div>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-5 sm:mb-6 leading-tight text-white drop-shadow-2xl">
                   <span className="block mb-2">
                     情報には鮮度がある
@@ -131,7 +126,7 @@ export default function HomeSwiper() {
                     ログイン
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -140,11 +135,7 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
+              <div>
                 <p className="text-base sm:text-lg text-slate-600 mb-5 font-light">
                   縦長のHPは読者には一切読まれていません。
                 </p>
@@ -166,7 +157,7 @@ export default function HomeSwiper() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -175,10 +166,7 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
             <div className="w-full max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <div
                 className="text-center mb-10"
               >
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 text-slate-900 leading-tight">
@@ -188,13 +176,10 @@ export default function HomeSwiper() {
                   大手企業がサービスを提供しているが<br />
                   <span className="text-red-600 font-medium">非常に高額</span>
                 </p>
-              </motion.div>
+              </div>
 
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
+                <div
                   className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
                   <p className="text-lg font-medium text-slate-600 mb-4">大手企業</p>
@@ -202,12 +187,9 @@ export default function HomeSwiper() {
                     ¥50,000
                   </div>
                   <p className="text-base text-slate-500 font-light">月額〜</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
+                <div
                   className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg relative overflow-hidden"
                 >
                   <div className="absolute -top-2 -right-2 w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center transform rotate-12">
@@ -218,7 +200,7 @@ export default function HomeSwiper() {
                     ¥0
                   </div>
                   <p className="text-base text-white/70 font-light">何個作成しても無料</p>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
@@ -228,21 +210,16 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <div
                 className="text-center mb-10"
               >
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 leading-tight">
                   他社との決定的な違い
                 </h2>
-              </motion.div>
+              </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
+                <div
                   className="bg-white border border-slate-200 rounded-xl p-6"
                 >
                   <div className="flex items-center gap-2 mb-5">
@@ -266,12 +243,9 @@ export default function HomeSwiper() {
                       <p className="text-sm text-slate-600 font-light">スワイプの感触もゴツゴツ</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
+                <div
                   className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg"
                 >
                   <div className="flex items-center gap-2 mb-5">
@@ -299,7 +273,7 @@ export default function HomeSwiper() {
                       <p className="text-sm text-white/80 font-light">スワイプ時の感触も◎</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
@@ -309,21 +283,16 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
             <div className="w-full max-w-3xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <div
                 className="text-center mb-10"
               >
                 <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">SELLER BENEFITS</p>
                 <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   販売者側メリット
                 </h2>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
+              <div
                 className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-8 shadow-sm border border-slate-200"
               >
                 <div className="space-y-5">
@@ -367,7 +336,7 @@ export default function HomeSwiper() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -376,22 +345,17 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <div
                 className="text-center mb-10"
               >
                 <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">SELLER BENEFITS 2</p>
                 <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   やることはシンプル
                 </h2>
-              </motion.div>
+              </div>
 
               <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
+                <div
                   className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
                   <div className="flex items-center gap-3 mb-3">
@@ -401,12 +365,9 @@ export default function HomeSwiper() {
                     <h3 className="text-2xl font-semibold text-slate-900">スワイプLPかNOTEを作成</h3>
                   </div>
                   <p className="text-base text-slate-600 font-light">AIアシスタントで5分で完成</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
+                <div
                   className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
                 >
                   <div className="flex items-center gap-3 mb-3">
@@ -416,12 +377,9 @@ export default function HomeSwiper() {
                     <h3 className="text-2xl font-semibold text-slate-900">宣伝するだけ</h3>
                   </div>
                   <p className="text-base text-slate-600 font-light">マーケットエリアからもお客様が流入</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                <div
                   className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-lg text-center border border-slate-700"
                 >
                   <div className="flex items-center justify-center gap-3 mb-3">
@@ -429,7 +387,7 @@ export default function HomeSwiper() {
                     <h3 className="text-2xl font-semibold text-white">審査なし・即宣伝可能</h3>
                   </div>
                   <p className="text-base text-white/80 font-light">デジタルコンテンツに煩わしい審査なし</p>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
@@ -439,22 +397,17 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <div
                 className="text-center mb-10"
               >
                 <p className="text-sm text-slate-500 font-light mb-3 uppercase tracking-wider">BUYER BENEFITS</p>
                 <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900">
                   購入者側メリット
                 </h2>
-              </motion.div>
+              </div>
 
               <div className="grid md:grid-cols-2 gap-5">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
+                <div
                   className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
                   <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -462,12 +415,9 @@ export default function HomeSwiper() {
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">登録はわずか30秒</h3>
                   <p className="text-sm text-slate-600 text-center font-light">すぐに購入開始</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
+                <div
                   className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
                   <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -475,12 +425,9 @@ export default function HomeSwiper() {
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">決済方法が豊富</h3>
                   <p className="text-sm text-slate-600 text-center font-light">クレカ・USDT対応</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 }}
+                <div
                   className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
                   <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -488,12 +435,9 @@ export default function HomeSwiper() {
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">様々なポイント獲得企画</h3>
                   <p className="text-sm text-slate-600 text-center font-light">お得に購入可能</p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 }}
+                <div
                   className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-6 shadow-sm border border-slate-200"
                 >
                   <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -501,7 +445,7 @@ export default function HomeSwiper() {
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">デジタルコンテンツを即座に購入</h3>
                   <p className="text-sm text-slate-600 text-center font-light">待ち時間なし</p>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
@@ -520,10 +464,7 @@ export default function HomeSwiper() {
             <div className="absolute inset-0 bg-white/90" />
             
             <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <div
                 className="space-y-8"
               >
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
@@ -544,7 +485,7 @@ export default function HomeSwiper() {
                   今すぐエディタを試す
                   <ArrowRightIcon className="w-5 h-5" />
                 </Link>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -562,10 +503,7 @@ export default function HomeSwiper() {
             <div className="absolute inset-0 bg-white/85" />
             
             <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <div
                 className="space-y-6"
               >
                 <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-slate-900">
@@ -583,7 +521,7 @@ export default function HomeSwiper() {
                     このページも走る男のビデオ背景で作成
                   </p>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -592,9 +530,7 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-white overflow-hidden px-6 py-12">
             <div className="w-full max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <div
                 className="text-center mb-10"
               >
                 <h2 className="text-4xl sm:text-5xl font-semibold text-slate-900 mb-6">
@@ -603,13 +539,10 @@ export default function HomeSwiper() {
                 <p className="text-xl sm:text-2xl text-slate-600 font-light">
                   手書き風のテンプレートもご用意
                 </p>
-              </motion.div>
+              </div>
 
               <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
+                <div
                   className="bg-white rounded-xl p-5 shadow-md border-3 border-slate-800"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                 >
@@ -636,12 +569,9 @@ export default function HomeSwiper() {
                       今すぐチェック
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
+                <div
                   className="bg-white rounded-xl p-5 shadow-md border-3 border-slate-800"
                   style={{ fontFamily: "'Indie Flower', cursive" }}
                 >
@@ -677,13 +607,10 @@ export default function HomeSwiper() {
                       <p className="text-xs text-slate-700 font-light">親しみやすく読みやすい</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+              <div
                 className="text-center mt-10"
               >
                 <div className="inline-block bg-slate-900 text-white px-8 py-4 rounded-xl shadow-lg">
@@ -691,7 +618,7 @@ export default function HomeSwiper() {
                     全10種類の手書き風テンプレートを完備
                   </p>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
@@ -700,10 +627,7 @@ export default function HomeSwiper() {
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <div
               >
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold mb-8 leading-tight text-white">
                   たった５分で
@@ -723,7 +647,7 @@ export default function HomeSwiper() {
                 <p className="mt-6 text-base text-white/80 font-light">
                   クレジットカード不要・いつでも解約可能
                 </p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </SwiperSlide>
