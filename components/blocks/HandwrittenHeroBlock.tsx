@@ -134,9 +134,9 @@ export default function HandwrittenHeroBlock({
         </div>
 
         {/* 手書き風アイコン装飾 */}
-        <div className="mt-12 flex justify-center gap-8">
+        <div className="mt-6 md:mt-12 flex justify-center gap-4 md:gap-8">
           {/* 星 - ハッチング */}
-          <svg width="60" height="60" viewBox="0 0 60 60">
+          <svg width="40" height="40" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
             <defs>
               <pattern id="star-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>
@@ -145,7 +145,7 @@ export default function HandwrittenHeroBlock({
             <path d="M30,10 L35,25 L50,25 L38,35 L43,50 L30,40 L17,50 L22,35 L10,25 L25,25 Z" stroke="#000" strokeWidth="2" fill="url(#star-hash)" />
           </svg>
           {/* 三角形 - ハッチング */}
-          <svg width="60" height="60" viewBox="0 0 60 60">
+          <svg width="40" height="40" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
             <defs>
               <pattern id="triangle-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>
@@ -154,7 +154,7 @@ export default function HandwrittenHeroBlock({
             <path d="M30,10 L50,50 L10,50 Z" stroke="#000" strokeWidth="2" fill="url(#triangle-hash)" />
           </svg>
           {/* 雲 - ハッチング */}
-          <svg width="80" height="60" viewBox="0 0 80 60">
+          <svg width="60" height="45" viewBox="0 0 80 60" className="md:w-20 md:h-[60px]">
             <defs>
               <pattern id="cloud-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                 <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5"/>

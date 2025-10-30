@@ -40,15 +40,15 @@ export default function HandwrittenTestimonialsBlock({
             </h2>
           )}
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {content.testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="border-2 md:border-3 border-black bg-white p-4 md:p-6"
+                className="border-2 md:border-3 border-black bg-white p-3 md:p-6"
               >
                 {/* 引用符 */}
-                <div className="mb-4">
-                  <svg width="30" height="22" viewBox="0 0 40 30" className="md:w-10 md:h-[30px]">
+                <div className="mb-2 md:mb-4">
+                  <svg width="24" height="18" viewBox="0 0 40 30" className="md:w-10 md:h-[30px]">
                     <path
                       d="M5,15 Q5,5 15,5 L15,15 Q15,20 10,20 M25,15 Q25,5 35,5 L35,15 Q35,20 30,20"
                       stroke="#000"
@@ -59,22 +59,22 @@ export default function HandwrittenTestimonialsBlock({
                 </div>
 
                 <p
-                  className="mb-4 md:mb-6 text-sm md:text-base text-gray-700"
+                  className="mb-3 md:mb-6 text-xs md:text-base leading-snug md:leading-relaxed text-gray-700"
                   style={{ fontFamily: "'Indie Flower', cursive" }}
                 >
                   {testimonial.quote}
                 </p>
 
-                <div className="border-t-2 border-black pt-4">
+                <div className="border-t-2 border-black pt-2 md:pt-4">
                   <p
-                    className="font-bold text-black"
+                    className="text-sm md:text-base font-bold text-black"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {testimonial.name}
                   </p>
                   {testimonial.role && (
                     <p
-                      className="text-sm text-gray-600"
+                      className="text-xs md:text-sm text-gray-600"
                       style={{ fontFamily: "'Indie Flower', cursive" }}
                     >
                       {testimonial.role}
