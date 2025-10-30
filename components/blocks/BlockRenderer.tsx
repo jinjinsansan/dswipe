@@ -16,6 +16,9 @@ import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
 import ContactBlock from './ContactBlock';
 import TokushoBlock from './TokushoBlock';
 import NewsletterBlock from './NewsletterBlock';
+import HandwrittenHeroBlock from './HandwrittenHeroBlock';
+import HandwrittenFeaturesBlock from './HandwrittenFeaturesBlock';
+import HandwrittenFAQBlock from './HandwrittenFAQBlock';
 import { getFontStack } from '@/lib/fonts';
 
 interface BlockRendererProps {
@@ -156,6 +159,27 @@ export default function BlockRenderer({
       break;
     case 'top-newsletter-1':
       element = <NewsletterBlock content={content} />;
+      break;
+    
+    // 手書き風ブロック
+    case 'handwritten-hero-1':
+      element = (
+        <HandwrittenHeroBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          productId={productId}
+          onProductClick={onProductClick}
+          ctaIds={ctaIds}
+          onCtaClick={onCtaClick}
+        />
+      );
+      break;
+    case 'handwritten-features-1':
+      element = <HandwrittenFeaturesBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      break;
+    case 'handwritten-faq-1':
+      element = <HandwrittenFAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     
     default:

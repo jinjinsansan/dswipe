@@ -20,7 +20,10 @@ export type BlockType =
   | 'top-media-spotlight-1'
   | 'top-contact-1'
   | 'top-tokusho-1'
-  | 'top-newsletter-1';
+  | 'top-newsletter-1'
+  | 'handwritten-hero-1'
+  | 'handwritten-features-1'
+  | 'handwritten-faq-1';
 
 // カテゴリ
 export type BlockCategory =

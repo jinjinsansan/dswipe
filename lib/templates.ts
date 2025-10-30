@@ -2068,7 +2068,7 @@ export function getTemplateById(templateId: string) {
 }
 
 export function getAllTemplates() {
-  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
+  return [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS, ...HANDWRITTEN_BLOCKS];
 }
 
 // 特定商取引法ブロック（新規追加）
@@ -2333,5 +2333,88 @@ export const NEWSLETTER_BLOCKS: TemplateBlock[] = [
       buttonColor: '#9333EA',
       buttonTextColor: '#FFFFFF',
     } as NewsletterBlockContent,
+  },
+];
+
+// 手書き風ブロック（新規追加）
+export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
+  {
+    id: 'handwritten-hero-casual',
+    templateId: 'handwritten-hero-1',
+    name: '手書き風ヒーロー（カジュアル）',
+    category: 'header',
+    description: '親しみやすい手書き風デザイン。個人ブランド・コーチング・教育コンテンツに最適。',
+    defaultContent: {
+      title: 'あなたの夢を\n一緒に叶えよう！',
+      subtitle: '初心者でも安心して始められる、やさしい学習プログラム',
+      tagline: 'FRIENDLY LEARNING',
+      highlightText: '無料体験あり',
+      buttonText: '今すぐ始める',
+      buttonUrl: '/register',
+      secondaryButtonText: '詳しく見る',
+      secondaryButtonUrl: '/about',
+      backgroundColor: '#FFFBEB',
+      textColor: '#78350F',
+      buttonColor: '#F59E0B',
+      secondaryButtonColor: '#FFFFFF',
+    } as HeroBlockContent,
+  },
+  {
+    id: 'handwritten-features-simple',
+    templateId: 'handwritten-features-1',
+    name: '手書き風機能ハイライト',
+    category: 'content',
+    description: 'スケッチ風のアイコンで特徴を紹介。カジュアルで親しみやすい印象。',
+    defaultContent: {
+      title: 'こんな特徴があります',
+      tagline: 'WHAT WE OFFER',
+      features: [
+        {
+          icon: '⭐',
+          title: '初心者歓迎',
+          description: '難しい知識は不要。誰でも簡単に始められます。',
+        },
+        {
+          icon: '📚',
+          title: '充実の教材',
+          description: '動画・テキスト・ワークシートで楽しく学べます。',
+        },
+        {
+          icon: '💬',
+          title: 'サポート体制',
+          description: 'わからないことは、いつでも質問できます。',
+        },
+      ],
+      layout: 'grid',
+      backgroundColor: '#FFFFFF',
+      textColor: '#1F2937',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'handwritten-faq-friendly',
+    templateId: 'handwritten-faq-1',
+    name: '手書き風よくある質問',
+    category: 'content',
+    description: '手書きメモ風のFAQセクション。カジュアルで質問しやすい雰囲気。',
+    defaultContent: {
+      title: 'よくある質問',
+      subtitle: '気になることは何でも聞いてください',
+      items: [
+        {
+          question: '初心者でも大丈夫ですか？',
+          answer: 'もちろんです！基礎から丁寧に教えますので、安心してください。',
+        },
+        {
+          question: 'どれくらいの期間で効果が出ますか？',
+          answer: '個人差はありますが、多くの方が3ヶ月程度で成果を実感されています。',
+        },
+        {
+          question: 'サポートはありますか？',
+          answer: 'はい！メールやチャットでいつでもサポートいたします。',
+        },
+      ],
+      backgroundColor: '#FEF3C7',
+      textColor: '#78350F',
+    } as FAQBlockContent,
   },
 ];
