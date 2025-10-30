@@ -7,9 +7,9 @@ import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationT
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
-import { mediaApi, noteApi } from '@/lib/api';
+import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { NoteBlock, NoteDetail, OfficialShareConfig } from '@/types';
+import type { NoteBlock, NoteDetail, OfficialShareConfig, Salon, SalonListResult } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -71,6 +71,22 @@ export default function NoteEditPage() {
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
+  const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadSalons = async () => {
+      try {
+        const response = await salonApi.list();
+        const payload = response.data as SalonListResult;
+        setSalonOptions(payload?.data ?? []);
+      } catch (error) {
+        console.warn('Failed to load salon list', error);
+      }
+    };
+
+    loadSalons();
+  }, []);
 
   const extractErrorDetail = (err: unknown): string | undefined => {
     if (typeof err === 'object' && err) {
@@ -161,6 +177,7 @@ export default function NoteEditPage() {
           configured_at: detail.official_share_set_at ?? undefined,
         });
         setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
+        setSelectedSalonIds(Array.isArray(detail.salon_access_ids) ? detail.salon_access_ids : []);
         if (detail.allow_share_unlock) {
           loadOfficialShareConfig();
         } else {
@@ -334,6 +351,14 @@ export default function NoteEditPage() {
     setPricePoints(value);
   };
 
+  const toggleSalonAccess = useCallback((salonId: string) => {
+    setSelectedSalonIds((prev) =>
+      prev.includes(salonId)
+        ? prev.filter((id) => id !== salonId)
+        : [...prev, salonId]
+    );
+  }, []);
+
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
       return 'タイトルを3文字以上で入力してください';
@@ -394,6 +419,7 @@ export default function NoteEditPage() {
         price_points: effectivePaid ? Number(pricePoints) || 0 : 0,
         categories,
         allow_share_unlock: allowShareUnlock,
+        salon_ids: selectedSalonIds,
       };
 
       const response = await noteApi.update(noteId, payload);
@@ -714,6 +740,44 @@ export default function NoteEditPage() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">サロン会員は無料閲覧</p>
+                  <p className="text-xs text-slate-500">選択したオンラインサロンの会員はポイント消費なしで記事を閲覧できます。</p>
+                </div>
+              </div>
+              {salonOptions.length === 0 ? (
+                <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                  まだオンラインサロンが登録されていません。サロンメニューから新規作成すると会員向けに無料公開できます。
+                </div>
+              ) : (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {salonOptions.map((salon) => {
+                    const isActive = selectedSalonIds.includes(salon.id);
+                    return (
+                      <button
+                        key={salon.id}
+                        type="button"
+                        onClick={() => toggleSalonAccess(salon.id)}
+                        disabled={saving || actionLoading}
+                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          isActive
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        } ${(saving || actionLoading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      >
+                        {salon.title ?? '無題のサロン'}
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
+                          {salon.member_count?.toLocaleString() ?? 0}名
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {effectivePaid && (

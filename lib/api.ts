@@ -19,6 +19,14 @@ import type {
   NotePurchaseResult,
   PublicNoteListResult,
   PublicNoteDetail,
+  ProductCreatePayload,
+  ProductUpdatePayload,
+  SubscriptionCheckoutPayload,
+  Salon,
+  SalonListResult,
+  SalonMemberListResult,
+  NoteSalonAccessPayload,
+  NoteSalonAccessResponse,
 } from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -163,16 +171,16 @@ export const analyticsApi = {
 
 // 商品API
 export const productApi = {
-  create: (data: any) =>
+  create: (data: ProductCreatePayload) =>
     api.post('/products', data),
   
-  list: (params?: any) =>
+  list: (params?: Record<string, unknown>) =>
     api.get('/products', { params }),
   
   get: (id: string) =>
     api.get(`/products/${id}`),
   
-  update: (id: string, data: any) =>
+  update: (id: string, data: ProductUpdatePayload) =>
     api.put(`/products/${id}`, data),
   
   delete: (id: string) =>
@@ -230,15 +238,21 @@ export const pointsApi = {
 export const subscriptionApi = {
   getPlans: () => api.get('/subscriptions/plans'),
   getSubscriptions: () => api.get('/subscriptions'),
-  createCheckout: (data: {
-    plan_key: string;
-    seller_id?: string;
-    seller_username?: string;
-    success_path?: string;
-    error_path?: string;
-    metadata?: Record<string, unknown>;
-  }) => api.post('/subscriptions/checkout', data),
+  createCheckout: (data: SubscriptionCheckoutPayload) => api.post('/subscriptions/checkout', data),
   cancel: (subscriptionId: string) => api.post(`/subscriptions/${subscriptionId}/cancel`),
+};
+
+export const salonApi = {
+  list: () => api.get<SalonListResult>('/salons'),
+  create: (data: { title: string; description?: string | null; thumbnail_url?: string | null; subscription_plan_id: string; subscription_external_id?: string | null }) =>
+    api.post<Salon>('/salons', data),
+  get: (salonId: string) => api.get<Salon>(`/salons/${salonId}`),
+  update: (salonId: string, data: { title?: string; description?: string | null; thumbnail_url?: string | null; is_active?: boolean }) =>
+    api.patch<Salon>(`/salons/${salonId}`, data),
+  getMembers: (salonId: string, params?: { status_filter?: string; limit?: number; offset?: number }) =>
+    api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
+  setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>
+    api.post<NoteSalonAccessResponse>(`/salons/${salonId}/notes/${noteId}/access`, data),
 };
 
 // 管理者API

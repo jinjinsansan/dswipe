@@ -24,6 +24,12 @@ export type {
   NoteCreateRequest,
   NoteUpdateRequest,
   OfficialShareConfig,
+  Product,
+  Salon,
+  SalonListResult,
+  SalonMember,
+  SalonMemberListResult,
+  NoteSalonAccessResponse,
 } from './index';
 
 export interface PointsBalance {
@@ -252,6 +258,7 @@ export interface SubscriptionPlan {
   label: string;
   points: number;
   usd_amount: number;
+  subscription_plan_id?: string;
 }
 
 export interface SubscriptionPlanListResponse {
@@ -262,6 +269,16 @@ export interface SubscriptionCheckoutResponse {
   checkout_url: string;
   checkout_preference_id: string;
   external_id: string;
+}
+
+export interface SubscriptionCheckoutPayload {
+  plan_key: string;
+  seller_id?: string;
+  seller_username?: string;
+  success_path?: string;
+  error_path?: string;
+  metadata?: Record<string, unknown>;
+  salon_id?: string;
 }
 
 export interface UserSubscription {
@@ -278,6 +295,7 @@ export interface UserSubscription {
   last_event_type?: string;
   seller_id?: string;
   seller_username?: string;
+  salon_id?: string;
   metadata?: Record<string, unknown>;
   cancelable: boolean;
   created_at: string;
@@ -286,4 +304,25 @@ export interface UserSubscription {
 
 export interface UserSubscriptionListResponse {
   data: UserSubscription[];
+}
+
+export interface ProductCreatePayload {
+  lp_id?: string | null;
+  title: string;
+  description?: string | null;
+  price_in_points?: number | null;
+  stock_quantity?: number | null;
+  is_available?: boolean;
+  redirect_url?: string | null;
+  thanks_lp_id?: string | null;
+  product_type?: 'points' | 'salon';
+  salon_id?: string | null;
+}
+
+export type ProductUpdatePayload = Partial<ProductCreatePayload> & {
+  title?: string;
+};
+
+export interface NoteSalonAccessPayload {
+  salon_ids: string[];
 }

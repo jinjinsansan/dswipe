@@ -15,6 +15,7 @@ import {
   PencilSquareIcon,
   BookOpenIcon,
   ArrowPathIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
@@ -23,6 +24,7 @@ export type DashboardNavGroupKey =
   | 'core'
   | 'lp'
   | 'note'
+  | 'salon'
   | 'points'
   | 'line'
   | 'media'
@@ -57,7 +59,7 @@ type DashboardNavGroupMeta = {
   };
 };
 
-const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'points', 'line', 'media', 'info'];
+const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
 
 const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
   core: {
@@ -106,6 +108,22 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
       base: 'bg-slate-100 text-slate-600 hover:bg-slate-200',
       active: 'bg-slate-500 text-white shadow-sm',
       badge: 'bg-white/80 text-slate-600',
+    },
+  },
+  salon: {
+    label: 'サロン',
+    headingClass: 'text-sky-500',
+    desktop: {
+      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100',
+      active: 'bg-sky-500 text-white border border-sky-500 shadow-sm',
+      icon: 'text-sky-500',
+      iconActive: 'text-white',
+      badge: 'bg-white text-sky-600 border border-sky-200',
+    },
+    mobile: {
+      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100',
+      active: 'bg-sky-500 text-white shadow-sm',
+      badge: 'bg-white/80 text-sky-600',
     },
   },
   points: {
@@ -183,6 +201,8 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
   { href: '/note', label: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
   { href: '/notes', label: 'AllNOTE', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
+  { href: '/salons', label: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
+  { href: '/salons/create', label: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
   { href: '/points/subscriptions', label: 'サブスク自動チャージ', icon: <ArrowPathIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 15 },
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },

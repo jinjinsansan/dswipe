@@ -100,6 +100,8 @@ export interface Product {
   id: string;
   seller_id: string;
   lp_id?: string;
+  product_type: 'points' | 'salon';
+  salon_id?: string | null;
   title: string;
   description?: string;
   price_in_points: number;
@@ -144,6 +146,7 @@ export interface NoteSummary {
 
 export interface NoteDetail extends NoteSummary {
   content_blocks: NoteBlock[];
+  salon_access_ids: string[];
 }
 
 export interface NoteListResult {
@@ -222,6 +225,7 @@ export interface PublicNoteDetail {
   official_share_x_username?: string | null;
   official_share_x_user_id?: string | null;
   official_share_set_at?: string | null;
+  salon_access_ids: string[];
 }
 
 export interface NotePurchaseResult {
@@ -239,6 +243,7 @@ export interface NoteCreateRequest {
   is_paid: boolean;
   price_points?: number | null;
   categories: string[];
+  salon_ids: string[];
 }
 
 export interface NoteUpdateRequest {
@@ -249,6 +254,7 @@ export interface NoteUpdateRequest {
   is_paid?: boolean;
   price_points?: number | null;
   categories?: string[];
+  salon_ids?: string[];
 }
 
 export interface OfficialShareConfig {
@@ -259,6 +265,49 @@ export interface OfficialShareConfig {
   author_x_user_id?: string | null;
   author_x_username?: string | null;
   configured_at?: string | null;
+}
+
+export interface Salon {
+  id: string;
+  owner_id: string;
+  title: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  subscription_plan_id: string;
+  subscription_external_id?: string | null;
+  is_active: boolean;
+  member_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonListResult {
+  data: Salon[];
+}
+
+export interface SalonMember {
+  id: string;
+  salon_id: string;
+  user_id: string;
+  status: string;
+  recurrent_payment_id?: string | null;
+  subscription_session_external_id?: string | null;
+  last_event_type?: string | null;
+  joined_at: string;
+  last_charged_at?: string | null;
+  next_charge_at?: string | null;
+  canceled_at?: string | null;
+}
+
+export interface SalonMemberListResult {
+  data: SalonMember[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface NoteSalonAccessResponse {
+  salon_ids: string[];
 }
 
 // ポイント残高型

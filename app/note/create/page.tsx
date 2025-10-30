@@ -1,14 +1,14 @@
 'use client';
 
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
-import { mediaApi, noteApi } from '@/lib/api';
+import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { NoteBlock } from '@/types';
+import type { NoteBlock, Salon, SalonListResult } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -32,6 +32,22 @@ export default function NoteCreatePage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [isCoverMediaOpen, setIsCoverMediaOpen] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
+  const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadSalons = async () => {
+      try {
+        const response = await salonApi.list();
+        const data = response.data as SalonListResult;
+        setSalonOptions(data?.data ?? []);
+      } catch (error) {
+        console.warn('Failed to load salon list', error);
+      }
+    };
+
+    loadSalons();
+  }, []);
   const coverFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCoverMediaSelect = (url: string) => {
@@ -104,6 +120,14 @@ export default function NoteCreatePage() {
     setPricePoints(value);
   };
 
+  const toggleSalonAccess = (salonId: string) => {
+    setSelectedSalonIds((prev) =>
+      prev.includes(salonId)
+        ? prev.filter((id) => id !== salonId)
+        : [...prev, salonId]
+    );
+  };
+
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
       return 'タイトルを3文字以上で入力してください';
@@ -158,6 +182,7 @@ export default function NoteCreatePage() {
         is_paid: effectivePaid,
         price_points: effectivePaid ? Number(pricePoints) || 0 : 0,
         categories,
+        salon_ids: selectedSalonIds,
       };
 
       const response = await noteApi.create(payload);
@@ -350,6 +375,44 @@ export default function NoteCreatePage() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">サロン会員は無料閲覧</p>
+                  <p className="text-xs text-slate-500">選択したオンラインサロンの会員はポイント消費なしで記事を閲覧できます。</p>
+                </div>
+              </div>
+              {salonOptions.length === 0 ? (
+                <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                  まだオンラインサロンが登録されていません。サロンメニューから新規作成すると会員向けに無料公開できます。
+                </div>
+              ) : (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {salonOptions.map((salon) => {
+                    const isActive = selectedSalonIds.includes(salon.id);
+                    return (
+                      <button
+                        key={salon.id}
+                        type="button"
+                        onClick={() => toggleSalonAccess(salon.id)}
+                        disabled={saving}
+                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          isActive
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      >
+                        {salon.title ?? '無題のサロン'}
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
+                          {salon.member_count?.toLocaleString() ?? 0}名
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 
 import type { LandingPage, Product } from "@/types";
+import type { ProductCreatePayload } from "@/types/api";
 
 interface ProductFormState {
   title: string;
@@ -236,10 +237,11 @@ export default function ProductManagementPage() {
 
     setSaving(true);
     try {
-      const payload: Record<string, unknown> = {
+      const payload: ProductCreatePayload = {
         title: form.title.trim(),
         price_in_points: Number(form.price),
         is_available: form.isAvailable,
+        product_type: editingProduct?.product_type ?? "points",
       };
 
       const description = form.description.trim();
