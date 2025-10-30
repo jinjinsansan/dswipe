@@ -12,26 +12,26 @@ export default function HandwrittenContactBlock({
 }: HandwrittenContactBlockProps) {
   return (
     <section
-      className="py-20 px-6"
-      style={{ backgroundColor: '#F8F9FA' }}
+      className="py-12 md:py-20 px-4 md:px-6"
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-3xl">
-        <div className="border-4 border-black rounded-2xl bg-white p-8">
+        <div className="border-3 md:border-4 border-black rounded-xl md:rounded-2xl bg-white p-6 md:p-8">
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b-3 border-black">
+          <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8 pb-3 md:pb-4 border-b-2 md:border-b-3 border-black">
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
             </div>
-            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 bg-white">
-              <span className="text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
+            <div className="flex-1 border-2 border-black rounded-full px-2 md:px-4 py-1 bg-white">
+              <span className="text-[10px] md:text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
             </div>
           </div>
 
           <div className="text-center">
             <h2
-              className="text-4xl md:text-5xl font-black mb-6 text-black"
+              className="text-2xl md:text-4xl lg:text-5xl font-black mb-4 md:mb-6 text-black"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.title}
@@ -39,7 +39,7 @@ export default function HandwrittenContactBlock({
 
             {content.subtitle && (
               <p
-                className="text-xl mb-8 text-gray-700"
+                className="text-base md:text-xl mb-6 md:mb-8 text-gray-700"
                 style={{ fontFamily: "'Indie Flower', cursive" }}
               >
                 {content.subtitle}
@@ -48,7 +48,7 @@ export default function HandwrittenContactBlock({
 
             {content.description && (
               <p
-                className="mb-10 text-base text-gray-700"
+                className="mb-6 md:mb-10 text-sm md:text-base text-gray-700"
                 style={{ fontFamily: "'Indie Flower', cursive" }}
               >
                 {content.description}
@@ -59,7 +59,7 @@ export default function HandwrittenContactBlock({
               href={content.buttonUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-10 py-5 text-lg font-bold border-4 border-black bg-white"
+              className="inline-block px-6 md:px-10 py-3 md:py-5 text-base md:text-lg font-bold border-3 md:border-4 border-black bg-white"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.buttonText}
@@ -67,7 +67,7 @@ export default function HandwrittenContactBlock({
 
             {/* 吹き出しアイコン */}
             <div className="mt-12">
-              <svg width="80" height="60" viewBox="0 0 80 60" className="mx-auto">
+              <svg width="60" height="45" viewBox="0 0 80 60" className="mx-auto md:w-20 md:h-[60px]">
                 <defs>
                   <pattern id="contact-hash" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                     <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5" opacity="0.1"/>

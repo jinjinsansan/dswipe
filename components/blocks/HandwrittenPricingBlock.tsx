@@ -33,37 +33,37 @@ export default function HandwrittenPricingBlock({
 
   return (
     <section
-      className="py-20 px-6"
-      style={{ backgroundColor: '#F8F9FA' }}
+      className="py-12 md:py-20 px-4 md:px-6"
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-6xl">
-        <div className="border-4 border-black rounded-2xl bg-white p-8">
+        <div className="border-3 md:border-4 border-black rounded-xl md:rounded-2xl bg-white p-4 md:p-8">
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b-3 border-black">
+          <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8 pb-3 md:pb-4 border-b-2 md:border-b-3 border-black">
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
             </div>
-            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 bg-white">
-              <span className="text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
+            <div className="flex-1 border-2 border-black rounded-full px-2 md:px-4 py-1 bg-white">
+              <span className="text-[10px] md:text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
             </div>
           </div>
 
           {content.title && (
             <h2
-              className="text-center text-4xl md:text-5xl font-black mb-12 text-black"
+              className="text-center text-2xl md:text-4xl lg:text-5xl font-black mb-8 md:mb-12 text-black"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.title}
             </h2>
           )}
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {content.plans.map((plan, index) => (
               <div
                 key={index}
-                className={`border-3 border-black bg-white p-6 relative ${plan.highlighted ? 'border-4' : ''}`}
+                className={`border-2 md:border-3 border-black bg-white p-4 md:p-6 relative ${plan.highlighted ? 'md:border-4' : ''}`}
               >
                 {plan.highlighted && (
                   <div
@@ -75,7 +75,7 @@ export default function HandwrittenPricingBlock({
                 )}
 
                 <h3
-                  className="text-2xl font-bold mb-4 text-black"
+                  className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-black"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                 >
                   {plan.name}
@@ -83,7 +83,7 @@ export default function HandwrittenPricingBlock({
 
                 <div className="mb-6">
                   <p
-                    className="text-4xl font-black text-black"
+                    className="text-3xl md:text-4xl font-black text-black"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {plan.price}

@@ -20,27 +20,27 @@ export default function HandwrittenFAQBlock({
 
   return (
     <section
-      className="py-20 px-6"
-      style={{ backgroundColor: '#F8F9FA' }}
+      className="py-12 md:py-20 px-4 md:px-6"
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-4xl">
         {/* ワイヤーフレーム風ブラウザボックス */}
-        <div className="border-4 border-black rounded-2xl bg-white p-8">
+        <div className="border-3 md:border-4 border-black rounded-xl md:rounded-2xl bg-white p-4 md:p-8">
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b-3 border-black">
+          <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8 pb-3 md:pb-4 border-b-2 md:border-b-3 border-black">
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
             </div>
-            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 bg-white">
-              <span className="text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
+            <div className="flex-1 border-2 border-black rounded-full px-2 md:px-4 py-1 bg-white">
+              <span className="text-[10px] md:text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
             </div>
           </div>
 
           {content.title && (
             <h2
-              className="text-center text-4xl md:text-5xl font-black mb-4 text-black"
+              className="text-center text-2xl md:text-4xl lg:text-5xl font-black mb-3 md:mb-4 text-black"
               style={{
                 fontFamily: "'Architects Daughter', cursive",
               }}
@@ -51,7 +51,7 @@ export default function HandwrittenFAQBlock({
 
           {content.subtitle && (
             <p
-              className="text-center text-xl mb-12 text-gray-700"
+              className="text-center text-base md:text-xl mb-8 md:mb-12 text-gray-700"
               style={{
                 fontFamily: "'Indie Flower', cursive",
               }}
@@ -66,15 +66,15 @@ export default function HandwrittenFAQBlock({
               return (
                 <div
                   key={index}
-                  className="border-3 border-black bg-white"
+                  className="border-2 md:border-3 border-black bg-white"
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full text-left p-5 flex items-start gap-4"
+                    className="w-full text-left p-3 md:p-5 flex items-start gap-3 md:gap-4"
                   >
                     <div className="flex-shrink-0 mt-1">
                       {/* ハッチング付きの開閉ボタン */}
-                      <div className="w-7 h-7 border-2 border-black flex items-center justify-center font-bold text-lg relative bg-white">
+                      <div className="w-6 h-6 md:w-7 md:h-7 border-2 border-black flex items-center justify-center font-bold text-base md:text-lg relative bg-white">
                         <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
                           <defs>
                             <pattern id={`btn-hash-${index}`} x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
@@ -88,7 +88,7 @@ export default function HandwrittenFAQBlock({
                     </div>
                     <div className="flex-1">
                       <h3
-                        className="text-lg font-bold pr-4 text-black"
+                        className="text-base md:text-lg font-bold pr-2 md:pr-4 text-black"
                         style={{
                           fontFamily: "'Architects Daughter', cursive",
                         }}
@@ -98,7 +98,7 @@ export default function HandwrittenFAQBlock({
                       {isOpen && (
                         <div className="mt-4">
                           <p
-                            className="text-base leading-relaxed text-gray-700"
+                            className="text-sm md:text-base leading-relaxed text-gray-700"
                             style={{
                               fontFamily: "'Indie Flower', cursive",
                             }}

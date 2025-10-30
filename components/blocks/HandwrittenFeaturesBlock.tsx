@@ -14,27 +14,27 @@ export default function HandwrittenFeaturesBlock({
 }: HandwrittenFeaturesBlockProps) {
   return (
     <section
-      className="py-20 px-6"
-      style={{ backgroundColor: '#F8F9FA' }}
+      className="py-12 md:py-20 px-4 md:px-6"
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-6xl">
         {/* ワイヤーフレーム風ブラウザボックス */}
-        <div className="border-4 border-black rounded-2xl bg-white p-8">
+        <div className="border-3 md:border-4 border-black rounded-xl md:rounded-2xl bg-white p-4 md:p-8">
           {/* ブラウザトップバー */}
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b-3 border-black">
+          <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8 pb-3 md:pb-4 border-b-2 md:border-b-3 border-black">
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
-              <div className="w-3 h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full border-2 border-black bg-white"></div>
             </div>
-            <div className="flex-1 border-2 border-black rounded-full px-4 py-1 bg-white">
-              <span className="text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
+            <div className="flex-1 border-2 border-black rounded-full px-2 md:px-4 py-1 bg-white">
+              <span className="text-[10px] md:text-xs text-gray-400" style={{ fontFamily: "'Indie Flower', cursive" }}>https://your-url.com</span>
             </div>
           </div>
 
           {content.title && (
             <h2
-              className="text-center text-4xl md:text-5xl font-black mb-12 text-black"
+              className="text-center text-2xl md:text-4xl lg:text-5xl font-black mb-8 md:mb-12 text-black"
               style={{
                 fontFamily: "'Architects Daughter', cursive",
               }}
@@ -47,11 +47,11 @@ export default function HandwrittenFeaturesBlock({
             {content.features.map((feature, index) => (
               <div
                 key={index}
-                className="border-3 border-black bg-white p-6 relative"
+                className="border-2 md:border-3 border-black bg-white p-4 md:p-6 relative"
               >
                 {/* モノクロ手書き風アイコン */}
                 <div className="mb-4">
-                  <svg width="60" height="60" viewBox="0 0 60 60">
+                  <svg width="50" height="50" viewBox="0 0 60 60" className="md:w-[60px] md:h-[60px]">
                     <defs>
                       <pattern id={`icon-hash-${index}`} x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
                         <path d="M0,4 L4,0" stroke="#000" strokeWidth="0.5" opacity="0.15"/>
@@ -86,7 +86,7 @@ export default function HandwrittenFeaturesBlock({
                 </div>
 
                 <h3
-                  className="text-xl font-bold mb-3 text-black"
+                  className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-black"
                   style={{
                     fontFamily: "'Architects Daughter', cursive",
                   }}
@@ -95,7 +95,7 @@ export default function HandwrittenFeaturesBlock({
                 </h3>
 
                 <p
-                  className="text-base leading-relaxed text-gray-700"
+                  className="text-sm md:text-base leading-relaxed text-gray-700"
                   style={{
                     fontFamily: "'Indie Flower', cursive",
                   }}
