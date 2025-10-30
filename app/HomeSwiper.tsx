@@ -557,7 +557,162 @@ export default function HomeSwiper() {
           </div>
         </SwiperSlide>
 
-        {/* スライド9: 最終CTA */}
+        {/* スライド9: ビデオ背景映像 */}
+        <SwiperSlide>
+          <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
+            {/* 走る男のビデオ背景 */}
+            <div className="absolute inset-0">
+              <AutoPlayVideo
+                className="absolute inset-0 w-full h-full object-cover"
+                src="/videos/hero-running-man.mp4"
+              />
+            </div>
+            
+            {/* 白グラデーションオーバーレイ */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-blue-50/85 to-slate-100/90" />
+            
+            <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="space-y-8"
+              >
+                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
+                  <span className="text-slate-900">ビデオ背景映像ページも</span>
+                  <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700">
+                    ご用意しております
+                  </span>
+                </h2>
+
+                <p className="text-3xl sm:text-4xl md:text-5xl text-slate-800 font-bold leading-relaxed">
+                  スワイプ型LPで
+                  <br />
+                  <span className="text-blue-600">動くビデオ背景</span>
+                </p>
+
+                <div className="inline-block bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-2xl border-2 border-blue-200">
+                  <p className="text-xl sm:text-2xl text-slate-700 font-semibold">
+                    このページも走る男のビデオ背景で作成
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </SwiperSlide>
+
+        {/* スライド10: 手書き風テンプレート */}
+        <SwiperSlide>
+          <div className="relative h-full w-full flex items-center justify-center bg-white overflow-hidden px-6 py-12">
+            <div className="w-full max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-center mb-12"
+              >
+                <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 mb-8">
+                  手書き風も完備
+                </h2>
+                <p className="text-2xl sm:text-3xl text-slate-700 font-bold">
+                  手書き風のテンプレートもご用意
+                </p>
+              </motion.div>
+
+              {/* 手書き風テンプレートのプレビュー */}
+              <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white rounded-2xl p-6 shadow-xl border-4 border-black"
+                  style={{ fontFamily: "'Architects Daughter', cursive" }}
+                >
+                  {/* ブラウザフレーム風 */}
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-black">
+                    <div className="flex gap-1">
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                    </div>
+                    <div className="flex-1 border-2 border-black rounded-full px-3 py-1 text-xs">
+                      手書き風LP
+                    </div>
+                  </div>
+                  
+                  <div className="text-center py-8">
+                    <h3 className="text-3xl font-black mb-4 text-slate-900">
+                      手書き風ヒーロー
+                    </h3>
+                    <p className="text-lg text-slate-700 mb-6">
+                      親しみやすいデザインで<br />
+                      読者の心をつかむ
+                    </p>
+                    <div className="inline-block px-6 py-3 border-3 border-black bg-white font-bold text-lg">
+                      今すぐチェック
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white rounded-2xl p-6 shadow-xl border-4 border-black"
+                  style={{ fontFamily: "'Indie Flower', cursive" }}
+                >
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-black">
+                    <div className="flex gap-1">
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                      <div className="w-3 h-3 rounded-full border-2 border-black"></div>
+                    </div>
+                    <div className="flex-1 border-2 border-black rounded-full px-3 py-1 text-xs">
+                      手書き風LP
+                    </div>
+                  </div>
+                  
+                  <div className="py-6 space-y-4">
+                    <div className="border-2 border-black rounded-lg p-4 bg-white">
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg width="30" height="30" viewBox="0 0 60 60" className="flex-shrink-0">
+                          <path d="M30,10 L35,25 L50,25 L38,35 L43,50 L30,40 L17,50 L22,35 L10,25 L25,25 Z" stroke="#000" strokeWidth="2" fill="none" />
+                        </svg>
+                        <h4 className="text-xl font-bold">特徴1</h4>
+                      </div>
+                      <p className="text-sm text-slate-700">手書き風の温かみあるデザイン</p>
+                    </div>
+                    
+                    <div className="border-2 border-black rounded-lg p-4 bg-white">
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg width="30" height="30" viewBox="0 0 60 60" className="flex-shrink-0">
+                          <circle cx="30" cy="30" r="20" stroke="#000" strokeWidth="2" fill="none" />
+                        </svg>
+                        <h4 className="text-xl font-bold">特徴2</h4>
+                      </div>
+                      <p className="text-sm text-slate-700">親しみやすく読みやすい</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-center mt-12"
+              >
+                <div className="inline-block bg-gradient-to-r from-slate-800 to-slate-900 text-white px-8 py-4 rounded-2xl shadow-xl">
+                  <p className="text-xl font-bold">
+                    全10種類の手書き風テンプレートを完備
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </SwiperSlide>
+
+        {/* スライド11: 最終CTA */}
         <SwiperSlide>
           <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto text-center">
