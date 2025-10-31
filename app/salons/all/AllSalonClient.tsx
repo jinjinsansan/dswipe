@@ -252,26 +252,20 @@ export default function AllSalonClient() {
           </form>
         </section>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <PageLoader />
+        {error ? (
+          <div className="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-4 text-sm text-rose-600">
+            {error}
           </div>
-        ) : (
-          <>
-            {error ? (
-              <div className="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-4 text-sm text-rose-600">
-                {error}
-              </div>
-            ) : null}
+        ) : null}
 
-            {salons.length === 0 && !error ? (
-              <div className="rounded-3xl border border-slate-200 bg-white px-8 py-16 text-center shadow-sm">
-                <p className="text-sm text-slate-600">条件に一致するサロンが見つかりませんでした。</p>
-              </div>
-            ) : null}
+        {salons.length === 0 && !error ? (
+          <div className="rounded-3xl border border-slate-200 bg-white px-8 py-16 text-center shadow-sm">
+            <p className="text-sm text-slate-600">条件に一致するサロンが見つかりませんでした。</p>
+          </div>
+        ) : null}
 
-            {salons.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2">
+        {salons.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2">
                 {salons.map((item) => (
                   <article key={item.id} className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                     <div className="relative h-48 w-full bg-slate-100">
@@ -339,11 +333,11 @@ export default function AllSalonClient() {
                     </div>
                   </article>
                 ))}
-              </div>
-            ) : null}
+          </div>
+        ) : null}
 
-            {hasMore ? (
-              <div className="flex items-center justify-center">
+        {hasMore && salons.length > 0 ? (
+          <div className="flex items-center justify-center">
                 <button
                   type="button"
                   onClick={handleLoadMore}
@@ -352,10 +346,8 @@ export default function AllSalonClient() {
                 >
                   {isLoadingMore ? "読み込み中..." : "もっと見る"}
                 </button>
-              </div>
-            ) : null}
-          </>
-        )}
+          </div>
+        ) : null}
       </div>
     </DashboardLayout>
   );
