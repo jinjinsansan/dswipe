@@ -77,6 +77,8 @@ function SubscriptionPageContent() {
     searchParams.get('seller_id') ?? searchParams.get('sellerId') ?? undefined;
   const planKeyParam =
     searchParams.get('plan_key') ?? searchParams.get('planKey') ?? undefined;
+  const planIdParam =
+    searchParams.get('plan_id') ?? searchParams.get('planId') ?? undefined;
   const salonIdParam = searchParams.get('salon') ?? undefined;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -97,9 +99,11 @@ function SubscriptionPageContent() {
       const planData = (plansRes.data as SubscriptionPlanListResponse).data ?? [];
       const subscriptionData = (subsRes.data as UserSubscriptionListResponse).data ?? [];
 
-      const filteredPlans = planKeyParam
-        ? planData.filter((plan) => plan.plan_key === planKeyParam)
-        : planData;
+      const filteredPlans = planData.filter((plan) => {
+        const matchesKey = planKeyParam ? plan.plan_key === planKeyParam : true;
+        const matchesId = planIdParam ? plan.subscription_plan_id === planIdParam : true;
+        return matchesKey && matchesId;
+      });
       setPlans(filteredPlans.length > 0 ? filteredPlans : planData);
       setSubscriptions(subscriptionData);
     } catch (error: any) {
@@ -109,7 +113,7 @@ function SubscriptionPageContent() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [planKeyParam, planIdParam]);
 
   useEffect(() => {
     fetchPlansAndSubscriptions();
@@ -123,6 +127,7 @@ function SubscriptionPageContent() {
         plan_key: planKey,
         seller_id: sellerId,
         seller_username: sellerUsername,
+        salon_id: salonIdParam,
       });
       const data = response.data as SubscriptionCheckoutResponse;
       if (data.checkout_url) {
@@ -190,7 +195,7 @@ function SubscriptionPageContent() {
           <p className="mt-1 text-sm text-slate-500">
             毎月自動でポイントがチャージされます。いつでも停止できます。
           </p>
-          {planKeyParam && plans.length === 1 && (
+          {plans.length === 1 && (planKeyParam || planIdParam) && (
             <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
               このサロンの指定プラン（{plans[0].label}）のみ申し込み可能です。他のプランは表示されません。
             </div>

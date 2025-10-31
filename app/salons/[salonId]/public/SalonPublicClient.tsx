@@ -57,14 +57,17 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     }
     if (typeof window !== "undefined") {
       const origin = window.location.origin;
-      const seller = salon.owner?.username ? encodeURIComponent(salon.owner.username) : "";
-      const planKey = salon.plan?.key ? encodeURIComponent(salon.plan.key) : "";
       const params = new URLSearchParams();
+      const seller = salon.owner?.username?.trim();
+      const planKey = salon.plan?.key?.trim();
+      const planId = salon.plan?.subscription_plan_id?.trim();
+
       if (seller) params.set("seller", seller);
       params.set("salon", salon.id);
       if (planKey) params.set("plan_key", planKey);
-      const url = `${origin}/points/subscriptions?${params.toString()}`;
-      window.location.href = url;
+      if (planId) params.set("plan_id", planId);
+
+      window.location.href = `${origin}/points/subscriptions?${params.toString()}`;
     }
   };
 
