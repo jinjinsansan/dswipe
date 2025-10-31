@@ -5,9 +5,9 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { productApi, publicApi } from '@/lib/api';
-import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon } from '@heroicons/react/24/outline';
-import type { PublicNoteSummary, PublicUserProfile } from '@/types';
+import { productApi, publicApi, salonPublicApi } from '@/lib/api';
+import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import type { PublicNoteSummary, PublicUserProfile, SalonPublicListItem } from '@/types';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 export default function UserProfilePage() {
@@ -19,12 +19,14 @@ export default function UserProfilePage() {
   const [products, setProducts] = useState<any[]>([]);
   const [notes, setNotes] = useState<PublicNoteSummary[]>([]);
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
+  const [salons, setSalons] = useState<SalonPublicListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalSales: 0,
     totalNotes: 0,
+    totalSalons: 0,
   });
 
   const getThumbnailUrl = (product: any): string | null => {
@@ -59,7 +61,7 @@ export default function UserProfilePage() {
       setIsLoading(true);
       setError('');
 
-      const [productsResponse, profileResponse, notesResponse] = await Promise.all([
+      const [productsResponse, profileResponse, notesResponse, salonsResponse] = await Promise.all([
         productApi.getPublic({
           seller_username: username,
           sort: 'latest',
@@ -67,17 +69,21 @@ export default function UserProfilePage() {
         }),
         publicApi.getUserProfile(username),
         publicApi.listNotes({ limit: 100, author_username: username }),
+        salonPublicApi.list({ limit: 50, seller_username: username }),
       ]);
 
       const userProducts = productsResponse.data?.data || [];
       const userNotes = (notesResponse.data?.data || []).filter((note: PublicNoteSummary) => note.author_username === username);
+      const userSalons = Array.isArray(salonsResponse.data?.data) ? (salonsResponse.data.data as SalonPublicListItem[]) : [];
 
       setProducts(userProducts);
       setNotes(userNotes);
+      setSalons(userSalons);
       setStats({
         totalProducts: userProducts.length,
         totalSales: userProducts.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0),
         totalNotes: userNotes.length,
+        totalSalons: userSalons.length,
       });
 
       setProfile(profileResponse.data as PublicUserProfile);
@@ -92,7 +98,8 @@ export default function UserProfilePage() {
       setProfile(null);
       setProducts([]);
       setNotes([]);
-      setStats({ totalProducts: 0, totalSales: 0, totalNotes: 0 });
+      setSalons([]);
+      setStats({ totalProducts: 0, totalSales: 0, totalNotes: 0, totalSalons: 0 });
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +127,11 @@ export default function UserProfilePage() {
   }
 
   return (
-    <DashboardLayout pageTitle={`${username}のプロフィール`} pageSubtitle={`${stats.totalProducts}商品 • ${stats.totalSales}販売 • ${stats.totalNotes}NOTE`} requireAuth={false}>
+    <DashboardLayout
+      pageTitle={`${username}のプロフィール`}
+      pageSubtitle={`${stats.totalProducts}商品 • ${stats.totalSales}販売 • ${stats.totalNotes}NOTE • ${stats.totalSalons}サロン`}
+      requireAuth={false}
+    >
       {/* Profile Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -160,6 +171,10 @@ export default function UserProfilePage() {
                 <div className="text-slate-600">
                   <span className="font-semibold text-amber-600">{stats.totalNotes}</span>
                   <span className="text-slate-500 ml-1">公開NOTE</span>
+                </div>
+                <div className="text-slate-600">
+                  <span className="font-semibold text-sky-600">{stats.totalSalons}</span>
+                  <span className="text-slate-500 ml-1">公開サロン</span>
                 </div>
               </div>
 
@@ -267,6 +282,70 @@ export default function UserProfilePage() {
                 </Link>
               );
             })}
+          </div>
+        )}
+      </div>
+
+      {/* Salons Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">公開中のオンラインサロン</h2>
+          {salons.length > 0 && (
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+              <UserGroupIcon className="h-4 w-4" aria-hidden="true" />
+              {salons.length} 件
+            </span>
+          )}
+        </div>
+
+        {salons.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <p className="text-slate-600 text-lg mb-3">公開サロンはまだありません</p>
+            <p className="text-slate-500 text-sm">ユーザー名: {username}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {salons.map((salon) => (
+              <Link
+                key={salon.id}
+                href={`/salons/${salon.id}/public`}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+              >
+                <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                  {salon.thumbnail_url ? (
+                    <img
+                      src={salon.thumbnail_url}
+                      alt={salon.title}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                      <UserGroupIcon className="h-8 w-8" aria-hidden="true" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 shadow">
+                    {salon.category || 'カテゴリ未設定'}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-3 px-5 py-6">
+                  <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">{salon.title}</h3>
+                  {salon.description ? (
+                    <p className="line-clamp-3 text-sm text-slate-600">{salon.description}</p>
+                  ) : (
+                    <p className="text-sm text-slate-500">サロンの説明がまだ登録されていません。</p>
+                  )}
+                  <div className="mt-auto flex items-center justify-between text-xs text-slate-500">
+                    <span className="font-semibold text-slate-700">
+                      {salon.plan_label || 'プラン情報未設定'}
+                    </span>
+                    <span>
+                      公開日: {salon.created_at ? new Date(salon.created_at).toLocaleDateString('ja-JP') : '—'}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>
