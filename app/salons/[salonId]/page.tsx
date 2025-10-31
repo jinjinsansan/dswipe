@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -61,6 +61,8 @@ export default function SalonDetailPage() {
   const [assetLoading, setAssetLoading] = useState(false);
   const [assetError, setAssetError] = useState<string | null>(null);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -173,6 +175,7 @@ export default function SalonDetailPage() {
       if (!salonId) return;
       const file = event.target.files?.[0];
       if (!file) return;
+      setSelectedFileName(file.name);
       setUploadingThumbnail(true);
       setAssetError(null);
       try {
@@ -195,6 +198,10 @@ export default function SalonDetailPage() {
         setAssetError(typeof detail === "string" ? detail : "サムネイルのアップロードに失敗しました");
       } finally {
         setUploadingThumbnail(false);
+        setSelectedFileName(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
         event.target.value = "";
       }
     },
@@ -578,12 +585,26 @@ export default function SalonDetailPage() {
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-slate-900">画像ファイルを選択</label>
                   <input
+                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleThumbnailUpload}
                     disabled={uploadingThumbnail}
-                    className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-full file:border-0 file:bg-sky-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-sky-500"
+                    className="hidden"
                   />
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingThumbnail}
+                      className="inline-flex items-center justify-center rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      デバイスから選択
+                    </button>
+                    {selectedFileName ? (
+                      <span className="truncate text-xs text-slate-500">選択中: {selectedFileName}</span>
+                    ) : null}
+                  </div>
                   <p className="text-xs text-slate-500">推奨: JPG / PNG（2MB以内）。アップロードするとアセットライブラリにも保存されます。</p>
                 </div>
                 {uploadingThumbnail ? (
