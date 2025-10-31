@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -87,6 +87,8 @@ function SubscriptionPageContent() {
   const [planLoadingKey, setPlanLoadingKey] = useState<string | null>(null);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [restrictedPlanKey, setRestrictedPlanKey] = useState<string | null>(null);
+  const [restrictedPlanId, setRestrictedPlanId] = useState<string | null>(null);
 
   const fetchPlansAndSubscriptions = useCallback(async () => {
     try {
@@ -99,12 +101,23 @@ function SubscriptionPageContent() {
       const planData = (plansRes.data as SubscriptionPlanListResponse).data ?? [];
       const subscriptionData = (subsRes.data as UserSubscriptionListResponse).data ?? [];
 
-      const filteredPlans = planData.filter((plan) => {
-        const matchesKey = planKeyParam ? plan.plan_key === planKeyParam : true;
-        const matchesId = planIdParam ? plan.subscription_plan_id === planIdParam : true;
-        return matchesKey && matchesId;
-      });
-      setPlans(filteredPlans.length > 0 ? filteredPlans : planData);
+      const matchedPlanById = planIdParam
+        ? planData.find((plan) => plan.subscription_plan_id === planIdParam)
+        : undefined;
+      const matchedPlanByKey = !matchedPlanById && planKeyParam
+        ? planData.find((plan) => plan.plan_key === planKeyParam)
+        : undefined;
+      const resolvedPlan = matchedPlanById ?? matchedPlanByKey ?? null;
+
+      if (resolvedPlan) {
+        setRestrictedPlanKey(resolvedPlan.plan_key ?? null);
+        setRestrictedPlanId(resolvedPlan.subscription_plan_id ?? null);
+      } else {
+        setRestrictedPlanKey(null);
+        setRestrictedPlanId(null);
+      }
+
+      setPlans(planData);
       setSubscriptions(subscriptionData);
     } catch (error: any) {
       console.error('Failed to load subscription data', error);
@@ -120,6 +133,13 @@ function SubscriptionPageContent() {
   }, [fetchPlansAndSubscriptions]);
 
   const handleSubscribe = async (planKey: string) => {
+    if (restrictedPlanKey || restrictedPlanId) {
+      const targetPlan = plans.find((plan) => plan.plan_key === planKey);
+      if (!targetPlan || !isPlanAllowed(targetPlan)) {
+        setErrorMessage('このサロンでは指定されたプランのみお申し込みいただけます。');
+        return;
+      }
+    }
     try {
       setErrorMessage(null);
       setPlanLoadingKey(planKey);
@@ -143,6 +163,35 @@ function SubscriptionPageContent() {
       setPlanLoadingKey(null);
     }
   };
+
+  const isPlanAllowed = useCallback(
+    (plan: SubscriptionPlan) => {
+      if (restrictedPlanId) {
+        return plan.subscription_plan_id === restrictedPlanId;
+      }
+      if (restrictedPlanKey) {
+        return plan.plan_key === restrictedPlanKey;
+      }
+      return true;
+    },
+    [restrictedPlanId, restrictedPlanKey],
+  );
+
+  const orderedPlans = useMemo(() => {
+    if (!restrictedPlanId && !restrictedPlanKey) {
+      return plans;
+    }
+    const allowed = plans.filter(isPlanAllowed);
+    const others = plans.filter((plan) => !isPlanAllowed(plan));
+    return [...allowed, ...others];
+  }, [plans, isPlanAllowed, restrictedPlanId, restrictedPlanKey]);
+
+  const primaryPlan = useMemo(() => {
+    if (!restrictedPlanId && !restrictedPlanKey) {
+      return null;
+    }
+    return plans.find(isPlanAllowed) ?? null;
+  }, [isPlanAllowed, plans, restrictedPlanId, restrictedPlanKey]);
 
   const handleCancel = async (subscriptionId: string) => {
     const confirmCancel = window.confirm('自動更新を停止します。よろしいですか？');
@@ -195,38 +244,56 @@ function SubscriptionPageContent() {
           <p className="mt-1 text-sm text-slate-500">
             毎月自動でポイントがチャージされます。いつでも停止できます。
           </p>
-          {plans.length === 1 && (planKeyParam || planIdParam) && (
+          {(restrictedPlanKey || restrictedPlanId) && primaryPlan && (
             <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
-              このサロンの指定プラン（{plans[0].label}）のみ申し込み可能です。他のプランは表示されません。
+              このサロンでは「{primaryPlan.label}」のみ申し込み可能です。他のプランは選択できません。
             </div>
           )}
 
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {plans.map((plan) => (
-              <div
-                key={plan.plan_key}
-                className="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <div>
-                  <p className="text-lg font-semibold text-slate-900">{plan.label}</p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {plan.points.toLocaleString('ja-JP')}ポイント / 月
-                  </p>
-                  <p className="mt-2 text-sm font-medium text-slate-700">{yenLabel(plan.usd_amount)}</p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    決済はONE.lat経由でUSD建てとなります。
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleSubscribe(plan.plan_key)}
-                  disabled={planLoadingKey === plan.plan_key}
-                  className="mt-6 w-full rounded-xl border border-blue-500 bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:border-blue-200 disabled:bg-blue-200"
+            {orderedPlans.map((plan) => {
+              const isAllowed = isPlanAllowed(plan);
+              const isProcessing = planLoadingKey === plan.plan_key;
+              const disabled = !isAllowed;
+
+              return (
+                <div
+                  key={plan.plan_key}
+                  className={`flex h-full flex-col justify-between rounded-2xl border p-6 shadow-sm transition ${
+                    isAllowed
+                      ? 'border-slate-200 bg-white'
+                      : 'border-slate-100 bg-slate-50 opacity-60'
+                  }`}
                 >
-                  {planLoadingKey === plan.plan_key ? 'リダイレクト中…' : 'このプランで申込む'}
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <p className="text-lg font-semibold text-slate-900">{plan.label}</p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {plan.points.toLocaleString('ja-JP')}ポイント / 月
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-slate-700">{yenLabel(plan.usd_amount)}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      決済はONE.lat経由でUSD建てとなります。
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSubscribe(plan.plan_key)}
+                    disabled={disabled || isProcessing}
+                    className={`mt-6 w-full rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed ${
+                      disabled
+                        ? 'border border-slate-200 bg-slate-100 text-slate-400'
+                        : 'border border-blue-500 bg-blue-500 text-white hover:bg-blue-600'
+                    }`}
+                  >
+                    {isProcessing
+                      ? 'リダイレクト中…'
+                      : disabled
+                        ? '選択できません'
+                        : 'このプランで申込む'}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
 
