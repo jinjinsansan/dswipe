@@ -108,8 +108,9 @@ function SubscriptionPageContent() {
       const planData = (plansRes.data as SubscriptionPlanListResponse).data ?? [];
       const subscriptionData = (subsRes.data as UserSubscriptionListResponse).data ?? [];
 
+      // plan_idパラメータはplan_keyまたはsubscription_plan_idのどちらかの可能性がある
       const matchedPlanById = planIdParam
-        ? planData.find((plan) => plan.subscription_plan_id === planIdParam)
+        ? planData.find((plan) => plan.subscription_plan_id === planIdParam || plan.plan_key === planIdParam)
         : undefined;
       const matchedPlanByKey = !matchedPlanById && planKeyParam
         ? planData.find((plan) => plan.plan_key === planKeyParam)
@@ -209,9 +210,8 @@ function SubscriptionPageContent() {
     if (!restrictedPlanId && !restrictedPlanKey && !restrictedPlanPoints) {
       return plans;
     }
-    const allowed = plans.filter(isPlanAllowed);
-    const others = plans.filter((plan) => !isPlanAllowed(plan));
-    return [...allowed, ...others];
+    // サロン専用ページでは、許可されたプランのみ表示
+    return plans.filter(isPlanAllowed);
   }, [plans, isPlanAllowed, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
 
   const primaryPlan = useMemo(() => {
@@ -290,24 +290,18 @@ function SubscriptionPageContent() {
           </p>
           {(restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) && (
             <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
-              このサロンでは「{restrictionNoticeLabel}」のみ申し込み可能です。他のプランは選択できません。
+              このサロンでは「{restrictionNoticeLabel}」のみお申し込みいただけます。
             </div>
           )}
 
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {orderedPlans.map((plan) => {
-              const isAllowed = isPlanAllowed(plan);
               const isProcessing = planLoadingKey === plan.plan_key;
-              const disabled = !isAllowed;
 
               return (
                 <div
                   key={plan.plan_key}
-                  className={`flex h-full flex-col justify-between rounded-2xl border p-6 shadow-sm transition ${
-                    isAllowed
-                      ? 'border-slate-200 bg-white'
-                      : 'border-slate-100 bg-slate-50 opacity-60'
-                  }`}
+                  className="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition"
                 >
                   <div>
                     <p className="text-lg font-semibold text-slate-900">{plan.label}</p>
@@ -322,18 +316,10 @@ function SubscriptionPageContent() {
                   <button
                     type="button"
                     onClick={() => handleSubscribe(plan.plan_key)}
-                    disabled={disabled || isProcessing}
-                    className={`mt-6 w-full rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed ${
-                      disabled
-                        ? 'border border-slate-200 bg-slate-100 text-slate-400'
-                        : 'border border-blue-500 bg-blue-500 text-white hover:bg-blue-600'
-                    }`}
+                    disabled={isProcessing}
+                    className="mt-6 w-full rounded-xl border border-blue-500 bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {isProcessing
-                      ? 'リダイレクト中…'
-                      : disabled
-                        ? '選択できません'
-                        : 'このプランで申込む'}
+                    {isProcessing ? 'リダイレクト中…' : 'このプランで申込む'}
                   </button>
                 </div>
               );
