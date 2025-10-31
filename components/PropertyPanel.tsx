@@ -33,6 +33,7 @@ interface PropertyPanelProps {
   onClose: () => void;
   onGenerateAI?: (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => void;
   linkedProduct?: { id: string; title?: string | null } | null;
+  linkedSalon?: { id: string; title?: string | null; public_path?: string | null } | null;
 }
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -46,7 +47,7 @@ function SectionHeader({ icon: Icon, label }: { icon: IconComponent; label: stri
   );
 }
 
-export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI, linkedProduct }: PropertyPanelProps) {
+export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI, linkedProduct, linkedSalon }: PropertyPanelProps) {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -243,6 +244,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const blockType = block.blockType as BlockType;
   const supportsProductLink = PRODUCT_CTA_BLOCKS.includes(blockType);
   const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
+  const isSalonLinked = Boolean(linkedSalon?.id) && supportsProductLink;
+  const isPrimaryLinkLocked = isProductLinked || isSalonLinked;
   const supportsThemeSelection = false;
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
   const textFieldCandidates = [
@@ -260,6 +263,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'testimonials',
     'plans',
   ];
+  const linkedTargetLabel = isSalonLinked
+    ? linkedSalon?.title || (linkedSalon?.id ? `サロンID: ${linkedSalon.id}` : '選択中のサロン')
+    : linkedProduct?.title || (linkedProduct?.id ? `商品ID: ${linkedProduct.id}` : '選択中の商品');
+  const linkedTargetKind = isSalonLinked ? 'オンラインサロン' : '商品';
   const hasEditableText = textFieldCandidates.some((key) => key in content);
   const currentFontKey = (content as any).fontFamily || DEFAULT_FONT_KEY;
 
@@ -281,15 +288,18 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
       {/* プロパティ */}
       <div className="p-3 lg:p-4 space-y-4 overflow-y-auto flex-1">
-        {isProductLinked && (
+        {isPrimaryLinkLocked && (
           <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-xs leading-relaxed text-blue-800">
             <p className="font-semibold text-blue-900">
-              商品と連動しています
+              {isSalonLinked ? 'オンラインサロン導線として設定されています' : '商品と連動しています'}
             </p>
             <p className="mt-1">
               公開ページではこのブロックの一次CTAを押すと、
-              「{linkedProduct?.title || `商品ID: ${linkedProduct?.id}`}」の購入モーダルが開きます。
-              プレビューではリンク先を表示していますが、公開時は商品モーダルが優先されます。
+              「{linkedTargetLabel}」の
+              {isSalonLinked ? '公開ページに遷移します。' : '購入モーダルが開きます。'}
+            </p>
+            <p className="mt-1">
+              プレビューではリンク先を表示していますが、公開時は{linkedTargetKind}への導線が優先されます。
             </p>
           </div>
         )}
@@ -537,13 +547,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).buttonUrl || ''}
               onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
-              readOnly={isProductLinked}
-              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isProductLinked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
+              readOnly={isPrimaryLinkLocked}
+              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
               placeholder="https://..."
             />
-            {isProductLinked && (
+            {isPrimaryLinkLocked && (
               <p className="mt-2 text-xs text-blue-600">
-                商品に連動しているため、公開時はこのURLではなく購入モーダルが開きます。
+                {isSalonLinked ? 'サロンに連動しているため、公開時はサロン公開ページへ遷移します。' : '商品に連動しているため、公開時はこのURLではなく購入モーダルが開きます。'}
               </p>
             )}
           </div>
@@ -1015,14 +1025,16 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.buttonUrl || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.buttonUrl`, e.target.value)}
-                    readOnly={isProductLinked}
-                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 ${isProductLinked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
+                    readOnly={isPrimaryLinkLocked}
+                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
                     placeholder="ボタンURL"
                   />
                 </div>
-                {isProductLinked && (
+                {isPrimaryLinkLocked && (
                   <p className="text-xs text-blue-600">
-                    商品連携中は公開ページでモーダルが表示され、プランごとのURL設定は無視されます。
+                    {isSalonLinked
+                      ? 'サロン連携中は公開ページでサロンページへ遷移するため、プランごとのURL設定は無視されます。'
+                      : '商品連携中は公開ページでモーダルが表示され、プランごとのURL設定は無視されます。'}
                   </p>
                 )}
                 <label className="flex items-center justify-between gap-3 bg-white border border-slate-300 rounded px-3 py-2 text-xs text-slate-700">

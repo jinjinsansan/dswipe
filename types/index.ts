@@ -44,6 +44,7 @@ export interface LandingPage {
   total_views: number;
   total_cta_clicks: number;
   product_id?: string;
+  salon_id?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_image_url?: string | null;
@@ -57,6 +58,15 @@ export interface LandingPage {
   user?: { username?: string; email?: string } | null;
   seller_username?: string | null;
   username?: string | null;
+}
+
+export interface LinkedSalonSummary {
+  id: string;
+  title: string;
+  public_path: string;
+  category?: string | null;
+  owner_username?: string | null;
+  thumbnail_url?: string | null;
 }
 
 // LPステップ型
@@ -93,6 +103,7 @@ export interface LPDetail extends LandingPage {
   steps: LPStep[];
   ctas: CTA[];
   public_url: string;
+  linked_salon?: LinkedSalonSummary | null;
 }
 
 // 商品型
@@ -273,6 +284,7 @@ export interface Salon {
   title: string;
   description?: string | null;
   thumbnail_url?: string | null;
+  category?: string | null;
   subscription_plan_id: string;
   subscription_external_id?: string | null;
   is_active: boolean;
@@ -305,6 +317,7 @@ export interface SalonPublicDetail {
   title: string;
   description?: string | null;
   thumbnail_url?: string | null;
+  category?: string | null;
   is_active: boolean;
   owner: SalonPublicOwner;
   plan: SalonPublicPlan;
@@ -313,6 +326,28 @@ export interface SalonPublicDetail {
   membership_status?: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface SalonPublicListItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  category?: string | null;
+  owner_username: string;
+  owner_display_name?: string | null;
+  owner_profile_image_url?: string | null;
+  plan_label: string;
+  plan_points: number;
+  plan_usd_amount: number;
+  created_at: string;
+}
+
+export interface SalonPublicListResult {
+  data: SalonPublicListItem[];
+  total: number;
+  limit: number;
+  offset: number;
 }
 
 export interface SalonMember {
@@ -565,6 +600,61 @@ export interface PointBalance {
   username: string;
   point_balance: number;
   last_updated: string;
+}
+
+export interface PurchaseHistorySummary {
+  product_purchases: number;
+  note_purchases: number;
+  active_salon_memberships: number;
+}
+
+export interface PurchaseHistoryProduct {
+  transaction_id: string;
+  product_id?: string | null;
+  product_title?: string | null;
+  amount_points: number;
+  purchased_at: string;
+  description?: string | null;
+  seller_username?: string | null;
+  seller_display_name?: string | null;
+  seller_profile_image_url?: string | null;
+  lp_slug?: string | null;
+}
+
+export interface PurchaseHistoryNote {
+  purchase_id: string;
+  note_id: string;
+  note_title?: string | null;
+  note_slug?: string | null;
+  cover_image_url?: string | null;
+  author_username?: string | null;
+  author_display_name?: string | null;
+  points_spent: number;
+  purchased_at: string;
+}
+
+export interface PurchaseHistorySalon {
+  membership_id: string;
+  salon_id: string;
+  salon_title?: string | null;
+  salon_category?: string | null;
+  salon_thumbnail_url?: string | null;
+  owner_username?: string | null;
+  owner_display_name?: string | null;
+  plan_label?: string | null;
+  plan_points?: number | null;
+  plan_usd_amount?: number | null;
+  joined_at: string;
+  status: string;
+  next_charge_at?: string | null;
+  last_charged_at?: string | null;
+}
+
+export interface PurchaseHistoryResponse {
+  summary: PurchaseHistorySummary;
+  products: PurchaseHistoryProduct[];
+  notes: PurchaseHistoryNote[];
+  active_salons: PurchaseHistorySalon[];
 }
 
 // トランザクション型

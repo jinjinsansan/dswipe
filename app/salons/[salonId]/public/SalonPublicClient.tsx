@@ -97,6 +97,11 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Online Salon</p>
               <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">{salon.title}</h1>
+              {salon.category ? (
+                <span className="mt-2 inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  {salon.category}
+                </span>
+              ) : null}
               <p className="mt-3 max-w-2xl text-sm text-slate-600 whitespace-pre-wrap">{salon.description || "サロンの説明が登録されていません。"}</p>
             </div>
             <div className="flex flex-col items-start gap-2 sm:items-end">

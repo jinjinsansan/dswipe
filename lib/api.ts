@@ -25,6 +25,8 @@ import type {
   Salon,
   SalonListResult,
   SalonPublicDetail,
+  SalonPublicListResult,
+  PurchaseHistoryResponse,
   SalonMemberListResult,
   NoteSalonAccessPayload,
   NoteSalonAccessResponse,
@@ -286,6 +288,22 @@ export const salonApi = {
 
 export const salonPublicApi = {
   get: (salonId: string) => api.get<SalonPublicDetail>(`/public/salons/${salonId}`),
+  list: (params?: {
+    limit?: number;
+    offset?: number;
+    category?: string;
+    price_range?: string;
+    seller_username?: string;
+    sort?: string;
+  }) => api.get<SalonPublicListResult>(`/public/salons`, { params }),
+};
+
+export const purchasesApi = {
+  getHistory: (params?: {
+    product_limit?: number;
+    note_limit?: number;
+    salon_limit?: number;
+  }) => api.get<PurchaseHistoryResponse>(`/purchases/history`, { params }),
 };
 
 export const salonFeedApi = {

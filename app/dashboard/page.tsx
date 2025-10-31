@@ -412,7 +412,9 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         const normalizedStatus = typeof lpItem.status === 'string' ? lpItem.status.toLowerCase() : '';
         const isPublished = normalizedStatus === 'published';
         const hasProductDirect = typeof lpItem.product_id === 'string' && lpItem.product_id.trim().length > 0;
-        const hasProduct = hasProductDirect || productLinkedLpIds.has(lpItem.id);
+        const hasProductViaCatalog = productLinkedLpIds.has(lpItem.id);
+        const hasSalonLink = typeof lpItem.salon_id === 'string' && lpItem.salon_id.trim().length > 0;
+        const hasPrimaryLink = hasProductDirect || hasProductViaCatalog || hasSalonLink;
         const statusLabel = normalizedStatus === 'published'
           ? '公開中'
           : normalizedStatus === 'archived'
@@ -429,7 +431,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
           heroImage: heroMedia?.type === 'image' ? heroMedia.url : lpItem.image_url || null,
           heroVideo: heroMedia?.type === 'video' ? heroMedia.url : null,
           isPublished,
-          hasProduct,
+          hasPrimaryLink,
           statusLabel,
           statusVariant,
         };
@@ -807,9 +809,9 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                         <span className={`px-1.5 py-0.5 text-[9px] sm:text-[10px] rounded-full font-semibold ${statusBadgeClass}`}>
                           {lp.statusLabel}
                         </span>
-                        {!lp.hasProduct && (
+                        {!lp.hasPrimaryLink && (
                           <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
-                            商品未登録
+                            CTA未設定
                           </span>
                         )}
                       </div>
@@ -953,7 +955,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                 公開中: {lps.filter((lp) => lp.isPublished).length}本
               </p>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
-                商品連携済み: {lps.filter((lp) => lp.hasProduct).length}本
+                CTA連携済み: {lps.filter((lp) => lp.hasPrimaryLink).length}本
               </p>
             </div>
 

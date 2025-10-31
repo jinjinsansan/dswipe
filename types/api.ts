@@ -3,6 +3,7 @@
 
 import type {
   LandingPage,
+  LinkedSalonSummary,
   SalonAnnouncementCreatePayload,
   SalonAnnouncementUpdatePayload,
   SalonAssetMetadataPayload,
@@ -17,6 +18,7 @@ export type {
   AuthResponse,
   LandingPage as LP,
   LPDetail,
+  LinkedSalonSummary,
   LPStep,
   CTA,
   PublicUserProfile,
@@ -37,8 +39,15 @@ export type {
   Salon,
   SalonListResult,
   SalonPublicDetail,
+  SalonPublicListItem,
+  SalonPublicListResult,
   SalonPublicOwner,
   SalonPublicPlan,
+  PurchaseHistoryResponse,
+  PurchaseHistorySummary,
+  PurchaseHistoryProduct,
+  PurchaseHistoryNote,
+  PurchaseHistorySalon,
   SalonMember,
   SalonMemberListResult,
   NoteSalonAccessResponse,
@@ -250,6 +259,7 @@ export interface CreateLPRequest {
   fullscreen_media?: boolean;
   floating_cta?: boolean;
   product_id?: string | null;
+  salon_id?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_image_url?: string | null;
@@ -266,6 +276,7 @@ export interface UpdateLPRequest {
   fullscreen_media?: boolean;
   floating_cta?: boolean;
   product_id?: string | null;
+  salon_id?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_image_url?: string | null;

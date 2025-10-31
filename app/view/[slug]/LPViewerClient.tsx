@@ -56,6 +56,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
     return map;
   }, [lp?.ctas]);
+  const primaryTargetId = lp?.linked_salon?.id ?? lp?.product_id;
 
   // ハプティックフィードバック（振動）
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -124,7 +125,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
       setLp(newLp);
 
-      if (response.data.id) {
+      if (response.data.linked_salon) {
+        setProducts([]);
+      } else if (response.data.id) {
         fetchProducts(response.data.id);
       }
     } catch (err: any) {
@@ -176,6 +179,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   const handleProductButtonClick = (productId?: string) => {
+    if (lp?.linked_salon?.public_path) {
+      router.push(lp.linked_salon.public_path);
+      return;
+    }
+
     const resolvedProductId = productId ?? (products[0] ? String(products[0].id) : undefined);
 
     if (!resolvedProductId) {
@@ -532,7 +540,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                         <ViewerBlockRenderer
                           blockType={step.block_type}
                           content={step.content_data}
-                          productId={lp.product_id}
+                        productId={primaryTargetId}
                           onProductClick={handleProductButtonClick}
                           ctaIds={(ctasByStep[step.id] ?? []).map((cta) => cta.id)}
                           onCtaClick={(ctaId) => recordCtaClick(step.id, ctaId)}

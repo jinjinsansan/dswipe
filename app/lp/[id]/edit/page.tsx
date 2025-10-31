@@ -86,6 +86,7 @@ export default function EditLPNewPage() {
   const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
   const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
   const [linkedProduct, setLinkedProduct] = useState<{ id: string; title?: string | null } | null>(null);
+  const [linkedSalon, setLinkedSalon] = useState<{ id: string; title?: string | null; public_path?: string | null } | null>(null);
   
   // サイドバー可変幅の状態管理
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
@@ -155,6 +156,7 @@ export default function EditLPNewPage() {
     try {
       const response = await lpApi.get(lpId);
       setLp(response.data);
+      setLinkedSalon(response.data.linked_salon ?? null);
       setLpTitle(response.data.title || '');
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
@@ -176,7 +178,11 @@ export default function EditLPNewPage() {
         setCustomThemeShades(response.data.custom_theme_shades as unknown as ColorShades);
       }
 
-      await fetchLinkedProduct(lpId);
+      if (response.data.linked_salon) {
+        setLinkedProduct(null);
+      } else {
+        await fetchLinkedProduct(lpId);
+      }
       
       // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
@@ -1248,6 +1254,7 @@ export default function EditLPNewPage() {
                 onClose={handleClosePropertyPanel}
                 onGenerateAI={handleGenerateAI}
                 linkedProduct={linkedProduct}
+                linkedSalon={linkedSalon}
               />
             ) : (
               <div className="p-6 text-center text-slate-500 font-medium text-sm">
@@ -1389,6 +1396,7 @@ export default function EditLPNewPage() {
               onClose={handleClosePropertyPanel}
               onGenerateAI={handleGenerateAI}
               linkedProduct={linkedProduct}
+              linkedSalon={linkedSalon}
             />
             ) : (
               <div className="p-6 text-center text-slate-500 text-sm font-medium">
