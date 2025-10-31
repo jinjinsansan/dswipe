@@ -30,6 +30,11 @@ export type {
   SalonMember,
   SalonMemberListResult,
   NoteSalonAccessResponse,
+  SalonPost,
+  SalonPostListResult,
+  SalonComment,
+  SalonCommentListResult,
+  SalonPostLikeResult,
 } from './index';
 
 export interface PointsBalance {
@@ -325,4 +330,26 @@ export type ProductUpdatePayload = Partial<ProductCreatePayload> & {
 
 export interface NoteSalonAccessPayload {
   salon_ids: string[];
+}
+
+export interface SalonPostCreatePayload {
+  title?: string | null;
+  body: string;
+  is_published?: boolean;
+}
+
+export interface SalonPostUpdatePayload {
+  title?: string | null;
+  body?: string | null;
+  is_published?: boolean;
+  is_pinned?: boolean;
+}
+
+export interface SalonCommentCreatePayload {
+  body: string;
+  parent_id?: string | null;
+}
+
+export interface SalonCommentUpdatePayload {
+  body: string;
 }

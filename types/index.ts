@@ -310,6 +310,54 @@ export interface NoteSalonAccessResponse {
   salon_ids: string[];
 }
 
+export interface SalonPost {
+  id: string;
+  salon_id: string;
+  user_id: string;
+  title?: string | null;
+  body: string;
+  is_pinned: boolean;
+  is_published: boolean;
+  like_count: number;
+  comment_count: number;
+  liked_by_me: boolean;
+  created_at: string;
+  updated_at: string;
+  author_username?: string | null;
+}
+
+export interface SalonPostListResult {
+  data: SalonPost[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonComment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  body: string;
+  parent_id?: string | null;
+  created_at: string;
+  updated_at: string;
+  author_username?: string | null;
+}
+
+export interface SalonCommentListResult {
+  data: SalonComment[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonPostLikeResult {
+  post_id: string;
+  user_id: string;
+  liked: boolean;
+  like_count: number;
+}
+
 // ポイント残高型
 export interface PointBalance {
   user_id: string;

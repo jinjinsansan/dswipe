@@ -288,6 +288,12 @@ export default function SalonDetailPage() {
                 >
                   会員管理ページへ
                 </Link>
+                <Link
+                  href={`/salons/${salon.id}/feed`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                >
+                  コミュニティフィード
+                </Link>
                 {user?.username ? (
                   <button
                     type="button"

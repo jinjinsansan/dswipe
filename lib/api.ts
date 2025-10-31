@@ -27,6 +27,15 @@ import type {
   SalonMemberListResult,
   NoteSalonAccessPayload,
   NoteSalonAccessResponse,
+  SalonPost,
+  SalonPostListResult,
+  SalonPostCreatePayload,
+  SalonPostUpdatePayload,
+  SalonComment,
+  SalonCommentListResult,
+  SalonCommentCreatePayload,
+  SalonCommentUpdatePayload,
+  SalonPostLikeResult,
 } from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -253,6 +262,29 @@ export const salonApi = {
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
   setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>
     api.post<NoteSalonAccessResponse>(`/salons/${salonId}/notes/${noteId}/access`, data),
+};
+
+export const salonFeedApi = {
+  listPosts: (salonId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<SalonPostListResult>(`/salons/${salonId}/posts`, { params }),
+  createPost: (salonId: string, data: SalonPostCreatePayload) =>
+    api.post<SalonPost>(`/salons/${salonId}/posts`, data),
+  getPost: (salonId: string, postId: string) =>
+    api.get<SalonPost>(`/salons/${salonId}/posts/${postId}`),
+  updatePost: (salonId: string, postId: string, data: SalonPostUpdatePayload) =>
+    api.patch<SalonPost>(`/salons/${salonId}/posts/${postId}`, data),
+  deletePost: (salonId: string, postId: string) =>
+    api.delete(`/salons/${salonId}/posts/${postId}`),
+  listComments: (salonId: string, postId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<SalonCommentListResult>(`/salons/${salonId}/posts/${postId}/comments`, { params }),
+  createComment: (salonId: string, postId: string, data: SalonCommentCreatePayload) =>
+    api.post<SalonComment>(`/salons/${salonId}/posts/${postId}/comments`, data),
+  updateComment: (salonId: string, postId: string, commentId: string, data: SalonCommentUpdatePayload) =>
+    api.patch<SalonComment>(`/salons/${salonId}/posts/${postId}/comments/${commentId}`, data),
+  deleteComment: (salonId: string, postId: string, commentId: string) =>
+    api.delete(`/salons/${salonId}/posts/${postId}/comments/${commentId}`),
+  toggleLike: (salonId: string, postId: string) =>
+    api.post<SalonPostLikeResult>(`/salons/${salonId}/posts/${postId}/like`, {}),
 };
 
 // 管理者API
