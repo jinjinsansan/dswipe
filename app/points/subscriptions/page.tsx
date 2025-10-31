@@ -75,6 +75,9 @@ function SubscriptionPageContent() {
   const sellerUsername = searchParams.get('seller') ?? undefined;
   const sellerId =
     searchParams.get('seller_id') ?? searchParams.get('sellerId') ?? undefined;
+  const planKeyParam =
+    searchParams.get('plan_key') ?? searchParams.get('planKey') ?? undefined;
+  const salonIdParam = searchParams.get('salon') ?? undefined;
 
   const [isLoading, setIsLoading] = useState(true);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -94,7 +97,10 @@ function SubscriptionPageContent() {
       const planData = (plansRes.data as SubscriptionPlanListResponse).data ?? [];
       const subscriptionData = (subsRes.data as UserSubscriptionListResponse).data ?? [];
 
-      setPlans(planData);
+      const filteredPlans = planKeyParam
+        ? planData.filter((plan) => plan.plan_key === planKeyParam)
+        : planData;
+      setPlans(filteredPlans.length > 0 ? filteredPlans : planData);
       setSubscriptions(subscriptionData);
     } catch (error: any) {
       console.error('Failed to load subscription data', error);
@@ -184,6 +190,11 @@ function SubscriptionPageContent() {
           <p className="mt-1 text-sm text-slate-500">
             毎月自動でポイントがチャージされます。いつでも停止できます。
           </p>
+          {planKeyParam && plans.length === 1 && (
+            <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
+              このサロンの指定プラン（{plans[0].label}）のみ申し込み可能です。他のプランは表示されません。
+            </div>
+          )}
 
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {plans.map((plan) => (

@@ -524,7 +524,7 @@ export default function SalonDetailPage() {
                   ) : (
                     <>
                       <ClipboardDocumentIcon className="h-4 w-4" aria-hidden="true" />
-                      公開ページリンクをコピー
+                      公開URLをコピー
                     </>
                   )}
                 </button>
