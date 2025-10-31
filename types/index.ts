@@ -285,6 +285,36 @@ export interface SalonListResult {
   data: Salon[];
 }
 
+export interface SalonPublicOwner {
+  id: string;
+  username: string;
+  display_name?: string | null;
+  profile_image_url?: string | null;
+}
+
+export interface SalonPublicPlan {
+  key: string;
+  label: string;
+  points: number;
+  usd_amount: number;
+  subscription_plan_id: string;
+}
+
+export interface SalonPublicDetail {
+  id: string;
+  title: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  is_active: boolean;
+  owner: SalonPublicOwner;
+  plan: SalonPublicPlan;
+  member_count: number;
+  is_member: boolean;
+  membership_status?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SalonMember {
   id: string;
   salon_id: string;

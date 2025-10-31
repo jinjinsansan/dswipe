@@ -24,7 +24,6 @@ import type {
   SubscriptionPlan,
   SubscriptionPlanListResponse,
 } from "@/types/api";
-import { useAuthStore } from "@/store/authStore";
 
 type FormState = {
   title: string;
@@ -43,7 +42,6 @@ const INITIAL_FORM: FormState = {
 export default function SalonDetailPage() {
   const params = useParams<{ salonId: string }>();
   const salonId = params?.salonId;
-  const { user } = useAuthStore();
 
   const [salon, setSalon] = useState<Salon | null>(null);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -251,9 +249,9 @@ export default function SalonDetailPage() {
   };
 
   const handleCopyLink = async () => {
-    if (!salon || !user?.username) return;
+    if (!salon) return;
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const link = `${origin}/points/subscriptions?seller=${encodeURIComponent(user.username)}&salon=${salon.id}`;
+    const link = `${origin}/salons/${salon.id}/public`;
     try {
       await navigator.clipboard.writeText(link);
       setCopyState("copied");
@@ -513,25 +511,30 @@ export default function SalonDetailPage() {
                 >
                   アセットライブラリ
                 </Link>
-                {user?.username ? (
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-600 hover:bg-sky-100"
-                  >
-                    {copyState === "copied" ? (
-                      <>
-                        <ClipboardDocumentCheckIcon className="h-4 w-4" aria-hidden="true" />
-                        コピーしました
-                      </>
-                    ) : (
-                      <>
-                        <ClipboardDocumentIcon className="h-4 w-4" aria-hidden="true" />
-                        サブスク導線リンクをコピー
-                      </>
-                    )}
-                  </button>
-                ) : null}
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-600 hover:bg-sky-100"
+                >
+                  {copyState === "copied" ? (
+                    <>
+                      <ClipboardDocumentCheckIcon className="h-4 w-4" aria-hidden="true" />
+                      コピーしました
+                    </>
+                  ) : (
+                    <>
+                      <ClipboardDocumentIcon className="h-4 w-4" aria-hidden="true" />
+                      公開ページリンクをコピー
+                    </>
+                  )}
+                </button>
+                <Link
+                  href={`/salons/${salon.id}/public`}
+                  target="_blank"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                >
+                  公開ページを開く
+                </Link>
               </div>
             </div>
           </aside>

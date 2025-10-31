@@ -24,6 +24,7 @@ import type {
   SubscriptionCheckoutPayload,
   Salon,
   SalonListResult,
+  SalonPublicDetail,
   SalonMemberListResult,
   NoteSalonAccessPayload,
   NoteSalonAccessResponse,
@@ -281,6 +282,10 @@ export const salonApi = {
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
   setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>
     api.post<NoteSalonAccessResponse>(`/salons/${salonId}/notes/${noteId}/access`, data),
+};
+
+export const salonPublicApi = {
+  get: (salonId: string) => api.get<SalonPublicDetail>(`/public/salons/${salonId}`),
 };
 
 export const salonFeedApi = {
