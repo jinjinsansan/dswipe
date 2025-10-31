@@ -125,7 +125,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
       setLp(newLp);
 
+      console.log('🔍 LP loaded:', {
+        lpId: response.data.id,
+        salonId: response.data.salon_id,
+        linked_salon: response.data.linked_salon,
+        product_id: response.data.product_id
+      });
+
       if (response.data.linked_salon) {
+        console.log('✅ LP is linked to salon:', response.data.linked_salon);
         setProducts([]);
       } else if (response.data.id) {
         fetchProducts(response.data.id);
@@ -179,7 +187,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   const handleProductButtonClick = (productId?: string) => {
+    console.log('🔘 CTA clicked:', {
+      hasLinkedSalon: !!lp?.linked_salon,
+      salonPath: lp?.linked_salon?.public_path,
+      productId,
+      lpData: lp
+    });
+
     if (lp?.linked_salon?.public_path) {
+      console.log('➡️  Redirecting to salon:', lp.linked_salon.public_path);
       router.push(lp.linked_salon.public_path);
       return;
     }
