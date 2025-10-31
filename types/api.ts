@@ -303,7 +303,7 @@ export interface SubscriptionPlan {
   label: string;
   points: number;
   usd_amount: number;
-  subscription_plan_id?: string;
+  subscription_plan_id: string;
 }
 
 export interface SubscriptionPlanListResponse {
