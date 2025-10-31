@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,13 +11,16 @@ import {
   ClockIcon,
   ExclamationCircleIcon,
   UsersIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
-import { salonAnnouncementApi, salonApi, subscriptionApi } from "@/lib/api";
+import { salonAnnouncementApi, salonApi, salonAssetApi, subscriptionApi } from "@/lib/api";
 import type {
   Salon,
   SalonAnnouncement,
+  SalonAsset,
+  SalonAssetListResult,
   SubscriptionPlan,
   SubscriptionPlanListResponse,
 } from "@/types/api";
@@ -52,6 +55,12 @@ export default function SalonDetailPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState<SalonAnnouncement[]>([]);
   const [announcementError, setAnnouncementError] = useState<string | null>(null);
+  const [thumbnailPickerOpen, setThumbnailPickerOpen] = useState(false);
+  const [thumbnailTab, setThumbnailTab] = useState<"upload" | "library">("upload");
+  const [assetItems, setAssetItems] = useState<SalonAsset[]>([]);
+  const [assetLoading, setAssetLoading] = useState(false);
+  const [assetError, setAssetError] = useState<string | null>(null);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -120,6 +129,83 @@ export default function SalonDetailPage() {
     };
     loadAnnouncements();
   }, [salonId]);
+
+  const openThumbnailPicker = useCallback(() => {
+    setAssetError(null);
+    setThumbnailTab("upload");
+    setThumbnailPickerOpen(true);
+  }, []);
+
+  const closeThumbnailPicker = useCallback(() => {
+    setThumbnailPickerOpen(false);
+    setAssetError(null);
+  }, []);
+
+  const loadThumbnailAssets = useCallback(async () => {
+    if (!salonId) return;
+    setAssetLoading(true);
+    setAssetError(null);
+    try {
+      const response = await salonAssetApi.listAssets(salonId, {
+        limit: 60,
+        offset: 0,
+        asset_type: "IMAGE",
+      });
+      const payload = response.data as SalonAssetListResult;
+      setAssetItems(payload.data ?? []);
+    } catch (loadError: any) {
+      console.error("Failed to load salon assets", loadError);
+      const detail = loadError?.response?.data?.detail;
+      setAssetError(typeof detail === "string" ? detail : "画像ライブラリの取得に失敗しました");
+    } finally {
+      setAssetLoading(false);
+    }
+  }, [salonId]);
+
+  useEffect(() => {
+    if (thumbnailPickerOpen && thumbnailTab === "library") {
+      loadThumbnailAssets();
+    }
+  }, [thumbnailPickerOpen, thumbnailTab, loadThumbnailAssets]);
+
+  const handleThumbnailUpload = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      if (!salonId) return;
+      const file = event.target.files?.[0];
+      if (!file) return;
+      setUploadingThumbnail(true);
+      setAssetError(null);
+      try {
+        const response = await salonAssetApi.uploadAsset(salonId, {
+          file,
+          asset_type: "IMAGE",
+          visibility: "MEMBERS",
+          title: file.name,
+        });
+        const uploaded = response.data as SalonAsset;
+        if (uploaded?.file_url) {
+          setForm((prev) => ({ ...prev, thumbnail_url: uploaded.file_url }));
+        }
+        setAssetItems((prev) => [uploaded, ...prev]);
+        setThumbnailPickerOpen(false);
+        setThumbnailTab("upload");
+      } catch (uploadError: any) {
+        console.error("Failed to upload thumbnail", uploadError);
+        const detail = uploadError?.response?.data?.detail;
+        setAssetError(typeof detail === "string" ? detail : "サムネイルのアップロードに失敗しました");
+      } finally {
+        setUploadingThumbnail(false);
+        event.target.value = "";
+      }
+    },
+    [salonId],
+  );
+
+  const handleSelectAsset = useCallback((asset: SalonAsset) => {
+    if (!asset?.file_url) return;
+    setForm((prev) => ({ ...prev, thumbnail_url: asset.file_url }));
+    setThumbnailPickerOpen(false);
+  }, []);
 
   const handleChange = useCallback(<K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -293,17 +379,38 @@ export default function SalonDetailPage() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                  サムネイルURL
+                  サムネイル
                 </label>
-                <input
-                  type="url"
-                  value={form.thumbnail_url}
-                  onChange={(event) => handleChange("thumbnail_url", event.target.value)}
-                  placeholder="https://example.com/thumbnail.jpg"
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
-                />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="url"
+                    value={form.thumbnail_url}
+                    onChange={(event) => handleChange("thumbnail_url", event.target.value)}
+                    placeholder="https://example.com/thumbnail.jpg"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={openThumbnailPicker}
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    画像を選択
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500">URL を直接入力するか、画像を選択してください。推奨サイズ 1200×630px。</p>
+                <div className="overflow-hidden rounded-2xl border border-dashed border-slate-200 bg-slate-50">
+                  {form.thumbnail_url ? (
+                    <img
+                      src={form.thumbnail_url}
+                      alt="サロンのサムネイル"
+                      className="h-48 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-48 items-center justify-center text-xs text-slate-400">サムネイル未設定</div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
@@ -423,6 +530,109 @@ export default function SalonDetailPage() {
           </aside>
         </section>
       </div>
+
+      {thumbnailPickerOpen ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 px-4 py-8">
+          <div className="relative w-full max-w-3xl rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,23,42,0.15)]">
+            <button
+              type="button"
+              onClick={closeThumbnailPicker}
+              className="absolute right-4 top-4 rounded-full border border-slate-200 bg-white p-1.5 text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+              aria-label="サムネイル選択を閉じる"
+            >
+              <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+            </button>
+
+            <h2 className="text-lg font-semibold text-slate-900">サムネイル画像を選択</h2>
+            <p className="mt-1 text-xs text-slate-500">画像をアップロードするか、ライブラリから選択してください。</p>
+
+            <div className="mt-4 flex gap-2 rounded-full bg-slate-100 p-1 text-sm font-medium">
+              <button
+                type="button"
+                onClick={() => {
+                  setThumbnailTab("upload");
+                  setAssetError(null);
+                }}
+                className={`flex-1 rounded-full px-4 py-2 transition ${thumbnailTab === "upload" ? "bg-white text-slate-900 shadow" : "text-slate-500 hover:text-slate-700"}`}
+              >
+                アップロード
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setThumbnailTab("library");
+                  setAssetError(null);
+                }}
+                className={`flex-1 rounded-full px-4 py-2 transition ${thumbnailTab === "library" ? "bg-white text-slate-900 shadow" : "text-slate-500 hover:text-slate-700"}`}
+              >
+                ライブラリ
+              </button>
+            </div>
+
+            {assetError ? (
+              <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-600">{assetError}</div>
+            ) : null}
+
+            {thumbnailTab === "upload" ? (
+              <div className="mt-6 space-y-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-slate-900">画像ファイルを選択</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailUpload}
+                    disabled={uploadingThumbnail}
+                    className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-full file:border-0 file:bg-sky-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-sky-500"
+                  />
+                  <p className="text-xs text-slate-500">推奨: JPG / PNG（2MB以内）。アップロードするとアセットライブラリにも保存されます。</p>
+                </div>
+                {uploadingThumbnail ? (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs text-slate-500">
+                    アップロード中です…
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="mt-6">
+                {assetLoading ? (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                    画像を読み込み中です…
+                  </div>
+                ) : assetItems.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                    選択できる画像がありません。アップロードしてみましょう。
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {assetItems.map((asset) => (
+                      <button
+                        type="button"
+                        key={asset.id}
+                        onClick={() => handleSelectAsset(asset)}
+                        className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition hover:border-sky-200 hover:shadow-md"
+                      >
+                        {asset.thumbnail_url || asset.file_url ? (
+                          <img
+                            src={asset.thumbnail_url ?? asset.file_url ?? ""}
+                            alt={asset.title ?? "サロン画像"}
+                            className="h-32 w-full object-cover transition group-hover:scale-[1.02]"
+                          />
+                        ) : (
+                          <div className="flex h-32 items-center justify-center bg-slate-100 text-xs text-slate-400">プレビューなし</div>
+                        )}
+                        <div className="px-3 py-2 text-xs text-slate-600">
+                          <p className="line-clamp-2 font-medium text-slate-900">{asset.title ?? "名称未設定"}</p>
+                          <p className="mt-1 text-[11px] text-slate-400">{asset.visibility ?? "MEMBERS"}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
     </DashboardLayout>
   );
 }
