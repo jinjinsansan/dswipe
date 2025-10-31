@@ -61,11 +61,15 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
       const seller = salon.owner?.username?.trim();
       const planKey = salon.plan?.key?.trim();
       const planId = salon.plan?.subscription_plan_id?.trim();
+      const planPoints = Number.isFinite(salon.plan?.points) ? salon.plan?.points : undefined;
 
       if (seller) params.set("seller", seller);
       params.set("salon", salon.id);
       if (planKey) params.set("plan_key", planKey);
       if (planId) params.set("plan_id", planId);
+      if (typeof planPoints === "number" && planPoints > 0) {
+        params.set("plan_points", String(planPoints));
+      }
 
       window.location.href = `${origin}/points/subscriptions?${params.toString()}`;
     }

@@ -79,6 +79,12 @@ function SubscriptionPageContent() {
     searchParams.get('plan_key') ?? searchParams.get('planKey') ?? undefined;
   const planIdParam =
     searchParams.get('plan_id') ?? searchParams.get('planId') ?? undefined;
+  const planPointsParamRaw = searchParams.get('plan_points') ?? undefined;
+  const planPointsParam = useMemo(() => {
+    if (!planPointsParamRaw) return undefined;
+    const parsed = Number(planPointsParamRaw);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+  }, [planPointsParamRaw]);
   const salonIdParam = searchParams.get('salon') ?? undefined;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -89,6 +95,7 @@ function SubscriptionPageContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [restrictedPlanKey, setRestrictedPlanKey] = useState<string | null>(null);
   const [restrictedPlanId, setRestrictedPlanId] = useState<string | null>(null);
+  const [restrictedPlanPoints, setRestrictedPlanPoints] = useState<number | null>(null);
 
   const fetchPlansAndSubscriptions = useCallback(async () => {
     try {
@@ -112,9 +119,24 @@ function SubscriptionPageContent() {
       if (resolvedPlan) {
         setRestrictedPlanKey(resolvedPlan.plan_key ?? null);
         setRestrictedPlanId(resolvedPlan.subscription_plan_id ?? null);
+        setRestrictedPlanPoints(
+          typeof resolvedPlan.points === 'number' && resolvedPlan.points > 0
+            ? resolvedPlan.points
+            : null,
+        );
       } else {
-        setRestrictedPlanKey(null);
-        setRestrictedPlanId(null);
+        const planIdExists = planIdParam
+          ? planData.some((plan) => plan.subscription_plan_id === planIdParam)
+          : false;
+        const planKeyExists = planKeyParam
+          ? planData.some((plan) => plan.plan_key === planKeyParam)
+          : false;
+
+        setRestrictedPlanId(planIdExists ? planIdParam ?? null : null);
+        setRestrictedPlanPoints(planPointsParam ?? null);
+        setRestrictedPlanKey(
+          planKeyExists && !planIdExists && !planPointsParam ? planKeyParam ?? null : null,
+        );
       }
 
       setPlans(planData);
@@ -126,14 +148,14 @@ function SubscriptionPageContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [planKeyParam, planIdParam]);
+  }, [planIdParam, planKeyParam, planPointsParam]);
 
   useEffect(() => {
     fetchPlansAndSubscriptions();
   }, [fetchPlansAndSubscriptions]);
 
   const handleSubscribe = async (planKey: string) => {
-    if (restrictedPlanKey || restrictedPlanId) {
+    if (restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) {
       const targetPlan = plans.find((plan) => plan.plan_key === planKey);
       if (!targetPlan || !isPlanAllowed(targetPlan)) {
         setErrorMessage('このサロンでは指定されたプランのみお申し込みいただけます。');
@@ -166,32 +188,54 @@ function SubscriptionPageContent() {
 
   const isPlanAllowed = useCallback(
     (plan: SubscriptionPlan) => {
-      if (restrictedPlanId) {
-        return plan.subscription_plan_id === restrictedPlanId;
+      if (!restrictedPlanId && !restrictedPlanKey && !restrictedPlanPoints) {
+        return true;
       }
-      if (restrictedPlanKey) {
-        return plan.plan_key === restrictedPlanKey;
-      }
-      return true;
+
+      const matchesId = restrictedPlanId
+        ? plan.subscription_plan_id === restrictedPlanId
+        : false;
+      const matchesKey = restrictedPlanKey ? plan.plan_key === restrictedPlanKey : false;
+      const matchesPoints = restrictedPlanPoints
+        ? plan.points === restrictedPlanPoints
+        : false;
+
+      return matchesId || matchesKey || matchesPoints;
     },
-    [restrictedPlanId, restrictedPlanKey],
+    [restrictedPlanId, restrictedPlanKey, restrictedPlanPoints],
   );
 
   const orderedPlans = useMemo(() => {
-    if (!restrictedPlanId && !restrictedPlanKey) {
+    if (!restrictedPlanId && !restrictedPlanKey && !restrictedPlanPoints) {
       return plans;
     }
     const allowed = plans.filter(isPlanAllowed);
     const others = plans.filter((plan) => !isPlanAllowed(plan));
     return [...allowed, ...others];
-  }, [plans, isPlanAllowed, restrictedPlanId, restrictedPlanKey]);
+  }, [plans, isPlanAllowed, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
 
   const primaryPlan = useMemo(() => {
-    if (!restrictedPlanId && !restrictedPlanKey) {
+    if (!restrictedPlanId && !restrictedPlanKey && !restrictedPlanPoints) {
       return null;
     }
     return plans.find(isPlanAllowed) ?? null;
-  }, [isPlanAllowed, plans, restrictedPlanId, restrictedPlanKey]);
+  }, [isPlanAllowed, plans, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
+
+  const restrictionNoticeLabel = useMemo(() => {
+    if (primaryPlan?.label) {
+      return primaryPlan.label;
+    }
+    if (restrictedPlanPoints) {
+      return `${restrictedPlanPoints.toLocaleString('ja-JP')}ポイント / 月`;
+    }
+    if (restrictedPlanKey) {
+      return restrictedPlanKey;
+    }
+    if (restrictedPlanId) {
+      return restrictedPlanId;
+    }
+    return '指定プラン';
+  }, [primaryPlan, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
 
   const handleCancel = async (subscriptionId: string) => {
     const confirmCancel = window.confirm('自動更新を停止します。よろしいですか？');
@@ -244,9 +288,9 @@ function SubscriptionPageContent() {
           <p className="mt-1 text-sm text-slate-500">
             毎月自動でポイントがチャージされます。いつでも停止できます。
           </p>
-          {(restrictedPlanKey || restrictedPlanId) && primaryPlan && (
+          {(restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) && (
             <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
-              このサロンでは「{primaryPlan.label}」のみ申し込み可能です。他のプランは選択できません。
+              このサロンでは「{restrictionNoticeLabel}」のみ申し込み可能です。他のプランは選択できません。
             </div>
           )}
 
