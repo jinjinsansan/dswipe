@@ -294,22 +294,24 @@ function SubscriptionPageContent() {
             </div>
           )}
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className={`mt-4 ${orderedPlans.length === 1 ? 'flex justify-center' : 'grid gap-4 md:grid-cols-2 xl:grid-cols-3'}`}>
             {orderedPlans.map((plan) => {
               const isProcessing = planLoadingKey === plan.plan_key;
 
               return (
                 <div
                   key={plan.plan_key}
-                  className="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition"
+                  className={`flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white shadow-sm transition ${
+                    orderedPlans.length === 1 ? 'w-full max-w-lg p-8' : 'p-6'
+                  }`}
                 >
                   <div>
-                    <p className="text-lg font-semibold text-slate-900">{plan.label}</p>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className={`font-semibold text-slate-900 ${orderedPlans.length === 1 ? 'text-2xl' : 'text-lg'}`}>{plan.label}</p>
+                    <p className={`mt-1 text-slate-500 ${orderedPlans.length === 1 ? 'text-base' : 'text-sm'}`}>
                       {plan.points.toLocaleString('ja-JP')}ポイント / 月
                     </p>
-                    <p className="mt-2 text-sm font-medium text-slate-700">{yenLabel(plan.usd_amount)}</p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className={`mt-2 font-medium text-slate-700 ${orderedPlans.length === 1 ? 'text-lg' : 'text-sm'}`}>{yenLabel(plan.usd_amount)}</p>
+                    <p className={`mt-1 text-slate-400 ${orderedPlans.length === 1 ? 'text-sm' : 'text-xs'}`}>
                       決済はONE.lat経由でUSD建てとなります。
                     </p>
                   </div>
@@ -317,7 +319,9 @@ function SubscriptionPageContent() {
                     type="button"
                     onClick={() => handleSubscribe(plan.plan_key)}
                     disabled={isProcessing}
-                    className="mt-6 w-full rounded-xl border border-blue-500 bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className={`mt-6 w-full rounded-xl border border-blue-500 bg-blue-500 font-semibold text-white shadow-sm transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 ${
+                      orderedPlans.length === 1 ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
+                    }`}
                   >
                     {isProcessing ? 'リダイレクト中…' : 'このプランで申込む'}
                   </button>
