@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { lpApi, productApi, salonApi } from '@/lib/api';
+import { lpApi, productApi } from '@/lib/api';
 import { getTemplateById } from '@/lib/templates';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
@@ -29,14 +29,12 @@ export default function CreateLPPage() {
     return aiSuggestion.blocks.map((block) => getTemplateById(block.blockType)?.name ?? block.blockType);
   }, [aiSuggestion]);
   const [products, setProducts] = useState<any[]>([]);
-  const [salons, setSalons] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     swipe_direction: 'vertical' as 'vertical' | 'horizontal',
     is_fullscreen: true,
     product_id: '',
-    salon_id: '',
     show_swipe_hint: false,
     fullscreen_media: false,
     floating_cta: false,
@@ -56,24 +54,8 @@ export default function CreateLPPage() {
       }
     };
 
-    const fetchSalons = async () => {
-      try {
-        const response = await salonApi.list();
-        const payload = response.data as { data?: any[] } | any[] | undefined;
-        const rows = Array.isArray((payload as any)?.data)
-          ? ((payload as any).data as any[])
-          : Array.isArray(payload)
-          ? (payload as any[])
-          : [];
-        setSalons(rows);
-      } catch (error) {
-        console.error('サロン一覧取得エラー:', error);
-      }
-    };
-    
     if (isAuthenticated) {
       fetchProducts();
-      fetchSalons();
     }
   }, [isAuthenticated]);
 
@@ -89,19 +71,10 @@ export default function CreateLPPage() {
     const field = target.name;
     const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
 
-    setFormData((prev) => {
-      const next = {
-        ...prev,
-        [field]: value,
-      };
-      if (field === 'salon_id' && typeof value === 'string' && value) {
-        next.product_id = '';
-      }
-      if (field === 'product_id' && typeof value === 'string' && value) {
-        next.salon_id = '';
-      }
-      return next;
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +131,6 @@ export default function CreateLPPage() {
       const payload = {
         ...formData,
         product_id: formData.product_id || null,
-        salon_id: formData.salon_id || null,
       };
       
       const response = await lpApi.create(payload);
@@ -284,30 +256,6 @@ export default function CreateLPPage() {
               </select>
               <p className="mt-1 text-sm text-slate-500">
                 CTAボタンから購入ページへ自動リンクされます
-              </p>
-            </div>
-
-            {/* サロン選択 */}
-            <div>
-              <label htmlFor="salon_id" className="block text-sm font-medium text-slate-700 mb-2">
-                紐づけるオンラインサロン
-              </label>
-              <select
-                id="salon_id"
-                name="salon_id"
-                value={formData.salon_id}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">選択しない（後で設定可能）</option>
-                {salons.map((salon) => (
-                  <option key={salon.id} value={salon.id}>
-                    {salon.title || `サロンID: ${salon.id}`}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-sm text-slate-500">
-                サロンを選択すると、公開LPのCTAはサロン公開ページに遷移します（商品紐づけは無効になります）。
               </p>
             </div>
 

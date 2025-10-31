@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
-import { salonAnnouncementApi, salonApi, salonAssetApi, subscriptionApi } from "@/lib/api";
+import { lpApi, salonAnnouncementApi, salonApi, salonAssetApi, subscriptionApi } from "@/lib/api";
 import type {
   Salon,
   SalonAnnouncement,
@@ -24,12 +24,14 @@ import type {
   SubscriptionPlan,
   SubscriptionPlanListResponse,
 } from "@/types/api";
+import type { LandingPage } from "@/types";
 
 type FormState = {
   title: string;
   description: string;
   thumbnail_url: string;
   is_active: boolean;
+  lp_id: string;
 };
 
 const INITIAL_FORM: FormState = {
@@ -37,6 +39,7 @@ const INITIAL_FORM: FormState = {
   description: "",
   thumbnail_url: "",
   is_active: true,
+  lp_id: "",
 };
 
 export default function SalonDetailPage() {
@@ -45,6 +48,7 @@ export default function SalonDetailPage() {
 
   const [salon, setSalon] = useState<Salon | null>(null);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [lpOptions, setLpOptions] = useState<Array<Pick<LandingPage, "id" | "title">>>([]);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -71,9 +75,10 @@ export default function SalonDetailPage() {
       }
 
       try {
-        const [salonRes, planRes] = await Promise.all([
+        const [salonRes, planRes, lpsRes] = await Promise.all([
           salonApi.get(salonId),
           subscriptionApi.getPlans(),
+          lpApi.list({ limit: 100 }),
         ]);
 
         const salonData = salonRes.data as Salon;
@@ -83,10 +88,21 @@ export default function SalonDetailPage() {
           description: salonData.description ?? "",
           thumbnail_url: salonData.thumbnail_url ?? "",
           is_active: Boolean(salonData.is_active),
+          lp_id: (salonData as any).lp_id ?? "",
         });
 
         const planData = (planRes.data as SubscriptionPlanListResponse)?.data ?? [];
         setPlans(planData);
+
+        const lpPayload = lpsRes.data as { data?: LandingPage[] | null } | LandingPage[] | null | undefined;
+        let lpRows: LandingPage[] = [];
+        if (Array.isArray(lpPayload)) {
+          lpRows = lpPayload;
+        } else if (lpPayload && "data" in lpPayload && Array.isArray(lpPayload.data)) {
+          lpRows = lpPayload.data;
+        }
+        const lpOptionsData = lpRows.map((lp) => ({ id: lp.id, title: lp.title }));
+        setLpOptions(lpOptionsData);
       } catch (loadError: any) {
         console.error("Failed to load salon detail", loadError);
         const detail = loadError?.response?.data?.detail;
@@ -228,12 +244,17 @@ export default function SalonDetailPage() {
 
     try {
       setIsSaving(true);
-      const payload = {
+      const payload: any = {
         title: form.title.trim(),
         description: form.description.trim() || undefined,
         thumbnail_url: form.thumbnail_url.trim() || undefined,
         is_active: form.is_active,
       };
+      if (form.lp_id) {
+        payload.lp_id = form.lp_id;
+      } else {
+        payload.lp_id = null;
+      }
 
       const response = await salonApi.update(salonId, payload);
       const updated = response.data as Salon;
@@ -416,6 +437,27 @@ export default function SalonDetailPage() {
                     <div className="flex h-48 items-center justify-center text-xs text-slate-400">サムネイル未設定</div>
                   )}
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                  紐づけるLP
+                </label>
+                <select
+                  value={form.lp_id}
+                  onChange={(event) => handleChange("lp_id", event.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                >
+                  <option value="">選択しない</option>
+                  {lpOptions.map((lp) => (
+                    <option key={lp.id} value={lp.id}>
+                      {lp.title}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-slate-500">
+                  LPを選択すると、そのLPのCTAボタンがこのサロンの公開ページに自動的にリンクされます。
+                </p>
               </div>
 
               <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
