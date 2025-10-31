@@ -265,6 +265,33 @@ export default function SalonFeedPage() {
           サロン詳細に戻る
         </Link>
 
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          <Link
+            href={`/salons/${salonId}/events`}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300 hover:text-slate-700"
+          >
+            イベント管理へ
+          </Link>
+          <Link
+            href={`/salons/${salonId}/announcements`}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300 hover:text-slate-700"
+          >
+            お知らせ管理へ
+          </Link>
+          <Link
+            href={`/salons/${salonId}/roles`}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300 hover:text-slate-700"
+          >
+            ロール管理へ
+          </Link>
+          <Link
+            href={`/salons/${salonId}/assets`}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300 hover:text-slate-700"
+          >
+            アセットライブラリへ
+          </Link>
+        </div>
+
         {error ? (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</div>
         ) : null}

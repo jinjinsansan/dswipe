@@ -358,6 +358,177 @@ export interface SalonPostLikeResult {
   like_count: number;
 }
 
+export interface SalonEvent {
+  id: string;
+  salon_id: string;
+  organizer_id: string;
+  title: string;
+  description?: string | null;
+  start_at: string;
+  end_at?: string | null;
+  location?: string | null;
+  meeting_url?: string | null;
+  is_public: boolean;
+  capacity?: number | null;
+  attendee_count: number;
+  is_attending: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonEventListResult {
+  data: SalonEvent[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonEventAttendee {
+  id: string;
+  event_id: string;
+  user_id: string;
+  status: string;
+  note?: string | null;
+  created_at: string;
+  updated_at: string;
+  username?: string | null;
+}
+
+export interface SalonEventAttendeeListResult {
+  data: SalonEventAttendee[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonAsset {
+  id: string;
+  salon_id: string;
+  uploader_id: string;
+  asset_type: string;
+  title?: string | null;
+  description?: string | null;
+  file_url: string;
+  thumbnail_url?: string | null;
+  content_type: string;
+  file_size: number;
+  visibility: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonAssetListResult {
+  data: SalonAsset[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonAssetUploadPayload {
+  file: File;
+  title?: string | null;
+  description?: string | null;
+  asset_type?: string | null;
+  visibility?: string | null;
+  thumbnail?: File | null;
+}
+
+export interface SalonAssetMetadataPayload {
+  title?: string | null;
+  description?: string | null;
+  asset_type?: string | null;
+  visibility?: string | null;
+}
+
+export interface SalonAnnouncement {
+  id: string;
+  salon_id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  is_pinned: boolean;
+  is_published: boolean;
+  start_at?: string | null;
+  end_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonAnnouncementListResult {
+  data: SalonAnnouncement[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonAnnouncementCreatePayload {
+  title: string;
+  body: string;
+  is_pinned?: boolean;
+  is_published?: boolean;
+  start_at?: string | null;
+  end_at?: string | null;
+}
+
+export interface SalonAnnouncementUpdatePayload {
+  title?: string | null;
+  body?: string | null;
+  is_pinned?: boolean | null;
+  is_published?: boolean | null;
+  start_at?: string | null;
+  end_at?: string | null;
+}
+
+export interface SalonRole {
+  id: string;
+  salon_id: string;
+  name: string;
+  description?: string | null;
+  is_default: boolean;
+  manage_feed: boolean;
+  manage_events: boolean;
+  manage_assets: boolean;
+  manage_announcements: boolean;
+  manage_members: boolean;
+  manage_roles: boolean;
+  assigned_member_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonRoleListResult {
+  data: SalonRole[];
+  total: number;
+}
+
+export interface SalonRoleCreatePayload {
+  name: string;
+  description?: string | null;
+  is_default?: boolean;
+  manage_feed?: boolean;
+  manage_events?: boolean;
+  manage_assets?: boolean;
+  manage_announcements?: boolean;
+  manage_members?: boolean;
+  manage_roles?: boolean;
+}
+
+export interface SalonRoleUpdatePayload {
+  name?: string | null;
+  description?: string | null;
+  is_default?: boolean | null;
+  manage_feed?: boolean | null;
+  manage_events?: boolean | null;
+  manage_assets?: boolean | null;
+  manage_announcements?: boolean | null;
+  manage_members?: boolean | null;
+  manage_roles?: boolean | null;
+}
+
+export interface SalonRoleAssignPayload {
+  user_id: string;
+}
+
 // ポイント残高型
 export interface PointBalance {
   user_id: string;

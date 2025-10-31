@@ -1,7 +1,16 @@
 // API レスポンス型定義
 // Note: 既存のtypes/index.tsの型を使用することを推奨
 
-import type { LandingPage } from './index';
+import type {
+  LandingPage,
+  SalonAnnouncementCreatePayload,
+  SalonAnnouncementUpdatePayload,
+  SalonAssetMetadataPayload,
+  SalonAssetUploadPayload,
+  SalonRoleAssignPayload,
+  SalonRoleCreatePayload,
+  SalonRoleUpdatePayload,
+} from './index';
 
 export type {
   User,
@@ -35,6 +44,23 @@ export type {
   SalonComment,
   SalonCommentListResult,
   SalonPostLikeResult,
+  SalonEvent,
+  SalonEventListResult,
+  SalonEventAttendee,
+  SalonEventAttendeeListResult,
+  SalonAsset,
+  SalonAssetListResult,
+  SalonAssetUploadPayload,
+  SalonAssetMetadataPayload,
+  SalonAnnouncement,
+  SalonAnnouncementListResult,
+  SalonAnnouncementCreatePayload,
+  SalonAnnouncementUpdatePayload,
+  SalonRole,
+  SalonRoleListResult,
+  SalonRoleCreatePayload,
+  SalonRoleUpdatePayload,
+  SalonRoleAssignPayload,
 } from './index';
 
 export interface PointsBalance {
@@ -353,3 +379,40 @@ export interface SalonCommentCreatePayload {
 export interface SalonCommentUpdatePayload {
   body: string;
 }
+
+export interface SalonEventCreatePayload {
+  title: string;
+  description?: string | null;
+  start_at: string;
+  end_at?: string | null;
+  location?: string | null;
+  meeting_url?: string | null;
+  is_public?: boolean;
+  capacity?: number | null;
+}
+
+export interface SalonEventUpdatePayload {
+  title?: string | null;
+  description?: string | null;
+  start_at?: string | null;
+  end_at?: string | null;
+  location?: string | null;
+  meeting_url?: string | null;
+  is_public?: boolean | null;
+  capacity?: number | null;
+}
+
+export interface SalonEventAttendPayload {
+  status?: string | null;
+  note?: string | null;
+}
+
+export type SalonAssetUploadRequest = SalonAssetUploadPayload;
+export type SalonAssetMetadataRequest = SalonAssetMetadataPayload;
+
+export type SalonAnnouncementCreateRequest = SalonAnnouncementCreatePayload;
+export type SalonAnnouncementUpdateRequest = SalonAnnouncementUpdatePayload;
+
+export type SalonRoleCreateRequest = SalonRoleCreatePayload;
+export type SalonRoleUpdateRequest = SalonRoleUpdatePayload;
+export type SalonRoleAssignRequest = SalonRoleAssignPayload;

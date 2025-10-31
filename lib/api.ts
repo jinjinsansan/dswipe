@@ -36,6 +36,25 @@ import type {
   SalonCommentCreatePayload,
   SalonCommentUpdatePayload,
   SalonPostLikeResult,
+  SalonEvent,
+  SalonEventListResult,
+  SalonEventAttendeeListResult,
+  SalonEventCreatePayload,
+  SalonEventUpdatePayload,
+  SalonEventAttendPayload,
+  SalonAsset,
+  SalonAssetListResult,
+  SalonAssetUploadPayload,
+  SalonAssetMetadataPayload,
+  SalonAnnouncement,
+  SalonAnnouncementListResult,
+  SalonAnnouncementCreatePayload,
+  SalonAnnouncementUpdatePayload,
+  SalonRole,
+  SalonRoleListResult,
+  SalonRoleCreatePayload,
+  SalonRoleUpdatePayload,
+  SalonRoleAssignPayload,
 } from '@/types/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -285,6 +304,90 @@ export const salonFeedApi = {
     api.delete(`/salons/${salonId}/posts/${postId}/comments/${commentId}`),
   toggleLike: (salonId: string, postId: string) =>
     api.post<SalonPostLikeResult>(`/salons/${salonId}/posts/${postId}/like`, {}),
+};
+
+export const salonEventApi = {
+  listEvents: (salonId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<SalonEventListResult>(`/salons/${salonId}/events`, { params }),
+  createEvent: (salonId: string, data: SalonEventCreatePayload) =>
+    api.post<SalonEvent>(`/salons/${salonId}/events`, data),
+  getEvent: (salonId: string, eventId: string) =>
+    api.get<SalonEvent>(`/salons/${salonId}/events/${eventId}`),
+  updateEvent: (salonId: string, eventId: string, data: SalonEventUpdatePayload) =>
+    api.patch<SalonEvent>(`/salons/${salonId}/events/${eventId}`, data),
+  deleteEvent: (salonId: string, eventId: string) =>
+    api.delete(`/salons/${salonId}/events/${eventId}`),
+  listAttendees: (salonId: string, eventId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<SalonEventAttendeeListResult>(`/salons/${salonId}/events/${eventId}/attendees`, { params }),
+  attendEvent: (salonId: string, eventId: string, data?: SalonEventAttendPayload) =>
+    api.post(`/salons/${salonId}/events/${eventId}/attend`, data ?? {}),
+  cancelAttendance: (salonId: string, eventId: string) =>
+    api.delete(`/salons/${salonId}/events/${eventId}/attend`),
+};
+
+export const salonAssetApi = {
+  listAssets: (
+    salonId: string,
+    params?: { limit?: number; offset?: number; visibility?: string; asset_type?: string },
+  ) => api.get<SalonAssetListResult>(`/salons/${salonId}/assets`, { params }),
+
+  uploadAsset: (salonId: string, payload: SalonAssetUploadPayload) => {
+    const formData = new FormData();
+    formData.append('file', payload.file);
+    if (payload.title) formData.append('title', payload.title);
+    if (payload.description) formData.append('description', payload.description);
+    if (payload.asset_type) formData.append('asset_type', payload.asset_type);
+    if (payload.visibility) formData.append('visibility', payload.visibility);
+    if (payload.thumbnail) formData.append('thumbnail', payload.thumbnail);
+
+    return api.post<SalonAsset>(`/salons/${salonId}/assets`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  updateAsset: (salonId: string, assetId: string, data: SalonAssetMetadataPayload) =>
+    api.patch<SalonAsset>(`/salons/${salonId}/assets/${assetId}`, data),
+
+  deleteAsset: (salonId: string, assetId: string) =>
+    api.delete(`/salons/${salonId}/assets/${assetId}`),
+};
+
+export const salonAnnouncementApi = {
+  listAnnouncements: (
+    salonId: string,
+    params?: { limit?: number; offset?: number; include_unpublished?: boolean },
+  ) => api.get<SalonAnnouncementListResult>(`/salons/${salonId}/announcements`, { params }),
+
+  createAnnouncement: (salonId: string, data: SalonAnnouncementCreatePayload) =>
+    api.post<SalonAnnouncement>(`/salons/${salonId}/announcements`, data),
+
+  updateAnnouncement: (salonId: string, announcementId: string, data: SalonAnnouncementUpdatePayload) =>
+    api.patch<SalonAnnouncement>(`/salons/${salonId}/announcements/${announcementId}`, data),
+
+  deleteAnnouncement: (salonId: string, announcementId: string) =>
+    api.delete(`/salons/${salonId}/announcements/${announcementId}`),
+};
+
+export const salonRoleApi = {
+  listRoles: (salonId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<SalonRoleListResult>(`/salons/${salonId}/roles`, { params }),
+
+  createRole: (salonId: string, data: SalonRoleCreatePayload) =>
+    api.post<SalonRole>(`/salons/${salonId}/roles`, data),
+
+  updateRole: (salonId: string, roleId: string, data: SalonRoleUpdatePayload) =>
+    api.patch<SalonRole>(`/salons/${salonId}/roles/${roleId}`, data),
+
+  deleteRole: (salonId: string, roleId: string) =>
+    api.delete(`/salons/${salonId}/roles/${roleId}`),
+
+  assignRole: (salonId: string, roleId: string, data: SalonRoleAssignPayload) =>
+    api.post(`/salons/${salonId}/roles/${roleId}/assign`, data),
+
+  unassignRole: (salonId: string, roleId: string, userId: string) =>
+    api.delete(`/salons/${salonId}/roles/${roleId}/assign/${userId}`),
 };
 
 // 管理者API
