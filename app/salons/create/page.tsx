@@ -23,6 +23,11 @@ type FormState = {
   description: string;
   thumbnail_url: string;
   subscription_plan_id: string;
+  allow_point_subscription: boolean;
+  allow_jpy_subscription: boolean;
+  monthly_price_jpy: string;
+  tax_rate: string;
+  tax_inclusive: boolean;
 };
 
 const INITIAL_FORM: FormState = {
@@ -30,6 +35,11 @@ const INITIAL_FORM: FormState = {
   description: "",
   thumbnail_url: "",
   subscription_plan_id: "",
+  allow_point_subscription: true,
+  allow_jpy_subscription: false,
+  monthly_price_jpy: "",
+  tax_rate: "10",
+  tax_inclusive: true,
 };
 
 export default function SalonCreatePage() {
@@ -98,6 +108,29 @@ export default function SalonCreatePage() {
       return;
     }
 
+    const allowPoint = form.allow_point_subscription;
+    const allowJpy = form.allow_jpy_subscription;
+
+    if (!allowPoint && !allowJpy) {
+      setError("少なくとも1つの決済方法を有効にしてください");
+      return;
+    }
+
+    if (allowJpy) {
+      const yenValue = Number(form.monthly_price_jpy);
+      if (!form.monthly_price_jpy || Number.isNaN(yenValue) || yenValue <= 0) {
+        setError("日本円サブスクの月額価格を1円以上で設定してください");
+        return;
+      }
+    }
+
+    const taxRateInput = form.tax_rate.trim();
+    const parsedTaxRate = taxRateInput === "" ? null : Number(taxRateInput);
+    if (parsedTaxRate !== null && (Number.isNaN(parsedTaxRate) || parsedTaxRate < 0 || parsedTaxRate > 100)) {
+      setError("消費税率は0〜100の範囲で入力してください");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const payload = {
@@ -105,6 +138,11 @@ export default function SalonCreatePage() {
         description: form.description.trim() || undefined,
         thumbnail_url: form.thumbnail_url.trim() || undefined,
         subscription_plan_id: form.subscription_plan_id,
+        allow_point_subscription: allowPoint,
+        allow_jpy_subscription: allowJpy,
+        monthly_price_jpy: allowJpy ? Number(form.monthly_price_jpy) : null,
+        tax_rate: parsedTaxRate,
+        tax_inclusive: form.tax_inclusive,
       };
 
       const response = await salonApi.create(payload);
@@ -242,23 +280,121 @@ export default function SalonCreatePage() {
                 value={form.subscription_plan_id}
               />
             </div>
-          </div>
 
-          <div className="mt-8 flex items-center justify-end gap-3">
-            <Link
-              href="/salons"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-            >
-              キャンセル
-            </Link>
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleSubmit}
-              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? "作成中..." : "サロンを作成"}
-            </button>
+            <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="text-sm font-semibold text-slate-900">決済方法設定</div>
+                  <p className="text-xs text-slate-500">
+                    ポイント／日本円どちらで会費を徴収するか選択し、必要に応じて価格と税率を設定してください。
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">ポイントサブスク</div>
+                      <p className="text-xs text-slate-500">ONE.latプランと連携したポイント決済を利用します。</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={form.allow_point_subscription}
+                        onChange={(event) => handleChange("allow_point_subscription", event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                      />
+                      有効化
+                    </label>
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500">
+                    ポイント決済を無効にして日本円のみで運用したい場合はチェックを外してください。
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">日本円サブスク</div>
+                      <p className="text-xs text-slate-500">one.latの月額決済を利用して日本円で課金します。</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={form.allow_jpy_subscription}
+                        onChange={(event) => handleChange("allow_jpy_subscription", event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                      />
+                      有効化
+                    </label>
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="1980"
+                        value={form.monthly_price_jpy}
+                        onChange={(event) => handleChange("monthly_price_jpy", event.target.value)}
+                        disabled={!form.allow_jpy_subscription}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
+                      />
+                      <span className="text-sm font-semibold text-slate-600">円 / 月</span>
+                    </div>
+                    <p className="text-xs text-slate-500">税込・税抜の表示は下記の税設定に準拠します。</p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">税込表示設定</div>
+                      <p className="text-xs text-slate-500">日本円決済の表示と決済データに反映される税率を設定します。</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={form.tax_inclusive}
+                        onChange={(event) => handleChange("tax_inclusive", event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                      />
+                      税込として扱う
+                    </label>
+                  </div>
+                  <div className="mt-3">
+                    <label className="mb-2 block text-xs font-semibold text-slate-600">消費税率</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      placeholder="10"
+                      value={form.tax_rate}
+                      onChange={(event) => handleChange("tax_rate", event.target.value)}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-end gap-3">
+              <Link
+                href="/salons"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+              >
+                キャンセル
+              </Link>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+                className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "作成中..." : "サロンを作成"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

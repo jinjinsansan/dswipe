@@ -15,10 +15,15 @@ interface ProductFormState {
   title: string;
   description: string;
   price: string;
+  priceJpy: string;
   stock: string;
   lpId: string;
   redirectUrl: string;
   thanksLpId: string;
+  allowPointPurchase: boolean;
+  allowJpyPurchase: boolean;
+  taxRate: string;
+  taxInclusive: boolean;
   isAvailable: boolean;
 }
 
@@ -48,10 +53,15 @@ export default function ProductManagementPage() {
     title: "",
     description: "",
     price: "",
+    priceJpy: "",
     stock: "",
     lpId: "",
     redirectUrl: "",
     thanksLpId: "",
+    allowPointPurchase: true,
+    allowJpyPurchase: false,
+    taxRate: "10",
+    taxInclusive: true,
     isAvailable: true,
   });
 
@@ -165,10 +175,15 @@ export default function ProductManagementPage() {
       title: "",
       description: "",
       price: "",
+      priceJpy: "",
       stock: "",
       lpId: "",
       redirectUrl: "",
       thanksLpId: "",
+      allowPointPurchase: true,
+      allowJpyPurchase: false,
+      taxRate: "10",
+      taxInclusive: true,
       isAvailable: true,
     });
     setFormError(null);
@@ -186,10 +201,15 @@ export default function ProductManagementPage() {
       title: product.title ?? "",
       description: product.description ?? "",
       price: String(product.price_in_points ?? ""),
+      priceJpy: product.price_jpy != null ? String(product.price_jpy) : "",
       stock: product.stock_quantity === null || product.stock_quantity === undefined ? "" : String(product.stock_quantity),
       lpId: product.lp_id ?? "",
       redirectUrl: product.redirect_url ?? "",
       thanksLpId: product.thanks_lp_id ?? "",
+      allowPointPurchase: product.allow_point_purchase,
+      allowJpyPurchase: product.allow_jpy_purchase,
+      taxRate: product.tax_rate != null ? String(product.tax_rate) : "",
+      taxInclusive: product.tax_inclusive,
       isAvailable: Boolean(product.is_available),
     });
     setFormError(null);
@@ -225,8 +245,34 @@ export default function ProductManagementPage() {
       return;
     }
 
-    if (!form.price || Number.isNaN(Number(form.price)) || Number(form.price) < 0) {
-      setFormError("価格は0以上の数値で入力してください");
+    const allowPoint = form.allowPointPurchase;
+    const allowJpy = form.allowJpyPurchase;
+
+    if (!allowPoint && !allowJpy) {
+      setFormError("少なくとも1つの決済方法を有効にしてください");
+      return;
+    }
+
+    if (allowPoint) {
+      const pointsValue = Number(form.price);
+      if (!form.price || Number.isNaN(pointsValue) || pointsValue <= 0) {
+        setFormError("ポイント決済の価格を1ポイント以上で設定してください");
+        return;
+      }
+    }
+
+    if (allowJpy) {
+      const yenValue = Number(form.priceJpy);
+      if (!form.priceJpy || Number.isNaN(yenValue) || yenValue <= 0) {
+        setFormError("日本円決済の価格を1円以上で設定してください");
+        return;
+      }
+    }
+
+    const taxRateInput = form.taxRate.trim();
+    const parsedTaxRate = taxRateInput === "" ? null : Number(taxRateInput);
+    if (parsedTaxRate !== null && (Number.isNaN(parsedTaxRate) || parsedTaxRate < 0 || parsedTaxRate > 100)) {
+      setFormError("消費税率は0〜100の範囲で入力してください");
       return;
     }
 
@@ -237,9 +283,16 @@ export default function ProductManagementPage() {
 
     setSaving(true);
     try {
+      const pointsValue = allowPoint ? Number(form.price) : 0;
+      const yenValue = allowJpy ? Number(form.priceJpy) : null;
       const payload: ProductCreatePayload = {
         title: form.title.trim(),
-        price_in_points: Number(form.price),
+        price_in_points: pointsValue,
+        price_jpy: yenValue,
+        allow_point_purchase: allowPoint,
+        allow_jpy_purchase: allowJpy,
+        tax_rate: parsedTaxRate,
+        tax_inclusive: form.taxInclusive,
         is_available: form.isAvailable,
         product_type: editingProduct?.product_type ?? "points",
       };
@@ -428,6 +481,15 @@ export default function ProductManagementPage() {
                                 <span className="font-semibold text-slate-900">{product.price_in_points.toLocaleString()} P</span>
                               </div>
 
+                              {product.allow_jpy_purchase && (
+                                <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                                  <span className="text-xs text-slate-500">日本円価格</span>
+                                  <span className="font-semibold text-emerald-600">
+                                    {product.price_jpy ? `${product.price_jpy.toLocaleString()} 円` : '未設定'}
+                                  </span>
+                                </div>
+                              )}
+
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                 <span className="text-xs text-slate-500">在庫</span>
                                 <span
@@ -547,31 +609,130 @@ export default function ProductManagementPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-xs font-semibold text-slate-600">価格（ポイント） *</label>
-                  <input
-                    name="price"
-                    value={form.price}
-                    onChange={handleInputChange}
-                    type="number"
-                    min="0"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
-                    placeholder="1000"
-                    required
-                  />
+              <div className="space-y-4">
+                <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">決済方法</div>
+                      <p className="text-xs text-slate-500">利用できる決済手段を選択し、価格を設定してください。</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">ポイント決済</div>
+                          <p className="text-xs text-slate-500">購入者の保有ポイントから差し引いて販売します。</p>
+                        </div>
+                        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="checkbox"
+                            name="allowPointPurchase"
+                            checked={form.allowPointPurchase}
+                            onChange={handleInputChange}
+                            className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                          />
+                          有効化
+                        </label>
+                      </div>
+                      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
+                        <input
+                          name="price"
+                          value={form.price}
+                          onChange={handleInputChange}
+                          type="number"
+                          min="0"
+                          disabled={!form.allowPointPurchase}
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
+                          placeholder="1000"
+                        />
+                        <p className="text-xs text-slate-500">ポイント販売価格。未入力の場合は購入できません。</p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">日本円決済</div>
+                          <p className="text-xs text-slate-500">外部決済（one.lat）を用いた日本円での販売価格です。</p>
+                        </div>
+                        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="checkbox"
+                            name="allowJpyPurchase"
+                            checked={form.allowJpyPurchase}
+                            onChange={handleInputChange}
+                            className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                          />
+                          有効化
+                        </label>
+                      </div>
+                      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
+                        <div className="flex items-center gap-2">
+                          <input
+                            name="priceJpy"
+                            value={form.priceJpy}
+                            onChange={handleInputChange}
+                            type="number"
+                            min="0"
+                            disabled={!form.allowJpyPurchase}
+                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
+                            placeholder="19800"
+                          />
+                          <span className="text-sm font-semibold text-slate-600">円</span>
+                        </div>
+                        <p className="text-xs text-slate-500">税込・税抜の扱いは下部の税設定に従います。</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="mb-2 block text-xs font-semibold text-slate-600">在庫数</label>
-                  <input
-                    name="stock"
-                    value={form.stock}
-                    onChange={handleInputChange}
-                    type="number"
-                    min="0"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
-                    placeholder="空欄で無制限"
-                  />
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold text-slate-600">在庫数</label>
+                    <input
+                      name="stock"
+                      value={form.stock}
+                      onChange={handleInputChange}
+                      type="number"
+                      min="0"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                      placeholder="空欄で無制限"
+                    />
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-900">税込表示の設定</div>
+                        <p className="text-xs text-slate-500">日本円決済での表示方法を選択できます。</p>
+                      </div>
+                      <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                        <input
+                          type="checkbox"
+                          name="taxInclusive"
+                          checked={form.taxInclusive}
+                          onChange={handleInputChange}
+                          className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                        />
+                        税込として扱う
+                      </label>
+                    </div>
+                    <div className="mt-3">
+                      <label className="mb-2 block text-xs font-semibold text-slate-600">消費税率</label>
+                      <input
+                        name="taxRate"
+                        value={form.taxRate}
+                        onChange={handleInputChange}
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+                        placeholder="10"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 

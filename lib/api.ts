@@ -276,10 +276,31 @@ export const subscriptionApi = {
 
 export const salonApi = {
   list: () => api.get<SalonListResult>('/salons'),
-  create: (data: { title: string; description?: string | null; thumbnail_url?: string | null; subscription_plan_id: string; subscription_external_id?: string | null }) =>
+  create: (data: {
+    title: string;
+    description?: string | null;
+    thumbnail_url?: string | null;
+    subscription_plan_id: string;
+    subscription_external_id?: string | null;
+    allow_point_subscription?: boolean;
+    allow_jpy_subscription?: boolean;
+    monthly_price_jpy?: number | null;
+    tax_rate?: number | null;
+    tax_inclusive?: boolean;
+  }) =>
     api.post<Salon>('/salons', data),
   get: (salonId: string) => api.get<Salon>(`/salons/${salonId}`),
-  update: (salonId: string, data: { title?: string; description?: string | null; thumbnail_url?: string | null; is_active?: boolean }) =>
+  update: (salonId: string, data: {
+    title?: string;
+    description?: string | null;
+    thumbnail_url?: string | null;
+    is_active?: boolean;
+    allow_point_subscription?: boolean;
+    allow_jpy_subscription?: boolean;
+    monthly_price_jpy?: number | null;
+    tax_rate?: number | null;
+    tax_inclusive?: boolean;
+  }) =>
     api.patch<Salon>(`/salons/${salonId}`, data),
   getMembers: (salonId: string, params?: { status_filter?: string; limit?: number; offset?: number }) =>
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
