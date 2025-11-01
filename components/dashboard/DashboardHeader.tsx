@@ -1,19 +1,51 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { useAuthStore } from '@/store/authStore';
 import {
-  type DashboardNavGroupKey,
   getDashboardNavLinks,
-  getDashboardNavClasses,
   getDashboardNavGroupMeta,
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+
+const MOBILE_LABEL_MAP: Record<string, string> = {
+  '/dashboard': 'ダッシュ',
+  '/lp/create': '新規LP',
+  '/products': 'マーケット',
+  '/products/manage': '商品管理',
+  '/sales': '販売履歴',
+  '/notes': 'NOTE一覧',
+  '/note/create': '新規NOTE',
+  '/purchases': '購入履歴',
+  '/purchases?type=seller': '販売履歴',
+  '/points/history': 'PT履歴',
+  '/points/purchase': 'PT購入',
+  '/points/subscriptions': '自動チャージ',
+  '/salons': 'サロン一覧',
+  '/salons/create': 'サロン作成',
+  '/salons/all': '公開サロン',
+  '/media': 'メディア',
+  '/line/bonus': 'LINE連携',
+  '/settings': '設定',
+  '/admin': '管理',
+  '/terms': '利用規約',
+  '/privacy': 'プライバシー',
+};
+
+const getCompactLabel = (href: string, fallback: string) => {
+  if (MOBILE_LABEL_MAP[href]) {
+    return MOBILE_LABEL_MAP[href];
+  }
+  if (fallback.length <= 6) {
+    return fallback;
+  }
+  return fallback.replace('新規', '新').slice(0, 6);
+};
 
 interface DashboardHeaderProps {
   user: any;
@@ -37,29 +69,6 @@ export default function DashboardHeader({
   const isAdmin = user?.user_type === 'admin';
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const navGroups = groupDashboardNavLinks(navLinks);
-  const pinnedCandidates = useMemo(() => {
-    if (!navLinks.length) return [] as string[];
-    if (user?.user_type === 'seller') {
-      return ['/dashboard', '/sales', '/products/manage', '/products', '/notes', '/purchases'];
-    }
-    return ['/dashboard', '/products', '/notes', '/purchases', '/points/history'];
-  }, [navLinks, user?.user_type]);
-
-  const pinnedLinks = useMemo(() => {
-    const seen = new Set<string>();
-    return pinnedCandidates
-      .map((href) => {
-        const match = navLinks.find((link) => link.href === href);
-        if (match && !seen.has(match.href)) {
-          seen.add(match.href);
-          return match;
-        }
-        return null;
-      })
-      .filter((link): link is typeof navLinks[number] => Boolean(link));
-  }, [navLinks, pinnedCandidates]);
-
-  const [activeMobileGroup, setActiveMobileGroup] = useState<DashboardNavGroupKey | null>(navGroups[0]?.key ?? null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
@@ -75,19 +84,6 @@ export default function DashboardHeader({
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    if (!navGroups.length) {
-      setActiveMobileGroup(null);
-      return;
-    }
-    setActiveMobileGroup((prev) => {
-      if (prev && navGroups.some((group) => group.key === prev)) {
-        return prev;
-      }
-      return navGroups[0]?.key ?? null;
-    });
-  }, [navGroups]);
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -272,7 +268,7 @@ export default function DashboardHeader({
                 <Link
                   href="/admin"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-between gap-2 rounded-full px-4 py-3 text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600 transition-colors"
+                  className="flex items-center justify-between gap-2 rounded-2xl px-4 py-3 text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600 transition-colors"
                 >
                   <span className="flex items-center gap-2">
                     <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -280,93 +276,45 @@ export default function DashboardHeader({
                   </span>
                 </Link>
               )}
-              
-              {pinnedLinks.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] px-1 text-slate-400">
-                    クイックアクセス
-                  </span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {pinnedLinks.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                        : { href: link.href };
-                      return (
-                        <Link
-                          key={`mobile-pinned-${link.href}`}
-                          {...linkProps}
-                          onClick={() => setIsMenuOpen(false)}
-                          className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold transition-colors ${
-                            isActive
-                              ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                          }`}
-                        >
-                          <span className="flex h-5 w-5 items-center justify-center text-slate-500">
-                            {link.icon}
-                          </span>
-                          <span className="truncate">{link.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {navGroups.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                    {navGroups.map((group) => {
-                      const isActive = activeMobileGroup === group.key;
-                      const meta = getDashboardNavGroupMeta(group.key);
-                      return (
-                        <button
-                          key={`tab-${group.key}`}
-                          type="button"
-                          onClick={() => setActiveMobileGroup(group.key)}
-                          className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                            isActive ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600'
-                          }`}
-                          aria-pressed={isActive}
-                        >
-                          {meta.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-
+                <div className="flex flex-col gap-4">
                   {navGroups.map((group) => {
-                    if (group.key !== activeMobileGroup) return null;
+                    const meta = getDashboardNavGroupMeta(group.key);
                     return (
-                      <div key={`panel-${group.key}`} className="flex flex-col gap-3">
-                        <div className="grid grid-cols-2 gap-2">
+                      <div key={group.key} className="flex flex-col gap-2">
+                        <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] px-1 ${meta.headingClass}`}>
+                          {meta.label}
+                        </span>
+                        <div className="grid grid-cols-3 gap-2">
                           {group.items.map((link) => {
                             const isActive = isDashboardLinkActive(pathname, link.href);
                             const linkProps = link.external
                               ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
                               : { href: link.href };
+                            const label = getCompactLabel(link.href, link.label);
 
                             return (
                               <Link
                                 key={link.href}
                                 {...linkProps}
                                 onClick={() => setIsMenuOpen(false)}
-                                className={`flex h-full flex-col justify-between gap-2 rounded-2xl border px-4 py-3 text-xs font-semibold transition-colors ${
+                                className={`flex aspect-square flex-col items-center justify-center gap-2 rounded-3xl border text-xs font-semibold transition-all ${
                                   isActive
-                                    ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
                                     : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                                 }`}
                               >
-                                <span className="flex items-center gap-2">
-                                  <span className="flex h-5 w-5 items-center justify-center text-slate-500">
-                                    {link.icon}
-                                  </span>
-                                  <span className="truncate">{link.label}</span>
+                                <span
+                                  className={`flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 ${
+                                    isActive ? 'bg-white/15 text-white' : 'bg-slate-100'
+                                  }`}
+                                >
+                                  {link.icon}
                                 </span>
-                                {link.badge ? (
-                                  <span className="text-[9px] font-semibold text-slate-400">{link.badge}</span>
-                                ) : null}
+                                <span className="text-center text-[11px] leading-tight">
+                                  {label}
+                                </span>
                               </Link>
                             );
                           })}
