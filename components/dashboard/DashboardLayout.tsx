@@ -166,6 +166,9 @@ export default function DashboardLayout({
                   <Link href="/terms" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
                     利用規約
                   </Link>
+                  <Link href="/tokusho" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                    特定商取引法
+                  </Link>
                   <Link href="/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
                     プライバシーポリシー
                   </Link>

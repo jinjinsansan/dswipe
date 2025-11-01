@@ -12,7 +12,6 @@ import {
   WrenchScrewdriverIcon,
   BuildingStorefrontIcon,
   ClipboardDocumentListIcon,
-  DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
@@ -48,6 +47,7 @@ const MOBILE_LABEL_MAP: Record<string, string> = {
   '/admin': '管理',
   '/terms': '利用規約',
   '/privacy': 'プライバシー',
+  '/tokusho': '特商表記',
   'https://lin.ee/lYIZWhd': '問合せ',
   'https://www.dlogicai.in/': '競馬AI',
 };
@@ -255,6 +255,7 @@ export default function DashboardHeader({
         defaultGroup: 'info',
         items: [
           { kind: 'link', href: '/terms', groupOverride: 'info', labelOverride: '利用規約' },
+          { kind: 'link', href: '/tokusho', groupOverride: 'info', labelOverride: '特定商' },
           { kind: 'link', href: '/privacy', groupOverride: 'info', labelOverride: 'プライバシー' },
           { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
         ],
@@ -265,13 +266,6 @@ export default function DashboardHeader({
         items: [
           { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media', labelOverride: '競馬予想AI' },
           { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
-          {
-            kind: 'disabled',
-            key: 'legal',
-            label: '特定商',
-            icon: <DocumentTextIcon className="h-6 w-6" aria-hidden="true" />,
-            groupKey: 'media',
-          },
         ],
       },
     ];
