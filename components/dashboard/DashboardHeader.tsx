@@ -8,6 +8,11 @@ import {
   ChevronRightIcon,
   HomeIcon,
   ArrowRightOnRectangleIcon,
+  Square2StackIcon,
+  WrenchScrewdriverIcon,
+  BuildingStorefrontIcon,
+  ClipboardDocumentListIcon,
+  DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
@@ -18,10 +23,14 @@ import {
 
 const MOBILE_LABEL_MAP: Record<string, string> = {
   '/': 'ホーム',
+  'https://d-swipe.com/': 'ホーム',
   '/dashboard': 'ダッシュ',
   '/lp/create': '新規LP',
+  'https://d-swipe.com/lp/create': '新規LP',
   '/products': 'マーケット',
+  'https://d-swipe.com/products': 'マーケット',
   '/products/manage': '商品管理',
+  'https://d-swipe.com/products/manage': '商品管理',
   '/sales': '販売履歴',
   '/notes': 'NOTE一覧',
   '/note/create': '新規NOTE',
@@ -54,37 +63,37 @@ const getCompactLabel = (href: string, fallback: string) => {
 };
 
 const MOBILE_GROUP_PILL_CLASSES: Record<DashboardNavGroupKey, string> = {
-  core: 'bg-slate-100 text-slate-600 border border-transparent',
-  lp: 'bg-blue-100 text-blue-700 border border-transparent',
-  note: 'bg-slate-200 text-slate-600 border border-transparent',
-  salon: 'bg-sky-100 text-sky-700 border border-transparent',
+  core: 'bg-slate-200 text-slate-600 border border-transparent',
+  lp: 'bg-sky-100 text-sky-700 border border-transparent',
+  note: 'bg-rose-100 text-rose-700 border border-transparent',
+  salon: 'bg-amber-100 text-amber-700 border border-transparent',
   points: 'bg-violet-100 text-violet-700 border border-transparent',
   line: 'bg-emerald-100 text-emerald-700 border border-transparent',
-  media: 'bg-indigo-100 text-indigo-700 border border-transparent',
-  info: 'bg-slate-100 text-slate-500 border border-transparent',
+  media: 'bg-orange-100 text-orange-700 border border-transparent',
+  info: 'bg-white text-slate-500 border border-slate-200',
 };
 
 const MOBILE_GROUP_PILL_ACTIVE_CLASS = 'bg-white/20 text-white border border-white/30';
 
 const MOBILE_GROUP_CARD_CLASSES: Record<DashboardNavGroupKey, string> = {
   core: 'border-slate-200 bg-slate-100 text-slate-700 hover:border-slate-300',
-  lp: 'border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300',
-  note: 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300',
-  salon: 'border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300',
+  lp: 'border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300',
+  note: 'border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300',
+  salon: 'border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-300',
   points: 'border-violet-200 bg-violet-50 text-violet-700 hover:border-violet-300',
   line: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300',
-  media: 'border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300',
-  info: 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300',
+  media: 'border-orange-200 bg-orange-50 text-orange-700 hover:border-orange-300',
+  info: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300',
 };
 
 const MOBILE_GROUP_ICON_CLASSES: Record<DashboardNavGroupKey, string> = {
   core: 'bg-white/70 text-slate-600',
-  lp: 'bg-white/70 text-blue-600',
-  note: 'bg-white/70 text-slate-600',
-  salon: 'bg-white/70 text-sky-600',
+  lp: 'bg-white/70 text-sky-600',
+  note: 'bg-white/70 text-rose-600',
+  salon: 'bg-white/70 text-amber-600',
   points: 'bg-white/70 text-violet-600',
   line: 'bg-white/70 text-emerald-600',
-  media: 'bg-white/70 text-indigo-600',
+  media: 'bg-white/70 text-orange-600',
   info: 'bg-white/70 text-slate-500',
 };
 
@@ -119,9 +128,10 @@ export default function DashboardHeader({
   }, [navLinks]);
 
   type MobileMenuItem =
-    | { kind: 'link'; href: string; groupOverride?: DashboardNavGroupKey }
-    | { kind: 'customLink'; key: string; href: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey }
-    | { kind: 'logout'; key: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey };
+    | { kind: 'link'; href: string; groupOverride?: DashboardNavGroupKey; labelOverride?: string }
+    | { kind: 'customLink'; key: string; href: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey; external?: boolean }
+    | { kind: 'logout'; key: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey }
+    | { kind: 'disabled'; key: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey };
 
   type MobileMenuSection = {
     label: string;
@@ -134,26 +144,66 @@ export default function DashboardHeader({
       return [];
     }
 
+    const resolveIcon = (href: string, fallback: ReactNode) => navLinkMap.get(href)?.icon ?? fallback;
+
     return [
       {
-        label: 'ホーム',
+        label: 'ホームメニュー',
         defaultGroup: 'core',
         items: [
           {
             kind: 'customLink',
-            key: 'home',
+            key: 'home-top',
             href: '/',
-            label: 'ホーム',
-            icon: <HomeIcon className="h-6 w-6" aria-hidden="true" />,
+            label: 'ホーム（TOPページ）',
+            icon: <HomeIcon className="h-6 w-6" aria-hidden="true" />, 
             groupKey: 'core',
           },
-          { kind: 'link', href: '/dashboard', groupOverride: 'core' },
+          {
+            kind: 'link',
+            href: '/dashboard',
+            groupOverride: 'core',
+            labelOverride: 'ダッシュ（ダッシュボート）',
+          },
           {
             kind: 'logout',
             key: 'logout',
             label: 'ログアウト',
-            icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />,
-            groupKey: 'info',
+            icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />, 
+            groupKey: 'core',
+          },
+        ],
+      },
+      {
+        label: 'LPメニュー',
+        defaultGroup: 'lp',
+        items: [
+          {
+            kind: 'customLink',
+            key: 'lp-create',
+            href: 'https://d-swipe.com/lp/create',
+            label: '新規LP',
+            icon: resolveIcon('/lp/create', <Square2StackIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'lp',
+            external: true,
+          },
+          {
+            kind: 'customLink',
+            key: 'products-manage',
+            href: 'https://d-swipe.com/products/manage',
+            label: '商品管理',
+            icon: resolveIcon('/products/manage', <WrenchScrewdriverIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'lp',
+            external: true,
+          },
+          {
+            kind: 'customLink',
+            key: 'products-market',
+            href: 'https://d-swipe.com/products',
+            label: 'マーケット',
+            icon: resolveIcon('/products', <BuildingStorefrontIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'lp',
+            external: true,
           },
         ],
       },
@@ -161,58 +211,71 @@ export default function DashboardHeader({
         label: 'NOTEメニュー',
         defaultGroup: 'note',
         items: [
-          { kind: 'link', href: '/note/create', groupOverride: 'note' },
-          { kind: 'link', href: '/note', groupOverride: 'note' },
-          { kind: 'link', href: '/notes', groupOverride: 'note' },
+          { kind: 'link', href: '/note/create', groupOverride: 'note', labelOverride: '新規NOTE' },
+          { kind: 'link', href: '/note', groupOverride: 'note', labelOverride: 'NOTE編集' },
+          { kind: 'link', href: '/notes', groupOverride: 'note', labelOverride: 'NOTE一覧' },
         ],
       },
       {
         label: 'サロン',
         defaultGroup: 'salon',
         items: [
-          { kind: 'link', href: '/salons', groupOverride: 'salon' },
-          { kind: 'link', href: '/salons/create', groupOverride: 'salon' },
-          { kind: 'link', href: '/salons/all', groupOverride: 'salon' },
+          { kind: 'link', href: '/salons/create', groupOverride: 'salon', labelOverride: 'サロン作成' },
+          { kind: 'link', href: '/salons', groupOverride: 'salon', labelOverride: 'サロン一覧' },
+          { kind: 'link', href: '/salons/all', groupOverride: 'salon', labelOverride: '公開サロン' },
         ],
       },
       {
         label: 'ポイント',
         defaultGroup: 'points',
         items: [
-          { kind: 'link', href: '/points/purchase', groupOverride: 'points' },
-          { kind: 'link', href: '/points/history', groupOverride: 'points' },
-          { kind: 'link', href: '/purchases', groupOverride: 'points' },
+          { kind: 'link', href: '/points/purchase', groupOverride: 'points', labelOverride: 'PT購入' },
+          { kind: 'link', href: '/points/history', groupOverride: 'points', labelOverride: 'PT履歴' },
+          { kind: 'link', href: '/purchases', groupOverride: 'points', labelOverride: '購入履歴' },
         ],
       },
       {
-        label: '連携',
-        defaultGroup: 'media',
+        label: '設定',
+        defaultGroup: 'line',
         items: [
-          { kind: 'link', href: '/line/bonus', groupOverride: 'media' },
-          { kind: 'link', href: '/settings', groupOverride: 'media' },
-          { kind: 'link', href: '/sales', groupOverride: 'media' },
+          { kind: 'link', href: '/line/bonus', groupOverride: 'line', labelOverride: 'LINE連携' },
+          { kind: 'link', href: '/settings', groupOverride: 'line', labelOverride: 'X連携' },
+          {
+            kind: 'customLink',
+            key: 'sales-history',
+            href: '/sales',
+            label: '販売履歴',
+            icon: resolveIcon('/sales', <ClipboardDocumentListIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'line',
+          },
         ],
       },
       {
         label: 'サポート',
         defaultGroup: 'info',
         items: [
-          { kind: 'link', href: '/terms', groupOverride: 'info' },
-          { kind: 'link', href: '/privacy', groupOverride: 'info' },
-          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info' },
+          { kind: 'link', href: '/terms', groupOverride: 'info', labelOverride: '利用規約' },
+          { kind: 'link', href: '/privacy', groupOverride: 'info', labelOverride: 'プライバシー' },
+          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
         ],
       },
       {
         label: 'その他',
         defaultGroup: 'media',
         items: [
-          { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media' },
-          { kind: 'link', href: '/media', groupOverride: 'media' },
-          { kind: 'link', href: '/products', groupOverride: 'media' },
+          { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media', labelOverride: '競馬予想AI' },
+          { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
+          {
+            kind: 'disabled',
+            key: 'legal',
+            label: '特定商',
+            icon: <DocumentTextIcon className="h-6 w-6" aria-hidden="true" />,
+            groupKey: 'media',
+          },
         ],
       },
     ];
-  }, [user]);
+  }, [navLinks, navLinkMap, user]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
@@ -446,7 +509,7 @@ export default function DashboardHeader({
                             const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
                             const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
                             const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
-                            const label = getCompactLabel(navLink.href, navLink.label);
+                            const label = item.labelOverride ?? getCompactLabel(navLink.href, navLink.label);
                             const linkProps = navLink.external
                               ? { href: navLink.href, target: '_blank' as const, rel: 'noopener noreferrer' }
                               : { href: navLink.href };
@@ -484,7 +547,8 @@ export default function DashboardHeader({
                           }
 
                           if (item.kind === 'customLink') {
-                            const isActive = pathname === item.href;
+                            const isExternal = item.external ?? item.href.startsWith('http');
+                            const isActive = !isExternal && pathname === item.href;
                             const groupKey = item.groupKey;
                             const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
                             const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
@@ -494,6 +558,7 @@ export default function DashboardHeader({
                               <Link
                                 key={`${section.label}-${item.key}`}
                                 href={item.href}
+                                {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
                                   isActive
@@ -548,6 +613,32 @@ export default function DashboardHeader({
                                   {item.label}
                                 </span>
                               </button>
+                            );
+                          }
+
+                          if (item.kind === 'disabled') {
+                            const groupKey = item.groupKey;
+                            const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
+                            const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
+                            const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
+
+                            return (
+                              <div
+                                key={`${section.label}-${item.key}`}
+                                className={`${cardClass} flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold opacity-60`}
+                              >
+                                <span
+                                  className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${pillClass}`}
+                                >
+                                  {section.label}
+                                </span>
+                                <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${iconClass}`}>
+                                  {item.icon}
+                                </span>
+                                <span className="mb-1 text-center text-[11px] leading-tight">
+                                  {item.label}
+                                </span>
+                              </div>
                             );
                           }
 
