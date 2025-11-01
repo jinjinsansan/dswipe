@@ -176,17 +176,17 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
 
         {/* Header with integrated search and filters */}
-        <div className="relative flex-shrink-0 bg-[#050916] border-b border-white/10">
+        <div className="relative flex-shrink-0 bg-sky-50 border-b border-sky-200">
           {/* Title bar */}
           <div className="flex items-center justify-between px-3 sm:px-5 sm:px-6 py-3 sm:py-4">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.32em] text-white mb-1">Template Library</p>
-              <h2 className="text-lg sm:text-xl font-semibold text-white truncate">テンプレートを選択</h2>
-              <p className="text-xs text-white mt-1 hidden sm:block">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
+              <p className="text-[10px] uppercase tracking-[0.32em] text-slate-600 mb-1">Template Library</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">テンプレートを選択</h2>
+              <p className="text-xs text-slate-700 mt-1 hidden sm:block">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
             </div>
             <button
               onClick={onClose}
-              className="inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white/5 text-white hover:bg-white/10 transition flex-shrink-0 ml-2"
+              className="inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-sky-100 text-slate-900 hover:bg-sky-200 transition flex-shrink-0 ml-2"
               aria-label="閉じる"
             >
               ×
@@ -197,16 +197,16 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           <div className="px-3 sm:px-5 sm:px-6 pb-3">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <div className="relative flex-1">
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-white" aria-hidden="true" />
+                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" aria-hidden="true" />
                 <input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="テンプレートを検索 (キーワード/用途/カラー)"
-                  className="w-full rounded-lg border border-white/20 bg-[#0b1024] pl-9 pr-3 py-2 text-sm text-white placeholder:text-white/50 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400/70"
+                  className="w-full rounded-lg border border-sky-300 bg-white pl-9 pr-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400/70"
                   aria-label="テンプレート検索"
                 />
               </div>
-              <div className="flex items-center gap-2 text-xs text-white">
+              <div className="flex items-center gap-2 text-xs text-slate-700">
                 <FunnelIcon className="h-4 w-4" aria-hidden="true" />
                 カテゴリを絞り込み
               </div>
@@ -214,7 +214,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           </div>
 
           {/* Category filters */}
-          <div className="px-3 sm:px-5 sm:px-6 pb-3 border-t border-white/5 pt-3">
+          <div className="px-3 sm:px-5 sm:px-6 pb-3 border-t border-sky-200 pt-3">
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
               {categoryOptions.map((category) => {
                 const isActive = selectedCategory === category.id;
@@ -226,7 +226,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                     className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                       isActive
                         ? 'bg-blue-500 text-white shadow-[0_8px_24px_-12px_rgba(37,99,235,0.9)]'
-                        : 'bg-white/15 text-white hover:bg-white/25'
+                        : 'bg-sky-100 text-slate-700 hover:bg-sky-200'
                     }`}
                   >
                     {category.name}
@@ -241,14 +241,14 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
 
           {templates.length === 0 ? (
-            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-white">
-              <FolderOpenIcon className="h-12 w-12 text-white" aria-hidden="true" />
+            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-slate-700">
+              <FolderOpenIcon className="h-12 w-12 text-slate-500" aria-hidden="true" />
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
             <>
               {filteredGroups.length === 0 ? (
-                <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-10 text-center text-sm text-white">
+                <div className="mt-6 rounded-xl border border-sky-200 bg-sky-50 p-10 text-center text-sm text-slate-700">
                   条件に一致するテンプレートが見つかりませんでした。検索ワードやカテゴリを変更してみてください。
                 </div>
               ) : (
@@ -344,8 +344,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         </div>
 
         {/* Footer */}
-        <div className="relative border-t border-white/10 bg-white/5 px-2 sm:px-5 sm:px-6 py-2 sm:py-3.5 text-center text-[10px] sm:text-[11px] sm:text-xs text-white flex-shrink-0">
-          <span className="font-medium text-white">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
+        <div className="relative border-t border-sky-200 bg-sky-50 px-2 sm:px-5 sm:px-6 py-2 sm:py-3.5 text-center text-[10px] sm:text-[11px] sm:text-xs text-slate-700 flex-shrink-0">
+          <span className="font-medium text-slate-900">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
         </div>
       </div>
     </div>
