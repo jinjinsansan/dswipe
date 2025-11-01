@@ -640,8 +640,8 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </Swiper>
       </div>
       {showPurchaseModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center px-4 animate-in fade-in duration-200">
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm px-4 py-6 sm:py-10 animate-in fade-in duration-200">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh]">
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))]" />
