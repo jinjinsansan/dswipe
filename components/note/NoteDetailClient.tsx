@@ -409,6 +409,9 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
                   )}
                   {purchaseState === 'processing' ? '処理中...' : purchaseButtonLabel}
                 </button>
+                <p className="text-[11px] leading-relaxed text-slate-500">
+                  デジタルコンテンツの性質上、購入完了後のポイントおよび提供済みコンテンツはキャンセルできません。
+                </p>
                 {!isAuthenticated ? (
                   <Link
                     href="/login"

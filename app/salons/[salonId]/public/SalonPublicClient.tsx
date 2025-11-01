@@ -261,6 +261,10 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                       現在申し込み可能な決済方法が設定されていません。
                     </div>
                   ) : null}
+
+                  <p className="text-[11px] leading-relaxed text-slate-500 text-center">
+                    デジタルコンテンツの性質上、決済完了後のポイントおよび提供済みコンテンツはキャンセルできません。
+                  </p>
                 </>
               )}
             </div>
