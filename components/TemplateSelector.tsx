@@ -180,9 +180,9 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           {/* Title bar */}
           <div className="flex items-center justify-between px-3 sm:px-5 sm:px-6 py-3 sm:py-4">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.32em] text-blue-200 mb-1">Template Library</p>
+              <p className="text-[10px] uppercase tracking-[0.32em] text-white mb-1">Template Library</p>
               <h2 className="text-lg sm:text-xl font-semibold text-white truncate">テンプレートを選択</h2>
-              <p className="text-xs text-white/70 mt-1 hidden sm:block">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
+              <p className="text-xs text-white mt-1 hidden sm:block">追加したいブロックを選び、瞬時にLPへ反映できます。</p>
             </div>
             <button
               onClick={onClose}
@@ -206,7 +206,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                   aria-label="テンプレート検索"
                 />
               </div>
-              <div className="flex items-center gap-2 text-xs text-white/90">
+              <div className="flex items-center gap-2 text-xs text-white">
                 <FunnelIcon className="h-4 w-4" aria-hidden="true" />
                 カテゴリを絞り込み
               </div>
@@ -241,14 +241,14 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
 
           {templates.length === 0 ? (
-            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
-              <FolderOpenIcon className="h-12 w-12 text-gray-500" aria-hidden="true" />
+            <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-white">
+              <FolderOpenIcon className="h-12 w-12 text-white" aria-hidden="true" />
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
             <>
               {filteredGroups.length === 0 ? (
-                <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-10 text-center text-sm text-blue-100/70">
+                <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-10 text-center text-sm text-white">
                   条件に一致するテンプレートが見つかりませんでした。検索ワードやカテゴリを変更してみてください。
                 </div>
               ) : (
@@ -348,8 +348,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         </div>
 
         {/* Footer */}
-        <div className="relative border-t border-white/10 bg-white/5 px-2 sm:px-5 sm:px-6 py-2 sm:py-3.5 text-center text-[10px] sm:text-[11px] sm:text-xs text-gray-400 flex-shrink-0">
-          <span className="font-medium text-white/80">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
+        <div className="relative border-t border-white/10 bg-white/5 px-2 sm:px-5 sm:px-6 py-2 sm:py-3.5 text-center text-[10px] sm:text-[11px] sm:text-xs text-white flex-shrink-0">
+          <span className="font-medium text-white">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
         </div>
       </div>
     </div>
