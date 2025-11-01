@@ -349,13 +349,13 @@ export default function SalonCreatePage() {
                         </span>
                       </div>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      <p>ONE.lat側のプランポイント数をそのまま日本円表示に利用します。</p>
-                      <p>税込・税抜の表示は下記の税設定に準拠します。</p>
-                      {form.allow_jpy_subscription && !selectedPlan ? (
-                        <span className="mt-1 block text-rose-500">先にサブスクプランを選択してください。</span>
-                      ) : null}
-                    </div>
+                  <div className="text-xs text-slate-500">
+                    <p>ONE.lat側のプランポイント数をそのまま日本円表示に利用します。</p>
+                    <p>税込・税抜の表示は下記の税設定に準拠します。</p>
+                    {form.allow_jpy_subscription && !selectedPlan ? (
+                      <span className="mt-1 block text-rose-500">先にサブスクプランを選択してください。</span>
+                    ) : null}
+                  </div>
                   </div>
                 </div>
 
