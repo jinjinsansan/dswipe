@@ -51,7 +51,7 @@ export default function TopMediaSpotlightBlock({
     const commonClasses =
       'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
 
-    if (onProductClick) {
+    if (onProductClick && productId) {
       return (
         <button
           type="button"

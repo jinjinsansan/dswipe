@@ -223,7 +223,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   ))}
                 </ul>
 
-                {onProductClick ? (
+                {onProductClick && productId ? (
                   <button
                     className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
                     type="button"

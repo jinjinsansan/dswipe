@@ -55,9 +55,16 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
   }, [salon]);
 
   const priceLabelYen = useMemo(() => {
-    if (!salon?.plan?.usd_amount) return null;
-    const estimatedYen = Math.round((salon.plan.usd_amount ?? 0) * 145);
-    return estimatedYen > 0 ? `月額 約${estimatedYen.toLocaleString("ja-JP") }円` : null;
+    const explicit = salon?.plan?.monthly_price_jpy;
+    if (explicit && explicit > 0) {
+      return `月額 ${explicit.toLocaleString("ja-JP")}円`;
+    }
+    const usdAmount = salon?.plan?.usd_amount;
+    if (usdAmount && usdAmount > 0) {
+      const estimated = Math.round(usdAmount * 145);
+      return estimated > 0 ? `月額 約${estimated.toLocaleString("ja-JP") }円` : null;
+    }
+    return null;
   }, [salon]);
 
   const handleJoinWithPoints = () => {

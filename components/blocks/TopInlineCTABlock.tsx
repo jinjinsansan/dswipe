@@ -93,7 +93,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
         </p>
 
         <div className="mt-2 flex justify-center">
-          {onProductClick ? (
+          {onProductClick && productId ? (
             <button
               type="button"
               onClick={() => {

@@ -602,7 +602,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                         <ViewerBlockRenderer
                           blockType={step.block_type}
                           content={step.content_data}
-                        productId={primaryTargetId}
+                          productId={primaryTargetId}
                           onProductClick={handleProductButtonClick}
                           ctaIds={(ctasByStep[step.id] ?? []).map((cta) => cta.id)}
                           onCtaClick={(ctaId) => recordCtaClick(step.id, ctaId)}

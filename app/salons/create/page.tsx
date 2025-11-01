@@ -25,7 +25,6 @@ type FormState = {
   subscription_plan_id: string;
   allow_point_subscription: boolean;
   allow_jpy_subscription: boolean;
-  monthly_price_jpy: string;
   tax_rate: string;
   tax_inclusive: boolean;
 };
@@ -37,7 +36,6 @@ const INITIAL_FORM: FormState = {
   subscription_plan_id: "",
   allow_point_subscription: true,
   allow_jpy_subscription: false,
-  monthly_price_jpy: "",
   tax_rate: "10",
   tax_inclusive: true,
 };
@@ -51,6 +49,15 @@ export default function SalonCreatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const selectedPlan = useMemo(() => {
+    if (!form.subscription_plan_id) {
+      return undefined;
+    }
+    return plans.find((plan) => {
+      const planId = plan.subscription_plan_id ?? plan.plan_key;
+      return planId === form.subscription_plan_id;
+    });
+  }, [form.subscription_plan_id, plans]);
 
   useEffect(() => {
     const init = async () => {
@@ -117,9 +124,12 @@ export default function SalonCreatePage() {
     }
 
     if (allowJpy) {
-      const yenValue = Number(form.monthly_price_jpy);
-      if (!form.monthly_price_jpy || Number.isNaN(yenValue) || yenValue <= 0) {
-        setError("日本円サブスクの月額価格を1円以上で設定してください");
+      if (!selectedPlan) {
+        setError("日本円サブスクを有効にするにはサブスクプランを選択してください");
+        return;
+      }
+      if (!Number.isFinite(selectedPlan.points) || selectedPlan.points <= 0) {
+        setError("選択したプランのポイント数が正しく設定されていません");
         return;
       }
     }
@@ -140,7 +150,7 @@ export default function SalonCreatePage() {
         subscription_plan_id: form.subscription_plan_id,
         allow_point_subscription: allowPoint,
         allow_jpy_subscription: allowJpy,
-        monthly_price_jpy: allowJpy ? Number(form.monthly_price_jpy) : null,
+        monthly_price_jpy: allowJpy && selectedPlan ? selectedPlan.points : null,
         tax_rate: parsedTaxRate,
         tax_inclusive: form.tax_inclusive,
       };
@@ -331,18 +341,21 @@ export default function SalonCreatePage() {
                   </div>
                   <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
                     <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="1980"
-                        value={form.monthly_price_jpy}
-                        onChange={(event) => handleChange("monthly_price_jpy", event.target.value)}
-                        disabled={!form.allow_jpy_subscription}
-                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
-                      />
-                      <span className="text-sm font-semibold text-slate-600">円 / 月</span>
+                      <div className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900">
+                        <span>
+                          {selectedPlan && form.allow_jpy_subscription
+                            ? `${selectedPlan.points.toLocaleString("ja-JP")} 円 / 月`
+                            : "プラン選択で自動計算"}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500">税込・税抜の表示は下記の税設定に準拠します。</p>
+                    <div className="text-xs text-slate-500">
+                      <p>ONE.lat側のプランポイント数をそのまま日本円表示に利用します。</p>
+                      <p>税込・税抜の表示は下記の税設定に準拠します。</p>
+                      {form.allow_jpy_subscription && !selectedPlan ? (
+                        <span className="mt-1 block text-rose-500">先にサブスクプランを選択してください。</span>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
 

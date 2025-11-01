@@ -167,7 +167,7 @@ export default function TopHeroBlock({
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             {primaryText ? (
-              onProductClick ? (
+              onProductClick && productId ? (
                 <button
                   type="button"
               onClick={() => {

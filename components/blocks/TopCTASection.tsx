@@ -45,7 +45,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
     const commonClasses =
       'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent shadow-sm';
 
-    if (onProductClick) {
+    if (onProductClick && productId) {
       return (
         <button
           type="button"
