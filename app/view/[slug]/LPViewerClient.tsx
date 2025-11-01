@@ -9,7 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import { publicApi, productApi, pointsApi } from '@/lib/api';
-import { LPDetail, RequiredActionsStatus, CTA } from '@/types';
+import { LPDetail, RequiredActionsStatus, CTA, Product } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 
@@ -34,13 +34,27 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [requiredActions, setRequiredActions] = useState<RequiredActionsStatus | null>(null);
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [email, setEmail] = useState('');
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [pointBalance, setPointBalance] = useState(0);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [purchaseMethod, setPurchaseMethod] = useState<'points' | 'yen'>('points');
   const swiperRef = useRef<SwiperType | null>(null);
+
+  const selectedIsPoints = purchaseMethod === 'points';
+  const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
+  const selectedProductPriceYen = selectedProduct?.price_jpy ?? 0;
+  const totalPointsCost = selectedProductPricePoints * purchaseQuantity;
+  const totalYenCost = selectedProductPriceYen * purchaseQuantity;
+  const showPointsOption = !!selectedProduct?.allow_point_purchase;
+  const showYenOption = !!selectedProduct?.allow_jpy_purchase;
+  const canUsePoints = !!selectedProduct?.allow_point_purchase;
+  const canUseYen = !!selectedProduct?.allow_jpy_purchase && selectedProductPriceYen > 0;
+  const insufficientPoints = selectedIsPoints && selectedProduct ? pointBalance < totalPointsCost : false;
+  const stockLimit = selectedProduct?.stock_quantity ?? null;
+  const isTaxInclusive = selectedProduct?.tax_inclusive ?? true;
 
   const ctasByStep = useMemo(() => {
     if (!lp?.ctas || !Array.isArray(lp.ctas)) {
@@ -141,12 +155,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const fetchProducts = async (lpId: string) => {
     try {
       const response = await productApi.list({ lp_id: lpId });
-      const productsData = Array.isArray(response.data?.data) 
-        ? response.data.data 
-        : Array.isArray(response.data) 
-        ? response.data 
+      const productsData = Array.isArray(response.data?.data)
+        ? (response.data.data as Product[])
+        : Array.isArray(response.data)
+        ? (response.data as Product[])
         : [];
-      const availableProducts = productsData.filter((p: any) => p.is_available);
+      const availableProducts = productsData.filter((p) => p?.is_available);
       setProducts(availableProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
@@ -163,7 +177,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
   };
 
-  const handleOpenPurchaseModal = (product: any) => {
+  const handleOpenPurchaseModal = (product: Product) => {
     
     if (!isAuthenticated) {
       if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
@@ -172,9 +186,27 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       return;
     }
     
-    
+    if (!product.allow_point_purchase && !product.allow_jpy_purchase) {
+      alert('現在この商品は購入できません。販売者にお問い合わせください。');
+      return;
+    }
+
+    if (
+      product.stock_quantity !== null &&
+      product.stock_quantity !== undefined &&
+      product.stock_quantity <= 0
+    ) {
+      alert('申し訳ありませんが、この商品は在庫切れです。');
+      return;
+    }
+
     setSelectedProduct(product);
     setPurchaseQuantity(1);
+    if (product.allow_point_purchase) {
+      setPurchaseMethod('points');
+    } else {
+      setPurchaseMethod('yen');
+    }
     setShowPurchaseModal(true);
   };
 
@@ -209,52 +241,83 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const handlePurchase = async () => {
     if (!selectedProduct) return;
 
+    const isPointsPurchase = purchaseMethod === 'points';
+    const totalPointsCost = selectedProduct.price_in_points * purchaseQuantity;
+    const totalYenCost = (selectedProduct.price_jpy ?? 0) * purchaseQuantity;
 
+    if (isPointsPurchase) {
+      if (!selectedProduct.allow_point_purchase) {
+        alert('この商品はポイント決済に対応していません。');
+        return;
+      }
+      if (pointBalance < totalPointsCost) {
+        alert('ポイントが不足しています。ポイントを購入してから再度お試しください。');
+        return;
+      }
+    } else {
+      if (!selectedProduct.allow_jpy_purchase || totalYenCost <= 0) {
+        alert('この商品は日本円決済に対応していません。');
+        return;
+      }
+    }
 
     setIsPurchasing(true);
     try {
-      const response = await productApi.purchase(selectedProduct.id, { quantity: purchaseQuantity });
-      
-      setShowPurchaseModal(false);
-      
-      const payload = response.data || {};
-      const nested = payload.data || {};
+      const response = await productApi.purchase(selectedProduct.id, {
+        quantity: purchaseQuantity,
+        payment_method: purchaseMethod,
+      });
 
-      const redirectTarget =
-        payload.redirect_url ||
-        payload.post_purchase_redirect_url ||
-        payload.postPurchaseRedirectUrl ||
-        payload.thanks_lp_url ||
-        payload.thanksLpUrl ||
-        nested.redirect_url ||
-        nested.post_purchase_redirect_url ||
-        nested.postPurchaseRedirectUrl ||
-        nested.thanks_lp_url ||
-        nested.thanksLpUrl;
+      if (isPointsPurchase) {
+        setShowPurchaseModal(false);
 
-      const thanksSlug =
-        payload.thanks_lp_slug ||
-        payload.thanksLpSlug ||
-        nested.thanks_lp_slug ||
-        nested.thanksLpSlug ||
-        payload.thanks_lp_id ||
-        payload.thanksLpId ||
-        nested.thanks_lp_id ||
-        nested.thanksLpId;
+        const payload = response.data || {};
+        const nested = payload.data || {};
 
-      if (redirectTarget) {
-        alert('購入が完了しました！\nサンクスページに移動します。');
-        window.location.href = redirectTarget;
-      } else if (thanksSlug) {
-        alert('購入が完了しました！\nサンクスページに移動します。');
-        router.push(`/view/${thanksSlug}`);
+        const redirectTarget =
+          payload.redirect_url ||
+          payload.post_purchase_redirect_url ||
+          payload.postPurchaseRedirectUrl ||
+          payload.thanks_lp_url ||
+          payload.thanksLpUrl ||
+          nested.redirect_url ||
+          nested.post_purchase_redirect_url ||
+          nested.postPurchaseRedirectUrl ||
+          nested.thanks_lp_url ||
+          nested.thanksLpUrl;
+
+        const thanksSlug =
+          payload.thanks_lp_slug ||
+          payload.thanksLpSlug ||
+          nested.thanks_lp_slug ||
+          nested.thanksLpSlug ||
+          payload.thanks_lp_id ||
+          payload.thanksLpId ||
+          nested.thanks_lp_id ||
+          nested.thanksLpId;
+
+        if (redirectTarget) {
+          alert('購入が完了しました！\nサンクスページに移動します。');
+          window.location.href = redirectTarget;
+        } else if (thanksSlug) {
+          alert('購入が完了しました！\nサンクスページに移動します。');
+          router.push(`/view/${thanksSlug}`);
+        } else {
+          alert('購入が完了しました！\nありがとうございます。');
+        }
+
+        await fetchPointBalance();
+        if (lp?.id) {
+          await fetchProducts(lp.id);
+        }
       } else {
-        alert('購入が完了しました！\nありがとうございます。');
-      }
-      
-      await fetchPointBalance();
-      if (lp?.id) {
-        await fetchProducts(lp.id);
+        const checkoutUrl = response.data?.checkout_url;
+        if (checkoutUrl) {
+          alert('決済ページに移動します。完了後にブラウザに戻ってください。');
+          window.location.href = checkoutUrl;
+        } else {
+          alert('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
+        }
       }
     } catch (error: any) {
       console.error('❌ Purchase error:', error);
@@ -263,10 +326,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         status: error.response?.status,
         message: error.message,
       });
-      
-      const errorMessage = error.response?.data?.detail 
-        || error.message 
-        || '購入に失敗しました。もう一度お試しください。';
+
+      const errorMessage =
+        error.response?.data?.detail || error.message || '購入に失敗しました。もう一度お試しください。';
       alert(errorMessage);
     } finally {
       setIsPurchasing(false);
@@ -603,12 +665,16 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     </svg>
                   </button>
                 </div>
-                <div className="flex items-center gap-2 text-blue-100">
+                <div
+                  className={`flex items-center gap-2 ${selectedIsPoints ? 'text-blue-100' : 'text-emerald-100'}`}
+                >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm font-medium">ポイント決済</span>
+                  <span className="text-sm font-medium">
+                    {selectedIsPoints ? 'ポイント決済' : '日本円決済'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -634,8 +700,59 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
               </div>
 
               {/* Purchase Details */}
-              <div className="space-y-3 mb-6">
-                {/* Price */}
+              <div className="space-y-4 mb-6">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {showPointsOption && (
+                    <button
+                      type="button"
+                      onClick={() => setPurchaseMethod('points')}
+                      className={`rounded-lg border px-4 py-3 text-left transition ${
+                        selectedIsPoints
+                          ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_0_1px_rgba(59,130,246,0.3)]'
+                          : 'border-gray-200 bg-white hover:border-blue-400/80'
+                      }`}
+                    >
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gray-500">
+                        ポイント決済
+                      </div>
+                      <div className="mt-2 text-2xl font-bold text-blue-600">
+                        {selectedProductPricePoints.toLocaleString()}{' '}
+                        <span className="text-base text-blue-400">PT</span>
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">保有ポイントから差し引かれます</div>
+                    </button>
+                  )}
+                  {showYenOption && (
+                    <button
+                      type="button"
+                      onClick={() => canUseYen && setPurchaseMethod('yen')}
+                      className={`rounded-lg border px-4 py-3 text-left transition ${
+                        !selectedIsPoints
+                          ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.3)]'
+                          : 'border-gray-200 bg-white hover:border-emerald-400/80'
+                      } ${!canUseYen ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      disabled={!canUseYen}
+                    >
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gray-500">
+                        日本円決済
+                      </div>
+                      <div className="mt-2 text-2xl font-bold text-emerald-600">
+                        {canUseYen ? (
+                          <>
+                            {selectedProductPriceYen.toLocaleString()}{' '}
+                            <span className="text-base text-emerald-400">円</span>
+                          </>
+                        ) : (
+                          <span className="text-sm text-emerald-500">価格未設定</span>
+                        )}
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        {isTaxInclusive ? '税込価格で表示されています' : '税抜価格で表示されています'}
+                      </div>
+                    </button>
+                  )}
+                </div>
+
                 <div className="bg-gradient-to-r from-gray-50 to-white rounded-lg p-4 border border-gray-100">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-600">
@@ -645,13 +762,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                       <span className="font-medium">単価</span>
                     </div>
                     <span className="text-lg font-bold text-gray-900">
-                      {selectedProduct.price_in_points.toLocaleString()}
-                      <span className="text-sm text-blue-600 ml-1">P</span>
+                      {selectedIsPoints
+                        ? `${selectedProductPricePoints.toLocaleString()} P`
+                        : canUseYen
+                          ? `${selectedProductPriceYen.toLocaleString()} 円`
+                          : '未設定'}
                     </span>
                   </div>
                 </div>
 
-                {/* Quantity */}
                 <div className="bg-gradient-to-r from-gray-50 to-white rounded-lg p-4 border border-gray-100">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-600">
@@ -669,14 +788,25 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                       </button>
                       <input
                         type="number"
-                        min="1"
-                        max={selectedProduct.stock_quantity || 999}
+                        min={1}
+                        max={stockLimit !== null ? Math.max(1, stockLimit) : undefined}
                         value={purchaseQuantity}
-                        onChange={(e) => setPurchaseQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                        onChange={(e) => {
+                          const nextValue = Math.max(1, parseInt(e.target.value, 10) || 1);
+                          const limitedValue = stockLimit !== null ? Math.min(Math.max(1, stockLimit), nextValue) : nextValue;
+                          setPurchaseQuantity(limitedValue);
+                        }}
                         className="w-16 px-3 py-2 border-2 border-gray-200 rounded-lg text-center font-bold text-gray-900 focus:border-blue-500 focus:outline-none"
                       />
                       <button
-                        onClick={() => setPurchaseQuantity(Math.min(selectedProduct.stock_quantity || 999, purchaseQuantity + 1))}
+                        onClick={() => {
+                          const nextValue = purchaseQuantity + 1;
+                          if (stockLimit !== null) {
+                            setPurchaseQuantity(Math.min(Math.max(1, stockLimit), nextValue));
+                          } else {
+                            setPurchaseQuantity(nextValue);
+                          }
+                        }}
                         className="w-8 h-8 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center text-gray-700 font-bold"
                       >
                         ＋
@@ -685,57 +815,85 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   </div>
                 </div>
 
-                {/* Total */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border-2 border-blue-200">
+                <div
+                  className={`rounded-lg p-4 border-2 ${
+                    selectedIsPoints
+                      ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
+                      : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200'
+                  }`}
+                >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-blue-900">
+                    <div className={`flex items-center gap-2 ${selectedIsPoints ? 'text-blue-900' : 'text-emerald-900'}`}>
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                       <span className="font-bold text-lg">合計金額</span>
                     </div>
-                    <span className="text-2xl font-bold text-blue-600">
-                      {(selectedProduct.price_in_points * purchaseQuantity).toLocaleString()}
-                      <span className="text-base ml-1">P</span>
+                    <span className={`text-2xl font-bold ${selectedIsPoints ? 'text-blue-600' : 'text-emerald-600'}`}>
+                      {selectedIsPoints
+                        ? `${totalPointsCost.toLocaleString()} P`
+                        : canUseYen
+                          ? `${totalYenCost.toLocaleString()} 円`
+                          : '未設定'}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Balance Info */}
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-5 mb-6 text-white shadow-lg">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300 text-sm flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                        <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-                      </svg>
-                      現在の残高
-                    </span>
-                    <span className="font-bold text-lg">{pointBalance.toLocaleString()} P</span>
-                  </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300 text-sm flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
-                      </svg>
-                      購入後の残高
-                    </span>
-                    <span className={`font-bold text-lg ${
-                      pointBalance - (selectedProduct.price_in_points * purchaseQuantity) < 0 
-                        ? 'text-red-400' 
-                        : 'text-green-400'
-                    }`}>
-                      {(pointBalance - (selectedProduct.price_in_points * purchaseQuantity)).toLocaleString()} P
-                    </span>
+              {selectedIsPoints ? (
+                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-5 mb-6 text-white shadow-lg">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 text-sm flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                          <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                        </svg>
+                        現在の残高
+                      </span>
+                      <span className="font-bold text-lg">{pointBalance.toLocaleString()} P</span>
+                    </div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 text-sm flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                        </svg>
+                        購入後の残高
+                      </span>
+                      <span className={`font-bold text-lg ${insufficientPoints ? 'text-red-400' : 'text-green-400'}`}>
+                        {(pointBalance - totalPointsCost).toLocaleString()} P
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-gradient-to-br from-emerald-100 via-white to-emerald-50 rounded-xl p-5 mb-6 text-emerald-900 border border-emerald-200 shadow-inner">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .672-3 1.5S10.343 11 12 11s3 .672 3 1.5S13.657 14 12 14s-3 .672-3 1.5S10.343 17 12 17s3-.672 3-1.5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 16v-2m7-7h2M3 12H1m18.364 6.364l-1.414-1.414M5.05 5.05L3.636 3.636m12.728 0l1.414 1.414M5.05 18.95l-1.414 1.414" />
+                      </svg>
+                      <span className="font-semibold">決済について</span>
+                    </div>
+                    <p className="text-sm leading-relaxed">
+                      日本円での決済は外部サービス（one.lat）で完了します。ボタンを押すと決済ページへ移動しますので、手続きを完了させてください。
+                    </p>
+                    <div className="flex items-center justify-between rounded-lg bg-white/70 px-4 py-3 text-sm font-semibold">
+                      <span>お支払い金額</span>
+                      <span>{canUseYen ? `${totalYenCost.toLocaleString()} 円` : '未設定'}</span>
+                    </div>
+                    <div className="text-xs text-emerald-700">
+                      決済完了後に自動的にコンテンツが付与されます。ブラウザを閉じずに決済を完了してください。
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Error Message */}
-              {pointBalance < (selectedProduct.price_in_points * purchaseQuantity) && (
+              {selectedIsPoints && insufficientPoints && (
                 <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl animate-in slide-in-from-top-2 duration-300">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -746,7 +904,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     <div>
                       <p className="text-red-900 font-semibold">ポイントが不足しています</p>
                       <p className="text-red-700 text-sm mt-1">
-                        不足: {((selectedProduct.price_in_points * purchaseQuantity) - pointBalance).toLocaleString()} P
+                        不足: {(totalPointsCost - pointBalance).toLocaleString()} P
                       </p>
                     </div>
                   </div>
@@ -758,10 +916,15 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                 <button
                   onClick={handlePurchase}
                   disabled={
-                    isPurchasing || 
-                    pointBalance < (selectedProduct.price_in_points * purchaseQuantity)
+                    isPurchasing ||
+                    (selectedIsPoints && insufficientPoints) ||
+                    (!selectedIsPoints && !canUseYen)
                   }
-                  className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2"
+                  className={`flex-1 px-6 py-4 text-white rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 ${
+                    selectedIsPoints
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40'
+                      : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40'
+                  }`}
                 >
                   {isPurchasing ? (
                     <>
@@ -773,10 +936,17 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     </>
                   ) : (
                     <>
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      購入を確定する
+                      {selectedIsPoints ? (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .672-3 1.5S10.343 11 12 11s3 .672 3 1.5S13.657 14 12 14s-3 .672-3 1.5S10.343 17 12 17s3-.672 3-1.5" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 16v-2m7-7h2M3 12H1m18.364 6.364l-1.414-1.414M5.05 5.05L3.636 3.636m12.728 0l1.414 1.414M5.05 18.95l-1.414 1.414" />
+                        </svg>
+                      )}
+                      {selectedIsPoints ? 'ポイントで購入' : '決済ページへ進む'}
                     </>
                   )}
                 </button>

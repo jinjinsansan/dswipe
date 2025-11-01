@@ -353,13 +353,28 @@ function ProductsContent() {
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between mb-3 text-sm font-semibold text-slate-700">
-                        <span>価格</span>
-                        <span>{(Number(product.price_in_points) || 0).toLocaleString()} P</span>
+                      <div className="space-y-2 mb-3 text-sm font-semibold text-slate-700">
+                        {product.allow_point_purchase && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500">ポイント</span>
+                            <span>{(Number(product.price_in_points) || 0).toLocaleString()} P</span>
+                          </div>
+                        )}
+                        {product.allow_jpy_purchase && (
+                          <div className="flex items-center justify-between text-emerald-600">
+                            <span className="text-slate-500">日本円</span>
+                            <span>{(Number(product.price_jpy) || 0).toLocaleString()} 円</span>
+                          </div>
+                        )}
+                        {!product.allow_point_purchase && !product.allow_jpy_purchase && (
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span>価格未設定</span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
-                        LPを見る
+                        詳細を見る
                       </div>
                     </div>
                   </Link>

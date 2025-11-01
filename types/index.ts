@@ -116,7 +116,12 @@ export interface Product {
   title: string;
   description?: string;
   price_in_points: number;
-  stock_quantity?: number;
+  price_jpy?: number | null;
+  allow_point_purchase: boolean;
+  allow_jpy_purchase: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
+  stock_quantity?: number | null;
   is_available: boolean;
   total_sales: number;
   created_at: string;
@@ -143,6 +148,11 @@ export interface NoteSummary {
   excerpt?: string | null;
   is_paid: boolean;
   price_points: number;
+  price_jpy?: number | null;
+  allow_point_purchase: boolean;
+  allow_jpy_purchase: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
   status: NoteStatus;
   published_at?: string | null;
   updated_at: string;
@@ -200,6 +210,11 @@ export interface PublicNoteSummary {
   excerpt?: string | null;
   is_paid: boolean;
   price_points: number;
+  price_jpy?: number | null;
+  allow_point_purchase: boolean;
+  allow_jpy_purchase: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
   author_username?: string | null;
   published_at?: string | null;
   categories: string[];
@@ -226,6 +241,11 @@ export interface PublicNoteDetail {
   excerpt?: string | null;
   is_paid: boolean;
   price_points: number;
+  price_jpy?: number | null;
+  allow_point_purchase: boolean;
+  allow_jpy_purchase: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
   has_access: boolean;
   content_blocks: NoteBlock[];
   published_at?: string | null;
@@ -243,7 +263,12 @@ export interface NotePurchaseResult {
   note_id: string;
   points_spent: number;
   remaining_points: number;
+  amount_jpy?: number | null;
   purchased_at: string;
+  payment_method: 'points' | 'yen';
+  payment_status: 'completed' | 'pending';
+  checkout_url?: string | null;
+  external_id?: string | null;
 }
 
 export interface NoteCreateRequest {
@@ -253,6 +278,11 @@ export interface NoteCreateRequest {
   content_blocks: NoteBlock[];
   is_paid: boolean;
   price_points?: number | null;
+  price_jpy?: number | null;
+  allow_point_purchase?: boolean;
+  allow_jpy_purchase?: boolean;
+  tax_rate?: number | null;
+  tax_inclusive?: boolean;
   categories: string[];
   salon_ids: string[];
 }
@@ -264,6 +294,11 @@ export interface NoteUpdateRequest {
   content_blocks?: NoteBlock[];
   is_paid?: boolean;
   price_points?: number | null;
+  price_jpy?: number | null;
+  allow_point_purchase?: boolean;
+  allow_jpy_purchase?: boolean;
+  tax_rate?: number | null;
+  tax_inclusive?: boolean;
   categories?: string[];
   salon_ids?: string[];
 }
@@ -287,8 +322,14 @@ export interface Salon {
   category?: string | null;
   subscription_plan_id: string;
   subscription_external_id?: string | null;
+  monthly_price_jpy?: number | null;
+  allow_point_subscription: boolean;
+  allow_jpy_subscription: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
   is_active: boolean;
   member_count: number;
+  lp_id?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -310,6 +351,11 @@ export interface SalonPublicPlan {
   points: number;
   usd_amount: number;
   subscription_plan_id: string;
+  monthly_price_jpy?: number | null;
+  allow_point_subscription: boolean;
+  allow_jpy_subscription: boolean;
+  tax_rate?: number | null;
+  tax_inclusive: boolean;
 }
 
 export interface SalonPublicDetail {
@@ -324,6 +370,8 @@ export interface SalonPublicDetail {
   member_count: number;
   is_member: boolean;
   membership_status?: string | null;
+  allow_point_subscription: boolean;
+  allow_jpy_subscription: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -340,6 +388,8 @@ export interface SalonPublicListItem {
   plan_label: string;
   plan_points: number;
   plan_usd_amount: number;
+  monthly_price_jpy?: number | null;
+  allow_jpy_subscription: boolean;
   created_at: string;
 }
 
@@ -613,12 +663,14 @@ export interface PurchaseHistoryProduct {
   product_id?: string | null;
   product_title?: string | null;
   amount_points: number;
+  amount_jpy?: number | null;
   purchased_at: string;
   description?: string | null;
   seller_username?: string | null;
   seller_display_name?: string | null;
   seller_profile_image_url?: string | null;
   lp_slug?: string | null;
+  payment_method: 'points' | 'yen';
 }
 
 export interface PurchaseHistoryNote {
@@ -630,7 +682,9 @@ export interface PurchaseHistoryNote {
   author_username?: string | null;
   author_display_name?: string | null;
   points_spent: number;
+  amount_jpy?: number | null;
   purchased_at: string;
+  payment_method: 'points' | 'yen';
 }
 
 export interface PurchaseHistorySalon {

@@ -25,6 +25,11 @@ export default function NoteCreatePage() {
   const [excerpt, setExcerpt] = useState('');
   const [isPaid, setIsPaid] = useState(false);
   const [pricePoints, setPricePoints] = useState('');
+  const [priceJpy, setPriceJpy] = useState('');
+  const [allowPointPurchase, setAllowPointPurchase] = useState(true);
+  const [allowJpyPurchase, setAllowJpyPurchase] = useState(false);
+  const [taxRate, setTaxRate] = useState('10');
+  const [taxInclusive, setTaxInclusive] = useState(true);
   const [blocks, setBlocks] = useState<NoteBlock[]>(() => [createEmptyBlock('paragraph')]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -107,17 +112,53 @@ export default function NoteCreatePage() {
   const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
   const effectivePaid = isPaid || paidBlockExists;
 
+  const handleAllowPointPurchaseChange = (checked: boolean) => {
+    if (!checked && effectivePaid && !allowJpyPurchase) {
+      alert('少なくとも1つの決済方法を有効にしてください');
+      return;
+    }
+    setAllowPointPurchase(checked);
+    if (!checked) {
+      setPricePoints('');
+    }
+  };
+
+  const handleAllowJpyPurchaseChange = (checked: boolean) => {
+    if (!checked && effectivePaid && !allowPointPurchase) {
+      alert('少なくとも1つの決済方法を有効にしてください');
+      return;
+    }
+    setAllowJpyPurchase(checked);
+    if (!checked) {
+      setPriceJpy('');
+    }
+  };
+
   const handlePaidToggle = (checked: boolean) => {
     setIsPaid(checked);
     if (!checked) {
       setBlocks((prev) => prev.map((block) => normalizeBlock({ ...block, access: 'public' })));
       setPricePoints('');
+      setPriceJpy('');
+    }
+    if (checked && !allowPointPurchase && !allowJpyPurchase) {
+      setAllowPointPurchase(true);
     }
   };
 
   const handlePriceChange = (value: string) => {
     if (!/^\d*$/.test(value)) return;
     setPricePoints(value);
+  };
+
+  const handlePriceJpyChange = (value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    setPriceJpy(value);
+  };
+
+  const handleTaxRateChange = (value: string) => {
+    if (!/^\d*(\.\d{0,2})?$/.test(value)) return;
+    setTaxRate(value);
   };
 
   const toggleSalonAccess = (salonId: string) => {
@@ -151,9 +192,22 @@ export default function NoteCreatePage() {
     }
 
     if (effectivePaid) {
-      const priceValue = Number(pricePoints);
-      if (!Number.isFinite(priceValue) || priceValue <= 0) {
-        return '有料記事の価格を1ポイント以上で設定してください';
+      if (!allowPointPurchase && !allowJpyPurchase) {
+        return '有料記事は少なくとも1つの決済方法を有効にしてください';
+      }
+
+      if (allowPointPurchase) {
+        const priceValue = Number(pricePoints);
+        if (!Number.isFinite(priceValue) || priceValue <= 0) {
+          return 'ポイント決済の価格を1ポイント以上で設定してください';
+        }
+      }
+
+      if (allowJpyPurchase) {
+        const priceValueJpy = Number(priceJpy);
+        if (!Number.isFinite(priceValueJpy) || priceValueJpy <= 0) {
+          return '日本円決済の価格を1円以上で設定してください';
+        }
       }
     }
 
@@ -174,13 +228,28 @@ export default function NoteCreatePage() {
     try {
       setSaving(true);
       const normalizedBlocks = blocks.map((block) => normalizeBlock(block));
+      const parsedPoints = Number(pricePoints);
+      const parsedJpy = Number(priceJpy);
+      const normalizedTaxRate = taxRate.trim();
+      const parsedTaxRate = normalizedTaxRate === '' ? null : Number(normalizedTaxRate);
+      const pricePointsValue =
+        effectivePaid && allowPointPurchase && Number.isFinite(parsedPoints) ? parsedPoints : 0;
+      const priceJpyValue =
+        effectivePaid && allowJpyPurchase && Number.isFinite(parsedJpy) ? parsedJpy : null;
+      const taxRateValue =
+        parsedTaxRate === null || Number.isNaN(parsedTaxRate) ? null : parsedTaxRate;
       const payload = {
         title: title.trim(),
         cover_image_url: coverImageUrl.trim() || undefined,
         excerpt: excerpt.trim() || undefined,
         content_blocks: normalizedBlocks,
         is_paid: effectivePaid,
-        price_points: effectivePaid ? Number(pricePoints) || 0 : 0,
+        price_points: pricePointsValue,
+        price_jpy: priceJpyValue,
+        allow_point_purchase: effectivePaid ? allowPointPurchase : false,
+        allow_jpy_purchase: effectivePaid ? allowJpyPurchase : false,
+        tax_rate: effectivePaid ? taxRateValue : null,
+        tax_inclusive: effectivePaid ? taxInclusive : true,
         categories,
         salon_ids: selectedSalonIds,
       };
@@ -352,25 +421,88 @@ export default function NoteCreatePage() {
                   有料設定を手動でオンにする
                 </label>
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div className="sm:col-span-1">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">価格 (ポイント)</label>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-slate-800">ポイント決済</p>
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        checked={allowPointPurchase}
+                        onChange={(event) => handleAllowPointPurchaseChange(event.target.checked)}
+                        disabled={!effectivePaid}
+                      />
+                      有効化
+                    </label>
+                  </div>
                   <input
                     type="text"
                     inputMode="numeric"
                     value={pricePoints}
                     onChange={(event) => handlePriceChange(event.target.value)}
                     placeholder="例: 1200"
+                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+                    disabled={saving || !effectivePaid || !allowPointPurchase}
+                  />
+                  <p className="mt-2 text-xs text-slate-500">購入者のポイント残高から差し引かれます。</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-slate-800">日本円決済</p>
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        checked={allowJpyPurchase}
+                        onChange={(event) => handleAllowJpyPurchaseChange(event.target.checked)}
+                        disabled={!effectivePaid}
+                      />
+                      有効化
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={priceJpy}
+                    onChange={(event) => handlePriceJpyChange(event.target.value)}
+                    placeholder="例: 14800"
+                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60"
+                    disabled={saving || !effectivePaid || !allowJpyPurchase}
+                  />
+                  <p className="mt-2 text-xs text-slate-500">決済プロバイダー(one.lat)経由で課金されます。</p>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">消費税率 (%)</label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={taxRate}
+                    onChange={(event) => handleTaxRateChange(event.target.value)}
                     className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
-                    disabled={saving || !effectivePaid}
+                    disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
                   />
                 </div>
-                <div className="sm:col-span-2 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-xs text-slate-600">
+                <div className="flex items-end">
+                  <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      checked={taxInclusive}
+                      onChange={(event) => setTaxInclusive(event.target.checked)}
+                      disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
+                    />
+                    税込表示として扱う
+                  </label>
+                </div>
+                <div className="sm:col-span-3 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-xs text-slate-600">
                   <p>
                     {effectivePaid
                       ? paidBlockExists
-                        ? '有料ブロックが含まれているため自動的に有料記事になります。'
-                        : '有料設定がオンです。購入前に読めないブロックを設定してください。'
+                        ? '有料ブロックが含まれているため自動的に有料記事になります。選択した決済方法で販売されます。'
+                        : '有料設定がオンです。公開前に決済方法と価格を確認してください。'
                       : 'すべてのブロックが無料公開されます。'}
                   </p>
                 </div>

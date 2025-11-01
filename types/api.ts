@@ -356,6 +356,11 @@ export interface ProductCreatePayload {
   title: string;
   description?: string | null;
   price_in_points?: number | null;
+  price_jpy?: number | null;
+  allow_point_purchase?: boolean;
+  allow_jpy_purchase?: boolean;
+  tax_rate?: number | null;
+  tax_inclusive?: boolean;
   stock_quantity?: number | null;
   is_available?: boolean;
   redirect_url?: string | null;
@@ -367,6 +372,11 @@ export interface ProductCreatePayload {
 export type ProductUpdatePayload = Partial<ProductCreatePayload> & {
   title?: string;
 };
+
+export interface ProductPurchasePayload {
+  quantity?: number;
+  payment_method: 'points' | 'yen';
+}
 
 export interface NoteSalonAccessPayload {
   salon_ids: string[];

@@ -21,6 +21,7 @@ import type {
   PublicNoteDetail,
   ProductCreatePayload,
   ProductUpdatePayload,
+  ProductPurchasePayload,
   SubscriptionCheckoutPayload,
   Salon,
   SalonListResult,
@@ -217,7 +218,7 @@ export const productApi = {
   delete: (id: string) =>
     api.delete(`/products/${id}`),
   
-  purchase: (id: string, data: { quantity: number }) =>
+  purchase: (id: string, data: ProductPurchasePayload) =>
     api.post(`/products/${id}/purchase`, data),
   
   getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number; seller_username?: string }) =>
@@ -247,8 +248,8 @@ export const noteApi = {
   unpublish: (noteId: string) =>
     api.post<NoteDetail>(`/notes/${noteId}/unpublish`),
 
-  purchase: (noteId: string) =>
-    api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`),
+  purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points') =>
+    api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, { params: { payment_method: paymentMethod } }),
 
   getMetrics: () =>
     api.get<NoteMetrics>('/notes/metrics'),

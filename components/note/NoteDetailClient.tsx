@@ -11,7 +11,7 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
-import { publicApi } from '@/lib/api';
+import { publicApi, noteApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
@@ -66,6 +66,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const [purchaseState, setPurchaseState] = useState<PurchaseState>('idle');
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'points' | 'yen'>('points');
 
   const fetchNote = useCallback(async () => {
     if (!slug) return;
@@ -75,14 +76,28 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       const response = await publicApi.getNote(slug, {
         accessToken: token ?? undefined,
       });
-      setNote(response.data);
+      const data = response.data;
+      setNote(data);
+      if (data.allow_point_purchase) {
+        setSelectedMethod('points');
+      } else if (data.allow_jpy_purchase) {
+        setSelectedMethod('yen');
+      } else {
+        setSelectedMethod('points');
+      }
       setLoading('idle');
     } catch (err: unknown) {
       const { status, detail } = extractErrorInfo(err);
       if (status === 401 || status === 403) {
         try {
           const fallback = await publicApi.getNote(slug);
-          setNote(fallback.data);
+          const fallbackData = fallback.data;
+          setNote(fallbackData);
+          if (fallbackData.allow_point_purchase) {
+            setSelectedMethod('points');
+          } else if (fallbackData.allow_jpy_purchase) {
+            setSelectedMethod('yen');
+          }
           setLoading('idle');
           setError(null);
           return;
@@ -108,17 +123,65 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       router.push('/login');
       return;
     }
+    const isPointsPurchase = selectedMethod === 'points';
+
+    if (isPointsPurchase && !note.allow_point_purchase) {
+      setPurchaseState('error');
+      setPurchaseError('このNOTEはポイント決済に対応していません');
+      return;
+    }
+
+    if (!isPointsPurchase && (!note.allow_jpy_purchase || (note.price_jpy ?? 0) <= 0)) {
+      setPurchaseState('error');
+      setPurchaseError('このNOTEは日本円決済に対応していません');
+      return;
+    }
+
+    const confirmMessage = isPointsPurchase
+      ? `以下のNOTEを購入しますか？\n\n` +
+        `タイトル: ${note.title}\n` +
+        `価格: ${note.price_points.toLocaleString()} ポイント\n\n` +
+        `ポイントが消費されます。よろしいですか？`
+      : `以下のNOTEを日本円決済で購入しますか？\n\n` +
+        `タイトル: ${note.title}\n` +
+        `価格: ${(note.price_jpy ?? 0).toLocaleString()} 円\n\n` +
+        `決済ページ(one.lat)に遷移します。よろしいですか？`;
+
+    if (!window.confirm(confirmMessage)) {
+      setPurchaseState('idle');
+      return;
+    }
+
     setPurchaseState('processing');
     setPurchaseMessage(null);
     setPurchaseError(null);
+
     try {
-      // 購入APIは認証が必要なためUIではログインに誘導
-      setPurchaseState('error');
-      setPurchaseError('購入にはログインが必要です。ログイン後に再度お試しください。');
+      const response = await noteApi.purchase(note.id, selectedMethod);
+      const result = response.data;
+
+      if (isPointsPurchase) {
+        setPurchaseState('success');
+        setPurchaseMessage(
+          `購入が完了しました。残りポイント: ${result.remaining_points.toLocaleString()} pt`
+        );
+        setNote((prev) => (prev ? { ...prev, has_access: true } : prev));
+      } else {
+        const checkoutUrl = result.checkout_url;
+        if (checkoutUrl) {
+          setPurchaseState('success');
+          setPurchaseMessage('決済ページに遷移します。完了後に再読み込みしてください。');
+          window.location.href = checkoutUrl;
+          return;
+        }
+        throw new Error('決済URLの取得に失敗しました');
+      }
     } catch (err: unknown) {
       const { detail } = extractErrorInfo(err);
       setPurchaseState('error');
-      setPurchaseError(typeof detail === 'string' ? detail : '購入に失敗しました。もう一度お試しください。');
+      setPurchaseError(
+        typeof detail === 'string' ? detail : '購入に失敗しました。もう一度お試しください。'
+      );
     }
   };
 
@@ -150,6 +213,17 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     );
   }
 
+  const isPointsSelected = selectedMethod === 'points';
+  const canPurchase = note.allow_point_purchase || note.allow_jpy_purchase;
+  const methodAvailable = isPointsSelected
+    ? note.allow_point_purchase
+    : note.allow_jpy_purchase && (note.price_jpy ?? 0) > 0;
+  const purchaseButtonLabel = !isAuthenticated
+    ? 'ログインして購入'
+    : isPointsSelected
+      ? `${note.price_points.toLocaleString()} ポイントで購入`
+      : `${(note.price_jpy ?? 0).toLocaleString()} 円で購入`;
+
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       {note.cover_image_url ? (
@@ -174,7 +248,28 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
             NOTE
           </span>
           <span>公開日: {formatDate(note.published_at)}</span>
-          <span>価格: {note.is_paid ? `${note.price_points.toLocaleString()} P` : '無料'}</span>
+          <span className="flex items-center gap-2">
+            価格:
+            {note.is_paid ? (
+              <span className="flex items-center gap-2">
+                {note.allow_point_purchase && (
+                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                    {note.price_points.toLocaleString()} pt
+                  </span>
+                )}
+                {note.allow_jpy_purchase && (
+                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                    {(note.price_jpy ?? 0).toLocaleString()} 円
+                  </span>
+                )}
+                {!note.allow_point_purchase && !note.allow_jpy_purchase && (
+                  <span className="text-xs text-slate-500">販売設定未設定</span>
+                )}
+              </span>
+            ) : (
+              '無料'
+            )}
+          </span>
           <span className="flex items-center gap-1">
             著者:
             {note.author_username ? (
@@ -238,7 +333,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
               <p className="mt-2 text-xs text-amber-700/80">
                 購入すると残りのコンテンツがすべて解放されます。
               </p>
-              <div className="mt-4 flex flex-col items-center gap-3">
+              <div className="mt-4 flex flex-col gap-4">
                 {purchaseMessage ? (
                   <div className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
                     {purchaseMessage}
@@ -249,16 +344,70 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
                     {purchaseError}
                   </div>
                 ) : null}
+                {canPurchase ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {note.allow_point_purchase && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedMethod('points')}
+                        className={`rounded-xl border px-4 py-3 text-left transition ${
+                          isPointsSelected
+                            ? 'border-blue-400 bg-white'
+                            : 'border-amber-100 bg-white/60 hover:border-blue-300'
+                        }`}
+                      >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          ポイント決済
+                        </p>
+                        <p className="mt-1 text-lg font-bold text-blue-600">
+                          {note.price_points.toLocaleString()} pt
+                        </p>
+                        <p className="mt-1 text-[11px] text-slate-500">保有ポイントから差し引かれます</p>
+                      </button>
+                    )}
+                    {note.allow_jpy_purchase && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedMethod('yen')}
+                        className={`rounded-xl border px-4 py-3 text-left transition ${
+                          !isPointsSelected
+                            ? 'border-emerald-400 bg-white'
+                            : 'border-amber-100 bg-white/60 hover:border-emerald-300'
+                        }`}
+                      >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          日本円決済
+                        </p>
+                        <p className="mt-1 text-lg font-bold text-emerald-600">
+                          {(note.price_jpy ?? 0).toLocaleString()} 円
+                        </p>
+                        <p className="mt-1 text-[11px] text-slate-500">one.lat決済ページに移動します</p>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-amber-700/80">現在購入できる決済方法が設定されていません。</p>
+                )}
                 <button
                   type="button"
                   onClick={handlePurchase}
-                  disabled={purchaseState === 'processing'}
-                  className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 ${
+                  disabled={purchaseState === 'processing' || !methodAvailable || !canPurchase}
+                  className={`inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70 ${
                     purchaseState === 'processing' ? 'opacity-70' : ''
                   }`}
                 >
-                  <CurrencyYenIcon className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`} aria-hidden="true" />
-                  {isAuthenticated ? `${note.price_points.toLocaleString()} ポイントで購入` : 'ログインして購入'}
+                  {isPointsSelected ? (
+                    <SparklesIcon
+                      className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <CurrencyYenIcon
+                      className={`h-4 w-4 ${purchaseState === 'processing' ? 'animate-pulse' : ''}`}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {purchaseState === 'processing' ? '処理中...' : purchaseButtonLabel}
                 </button>
                 {!isAuthenticated ? (
                   <Link

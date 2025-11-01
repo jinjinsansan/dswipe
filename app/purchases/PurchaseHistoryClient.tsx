@@ -36,6 +36,7 @@ const formatDateTime = (value: string) => {
 };
 
 const formatPoints = (points: number) => `${new Intl.NumberFormat("ja-JP").format(points)} pt`;
+const formatYen = (amount?: number | null) => `${new Intl.NumberFormat("ja-JP").format(amount ?? 0)} 円`;
 
 const getProductLink = (item: PurchaseHistoryProduct) => {
   if (item.lp_slug) {
@@ -157,7 +158,9 @@ export default function PurchaseHistoryClient() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">LP・デジタル商品</h2>
-              <p className="text-sm text-slate-500">ポイントで購入したLP連動商品やテンプレートの履歴です</p>
+              <p className="text-sm text-slate-500">
+                ポイント / 日本円決済で購入したLP連動商品やテンプレートの履歴です
+              </p>
             </div>
             <span className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-600">
               {history?.products.length ?? 0} 件
@@ -168,6 +171,12 @@ export default function PurchaseHistoryClient() {
             <ul className="mt-6 space-y-4">
               {history.products.map((item) => {
                 const link = getProductLink(item);
+                const isYenPayment = item.payment_method === "yen";
+                const amountDisplay = isYenPayment
+                  ? formatYen(item.amount_jpy)
+                  : formatPoints(item.amount_points);
+                const amountClass = isYenPayment ? "text-emerald-600" : "text-purple-600";
+                const methodLabel = isYenPayment ? "日本円決済" : "ポイント決済";
                 return (
                   <li
                     key={item.transaction_id}
@@ -183,11 +192,20 @@ export default function PurchaseHistoryClient() {
                       {item.description ? (
                         <p className="text-xs text-slate-500">{item.description}</p>
                       ) : null}
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide ${
+                            isYenPayment ? "bg-emerald-100 text-emerald-600" : "bg-purple-100 text-purple-600"
+                          }`}
+                        >
+                          {methodLabel}
+                        </span>
+                      </div>
                       <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm font-semibold text-purple-600">
-                        {formatPoints(item.amount_points)}
+                      <span className={`text-sm font-semibold ${amountClass}`}>
+                        {amountDisplay}
                       </span>
                       {link ? (
                         <Link
@@ -214,7 +232,7 @@ export default function PurchaseHistoryClient() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">有料NOTE</h2>
-              <p className="text-sm text-slate-500">購入済みの有料NOTE一覧です</p>
+              <p className="text-sm text-slate-500">ポイント / 日本円決済で購入済みの有料NOTE一覧です</p>
             </div>
             <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
               {history?.notes.length ?? 0} 件
@@ -225,6 +243,10 @@ export default function PurchaseHistoryClient() {
             <ul className="mt-6 space-y-4">
               {history.notes.map((item) => {
                 const link = getNoteLink(item);
+                const isYenPayment = item.payment_method === "yen";
+                const amountDisplay = isYenPayment ? formatYen(item.amount_jpy) : formatPoints(item.points_spent);
+                const amountClass = isYenPayment ? "text-emerald-600" : "text-sky-600";
+                const methodLabel = isYenPayment ? "日本円決済" : "ポイント決済";
                 return (
                   <li
                     key={item.purchase_id}
@@ -237,11 +259,20 @@ export default function PurchaseHistoryClient() {
                       <p className="text-xs text-slate-500">
                         {item.author_display_name ?? item.author_username ?? "著者不明"}
                       </p>
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide ${
+                            isYenPayment ? "bg-emerald-100 text-emerald-600" : "bg-sky-100 text-sky-600"
+                          }`}
+                        >
+                          {methodLabel}
+                        </span>
+                      </div>
                       <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm font-semibold text-sky-600">
-                        {formatPoints(item.points_spent)}
+                      <span className={`text-sm font-semibold ${amountClass}`}>
+                        {amountDisplay}
                       </span>
                       {link ? (
                         <Link
