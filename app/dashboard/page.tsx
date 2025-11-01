@@ -450,7 +450,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       }
 
       try {
-        const notesResponse = await noteApi.list({ limit: 200, offset: 0 });
+        const notesResponse = await noteApi.list({ limit: 100, offset: 0 });
         const notesData = Array.isArray(notesResponse.data?.data)
           ? notesResponse.data.data
           : [];
