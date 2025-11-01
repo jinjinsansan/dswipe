@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
@@ -9,6 +10,8 @@ import DSwipeLogo from '@/components/DSwipeLogo';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { pointsApi } from '@/lib/api';
 import {
+  type DashboardNavLink,
+  type DashboardNavGroupKey,
   getDashboardNavLinks,
   getDashboardNavClasses,
   getDashboardNavGroupMeta,
@@ -54,6 +57,47 @@ export default function DashboardLayout({
   );
   const resolvedPageTitle = pageTitle ?? activeNavLink?.label ?? 'ダッシュボード';
   const resolvedSubtitle = pageSubtitle;
+
+  const pinnedCandidates = useMemo(() => {
+    if (!navLinks.length) return [] as string[];
+    if (user?.user_type === 'seller') {
+      return ['/dashboard', '/sales', '/products/manage', '/products', '/notes', '/purchases'];
+    }
+    return ['/dashboard', '/products', '/notes', '/purchases', '/points/history'];
+  }, [navLinks, user?.user_type]);
+
+  const pinnedLinks = useMemo(() => {
+    const seen = new Set<string>();
+    const collected: DashboardNavLink[] = [];
+    pinnedCandidates.forEach((href) => {
+      const match = navLinks.find((link) => link.href === href);
+      if (match && !seen.has(match.href)) {
+        seen.add(match.href);
+        collected.push(match);
+      }
+    });
+    return collected;
+  }, [navLinks, pinnedCandidates]);
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setExpandedGroups((prev) => {
+      const next: Record<string, boolean> = {};
+      const defaultExpanded = new Set<DashboardNavGroupKey>(['core', 'points']);
+      navGroups.forEach((group) => {
+        next[group.key] = prev[group.key] ?? defaultExpanded.has(group.key);
+      });
+      return next;
+    });
+  }, [navGroups]);
+
+  const toggleGroup = (key: DashboardNavGroupKey) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   useEffect(() => {
     if (requireAuth && isInitialized && !isAuthenticated) {
@@ -152,46 +196,86 @@ export default function DashboardLayout({
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {navGroups.map((group) => {
-              const meta = getDashboardNavGroupMeta(group.key);
-              return (
-                <div key={group.key} className="space-y-1.5">
-                  <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass}`}>
-                    {meta.label}
-                  </p>
-                  <div className="space-y-1">
-                    {group.items.map((link) => {
+              {pinnedLinks.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">クイックアクセス</p>
+                  <div className="px-2 flex flex-wrap gap-2">
+                    {pinnedLinks.map((link) => {
                       const isActive = isDashboardLinkActive(pathname, link.href);
                       const linkProps = link.external
                         ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
                         : { href: link.href };
-                      const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
-
                       return (
                         <Link
-                          key={link.href}
+                          key={`pinned-${link.href}`}
                           {...linkProps}
-                          className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                            isActive
+                              ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
+                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
                         >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
-                              {link.icon}
-                            </span>
-                            <span className="truncate">{link.label}</span>
+                          <span className="flex h-4 w-4 items-center justify-center text-slate-500">
+                            {link.icon}
                           </span>
-                          {link.badge ? (
-                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
-                              {link.badge}
-                            </span>
-                          ) : null}
+                          <span className="truncate max-w-[120px]">{link.label}</span>
                         </Link>
                       );
                     })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              )}
+
+              {navGroups.map((group) => {
+                const meta = getDashboardNavGroupMeta(group.key);
+                const isExpanded = expandedGroups[group.key] ?? false;
+                return (
+                  <div key={group.key} className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(group.key)}
+                      className={`w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass} transition-colors hover:bg-slate-100/60`}
+                    >
+                      <span>{meta.label}</span>
+                      {isExpanded ? (
+                        <ChevronUpIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      ) : (
+                        <ChevronDownIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      )}
+                    </button>
+                    <div className={`${isExpanded ? 'space-y-1' : 'space-y-1 hidden'}`}>
+                      {group.items.map((link) => {
+                        const isActive = isDashboardLinkActive(pathname, link.href);
+                        const linkProps = link.external
+                          ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                          : { href: link.href };
+                        const styles = getDashboardNavClasses(link, { variant: 'desktop', active: isActive });
+
+                        return (
+                          <Link
+                            key={link.href}
+                            {...linkProps}
+                            className={`flex items-center justify-between gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${styles.container}`}
+                          >
+                            <span className="flex min-w-0 items-center gap-2">
+                              <span className={`flex h-5 w-5 items-center justify-center ${styles.icon}`}>
+                                {link.icon}
+                              </span>
+                              <span className="truncate">{link.label}</span>
+                            </span>
+                            {link.badge ? (
+                              <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${styles.badge}`}>
+                                {link.badge}
+                              </span>
+                            ) : null}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </nav>
 

@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { useAuthStore } from '@/store/authStore';
 import {
+  type DashboardNavGroupKey,
   getDashboardNavLinks,
   getDashboardNavClasses,
   getDashboardNavGroupMeta,
@@ -36,6 +37,29 @@ export default function DashboardHeader({
   const isAdmin = user?.user_type === 'admin';
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const navGroups = groupDashboardNavLinks(navLinks);
+  const pinnedCandidates = useMemo(() => {
+    if (!navLinks.length) return [] as string[];
+    if (user?.user_type === 'seller') {
+      return ['/dashboard', '/sales', '/products/manage', '/products', '/notes', '/purchases'];
+    }
+    return ['/dashboard', '/products', '/notes', '/purchases', '/points/history'];
+  }, [navLinks, user?.user_type]);
+
+  const pinnedLinks = useMemo(() => {
+    const seen = new Set<string>();
+    return pinnedCandidates
+      .map((href) => {
+        const match = navLinks.find((link) => link.href === href);
+        if (match && !seen.has(match.href)) {
+          seen.add(match.href);
+          return match;
+        }
+        return null;
+      })
+      .filter((link): link is typeof navLinks[number] => Boolean(link));
+  }, [navLinks, pinnedCandidates]);
+
+  const [activeMobileGroup, setActiveMobileGroup] = useState<DashboardNavGroupKey | null>(navGroups[0]?.key ?? null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
@@ -51,6 +75,19 @@ export default function DashboardHeader({
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!navGroups.length) {
+      setActiveMobileGroup(null);
+      return;
+    }
+    setActiveMobileGroup((prev) => {
+      if (prev && navGroups.some((group) => group.key === prev)) {
+        return prev;
+      }
+      return navGroups[0]?.key ?? null;
+    });
+  }, [navGroups]);
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -244,46 +281,101 @@ export default function DashboardHeader({
                 </Link>
               )}
               
-              {navGroups.map((group) => {
-                const meta = getDashboardNavGroupMeta(group.key);
-                return (
-                  <div key={group.key} className="flex flex-col gap-2">
-                    <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] px-1 ${meta.headingClass}`}>
-                      {meta.label}
-                    </span>
-                    <div className="flex flex-col gap-2">
-                      {group.items.map((link) => {
-                        const isActive = isDashboardLinkActive(pathname, link.href);
-                        const linkProps = link.external
-                          ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                          : { href: link.href };
-                        const styles = getDashboardNavClasses(link, { variant: 'mobile', active: isActive });
-
-                        return (
-                          <Link
-                            key={link.href}
-                            {...linkProps}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center justify-between gap-2 rounded-full px-4 py-2 text-xs font-semibold ${styles.container}`}
-                          >
-                            <span className="flex items-center gap-2 min-w-0">
-                              <span className={`flex h-4 w-4 items-center justify-center ${styles.icon}`}>
-                                {link.icon}
-                              </span>
-                              <span className="truncate">{link.label}</span>
-                            </span>
-                            {link.badge ? (
-                              <span className={`ml-2 rounded px-1.5 py-0.5 text-[9px] font-semibold ${styles.badge}`}>
-                                {link.badge}
-                              </span>
-                            ) : null}
-                          </Link>
-                        );
-                      })}
-                    </div>
+              {pinnedLinks.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] px-1 text-slate-400">
+                    クイックアクセス
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {pinnedLinks.map((link) => {
+                      const isActive = isDashboardLinkActive(pathname, link.href);
+                      const linkProps = link.external
+                        ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      return (
+                        <Link
+                          key={`mobile-pinned-${link.href}`}
+                          {...linkProps}
+                          onClick={() => setIsMenuOpen(false)}
+                          className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold transition-colors ${
+                            isActive
+                              ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          <span className="flex h-5 w-5 items-center justify-center text-slate-500">
+                            {link.icon}
+                          </span>
+                          <span className="truncate">{link.label}</span>
+                        </Link>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              )}
+
+              {navGroups.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                    {navGroups.map((group) => {
+                      const isActive = activeMobileGroup === group.key;
+                      const meta = getDashboardNavGroupMeta(group.key);
+                      return (
+                        <button
+                          key={`tab-${group.key}`}
+                          type="button"
+                          onClick={() => setActiveMobileGroup(group.key)}
+                          className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                            isActive ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600'
+                          }`}
+                          aria-pressed={isActive}
+                        >
+                          {meta.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {navGroups.map((group) => {
+                    if (group.key !== activeMobileGroup) return null;
+                    return (
+                      <div key={`panel-${group.key}`} className="flex flex-col gap-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          {group.items.map((link) => {
+                            const isActive = isDashboardLinkActive(pathname, link.href);
+                            const linkProps = link.external
+                              ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                              : { href: link.href };
+
+                            return (
+                              <Link
+                                key={link.href}
+                                {...linkProps}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`flex h-full flex-col justify-between gap-2 rounded-2xl border px-4 py-3 text-xs font-semibold transition-colors ${
+                                  isActive
+                                    ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                                }`}
+                              >
+                                <span className="flex items-center gap-2">
+                                  <span className="flex h-5 w-5 items-center justify-center text-slate-500">
+                                    {link.icon}
+                                  </span>
+                                  <span className="truncate">{link.label}</span>
+                                </span>
+                                {link.badge ? (
+                                  <span className="text-[9px] font-semibold text-slate-400">{link.badge}</span>
+                                ) : null}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </nav>
           </div>
         </>
