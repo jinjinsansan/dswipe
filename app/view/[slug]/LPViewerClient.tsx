@@ -1003,6 +1003,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   キャンセル
                 </button>
               </div>
+              <p className="mt-4 text-[11px] leading-relaxed text-gray-500 text-center">
+                デジタルコンテンツの性質上、購入完了後のポイントおよび提供済みコンテンツはキャンセルできません。
+              </p>
             </div>
           </div>
         </div>
