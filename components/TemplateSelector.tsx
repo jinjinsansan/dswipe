@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
-import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
-import { getAllTemplates } from '@/lib/templates';
+import React, { useMemo, useState } from 'react';
+import { DocumentTextIcon, FolderOpenIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { getAllTemplates, TEMPLATE_CATEGORIES } from '@/lib/templates';
 import { resolveViewerPalette } from '@/components/viewer/theme';
-import type { TemplateBlock } from '@/types/templates';
+import type { BlockType, TemplateBlock } from '@/types/templates';
 
 interface TemplateSelectorProps {
   onSelectTemplate: (template: TemplateBlock) => void;
@@ -13,57 +13,161 @@ interface TemplateSelectorProps {
 
 const iconClass = 'h-4 w-4';
 
-const CATEGORY_META: Record<string, { name: string; icon: React.ReactNode }> = {
-  header: {
-    name: 'ヒーロー',
-    icon: (
+const CATEGORY_META = TEMPLATE_CATEGORIES.reduce<Record<string, { name: string; icon: React.ReactNode }>>(
+  (acc, category) => {
+    const baseIcon = (
       <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="6" />
-        <path strokeLinecap="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3" />
-        <path strokeLinecap="round" d="M16.95 7.05 15.54 8.46M8.46 15.54 7.05 16.95M16.95 16.95l-1.41-1.41M8.46 8.46 7.05 7.05" />
+        <rect x="4" y="4" width="16" height="16" rx="3" />
+        <path strokeLinecap="round" d="M8 8h8M8 12h5" />
       </svg>
-    ),
+    );
+
+    const iconMap: Record<string, React.ReactNode> = {
+      header: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="6" />
+          <path strokeLinecap="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3" />
+        </svg>
+      ),
+      content: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path strokeLinecap="round" d="M8 7h8M8 11h8M8 15h5" />
+        </svg>
+      ),
+      conversion: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 18 10 12l4 4 6-6" />
+          <path strokeLinecap="round" d="M4 6h16" />
+        </svg>
+      ),
+      trust: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13.5 9.5 18l9-12" />
+          <path strokeLinecap="round" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10" />
+        </svg>
+      ),
+      urgency: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 3" />
+        </svg>
+      ),
+    };
+
+    acc[category.id] = {
+      name: category.name,
+      icon: iconMap[category.id] ?? baseIcon,
+    };
+    return acc;
   },
-  content: {
-    name: 'コンテンツ',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <rect x="5" y="3" width="14" height="18" rx="2" />
-        <path strokeLinecap="round" d="M8 7h8M8 11h8M8 15h5" />
-      </svg>
-    ),
-  },
-  conversion: {
-    name: 'コンバージョン',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 18 10 12l4 4 6-6" />
-        <path strokeLinecap="round" d="M4 6h16" />
-      </svg>
-    ),
-  },
-  trust: {
-    name: '信頼・実績',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13.5 9.5 18l9-12" />
-        <path strokeLinecap="round" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10" />
-      </svg>
-    ),
-  },
-  urgency: {
-    name: '緊急性',
-    icon: (
-      <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 3" />
-      </svg>
-    ),
-  },
+  {}
+);
+
+type TemplateGroup = {
+  templateId: BlockType;
+  category: TemplateBlock['category'];
+  variants: TemplateBlock[];
+  displayName: string;
+  summary: string;
+};
+
+const deriveDisplayName = (template: TemplateBlock) => {
+  const match = template.name.match(/^(.*?)（/);
+  if (match?.[1]) {
+    return match[1].trim();
+  }
+  const parts = template.name.split(/[-–:：]/);
+  if (parts[0]) {
+    return parts[0].trim();
+  }
+  return template.name;
 };
 
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {
-  const templates = React.useMemo(() => getAllTemplates(), []);
+  const templates = useMemo(() => getAllTemplates(), []);
+
+  const templateGroups = useMemo<TemplateGroup[]>(() => {
+    const groups = new Map<BlockType, TemplateGroup>();
+
+    templates.forEach((template) => {
+      const existing = groups.get(template.templateId as BlockType);
+      if (!existing) {
+        groups.set(template.templateId as BlockType, {
+          templateId: template.templateId as BlockType,
+          category: template.category,
+          variants: [template],
+          displayName: deriveDisplayName(template),
+          summary: template.description,
+        });
+      } else {
+        existing.variants.push(template);
+      }
+    });
+
+    return Array.from(groups.values()).map((group) => ({
+      ...group,
+      variants: group.variants.sort((a, b) => a.name.localeCompare(b.name, 'ja')),
+      summary: group.summary || group.variants[0]?.description || '',
+    }));
+  }, [templates]);
+
+  const [selectedCategory, setSelectedCategory] = useState<'all' | TemplateBlock['category']>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeVariants, setActiveVariants] = useState<Partial<Record<BlockType, string>>>({});
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filteredGroups = useMemo(() => {
+    return templateGroups
+      .filter((group) => selectedCategory === 'all' || group.category === selectedCategory)
+      .filter((group) => {
+        if (!normalizedQuery) return true;
+        const groupText = `${group.displayName} ${group.summary}`.toLowerCase();
+        if (groupText.includes(normalizedQuery)) return true;
+        return group.variants.some((variant) =>
+          `${variant.name} ${variant.description}`.toLowerCase().includes(normalizedQuery)
+        );
+      })
+      .sort((a, b) => {
+        if (a.category === b.category) {
+          return a.displayName.localeCompare(b.displayName, 'ja');
+        }
+        return a.category.localeCompare(b.category, 'ja');
+      });
+  }, [templateGroups, selectedCategory, normalizedQuery]);
+
+  const handleVariantSelect = (templateId: BlockType, variantId: string) => {
+    setActiveVariants((prev) => ({ ...prev, [templateId]: variantId }));
+  };
+
+  const handleAddTemplate = (group: TemplateGroup) => {
+    const activeVariantId = activeVariants[group.templateId] ?? group.variants[0]?.id;
+    const targetVariant = group.variants.find((variant) => variant.id === activeVariantId);
+    if (targetVariant) {
+      onSelectTemplate(targetVariant);
+      onClose();
+    }
+  };
+
+  const getPalette = (template: TemplateBlock) => {
+    const defaultContent = template.defaultContent as { themeKey?: string; accentColor?: string; backgroundColor?: string };
+    const palette = resolveViewerPalette(defaultContent?.themeKey, defaultContent?.accentColor);
+    return {
+      accent: palette.accent,
+      accentSoft: palette.accentSoft ?? palette.accent,
+      background: defaultContent?.backgroundColor ?? palette.background,
+      text: palette.text,
+    };
+  };
+
+  const categoryOptions = useMemo(
+    () => [
+      { id: 'all', name: 'すべて' },
+      ...TEMPLATE_CATEGORIES,
+    ],
+    []
+  );
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4">
@@ -89,77 +193,153 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
 
         {/* Content - Scrollable */}
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
+          {/* Filters */}
+          <div className="sticky top-0 z-20 -mx-2 sm:-mx-6 bg-[#070b16]/95 px-2 sm:px-6 pb-3 sm:pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="relative flex-1">
+                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-blue-200/60" aria-hidden="true" />
+                <input
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="テンプレートを検索 (キーワード/用途/カラー)"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-3 py-2 text-sm text-white placeholder:text-blue-100/40 focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/50"
+                  aria-label="テンプレート検索"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs text-blue-100/70">
+                <FunnelIcon className="h-4 w-4" aria-hidden="true" />
+                テンプレートカテゴリを絞り込み
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+              {categoryOptions.map((category) => {
+                const isActive = selectedCategory === category.id;
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
+                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                      isActive
+                        ? 'bg-blue-500/90 text-white shadow-[0_10px_30px_-20px_rgba(37,99,235,0.9)]'
+                        : 'bg-white/5 text-blue-100/70 hover:bg-white/10'
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-gray-400">
               <FolderOpenIcon className="h-12 w-12 text-gray-500" aria-hidden="true" />
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {templates.map((template) => {
-                const defaultContent = template.defaultContent as unknown as {
-                  themeKey?: string;
-                  accentColor?: string;
-                };
-                const palette = resolveViewerPalette(defaultContent?.themeKey, defaultContent?.accentColor as string | undefined);
-                const accentColor = palette.accent;
-                const accentSoft = palette.accentSoft ?? palette.accent;
-                const meta = CATEGORY_META[template.category] || {
-                  name: template.category,
-                  icon: <DocumentTextIcon className={iconClass} aria-hidden="true" />,
-                };
-                return (
-                  <button
-                    key={template.id}
-                    onClick={() => {
-                      onSelectTemplate(template);
-                      onClose();
-                    }}
-                    className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] px-3 sm:px-4 pt-3 sm:pt-4 pb-3 sm:pb-4 text-left transition-all hover:border-blue-400/70 hover:bg-white/[0.05] hover:shadow-[0_20px_45px_-35px_rgba(59,130,246,0.65)]"
-                  >
-                    <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-2xl opacity-0 transition group-hover:opacity-100" />
+            <>
+              {filteredGroups.length === 0 ? (
+                <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-10 text-center text-sm text-blue-100/70">
+                  条件に一致するテンプレートが見つかりませんでした。検索ワードやカテゴリを変更してみてください。
+                </div>
+              ) : (
+                <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                  {filteredGroups.map((group) => {
+                    const activeVariantId = activeVariants[group.templateId] ?? group.variants[0]?.id;
+                    const activeVariant = group.variants.find((variant) => variant.id === activeVariantId) ?? group.variants[0];
+                    const palette = activeVariant ? getPalette(activeVariant) : { accent: '#38BDF8', accentSoft: '#38BDF8', background: '#0F172A', text: '#FFFFFF' };
+                    const categoryMeta = CATEGORY_META[group.category] ?? {
+                      name: group.category,
+                      icon: <DocumentTextIcon className={iconClass} aria-hidden="true" />,
+                    };
 
-                    <div className="relative flex items-center justify-between gap-2 sm:gap-3">
-                      <span
-                        className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg flex-shrink-0"
-                        style={{ background: accentSoft, color: palette.text }}
+                    return (
+                      <div
+                        key={group.templateId}
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 sm:px-5 sm:py-5 transition-colors hover:border-blue-400/70 hover:bg-white/[0.06]"
                       >
-                        {meta.icon}
-                      </span>
-                      <span
-                        className="rounded-full px-2 sm:px-3 py-0.5 text-[10px] sm:text-[11px] font-medium truncate"
-                        style={{
-                          border: `1px solid ${accentSoft}`,
-                          background: `${accentSoft}`,
-                          color: palette.text,
-                        }}
-                      >
-                        {meta.name}
-                      </span>
-                    </div>
+                        <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-3xl opacity-0 transition group-hover:opacity-100" />
 
-                    <div className="relative mt-2 sm:mt-3 space-y-1">
-                      <h3
-                        className="text-xs sm:text-sm font-semibold line-clamp-1"
-                        style={{ color: accentColor }}
-                      >
-                        {template.name}
-                      </h3>
-                      <p className="text-[10px] sm:text-[11px] text-gray-400 leading-relaxed line-clamp-2">
-                        {template.description}
-                      </p>
-                    </div>
+                        <div className="relative flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <span
+                              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10"
+                              style={{
+                                background: palette.accentSoft,
+                                color: palette.text,
+                                borderColor: `${palette.accent}40`,
+                              }}
+                            >
+                              {categoryMeta.icon}
+                            </span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-white">{group.displayName}</span>
+                                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-blue-100/80">
+                                  バリエーション {group.variants.length}
+                                </span>
+                              </div>
+                              <div className="mt-1 flex items-center gap-1 text-[11px] text-blue-100/70">
+                                <span className="rounded-full bg-white/5 px-2 py-0.5 font-medium">{categoryMeta.name}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleAddTemplate(group)}
+                            className="shrink-0 rounded-full border border-blue-400/40 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-100 transition hover:bg-blue-500/30 hover:text-white"
+                          >
+                            追加する
+                          </button>
+                        </div>
 
-                    <div className="relative mt-2 sm:mt-4 flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-blue-300">
-                      追加する
-                      <svg className="h-3 sm:h-3.5 w-3 sm:w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+                        <div className="relative mt-4 grid gap-2">
+                          <div className="flex flex-wrap gap-2">
+                            {group.variants.map((variant) => {
+                              const paletteForVariant = getPalette(variant);
+                              const isActive = variant.id === activeVariant?.id;
+                              return (
+                                <button
+                                  key={variant.id}
+                                  type="button"
+                                  onClick={() => handleVariantSelect(group.templateId, variant.id)}
+                                  className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${
+                                    isActive
+                                      ? 'shadow-[0_12px_30px_-20px_rgba(148,163,255,0.9)]'
+                                      : 'opacity-75 hover:opacity-100'
+                                  }`}
+                                  style={{
+                                    borderColor: `${paletteForVariant.accent}70`,
+                                    background: isActive ? `${paletteForVariant.accentSoft}dd` : 'transparent',
+                                    color: isActive ? paletteForVariant.text : '#dbeafe',
+                                  }}
+                                >
+                                  {variant.name.replace(group.displayName, '').replace(/[（）]/g, '').trim() || '基本'}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {activeVariant && (
+                            <div className="rounded-xl border border-white/5 bg-white/[0.04] p-3">
+                              <h4
+                                className="text-xs font-semibold text-white"
+                                style={{ color: palette.accent }}
+                              >
+                                {activeVariant.name}
+                              </h4>
+                              <p className="mt-1 text-[11px] leading-relaxed text-blue-100/80">
+                                {activeVariant.description}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
 
