@@ -1,19 +1,23 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  HomeIcon,
+  ArrowRightOnRectangleIcon,
+} from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
   type DashboardNavGroupKey,
   getDashboardNavLinks,
-  getDashboardNavGroupMeta,
-  groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
 
 const MOBILE_LABEL_MAP: Record<string, string> = {
+  '/': 'ホーム',
   '/dashboard': 'ダッシュ',
   '/lp/create': '新規LP',
   '/products': 'マーケット',
@@ -31,10 +35,12 @@ const MOBILE_LABEL_MAP: Record<string, string> = {
   '/salons/all': '公開サロン',
   '/media': 'メディア',
   '/line/bonus': 'LINE連携',
-  '/settings': '設定',
+  '/settings': 'X連携',
   '/admin': '管理',
   '/terms': '利用規約',
   '/privacy': 'プライバシー',
+  'https://lin.ee/lYIZWhd': '問合せ',
+  'https://www.dlogicai.in/': '競馬AI',
 };
 
 const getCompactLabel = (href: string, fallback: string) => {
@@ -89,6 +95,7 @@ interface DashboardHeaderProps {
   pageSubtitle?: string;
   isBalanceLoading?: boolean;
   requireAuth?: boolean;
+  onLogout: () => void;
 }
 
 export default function DashboardHeader({
@@ -98,25 +105,114 @@ export default function DashboardHeader({
   pageSubtitle,
   isBalanceLoading = false,
   requireAuth = true,
+  onLogout,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const isAdmin = user?.user_type === 'admin';
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
-  const navGroups = groupDashboardNavLinks(navLinks);
-  const flatMobileLinks = useMemo(
-    () =>
-      navGroups.flatMap((group) => {
-        const meta = getDashboardNavGroupMeta(group.key);
-        const pillClass = MOBILE_GROUP_PILL_CLASSES[group.key] ?? 'bg-slate-100 text-slate-600 border border-transparent';
-        return group.items.map((link) => ({
-          link,
-          groupKey: group.key,
-          groupLabel: meta.label,
-          pillClass,
-        }));
-      }),
-    [navGroups]
-  );
+  const navLinkMap = useMemo(() => {
+    const map = new Map<string, (typeof navLinks)[number]>();
+    navLinks.forEach((link) => {
+      map.set(link.href, link);
+    });
+    return map;
+  }, [navLinks]);
+
+  type MobileMenuItem =
+    | { kind: 'link'; href: string; groupOverride?: DashboardNavGroupKey }
+    | { kind: 'customLink'; key: string; href: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey }
+    | { kind: 'logout'; key: string; label: string; icon: ReactNode; groupKey: DashboardNavGroupKey };
+
+  type MobileMenuSection = {
+    label: string;
+    defaultGroup: DashboardNavGroupKey;
+    items: MobileMenuItem[];
+  };
+
+  const mobileSections = useMemo<MobileMenuSection[]>(() => {
+    if (!user) {
+      return [];
+    }
+
+    return [
+      {
+        label: 'ホーム',
+        defaultGroup: 'core',
+        items: [
+          {
+            kind: 'customLink',
+            key: 'home',
+            href: '/',
+            label: 'ホーム',
+            icon: <HomeIcon className="h-6 w-6" aria-hidden="true" />,
+            groupKey: 'core',
+          },
+          { kind: 'link', href: '/dashboard', groupOverride: 'core' },
+          {
+            kind: 'logout',
+            key: 'logout',
+            label: 'ログアウト',
+            icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />,
+            groupKey: 'info',
+          },
+        ],
+      },
+      {
+        label: 'NOTEメニュー',
+        defaultGroup: 'note',
+        items: [
+          { kind: 'link', href: '/note/create', groupOverride: 'note' },
+          { kind: 'link', href: '/note', groupOverride: 'note' },
+          { kind: 'link', href: '/notes', groupOverride: 'note' },
+        ],
+      },
+      {
+        label: 'サロン',
+        defaultGroup: 'salon',
+        items: [
+          { kind: 'link', href: '/salons', groupOverride: 'salon' },
+          { kind: 'link', href: '/salons/create', groupOverride: 'salon' },
+          { kind: 'link', href: '/salons/all', groupOverride: 'salon' },
+        ],
+      },
+      {
+        label: 'ポイント',
+        defaultGroup: 'points',
+        items: [
+          { kind: 'link', href: '/points/purchase', groupOverride: 'points' },
+          { kind: 'link', href: '/points/history', groupOverride: 'points' },
+          { kind: 'link', href: '/purchases', groupOverride: 'points' },
+        ],
+      },
+      {
+        label: '連携',
+        defaultGroup: 'media',
+        items: [
+          { kind: 'link', href: '/line/bonus', groupOverride: 'media' },
+          { kind: 'link', href: '/settings', groupOverride: 'media' },
+          { kind: 'link', href: '/sales', groupOverride: 'media' },
+        ],
+      },
+      {
+        label: 'サポート',
+        defaultGroup: 'info',
+        items: [
+          { kind: 'link', href: '/terms', groupOverride: 'info' },
+          { kind: 'link', href: '/privacy', groupOverride: 'info' },
+          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info' },
+        ],
+      },
+      {
+        label: 'その他',
+        defaultGroup: 'media',
+        items: [
+          { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media' },
+          { kind: 'link', href: '/media', groupOverride: 'media' },
+          { kind: 'link', href: '/products', groupOverride: 'media' },
+        ],
+      },
+    ];
+  }, [user]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
@@ -312,46 +408,152 @@ export default function DashboardHeader({
               className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 h-full overflow-y-auto overscroll-contain"
               style={{ paddingBottom: menuPaddingBottom }}
             >
-              {flatMobileLinks.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {flatMobileLinks.map(({ link, groupKey, groupLabel, pillClass }) => {
-                    const isActive = isDashboardLinkActive(pathname, link.href);
-                    const linkProps = link.external
-                      ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                      : { href: link.href };
-                    const label = getCompactLabel(link.href, link.label);
-                    const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
-                    const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
+              {mobileSections.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  {mobileSections.map((section) => {
+                    const items: (MobileMenuItem | null)[] = [...section.items];
+                    while (items.length < 3) {
+                      items.push(null);
+                    }
 
                     return (
-                      <Link
-                        key={`${groupKey}-${link.href}`}
-                        {...linkProps}
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
-                          isActive
-                            ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
-                            : cardClass
-                        }`}
-                      >
-                        <span
-                          className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${
-                            isActive ? MOBILE_GROUP_PILL_ACTIVE_CLASS : pillClass
-                          }`}
-                        >
-                          {groupLabel}
-                        </span>
-                        <span
-                          className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
-                            isActive ? 'bg-white/15 text-white' : iconClass
-                          }`}
-                        >
-                          {link.icon}
-                        </span>
-                        <span className="mb-1 text-center text-[11px] leading-tight">
-                          {label}
-                        </span>
-                      </Link>
+                      <div key={section.label} className="grid grid-cols-3 gap-2">
+                        {items.map((item, index) => {
+                          if (!item) {
+                            return (
+                              <div
+                                key={`${section.label}-placeholder-${index}`}
+                                aria-hidden="true"
+                                className="aspect-square rounded-3xl"
+                              />
+                            );
+                          }
+
+                          if (item.kind === 'link') {
+                            const navLink = navLinkMap.get(item.href);
+                            if (!navLink) {
+                              return (
+                                <div
+                                  key={`${section.label}-missing-${index}`}
+                                  aria-hidden="true"
+                                  className="aspect-square rounded-3xl"
+                                />
+                              );
+                            }
+
+                            const isActive = !navLink.external && isDashboardLinkActive(pathname, navLink.href);
+                            const groupKey = item.groupOverride ?? navLink.group ?? section.defaultGroup;
+                            const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
+                            const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
+                            const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
+                            const label = getCompactLabel(navLink.href, navLink.label);
+                            const linkProps = navLink.external
+                              ? { href: navLink.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                              : { href: navLink.href };
+
+                            return (
+                              <Link
+                                key={`${section.label}-${navLink.href}`}
+                                {...linkProps}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
+                                  isActive
+                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                                    : cardClass
+                                }`}
+                              >
+                                <span
+                                  className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${
+                                    isActive ? MOBILE_GROUP_PILL_ACTIVE_CLASS : pillClass
+                                  }`}
+                                >
+                                  {section.label}
+                                </span>
+                                <span
+                                  className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+                                    isActive ? 'bg-white/15 text-white' : iconClass
+                                  }`}
+                                >
+                                  {navLink.icon}
+                                </span>
+                                <span className="mb-1 text-center text-[11px] leading-tight">
+                                  {label}
+                                </span>
+                              </Link>
+                            );
+                          }
+
+                          if (item.kind === 'customLink') {
+                            const isActive = pathname === item.href;
+                            const groupKey = item.groupKey;
+                            const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
+                            const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
+                            const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
+
+                            return (
+                              <Link
+                                key={`${section.label}-${item.key}`}
+                                href={item.href}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
+                                  isActive
+                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                                    : cardClass
+                                }`}
+                              >
+                                <span
+                                  className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${
+                                    isActive ? MOBILE_GROUP_PILL_ACTIVE_CLASS : pillClass
+                                  }`}
+                                >
+                                  {section.label}
+                                </span>
+                                <span
+                                  className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+                                    isActive ? 'bg-white/15 text-white' : iconClass
+                                  }`}
+                                >
+                                  {item.icon}
+                                </span>
+                                <span className="mb-1 text-center text-[11px] leading-tight">
+                                  {item.label}
+                                </span>
+                              </Link>
+                            );
+                          }
+
+                          if (item.kind === 'logout') {
+                            const groupKey = item.groupKey;
+                            const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
+                            const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
+                            const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
+
+                            return (
+                              <button
+                                key={`${section.label}-${item.key}`}
+                                type="button"
+                                onClick={() => {
+                                  setIsMenuOpen(false);
+                                  onLogout();
+                                }}
+                                className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${cardClass}`}
+                              >
+                                <span className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${pillClass}`}>
+                                  {section.label}
+                                </span>
+                                <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${iconClass}`}>
+                                  {item.icon}
+                                </span>
+                                <span className="mb-1 text-center text-[11px] leading-tight">
+                                  {item.label}
+                                </span>
+                              </button>
+                            );
+                          }
+
+                          return null;
+                        })}
+                      </div>
                     );
                   })}
                 </div>

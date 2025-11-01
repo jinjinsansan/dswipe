@@ -260,6 +260,7 @@ export default function DashboardLayout({
           pageSubtitle={resolvedSubtitle}
           isBalanceLoading={isBalanceLoading}
           requireAuth={requireAuth}
+          onLogout={handleLogout}
         />
 
         <main className="flex-1">
