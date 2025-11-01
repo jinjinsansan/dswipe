@@ -641,7 +641,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       </div>
       {showPurchaseModal && selectedProduct && (
         <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm px-4 py-6 sm:py-10 animate-in fade-in duration-200">
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh]">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh] flex flex-col">
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))]" />
@@ -680,7 +680,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             </div>
 
             {/* Product Info */}
-            <div className="p-6">
+            <div className="p-6 sm:flex-1 sm:overflow-y-auto">
               <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
@@ -946,7 +946,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 16v-2m7-7h2M3 12H1m18.364 6.364l-1.414-1.414M5.05 5.05L3.636 3.636m12.728 0l1.414 1.414M5.05 18.95l-1.414 1.414" />
                         </svg>
                       )}
-                      {selectedIsPoints ? 'ポイントで購入' : '決済ページへ進む'}
+                      {selectedIsPoints ? 'ポイントで購入' : '日本円で購入'}
                     </>
                   )}
                 </button>
