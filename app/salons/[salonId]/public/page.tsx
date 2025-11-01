@@ -7,10 +7,12 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/a
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || "https://d-swipe.com";
 
+export const revalidate = 300;
+
 async function fetchSalonPublic(salonId: string): Promise<SalonPublicDetail | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/public/salons/${salonId}`, {
-      next: { revalidate: 60 },
+      next: { revalidate },
       headers: {
         Accept: "application/json",
       },

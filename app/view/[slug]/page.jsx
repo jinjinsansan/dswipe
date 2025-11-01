@@ -1,12 +1,14 @@
 import LPViewerClient from './LPViewerClient';
 
+export const revalidate = 300;
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://swipe.dlogicai.in';
 
 async function fetchLPMetadata(slug) {
   try {
     const response = await fetch(`${API_BASE_URL}/public/${slug}?track_view=false`, {
-      next: { revalidate: 60 },
+      next: { revalidate },
       headers: {
         Accept: 'application/json',
       },

@@ -8,11 +8,13 @@ type NoteDetailPageProps = {
   }>;
 };
 
+export const revalidate = 300;
+
 async function getNoteData(slug: string) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
   try {
     const response = await fetch(`${apiUrl}/notes/public/${slug}`, {
-      next: { revalidate: 60 }, // キャッシュを60秒間保持
+      next: { revalidate },
     });
     
     if (response.ok) {
