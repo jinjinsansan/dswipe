@@ -265,7 +265,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                     return (
                       <div
                         key={group.templateId}
-                        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 sm:px-5 sm:py-5 transition-colors hover:border-blue-400/70 hover:bg-white/[0.06]"
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-cyan-500/20 px-4 py-4 sm:px-5 sm:py-5 transition-colors hover:border-blue-400/70 hover:bg-cyan-400/25"
                       >
                         <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-3xl opacity-0 transition group-hover:opacity-100" />
 
@@ -283,18 +283,18 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-semibold text-white">{group.displayName}</span>
-                                <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-white">
+                                <span className="rounded-full bg-cyan-500/30 px-2.5 py-0.5 text-[11px] font-medium text-white">
                                   バリエーション {group.variants.length}
                                 </span>
                               </div>
                               <div className="mt-1 flex items-center gap-1">
-                                <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-medium text-white">{categoryMeta.name}</span>
+                                <span className="rounded-full bg-cyan-500/30 px-2 py-0.5 text-[11px] font-medium text-white">{categoryMeta.name}</span>
                               </div>
                             </div>
                           </div>
                           <button
                             onClick={() => handleAddTemplate(group)}
-                            className="shrink-0 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-xs font-semibold text-white transition hover:bg-white/25 hover:border-white/40"
+                            className="shrink-0 rounded-full border border-white/30 bg-cyan-500/30 px-3 py-1 text-xs font-semibold text-white transition hover:bg-cyan-400/40 hover:border-white/40"
                           >
                             追加する
                           </button>
@@ -317,7 +317,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                                   }`}
                                   style={{
                                     borderColor: `${paletteForVariant.accent}60`,
-                                    background: isActive ? `${paletteForVariant.accentSoft}dd` : 'rgba(255,255,255,0.08)',
+                                    background: isActive ? `${paletteForVariant.accentSoft}dd` : 'rgba(34, 211, 238, 0.3)',
                                     color: '#FFFFFF',
                                   }}
                                 >
@@ -328,7 +328,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                           </div>
 
                           {activeVariant && (
-                            <div className="rounded-xl border border-white/15 bg-white/10 p-3">
+                            <div className="rounded-xl border border-white/15 bg-sky-500/20 p-3">
                               <h4 className="text-xs font-semibold text-white">
                                 {activeVariant.name}
                               </h4>
