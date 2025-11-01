@@ -312,8 +312,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                                       : 'opacity-90 hover:opacity-100'
                                   }`}
                                   style={{
-                                    borderColor: isActive ? `${paletteForVariant.accent}60` : '#bae6fd',
-                                    background: isActive ? `${paletteForVariant.accentSoft}dd` : '#e0f2fe',
+                                    borderColor: isActive ? '#2563eb' : '#bae6fd',
+                                    background: isActive ? '#2563eb' : '#e0f2fe',
                                     color: isActive ? '#FFFFFF' : '#0f172a',
                                   }}
                                 >
