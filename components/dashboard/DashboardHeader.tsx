@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
-import { useAuthStore } from '@/store/authStore';
 import {
+  type DashboardNavGroupKey,
   getDashboardNavLinks,
   getDashboardNavGroupMeta,
   groupDashboardNavLinks,
@@ -47,6 +47,19 @@ const getCompactLabel = (href: string, fallback: string) => {
   return fallback.replace('新規', '新').slice(0, 6);
 };
 
+const MOBILE_GROUP_PILL_CLASSES: Record<DashboardNavGroupKey, string> = {
+  core: 'bg-slate-100 text-slate-600 border border-transparent',
+  lp: 'bg-blue-100 text-blue-700 border border-transparent',
+  note: 'bg-slate-200 text-slate-600 border border-transparent',
+  salon: 'bg-sky-100 text-sky-700 border border-transparent',
+  points: 'bg-violet-100 text-violet-700 border border-transparent',
+  line: 'bg-emerald-100 text-emerald-700 border border-transparent',
+  media: 'bg-indigo-100 text-indigo-700 border border-transparent',
+  info: 'bg-slate-100 text-slate-500 border border-transparent',
+};
+
+const MOBILE_GROUP_PILL_ACTIVE_CLASS = 'bg-white/20 text-white border border-white/30';
+
 interface DashboardHeaderProps {
   user: any;
   pointBalance: number;
@@ -65,10 +78,23 @@ export default function DashboardHeader({
   requireAuth = true,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
-  const { isAdmin: isAdminUser } = useAuthStore();
   const isAdmin = user?.user_type === 'admin';
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const navGroups = groupDashboardNavLinks(navLinks);
+  const flatMobileLinks = useMemo(
+    () =>
+      navGroups.flatMap((group) => {
+        const meta = getDashboardNavGroupMeta(group.key);
+        const pillClass = MOBILE_GROUP_PILL_CLASSES[group.key] ?? 'bg-slate-100 text-slate-600 border border-transparent';
+        return group.items.map((link) => ({
+          link,
+          groupKey: group.key,
+          groupLabel: meta.label,
+          pillClass,
+        }));
+      }),
+    [navGroups]
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
@@ -264,62 +290,44 @@ export default function DashboardHeader({
               className="rounded-3xl border border-white/60 bg-white/85 backdrop-blur-2xl shadow-2xl p-3 flex flex-col gap-4 h-full overflow-y-auto overscroll-contain"
               style={{ paddingBottom: menuPaddingBottom }}
             >
-              {isAdminUser && (
-                <Link
-                  href="/admin"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-between gap-2 rounded-2xl px-4 py-3 text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:from-amber-600 hover:to-orange-600 transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />
-                    <span>管理者パネル</span>
-                  </span>
-                </Link>
-              )}
+              {flatMobileLinks.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {flatMobileLinks.map(({ link, groupKey, groupLabel, pillClass }) => {
+                    const isActive = isDashboardLinkActive(pathname, link.href);
+                    const linkProps = link.external
+                      ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
+                      : { href: link.href };
+                    const label = getCompactLabel(link.href, link.label);
 
-              {navGroups.length > 0 && (
-                <div className="flex flex-col gap-4">
-                  {navGroups.map((group) => {
-                    const meta = getDashboardNavGroupMeta(group.key);
                     return (
-                      <div key={group.key} className="flex flex-col gap-2">
-                        <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] px-1 ${meta.headingClass}`}>
-                          {meta.label}
+                      <Link
+                        key={`${groupKey}-${link.href}`}
+                        {...linkProps}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`flex aspect-square flex-col items-center justify-between rounded-3xl border px-3 py-3 text-xs font-semibold transition-all ${
+                          isActive
+                            ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span
+                          className={`mt-1 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[9px] font-semibold ${
+                            isActive ? MOBILE_GROUP_PILL_ACTIVE_CLASS : pillClass
+                          }`}
+                        >
+                          {groupLabel}
                         </span>
-                        <div className="grid grid-cols-3 gap-2">
-                          {group.items.map((link) => {
-                            const isActive = isDashboardLinkActive(pathname, link.href);
-                            const linkProps = link.external
-                              ? { href: link.href, target: '_blank' as const, rel: 'noopener noreferrer' }
-                              : { href: link.href };
-                            const label = getCompactLabel(link.href, link.label);
-
-                            return (
-                              <Link
-                                key={link.href}
-                                {...linkProps}
-                                onClick={() => setIsMenuOpen(false)}
-                                className={`flex aspect-square flex-col items-center justify-center gap-2 rounded-3xl border text-xs font-semibold transition-all ${
-                                  isActive
-                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
-                                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                                }`}
-                              >
-                                <span
-                                  className={`flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 ${
-                                    isActive ? 'bg-white/15 text-white' : 'bg-slate-100'
-                                  }`}
-                                >
-                                  {link.icon}
-                                </span>
-                                <span className="text-center text-[11px] leading-tight">
-                                  {label}
-                                </span>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
+                        <span
+                          className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+                            isActive ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {link.icon}
+                        </span>
+                        <span className="mb-1 text-center text-[11px] leading-tight">
+                          {label}
+                        </span>
+                      </Link>
                     );
                   })}
                 </div>

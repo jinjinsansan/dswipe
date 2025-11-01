@@ -10,7 +10,6 @@ import DSwipeLogo from '@/components/DSwipeLogo';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { pointsApi } from '@/lib/api';
 import {
-  type DashboardNavLink,
   type DashboardNavGroupKey,
   getDashboardNavLinks,
   getDashboardNavClasses,
@@ -57,27 +56,6 @@ export default function DashboardLayout({
   );
   const resolvedPageTitle = pageTitle ?? activeNavLink?.label ?? 'ダッシュボード';
   const resolvedSubtitle = pageSubtitle;
-
-  const pinnedCandidates = useMemo(() => {
-    if (!navLinks.length) return [] as string[];
-    if (user?.user_type === 'seller') {
-      return ['/dashboard', '/sales', '/products/manage', '/products', '/notes', '/purchases'];
-    }
-    return ['/dashboard', '/products', '/notes', '/purchases', '/points/history'];
-  }, [navLinks, user?.user_type]);
-
-  const pinnedLinks = useMemo(() => {
-    const seen = new Set<string>();
-    const collected: DashboardNavLink[] = [];
-    pinnedCandidates.forEach((href) => {
-      const match = navLinks.find((link) => link.href === href);
-      if (match && !seen.has(match.href)) {
-        seen.add(match.href);
-        collected.push(match);
-      }
-    });
-    return collected;
-  }, [navLinks, pinnedCandidates]);
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -196,36 +174,6 @@ export default function DashboardLayout({
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {pinnedLinks.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">クイックアクセス</p>
-                  <div className="px-2 flex flex-wrap gap-2">
-                    {pinnedLinks.map((link) => {
-                      const isActive = isDashboardLinkActive(pathname, link.href);
-                      const linkProps = link.external
-                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                        : { href: link.href };
-                      return (
-                        <Link
-                          key={`pinned-${link.href}`}
-                          {...linkProps}
-                          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                            isActive
-                              ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                          }`}
-                        >
-                          <span className="flex h-4 w-4 items-center justify-center text-slate-500">
-                            {link.icon}
-                          </span>
-                          <span className="truncate max-w-[120px]">{link.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
               {navGroups.map((group) => {
                 const meta = getDashboardNavGroupMeta(group.key);
                 const isExpanded = expandedGroups[group.key] ?? false;
