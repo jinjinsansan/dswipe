@@ -194,26 +194,26 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         {/* Content - Scrollable */}
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
           {/* Filters */}
-          <div className="sticky top-0 z-20 -mx-2 sm:-mx-6">
-            <div className="px-2 sm:px-6 pt-3 pb-3 sm:pb-4 bg-[#050916] border-b border-white/10 shadow-[0_25px_40px_-30px_rgba(37,99,235,0.65)]">
+          <div className="sticky top-0 z-20 -mx-2 sm:-mx-6 bg-[#050916]">
+            <div className="px-2 sm:px-6 pt-4 pb-3 sm:pb-4 border-b border-white/10 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.9)]">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="relative flex-1">
-                  <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-blue-200/70" aria-hidden="true" />
+                  <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-blue-100/80" aria-hidden="true" />
                   <input
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="テンプレートを検索 (キーワード/用途/カラー)"
-                    className="w-full rounded-lg border border-white/10 bg-white/10 pl-9 pr-3 py-2 text-sm text-white placeholder:text-blue-100/50 focus:border-blue-400/70 focus:outline-none focus:ring-1 focus:ring-blue-400/60"
+                    className="w-full rounded-lg border border-white/15 bg-[#0b1024] pl-9 pr-3 py-2 text-sm text-white placeholder:text-blue-100/60 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400/70"
                     aria-label="テンプレート検索"
                   />
                 </div>
-                <div className="flex items-center gap-2 text-xs text-blue-100/80">
+                <div className="flex items-center gap-2 text-xs text-white/75">
                   <FunnelIcon className="h-4 w-4" aria-hidden="true" />
                   テンプレートカテゴリを絞り込み
                 </div>
               </div>
             </div>
-            <div className="px-2 sm:px-6 pt-2 pb-2 sm:pb-3 bg-[#050916] border-b border-white/5 shadow-[0_25px_40px_-30px_rgba(15,23,42,0.85)]">
+            <div className="px-2 sm:px-6 pt-2 pb-3 border-b border-white/5">
               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                 {categoryOptions.map((category) => {
                   const isActive = selectedCategory === category.id;
@@ -222,10 +222,10 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                       key={category.id}
                       type="button"
                       onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
-                      className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                      className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                         isActive
-                          ? 'bg-blue-500 text-white shadow-[0_8px_24px_-14px_rgba(37,99,235,0.9)]'
-                          : 'bg-white/10 text-blue-100/80 hover:bg-white/15'
+                          ? 'bg-blue-500 text-white shadow-[0_8px_24px_-12px_rgba(37,99,235,0.9)]'
+                          : 'bg-white/15 text-white/80 hover:bg-white/20'
                       }`}
                     >
                       {category.name}
@@ -283,8 +283,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                                   バリエーション {group.variants.length}
                                 </span>
                               </div>
-                              <div className="mt-1 flex items-center gap-1 text-[11px] text-blue-100/70">
-                                <span className="rounded-full bg-white/5 px-2 py-0.5 font-medium">{categoryMeta.name}</span>
+                              <div className="mt-1 flex items-center gap-1 text-[11px] text-white/70">
+                                <span className="rounded-full bg-white/10 px-2 py-0.5 font-medium text-white">{categoryMeta.name}</span>
                               </div>
                             </div>
                           </div>
@@ -324,14 +324,13 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                           </div>
 
                           {activeVariant && (
-                            <div className="rounded-xl border border-white/5 bg-white/[0.04] p-3">
+                            <div className="rounded-xl border border-white/10 bg-white/10 p-3">
                               <h4
                                 className="text-xs font-semibold text-white"
-                                style={{ color: palette.accent }}
                               >
                                 {activeVariant.name}
                               </h4>
-                              <p className="mt-1 text-[11px] leading-relaxed text-blue-100/80">
+                              <p className="mt-1 text-[11px] leading-relaxed text-white/80">
                                 {activeVariant.description}
                               </p>
                             </div>
