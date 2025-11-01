@@ -143,7 +143,7 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   line: {
-    label: 'X連携',
+    label: 'LINE連携',
     headingClass: 'text-emerald-500',
     desktop: {
       base: 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100',
@@ -161,7 +161,7 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   media: {
-    label: 'メディア',
+    label: '外部連携',
     headingClass: 'text-indigo-500',
     desktop: {
       base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100',
@@ -208,7 +208,7 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
   { href: '/purchases', label: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
-  { href: '/settings', label: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 20 },
+  { href: '/settings', label: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
   { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
   { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
   { href: '/privacy', label: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
