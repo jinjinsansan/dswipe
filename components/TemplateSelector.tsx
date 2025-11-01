@@ -157,7 +157,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
       accent: palette.accent,
       accentSoft: palette.accentSoft ?? palette.accent,
       background: defaultContent?.backgroundColor ?? palette.background,
-      text: palette.text,
+      text: '#FFFFFF',
     };
   };
 
@@ -194,41 +194,45 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         {/* Content - Scrollable */}
         <div className="relative flex-1 overflow-y-auto min-h-0 px-2 sm:px-5 sm:px-6 py-3 sm:py-5 sm:py-6">
           {/* Filters */}
-          <div className="sticky top-0 z-20 -mx-2 sm:-mx-6 bg-[#070b16]/95 px-2 sm:px-6 pb-3 sm:pb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className="relative flex-1">
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-blue-200/60" aria-hidden="true" />
-                <input
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="テンプレートを検索 (キーワード/用途/カラー)"
-                  className="w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-3 py-2 text-sm text-white placeholder:text-blue-100/40 focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/50"
-                  aria-label="テンプレート検索"
-                />
-              </div>
-              <div className="flex items-center gap-2 text-xs text-blue-100/70">
-                <FunnelIcon className="h-4 w-4" aria-hidden="true" />
-                テンプレートカテゴリを絞り込み
+          <div className="sticky top-0 z-20 -mx-2 sm:-mx-6">
+            <div className="px-2 sm:px-6 pt-3 pb-3 sm:pb-4 bg-[#050916] border-b border-white/10 shadow-[0_25px_40px_-30px_rgba(37,99,235,0.65)]">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div className="relative flex-1">
+                  <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-blue-200/70" aria-hidden="true" />
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="テンプレートを検索 (キーワード/用途/カラー)"
+                    className="w-full rounded-lg border border-white/10 bg-white/10 pl-9 pr-3 py-2 text-sm text-white placeholder:text-blue-100/50 focus:border-blue-400/70 focus:outline-none focus:ring-1 focus:ring-blue-400/60"
+                    aria-label="テンプレート検索"
+                  />
+                </div>
+                <div className="flex items-center gap-2 text-xs text-blue-100/80">
+                  <FunnelIcon className="h-4 w-4" aria-hidden="true" />
+                  テンプレートカテゴリを絞り込み
+                </div>
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
-              {categoryOptions.map((category) => {
-                const isActive = selectedCategory === category.id;
-                return (
-                  <button
-                    key={category.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
-                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
-                      isActive
-                        ? 'bg-blue-500/90 text-white shadow-[0_10px_30px_-20px_rgba(37,99,235,0.9)]'
-                        : 'bg-white/5 text-blue-100/70 hover:bg-white/10'
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                );
-              })}
+            <div className="px-2 sm:px-6 pt-2 pb-2 sm:pb-3 bg-[#050916] border-b border-white/5 shadow-[0_25px_40px_-30px_rgba(15,23,42,0.85)]">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {categoryOptions.map((category) => {
+                  const isActive = selectedCategory === category.id;
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
+                      className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                        isActive
+                          ? 'bg-blue-500 text-white shadow-[0_8px_24px_-14px_rgba(37,99,235,0.9)]'
+                          : 'bg-white/10 text-blue-100/80 hover:bg-white/15'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -264,10 +268,9 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                         <div className="relative flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
                             <span
-                              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10"
+                              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-white"
                               style={{
                                 background: palette.accentSoft,
-                                color: palette.text,
                                 borderColor: `${palette.accent}40`,
                               }}
                             >
@@ -311,7 +314,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                                   style={{
                                     borderColor: `${paletteForVariant.accent}70`,
                                     background: isActive ? `${paletteForVariant.accentSoft}dd` : 'transparent',
-                                    color: isActive ? paletteForVariant.text : '#dbeafe',
+                                    color: isActive ? '#FFFFFF' : '#dbeafe',
                                   }}
                                 >
                                   {variant.name.replace(group.displayName, '').replace(/[（）]/g, '').trim() || '基本'}
