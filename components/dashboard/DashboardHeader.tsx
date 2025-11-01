@@ -155,7 +155,7 @@ export default function DashboardHeader({
             kind: 'customLink',
             key: 'home-top',
             href: '/',
-            label: 'ホーム（TOPページ）',
+            label: 'ホーム',
             icon: <HomeIcon className="h-6 w-6" aria-hidden="true" />, 
             groupKey: 'core',
           },
@@ -163,7 +163,7 @@ export default function DashboardHeader({
             kind: 'link',
             href: '/dashboard',
             groupOverride: 'core',
-            labelOverride: 'ダッシュ（ダッシュボート）',
+            labelOverride: 'ダッシュ',
           },
           {
             kind: 'logout',
