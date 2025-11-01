@@ -70,7 +70,18 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
     return map;
   }, [lp?.ctas]);
-  const primaryTargetId = lp?.linked_salon?.id ?? lp?.product_id;
+  const primaryTargetId = useMemo(() => {
+    if (lp?.linked_salon?.id) {
+      return lp.linked_salon.id;
+    }
+    if (lp?.product_id) {
+      return lp.product_id;
+    }
+    if (products.length > 0) {
+      return String(products[0].id);
+    }
+    return undefined;
+  }, [lp?.linked_salon?.id, lp?.product_id, products]);
 
   // ハプティックフィードバック（振動）
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -154,14 +165,48 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
 
   const fetchProducts = async (lpId: string) => {
     try {
-      const response = await productApi.list({ lp_id: lpId });
+      const response = await productApi.getPublic({ lp_id: lpId, limit: 20 });
       const productsData = Array.isArray(response.data?.data)
-        ? (response.data.data as Product[])
-        : Array.isArray(response.data)
-        ? (response.data as Product[])
+        ? (response.data.data as Array<Record<string, any>>)
         : [];
-      const availableProducts = productsData.filter((p) => p?.is_available);
-      setProducts(availableProducts);
+
+      const mappedProducts: Product[] = productsData
+        .map((item) => {
+          if (!item) return null;
+          const pricePointsRaw = item.price_in_points;
+          const priceYenRaw = item.price_jpy;
+          const taxRateRaw = item.tax_rate;
+          const stockRaw = item.stock_quantity;
+          const createdAt = typeof item.created_at === 'string' ? item.created_at : new Date().toISOString();
+          const updatedAt = typeof item.updated_at === 'string' ? item.updated_at : createdAt;
+
+          return {
+            id: String(item.id ?? ''),
+            seller_id: String(item.seller_id ?? ''),
+            lp_id: item.lp_id ?? undefined,
+            product_type: (item.product_type as 'points' | 'salon') ?? 'points',
+            salon_id: item.salon_id ?? undefined,
+            title: item.title ?? '',
+            description: item.description ?? undefined,
+            price_in_points: Number.isFinite(Number(pricePointsRaw)) ? Number(pricePointsRaw) : 0,
+            price_jpy: Number.isFinite(Number(priceYenRaw)) ? Number(priceYenRaw) : null,
+            allow_point_purchase: Boolean(item.allow_point_purchase ?? false),
+            allow_jpy_purchase: Boolean(item.allow_jpy_purchase ?? false),
+            tax_rate: taxRateRaw === null || taxRateRaw === undefined ? undefined : Number(taxRateRaw),
+            tax_inclusive: Boolean(item.tax_inclusive ?? true),
+            stock_quantity:
+              stockRaw === null || stockRaw === undefined || stockRaw === ''
+                ? null
+                : Number(stockRaw),
+            is_available: Boolean(item.is_available ?? false),
+            total_sales: Number.isFinite(Number(item.total_sales)) ? Number(item.total_sales) : 0,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          } as Product;
+        })
+        .filter((product): product is Product => product !== null && product.is_available);
+
+      setProducts(mappedProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
     }

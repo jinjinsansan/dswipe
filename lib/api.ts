@@ -221,7 +221,7 @@ export const productApi = {
   purchase: (id: string, data: ProductPurchasePayload) =>
     api.post(`/products/${id}/purchase`, data),
   
-  getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number; seller_username?: string }) =>
+  getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number; seller_username?: string; lp_id?: string }) =>
     axios.get(`${API_URL}/products/public`, { params }),
 };
 
