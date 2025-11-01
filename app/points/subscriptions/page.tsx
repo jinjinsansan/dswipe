@@ -171,6 +171,10 @@ function SubscriptionPageContent() {
         seller_id: sellerId,
         seller_username: sellerUsername,
         salon_id: salonIdParam,
+        metadata: {
+          billing_method: "points",
+          ...(salonIdParam ? { salon_id: salonIdParam } : {}),
+        },
       });
       const data = response.data as SubscriptionCheckoutResponse;
       if (data.checkout_url) {

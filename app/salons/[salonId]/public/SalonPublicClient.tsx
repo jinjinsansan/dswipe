@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { salonPublicApi } from "@/lib/api";
+import { salonPublicApi, subscriptionApi } from "@/lib/api";
+import { useAuthStore } from "@/store/authStore";
 import type { SalonPublicDetail } from "@/types/api";
 
 type SalonPublicClientProps = {
@@ -16,6 +17,9 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
   const [salon, setSalon] = useState<SalonPublicDetail | null>(initialSalon);
   const [isLoading, setIsLoading] = useState(!initialSalon);
   const [error, setError] = useState<string | null>(null);
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [isJoiningYen, setIsJoiningYen] = useState(false);
+  const { isAuthenticated, isInitialized } = useAuthStore();
 
   useEffect(() => {
     let mounted = true;
@@ -27,6 +31,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
         const response = await salonPublicApi.get(salonId);
         if (!mounted) return;
         setSalon(response.data as SalonPublicDetail);
+        setJoinError(null);
       } catch (loadError: any) {
         if (!mounted) return;
         const detail = loadError?.response?.data?.detail;
@@ -44,34 +49,71 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     };
   }, [salonId]);
 
-  const priceLabel = useMemo(() => {
+  const priceLabelPoints = useMemo(() => {
     const points = salon?.plan?.points ?? 0;
-    return points > 0 ? `月額 ¥${points.toLocaleString("ja-JP")}` : "月額プラン";
+    return points > 0 ? `月額 ${points.toLocaleString("ja-JP")}ポイント` : "月額プラン";
   }, [salon]);
 
-  const handlePrimaryAction = () => {
+  const priceLabelYen = useMemo(() => {
+    if (!salon?.plan?.usd_amount) return null;
+    const estimatedYen = Math.round((salon.plan.usd_amount ?? 0) * 145);
+    return estimatedYen > 0 ? `月額 約${estimatedYen.toLocaleString("ja-JP") }円` : null;
+  }, [salon]);
+
+  const handleJoinWithPoints = () => {
     if (!salon) return;
-    if (salon.is_member) {
-      router.push(`/salons/${salon.id}/feed`);
+    if (typeof window === "undefined") return;
+    const origin = window.location.origin;
+    const params = new URLSearchParams();
+    const seller = salon.owner?.username?.trim();
+    const planKey = salon.plan?.key?.trim();
+    const planId = salon.plan?.subscription_plan_id?.trim();
+    const planPoints = Number.isFinite(salon.plan?.points) ? salon.plan?.points : undefined;
+
+    if (seller) params.set("seller", seller);
+    params.set("salon", salon.id);
+    if (planKey) params.set("plan_key", planKey);
+    if (planId) params.set("plan_id", planId);
+    if (typeof planPoints === "number" && planPoints > 0) {
+      params.set("plan_points", String(planPoints));
+    }
+
+    window.location.href = `${origin}/points/subscriptions?${params.toString()}`;
+  };
+
+  const handleJoinWithYen = async () => {
+    if (!salon || !salon.plan?.key) return;
+    if (!isInitialized) return;
+    if (!isAuthenticated) {
+      router.push("/login");
       return;
     }
-    if (typeof window !== "undefined") {
-      const origin = window.location.origin;
-      const params = new URLSearchParams();
-      const seller = salon.owner?.username?.trim();
-      const planKey = salon.plan?.key?.trim();
-      const planId = salon.plan?.subscription_plan_id?.trim();
-      const planPoints = Number.isFinite(salon.plan?.points) ? salon.plan?.points : undefined;
 
-      if (seller) params.set("seller", seller);
-      params.set("salon", salon.id);
-      if (planKey) params.set("plan_key", planKey);
-      if (planId) params.set("plan_id", planId);
-      if (typeof planPoints === "number" && planPoints > 0) {
-        params.set("plan_points", String(planPoints));
+    setJoinError(null);
+    setIsJoiningYen(true);
+    try {
+      const response = await subscriptionApi.createCheckout({
+        plan_key: salon.plan.key,
+        seller_id: salon.owner?.id,
+        seller_username: salon.owner?.username,
+        salon_id: salon.id,
+        metadata: {
+          billing_method: "salon_yen",
+          salon_id: salon.id,
+        },
+      });
+      const data = response.data as { checkout_url?: string };
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        throw new Error("チェックアウトURLの取得に失敗しました");
       }
-
-      window.location.href = `${origin}/points/subscriptions?${params.toString()}`;
+    } catch (joinErr: any) {
+      console.error("Failed to start yen subscription", joinErr);
+      const detail = joinErr?.response?.data?.detail;
+      setJoinError(typeof detail === "string" ? detail : "決済の開始に失敗しました。時間をおいて再度お試しください。");
+    } finally {
+      setIsJoiningYen(false);
     }
   };
 
@@ -152,7 +194,10 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
           <aside className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">PLAN</p>
-              <p className="text-3xl font-bold text-slate-900">{priceLabel}</p>
+              <p className="text-3xl font-bold text-slate-900">{priceLabelPoints}</p>
+              {priceLabelYen ? (
+                <p className="text-sm text-slate-500">{priceLabelYen}（クレジットカード決済）</p>
+              ) : null}
               <p className="text-xs text-slate-500">※ 決済はサロン運営のメンバーシップとして行われます</p>
             </div>
 
@@ -166,14 +211,52 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
               </div>
             ) : null}
 
-            <button
-              type="button"
-              onClick={handlePrimaryAction}
-              disabled={isLoading}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {salon.is_member ? "コミュニティフィードへ" : `${priceLabel}で参加する`}
-            </button>
+            {joinError ? (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-600">
+                {joinError}
+              </div>
+            ) : null}
+
+            <div className="space-y-2">
+              {salon.is_member ? (
+                <button
+                  type="button"
+                  onClick={() => router.push(`/salons/${salon.id}/feed`)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
+                >
+                  コミュニティフィードへ
+                </button>
+              ) : (
+                <>
+                  {salon.allow_point_subscription ? (
+                    <button
+                      type="button"
+                      onClick={handleJoinWithPoints}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-blue-500"
+                    >
+                      ポイント自動チャージで参加する
+                    </button>
+                  ) : null}
+
+                  {salon.allow_jpy_subscription ? (
+                    <button
+                      type="button"
+                      onClick={handleJoinWithYen}
+                      disabled={isJoiningYen}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isJoiningYen ? "リダイレクト中…" : "日本円クレジットカードで参加する"}
+                    </button>
+                  ) : null}
+
+                  {!salon.allow_point_subscription && !salon.allow_jpy_subscription ? (
+                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500">
+                      現在申し込み可能な決済方法が設定されていません。
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </div>
 
             <button
               type="button"
