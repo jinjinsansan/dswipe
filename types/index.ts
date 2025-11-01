@@ -711,6 +711,63 @@ export interface PurchaseHistoryResponse {
   active_salons: PurchaseHistorySalon[];
 }
 
+export interface SalesSummary {
+  product_orders: number;
+  note_orders: number;
+  salon_memberships: number;
+  total_points_revenue: number;
+  total_yen_revenue: number;
+}
+
+export interface SalesProductRecord {
+  sale_id: string;
+  product_id?: string | null;
+  product_title?: string | null;
+  buyer_id?: string | null;
+  buyer_username?: string | null;
+  buyer_profile_image_url?: string | null;
+  payment_method: 'points' | 'yen';
+  amount_points: number;
+  amount_jpy?: number | null;
+  purchased_at: string;
+  lp_slug?: string | null;
+  description?: string | null;
+}
+
+export interface SalesNoteRecord {
+  sale_id: string;
+  note_id: string;
+  note_title?: string | null;
+  note_slug?: string | null;
+  buyer_id?: string | null;
+  buyer_username?: string | null;
+  buyer_profile_image_url?: string | null;
+  payment_method: 'points' | 'yen';
+  points_spent: number;
+  amount_jpy?: number | null;
+  purchased_at: string;
+}
+
+export interface SalesSalonRecord {
+  membership_id: string;
+  salon_id: string;
+  salon_title?: string | null;
+  buyer_id?: string | null;
+  buyer_username?: string | null;
+  buyer_profile_image_url?: string | null;
+  status: string;
+  joined_at: string;
+  next_charge_at?: string | null;
+  last_charged_at?: string | null;
+}
+
+export interface SalesHistoryResponse {
+  summary: SalesSummary;
+  products: SalesProductRecord[];
+  notes: SalesNoteRecord[];
+  salons: SalesSalonRecord[];
+}
+
 // トランザクション型
 export interface Transaction {
   id: string;

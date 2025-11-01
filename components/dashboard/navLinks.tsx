@@ -232,6 +232,16 @@ export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: s
     links.push(productsManageLink);
   }
 
+  if (options?.userType === 'seller' && !links.some((link) => link.href === '/sales')) {
+    links.push({
+      href: '/sales',
+      label: '販売履歴',
+      icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />,
+      group: 'points',
+      order: 22,
+    });
+  }
+
   if (options?.isAdmin && !links.some((link) => link.href === '/admin')) {
     links.push({
       href: '/admin',
