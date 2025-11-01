@@ -1,6 +1,6 @@
 import type { AIGenerationResponse } from '@/types/api';
 import { BlockType, BlockContent } from '@/types/templates';
-import { getTemplateById, ColorThemeKey } from './templates';
+import { getTemplateById, getTemplateByUniqueId, ColorThemeKey } from './templates';
 
 /**
  * AIウィザードの結果をブロック構造に変換
@@ -31,9 +31,13 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
 
   aiResult.blocks.forEach((aiBlock, index) => {
     const blockType = aiBlock.blockType as BlockType;
+    const templateVariantId = typeof (aiBlock as any).templateId === 'string' ? (aiBlock as any).templateId : undefined;
     console.log(`Processing block ${index}:`, blockType, aiBlock);
 
-    const template = getTemplateById(blockType);
+    let template = templateVariantId ? getTemplateByUniqueId(templateVariantId) : undefined;
+    if (!template) {
+      template = getTemplateById(blockType);
+    }
 
     if (!template) {
       console.warn(`Skipping unknown block type: ${blockType}`);
@@ -56,7 +60,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
       return; // スキップして次のブロックへ
     }
     
-    console.log(`Found template for ${blockType}:`, template.name);
+    console.log(`Found template for ${blockType}:`, template.name, templateVariantId ? `(variant: ${templateVariantId})` : '');
 
     const defaultContent = structuredClone(template.defaultContent) as unknown as Record<string, unknown>;
     const overrides = (aiBlock.content ?? {}) as unknown as Record<string, unknown>;

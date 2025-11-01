@@ -228,6 +228,7 @@ export interface AIGenerationResponse {
     blockType: string;
     content: Record<string, unknown>;
     reason?: string;
+    templateId?: string;
   }>;
 }
 

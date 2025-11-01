@@ -2333,8 +2333,13 @@ export function getTemplatesByCategory(category: string) {
 }
 
 export function getTemplateById(templateId: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS, ...HANDWRITTEN_BLOCKS];
   return allTemplates.find((template) => template.templateId === templateId);
+}
+
+export function getTemplateByUniqueId(templateUniqueId: string) {
+  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS, ...HANDWRITTEN_BLOCKS];
+  return allTemplates.find((template) => template.id === templateUniqueId);
 }
 
 export function getAllTemplates() {
