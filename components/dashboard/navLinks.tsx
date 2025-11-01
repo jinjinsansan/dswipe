@@ -14,7 +14,6 @@ import {
   DocumentPlusIcon,
   PencilSquareIcon,
   BookOpenIcon,
-  ArrowPathIcon,
   UserGroupIcon,
   ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
@@ -144,7 +143,7 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   line: {
-    label: 'LINE連携',
+    label: 'X連携',
     headingClass: 'text-emerald-500',
     desktop: {
       base: 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100',
@@ -206,7 +205,6 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/salons/create', label: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
   { href: '/salons/all', label: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
   { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
-  { href: '/points/subscriptions', label: 'サブスク自動チャージ', icon: <ArrowPathIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 15 },
   { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
   { href: '/purchases', label: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
