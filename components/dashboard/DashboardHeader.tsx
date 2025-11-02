@@ -257,13 +257,13 @@ export default function DashboardHeader({
           { kind: 'link', href: '/terms', groupOverride: 'info', labelOverride: '利用規約' },
           { kind: 'link', href: '/tokusho', groupOverride: 'info', labelOverride: '特定商' },
           { kind: 'link', href: '/privacy', groupOverride: 'info', labelOverride: 'プライバシー' },
-          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
         ],
       },
       {
         label: 'その他',
         defaultGroup: 'media',
         items: [
+          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
           { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media', labelOverride: '競馬予想AI' },
           { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
         ],

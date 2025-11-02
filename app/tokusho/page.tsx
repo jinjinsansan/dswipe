@@ -34,9 +34,9 @@ export default function TokushoPage() {
                   </div>
                   <div className="flex flex-col gap-1 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4">
                     <dt className="text-slate-400">所在地</dt>
-                    <dd className="text-slate-100">
-                      Registered Location: Samoa Office<br />
-                      Location: Hong Kong
+                    <dd className="rounded-lg bg-slate-200 px-4 py-3 text-slate-900">
+                      <span className="block font-medium">Registered Location: Samoa Office</span>
+                      <span className="block font-medium">Location: Hong Kong</span>
                     </dd>
                   </div>
                 </dl>
