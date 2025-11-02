@@ -81,6 +81,17 @@ interface PublicProductSummary {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
+const safeGet = (source: unknown, key: string): unknown =>
+  isRecord(source) ? source[key] : undefined;
+
+const asOptionalString = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 const parseLpList = (input: unknown): LpApiRecord[] => {
   if (!Array.isArray(input)) {
     return [];
