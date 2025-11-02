@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   Bars3Icon,
   ChartBarIcon,
-  Cog6ToothIcon,
   MegaphoneIcon,
   ShareIcon,
   XMarkIcon,
@@ -64,15 +63,13 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     icon: MegaphoneIcon,
     description: '公式LINEキャンペーン設定',
   },
-  {
-    href: '/settings',
-    label: 'アカウント設定',
-    icon: Cog6ToothIcon,
-  },
 ];
 
-const mobileNavButtonClass =
-  'flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-left text-sm font-semibold text-gray-700 hover:border-blue-500 hover:bg-blue-50/70 transition-colors';
+const NAV_BUTTON_BASE = 'flex w-full items-center gap-3 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors';
+const NAV_BUTTON_ACTIVE = 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-100';
+const NAV_BUTTON_INACTIVE = 'border-transparent bg-gray-100 text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700';
+
+const mobileNavButtonClass = `${NAV_BUTTON_BASE} justify-start`;
 
 export default function AdminShell({
   children,
@@ -116,7 +113,7 @@ export default function AdminShell({
             </Link>
             <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600">Admin</span>
           </div>
-          <nav className="flex-1 space-y-4 overflow-y-auto px-4 py-6">
+          <nav className="flex-1 space-y-3 overflow-y-auto px-4 py-6">
             {resolvedNavItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               const Icon = item.icon;
@@ -125,30 +122,33 @@ export default function AdminShell({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'block rounded-2xl border px-4 py-3 shadow-sm transition-all',
-                    isActive
-                      ? 'border-blue-500 bg-blue-50 shadow-blue-100'
-                      : 'border-transparent bg-white hover:border-blue-400 hover:bg-blue-50/60'
+                    NAV_BUTTON_BASE,
+                    isActive ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                   )}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl', isActive ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500')}>
-                        <Icon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">{item.label}</p>
-                        {item.description && (
-                          <p className="text-xs text-gray-500">{item.description}</p>
-                        )}
-                      </div>
-                    </div>
-                    {item.badge && (
-                      <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                        {item.badge}
-                      </span>
+                  {Icon && (
+                    <span
+                      className={cn(
+                        'flex h-8 w-8 items-center justify-center rounded-lg',
+                        isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500'
+                      )}
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
+                    {item.description && (
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-blue-600/80' : 'text-gray-500')}>
+                        {item.description}
+                      </p>
                     )}
                   </div>
+                  {item.badge && (
+                    <span className="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -168,20 +168,16 @@ export default function AdminShell({
                         type="button"
                         onClick={() => onSideNavChange?.(item.id)}
                         className={cn(
-                          'w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors',
-                          isActive
-                            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-100'
-                            : 'border-transparent bg-gray-100 text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700'
+                          NAV_BUTTON_BASE,
+                          isActive ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                         )}
                       >
-                        <span className="flex items-center gap-3">
-                          {Icon && (
-                            <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
-                              <Icon className="h-4 w-4" aria-hidden="true" />
-                            </span>
-                          )}
-                          <span>{item.label}</span>
-                        </span>
+                        {Icon && (
+                          <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                            <Icon className="h-4 w-4" aria-hidden="true" />
+                          </span>
+                        )}
+                        <span className="flex-1 text-left text-sm font-semibold leading-5 text-current">{item.label}</span>
                       </button>
                     );
                   })}
@@ -254,15 +250,29 @@ export default function AdminShell({
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileNavOpen(false)}
-                      className={cn(mobileNavButtonClass, isActive && 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm')}
+                  className={cn(
+                    mobileNavButtonClass,
+                    isActive ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
+                  )}
                     >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                        <Icon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <p>{item.label}</p>
-                        {item.description && <p className="text-xs text-gray-500">{item.description}</p>}
-                      </div>
+                  {Icon && (
+                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
+                    {item.description && (
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-blue-600/80' : 'text-gray-500')}>
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                  {item.badge && (
+                    <span className="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      {item.badge}
+                    </span>
+                  )}
                     </Link>
                   );
                 })}
@@ -286,16 +296,15 @@ export default function AdminShell({
                             }}
                             className={cn(
                               mobileNavButtonClass,
-                              'justify-start',
-                              isActive && 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                              isActive ? NAV_BUTTON_ACTIVE : NAV_BUTTON_INACTIVE
                             )}
                           >
                             {Icon && (
-                              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                                <Icon className="h-5 w-5" aria-hidden="true" />
+                              <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                                <Icon className="h-4 w-4" aria-hidden="true" />
                               </span>
                             )}
-                            <span>{item.label}</span>
+                            <span className="flex-1 text-left text-sm font-semibold leading-5 text-current">{item.label}</span>
                           </button>
                         );
                       })}
