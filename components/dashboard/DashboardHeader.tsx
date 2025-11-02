@@ -254,7 +254,7 @@ export default function DashboardHeader({
             href: '/sales',
             label: '販売履歴',
             icon: resolveIcon('/sales', <ClipboardDocumentListIcon className="h-6 w-6" aria-hidden="true" />),
-            groupKey: 'line',
+            groupKey: 'line' as DashboardNavGroupKey,
           },
           ...(ADMIN_EMAILS.has(user.email ?? '')
             ? [
@@ -264,7 +264,7 @@ export default function DashboardHeader({
                   href: '/admin',
                   label: '管理者パネル',
                   icon: resolveIcon('/admin', <ShieldCheckIcon className="h-6 w-6" aria-hidden="true" />),
-                  groupKey: 'line',
+                  groupKey: 'line' as DashboardNavGroupKey,
                 },
               ]
             : []),
