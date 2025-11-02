@@ -1,5 +1,3 @@
-import type { AppRouterInstance } from 'next/navigation';
-
 const DEFAULT_REDIRECT = '/dashboard';
 
 export const buildLoginRedirectUrl = (path?: string) => {
@@ -17,6 +15,10 @@ export const buildLoginRedirectUrl = (path?: string) => {
   return `/login?redirect=${encodeURIComponent(normalized)}`;
 };
 
-export const redirectToLogin = (router: AppRouterInstance, path?: string) => {
+type RouterLike = {
+  push: (href: string) => void;
+};
+
+export const redirectToLogin = (router: RouterLike, path?: string) => {
   router.push(buildLoginRedirectUrl(path));
 };
