@@ -371,7 +371,7 @@ export default function DashboardHeader({
         <div className="px-3 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/dashboard" className="sm:hidden">
-              <DSwipeLogo size="small" showFullName={true} textColor="text-slate-900" />
+              <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
             </Link>
             <div className="hidden sm:block min-w-0">
               <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">{pageTitle}</h1>
