@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
 import { isAdminEmail } from '@/constants/admin';
@@ -89,15 +89,7 @@ export default function ShareManagementPage() {
   const [newRate, setNewRate] = useState('');
   const [savingRate, setSavingRate] = useState(false);
 
-  useEffect(() => {
-    if (!user || !isAdminEmail(user.email)) {
-      window.location.href = '/dashboard';
-      return;
-    }
-    fetchData();
-  }, [user, activeTab]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!token) return;
 
     setLoading(true);
@@ -147,7 +139,15 @@ export default function ShareManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, activeTab, suspiciousOnly, showResolved]);
+
+  useEffect(() => {
+    if (!user || !isAdminEmail(user.email)) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    fetchData();
+  }, [user, fetchData]);
 
   const handleResolveAlert = async (alertId: string) => {
     if (!token) return;

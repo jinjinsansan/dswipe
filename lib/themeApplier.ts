@@ -3,19 +3,36 @@
  * Kigenで生成したシェードを各ブロック要素に分散させる
  */
 
-import type { BlockContent } from '@/types/templates';
 import type { ColorShades } from './colorGenerator';
+
+type GenericRecord = Record<string, unknown>;
+
+export interface ThemeBlock {
+  blockType?: string | null;
+  content?: GenericRecord;
+}
+
+type ThemeContent = GenericRecord;
+
+type PricingPlan = GenericRecord & { highlighted?: boolean };
+type TestimonialItem = GenericRecord;
+type FAQItem = GenericRecord;
+type FeatureItem = GenericRecord;
+type BonusItem = GenericRecord;
+type ComparisonItem = GenericRecord;
+type ProblemItem = GenericRecord;
+type StatItem = GenericRecord;
 
 /**
  * ブロックコンテンツにシェードを適用する
  * PropertyPanel の個別設定を保持する（微調整用）
  */
-export function applyThemeShadesToBlock(
-  block: any,
+export function applyThemeShadesToBlock<T extends ThemeBlock>(
+  block: T,
   shades: ColorShades
-): any {
-  const blockType = block.blockType || '';
-  const content = block.content || {};
+): T {
+  const blockType = block.blockType ?? '';
+  const content: ThemeContent = { ...(block.content ?? {}) };
 
   // PropertyPanel で設定された個別カラーを保存（微調整用として保持）
   const individualColors = {
@@ -25,14 +42,14 @@ export function applyThemeShadesToBlock(
   };
 
   // 基本的なカラー割り当て（個別設定がなければテーマから）
-  const baseUpdate = {
+  const baseUpdate: ThemeContent = {
     backgroundColor: content.backgroundColor || shades[50],
     textColor: content.textColor || shades[800],
     accentColor: content.accentColor || shades[600],
     buttonColor: content.buttonColor || shades[500],
   };
 
-  let updatedContent = { ...content, ...baseUpdate };
+  let updatedContent: ThemeContent = { ...content, ...baseUpdate };
 
   // ブロックタイプ別の詳細な色割り当て
   if (blockType.startsWith('hero')) {
@@ -87,12 +104,12 @@ export function applyThemeShadesToBlock(
   return {
     ...block,
     content: updatedContent,
-  };
+  } as T;
 }
 
 // ===== ブロックタイプ別テーマ適用関数 =====
 
-function applyHeroTheme(content: any, shades: ColorShades): any {
+function applyHeroTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -104,16 +121,16 @@ function applyHeroTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyPricingTheme(content: any, shades: ColorShades): any {
-  const updatedPlans = content.plans?.map((plan: any) => ({
+function applyPricingTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawPlans = Array.isArray(content.plans) ? (content.plans as PricingPlan[]) : [];
+  const updatedPlans = rawPlans.map((plan) => ({
     ...plan,
     backgroundColor: plan.highlighted ? shades[600] : shades[100],
     textColor: plan.highlighted ? shades[50] : shades[900],
     buttonColor: plan.highlighted ? shades[500] : shades[600],
     borderColor: shades[200],
     priceColor: shades[500],
-  })) || [];
-
+  }));
   return {
     ...content,
     backgroundColor: shades[50],
@@ -123,15 +140,18 @@ function applyPricingTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyTestimonialTheme(content: any, shades: ColorShades): any {
-  const updatedTestimonials = content.testimonials?.map((testimonial: any) => ({
+function applyTestimonialTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawTestimonials = Array.isArray(content.testimonials)
+    ? (content.testimonials as TestimonialItem[])
+    : [];
+  const updatedTestimonials = rawTestimonials.map((testimonial) => ({
     ...testimonial,
     nameColor: shades[900],
     textColor: shades[800],
     roleColor: shades[600],
     backgroundColor: shades[100],
     borderColor: shades[200],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -141,14 +161,15 @@ function applyTestimonialTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyFAQTheme(content: any, shades: ColorShades): any {
-  const updatedFAQs = content.faqs?.map((faq: any) => ({
+function applyFAQTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawFaqs = Array.isArray(content.faqs) ? (content.faqs as FAQItem[]) : [];
+  const updatedFAQs = rawFaqs.map((faq) => ({
     ...faq,
     questionColor: shades[700],
     answerColor: shades[800],
     backgroundColor: shades[100],
     accentColor: shades[500],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -159,14 +180,15 @@ function applyFAQTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyFeaturesTheme(content: any, shades: ColorShades): any {
-  const updatedFeatures = content.features?.map((feature: any) => ({
+function applyFeaturesTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawFeatures = Array.isArray(content.features) ? (content.features as FeatureItem[]) : [];
+  const updatedFeatures = rawFeatures.map((feature) => ({
     ...feature,
     titleColor: shades[900],
     descriptionColor: shades[800],
     iconColor: shades[600],
     backgroundColor: shades[100],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -178,7 +200,7 @@ function applyFeaturesTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyCTATheme(content: any, shades: ColorShades): any {
+function applyCTATheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -191,7 +213,7 @@ function applyCTATheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyTextImageTheme(content: any, shades: ColorShades): any {
+function applyTextImageTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -202,13 +224,14 @@ function applyTextImageTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyStatsTheme(content: any, shades: ColorShades): any {
-  const updatedStats = content.stats?.map((stat: any) => ({
+function applyStatsTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawStats = Array.isArray(content.stats) ? (content.stats as StatItem[]) : [];
+  const updatedStats = rawStats.map((stat) => ({
     ...stat,
     numberColor: shades[500],
     labelColor: shades[800],
     backgroundColor: shades[100],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -218,14 +241,15 @@ function applyStatsTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyComparisonTheme(content: any, shades: ColorShades): any {
-  const updatedRows = content.rows?.map((row: any) => ({
+function applyComparisonTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawRows = Array.isArray(content.rows) ? (content.rows as ComparisonItem[]) : [];
+  const updatedRows = rawRows.map((row) => ({
     ...row,
     headerColor: shades[900],
     highlightedColor: shades[500],
     normalColor: shades[800],
     backgroundColor: shades[100],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -235,15 +259,15 @@ function applyComparisonTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyBonusListTheme(content: any, shades: ColorShades): any {
-  const updatedBonuses = content.bonuses?.map((bonus: any) => ({
+function applyBonusListTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawBonuses = Array.isArray(content.bonuses) ? (content.bonuses as BonusItem[]) : [];
+  const updatedBonuses = rawBonuses.map((bonus) => ({
     ...bonus,
     titleColor: shades[900],
     descriptionColor: shades[800],
     highlightColor: shades[500],
     checkmarkColor: shades[600],
-    backgroundColor: shades[100],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -254,7 +278,7 @@ function applyBonusListTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyGuaranteeTheme(content: any, shades: ColorShades): any {
+function applyGuaranteeTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[100],
@@ -266,13 +290,14 @@ function applyGuaranteeTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyProblemTheme(content: any, shades: ColorShades): any {
-  const updatedItems = content.items?.map((item: any) => ({
+function applyProblemTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
+  const rawItems = Array.isArray(content.items) ? (content.items as ProblemItem[]) : [];
+  const updatedItems = rawItems.map((item) => ({
     ...item,
     titleColor: shades[900],
     checkColor: shades[600],
     backgroundColor: shades[100],
-  })) || [];
+  }));
 
   return {
     ...content,
@@ -283,7 +308,7 @@ function applyProblemTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applySpecialPriceTheme(content: any, shades: ColorShades): any {
+function applySpecialPriceTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[950],
@@ -296,7 +321,7 @@ function applySpecialPriceTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyBeforeAfterTheme(content: any, shades: ColorShades): any {
+function applyBeforeAfterTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -312,7 +337,7 @@ function applyBeforeAfterTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyAuthorProfileTheme(content: any, shades: ColorShades): any {
+function applyAuthorProfileTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[950],
@@ -325,7 +350,7 @@ function applyAuthorProfileTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyScarcityTheme(content: any, shades: ColorShades): any {
+function applyScarcityTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -337,7 +362,7 @@ function applyScarcityTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyUrgencyTheme(content: any, shades: ColorShades): any {
+function applyUrgencyTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],
@@ -348,7 +373,7 @@ function applyUrgencyTheme(content: any, shades: ColorShades): any {
   };
 }
 
-function applyCountdownTheme(content: any, shades: ColorShades): any {
+function applyCountdownTheme(content: ThemeContent, shades: ColorShades): ThemeContent {
   return {
     ...content,
     backgroundColor: shades[50],

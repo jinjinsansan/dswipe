@@ -2,13 +2,13 @@
 
 import { PageLoader } from '@/components/LoadingSpinner';
 
-import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi, noteApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
-import { BlockType } from '@/types/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
@@ -17,19 +17,246 @@ import {
   ArrowTrendingUpIcon,
   BuildingStorefrontIcon,
   ChartBarIcon,
-  ClipboardDocumentListIcon,
-  ClipboardIcon,
   CurrencyYenIcon,
   DocumentIcon,
   DocumentTextIcon,
-  PhotoIcon,
   ShoppingBagIcon,
   Cog6ToothIcon,
-  BriefcaseIcon,
   CheckCircleIcon,
   SparklesIcon,
   TagIcon,
 } from '@heroicons/react/24/outline';
+
+type HeroMediaType = 'image' | 'video';
+
+interface HeroMedia {
+  type: HeroMediaType;
+  url: string;
+}
+
+interface LpApiRecord {
+  id: string;
+  title: string;
+  status?: string | null;
+  slug?: string | null;
+  custom_theme_hex?: string | null;
+  product_id?: string | null;
+  salon_id?: string | null;
+  image_url?: string | null;
+  total_views?: number | null;
+  total_cta_clicks?: number | null;
+  [key: string]: unknown;
+}
+
+type LpStatusVariant = 'published' | 'archived' | 'draft';
+
+interface DashboardLp extends LpApiRecord {
+  heroMedia?: HeroMedia;
+  heroImage?: string | null;
+  heroVideo?: string | null;
+  isPublished: boolean;
+  hasPrimaryLink: boolean;
+  statusLabel: string;
+  statusVariant: LpStatusVariant;
+}
+
+interface LpStep extends Record<string, unknown> {
+  block_type?: string | null;
+  content_data?: Record<string, unknown>;
+  image_url?: string | null;
+  imageUrl?: string | null;
+  video_url?: string | null;
+  videoUrl?: string | null;
+  background_video_url?: string | null;
+  backgroundVideoUrl?: string | null;
+}
+
+interface PointTransactionRecord {
+  id: string;
+  amount: number;
+  created_at: string;
+  description?: string | null;
+  transaction_type?: string | null;
+  note_title?: string | null;
+  points_after?: number | null;
+}
+
+interface PublicProductSummary {
+  id: string;
+  title: string;
+  description?: string | null;
+  seller_username?: string | null;
+  price_in_points?: number | null;
+  total_sales?: number | null;
+  lp_id?: string | null;
+  [key: string]: unknown;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const toNumber = (value: unknown): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+};
+
+const parseLpList = (input: unknown): LpApiRecord[] => {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+  return input.filter((item): item is LpApiRecord => {
+    if (!isRecord(item)) {
+      return false;
+    }
+    return typeof item.id === 'string' && typeof item.title === 'string';
+  });
+};
+
+const parsePublicProducts = (input: unknown): PublicProductSummary[] => {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+  return input.filter((item): item is PublicProductSummary => {
+    if (!isRecord(item)) {
+      return false;
+    }
+    return typeof item.id === 'string' && typeof item.title === 'string';
+  });
+};
+
+const parsePointTransactions = (input: unknown): PointTransactionRecord[] => {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+  const results: PointTransactionRecord[] = [];
+  input.forEach((item) => {
+    if (!isRecord(item) || typeof item.id !== 'string' || typeof item.created_at !== 'string') {
+      return;
+    }
+    const transaction: PointTransactionRecord = {
+      id: item.id,
+      amount: toNumber(item.amount),
+      created_at: item.created_at,
+      description: typeof item.description === 'string' ? item.description : null,
+      transaction_type: typeof item.transaction_type === 'string' ? item.transaction_type : null,
+      note_title: typeof item.note_title === 'string' ? item.note_title : null,
+      points_after: typeof item.points_after === 'number' ? item.points_after : null,
+    };
+    results.push(transaction);
+  });
+  return results;
+};
+
+const safeGet = (source: unknown, key: string): unknown =>
+  isRecord(source) ? source[key] : undefined;
+
+const asOptionalString = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const parseLpSteps = (input: unknown): LpStep[] => {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  const steps: LpStep[] = [];
+  for (const item of input) {
+    if (!isRecord(item)) {
+      continue;
+    }
+
+    const normalized: LpStep = {
+      ...(item as Record<string, unknown>),
+      block_type: asOptionalString(item.block_type),
+      content_data: isRecord(item.content_data) ? item.content_data : undefined,
+      image_url: asOptionalString(item.image_url),
+      imageUrl: asOptionalString(item.imageUrl),
+      video_url: asOptionalString(item.video_url),
+      videoUrl: asOptionalString(item.videoUrl),
+      background_video_url: asOptionalString(item.background_video_url),
+      backgroundVideoUrl: asOptionalString(item.backgroundVideoUrl),
+      background_image_url: asOptionalString(item.background_image_url),
+      backgroundImageUrl: asOptionalString(item.backgroundImageUrl),
+      hero_image: asOptionalString(item.hero_image),
+      heroImage: asOptionalString(item.heroImage),
+      primary_image_url: asOptionalString(item.primary_image_url),
+      primaryImageUrl: asOptionalString(item.primaryImageUrl),
+      media: isRecord(item.media) ? item.media : undefined,
+      visual: isRecord(item.visual) ? item.visual : undefined,
+    };
+
+    steps.push(normalized);
+  }
+
+  return steps;
+};
+
+const extractErrorDetail = (error: unknown, fallback: string): string => {
+  const response = safeGet(error, 'response');
+  const data = safeGet(response, 'data');
+  const detail = safeGet(data, 'detail');
+  if (typeof detail === 'string' && detail.trim().length > 0) {
+    return detail;
+  }
+  return fallback;
+};
+
+interface NoteCountSummary {
+  total: number;
+  published: number;
+  draft: number;
+  paid: number;
+  free: number;
+  latestPublishedIso: string | null;
+}
+
+const deriveNoteCounts = (notes: NoteSummary[]): NoteCountSummary => {
+  const total = notes.length;
+  const published = notes.filter((note) => note.status === 'published').length;
+  const draft = notes.filter((note) => note.status === 'draft').length;
+  const paid = notes.filter((note) => note.is_paid).length;
+  const free = total - paid;
+  const latestPublished = notes
+    .map((note) => (note.published_at ? new Date(note.published_at) : null))
+    .filter((value): value is Date => value instanceof Date && !Number.isNaN(value.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0] ?? null;
+  const latestPublishedIso = latestPublished ? latestPublished.toISOString() : null;
+  return {
+    total,
+    published,
+    draft,
+    paid,
+    free,
+    latestPublishedIso,
+  };
+};
+
+const FALLBACK_NOTE_METRICS: NoteMetrics = {
+  total_notes: 0,
+  published_notes: 0,
+  draft_notes: 0,
+  paid_notes: 0,
+  free_notes: 0,
+  total_sales_count: 0,
+  total_sales_points: 0,
+  monthly_sales_count: 0,
+  monthly_sales_points: 0,
+  recent_published_count: 0,
+  average_paid_price: 0,
+  latest_published_at: null,
+  top_categories: [],
+  top_note: null,
+};
 
 const formatAnnouncementDate = (value?: string) => {
   if (!value) return '-';
@@ -55,14 +282,13 @@ const formatAccountDate = (value?: string | null, includeTime = false) => {
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized } = useAuthStore();
-  const [lps, setLps] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+  const [lps, setLps] = useState<DashboardLp[]>([]);
   const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dashboardType, setDashboardType] = useState<'seller' | 'buyer' | 'settings'>('seller');
-  const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
-  const [popularProducts, setPopularProducts] = useState<any[]>([]);
-  const [latestProducts, setLatestProducts] = useState<any[]>([]);
+  const [purchaseHistory, setPurchaseHistory] = useState<PointTransactionRecord[]>([]);
+  const [popularProducts, setPopularProducts] = useState<PublicProductSummary[]>([]);
+  const [latestProducts, setLatestProducts] = useState<PublicProductSummary[]>([]);
   const [newUsername, setNewUsername] = useState<string>('');
   const [usernameError, setUsernameError] = useState<string>('');
   const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
@@ -72,7 +298,6 @@ export default function DashboardPage() {
   const [profileLineUrl, setProfileLineUrl] = useState<string>(user?.line_url ?? '');
   const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profile_image_url ?? '');
   const [noteMetrics, setNoteMetrics] = useState<NoteMetrics | null>(null);
-  const [noteOverview, setNoteOverview] = useState<NoteSummary[]>([]);
   const [profileUpdateError, setProfileUpdateError] = useState<string>('');
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState<boolean>(false);
   const [isSavingProfileInfo, setIsSavingProfileInfo] = useState<boolean>(false);
@@ -94,45 +319,7 @@ export default function DashboardPage() {
     : null;
   const continuityLabel = continuityDays !== null ? `${continuityDays}日` : '記録なし';
 
-  const fallbackNoteMetrics: NoteMetrics = {
-    total_notes: 0,
-    published_notes: 0,
-    draft_notes: 0,
-    paid_notes: 0,
-    free_notes: 0,
-    total_sales_count: 0,
-    total_sales_points: 0,
-    monthly_sales_count: 0,
-    monthly_sales_points: 0,
-    recent_published_count: 0,
-    average_paid_price: 0,
-    latest_published_at: null,
-    top_categories: [],
-    top_note: null,
-  };
-
-const deriveNoteCounts = (notes: NoteSummary[]) => {
-  const total = notes.length;
-  const published = notes.filter((note) => note.status === 'published').length;
-  const draft = notes.filter((note) => note.status === 'draft').length;
-  const paid = notes.filter((note) => note.is_paid).length;
-  const free = total - paid;
-  const latestPublished = notes
-    .map((note) => (note.published_at ? new Date(note.published_at) : null))
-    .filter((value): value is Date => value instanceof Date && !Number.isNaN(value.getTime()))
-    .sort((a, b) => b.getTime() - a.getTime())[0] ?? null;
-  const latestPublishedIso = latestPublished ? latestPublished.toISOString() : null;
-  return {
-    total,
-    published,
-    draft,
-    paid,
-    free,
-    latestPublishedIso,
-  };
-};
-
-  const noteSummary = noteMetrics ?? fallbackNoteMetrics;
+  const noteSummary = noteMetrics ?? FALLBACK_NOTE_METRICS;
   const latestNotePublishedLabel = noteSummary.latest_published_at
     ? formatAccountDate(noteSummary.latest_published_at, true)
     : '未公開';
@@ -143,17 +330,6 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
     : '—';
   const topNote = noteSummary.top_note ?? null;
   const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
-
-  useEffect(() => {
-    if (!isInitialized) return;
-    
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    fetchData();
-  }, [isAuthenticated, isInitialized]);
 
   useEffect(() => {
     setProfileBio(user?.bio ?? '');
@@ -170,16 +346,17 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
     }
   }, [user]);
 
-  const loadAnnouncements = async () => {
+  const loadAnnouncements = useCallback(async () => {
     setAnnouncementsLoading(true);
     try {
       const response = await announcementApi.list({ limit: 6 });
-      const payload = response.data as { data?: DashboardAnnouncement[] } | DashboardAnnouncement[] | undefined;
-      const rows = Array.isArray((payload as any)?.data)
-        ? ((payload as any).data as DashboardAnnouncement[])
-        : Array.isArray(payload)
-        ? (payload as DashboardAnnouncement[])
-        : [];
+      const rawPayload = response.data as { data?: unknown } | unknown;
+      let rows: DashboardAnnouncement[] = [];
+      if (isRecord(rawPayload) && Array.isArray(rawPayload.data)) {
+        rows = rawPayload.data as DashboardAnnouncement[];
+      } else if (Array.isArray(rawPayload)) {
+        rows = rawPayload as DashboardAnnouncement[];
+      }
       setAnnouncements(rows);
       setAnnouncementsError(null);
     } catch (error) {
@@ -188,9 +365,9 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
     } finally {
       setAnnouncementsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const announcementPromise = loadAnnouncements();
       const [meResponse, lpsResponse, pointsResponse, productsResponse] = await Promise.all([
@@ -205,18 +382,22 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         localStorage.setItem('user', JSON.stringify(meResponse.data));
       }
 
-      const lpsData = Array.isArray(lpsResponse.data?.data) 
-        ? lpsResponse.data.data 
-        : Array.isArray(lpsResponse.data) 
-        ? lpsResponse.data 
-        : [];
+      const lpPayload = lpsResponse?.data as { data?: unknown } | unknown;
+      const lpsData = (() => {
+        if (isRecord(lpPayload) && Array.isArray(lpPayload.data)) {
+          return parseLpList(lpPayload.data);
+        }
+        if (Array.isArray(lpPayload)) {
+          return parseLpList(lpPayload);
+        }
+        return [];
+      })();
 
-      type HeroMedia = { type: 'image' | 'video'; url: string };
       const heroMediaMap = new Map<string, HeroMedia>();
 
-      const normalizeContent = (raw: unknown): Record<string, any> => {
+      const normalizeContent = (raw: unknown): Record<string, unknown> => {
         if (!raw) return {};
-        let parsed = raw;
+        let parsed: unknown = raw;
         if (typeof parsed === 'string') {
           try {
             parsed = JSON.parse(parsed);
@@ -225,13 +406,10 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
             return {};
           }
         }
-        if (parsed && typeof parsed === 'object' && 'content' in (parsed as Record<string, any>)) {
-          const inner = (parsed as Record<string, any>).content;
-          if (inner && typeof inner === 'object') {
-            return inner as Record<string, any>;
-          }
+        if (isRecord(parsed) && parsed.content && isRecord(parsed.content)) {
+          return parsed.content;
         }
-        return (parsed && typeof parsed === 'object') ? (parsed as Record<string, any>) : {};
+        return isRecord(parsed) ? parsed : {};
       };
 
       const pickFirstString = (candidates: unknown[]): string | null => {
@@ -243,23 +421,23 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         return null;
       };
 
-      const extractMediaFromContent = (content: Record<string, any>, step?: any): HeroMedia | null => {
+      const extractMediaFromContent = (content: Record<string, unknown>, step?: LpStep | null): HeroMedia | null => {
         const imageUrl = pickFirstString([
-          content?.imageUrl,
-          content?.image_url,
-          content?.heroImage,
-          content?.hero_image,
-          content?.primaryImageUrl,
-          content?.primary_image_url,
-          content?.backgroundImageUrl,
-          content?.background_image_url,
-          content?.backgroundImage,
-          content?.media?.imageUrl,
-          content?.media?.image_url,
-          content?.visual?.imageUrl,
-          content?.visual?.image_url,
+          content['imageUrl'],
+          content['image_url'],
+          content['heroImage'],
+          content['hero_image'],
+          content['primaryImageUrl'],
+          content['primary_image_url'],
+          content['backgroundImageUrl'],
+          content['background_image_url'],
+          content['backgroundImage'],
+          safeGet(safeGet(content, 'media'), 'imageUrl'),
+          safeGet(safeGet(content, 'media'), 'image_url'),
+          safeGet(safeGet(content, 'visual'), 'imageUrl'),
+          safeGet(safeGet(content, 'visual'), 'image_url'),
           step?.image_url,
-          step?.imageUrl,
+          safeGet(step, 'imageUrl'),
         ]);
 
         if (imageUrl) {
@@ -267,17 +445,17 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         }
 
         const videoUrl = pickFirstString([
-          content?.backgroundVideoUrl,
-          content?.background_video_url,
-          content?.videoUrl,
-          content?.video_url,
-          content?.media?.videoUrl,
-          content?.media?.video_url,
-          content?.visual?.videoUrl,
-          content?.visual?.video_url,
-          step?.backgroundVideoUrl,
+          content['backgroundVideoUrl'],
+          content['background_video_url'],
+          content['videoUrl'],
+          content['video_url'],
+          safeGet(safeGet(content, 'media'), 'videoUrl'),
+          safeGet(safeGet(content, 'media'), 'video_url'),
+          safeGet(safeGet(content, 'visual'), 'videoUrl'),
+          safeGet(safeGet(content, 'visual'), 'video_url'),
+          safeGet(step, 'backgroundVideoUrl'),
           step?.background_video_url,
-          step?.videoUrl,
+          safeGet(step, 'videoUrl'),
           step?.video_url,
         ]);
 
@@ -286,15 +464,6 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         }
 
         return null;
-      };
-
-      const getTemplateMediaFallback = (blockType: BlockType): HeroMedia | null => {
-        // Check both 'id' (unique template identifier) and 'templateId' (component type)
-        const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
-        if (!template) return null;
-
-        const templateContent = normalizeContent(template.defaultContent);
-        return extractMediaFromContent(templateContent);
       };
 
       const createPlaceholderThumbnail = (title: string, accentHex?: string | null): HeroMedia => {
@@ -329,45 +498,53 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         };
       };
 
-      const extractMediaFromStep = (step: any, title: string, accent?: string | null): HeroMedia => {
+      const extractMediaFromStep = (step: LpStep | undefined, title: string, accent?: string | null): HeroMedia => {
         if (!step) {
           return createPlaceholderThumbnail(title, accent);
         }
 
         // SIMPLE APPROACH: Direct access to content_data
-        const contentData = step?.content_data;
-        
+        const contentData = isRecord(step.content_data) ? step.content_data : undefined;
+
         // Check 1: content_data.backgroundVideoUrl (most common for hero blocks)
-        if (contentData?.backgroundVideoUrl && typeof contentData.backgroundVideoUrl === 'string') {
-          return { type: 'video', url: contentData.backgroundVideoUrl };
+        const contentBackgroundVideo = safeGet(contentData, 'backgroundVideoUrl');
+        if (typeof contentBackgroundVideo === 'string' && contentBackgroundVideo.trim()) {
+          return { type: 'video', url: contentBackgroundVideo };
         }
 
         // Check 2: content_data.backgroundImageUrl (for image-based heroes)
-        if (contentData?.backgroundImageUrl && typeof contentData.backgroundImageUrl === 'string') {
-          return { type: 'image', url: contentData.backgroundImageUrl };
+        const contentBackgroundImage = safeGet(contentData, 'backgroundImageUrl');
+        if (typeof contentBackgroundImage === 'string' && contentBackgroundImage.trim()) {
+          return { type: 'image', url: contentBackgroundImage };
         }
 
         // Check 3: step.video_url (direct DB field)
-        if (step.video_url && typeof step.video_url === 'string') {
+        if (typeof step.video_url === 'string' && step.video_url.trim()) {
           return { type: 'video', url: step.video_url };
         }
 
         // Check 4: step.image_url (direct DB field, but skip placeholder)
-        if (step.image_url && typeof step.image_url === 'string' && step.image_url !== '/placeholder.jpg') {
+        if (typeof step.image_url === 'string' && step.image_url.trim() && step.image_url !== '/placeholder.jpg') {
           return { type: 'image', url: step.image_url };
         }
 
         // Check 5: Fallback to template default media by ID
-        const blockType = step?.block_type;
+        let blockType: string | undefined;
+        if (typeof step.block_type === 'string') {
+          blockType = step.block_type;
+        } else if (isRecord(step.content_data)) {
+          const candidate = safeGet(step.content_data, 'block_type');
+          if (typeof candidate === 'string') {
+            blockType = candidate;
+          }
+        }
         if (blockType) {
           const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
           if (template?.defaultContent) {
-            const defaultContent = template.defaultContent as any;
-            if (defaultContent.backgroundVideoUrl) {
-              return { type: 'video', url: defaultContent.backgroundVideoUrl };
-            }
-            if (defaultContent.backgroundImageUrl) {
-              return { type: 'image', url: defaultContent.backgroundImageUrl };
+            const defaultContent = normalizeContent(template.defaultContent);
+            const fallbackMedia = extractMediaFromContent(defaultContent);
+            if (fallbackMedia) {
+              return fallbackMedia;
             }
           }
         }
@@ -376,15 +553,34 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
         return createPlaceholderThumbnail(title, accent);
       };
 
+      const resolveBlockType = (step: LpStep | undefined): string | null => {
+        if (!step) {
+          return null;
+        }
+        if (typeof step.block_type === 'string') {
+          return step.block_type;
+        }
+        if (isRecord(step.content_data)) {
+          const candidate = safeGet(step.content_data, 'block_type');
+          if (typeof candidate === 'string') {
+            return candidate;
+          }
+        }
+        return null;
+      };
+
       await Promise.all(
         lpsData.map(async (lpItem) => {
           try {
             const detailResponse = await lpApi.get(lpItem.id);
-            const steps = Array.isArray(detailResponse.data?.steps) ? detailResponse.data.steps : [];
-            const heroStep = [...steps].find((step: any) => {
-              const type = step?.block_type || step?.content_data?.block_type;
-              return typeof type === 'string' && type.includes('hero');
-            }) || steps.find((step: any) => step?.block_type === 'image-aurora-1') || steps[0];
+            const steps = parseLpSteps(detailResponse.data?.steps);
+            const heroStep =
+              steps.find((step) => {
+                const blockType = resolveBlockType(step);
+                return typeof blockType === 'string' && blockType.includes('hero');
+              }) ??
+              steps.find((step) => resolveBlockType(step) === 'image-aurora-1') ??
+              steps[0];
 
             const media = extractMediaFromStep(heroStep, lpItem.title, lpItem.custom_theme_hex);
             heroMediaMap.set(lpItem.id, media);
@@ -394,20 +590,25 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
           }
         })
       );
-      
-      const productsData = Array.isArray(productsResponse.data?.data)
-        ? productsResponse.data.data
-        : Array.isArray(productsResponse.data)
-        ? productsResponse.data
-        : [];
 
-      const productLinkedLpIds = new Set(
+      const productsPayload = productsResponse?.data as { data?: unknown } | unknown;
+      const productsData = (() => {
+        if (isRecord(productsPayload) && Array.isArray(productsPayload.data)) {
+          return parsePublicProducts(productsPayload.data);
+        }
+        if (Array.isArray(productsPayload)) {
+          return parsePublicProducts(productsPayload);
+        }
+        return [];
+      })();
+
+      const productLinkedLpIds = new Set<string>(
         productsData
-          .map((product: any) => product?.lp_id)
-          .filter((lpId: unknown): lpId is string => typeof lpId === 'string' && lpId.trim().length > 0)
+          .map((product) => product.lp_id)
+          .filter((lpId): lpId is string => typeof lpId === 'string' && lpId.trim().length > 0)
       );
-      
-      const enrichedLps = lpsData.map((lpItem: any) => {
+
+      const enrichedLps: DashboardLp[] = lpsData.map((lpItem) => {
         const heroMedia = heroMediaMap.get(lpItem.id) ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
         const normalizedStatus = typeof lpItem.status === 'string' ? lpItem.status.toLowerCase() : '';
         const isPublished = normalizedStatus === 'published';
@@ -420,7 +621,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
           : normalizedStatus === 'archived'
           ? 'アーカイブ'
           : '下書き';
-        const statusVariant = normalizedStatus === 'published'
+        const statusVariant: LpStatusVariant = normalizedStatus === 'published'
           ? 'published'
           : normalizedStatus === 'archived'
           ? 'archived'
@@ -438,8 +639,8 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       });
 
       setLps(enrichedLps);
-      setProducts(productsData);
-      setPointBalance(pointsResponse.data.point_balance);
+      const pointBalanceValue = toNumber((pointsResponse?.data as { point_balance?: unknown })?.point_balance);
+      setPointBalance(pointBalanceValue);
       
       let metrics: NoteMetrics | null = null;
       try {
@@ -451,10 +652,9 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
 
       try {
         const notesResponse = await noteApi.list({ limit: 100, offset: 0 });
-        const notesData = Array.isArray(notesResponse.data?.data)
-          ? notesResponse.data.data
+        const notesData: NoteSummary[] = Array.isArray(notesResponse.data?.data)
+          ? (notesResponse.data.data as NoteSummary[])
           : [];
-        setNoteOverview(notesData);
 
         const counts = deriveNoteCounts(notesData);
         if (metrics) {
@@ -469,7 +669,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
           };
         } else {
           metrics = {
-            ...fallbackNoteMetrics,
+            ...FALLBACK_NOTE_METRICS,
             total_notes: counts.total,
             published_notes: counts.published,
             draft_notes: counts.draft,
@@ -491,33 +691,69 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [loadAnnouncements]);
 
-  const fetchBuyerData = async () => {
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    void fetchData();
+  }, [fetchData, isAuthenticated, isInitialized, router]);
+
+  const fetchBuyerData = useCallback(async () => {
     try {
-      // 全てのトランザクションを取得
       const allTransactions = await pointsApi.getTransactions({ limit: 50 });
+      const transactionsPayload = allTransactions?.data as { data?: unknown } | unknown;
+      const transactions = (() => {
+        if (isRecord(transactionsPayload) && Array.isArray(transactionsPayload.data)) {
+          return parsePointTransactions(transactionsPayload.data);
+        }
+        if (Array.isArray(transactionsPayload)) {
+          return parsePointTransactions(transactionsPayload);
+        }
+        return [];
+      })();
 
-      // transaction_typeに関係なく、product_purchase関連を全て表示
-      const purchaseTransactions = allTransactions.data?.data?.filter(
-        (tx: any) => tx.transaction_type === 'product_purchase'
-      ) || [];
-      
+      const purchaseTransactions = transactions.filter(
+        (tx) => tx.transaction_type === 'product_purchase'
+      );
       setPurchaseHistory(purchaseTransactions);
 
-      // 人気商品を取得（エラーでも続行）
       try {
         const popularResponse = await productApi.getPublic({ sort: 'popular', limit: 5 });
-        setPopularProducts(popularResponse.data?.data || []);
+        const popularPayload = popularResponse?.data as { data?: unknown } | unknown;
+        const popular = (() => {
+          if (isRecord(popularPayload) && Array.isArray(popularPayload.data)) {
+            return parsePublicProducts(popularPayload.data);
+          }
+          if (Array.isArray(popularPayload)) {
+            return parsePublicProducts(popularPayload);
+          }
+          return [];
+        })();
+        setPopularProducts(popular);
       } catch (error) {
         console.error('Failed to fetch popular products:', error);
         setPopularProducts([]);
       }
 
-      // 新着商品を取得（エラーでも続行）
       try {
         const latestResponse = await productApi.getPublic({ sort: 'latest', limit: 5 });
-        setLatestProducts(latestResponse.data?.data || []);
+        const latestPayload = latestResponse?.data as { data?: unknown } | unknown;
+        const latest = (() => {
+          if (isRecord(latestPayload) && Array.isArray(latestPayload.data)) {
+            return parsePublicProducts(latestPayload.data);
+          }
+          if (Array.isArray(latestPayload)) {
+            return parsePublicProducts(latestPayload);
+          }
+          return [];
+        })();
+        setLatestProducts(latest);
       } catch (error) {
         console.error('Failed to fetch latest products:', error);
         setLatestProducts([]);
@@ -525,13 +761,13 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
     } catch (error) {
       console.error('Failed to fetch buyer data:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (dashboardType === 'buyer' && isAuthenticated) {
-      fetchBuyerData();
+      void fetchBuyerData();
     }
-  }, [dashboardType, isAuthenticated]);
+  }, [dashboardType, fetchBuyerData, isAuthenticated]);
 
 
 
@@ -574,8 +810,8 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       setUpdateSuccess(true);
       setNewUsername(updatedUser?.username ?? trimmedUsername);
       setTimeout(() => setUpdateSuccess(false), 3000);
-    } catch (error: any) {
-      setUsernameError(error.response?.data?.detail || 'ユーザー名の更新に失敗しました');
+    } catch (error: unknown) {
+      setUsernameError(extractErrorDetail(error, 'ユーザー名の更新に失敗しました'));
     }
   };
 
@@ -604,8 +840,8 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setProfileUpdateSuccess(true);
       setTimeout(() => setProfileUpdateSuccess(false), 3000);
-    } catch (error: any) {
-      setProfileUpdateError(error.response?.data?.detail || 'プロフィールの更新に失敗しました');
+    } catch (error: unknown) {
+      setProfileUpdateError(extractErrorDetail(error, 'プロフィールの更新に失敗しました'));
     } finally {
       setIsSavingProfileInfo(false);
     }
@@ -623,8 +859,8 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       if (imageUrl) {
         setProfileImageUrl(imageUrl);
       }
-    } catch (error: any) {
-      setProfileUpdateError(error.response?.data?.detail || '画像のアップロードに失敗しました');
+    } catch (error: unknown) {
+      setProfileUpdateError(extractErrorDetail(error, '画像のアップロードに失敗しました'));
     } finally {
       setIsUploadingProfileImage(false);
       if (profileImageInputRef.current) {
@@ -653,9 +889,9 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       await lpApi.delete(lpId);
       await fetchData();
       alert('LPを削除しました');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to delete LP:', error);
-      alert(error.response?.data?.detail || 'LPの削除に失敗しました');
+      alert(extractErrorDetail(error, 'LPの削除に失敗しました'));
     }
   };
 
@@ -669,15 +905,15 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
       if (duplicated?.id) {
         router.push(`/lp/${duplicated.id}/edit`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to duplicate LP:', error);
-      alert(error.response?.data?.detail || 'LPの複製に失敗しました');
+      alert(extractErrorDetail(error, 'LPの複製に失敗しました'));
     } finally {
       setDuplicatingId(null);
     }
   };
 
-  const totalPointsUsed = Math.abs(purchaseHistory.reduce((sum: number, tx: any) => sum + (tx.amount || 0), 0));
+  const totalPointsUsed = Math.abs(purchaseHistory.reduce((sum, tx) => sum + (tx.amount ?? 0), 0));
   const averagePointsUsed = purchaseHistory.length ? Math.round(totalPointsUsed / purchaseHistory.length) : 0;
   const lastPurchaseDateLabel = purchaseHistory.length
     ? new Date(purchaseHistory[0].created_at).toLocaleDateString('ja-JP', {
@@ -770,8 +1006,8 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {lps.map((lp: any) => {
-                  const heroMedia = lp.heroMedia as { type: 'image' | 'video'; url: string } | undefined;
+                {lps.map((lp) => {
+                  const heroMedia = lp.heroMedia;
                   const statusBadgeClass = lp.statusVariant === 'published'
                     ? 'bg-green-500 text-white'
                     : lp.statusVariant === 'archived'
@@ -786,10 +1022,13 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                     {/* Thumbnail */}
                     <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {heroMedia?.type === 'image' ? (
-                        <img
+                        <Image
                           src={heroMedia.url}
-                          alt={lp.title}
-                          className="w-full h-full object-cover"
+                          alt={lp.title || 'LPサムネイル'}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 20vw"
+                          unoptimized
                         />
                       ) : heroMedia?.type === 'video' ? (
                         <video
@@ -1068,7 +1307,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                       </div>
                     ) : (
                       <div className="divide-y divide-slate-200">
-                        {purchaseHistory.map((transaction: any) => (
+                        {purchaseHistory.map((transaction) => (
                           <div key={transaction.id} className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
                               <p className="text-sm font-medium text-slate-900">{transaction.description}</p>
@@ -1096,7 +1335,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {popularProducts.map((product: any) => (
+                        {popularProducts.map((product) => (
                           <div
                             key={product.id}
                             className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
@@ -1132,7 +1371,7 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {latestProducts.map((product: any) => (
+                        {latestProducts.map((product) => (
                           <div
                             key={product.id}
                             className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-emerald-300"
@@ -1370,9 +1609,16 @@ const deriveNoteCounts = (notes: NoteSummary[]) => {
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">プロフィール画像</label>
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center text-white text-xl">
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center text-white text-xl">
                           {profileImageUrl ? (
-                            <img src={profileImageUrl} alt="プロフィール画像プレビュー" className="w-full h-full object-cover" />
+                            <Image
+                              src={profileImageUrl}
+                              alt="プロフィール画像プレビュー"
+                              fill
+                              className="object-cover"
+                              sizes="64px"
+                              unoptimized
+                            />
                           ) : (
                             user?.username?.charAt(0).toUpperCase() || 'U'
                           )}

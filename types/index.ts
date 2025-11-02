@@ -328,6 +328,8 @@ export interface Salon {
   tax_rate?: number | null;
   tax_inclusive: boolean;
   is_active: boolean;
+  status?: string;
+  moderation_notes?: string | null;
   member_count: number;
   lp_id?: string | null;
   created_at: string;
@@ -974,4 +976,230 @@ export interface DashboardAnnouncement {
   body: string;
   highlight: boolean;
   published_at: string;
+}
+
+export interface NoteModerationItem {
+  id: string;
+  title: string;
+  status: string;
+  author_id: string;
+  author_username?: string | null;
+  author_email?: string | null;
+  author_user_type?: string | null;
+  price_points?: number | null;
+  price_jpy?: number | null;
+  is_paid: boolean;
+  allow_point_purchase: boolean;
+  allow_jpy_purchase: boolean;
+  total_purchases: number;
+  total_shares: number;
+  suspicious_shares: number;
+  total_refunds: number;
+  risk_score: number;
+  risk_indicators: string[];
+  created_at: string;
+  updated_at: string;
+  published_at?: string | null;
+  categories: string[];
+}
+
+export interface NoteModerationListResponse {
+  data: NoteModerationItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface NoteModerationDetail extends NoteModerationItem {
+  excerpt?: string | null;
+  content_blocks: unknown[];
+  official_share_tweet_url?: string | null;
+  official_share_x_username?: string | null;
+}
+
+export interface SalonModerationItem {
+  id: string;
+  title: string;
+  status: string;
+  is_active: boolean;
+  owner_id: string;
+  owner_username?: string | null;
+  owner_email?: string | null;
+  monthly_price_jpy?: number | null;
+  allow_point_subscription: boolean;
+  allow_jpy_subscription: boolean;
+  active_members: number;
+  pending_members: number;
+  canceled_members: number;
+  total_members: number;
+  risk_score: number;
+  risk_indicators: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SalonModerationListResponse {
+  data: SalonModerationItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SalonMemberModeration {
+  id: string;
+  user_id: string;
+  username?: string | null;
+  email?: string | null;
+  status: string;
+  joined_at?: string | null;
+  last_charged_at?: string | null;
+  next_charge_at?: string | null;
+  canceled_at?: string | null;
+}
+
+export interface SalonModerationDetail extends SalonModerationItem {
+  description?: string | null;
+  moderation_notes?: string | null;
+  owner_user_type?: string | null;
+  members: SalonMemberModeration[];
+  announcements_count: number;
+  events_count: number;
+  posts_count: number;
+}
+
+export interface SalonStatusUpdateRequest {
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  reason?: string | null;
+  moderation_notes?: string | null;
+}
+
+export interface SalonMemberActionRequest {
+  action: 'approve' | 'cancel';
+  reason?: string | null;
+}
+
+export interface MaintenanceMode {
+  id: string;
+  scope: 'global' | 'lp' | 'note' | 'salon' | 'points' | 'products' | 'ai' | 'payments';
+  status: 'scheduled' | 'active' | 'completed' | 'cancelled';
+  title: string;
+  message?: string | null;
+  planned_start?: string | null;
+  planned_end?: string | null;
+  activated_at?: string | null;
+  deactivated_at?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MaintenanceModeListResponse {
+  data: MaintenanceMode[];
+}
+
+export interface MaintenanceModeCreateRequest {
+  scope: MaintenanceMode['scope'];
+  title: string;
+  message?: string | null;
+  planned_start?: string | null;
+  planned_end?: string | null;
+}
+
+export interface MaintenanceModeStatusUpdateRequest {
+  status: MaintenanceMode['status'];
+  message?: string | null;
+}
+
+export interface MaintenanceOverview {
+  active: MaintenanceMode[];
+  scheduled: MaintenanceMode[];
+  history: MaintenanceMode[];
+}
+
+export interface SystemStatusCheck {
+  id: string;
+  component: string;
+  status: 'healthy' | 'degraded' | 'down';
+  response_time_ms?: number | null;
+  message?: string | null;
+  checked_at: string;
+  created_by?: string | null;
+}
+
+export interface SystemStatusCheckListResponse {
+  data: SystemStatusCheck[];
+}
+
+export interface SystemStatusCheckCreateRequest {
+  component: string;
+  status: SystemStatusCheck['status'];
+  response_time_ms?: number | null;
+  message?: string | null;
+}
+
+export interface ShareOverviewStats {
+  total_shares: number;
+  total_reward_points: number;
+  today_shares: number;
+  this_week_shares: number;
+  this_month_shares: number;
+}
+
+export interface ShareTopCreator {
+  user_id: string;
+  username: string;
+  email: string;
+  total_shares: number;
+  total_reward_points: number;
+}
+
+export interface ShareTopNote {
+  note_id: string;
+  title: string;
+  author_username: string;
+  share_count: number;
+  total_reward_points: number;
+}
+
+export interface ShareLogItem {
+  id: string;
+  note_id: string;
+  note_title: string;
+  author_username: string;
+  shared_by_user_id: string;
+  shared_by_username: string;
+  tweet_id: string;
+  tweet_url: string;
+  shared_at: string;
+  verified: boolean;
+  points_amount: number;
+  is_suspicious: boolean;
+  ip_address?: string | null;
+  admin_notes?: string | null;
+}
+
+export interface ShareFraudAlert {
+  id: string;
+  alert_type: string;
+  severity: string;
+  description?: string | null;
+  note_id?: string | null;
+  note_title?: string | null;
+  user_id?: string | null;
+  username?: string | null;
+  resolved: boolean;
+  resolved_by?: string | null;
+  resolved_at?: string | null;
+  created_at: string;
+}
+
+export interface ShareRewardSettings {
+  id: string;
+  points_per_share: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+
+export interface ShareRewardSettingsUpdateRequest {
+  points_per_share: number;
 }

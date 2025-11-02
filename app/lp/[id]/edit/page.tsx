@@ -384,13 +384,23 @@ export default function EditLPNewPage() {
     // 11段階のシェードをブロックごとに適用
     setBlocks((prev) =>
       prev.map((block) => {
-        // テキストを持つブロックのみカラー適用
-        if (colorableBlockTypes.includes(block.blockType)) {
-          return applyThemeShadesToBlock(block, shades);
+        if (!colorableBlockTypes.includes(block.blockType)) {
+          return block;
         }
-        // 画像オンリーのブロック（image-1, gallery, video等）はスキップ
-        return block;
-      }),
+
+        const themed = applyThemeShadesToBlock(
+          {
+            blockType: block.blockType,
+            content: block.content as unknown as Record<string, unknown>,
+          },
+          shades
+        );
+
+        return {
+          ...block,
+          content: ((themed.content ?? {}) as unknown) as BlockContent,
+        };
+      })
     );
 
     // テーマを LP に保存

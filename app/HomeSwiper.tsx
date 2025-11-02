@@ -11,11 +11,9 @@ import {
   CheckCircleIcon,
   XMarkIcon,
   RocketLaunchIcon,
-  ChartBarIcon,
   CurrencyDollarIcon,
   BoltIcon,
   ShieldCheckIcon,
-  UserGroupIcon,
   CreditCardIcon,
 } from '@heroicons/react/24/outline';
 

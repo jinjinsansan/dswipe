@@ -1,7 +1,6 @@
 import { lpApi, publicApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import type { LandingPage, LPStep } from '@/types';
-import type { BlockType } from '@/types/templates';
 
 export type HeroMedia = { type: 'image' | 'video'; url: string };
 
@@ -38,15 +37,6 @@ type LandingPageLike = LandingPage & {
   steps?: StepLike[];
 };
 
-const pickFirstString = (values: Array<string | null | undefined>): string | null => {
-  for (const value of values) {
-    if (typeof value === 'string' && value.trim().length > 0) {
-      return value.trim();
-    }
-  }
-  return null;
-};
-
 const asRecord = (value: unknown): Record<string, unknown> | undefined => {
   return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : undefined;
 };
@@ -60,6 +50,56 @@ const asStepArray = (value: unknown): StepLike[] => {
 
 const asString = (value: unknown): string | null => {
   return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+};
+
+const safeGet = (source: unknown, key: string): unknown => {
+  return typeof source === 'object' && source !== null ? (source as Record<string, unknown>)[key] : undefined;
+};
+
+const getNestedString = (source: unknown, path: string[]): string | null => {
+  let current: unknown = source;
+  for (const key of path) {
+    if (current === undefined || current === null) {
+      return null;
+    }
+    current = safeGet(current, key);
+  }
+  return asString(current);
+};
+
+const normalizeContent = (raw: unknown): Record<string, unknown> => {
+  if (!raw) {
+    return {};
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      return asRecord(parsed) ?? {};
+    } catch {
+      return {};
+    }
+  }
+  return asRecord(raw) ?? {};
+};
+
+const resolveBlockType = (step: StepLike | null | undefined): string | null => {
+  if (!step) {
+    return null;
+  }
+  const direct = asString(step.block_type);
+  if (direct) {
+    return direct;
+  }
+  return getNestedString(step.content_data, ['block_type']);
+};
+
+const pickFirstString = (candidates: unknown[]): string | null => {
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+  }
+  return null;
 };
 
 const createPlaceholderThumbnail = (title: string, accentHex?: string | null): HeroMedia => {
@@ -99,40 +139,73 @@ const extractMediaFromStep = (step: StepLike | null | undefined, title: string, 
     return createPlaceholderThumbnail(title, accent);
   }
 
-  // SIMPLE APPROACH: Direct access to content_data (same as dashboard)
-  const contentData = step?.content_data;
+  const contentData = normalizeContent(step.content_data);
 
-  // Check 1: content_data.backgroundVideoUrl (most common for hero blocks)
-  if (contentData?.backgroundVideoUrl && typeof contentData.backgroundVideoUrl === 'string') {
-    return { type: 'video', url: contentData.backgroundVideoUrl };
+  const imageUrl = pickFirstString([
+    getNestedString(contentData, ['imageUrl']),
+    getNestedString(contentData, ['image_url']),
+    getNestedString(contentData, ['heroImage']),
+    getNestedString(contentData, ['hero_image']),
+    getNestedString(contentData, ['primaryImageUrl']),
+    getNestedString(contentData, ['primary_image_url']),
+    getNestedString(contentData, ['backgroundImageUrl']),
+    getNestedString(contentData, ['background_image_url']),
+    getNestedString(contentData, ['media', 'imageUrl']),
+    getNestedString(contentData, ['media', 'image_url']),
+    getNestedString(contentData, ['visual', 'imageUrl']),
+    getNestedString(contentData, ['visual', 'image_url']),
+    asString(step.image_url),
+    asString(step.imageUrl),
+    asString(step.heroImage),
+    asString(step.hero_image),
+    asString(step.primaryImageUrl),
+    asString(step.primary_image_url),
+  ]);
+
+  if (imageUrl && imageUrl !== '/placeholder.jpg') {
+    return { type: 'image', url: imageUrl };
   }
 
-  // Check 2: content_data.backgroundImageUrl (for image-based heroes)
-  if (contentData?.backgroundImageUrl && typeof contentData.backgroundImageUrl === 'string') {
-    return { type: 'image', url: contentData.backgroundImageUrl };
+  const videoUrl = pickFirstString([
+    getNestedString(contentData, ['backgroundVideoUrl']),
+    getNestedString(contentData, ['background_video_url']),
+    getNestedString(contentData, ['videoUrl']),
+    getNestedString(contentData, ['video_url']),
+    getNestedString(contentData, ['media', 'videoUrl']),
+    getNestedString(contentData, ['media', 'video_url']),
+    getNestedString(contentData, ['visual', 'videoUrl']),
+    getNestedString(contentData, ['visual', 'video_url']),
+    asString(step.backgroundVideoUrl),
+    asString(step.background_video_url),
+    asString(step.videoUrl),
+    asString(step.video_url),
+  ]);
+
+  if (videoUrl) {
+    return { type: 'video', url: videoUrl };
   }
 
-  // Check 3: step.video_url (direct DB field)
-  if (step.video_url && typeof step.video_url === 'string') {
-    return { type: 'video', url: step.video_url };
-  }
-
-  // Check 4: step.image_url (direct DB field, but skip placeholder)
-  if (step.image_url && typeof step.image_url === 'string' && step.image_url !== '/placeholder.jpg') {
-    return { type: 'image', url: step.image_url };
-  }
-
-  // Check 5: Fallback to template default media by ID
-  const blockType = step?.block_type;
+  const blockType = resolveBlockType(step);
   if (blockType) {
     const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
     if (template?.defaultContent) {
-      const defaultContent = template.defaultContent as any;
-      if (defaultContent.backgroundVideoUrl) {
-        return { type: 'video', url: defaultContent.backgroundVideoUrl };
+      const defaultContent = normalizeContent(template.defaultContent);
+      const templateImage = pickFirstString([
+        getNestedString(defaultContent, ['backgroundImageUrl']),
+        getNestedString(defaultContent, ['background_image_url']),
+        getNestedString(defaultContent, ['heroImage']),
+        getNestedString(defaultContent, ['imageUrl']),
+      ]);
+      if (templateImage) {
+        return { type: 'image', url: templateImage };
       }
-      if (defaultContent.backgroundImageUrl) {
-        return { type: 'image', url: defaultContent.backgroundImageUrl };
+      const templateVideo = pickFirstString([
+        getNestedString(defaultContent, ['backgroundVideoUrl']),
+        getNestedString(defaultContent, ['background_video_url']),
+        getNestedString(defaultContent, ['videoUrl']),
+      ]);
+      if (templateVideo) {
+        return { type: 'video', url: templateVideo };
       }
     }
   }

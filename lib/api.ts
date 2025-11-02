@@ -61,8 +61,59 @@ import type {
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
 } from '@/types/api';
+import type {
+  NoteModerationDetail,
+  NoteModerationListResponse,
+  SalonModerationDetail,
+  SalonModerationListResponse,
+  SalonStatusUpdateRequest,
+  SalonMemberActionRequest,
+  MaintenanceMode,
+  MaintenanceModeListResponse,
+  MaintenanceModeCreateRequest,
+  MaintenanceModeStatusUpdateRequest,
+  MaintenanceOverview,
+  SystemStatusCheck,
+  SystemStatusCheckListResponse,
+  SystemStatusCheckCreateRequest,
+  ShareOverviewStats,
+  ShareTopCreator,
+  ShareTopNote,
+  ShareLogItem,
+  ShareFraudAlert,
+  ShareRewardSettings,
+  ShareRewardSettingsUpdateRequest,
+} from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
+type CtaType = 'link' | 'form' | 'product' | 'newsletter' | 'line';
+type CtaPosition = 'top' | 'bottom' | 'floating';
+
+export interface CtaCreatePayload {
+  step_id?: string | null;
+  cta_type: CtaType;
+  button_image_url: string;
+  button_position?: CtaPosition;
+  link_url?: string | null;
+  is_required?: boolean;
+}
+
+export interface CtaUpdatePayload {
+  cta_type?: CtaType;
+  button_image_url?: string;
+  button_position?: CtaPosition;
+  link_url?: string | null;
+  is_required?: boolean;
+}
+
+export interface AnalyticsEventQuery {
+  event_type?: 'view' | 'step_view' | 'step_exit' | 'cta_click';
+  date_from?: string;
+  date_to?: string;
+  limit?: number;
+  offset?: number;
+}
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -162,10 +213,10 @@ export const lpApi = {
   ) => api.post(`/lp/${lpId}/blocks`, { steps: blocks }),
   
   // CTA管理
-  addCta: (lpId: string, data: any) =>
+  addCta: (lpId: string, data: CtaCreatePayload) =>
     api.post(`/lp/${lpId}/ctas`, data),
   
-  updateCta: (ctaId: string, data: any) =>
+  updateCta: (ctaId: string, data: CtaUpdatePayload) =>
     api.put(`/lp/ctas/${ctaId}`, data),
   
   deleteCta: (ctaId: string) =>
@@ -198,7 +249,7 @@ export const analyticsApi = {
   getLPAnalytics: (lpId: string, params?: { date_from?: string; date_to?: string }) =>
     api.get(`/lp/${lpId}/analytics`, { params }),
   
-  getEvents: (lpId: string, params?: any) =>
+  getEvents: (lpId: string, params?: AnalyticsEventQuery) =>
     api.get(`/lp/${lpId}/events`, { params }),
 };
 
@@ -472,6 +523,82 @@ export const adminApi = {
 
   deleteUserNote: (userId: string, noteId: string, data?: { reason?: string }) =>
     api.post(`/admin/users/${userId}/notes/${noteId}/delete`, data ?? {}),
+
+  listNoteModeration: (params?: {
+    status?: string;
+    search?: string;
+    min_risk?: number;
+    max_risk?: number;
+    only_suspicious?: boolean;
+    limit?: number;
+    offset?: number;
+  }) =>
+    api.get<NoteModerationListResponse>('/admin/notes/moderation', { params }),
+
+  getNoteModerationDetail: (noteId: string) =>
+    api.get<NoteModerationDetail>(`/admin/notes/${noteId}/moderation`),
+
+  listSalonModeration: (params?: {
+    status?: string;
+    search?: string;
+    min_risk?: number;
+    max_risk?: number;
+    only_flagged?: boolean;
+    limit?: number;
+    offset?: number;
+  }) =>
+    api.get<SalonModerationListResponse>('/admin/salons/moderation', { params }),
+
+  getSalonModerationDetail: (salonId: string) =>
+    api.get<SalonModerationDetail>(`/admin/salons/${salonId}/moderation`),
+
+  updateSalonStatus: (salonId: string, payload: SalonStatusUpdateRequest) =>
+    api.post(`/admin/salons/${salonId}/status`, payload),
+
+  updateSalonMember: (salonId: string, membershipId: string, payload: SalonMemberActionRequest) =>
+    api.post(`/admin/salons/${salonId}/members/${membershipId}/action`, payload),
+
+  listMaintenanceModes: (params?: { scope?: string; status?: string }) =>
+    api.get<MaintenanceModeListResponse>('/admin/maintenance/modes', { params }),
+
+  createMaintenanceMode: (payload: MaintenanceModeCreateRequest) =>
+    api.post<MaintenanceMode>('/admin/maintenance/modes', payload),
+
+  updateMaintenanceModeStatus: (modeId: string, payload: MaintenanceModeStatusUpdateRequest) =>
+    api.post<MaintenanceMode>(`/admin/maintenance/modes/${modeId}/status`, payload),
+
+  getMaintenanceOverview: () =>
+    api.get<MaintenanceOverview>('/admin/maintenance/overview'),
+
+  listSystemStatusChecks: (params?: { component?: string; limit?: number }) =>
+    api.get<SystemStatusCheckListResponse>('/admin/maintenance/status-checks', { params }),
+
+  createSystemStatusCheck: (payload: SystemStatusCheckCreateRequest) =>
+    api.post<SystemStatusCheck>('/admin/maintenance/status-checks', payload),
+
+  getShareOverviewStats: () =>
+    api.get<ShareOverviewStats>('/admin/share-stats/overview'),
+
+  getShareTopCreators: (params?: { limit?: number }) =>
+    api.get<ShareTopCreator[]>('/admin/share-stats/top-creators', { params }),
+
+  getShareTopNotes: (params?: { limit?: number }) =>
+    api.get<ShareTopNote[]>('/admin/share-stats/top-notes', { params }),
+
+  listShareLogs: (params?: { limit?: number; offset?: number; suspicious_only?: boolean }) =>
+    api.get<ShareLogItem[]>('/admin/shares', { params }),
+
+  getShareFraudAlerts: (params?: { resolved?: boolean }) =>
+    api.get<ShareFraudAlert[]>('/admin/fraud-alerts', { params }),
+
+  resolveShareFraudAlert: (alertId: string) =>
+    api.patch(`/admin/fraud-alerts/${alertId}/resolve`, {}),
+
+  getShareRewardSettings: () =>
+    api.get<ShareRewardSettings>('/admin/share-reward-settings'),
+
+  updateShareRewardSettings: (payload: ShareRewardSettingsUpdateRequest) =>
+    api.put('/admin/share-reward-settings', payload),
 
   listMarketplaceLPs: (params?: { status?: string; search?: string; limit?: number; offset?: number }) =>
     api.get('/admin/marketplace/lps', { params }),

@@ -1,33 +1,61 @@
-export function getErrorMessage(err: any): string {
+const DEFAULT_ERROR_MESSAGE = 'エラーが発生しました';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const safeGet = (source: unknown, key: string): unknown =>
+  isRecord(source) ? source[key] : undefined;
+
+const stringifyFallback = (value: unknown): string => {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return DEFAULT_ERROR_MESSAGE;
+  }
+};
+
+export function getErrorMessage(err: unknown): string {
   if (typeof err === 'string') {
     return err;
   }
 
-  const detail = err?.response?.data?.detail;
-  
-  if (!detail) {
-    return err?.message || 'エラーが発生しました';
+  const detail = safeGet(safeGet(safeGet(err, 'response'), 'data'), 'detail');
+
+  if (detail === undefined || detail === null) {
+    const message = safeGet(err, 'message');
+    return typeof message === 'string' && message.trim().length > 0
+      ? message
+      : DEFAULT_ERROR_MESSAGE;
   }
 
-  // detailが文字列の場合
   if (typeof detail === 'string') {
     return detail;
   }
 
-  // detailが配列の場合（バリデーションエラー）
   if (Array.isArray(detail)) {
-    return detail.map((item: any) => {
-      if (typeof item === 'string') return item;
-      if (item.msg) return item.msg;
-      return JSON.stringify(item);
-    }).join(', ');
+    const messages = detail
+      .map((item) => {
+        if (typeof item === 'string') {
+          return item;
+        }
+        const msg = safeGet(item, 'msg');
+        if (typeof msg === 'string') {
+          return msg;
+        }
+        return stringifyFallback(item);
+      })
+      .filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+
+    return messages.length > 0 ? messages.join(', ') : DEFAULT_ERROR_MESSAGE;
   }
 
-  // detailがオブジェクトの場合
-  if (typeof detail === 'object') {
-    if (detail.msg) return detail.msg;
-    return JSON.stringify(detail);
+  if (isRecord(detail)) {
+    const msg = safeGet(detail, 'msg');
+    if (typeof msg === 'string') {
+      return msg;
+    }
+    return stringifyFallback(detail);
   }
 
-  return 'エラーが発生しました';
+  return DEFAULT_ERROR_MESSAGE;
 }

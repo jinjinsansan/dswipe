@@ -101,6 +101,33 @@ export default function LPAnalyticsPage() {
     return window.location.origin;
   }, []);
 
+  const stepFunnel = useMemo(() => {
+    const raw = Array.isArray(analytics?.step_funnel) ? analytics.step_funnel ?? [] : [];
+    return raw
+      .filter((step): step is StepFunnelData => step && typeof step === 'object' && 'step_order' in step)
+      .map((step) => ({
+        ...step,
+        step_views: Math.max(0, Number(step.step_views || 0)),
+        step_exits: Math.max(0, Number(step.step_exits || 0)),
+        conversion_rate: Math.max(0, Math.min(100, Number(step.conversion_rate || 0))),
+      }));
+  }, [analytics]);
+
+  const ctaClicks = useMemo(() => {
+    const raw = Array.isArray(analytics?.cta_clicks) ? analytics.cta_clicks ?? [] : [];
+    return raw.filter((cta): cta is CTAClickData => cta && typeof cta === 'object');
+  }, [analytics]);
+
+  const stepOrderMap = useMemo(() => {
+    const map = new Map<string, number>();
+    stepFunnel.forEach((step) => {
+      if (step.step_id) {
+        map.set(step.step_id, step.step_order);
+      }
+    });
+    return map;
+  }, [stepFunnel]);
+
   if (isLoading || !isInitialized) {
     return <PageLoader />;
   }
@@ -119,30 +146,6 @@ export default function LPAnalyticsPage() {
   const conversionRateValue = typeof analytics.cta_conversion_rate === 'number' ? analytics.cta_conversion_rate : 0;
   const conversionRate = `${conversionRateValue.toFixed(1)}%`;
   const publicUrl = `${baseUrl}/view/${analytics.slug}`;
-  const rawStepFunnel = Array.isArray(analytics.step_funnel) ? analytics.step_funnel : [];
-  const rawCtaClicks = Array.isArray(analytics.cta_clicks) ? analytics.cta_clicks : [];
-  
-  // 安全なデータフィルタリング（異常値をクランプ）
-  const stepFunnel = rawStepFunnel
-    .filter((step): step is StepFunnelData => step && typeof step === 'object' && 'step_order' in step)
-    .map(step => ({
-      ...step,
-      step_views: Math.max(0, Number(step.step_views || 0)),
-      step_exits: Math.max(0, Number(step.step_exits || 0)),
-      conversion_rate: Math.max(0, Math.min(100, Number(step.conversion_rate || 0)))
-    }));
-  
-  const ctaClicks = rawCtaClicks.filter((cta): cta is CTAClickData => cta && typeof cta === 'object');
-
-  const stepOrderMap = useMemo(() => {
-    const map = new Map<string, number>();
-    stepFunnel.forEach((step) => {
-      if (step.step_id) {
-        map.set(step.step_id, step.step_order);
-      }
-    });
-    return map;
-  }, [stepFunnel]);
 
   return (
     <ErrorBoundary>
