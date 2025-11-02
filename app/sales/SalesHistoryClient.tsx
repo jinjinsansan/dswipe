@@ -10,16 +10,21 @@ import {
   SparklesIcon,
   CurrencyYenIcon,
   ArrowTopRightOnSquareIcon,
+  WalletIcon,
+  CalendarIcon,
+  BanknotesIcon,
 } from "@heroicons/react/24/outline";
 
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
-import { salesApi } from "@/lib/api";
+import { salesApi, payoutApi } from "@/lib/api";
 import type {
   SalesHistoryResponse,
   SalesNoteRecord,
   SalesProductRecord,
   SalesSalonRecord,
+  PayoutDashboardResponse,
+  PayoutLedgerEntry,
 } from "@/types/api";
 
 const formatDateTime = (value?: string | null) => {
@@ -39,6 +44,7 @@ const formatDateTime = (value?: string | null) => {
 
 const formatPoints = (points: number) => `${new Intl.NumberFormat("ja-JP").format(points)} pt`;
 const formatYen = (amount?: number | null) => `${new Intl.NumberFormat("ja-JP").format(amount ?? 0)} 円`;
+const formatUsd = (amount?: number | null) => (amount === undefined || amount === null ? "-" : `${amount.toFixed(2)} USD`);
 
 const getLpLink = (record: SalesProductRecord) => (record.lp_slug ? `/view/${record.lp_slug}` : null);
 const getNoteLink = (record: SalesNoteRecord) => (record.note_slug ? `/notes/${record.note_slug}` : null);
@@ -48,13 +54,29 @@ export default function SalesHistoryClient() {
   const [history, setHistory] = useState<SalesHistoryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [payoutDashboard, setPayoutDashboard] = useState<PayoutDashboardResponse | null>(null);
+  const [selectedPayout, setSelectedPayout] = useState<PayoutLedgerEntry | null>(null);
+  const [addressInput, setAddressInput] = useState("");
+  const [isSavingAddress, setIsSavingAddress] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await salesApi.getHistory();
-      setHistory(response.data as SalesHistoryResponse);
+      const [salesResponse, payoutResponse] = await Promise.all([
+        salesApi.getHistory(),
+        payoutApi.getDashboard().catch((err) => {
+          console.error("Failed to load payout dashboard", err);
+          return null;
+        }),
+      ]);
+      setHistory(salesResponse.data as SalesHistoryResponse);
+      if (payoutResponse) {
+        const dashboard = payoutResponse.data as PayoutDashboardResponse;
+        setPayoutDashboard(dashboard);
+        setAddressInput(dashboard.settings?.usdt_address ?? "");
+      }
     } catch (err: unknown) {
       console.error("Failed to load sales history", err);
       const message =
@@ -64,6 +86,38 @@ export default function SalesHistoryClient() {
       setHistory(null);
     } finally {
       setIsLoading(false);
+    }
+  }, []);
+
+  const handleSaveAddress = useCallback(async () => {
+    if (!addressInput || !addressInput.startsWith("T")) {
+      alert("TRC20形式のUSDTウォレットアドレスを入力してください (先頭がT)。");
+      return;
+    }
+    try {
+      setIsSavingAddress(true);
+      await payoutApi.updateSettings({ usdt_address: addressInput });
+      const dashboard = await payoutApi.getDashboard();
+      setPayoutDashboard(dashboard.data as PayoutDashboardResponse);
+      alert("受取アドレスを更新しました");
+    } catch (err) {
+      console.error("Failed to update payout address", err);
+      alert("受取アドレスの更新に失敗しました");
+    } finally {
+      setIsSavingAddress(false);
+    }
+  }, [addressInput]);
+
+  const handleViewPayoutDetail = useCallback(async (payoutId: string) => {
+    try {
+      setDetailLoading(true);
+      const response = await payoutApi.getDetail(payoutId);
+      setSelectedPayout(response.data as PayoutLedgerEntry);
+    } catch (err) {
+      console.error("Failed to load payout detail", err);
+      alert("支払い詳細の取得に失敗しました");
+    } finally {
+      setDetailLoading(false);
     }
   }, []);
 
@@ -114,7 +168,7 @@ export default function SalesHistoryClient() {
   return (
     <DashboardLayout
       pageTitle="販売履歴"
-      pageSubtitle="LP商品・有料NOTE・オンラインサロンの販売状況を確認できます"
+      pageSubtitle="LP商品・有料NOTE・オンラインサロンの販売状況と支払い予定を確認できます"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -127,13 +181,226 @@ export default function SalesHistoryClient() {
           )}
           <button
             type="button"
-            onClick={refresh}
+            onClick={() => {
+              setSelectedPayout(null);
+              refresh();
+            }}
             className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
           >
             <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
             再取得
           </button>
         </div>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-1 flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center justify-center rounded-full bg-blue-100 p-2 text-blue-600">
+                  <WalletIcon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900">USDT受取設定</h2>
+                  <p className="text-sm text-slate-500">決済翌日から換算し10日後以降に運営よりTRC20ネットワークで送金されます。</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label className="flex min-w-0 flex-1 flex-col gap-2">
+                  <span className="text-xs font-semibold text-slate-500">受取ウォレットアドレス（TRC20）</span>
+                  <input
+                    value={addressInput}
+                    onChange={(event) => setAddressInput(event.target.value.trim())}
+                    placeholder="Txxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                  />
+                </label>
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    onClick={handleSaveAddress}
+                    disabled={isSavingAddress}
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                  >
+                    {isSavingAddress ? "更新中…" : "アドレスを保存"}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  次回支払い予定
+                  <CalendarIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                </div>
+                <p className="mt-2 text-base font-semibold text-slate-900">
+                  {payoutDashboard?.next_settlement_at ? formatDateTime(payoutDashboard.next_settlement_at) : "未定"}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  支払い待機中合計
+                  <BanknotesIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                </div>
+                <p className="mt-2 text-base font-semibold text-emerald-600">{formatUsd(payoutDashboard?.pending_net_amount_usdt)}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-slate-900">支払い待機中</h3>
+                <span className="text-xs text-slate-500">{payoutDashboard?.pending_records.length ?? 0} 件</span>
+              </div>
+              <div className="mt-3 space-y-3">
+                {(payoutDashboard?.pending_records ?? []).map((record) => (
+                  <button
+                    key={record.id}
+                    type="button"
+                    onClick={() => handleViewPayoutDetail(record.id)}
+                    className="w-full rounded-2xl border border-blue-100 bg-blue-50/50 px-4 py-3 text-left shadow-sm transition hover:border-blue-300 hover:bg-blue-50"
+                  >
+                    <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
+                      <span>
+                        {formatDateTime(record.period_start)} ～ {formatDateTime(record.period_end)}
+                      </span>
+                      <span className="text-emerald-600">{formatUsd(record.net_amount_usdt)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+                      <span>支払い予定: {formatDateTime(record.settlement_due_at)}</span>
+                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-blue-600">{record.status}</span>
+                    </div>
+                  </button>
+                ))}
+                {(payoutDashboard?.pending_records?.length ?? 0) === 0 && (
+                  <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
+                    現在支払い待機中のレコードはありません。
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-slate-900">最近の支払い履歴</h3>
+                <span className="text-xs text-slate-500">{payoutDashboard?.recent_records.length ?? 0} 件</span>
+              </div>
+              <div className="mt-3 space-y-3">
+                {(payoutDashboard?.recent_records ?? []).map((record) => (
+                  <button
+                    key={record.id}
+                    type="button"
+                    onClick={() => handleViewPayoutDetail(record.id)}
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
+                      <span>
+                        {formatDateTime(record.period_start)} ～ {formatDateTime(record.period_end)}
+                      </span>
+                      <span className="text-slate-700">{formatUsd(record.net_amount_usdt)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+                      <span>支払い日: {formatDateTime(record.settlement_due_at)}</span>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{record.status}</span>
+                    </div>
+                  </button>
+                ))}
+                {(payoutDashboard?.recent_records?.length ?? 0) === 0 && (
+                  <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
+                    まだ支払い履歴がありません。
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {detailLoading ? (
+            <p className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs text-slate-500">支払い詳細を読み込み中です…</p>
+          ) : null}
+
+          {selectedPayout ? (
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-slate-900">支払い詳細</h3>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPayout(null)}
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-500"
+                >
+                  閉じる
+                </button>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-xl border border-white bg-white px-4 py-3 text-xs text-slate-600">
+                  <p className="font-semibold text-slate-500">期間</p>
+                  <p className="mt-1 text-slate-900">
+                    {formatDateTime(selectedPayout.period_start)}
+                    <br />～ {formatDateTime(selectedPayout.period_end)}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-white bg-white px-4 py-3 text-xs text-slate-600">
+                  <p className="font-semibold text-slate-500">支払い予定日</p>
+                  <p className="mt-1 text-slate-900">{formatDateTime(selectedPayout.settlement_due_at)}</p>
+                </div>
+                <div className="rounded-xl border border-white bg-white px-4 py-3 text-xs text-slate-600">
+                  <p className="font-semibold text-slate-500">ステータス</p>
+                  <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-blue-600">
+                    {selectedPayout.status}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-white bg-white px-4 py-3 text-xs text-slate-600">
+                  <p className="font-semibold text-slate-500">送金Tx</p>
+                  <p className="mt-1 break-all text-slate-900">{selectedPayout.admin_tx_hash ?? "未登録"}</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <h4 className="text-sm font-semibold text-slate-900">対象決済 {selectedPayout.line_items.length} 件</h4>
+                <div className="mt-2 overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-500">
+                      <tr>
+                        <th className="px-3 py-2 text-left">決済日時</th>
+                        <th className="px-3 py-2 text-left">説明</th>
+                        <th className="px-3 py-2 text-right">売上USD</th>
+                        <th className="px-3 py-2 text-right">手数料USD</th>
+                        <th className="px-3 py-2 text-right">支払額USDT</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 bg-white">
+                      {selectedPayout.line_items.map((item) => (
+                        <tr key={item.id}>
+                          <td className="px-3 py-2 text-slate-600">{formatDateTime(item.occurred_at ?? "")}</td>
+                          <td className="px-3 py-2 text-slate-600">{item.description ?? item.source_type}</td>
+                          <td className="px-3 py-2 text-right text-slate-900">{formatUsd(item.gross_amount_usd)}</td>
+                          <td className="px-3 py-2 text-right text-slate-900">{formatUsd(item.fee_amount_usd)}</td>
+                          <td className="px-3 py-2 text-right text-emerald-600">{formatUsd(item.net_amount_usdt)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="mt-4">
+                <h4 className="text-sm font-semibold text-slate-900">イベントログ</h4>
+                <div className="mt-2 space-y-2">
+                  {selectedPayout.events.length === 0 ? (
+                    <p className="rounded-xl border border-dashed border-slate-200 bg-white px-4 py-3 text-xs text-slate-500">イベントログはまだありません。</p>
+                  ) : (
+                    selectedPayout.events.map((event) => (
+                      <div key={event.id} className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                          <span>{event.event_type}</span>
+                          <span>{formatDateTime(event.created_at)}</span>
+                        </div>
+                        {event.title ? <p className="mt-1 text-sm font-semibold text-slate-900">{event.title}</p> : null}
+                        {event.body ? <p className="text-xs text-slate-600">{event.body}</p> : null}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </section>
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {summaryCards.map((card) => (

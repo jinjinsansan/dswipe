@@ -78,7 +78,7 @@ export interface LPStep {
   video_url?: string;
   animation_type?: string;
   block_type?: string;
-  content_data?: Record<string, any>;
+  content_data?: Record<string, unknown>;
   step_views: number;
   step_exits: number;
   created_at: string;
@@ -770,6 +770,160 @@ export interface SalesHistoryResponse {
   salons: SalesSalonRecord[];
 }
 
+export interface PayoutSettings {
+  user_id: string;
+  usdt_address: string;
+  address_label?: string | null;
+  preferred_network: string;
+  payout_cycle_days: number;
+  address_verified_at?: string | null;
+  payout_note?: string | null;
+  last_reviewed_at?: string | null;
+  reviewer_id?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface PayoutLedgerSummary {
+  id: string;
+  period_start: string;
+  period_end: string;
+  settlement_due_at: string;
+  status: string;
+  gross_amount_usd: number;
+  net_amount_usdt?: number | null;
+  currency: string;
+  admin_tx_hash?: string | null;
+  admin_tx_confirmed_at?: string | null;
+  last_status_change_at?: string | null;
+}
+
+export interface PayoutLineItem {
+  id: string;
+  payout_id: string;
+  source_type: string;
+  source_id: string;
+  occurred_at?: string | null;
+  description?: string | null;
+  gross_amount_usd?: number | null;
+  gross_amount_jpy?: number | null;
+  gross_amount_points?: number | null;
+  gross_amount_usdt?: number | null;
+  fee_amount_usd?: number | null;
+  fee_amount_usdt?: number | null;
+  net_amount_usd?: number | null;
+  net_amount_usdt?: number | null;
+  metadata: Record<string, unknown>;
+  created_at?: string | null;
+}
+
+export interface PayoutEvent {
+  id: string;
+  payout_id: string;
+  event_type: string;
+  title?: string | null;
+  body?: string | null;
+  actor_id?: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface PayoutLedgerEntry {
+  id: string;
+  seller_id: string;
+  seller_username?: string | null;
+  seller_email?: string | null;
+  period_start: string;
+  period_end: string;
+  settlement_due_at: string;
+  funds_expected_at?: string | null;
+  payout_cycle_days: number;
+  one_lat_batch_id?: string | null;
+  currency: string;
+  gross_amount_usd: number;
+  gross_amount_usdt?: number | null;
+  gross_amount_points?: number | null;
+  fee_amount_usd?: number | null;
+  fee_amount_usdt?: number | null;
+  net_amount_usd?: number | null;
+  net_amount_usdt?: number | null;
+  status: string;
+  seller_wallet_snapshot?: string | null;
+  admin_tx_hash?: string | null;
+  admin_tx_network?: string | null;
+  admin_tx_memo?: string | null;
+  admin_tx_confirmed_at?: string | null;
+  notes?: string | null;
+  metadata: Record<string, unknown>;
+  last_status_change_at?: string | null;
+  last_status_changed_by?: string | null;
+  created_at: string;
+  updated_at: string;
+  line_items: PayoutLineItem[];
+  events: PayoutEvent[];
+}
+
+export interface PayoutDashboardResponse {
+  settings?: PayoutSettings | null;
+  next_settlement_at?: string | null;
+  pending_net_amount_usdt: number;
+  pending_records: PayoutLedgerSummary[];
+  recent_records: PayoutLedgerSummary[];
+}
+
+export interface AdminPayoutListItem {
+  id: string;
+  seller_id: string;
+  seller_username?: string | null;
+  seller_email?: string | null;
+  status: string;
+  net_amount_usdt?: number | null;
+  gross_amount_usd: number;
+  settlement_due_at: string;
+  period_start: string;
+  period_end: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminPayoutListResponse {
+  total: number;
+  data: AdminPayoutListItem[];
+}
+
+export interface PayoutSettingsUpsertPayload {
+  usdt_address: string;
+  address_label?: string | null;
+  preferred_network?: string | null;
+  payout_note?: string | null;
+}
+
+export interface AdminPayoutGeneratePayload {
+  reference_date?: string | null;
+  lookback_days?: number;
+  fee_percent?: number;
+  min_net_threshold_usd?: number;
+}
+
+export interface AdminPayoutStatusUpdatePayload {
+  status: string;
+  note?: string | null;
+}
+
+export interface AdminPayoutTxRecordPayload {
+  tx_hash: string;
+  tx_network?: string | null;
+  tx_memo?: string | null;
+  confirmed_at?: string | null;
+}
+
+export interface AdminPayoutEventPayload {
+  event_type: string;
+  title?: string | null;
+  body?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
 // トランザクション型
 export interface Transaction {
   id: string;
@@ -818,7 +972,7 @@ export interface RequiredAction {
   action_type: 'email' | 'line' | 'form';
   step_id?: string;
   is_required: boolean;
-  action_config?: any;
+  action_config?: Record<string, unknown>;
 }
 
 export interface RequiredActionsStatus {

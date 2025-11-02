@@ -3,7 +3,6 @@
 
 import type {
   LandingPage,
-  LinkedSalonSummary,
   SalonAnnouncementCreatePayload,
   SalonAnnouncementUpdatePayload,
   SalonAssetMetadataPayload,
@@ -13,12 +12,13 @@ import type {
   SalonRoleUpdatePayload,
 } from './index';
 
+export type { LinkedSalonSummary } from './index';
+
 export type {
   User,
   AuthResponse,
   LandingPage as LP,
   LPDetail,
-  LinkedSalonSummary,
   LPStep,
   CTA,
   PublicUserProfile,
@@ -53,6 +53,19 @@ export type {
   SalesProductRecord,
   SalesNoteRecord,
   SalesSalonRecord,
+  PayoutSettings,
+  PayoutDashboardResponse,
+  PayoutLedgerSummary,
+  PayoutLedgerEntry,
+  PayoutLineItem,
+  PayoutEvent,
+  AdminPayoutListResponse,
+  AdminPayoutListItem,
+  PayoutSettingsUpsertPayload,
+  AdminPayoutGeneratePayload,
+  AdminPayoutStatusUpdatePayload,
+  AdminPayoutTxRecordPayload,
+  AdminPayoutEventPayload,
   SalonMember,
   SalonMemberListResult,
   NoteSalonAccessResponse,

@@ -9,6 +9,7 @@ import {
   MegaphoneIcon,
   ShareIcon,
   XMarkIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -62,6 +63,12 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     label: 'LINE連携ボーナス',
     icon: MegaphoneIcon,
     description: '公式LINEキャンペーン設定',
+  },
+  {
+    href: '/admin/payouts',
+    label: '支払い管理',
+    icon: BanknotesIcon,
+    description: '販売者へのUSDT支払いキューと送金状況',
   },
 ];
 

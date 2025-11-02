@@ -60,6 +60,15 @@ import type {
   SalonRoleCreatePayload,
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
+  PayoutDashboardResponse,
+  PayoutSettings,
+  PayoutLedgerEntry,
+  AdminPayoutListResponse,
+  AdminPayoutGeneratePayload,
+  PayoutSettingsUpsertPayload,
+  AdminPayoutStatusUpdatePayload,
+  AdminPayoutTxRecordPayload,
+  AdminPayoutEventPayload,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -386,6 +395,24 @@ export const salesApi = {
     note_limit?: number;
     salon_limit?: number;
   }) => api.get<SalesHistoryResponse>('/sales/history', { params }),
+};
+
+export const payoutApi = {
+  getDashboard: () => api.get<PayoutDashboardResponse>('/payouts/dashboard'),
+  getSettings: () => api.get<PayoutSettings | null>('/payouts/settings'),
+  updateSettings: (payload: PayoutSettingsUpsertPayload) => api.put<PayoutSettings>('/payouts/settings', payload),
+  getDetail: (payoutId: string) => api.get<PayoutLedgerEntry>(`/payouts/ledger/${payoutId}`),
+};
+
+export const adminPayoutApi = {
+  list: (params?: { status?: string; seller_query?: string; from_date?: string; to_date?: string; limit?: number; offset?: number }) =>
+    api.get<AdminPayoutListResponse>('/admin/payouts', { params }),
+  generate: (payload: AdminPayoutGeneratePayload) => api.post('/admin/payouts/generate', payload),
+  getDetail: (payoutId: string) => api.get<PayoutLedgerEntry>(`/admin/payouts/${payoutId}`),
+  updateStatus: (payoutId: string, payload: AdminPayoutStatusUpdatePayload) => api.post<PayoutLedgerEntry>(`/admin/payouts/${payoutId}/status`, payload),
+  recordTransaction: (payoutId: string, payload: AdminPayoutTxRecordPayload) =>
+    api.post<PayoutLedgerEntry>(`/admin/payouts/${payoutId}/transaction`, payload),
+  addEvent: (payoutId: string, payload: AdminPayoutEventPayload) => api.post(`/admin/payouts/${payoutId}/events`, payload),
 };
 
 export const salonFeedApi = {
