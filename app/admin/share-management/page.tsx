@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { useRouter } from 'next/navigation';
+import AdminShell, { AdminPageTab } from '@/components/admin/AdminShell';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminEmail } from '@/constants/admin';
 import {
   ChartBarIcon,
   ShareIcon,
@@ -66,10 +66,19 @@ interface RewardSettings {
   points_per_share: number;
 }
 
+type ShareTab = 'overview' | 'logs' | 'alerts' | 'settings';
+
+const SHARE_NAV_ITEMS: Array<AdminPageTab & { id: ShareTab }> = [
+  { id: 'overview', label: '統計サマリー', icon: ChartBarIcon },
+  { id: 'logs', label: 'シェアログ', icon: ShareIcon },
+  { id: 'alerts', label: '不正検知', icon: ExclamationTriangleIcon },
+  { id: 'settings', label: '報酬設定', icon: CogIcon },
+];
 export default function ShareManagementPage() {
-  const { user, token } = useAuthStore();
+  const router = useRouter();
+  const { token, isAdmin, isAuthenticated, isInitialized } = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'logs' | 'alerts' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<ShareTab>('overview');
 
   // Overview stats
   const [stats, setStats] = useState<ShareOverviewStats | null>(null);
@@ -142,12 +151,17 @@ export default function ShareManagementPage() {
   }, [token, activeTab, suspiciousOnly, showResolved]);
 
   useEffect(() => {
-    if (!user || !isAdminEmail(user.email)) {
-      window.location.href = '/dashboard';
+    if (!isInitialized) {
       return;
     }
+
+    if (!isAuthenticated || !isAdmin) {
+      router.push('/dashboard');
+      return;
+    }
+
     fetchData();
-  }, [user, fetchData]);
+  }, [isInitialized, isAuthenticated, isAdmin, router, fetchData]);
 
   const handleResolveAlert = async (alertId: string) => {
     if (!token) return;
@@ -203,61 +217,20 @@ export default function ShareManagementPage() {
     }
   };
 
-  if (!user || !isAdminEmail(user.email)) {
+  if (!isInitialized || !isAuthenticated || !isAdmin) {
     return null;
   }
 
   return (
-    <DashboardLayout pageTitle="NOTEシェア管理" pageSubtitle="シェア統計・不正検知・報酬設定">
-      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
-        {/* タブナビゲーション */}
-        <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              activeTab === 'overview'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900'
-            }`}
-          >
-            <ChartBarIcon className="h-5 w-5" />
-            統計サマリー
-          </button>
-          <button
-            onClick={() => setActiveTab('logs')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              activeTab === 'logs'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900'
-            }`}
-          >
-            <ShareIcon className="h-5 w-5" />
-            シェアログ
-          </button>
-          <button
-            onClick={() => setActiveTab('alerts')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              activeTab === 'alerts'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900'
-            }`}
-          >
-            <ExclamationTriangleIcon className="h-5 w-5" />
-            不正検知
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              activeTab === 'settings'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900'
-            }`}
-          >
-            <CogIcon className="h-5 w-5" />
-            報酬設定
-          </button>
-        </div>
-
+    <AdminShell
+      pageTitle="NOTEシェア管理"
+      pageSubtitle="シェア統計・不正検知・報酬設定"
+      sideNavItems={SHARE_NAV_ITEMS}
+      activeSideNav={activeTab}
+      onSideNavChange={(tabId) => setActiveTab(tabId as ShareTab)}
+      sideNavTitle="セクション"
+    >
+      <div className="mx-auto w-full max-w-6xl space-y-6">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <ArrowPathIcon className="h-8 w-8 animate-spin text-slate-400" />
@@ -559,6 +532,6 @@ export default function ShareManagementPage() {
           </>
         )}
       </div>
-    </DashboardLayout>
+    </AdminShell>
   );
 }

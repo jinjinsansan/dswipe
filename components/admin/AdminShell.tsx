@@ -38,6 +38,10 @@ export interface AdminShellProps {
   tabs?: AdminPageTab[];
   onTabChange?: (tabId: string) => void;
   headerActions?: ReactNode;
+  sideNavItems?: AdminPageTab[];
+  activeSideNav?: string;
+  onSideNavChange?: (tabId: string) => void;
+  sideNavTitle?: string;
   className?: string;
 }
 
@@ -79,6 +83,10 @@ export default function AdminShell({
   tabs,
   onTabChange,
   headerActions,
+  sideNavItems,
+  activeSideNav,
+  onSideNavChange,
+  sideNavTitle,
   className,
 }: AdminShellProps) {
   const pathname = usePathname();
@@ -144,6 +152,42 @@ export default function AdminShell({
                 </Link>
               );
             })}
+
+            {sideNavItems && sideNavItems.length > 0 && (
+              <div className="mt-8 space-y-3">
+                <p className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  {sideNavTitle ?? '管理メニュー'}
+                </p>
+                <div className="space-y-2">
+                  {sideNavItems.map((item) => {
+                    const isActive = item.id === activeSideNav;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => onSideNavChange?.(item.id)}
+                        className={cn(
+                          'w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors',
+                          isActive
+                            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-100'
+                            : 'border-transparent bg-gray-100 text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700'
+                        )}
+                      >
+                        <span className="flex items-center gap-3">
+                          {Icon && (
+                            <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                              <Icon className="h-4 w-4" aria-hidden="true" />
+                            </span>
+                          )}
+                          <span>{item.label}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </nav>
           <div className="border-t border-gray-200 px-6 py-5 text-sm text-gray-500">
             <p className="font-semibold text-gray-700">運営チームの皆さまへ</p>
@@ -222,6 +266,42 @@ export default function AdminShell({
                     </Link>
                   );
                 })}
+
+                {sideNavItems && sideNavItems.length > 0 && (
+                  <div className="mt-6 space-y-3">
+                    <p className="px-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                      {sideNavTitle ?? '管理メニュー'}
+                    </p>
+                    <div className="space-y-2">
+                      {sideNavItems.map((item) => {
+                        const isActive = item.id === activeSideNav;
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              onSideNavChange?.(item.id);
+                              setMobileNavOpen(false);
+                            }}
+                            className={cn(
+                              mobileNavButtonClass,
+                              'justify-start',
+                              isActive && 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                            )}
+                          >
+                            {Icon && (
+                              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                <Icon className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            )}
+                            <span>{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </nav>
               {user && (
                 <div className="border-t border-gray-200 px-4 py-4 text-sm text-gray-500">

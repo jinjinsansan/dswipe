@@ -178,7 +178,7 @@ export default function AdminPanelPage() {
   const router = useRouter();
   const { isAuthenticated, isInitialized, isAdmin } = useAuthStore();
 
-  const [activeTab, setActiveTab] = useState<TabKey>('users');
+  const [activeSection, setActiveSection] = useState<TabKey>('users');
   const [pageLoading, setPageLoading] = useState(true);
 
   const [userSummaries, setUserSummaries] = useState<AdminUserSummary[]>([]);
@@ -307,24 +307,24 @@ export default function AdminPanelPage() {
   }, [isInitialized, isAuthenticated, isAdmin]);
 
   useEffect(() => {
-    if (activeTab === 'announcements') {
+    if (activeSection === 'announcements') {
       fetchMaintenanceData(maintenanceScopeFilter);
     }
-  }, [activeTab, maintenanceScopeFilter]);
+  }, [activeSection, maintenanceScopeFilter]);
 
   useEffect(() => {
-    if (activeTab === 'announcements') {
+    if (activeSection === 'announcements') {
       fetchStatusCheckData();
     }
-  }, [activeTab]);
+  }, [activeSection]);
 
   useEffect(() => {
-    if (activeTab === 'share-management') {
+    if (activeSection === 'share-management') {
       fetchShareDashboard();
       fetchShareLogs(suspiciousOnly);
       fetchShareAlerts();
     }
-  }, [activeTab, suspiciousOnly]);
+  }, [activeSection, suspiciousOnly]);
 
   const fetchUsers = async (search?: string) => {
     setUsersLoading(true);
@@ -914,9 +914,10 @@ export default function AdminPanelPage() {
     <AdminShell
       pageTitle="管理者ダッシュボード"
       pageSubtitle="運営状況と審査案件をリアルタイムに把握"
-      tabs={TABS}
-      activeTab={activeTab}
-      onTabChange={(tabId) => setActiveTab(tabId as TabKey)}
+      sideNavItems={TABS}
+      activeSideNav={activeSection}
+      onSideNavChange={(tabId) => setActiveSection(tabId as TabKey)}
+      sideNavTitle="管理メニュー"
       headerActions={
         <button
           type="button"
@@ -929,7 +930,7 @@ export default function AdminPanelPage() {
       }
     >
       <div className="max-w-7xl mx-auto space-y-8 px-4 py-6 sm:px-6 lg:px-8">
-          {activeTab === 'users' && (
+          {activeSection === 'users' && (
             <div className="grid xl:grid-cols-[1.4fr_1fr] gap-6 xl:gap-8">
               <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-lg shadow-gray-200/60">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
@@ -1777,10 +1778,10 @@ export default function AdminPanelPage() {
               </div>
             </div>
           )}
-          {activeTab === 'moderation' && <NoteModerationCenter />}
-          {activeTab === 'salons' && <SalonManagementCenter />}
+          {activeSection === 'moderation' && <NoteModerationCenter />}
+          {activeSection === 'salons' && <SalonManagementCenter />}
 
-          {activeTab === 'marketplace' && (
+          {activeSection === 'marketplace' && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -1958,7 +1959,7 @@ export default function AdminPanelPage() {
             </div>
           )}
 
-          {activeTab === 'analytics' && (
+          {activeSection === 'analytics' && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -2089,7 +2090,7 @@ export default function AdminPanelPage() {
             </div>
           )}
 
-          {activeTab === 'share-management' && (
+          {activeSection === 'share-management' && (
             <div className="space-y-6">
               {shareError && (
                 <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{shareError}</div>
@@ -2418,7 +2419,7 @@ export default function AdminPanelPage() {
             </div>
           )}
 
-          {activeTab === 'announcements' && (
+          {activeSection === 'announcements' && (
             <div className="space-y-6">
               <div className="grid gap-4 lg:grid-cols-3">
                 <div className="rounded-2xl border border-red-100 bg-red-50 p-5">
@@ -3094,7 +3095,7 @@ export default function AdminPanelPage() {
             </div>
           )}
 
-          {activeTab === 'logs' && (
+          {activeSection === 'logs' && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>

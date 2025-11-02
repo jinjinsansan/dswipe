@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import DSwipeLogo from '@/components/DSwipeLogo';
+import AdminShell from '@/components/admin/AdminShell';
 import { PageLoader } from '@/components/LoadingSpinner';
-import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 
 interface LineBonusSettings {
   id: string;
@@ -20,7 +20,7 @@ interface LineBonusSettings {
 
 export default function LineSettingsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, isInitialized, isAdmin } = useAuthStore();
+  const { isAuthenticated, isInitialized, isAdmin } = useAuthStore();
   
   const [settings, setSettings] = useState<LineBonusSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,9 +74,10 @@ export default function LineSettingsPage() {
         description: data.description,
         line_add_url: data.line_add_url,
       });
-    } catch (err: any) {
-      console.error('Error fetching settings:', err);
-      setError(err.message || 'エラーが発生しました');
+    } catch (error: unknown) {
+      console.error('Error fetching settings:', error);
+      const message = error instanceof Error ? error.message : 'エラーが発生しました';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -115,9 +116,10 @@ export default function LineSettingsPage() {
       setSuccessMessage('設定を保存しました');
       
       setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err: any) {
-      console.error('Error saving settings:', err);
-      setError(err.message || 'エラーが発生しました');
+    } catch (error: unknown) {
+      console.error('Error saving settings:', error);
+      const message = error instanceof Error ? error.message : 'エラーが発生しました';
+      setError(message);
     } finally {
       setSaving(false);
     }
@@ -132,32 +134,11 @@ export default function LineSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ヘッダー */}
-      <header className="border-b border-gray-200 bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="block">
-                <DSwipeLogo size="medium" showFullName={true} />
-              </Link>
-              <span className="text-gray-400">/</span>
-              <span className="text-sm font-semibold text-gray-900">LINE連携設定</span>
-            </div>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
-            >
-              <ArrowLeftIcon className="h-4 w-4" />
-              管理者パネルに戻る
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* メインコンテンツ */}
-      <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="space-y-6">
+    <AdminShell
+      pageTitle="LINE連携設定"
+      pageSubtitle="LINE公式アカウント連携時のボーナス付与を管理"
+    >
+      <div className="mx-auto max-w-4xl space-y-6">
           {/* タイトル */}
           <div>
             <h1 className="text-2xl font-bold text-gray-900">LINE連携ボーナス設定</h1>
@@ -312,8 +293,7 @@ export default function LineSettingsPage() {
               <li>• ボーナスポイント数の変更は、変更後に連携するユーザーから適用されます</li>
             </ul>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </AdminShell>
   );
 }
