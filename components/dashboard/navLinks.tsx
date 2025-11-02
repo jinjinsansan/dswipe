@@ -16,6 +16,7 @@ import {
   BookOpenIcon,
   UserGroupIcon,
   ShoppingBagIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
@@ -196,6 +197,7 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
 
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
+  { href: '/profile', label: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
   { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
   { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
   { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },

@@ -3,11 +3,11 @@
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import Image from 'next/image';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { lpApi, pointsApi, productApi, authApi, announcementApi, mediaApi, noteApi } from '@/lib/api';
+import { lpApi, productApi, authApi, announcementApi, noteApi } from '@/lib/api';
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -15,14 +15,10 @@ import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
-  BuildingStorefrontIcon,
   ChartBarIcon,
   CurrencyYenIcon,
   DocumentIcon,
   DocumentTextIcon,
-  ShoppingBagIcon,
-  Cog6ToothIcon,
-  CheckCircleIcon,
   SparklesIcon,
   TagIcon,
 } from '@heroicons/react/24/outline';
@@ -71,16 +67,6 @@ interface LpStep extends Record<string, unknown> {
   backgroundVideoUrl?: string | null;
 }
 
-interface PointTransactionRecord {
-  id: string;
-  amount: number;
-  created_at: string;
-  description?: string | null;
-  transaction_type?: string | null;
-  note_title?: string | null;
-  points_after?: number | null;
-}
-
 interface PublicProductSummary {
   id: string;
   title: string;
@@ -94,17 +80,6 @@ interface PublicProductSummary {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
-
-const toNumber = (value: unknown): number => {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-  return 0;
-};
 
 const parseLpList = (input: unknown): LpApiRecord[] => {
   if (!Array.isArray(input)) {
@@ -129,41 +104,6 @@ const parsePublicProducts = (input: unknown): PublicProductSummary[] => {
     return typeof item.id === 'string' && typeof item.title === 'string';
   });
 };
-
-const parsePointTransactions = (input: unknown): PointTransactionRecord[] => {
-  if (!Array.isArray(input)) {
-    return [];
-  }
-  const results: PointTransactionRecord[] = [];
-  input.forEach((item) => {
-    if (!isRecord(item) || typeof item.id !== 'string' || typeof item.created_at !== 'string') {
-      return;
-    }
-    const transaction: PointTransactionRecord = {
-      id: item.id,
-      amount: toNumber(item.amount),
-      created_at: item.created_at,
-      description: typeof item.description === 'string' ? item.description : null,
-      transaction_type: typeof item.transaction_type === 'string' ? item.transaction_type : null,
-      note_title: typeof item.note_title === 'string' ? item.note_title : null,
-      points_after: typeof item.points_after === 'number' ? item.points_after : null,
-    };
-    results.push(transaction);
-  });
-  return results;
-};
-
-const safeGet = (source: unknown, key: string): unknown =>
-  isRecord(source) ? source[key] : undefined;
-
-const asOptionalString = (value: unknown): string | null => {
-  if (typeof value !== 'string') {
-    return null;
-  }
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-};
-
 const parseLpSteps = (input: unknown): LpStep[] => {
   if (!Array.isArray(input)) {
     return [];
@@ -283,28 +223,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized } = useAuthStore();
   const [lps, setLps] = useState<DashboardLp[]>([]);
-  const [pointBalance, setPointBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [dashboardType, setDashboardType] = useState<'seller' | 'buyer' | 'settings'>('seller');
-  const [purchaseHistory, setPurchaseHistory] = useState<PointTransactionRecord[]>([]);
-  const [popularProducts, setPopularProducts] = useState<PublicProductSummary[]>([]);
-  const [latestProducts, setLatestProducts] = useState<PublicProductSummary[]>([]);
-  const [newUsername, setNewUsername] = useState<string>('');
-  const [usernameError, setUsernameError] = useState<string>('');
-  const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
-  const [profileBio, setProfileBio] = useState<string>(user?.bio ?? '');
-  const [profileSnsUrl, setProfileSnsUrl] = useState<string>(user?.sns_url ?? '');
-  const [profileLineUrl, setProfileLineUrl] = useState<string>(user?.line_url ?? '');
-  const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profile_image_url ?? '');
   const [noteMetrics, setNoteMetrics] = useState<NoteMetrics | null>(null);
-  const [profileUpdateError, setProfileUpdateError] = useState<string>('');
-  const [profileUpdateSuccess, setProfileUpdateSuccess] = useState<boolean>(false);
-  const [isSavingProfileInfo, setIsSavingProfileInfo] = useState<boolean>(false);
-  const [isUploadingProfileImage, setIsUploadingProfileImage] = useState<boolean>(false);
-  const [profilePageUrl, setProfilePageUrl] = useState<string>('');
-  const profileImageInputRef = useRef<HTMLInputElement | null>(null);
-  const [profileLinkCopied, setProfileLinkCopied] = useState<boolean>(false);
   const [announcements, setAnnouncements] = useState<DashboardAnnouncement[]>([]);
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
@@ -331,21 +252,6 @@ export default function DashboardPage() {
   const topNote = noteSummary.top_note ?? null;
   const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
 
-  useEffect(() => {
-    setProfileBio(user?.bio ?? '');
-    setProfileSnsUrl(user?.sns_url ?? '');
-    setProfileLineUrl(user?.line_url ?? '');
-    setProfileImageUrl(user?.profile_image_url ?? '');
-    setNewUsername(user?.username ?? '');
-    setProfileLinkCopied(false);
-
-    if (typeof window !== 'undefined' && user?.username) {
-      setProfilePageUrl(`${window.location.origin}/u/${user.username}`);
-    } else {
-      setProfilePageUrl('');
-    }
-  }, [user]);
-
   const loadAnnouncements = useCallback(async () => {
     setAnnouncementsLoading(true);
     try {
@@ -370,10 +276,9 @@ export default function DashboardPage() {
   const fetchData = useCallback(async () => {
     try {
       const announcementPromise = loadAnnouncements();
-      const [meResponse, lpsResponse, pointsResponse, productsResponse] = await Promise.all([
+      const [meResponse, lpsResponse, productsResponse] = await Promise.all([
         authApi.getMe(),
         lpApi.list(),
-        pointsApi.getBalance(),
         productApi.list(),
       ]);
 
@@ -639,9 +544,6 @@ export default function DashboardPage() {
       });
 
       setLps(enrichedLps);
-      const pointBalanceValue = toNumber((pointsResponse?.data as { point_balance?: unknown })?.point_balance);
-      setPointBalance(pointBalanceValue);
-      
       let metrics: NoteMetrics | null = null;
       try {
         const metricsResponse = await noteApi.getMetrics();
@@ -704,182 +606,6 @@ export default function DashboardPage() {
     void fetchData();
   }, [fetchData, isAuthenticated, isInitialized, router]);
 
-  const fetchBuyerData = useCallback(async () => {
-    try {
-      const allTransactions = await pointsApi.getTransactions({ limit: 50 });
-      const transactionsPayload = allTransactions?.data as { data?: unknown } | unknown;
-      const transactions = (() => {
-        if (isRecord(transactionsPayload) && Array.isArray(transactionsPayload.data)) {
-          return parsePointTransactions(transactionsPayload.data);
-        }
-        if (Array.isArray(transactionsPayload)) {
-          return parsePointTransactions(transactionsPayload);
-        }
-        return [];
-      })();
-
-      const purchaseTransactions = transactions.filter(
-        (tx) => tx.transaction_type === 'product_purchase'
-      );
-      setPurchaseHistory(purchaseTransactions);
-
-      try {
-        const popularResponse = await productApi.getPublic({ sort: 'popular', limit: 5 });
-        const popularPayload = popularResponse?.data as { data?: unknown } | unknown;
-        const popular = (() => {
-          if (isRecord(popularPayload) && Array.isArray(popularPayload.data)) {
-            return parsePublicProducts(popularPayload.data);
-          }
-          if (Array.isArray(popularPayload)) {
-            return parsePublicProducts(popularPayload);
-          }
-          return [];
-        })();
-        setPopularProducts(popular);
-      } catch (error) {
-        console.error('Failed to fetch popular products:', error);
-        setPopularProducts([]);
-      }
-
-      try {
-        const latestResponse = await productApi.getPublic({ sort: 'latest', limit: 5 });
-        const latestPayload = latestResponse?.data as { data?: unknown } | unknown;
-        const latest = (() => {
-          if (isRecord(latestPayload) && Array.isArray(latestPayload.data)) {
-            return parsePublicProducts(latestPayload.data);
-          }
-          if (Array.isArray(latestPayload)) {
-            return parsePublicProducts(latestPayload);
-          }
-          return [];
-        })();
-        setLatestProducts(latest);
-      } catch (error) {
-        console.error('Failed to fetch latest products:', error);
-        setLatestProducts([]);
-      }
-    } catch (error) {
-      console.error('Failed to fetch buyer data:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (dashboardType === 'buyer' && isAuthenticated) {
-      void fetchBuyerData();
-    }
-  }, [dashboardType, fetchBuyerData, isAuthenticated]);
-
-
-
-  const handleUsernameChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUsernameError('');
-    setUpdateSuccess(false);
-
-    // バリデーション
-    if (!newUsername.trim()) {
-      setUsernameError('ユーザー名を入力してください');
-      return;
-    }
-
-    const trimmedUsername = newUsername.trim();
-
-    if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
-      setUsernameError('ユーザー名は3-20文字で入力してください');
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) {
-      setUsernameError('ユーザー名は英数字とアンダースコアのみ使用できます');
-      return;
-    }
-
-    if (trimmedUsername === user?.username) {
-      setUsernameError('現在のユーザー名と同じです');
-      return;
-    }
-
-    try {
-      const response = await authApi.updateProfile({ username: trimmedUsername });
-      
-      // 更新されたユーザー情報をストアに保存
-      const updatedUser = response.data;
-      useAuthStore.getState().setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      setUpdateSuccess(true);
-      setNewUsername(updatedUser?.username ?? trimmedUsername);
-      setTimeout(() => setUpdateSuccess(false), 3000);
-    } catch (error: unknown) {
-      setUsernameError(extractErrorDetail(error, 'ユーザー名の更新に失敗しました'));
-    }
-  };
-
-  const handleProfileInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProfileUpdateError('');
-    setProfileUpdateSuccess(false);
-
-    const sanitizedBio = profileBio.trim();
-    const sanitizedSnsUrl = profileSnsUrl.trim();
-    const sanitizedLineUrl = profileLineUrl.trim();
-    const sanitizedImageUrl = profileImageUrl.trim();
-
-    const payload = {
-      bio: sanitizedBio ? sanitizedBio : null,
-      sns_url: sanitizedSnsUrl ? sanitizedSnsUrl : null,
-      line_url: sanitizedLineUrl ? sanitizedLineUrl : null,
-      profile_image_url: sanitizedImageUrl ? sanitizedImageUrl : null,
-    } as const;
-
-    setIsSavingProfileInfo(true);
-    try {
-      const response = await authApi.updateProfile(payload);
-      const updatedUser = response.data;
-      useAuthStore.getState().setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setProfileUpdateSuccess(true);
-      setTimeout(() => setProfileUpdateSuccess(false), 3000);
-    } catch (error: unknown) {
-      setProfileUpdateError(extractErrorDetail(error, 'プロフィールの更新に失敗しました'));
-    } finally {
-      setIsSavingProfileInfo(false);
-    }
-  };
-
-  const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setProfileUpdateError('');
-    setIsUploadingProfileImage(true);
-    try {
-      const response = await mediaApi.upload(file, { optimize: true, max_width: 512, max_height: 512 });
-      const imageUrl = response.data?.url;
-      if (imageUrl) {
-        setProfileImageUrl(imageUrl);
-      }
-    } catch (error: unknown) {
-      setProfileUpdateError(extractErrorDetail(error, '画像のアップロードに失敗しました'));
-    } finally {
-      setIsUploadingProfileImage(false);
-      if (profileImageInputRef.current) {
-        profileImageInputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleRemoveProfileImage = () => {
-    setProfileImageUrl('');
-  };
-
-  const handleCopyProfileLink = () => {
-    if (!profilePageUrl || typeof navigator === 'undefined') return;
-    navigator.clipboard.writeText(profilePageUrl);
-    setProfileLinkCopied(true);
-    setTimeout(() => setProfileLinkCopied(false), 2000);
-  };
-
   const handleDeleteLP = async (lpId: string) => {
     if (!confirm('本当にこのLPを削除しますか？この操作は取り消せません。')) {
       return;
@@ -913,16 +639,6 @@ export default function DashboardPage() {
     }
   };
 
-  const totalPointsUsed = Math.abs(purchaseHistory.reduce((sum, tx) => sum + (tx.amount ?? 0), 0));
-  const averagePointsUsed = purchaseHistory.length ? Math.round(totalPointsUsed / purchaseHistory.length) : 0;
-  const lastPurchaseDateLabel = purchaseHistory.length
-    ? new Date(purchaseHistory[0].created_at).toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      })
-    : '未購入';
-
   if (isLoading) {
     return <PageLoader />;
   }
@@ -930,54 +646,6 @@ export default function DashboardPage() {
   return (
     <DashboardLayout pageTitle="ダッシュボード">
       <div className="p-3 sm:p-6">
-          {/* Dashboard Type Tabs */}
-          <div className="mb-6">
-            <div className="flex gap-1 sm:gap-2 border-b border-slate-200 overflow-x-auto">
-              <button
-                onClick={() => setDashboardType('seller')}
-                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
-                  dashboardType === 'seller'
-                    ? 'text-slate-900 border-b-2 border-blue-500'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
-                  <BuildingStorefrontIcon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                販売者画面
-              </button>
-              <button
-                onClick={() => setDashboardType('buyer')}
-                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
-                  dashboardType === 'buyer'
-                    ? 'text-slate-900 border-b-2 border-blue-500'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
-                  <ShoppingBagIcon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                購入者画面
-              </button>
-              <button
-                onClick={() => setDashboardType('settings')}
-                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
-                  dashboardType === 'settings'
-                    ? 'text-slate-900 border-b-2 border-blue-500'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                <span className="mr-1 inline-flex h-4 w-4 items-center justify-center align-middle">
-                  <Cog6ToothIcon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                設定
-              </button>
-            </div>
-          </div>
-
-          {/* Seller Dashboard */}
-          {dashboardType === 'seller' && (
-            <>
               {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
@@ -1263,432 +931,6 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-            </>
-          )}
-
-          {/* Buyer Dashboard */}
-          {dashboardType === 'buyer' && (
-            <>
-              <div className="mb-8">
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow">
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                    <div>
-                      <p className="text-sm uppercase tracking-wider text-slate-300/80">現在のポイント残高</p>
-                      <p className="mt-3 text-3xl sm:text-4xl font-semibold text-slate-900">
-                        {pointBalance.toLocaleString()} <span className="text-base text-slate-500 font-normal">P</span>
-                      </p>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-500">
-                        残高はリアルタイムで更新されます。購入履歴は下の一覧で確認できます。
-                      </p>
-                    </div>
-                    <Link
-                      href="/points/purchase"
-                      className="inline-flex items-center justify-center rounded-xl border border-blue-500 bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
-                    >
-                      ポイントを購入する
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-                <div className="xl:col-span-2 space-y-6">
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg font-semibold text-slate-900">購入履歴</h2>
-                      <span className="text-xs text-slate-500">{purchaseHistory.length}件</span>
-                    </div>
-                    {purchaseHistory.length === 0 ? (
-                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-12 text-center">
-                        <h3 className="text-base font-medium text-slate-900 mb-2">購入履歴がまだありません</h3>
-                        <p className="text-sm text-slate-500">
-                          購入が完了すると、ここに明細が表示されます。
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="divide-y divide-slate-200">
-                        {purchaseHistory.map((transaction) => (
-                          <div key={transaction.id} className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-medium text-slate-900">{transaction.description}</p>
-                              <p className="text-xs text-slate-500">
-                                {new Date(transaction.created_at).toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                              </p>
-                            </div>
-                            <span className="text-sm font-semibold text-rose-500">
-                              -{Math.abs(transaction.amount || 0).toLocaleString()} P
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg font-semibold text-white">人気の公開LP</h2>
-                      <span className="text-xs text-slate-400">直近のトレンド</span>
-                    </div>
-                    {popularProducts.length === 0 ? (
-                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-10 text-center text-sm text-slate-500">
-                        現在人気の公開LPはありません
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {popularProducts.map((product) => (
-                          <div
-                            key={product.id}
-                            className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
-                          >
-                            <Link href={`/u/${product.seller_username}`} className="flex items-center gap-3 mb-3">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-semibold text-white">
-                                {product.seller_username?.charAt(0).toUpperCase() || 'S'}
-                              </div>
-                              <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
-                                @{product.seller_username}
-                              </span>
-                            </Link>
-                            <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{product.title}</h3>
-                            <p className="text-xs text-slate-500 line-clamp-2 mb-3">{product.description}</p>
-                            <div className="flex items-center justify-between text-xs text-slate-500">
-                              <span className="font-semibold text-blue-600">{product.price_in_points?.toLocaleString()} P</span>
-                              <span className="text-slate-600">成約 {product.total_sales} 件</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg font-semibold text-white">新着の公開LP</h2>
-                      <span className="text-xs text-slate-400">最新アップデート</span>
-                    </div>
-                    {latestProducts.length === 0 ? (
-                      <div className="rounded-xl border border-slate-200 bg-slate-100 py-10 text-center text-sm text-slate-500">
-                        現在新着の公開LPはありません
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {latestProducts.map((product) => (
-                          <div
-                            key={product.id}
-                            className="group rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-emerald-300"
-                          >
-                            <Link href={`/u/${product.seller_username}`} className="flex items-center gap-3 mb-3">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-sm font-semibold text-white">
-                                {product.seller_username?.charAt(0).toUpperCase() || 'S'}
-                              </div>
-                              <span className="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 transition-colors">
-                                @{product.seller_username}
-                              </span>
-                            </Link>
-                            <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{product.title}</h3>
-                            <p className="text-xs text-slate-500 line-clamp-2 mb-3">{product.description}</p>
-                            <div className="flex items-center justify-between text-xs text-slate-500">
-                              <span className="font-semibold text-blue-600">{product.price_in_points?.toLocaleString()} P</span>
-                              <span className="text-emerald-600">NEW</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p className="text-sm font-medium text-slate-900">ポイント利用サマリー</p>
-                    <dl className="mt-4 space-y-3 text-sm">
-                      <div className="flex items-center justify-between text-slate-600">
-                        <dt className="text-slate-500">累計使用ポイント</dt>
-                        <dd className="font-semibold text-slate-900">{totalPointsUsed.toLocaleString()} P</dd>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-600">
-                        <dt className="text-slate-500">平均購入ポイント</dt>
-                        <dd className="font-semibold text-slate-900">{averagePointsUsed.toLocaleString()} P</dd>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-600">
-                        <dt className="text-slate-500">直近の購入</dt>
-                        <dd className="font-semibold text-slate-900">{lastPurchaseDateLabel}</dd>
-                      </div>
-                    </dl>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-4">購入に関するメモ</h3>
-                    <ul className="space-y-3 text-xs text-slate-500">
-                      <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
-                        <span>1ポイント = 1円としてご利用いただけます。</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
-                        <span>購入後のポイントに有効期限はありません。</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
-                        <span>大口購入をご希望の場合はサポートまでお問い合わせください。</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-500 mt-1" />
-                        <span>決済サービスとの連携は現在準備中です。</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-3">購入状況のサマリー</h3>
-                    <div className="space-y-4 text-sm">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">総購入回数</span>
-                        <span className="font-semibold text-slate-900">{purchaseHistory.length}回</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">総使用ポイント</span>
-                        <span className="font-semibold text-slate-900">{totalPointsUsed.toLocaleString()} P</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">購入商品数</span>
-                        <span className="font-semibold text-slate-900">{purchaseHistory.length}個</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Settings Dashboard */}
-          {dashboardType === 'settings' && (
-            <>
-              <div className="max-w-2xl">
-                <h2 className="text-2xl font-bold text-white mb-6">アカウント設定</h2>
-
-                {/* Current User Info */}
-                <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-6 mb-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">現在の情報</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm text-slate-400">メールアドレス</label>
-                      <div className="text-white font-medium">{user?.email}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-400">ユーザー名</label>
-                      <div className="text-white font-medium">{user?.username}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm text-slate-400">ポイント残高</label>
-                      <div className="text-white font-medium">{pointBalance.toLocaleString()} P</div>
-                    </div>
-                    {profilePageUrl && (
-                      <div>
-                        <label className="text-sm text-slate-400">プロフィールページ</label>
-                        <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                          <input
-                            value={profilePageUrl}
-                            readOnly
-                            className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm truncate"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleCopyProfileLink}
-                            className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold"
-                          >
-                            {profileLinkCopied ? 'コピー済み' : 'リンクをコピー'}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Profile Update Form */}
-                <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">プロフィール更新</h3>
-                  
-                  <form onSubmit={handleUsernameChange} className="space-y-4">
-                    <div>
-                      <label htmlFor="newUsername" className="block text-sm font-medium text-slate-300 mb-2">
-                        新しいユーザー名
-                      </label>
-                      <input
-                        id="newUsername"
-                        type="text"
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        placeholder="新しいユーザー名を入力"
-                        className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      />
-                      <p className="text-xs text-slate-400 mt-1">
-                        3-20文字、英数字とアンダースコア（_）のみ使用可能
-                      </p>
-                    </div>
-
-                    {usernameError && (
-                      <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
-                        {usernameError}
-                      </div>
-                    )}
-
-                    {updateSuccess && (
-                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg text-sm">
-                        <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
-                        ユーザー名を更新しました
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                    >
-                      更新する
-                    </button>
-                  </form>
-                </div>
-
-                <div className="bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">公開プロフィール設定</h3>
-
-                  <form onSubmit={handleProfileInfoSubmit} className="space-y-5">
-                    <div>
-                      <label htmlFor="profileBio" className="block text-sm font-medium text-slate-300 mb-2">
-                        自己紹介
-                      </label>
-                      <textarea
-                        id="profileBio"
-                        value={profileBio}
-                        maxLength={600}
-                        onChange={(e) => {
-                          setProfileBio(e.target.value);
-                          setProfileUpdateError('');
-                        }}
-                        placeholder="あなたやビジネスの紹介を入力してください"
-                        className="w-full min-h-[100px] px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
-                      />
-                      <div className="mt-1 text-xs text-slate-500 text-right">{profileBio.length}/600</div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="profileSnsUrl" className="block text-sm font-medium text-slate-300 mb-2">
-                        SNSリンク
-                      </label>
-                      <input
-                        id="profileSnsUrl"
-                        type="url"
-                        value={profileSnsUrl}
-                        onChange={(e) => {
-                          setProfileSnsUrl(e.target.value);
-                          setProfileUpdateError('');
-                        }}
-                        placeholder="https://"
-                        className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      />
-                      <p className="text-xs text-slate-500 mt-1">例: X（旧Twitter）やInstagramなどのプロフィールURL</p>
-                    </div>
-
-                    <div>
-                      <label htmlFor="profileLineUrl" className="block text-sm font-medium text-slate-300 mb-2">
-                        公式LINEリンク
-                      </label>
-                      <input
-                        id="profileLineUrl"
-                        type="url"
-                        value={profileLineUrl}
-                        onChange={(e) => {
-                          setProfileLineUrl(e.target.value);
-                          setProfileUpdateError('');
-                        }}
-                        placeholder="https://"
-                        className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      />
-                      <p className="text-xs text-slate-500 mt-1">例: https://lin.ee/ から始まるリンク</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">プロフィール画像</label>
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center text-white text-xl">
-                          {profileImageUrl ? (
-                            <Image
-                              src={profileImageUrl}
-                              alt="プロフィール画像プレビュー"
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                              unoptimized
-                            />
-                          ) : (
-                            user?.username?.charAt(0).toUpperCase() || 'U'
-                          )}
-                        </div>
-                        <div className="flex-1 space-y-3">
-                          <div className="flex flex-col sm:flex-row gap-2">
-                            <label className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${isUploadingProfileImage ? 'bg-slate-700 text-slate-300' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
-                              <input
-                                ref={profileImageInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleProfileImageUpload}
-                                className="hidden"
-                              />
-                              {isUploadingProfileImage ? 'アップロード中…' : '画像を選択'}
-                            </label>
-                            {profileImageUrl && (
-                              <button
-                                type="button"
-                                onClick={handleRemoveProfileImage}
-                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold bg-white text-red-600 border border-red-200 hover:bg-red-50"
-                              >
-                                画像をクリア
-                              </button>
-                            )}
-                          </div>
-                          <input
-                            type="text"
-                            value={profileImageUrl}
-                            onChange={(e) => {
-                              setProfileImageUrl(e.target.value);
-                              setProfileUpdateError('');
-                            }}
-                            placeholder="カスタム画像URLを入力することもできます"
-                            className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {profileUpdateError && (
-                      <div className="bg-red-500/10 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm">
-                        {profileUpdateError}
-                      </div>
-                    )}
-
-                    {profileUpdateSuccess && (
-                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/50 text-green-300 px-4 py-3 rounded-lg text-sm">
-                        <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
-                        公開プロフィールを更新しました
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={isSavingProfileInfo}
-                      className={`w-full px-6 py-3 rounded-lg font-semibold transition-colors ${
-                        isSavingProfileInfo
-                          ? 'bg-slate-700 text-slate-300'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
-                    >
-                      {isSavingProfileInfo ? '更新中…' : '保存する'}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </>
-          )}
-
           <section className="mt-12">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">

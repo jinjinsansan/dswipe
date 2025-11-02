@@ -12,6 +12,7 @@ import {
   WrenchScrewdriverIcon,
   BuildingStorefrontIcon,
   ClipboardDocumentListIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
@@ -24,6 +25,7 @@ const MOBILE_LABEL_MAP: Record<string, string> = {
   '/': 'ホーム',
   'https://d-swipe.com/': 'ホーム',
   '/dashboard': 'ダッシュ',
+  '/profile': 'プロフィール',
   '/lp/create': '新規LP',
   'https://d-swipe.com/lp/create': '新規LP',
   '/products': 'マーケット',
@@ -96,6 +98,11 @@ const MOBILE_GROUP_ICON_CLASSES: Record<DashboardNavGroupKey, string> = {
   media: 'bg-white/70 text-orange-600',
   info: 'bg-white/70 text-slate-500',
 };
+
+const ADMIN_EMAILS = new Set([
+  'goldbenchan@gmail.com',
+  'kusanokiyoshi1@gmail.com',
+]);
 
 interface DashboardHeaderProps {
   user: any;
@@ -238,6 +245,7 @@ export default function DashboardHeader({
         label: '設定',
         defaultGroup: 'line',
         items: [
+          { kind: 'link', href: '/profile', groupOverride: 'line', labelOverride: 'プロフィール' },
           { kind: 'link', href: '/line/bonus', groupOverride: 'line', labelOverride: 'LINE連携' },
           { kind: 'link', href: '/settings', groupOverride: 'line', labelOverride: 'X連携' },
           {
@@ -248,6 +256,18 @@ export default function DashboardHeader({
             icon: resolveIcon('/sales', <ClipboardDocumentListIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'line',
           },
+          ...(ADMIN_EMAILS.has(user.email ?? '')
+            ? [
+                {
+                  kind: 'customLink' as const,
+                  key: 'admin-panel',
+                  href: '/admin',
+                  label: '管理者パネル',
+                  icon: resolveIcon('/admin', <ShieldCheckIcon className="h-6 w-6" aria-hidden="true" />),
+                  groupKey: 'line',
+                },
+              ]
+            : []),
         ],
       },
       {
