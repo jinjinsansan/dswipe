@@ -364,6 +364,7 @@ export const salonApi = {
     tax_inclusive?: boolean;
   }) =>
     api.patch<Salon>(`/salons/${salonId}`, data),
+  delete: (salonId: string) => api.delete(`/salons/${salonId}`),
   getMembers: (salonId: string, params?: { status_filter?: string; limit?: number; offset?: number }) =>
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
   setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>

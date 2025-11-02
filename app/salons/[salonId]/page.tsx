@@ -1,7 +1,7 @@
 "use client";
 
 import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeftIcon,
@@ -12,6 +12,7 @@ import {
   ExclamationCircleIcon,
   UsersIcon,
   XMarkIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
@@ -45,6 +46,7 @@ const INITIAL_FORM: FormState = {
 export default function SalonDetailPage() {
   const params = useParams<{ salonId: string }>();
   const salonId = params?.salonId;
+  const router = useRouter();
 
   const [salon, setSalon] = useState<Salon | null>(null);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -65,6 +67,7 @@ export default function SalonDetailPage() {
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -268,6 +271,27 @@ export default function SalonDetailPage() {
       setIsSaving(false);
     }
   };
+
+  const handleDeleteSalon = useCallback(async () => {
+    if (!salonId || isDeleting) return;
+    if (!window.confirm("このサロンを削除しますか？会員データやコンテンツは復元できません。")) {
+      return;
+    }
+    setError(null);
+    setSuccessMessage(null);
+    try {
+      setIsDeleting(true);
+      await salonApi.delete(salonId);
+      alert("サロンを削除しました");
+      router.push("/salons");
+    } catch (deleteError: any) {
+      console.error("Failed to delete salon", deleteError);
+      const detail = deleteError?.response?.data?.detail;
+      setError(typeof detail === "string" ? detail : "サロンの削除に失敗しました");
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [salonId, isDeleting, router]);
 
   const handleCopyLink = async () => {
     if (!salon) return;
@@ -511,6 +535,22 @@ export default function SalonDetailPage() {
                     </p>
                   ) : null}
                 </div>
+            <div className="rounded-3xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
+              <h3 className="text-sm font-semibold text-rose-700">サロンを削除</h3>
+              <p className="mt-2 text-xs text-rose-600">
+                サロンを削除すると関連するお知らせ・アセット・ロール設定も全て削除され、元に戻すことはできません。
+                現在の会員がいる場合は先に解約・退会処理を完了させてください。
+              </p>
+              <button
+                type="button"
+                onClick={handleDeleteSalon}
+                disabled={isDeleting}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:bg-rose-300"
+              >
+                <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                {isDeleting ? "削除中..." : "サロンを削除する"}
+              </button>
+            </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">サロンID</dt>
                   <dd className="mt-1 text-xs font-mono text-slate-500">{salon.id}</dd>
