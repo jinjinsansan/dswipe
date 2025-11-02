@@ -19,6 +19,7 @@ import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPAnalytics, StepFunnelData, CTAClickData } from '@/types';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { redirectToLogin } from '@/lib/navigation';
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {
@@ -84,7 +85,7 @@ export default function LPAnalyticsPage() {
     if (!isInitialized) return;
 
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

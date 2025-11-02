@@ -11,6 +11,7 @@ import { lpApi, productApi, authApi, announcementApi, noteApi } from '@/lib/api'
 import { TEMPLATE_LIBRARY } from '@/lib/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { redirectToLogin } from '@/lib/navigation';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
 import {
   ArrowPathIcon,
@@ -610,7 +611,7 @@ export default function DashboardPage() {
     if (!isInitialized) return;
 
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

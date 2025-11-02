@@ -16,6 +16,7 @@ import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import { TEMPLATE_LIBRARY, INFO_PRODUCT_BLOCKS } from '@/lib/templates';
+import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
@@ -98,9 +99,9 @@ export default function EditLPNewPage() {
   useEffect(() => {
     // 初期化が完了するまで待つ
     if (!isInitialized) return;
-    
+
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
     fetchLP();

@@ -12,6 +12,7 @@ import { publicApi, productApi, pointsApi } from '@/lib/api';
 import { LPDetail, RequiredActionsStatus, CTA, Product } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
+import { redirectToLogin } from '@/lib/navigation';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -226,7 +227,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     
     if (!isAuthenticated) {
       if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
-        router.push('/login');
+        redirectToLogin(router);
       }
       return;
     }

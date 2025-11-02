@@ -10,6 +10,7 @@ import { productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import StickySiteHeader from '@/components/layout/StickySiteHeader';
 import type { Product } from '@/types';
+import { redirectToLogin } from '@/lib/navigation';
 
 type ProductDetail = Product & {
   seller_username?: string | null;
@@ -58,7 +59,7 @@ export default function ProductDetailPage() {
   const handlePurchase = async () => {
     if (!user) {
       alert('ログインが必要です');
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

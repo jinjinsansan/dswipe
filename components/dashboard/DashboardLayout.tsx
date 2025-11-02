@@ -9,6 +9,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { pointsApi } from '@/lib/api';
+import { redirectToLogin } from '@/lib/navigation';
 import {
   type DashboardNavGroupKey,
   getDashboardNavLinks,
@@ -78,7 +79,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (requireAuth && isInitialized && !isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
     }
   }, [requireAuth, isInitialized, isAuthenticated, router]);
 

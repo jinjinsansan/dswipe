@@ -2,12 +2,16 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import AuthShell from '@/components/auth/AuthShell';
 
 const GoogleSignInButton = dynamic(() => import('@/components/auth/GoogleSignInButton'), { ssr: false });
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams?.get('redirect') ?? undefined;
+
   return (
     <AuthShell
       cardTitle="ログイン"
@@ -32,7 +36,7 @@ export default function LoginPage() {
         ],
       }}
     >
-      <GoogleSignInButton />
+      <GoogleSignInButton redirectPath={redirectParam} />
     </AuthShell>
   );
 }

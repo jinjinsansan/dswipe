@@ -18,6 +18,7 @@ import {
 import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import DSwipeLogo from '@/components/DSwipeLogo';
+import { redirectToLogin } from '@/lib/navigation';
 
 export default function SimpleAnalyticsPage() {
   const params = useParams();
@@ -33,7 +34,7 @@ export default function SimpleAnalyticsPage() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push('/login');
+      redirectToLogin(router);
     } catch (err) {
       console.error('Logout failed:', err);
     }
@@ -43,7 +44,7 @@ export default function SimpleAnalyticsPage() {
     if (!isInitialized) return;
     
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

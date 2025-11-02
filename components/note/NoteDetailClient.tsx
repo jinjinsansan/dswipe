@@ -16,6 +16,7 @@ import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
+import { redirectToLogin } from '@/lib/navigation';
 
 interface NoteDetailClientProps {
   slug: string;
@@ -120,7 +121,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const handlePurchase = async () => {
     if (!note) return;
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
     const isPointsPurchase = selectedMethod === 'points';

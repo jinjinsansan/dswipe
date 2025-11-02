@@ -25,6 +25,7 @@ export default function GoogleSignInButton({
   const [isLoading, setIsLoading] = useState(false);
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const isConfigured = Boolean(googleClientId && googleClientId.trim().length > 0);
+  const safeRedirectPath = redirectPath && redirectPath.startsWith('/') ? redirectPath : '/dashboard';
 
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) {
@@ -45,7 +46,7 @@ export default function GoogleSignInButton({
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
 
-      router.push(redirectPath);
+      router.push(safeRedirectPath);
     } catch (err: unknown) {
       console.error('❌ Google認証エラー:', err);
       console.error('詳細:', {

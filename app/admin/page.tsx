@@ -20,6 +20,7 @@ import AdminShell, { AdminPageTab } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getCategoryLabel } from '@/lib/noteCategories';
+import { redirectToLogin } from '@/lib/navigation';
 import type {
   AdminMarketplaceLP,
   AdminPointAnalytics,
@@ -277,7 +278,7 @@ export default function AdminPanelPage() {
     if (!isInitialized) return;
 
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { analyticsApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { redirectToLogin } from '@/lib/navigation';
 
 export default function SimpleAnalyticsPage() {
   const params = useParams();
@@ -20,7 +21,7 @@ export default function SimpleAnalyticsPage() {
     if (!isInitialized) return;
     
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 

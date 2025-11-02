@@ -10,6 +10,7 @@ import {
   SparklesIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
+import { redirectToLogin } from '@/lib/navigation';
 
 interface ShareToUnlockButtonProps {
   noteId: string;
@@ -94,7 +95,7 @@ export default function ShareToUnlockButton({
 
   const handleShare = async () => {
     if (!isAuthenticated) {
-      router.push('/login');
+      redirectToLogin(router);
       return;
     }
 
