@@ -15,7 +15,7 @@ type SalonPublicClientProps = {
 export default function SalonPublicClient({ salonId, initialSalon }: SalonPublicClientProps) {
   const router = useRouter();
   const [salon, setSalon] = useState<SalonPublicDetail | null>(initialSalon);
-  const [isLoading, setIsLoading] = useState(!initialSalon);
+  const [_isLoading, setIsLoading] = useState(!initialSalon);
   const [error, setError] = useState<string | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoiningYen, setIsJoiningYen] = useState(false);
@@ -23,6 +23,24 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
 
   useEffect(() => {
     let mounted = true;
+
+    if (!salonId) {
+      setSalon(null);
+      setIsLoading(false);
+      setError("サロンIDが無効です");
+      return () => {
+        mounted = false;
+      };
+    }
+
+    if (initialSalon && initialSalon.id === salonId) {
+      setSalon(initialSalon);
+      setIsLoading(false);
+      setError(null);
+      return () => {
+        mounted = false;
+      };
+    }
 
     const load = async () => {
       try {
@@ -47,7 +65,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     return () => {
       mounted = false;
     };
-  }, [salonId]);
+  }, [salonId, initialSalon]);
 
   const priceLabelPoints = useMemo(() => {
     const points = salon?.plan?.points ?? 0;

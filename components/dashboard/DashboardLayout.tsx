@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -42,8 +42,7 @@ export default function DashboardLayout({
     pointBalance,
     setPointBalance,
   } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(false); // ページ遷移時はローディングを表示しない
-  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+  const lastFetchedUserRef = useRef<string | null>(null);
 
   const navLinks = useMemo(
     () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
@@ -84,32 +83,37 @@ export default function DashboardLayout({
   }, [requireAuth, isInitialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (!isInitialized || !isAuthenticated || !user) {
+    if (!isInitialized || !isAuthenticated || !user?.id) {
+      lastFetchedUserRef.current = null;
       return;
     }
 
-    // ポイント残高を取得（バックグラウンドで更新、ローディングは表示しない）
+    if (lastFetchedUserRef.current === user.id) {
+      return;
+    }
+
+    lastFetchedUserRef.current = user.id;
     let isActive = true;
 
     const fetchPointBalance = async () => {
       try {
         const response = await pointsApi.getBalance();
         if (!isActive) return;
-        setPointBalance(response.data.point_balance ?? 0);
+        const balance = Number(response.data.point_balance);
+        if (Number.isFinite(balance)) {
+          setPointBalance(balance);
+        }
       } catch (error) {
         console.error('Failed to fetch point balance:', error);
       }
     };
 
-    // 初回またはポイント残高が0の場合のみ取得
-    if (pointBalance === 0) {
-      fetchPointBalance();
-    }
+    fetchPointBalance();
 
     return () => {
       isActive = false;
     };
-  }, [isInitialized, isAuthenticated, user, pointBalance, setPointBalance]);
+  }, [isInitialized, isAuthenticated, user?.id, setPointBalance]);
 
   const handleLogout = () => {
     logout();
@@ -261,7 +265,7 @@ export default function DashboardLayout({
           pointBalance={pointBalance}
           pageTitle={resolvedPageTitle}
           pageSubtitle={resolvedSubtitle}
-          isBalanceLoading={isBalanceLoading}
+          isBalanceLoading={false}
           requireAuth={requireAuth}
           onLogout={handleLogout}
         />
