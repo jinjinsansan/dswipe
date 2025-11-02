@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ComponentProps, type ComponentType } from "react";
 import Link from "next/link";
 import {
   ArrowPathIcon,
@@ -13,6 +13,9 @@ import {
   WalletIcon,
   CalendarIcon,
   BanknotesIcon,
+  ShieldCheckIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -45,6 +48,84 @@ const formatDateTime = (value?: string | null) => {
 const formatPoints = (points: number) => `${new Intl.NumberFormat("ja-JP").format(points)} pt`;
 const formatYen = (amount?: number | null) => `${new Intl.NumberFormat("ja-JP").format(amount ?? 0)} 円`;
 const formatUsd = (amount?: number | null) => (amount === undefined || amount === null ? "-" : `${amount.toFixed(2)} USD`);
+const formatShortDate = (value?: string | Date | null) => {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+};
+
+type ClearingStateConfig = {
+  label: string;
+  description: string;
+  badgeClass: string;
+  icon: ComponentType<ComponentProps<"svg">>;
+};
+
+const CLEARING_STATE_DISPLAY: Record<string, ClearingStateConfig> = {
+  pending: {
+    label: "決済待機中",
+    description: "カード会社での決済確定を待っています。",
+    badgeClass: "bg-slate-100 text-slate-600",
+    icon: ClockIcon,
+  },
+  clearing: {
+    label: "決済確認中",
+    description: "チャージバック確認期間中のため支払いを保留しています。",
+    badgeClass: "bg-amber-100 text-amber-700",
+    icon: ClockIcon,
+  },
+  ready: {
+    label: "支払い対象",
+    description: "次回の支払いサイクルで送金処理されます。",
+    badgeClass: "bg-emerald-100 text-emerald-600",
+    icon: ShieldCheckIcon,
+  },
+  dispute: {
+    label: "調査中",
+    description: "カード会社による調査中のため一時停止しています。",
+    badgeClass: "bg-rose-100 text-rose-600",
+    icon: ExclamationTriangleIcon,
+  },
+  released: {
+    label: "送金完了",
+    description: "送金済みの決済です。",
+    badgeClass: "bg-sky-100 text-sky-600",
+    icon: ShieldCheckIcon,
+  },
+  cancelled: {
+    label: "キャンセル済み",
+    description: "返金またはキャンセルされた決済です。",
+    badgeClass: "bg-slate-200 text-slate-600",
+    icon: ExclamationTriangleIcon,
+  },
+};
+
+const resolveClearingState = (sale: SalesProductRecord | SalesNoteRecord) => {
+  if (sale.dispute_flag) {
+    return "dispute";
+  }
+  const state = (sale.clearing_state || "").toLowerCase();
+  if (state === "ready_to_payout") {
+    return "ready";
+  }
+  if (!state) {
+    return sale.ready_for_payout_at ? "ready" : "pending";
+  }
+  return state;
+};
+
+const riskBadgeClass = (riskLevel?: string | null) => {
+  if (!riskLevel) return "bg-slate-100 text-slate-600";
+  const level = riskLevel.toLowerCase();
+  if (level === "high") return "bg-rose-100 text-rose-600";
+  if (level === "medium") return "bg-amber-100 text-amber-700";
+  return "bg-emerald-100 text-emerald-600";
+};
 
 const getLpLink = (record: SalesProductRecord) => (record.lp_slug ? `/view/${record.lp_slug}` : null);
 const getNoteLink = (record: SalesNoteRecord) => (record.note_slug ? `/notes/${record.note_slug}` : null);
@@ -161,6 +242,78 @@ export default function SalesHistoryClient() {
     ];
   }, [history]);
 
+  const renderClearingStatus = useCallback(
+    (sale: SalesProductRecord | SalesNoteRecord) => {
+      if (sale.payment_method !== "yen") {
+        return null;
+      }
+      const stateKey = resolveClearingState(sale);
+      const config = CLEARING_STATE_DISPLAY[stateKey] ?? CLEARING_STATE_DISPLAY.pending;
+      const Icon = config.icon;
+      const riskLevel = sale.risk_level ?? undefined;
+      const readyAt = formatShortDate(sale.ready_for_payout_at);
+      const holdUntil = formatShortDate(sale.chargeback_hold_until);
+      const reserve = sale.reserve_amount_usd && sale.reserve_amount_usd > 0 ? `${sale.reserve_amount_usd.toFixed(2)} USD` : null;
+      const riskScore = sale.risk_score !== null && sale.risk_score !== undefined ? sale.risk_score : null;
+      const riskFactors = sale.risk_factors && typeof sale.risk_factors === "object" ? Object.keys(sale.risk_factors) : [];
+
+      return (
+        <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${config.badgeClass}`}>
+              <Icon className="h-4 w-4" aria-hidden="true" />
+              {config.label}
+            </span>
+            {riskLevel && (
+              <span
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${riskBadgeClass(riskLevel)}`}
+              >
+                リスク {riskLevel.toUpperCase()}
+                {riskScore !== null && <span className="ml-1 text-[11px] font-normal">(スコア {riskScore})</span>}
+              </span>
+            )}
+          </div>
+          <p className="mt-2 text-xs text-slate-600">{config.description}</p>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-500">
+            {readyAt && (
+              <span>
+                支払い目安: <span className="font-semibold text-slate-700">{readyAt}</span>
+              </span>
+            )}
+            {holdUntil && holdUntil !== readyAt && (
+              <span>
+                ホールド期限: <span className="font-semibold text-slate-700">{holdUntil}</span>
+              </span>
+            )}
+            {reserve && (
+              <span>
+                留保額: <span className="font-semibold text-slate-700">{reserve}</span>
+              </span>
+            )}
+          </div>
+          {riskFactors.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {riskFactors.map((factorKey) => (
+                <span
+                  key={factorKey}
+                  className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600"
+                >
+                  {factorKey.replace(/_/g, " ")}
+                </span>
+              ))}
+            </div>
+          )}
+          {sale.dispute_flag && sale.dispute_status && (
+            <p className="mt-2 text-xs font-semibold text-rose-600">
+              カード会社調査ステータス: {sale.dispute_status}
+            </p>
+          )}
+        </div>
+      );
+    },
+    []
+  );
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -190,6 +343,16 @@ export default function SalesHistoryClient() {
             <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
             再取得
           </button>
+        </div>
+
+        <div className="rounded-3xl border border-amber-200 bg-amber-50 px-5 py-4 text-xs leading-relaxed text-amber-800">
+          <p className="font-semibold">クレジット決済の支払いタイミング</p>
+          <p className="mt-1">
+            決済完了後はカード会社のチャージバック確認期間として最大45日間「決済確認中」となります。リスクスコアが高い取引は安全のため一部金額を留保し、調査が完了次第に送金対象へ切り替わります。
+          </p>
+          <p className="mt-1">
+            支払い状況・留保額・ホールド期限はそれぞれの決済カード内で確認できます。調査中の決済についてご不明点がある場合はサポート窓口までお問い合わせください。
+          </p>
         </div>
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -438,7 +601,7 @@ export default function SalesHistoryClient() {
                     key={sale.sale_id}
                     className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-2">
                       <p className="text-sm font-semibold text-slate-900">{sale.product_title ?? "名称未設定の商品"}</p>
                       <p className="text-xs text-slate-500">
                         購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}
@@ -454,6 +617,7 @@ export default function SalesHistoryClient() {
                         </span>
                       </div>
                       <p className="text-xs text-slate-400">{formatDateTime(sale.purchased_at)}</p>
+                      {renderClearingStatus(sale)}
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>{amountDisplay}</span>
@@ -502,7 +666,7 @@ export default function SalesHistoryClient() {
                     key={sale.sale_id}
                     className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-2">
                       <p className="text-sm font-semibold text-slate-900">{sale.note_title ?? "タイトル未設定のNOTE"}</p>
                       <p className="text-xs text-slate-500">
                         購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}
@@ -517,6 +681,7 @@ export default function SalesHistoryClient() {
                         </span>
                       </div>
                       <p className="text-xs text-slate-400">{formatDateTime(sale.purchased_at)}</p>
+                      {renderClearingStatus(sale)}
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>{amountDisplay}</span>

@@ -69,6 +69,7 @@ import type {
   AdminPayoutStatusUpdatePayload,
   AdminPayoutTxRecordPayload,
   AdminPayoutEventPayload,
+  AdminRiskOrderListResponse,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -413,6 +414,7 @@ export const adminPayoutApi = {
   recordTransaction: (payoutId: string, payload: AdminPayoutTxRecordPayload) =>
     api.post<PayoutLedgerEntry>(`/admin/payouts/${payoutId}/transaction`, payload),
   addEvent: (payoutId: string, payload: AdminPayoutEventPayload) => api.post(`/admin/payouts/${payoutId}/events`, payload),
+  listRiskOrders: (params?: { limit?: number }) => api.get<AdminRiskOrderListResponse>('/admin/payouts/risk', { params }),
 };
 
 export const salonFeedApi = {

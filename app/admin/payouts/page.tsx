@@ -17,6 +17,8 @@ import type {
   AdminPayoutGeneratePayload,
   AdminPayoutListItem,
   AdminPayoutListResponse,
+  AdminRiskOrder,
+  AdminRiskOrderListResponse,
   AdminPayoutStatusUpdatePayload,
   AdminPayoutTxRecordPayload,
   PayoutLedgerEntry,
@@ -47,12 +49,33 @@ const formatDateTime = (value?: string | null) => {
 };
 
 const formatUsd = (value?: number | null) => (value === undefined || value === null ? "-" : `${value.toFixed(2)} USD`);
+const formatYen = (value?: number | null) => (value === undefined || value === null ? "-" : `${value.toLocaleString()} 円`);
+
+const riskLevelBadge = (level?: string | null) => {
+  if (!level) return "bg-slate-100 text-slate-600";
+  const normalized = level.toLowerCase();
+  if (normalized === "high") return "bg-rose-100 text-rose-600";
+  if (normalized === "medium") return "bg-amber-100 text-amber-700";
+  return "bg-emerald-100 text-emerald-600";
+};
+
+const clearingBadge = (state?: string | null) => {
+  if (!state) return "bg-slate-100 text-slate-600";
+  const normalized = state.toLowerCase();
+  if (normalized === "dispute") return "bg-rose-100 text-rose-600";
+  if (normalized === "clearing") return "bg-amber-100 text-amber-700";
+  if (normalized === "ready") return "bg-emerald-100 text-emerald-600";
+  if (normalized === "released") return "bg-sky-100 text-sky-600";
+  return "bg-slate-100 text-slate-600";
+};
 
 export default function AdminPayoutsPage() {
   const router = useRouter();
   const { isAdmin, isAuthenticated, isInitialized } = useAuthStore();
   const [list, setList] = useState<AdminPayoutListItem[]>([]);
   const [total, setTotal] = useState(0);
+  const [riskOrders, setRiskOrders] = useState<AdminRiskOrder[]>([]);
+  const [riskTotal, setRiskTotal] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<PayoutLedgerEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,14 +94,22 @@ export default function AdminPayoutsPage() {
   const fetchList = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await adminPayoutApi.list({ status: filters.status, seller_query: filters.seller_query, limit: 100 });
+      const [response, riskResponse] = await Promise.all([
+        adminPayoutApi.list({ status: filters.status, seller_query: filters.seller_query, limit: 100 }),
+        adminPayoutApi.listRiskOrders({ limit: 100 }),
+      ]);
       const payload = response.data as AdminPayoutListResponse;
+      const riskPayload = riskResponse.data as AdminRiskOrderListResponse;
       setList(payload.data);
       setTotal(payload.total);
+      setRiskOrders(riskPayload.data);
+      setRiskTotal(riskPayload.total);
     } catch (err) {
       console.error("Failed to load payout list", err);
       setList([]);
       setTotal(0);
+      setRiskOrders([]);
+      setRiskTotal(0);
     } finally {
       setIsLoading(false);
     }
@@ -223,6 +254,75 @@ export default function AdminPayoutsPage() {
     );
   }, [fetchDetail, isLoading, list, selectedId]);
 
+  const riskContent = useMemo(() => {
+    if (isLoading) {
+      return <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-center text-sm text-amber-700">審査対象の決済を確認中です…</p>;
+    }
+    if (riskOrders.length === 0) {
+      return <p className="rounded-xl border border-dashed border-amber-200 bg-amber-50 px-4 py-6 text-center text-sm text-amber-700">現在、審査中の決済はありません。</p>;
+    }
+    return (
+      <ul className="space-y-3">
+        {riskOrders.map((order) => {
+          const metadata = order.metadata ?? {};
+          const rawRiskSnapshot =
+            metadata && typeof metadata === "object" && "risk_snapshot" in metadata
+              ? (metadata as Record<string, unknown>)["risk_snapshot"]
+              : null;
+          const riskSnapshot = rawRiskSnapshot && typeof rawRiskSnapshot === "object" ? (rawRiskSnapshot as Record<string, unknown>) : null;
+          const rawFactors = riskSnapshot && "factors" in riskSnapshot ? (riskSnapshot["factors"] as unknown) : null;
+          const factorKeys = rawFactors && typeof rawFactors === "object" ? Object.keys(rawFactors as Record<string, unknown>) : [];
+          return (
+            <li key={order.order_id} className="rounded-2xl border border-amber-200 bg-amber-50/60 px-4 py-3 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">{order.seller_username ?? order.seller_id}</p>
+                  <p className="text-xs text-slate-600">
+                    オーダーID: {order.order_id}
+                    {order.buyer_username ? ` ・ 購入者 @${order.buyer_username}` : ""}
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-emerald-600">{formatYen(order.amount_jpy)}</span>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 font-semibold uppercase ${riskLevelBadge(order.risk_level)}`}>
+                  リスク {order.risk_level ? order.risk_level.toUpperCase() : "未評価"}
+                  {order.risk_score !== null && order.risk_score !== undefined ? ` (${order.risk_score})` : ""}
+                </span>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 font-semibold uppercase ${clearingBadge(order.clearing_state)}`}>
+                  {order.clearing_state ?? "未設定"}
+                </span>
+                {order.dispute_flag ? (
+                  <span className="inline-flex items-center rounded-full bg-rose-100 px-2.5 py-0.5 font-semibold uppercase text-rose-600">
+                    調査中{order.dispute_status ? ` (${order.dispute_status})` : ""}
+                  </span>
+                ) : null}
+              </div>
+              <div className="mt-2 grid gap-2 text-xs text-slate-600 sm:grid-cols-2">
+                <span>完了日時: {formatDateTime(order.completed_at)}</span>
+                <span>支払い目安: {formatDateTime(order.ready_for_payout_at)}</span>
+                <span>ホールド期限: {formatDateTime(order.chargeback_hold_until)}</span>
+                <span>登録日: {formatDateTime(order.created_at)}</span>
+              </div>
+              {order.reserve_amount_usd ? (
+                <p className="mt-2 text-xs text-slate-600">留保額: {order.reserve_amount_usd.toFixed(2)} USD</p>
+              ) : null}
+              {factorKeys.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {factorKeys.map((key) => (
+                    <span key={key} className="inline-flex items-center rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-slate-600">
+                      {key.replace(/_/g, " ")}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }, [isLoading, riskOrders]);
+
   return (
     <AdminShell pageTitle="支払い管理" pageSubtitle="one.lat決済後のUSDT送金キューを管理します">
       <div className="flex flex-col gap-6">
@@ -272,6 +372,17 @@ export default function AdminPayoutsPage() {
             </button>
           </div>
         </div>
+
+        <section className="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-amber-800">
+              <ChatBubbleBottomCenterTextIcon className="h-5 w-5" aria-hidden="true" />
+              審査中の決済 ({riskTotal.toLocaleString()} 件)
+            </div>
+            <p className="text-xs text-amber-800/80">チャージバック懸念がある決済はここで確認し、送金前にリスクを判断してください。</p>
+          </div>
+          <div className="mt-4">{riskContent}</div>
+        </section>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
           <div className="space-y-3">

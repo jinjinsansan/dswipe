@@ -61,6 +61,8 @@ export type {
   PayoutEvent,
   AdminPayoutListResponse,
   AdminPayoutListItem,
+  AdminRiskOrder,
+  AdminRiskOrderListResponse,
   PayoutSettingsUpsertPayload,
   AdminPayoutGeneratePayload,
   AdminPayoutStatusUpdatePayload,

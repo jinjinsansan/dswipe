@@ -734,6 +734,15 @@ export interface SalesProductRecord {
   purchased_at: string;
   lp_slug?: string | null;
   description?: string | null;
+  clearing_state?: string | null;
+  risk_level?: string | null;
+  risk_score?: number | null;
+  risk_factors?: Record<string, unknown> | null;
+  ready_for_payout_at?: string | null;
+  chargeback_hold_until?: string | null;
+  dispute_flag?: boolean;
+  dispute_status?: string | null;
+  reserve_amount_usd?: number | null;
 }
 
 export interface SalesNoteRecord {
@@ -748,6 +757,15 @@ export interface SalesNoteRecord {
   points_spent: number;
   amount_jpy?: number | null;
   purchased_at: string;
+  clearing_state?: string | null;
+  risk_level?: string | null;
+  risk_score?: number | null;
+  risk_factors?: Record<string, unknown> | null;
+  ready_for_payout_at?: string | null;
+  chargeback_hold_until?: string | null;
+  dispute_flag?: boolean;
+  dispute_status?: string | null;
+  reserve_amount_usd?: number | null;
 }
 
 export interface SalesSalonRecord {
@@ -889,6 +907,33 @@ export interface AdminPayoutListItem {
 export interface AdminPayoutListResponse {
   total: number;
   data: AdminPayoutListItem[];
+}
+
+export interface AdminRiskOrder {
+  order_id: string;
+  seller_id: string;
+  seller_username?: string | null;
+  seller_email?: string | null;
+  buyer_id?: string | null;
+  buyer_username?: string | null;
+  amount_jpy: number;
+  currency: string;
+  risk_level?: string | null;
+  risk_score?: number | null;
+  clearing_state?: string | null;
+  dispute_flag: boolean;
+  dispute_status?: string | null;
+  ready_for_payout_at?: string | null;
+  chargeback_hold_until?: string | null;
+  reserve_amount_usd?: number | null;
+  created_at: string;
+  completed_at?: string | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface AdminRiskOrderListResponse {
+  total: number;
+  data: AdminRiskOrder[];
 }
 
 export interface PayoutSettingsUpsertPayload {
