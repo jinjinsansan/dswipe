@@ -23,6 +23,43 @@ import {
 } from '@/components/dashboard/navLinks';
 import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 
+const KNOWN_SITE_ORIGINS = [
+  typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined,
+  typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_FRONTEND_URL : undefined,
+  typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_APP_URL : undefined,
+].filter((value): value is string => Boolean(value));
+
+const isExternalHref = (href: string): boolean => {
+  if (!href || !href.startsWith('http')) {
+    return false;
+  }
+
+  try {
+    const url = new URL(href);
+
+    if (typeof window !== 'undefined' && window.location?.host) {
+      if (url.host === window.location.host) {
+        return false;
+      }
+    }
+
+    for (const origin of KNOWN_SITE_ORIGINS) {
+      try {
+        const originUrl = new URL(origin);
+        if (originUrl.host === url.host) {
+          return false;
+        }
+      } catch (error) {
+        // 解析失敗時はスキップ
+      }
+    }
+
+    return true;
+  } catch (error) {
+    return true;
+  }
+};
+
 const MOBILE_LABEL_MAP: Record<string, string> = {
   '/': 'ホーム',
   'https://d-swipe.com/': 'ホーム',
@@ -570,7 +607,7 @@ export default function DashboardHeader({
                           }
 
                           if (item.kind === 'customLink') {
-                            const isExternal = item.external ?? item.href.startsWith('http');
+                            const isExternal = item.external ?? isExternalHref(item.href);
                             const isActive = !isExternal && pathname === item.href;
                             const groupKey = item.groupKey;
                             const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
