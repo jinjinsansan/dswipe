@@ -150,67 +150,78 @@ export default function NotesMarketplacePage() {
             </div>
           </section>
         ) : (
-          <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {filteredNotes.map((note) => (
-              <Link
-                key={note.id}
-                href={`/notes/${note.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                  {note.cover_image_url ? (
-                    <Image
-                      src={note.cover_image_url}
-                      alt={note.title}
-                      fill
-                      className="object-cover transition duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <DefaultCover />
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col gap-3 px-4 py-5">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
-                        note.is_paid
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-emerald-100 text-emerald-700'
-                      }`}
-                    >
-                      {note.is_paid ? '有料' : '無料'}
-                    </span>
-                    <span className="text-xs text-slate-400">
-                      {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
-                    </span>
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
+            {filteredNotes.map((note) => {
+              const primaryCategory = note.categories?.[0];
+              const categoryLabel = primaryCategory ? getCategoryLabel(primaryCategory) : null;
+              const dateLabel = note.published_at
+                ? new Date(note.published_at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })
+                : '未公開';
+              const priceLabel = note.is_paid
+                ? note.allow_point_purchase
+                  ? `${note.price_points.toLocaleString()} pt`
+                  : note.allow_jpy_purchase && note.price_jpy
+                    ? `${note.price_jpy.toLocaleString()} 円`
+                    : '有料'
+                : 'FREE';
+
+              return (
+                <Link
+                  key={note.id}
+                  href={`/notes/${note.slug}`}
+                  className="group flex items-stretch gap-3 rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:overflow-hidden md:gap-0"
+                >
+                  <div className="relative h-20 w-28 flex-none overflow-hidden rounded-lg bg-slate-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
+                    {note.cover_image_url ? (
+                      <Image
+                        src={note.cover_image_url}
+                        alt={note.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <DefaultCover />
+                    )}
                   </div>
-                  <h3 className="line-clamp-2 text-base font-semibold text-slate-900">{note.title}</h3>
-                  {note.excerpt ? (
-                    <p className="line-clamp-2 text-sm text-slate-600">{note.excerpt}</p>
-                  ) : (
-                    <p className="text-sm text-slate-500">概要未設定の記事です。</p>
-                  )}
-                  {Array.isArray(note.categories) && note.categories.length > 0 ? (
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {note.categories.map((category) => (
+                  <div className="flex flex-1 flex-col justify-between gap-2 px-3 py-3 md:px-4 md:py-4">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                         <span
-                          key={`${note.id}-${category}`}
-                          className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600"
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide md:text-[11px] ${
+                            note.is_paid
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-emerald-100 text-emerald-700'
+                          }`}
                         >
-                          #{getCategoryLabel(category)}
+                          {note.is_paid ? '有料' : '無料'}
                         </span>
-                      ))}
+                        {categoryLabel ? (
+                          <span className="text-[10px] font-medium text-slate-400 md:text-[11px]">
+                            #{categoryLabel}
+                            {note.categories.length > 1 ? ' 他' : ''}
+                          </span>
+                        ) : null}
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 md:text-[11px]">
+                          {dateLabel}
+                        </span>
+                      </div>
+                      <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">{note.title}</h3>
+                      {note.excerpt ? (
+                        <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">{note.excerpt}</p>
+                      ) : (
+                        <p className="text-xs text-slate-500 md:text-sm">概要未設定の記事です。</p>
+                      )}
                     </div>
-                  ) : null}
-                  <div className="mt-auto flex items-center justify-between text-xs text-slate-500">
-                    <span>@{note.author_username ?? 'unknown'}</span>
-                    <span>
-                      {note.is_paid ? `${note.price_points.toLocaleString()} P` : 'FREE'}
-                    </span>
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 md:text-xs">
+                      <span className="font-medium text-slate-500">@{note.author_username ?? 'unknown'}</span>
+                      <span className={`${note.is_paid ? 'text-amber-600' : 'text-emerald-600'} font-semibold`}>
+                        {priceLabel}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </section>
         )}
       </main>
