@@ -2315,6 +2315,48 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       buttonColor: '#2563EB',
     } as MediaSpotlightBlockContent,
   },
+  {
+    id: 'top-media-spotlight-instructor',
+    templateId: 'top-media-spotlight-1',
+    name: '講師紹介（スポットライト）',
+    category: 'trust',
+    description: '講師や代表者の写真と経歴を強調できるプロフィール向けレイアウト。',
+    defaultContent: {
+      tagline: 'Lead Instructor',
+      title: '代表講師・水野海斗',
+      subtitle: '年商3億円を突破したプロダクトローンチ専門家。AIオートメーションを武器に中小企業のデジタルセールスを最適化。',
+      caption: 'Media: Forbes JAPAN / TechCrunch / 日経クロストレンド',
+      buttonText: '実績とインタビューを読む',
+      buttonUrl: '/profile/mizuno',
+      imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
+      imageAlt: '講師のプロフィール写真',
+      backgroundColor: '#0F172A',
+      textColor: '#F8FAFC',
+      accentColor: '#38BDF8',
+      buttonColor: '#38BDF8',
+    } as MediaSpotlightBlockContent,
+  },
+  {
+    id: 'top-testimonials-instructor',
+    templateId: 'top-testimonials-1',
+    name: 'プロフィール（シングルカード）',
+    category: 'trust',
+    description: '講師プロフィールや自己紹介用に最適化した単カードの信頼獲得ブロック。',
+    defaultContent: {
+      title: '講師紹介',
+      subtitle: 'AIローンチプロデューサーとして累計227件のローンチに携わり、平均CVR 11.8%を記録。',
+      backgroundColor: '#F9FAFB',
+      textColor: '#0F172A',
+      accentColor: '#2563EB',
+      testimonials: [
+        {
+          quote: '「成果を出せる人材を量産する」ことをミッションに、売上設計からチーム構築まで伴走型でサポート。最新の生成AIスタックを用い、ファネル制作を半自動化します。',
+          name: '水野 海斗',
+          role: 'AIローンチプロデューサー / D-swipe監修者',
+        },
+      ],
+    } as TestimonialsBlockContent,
+  },
 ];
 
 export const INFO_PRODUCT_BLOCKS: TemplateBlock[] = [];

@@ -106,6 +106,23 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+const buildQueryString = (params?: Record<string, unknown>): string => {
+  if (!params) return '';
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item === undefined || item === null) return;
+        searchParams.append(key, String(item));
+      });
+    } else {
+      searchParams.append(key, String(value));
+    }
+  });
+  return searchParams.toString();
+};
+
 type CtaType = 'link' | 'form' | 'product' | 'newsletter' | 'line';
 type CtaPosition = 'top' | 'bottom' | 'floating';
 
@@ -207,6 +224,9 @@ export const lpApi = {
   
   publish: (id: string) =>
     api.post(`/lp/${id}/publish`),
+
+  unpublish: (id: string) =>
+    api.post(`/lp/${id}/unpublish`),
   
   // ステップ管理
   addStep: (lpId: string, data: { step_order: number; image_url: string; block_type?: string; content_data?: Record<string, unknown> }) =>
@@ -764,7 +784,10 @@ export const publicApi = {
     }),
 
   listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[]; author_username?: string }) =>
-    axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, { params }),
+    axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, {
+      params,
+      paramsSerializer: (parameters) => buildQueryString(parameters as Record<string, unknown> | undefined),
+    }),
 
   getNote: (slug: string, options?: { accessToken?: string }) =>
     axios.get<PublicNoteDetail>(`${API_URL}/notes/public/${slug}`, {

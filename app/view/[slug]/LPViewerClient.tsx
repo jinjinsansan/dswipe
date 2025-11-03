@@ -474,6 +474,70 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
     }
   };
 
+  useEffect(() => {
+    const swiperInstance = swiperRef.current;
+    if (!swiperInstance) return;
+
+    const restoreTouchMove = () => {
+      const instance = swiperRef.current;
+      if (instance) {
+        instance.allowTouchMove = true;
+      }
+    };
+
+    const updateAllowance = (element: HTMLElement) => {
+      const instance = swiperRef.current;
+      if (!instance) return;
+
+      const isScrollable = element.scrollHeight - element.clientHeight > 2;
+      if (!isScrollable) {
+        instance.allowTouchMove = true;
+        return;
+      }
+
+      const atTop = element.scrollTop <= 0;
+      const atBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 2;
+      instance.allowTouchMove = atTop || atBottom;
+    };
+
+    const scrollContainers = Array.from(swiperInstance.slides || [])
+      .map((slide) => slide.querySelector<HTMLElement>('.lp-slide-clean-inner'))
+      .filter((node): node is HTMLElement => Boolean(node));
+
+    if (scrollContainers.length === 0) {
+      return;
+    }
+
+    const handleTouchStart = (event: Event) => {
+      updateAllowance(event.currentTarget as HTMLElement);
+    };
+
+    const handleScroll = (event: Event) => {
+      updateAllowance(event.currentTarget as HTMLElement);
+    };
+
+    scrollContainers.forEach((element) => {
+      element.addEventListener('touchstart', handleTouchStart, { passive: true });
+      element.addEventListener('touchmove', handleScroll, { passive: true });
+      element.addEventListener('scroll', handleScroll, { passive: true });
+      element.addEventListener('touchend', restoreTouchMove, { passive: true });
+      element.addEventListener('touchcancel', restoreTouchMove, { passive: true });
+      element.addEventListener('mouseleave', restoreTouchMove);
+    });
+
+    return () => {
+      scrollContainers.forEach((element) => {
+        element.removeEventListener('touchstart', handleTouchStart);
+        element.removeEventListener('touchmove', handleScroll);
+        element.removeEventListener('scroll', handleScroll);
+        element.removeEventListener('touchend', restoreTouchMove);
+        element.removeEventListener('touchcancel', restoreTouchMove);
+        element.removeEventListener('mouseleave', restoreTouchMove);
+      });
+      restoreTouchMove();
+    };
+  }, [lp?.steps?.length, lp?.swipe_direction, isLoading]);
+
   const handleEmailSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
@@ -564,13 +628,13 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}
           speed={350}
-          touchRatio={1.8}
-          threshold={3}
+          touchRatio={0.9}
+          threshold={10}
           shortSwipes={true}
           longSwipes={true}
-          longSwipesRatio={0.25}
+          longSwipesRatio={0.45}
           resistance={true}
-          resistanceRatio={0.65}
+          resistanceRatio={0.8}
           touchStartPreventDefault={false}
           simulateTouch={true}
           followFinger={true}
@@ -598,11 +662,11 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
             },
           }}
           
-          mousewheel={{ 
-            releaseOnEdges: true, 
-            forceToAxis: true, 
-            sensitivity: 0.8,
-            thresholdDelta: 10,
+          mousewheel={{
+            releaseOnEdges: true,
+            forceToAxis: true,
+            sensitivity: 0.6,
+            thresholdDelta: 30,
           }}
           keyboard={{
             enabled: true,

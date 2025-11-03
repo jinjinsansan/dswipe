@@ -242,6 +242,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
   const content = block.content;
   const blockType = block.blockType as BlockType;
+  const baseFaqItems = Array.isArray((content as any).items) ? [...((content as any).items as Array<{ question: string; answer: string }>)] : [];
+  const faqItems = baseFaqItems.length > 0 ? baseFaqItems : [
+    { question: '質問内容を入力', answer: '回答内容を入力' },
+  ];
+  const guaranteeBullets = Array.isArray((content as any).bulletPoints)
+    ? [...((content as any).bulletPoints as string[])]
+    : ['保証の詳細を入力'];
   const supportsProductLink = PRODUCT_CTA_BLOCKS.includes(blockType);
   const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
   const isSalonLinked = Boolean(linkedSalon?.id) && supportsProductLink;
@@ -316,6 +323,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               onChange={(e) => onUpdateContent('tagline', e.target.value)}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タグラインを入力"
+            />
+          </div>
+        )}
+
+        {('eyebrow' in content) && (
+          <div>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              {blockType === 'top-inline-cta-1' ? 'タグライン（上部テキスト）' : 'アイキャッチテキスト'}
+            </label>
+            <input
+              type="text"
+              value={(content as any).eyebrow || ''}
+              onChange={(e) => onUpdateContent('eyebrow', e.target.value)}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="上部の小見出しを入力"
             />
           </div>
         )}
@@ -424,22 +446,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             />
           </div>
         )}
-
-        {('buttonUrl' in content) && (
-          <div>
-            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
-              ボタンリンク先URL
-            </label>
-            <input
-              type="text"
-              value={(content as any).buttonUrl || ''}
-              onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              placeholder="https://example.com"
-            />
-          </div>
-        )}
-
         {/* 特定商取引法ブロックの項目編集 */}
         {blockType === 'top-tokusho-1' && 'items' in content && Array.isArray((content as any).items) && (
           <div className="space-y-4">
@@ -571,17 +577,136 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
-            <input
-              type="text"
-              value={(content as any).secondaryButtonUrl || ''}
-              onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-              placeholder="セカンダリーボタンのURL"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={(content as any).secondaryButtonUrl || ''}
+                onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                placeholder="セカンダリーボタンのURL"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  onUpdateContent('secondaryButtonText', '');
+                  onUpdateContent('secondaryButtonUrl', '');
+                }}
+                className="px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100"
+              >
+                非表示
+              </button>
+            </div>
           </div>
         )}
 
         {renderColorSection()}
+
+        {blockType === 'top-faq-1' && (
+          <div className="space-y-4 pt-4 border-t border-slate-200">
+            <SectionHeader icon={InformationCircleIcon} label="FAQ項目" />
+            {faqItems.map((item, index) => (
+              <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500">Q{index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [...faqItems];
+                      next.splice(index, 1);
+                      onUpdateContent('items', next);
+                    }}
+                    className="text-xs text-red-500 hover:text-red-600"
+                    disabled={faqItems.length <= 1}
+                  >
+                    削除
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={item.question}
+                  onChange={(e) => {
+                    const next = [...faqItems];
+                    next[index] = { ...next[index], question: e.target.value };
+                    onUpdateContent('items', next);
+                  }}
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
+                  placeholder="質問文を入力"
+                />
+                <textarea
+                  value={item.answer}
+                  onChange={(e) => {
+                    const next = [...faqItems];
+                    next[index] = { ...next[index], answer: e.target.value };
+                    onUpdateContent('items', next);
+                  }}
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm resize-none"
+                  rows={3}
+                  placeholder="回答文を入力"
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => onUpdateContent('items', [...faqItems, { question: '', answer: '' }])}
+              className="w-full rounded-lg border border-dashed border-slate-300 py-2 text-sm text-slate-600 hover:bg-slate-100"
+            >
+              FAQを追加
+            </button>
+          </div>
+        )}
+
+        {blockType === 'top-guarantee-1' && (
+          <div className="space-y-4 pt-4 border-t border-slate-200">
+            <SectionHeader icon={InformationCircleIcon} label="保証コンテンツ" />
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">保証詳細</label>
+              <textarea
+                value={(content as any).guaranteeDetails || ''}
+                onChange={(e) => onUpdateContent('guaranteeDetails', e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
+                placeholder="保証内容を入力"
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-slate-700">保証項目</label>
+              {guaranteeBullets.map((point, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => {
+                      const next = [...guaranteeBullets];
+                      next[index] = e.target.value;
+                      onUpdateContent('bulletPoints', next);
+                    }}
+                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
+                    placeholder="保証項目を入力"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = [...guaranteeBullets];
+                      next.splice(index, 1);
+                      onUpdateContent('bulletPoints', next.length ? next : ['']);
+                    }}
+                    className="px-3 py-2 text-xs text-red-500 hover:text-red-600"
+                    disabled={guaranteeBullets.length <= 1}
+                  >
+                    削除
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => onUpdateContent('bulletPoints', [...guaranteeBullets, ''])}
+                className="w-full rounded-lg border border-dashed border-slate-300 py-2 text-sm text-slate-600 hover:bg-slate-100"
+              >
+                保証項目を追加
+              </button>
+            </div>
+          </div>
+        )}
 
         {('subText' in content) && (
           <div>

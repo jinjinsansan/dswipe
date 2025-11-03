@@ -38,6 +38,7 @@ interface DraggableBlockEditorProps {
   onSelectBlock?: (blockId: string) => void;
   selectedBlockId?: string;
   withinEditor?: boolean;
+  onMountBlock?: (blockId: string, element: HTMLElement | null) => void;
 }
 
 // ドラッグ可能なブロックアイテム
@@ -49,6 +50,7 @@ function SortableBlock({
   onDeleteBlock,
   onSelect,
   withinEditor,
+  onRegister,
 }: {
   block: Block;
   isEditing: boolean;
@@ -57,6 +59,7 @@ function SortableBlock({
   onDeleteBlock: () => void;
   onSelect: () => void;
   withinEditor?: boolean;
+  onRegister?: (element: HTMLElement | null) => void;
 }) {
   const {
     attributes,
@@ -73,9 +76,14 @@ function SortableBlock({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const registerRef = (node: HTMLElement | null) => {
+    setNodeRef(node);
+    onRegister?.(node);
+  };
+
   return (
     <div
-      ref={setNodeRef}
+      ref={registerRef}
       style={style}
       className={`relative group ${
         isEditing ? 'mb-2 lg:mb-4 cursor-move' : ''
@@ -124,7 +132,9 @@ function SortableBlock({
                   ? 'border-blue-500 ring-4 ring-blue-500/20'
                   : 'border-dashed border-gray-600 hover:border-blue-400'
               }`
-            : ''
+            : isSelected
+              ? 'ring-4 ring-blue-400/30 rounded-xl'
+              : ''
         }`}
       >
         {isEditing && (
@@ -145,6 +155,43 @@ function SortableBlock({
   );
 }
 
+function PreviewBlock({
+  block,
+  isSelected,
+  onSelect,
+  withinEditor,
+  onRegister,
+}: {
+  block: Block;
+  isSelected: boolean;
+  onSelect?: () => void;
+  withinEditor?: boolean;
+  onRegister?: (element: HTMLElement | null) => void;
+}) {
+  const handleRef = (element: HTMLElement | null) => {
+    onRegister?.(element);
+  };
+
+  return (
+    <div ref={handleRef} className="relative group">
+      <div
+        onClick={() => onSelect?.()}
+        className={`relative ${
+          isSelected ? 'ring-4 ring-blue-400/30 rounded-xl' : ''
+        }`}
+      >
+        <BlockRenderer
+          blockType={block.blockType}
+          content={block.content}
+          isEditing={false}
+          onEdit={() => {}}
+          withinEditor={withinEditor}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function DraggableBlockEditor({
   blocks,
   onUpdateBlock,
@@ -154,6 +201,7 @@ export default function DraggableBlockEditor({
   onSelectBlock,
   selectedBlockId,
   withinEditor,
+  onMountBlock,
 }: DraggableBlockEditorProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -167,6 +215,23 @@ export default function DraggableBlockEditor({
   );
 
   const sortedBlocks = [...blocks].sort((a, b) => a.order - b.order);
+
+  if (!isEditing) {
+    return (
+      <div className="space-y-0">
+        {sortedBlocks.map((block) => (
+          <PreviewBlock
+            key={block.id}
+            block={block}
+            isSelected={selectedBlockId === block.id}
+            onSelect={() => onSelectBlock?.(block.id)}
+            withinEditor={withinEditor}
+            onRegister={(element) => onMountBlock?.(block.id, element)}
+          />
+        ))}
+      </div>
+    );
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -222,6 +287,7 @@ export default function DraggableBlockEditor({
               onDeleteBlock={() => onDeleteBlock(block.id)}
               onSelect={() => onSelectBlock?.(block.id)}
               withinEditor={withinEditor}
+              onRegister={(element) => onMountBlock?.(block.id, element)}
             />
           ))}
         </div>

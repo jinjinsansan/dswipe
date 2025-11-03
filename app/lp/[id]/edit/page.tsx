@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
@@ -30,12 +30,27 @@ import {
 import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
 
+type BlockContentWithMeta = BlockContent & {
+  __templateId?: string;
+  __templateName?: string;
+};
+
 // ブロックタイプから日本語名を取得するヘルパー関数
-function getBlockDisplayName(blockType: BlockType): string {
-  // 全テンプレートから該当するブロックを検索
+function getBlockDisplayName(block: { blockType: BlockType; content: BlockContentWithMeta }): string {
   const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
-  const template = allTemplates.find(t => t.templateId === blockType);
-  return template?.name || blockType;
+  const metaName = (block.content as any)?.__templateName as string | undefined;
+  if (metaName) return metaName;
+
+  const metaId = (block.content as any)?.__templateId as string | undefined;
+  if (metaId) {
+    const variant = allTemplates.find((template) => template.id === metaId);
+    if (variant?.name) {
+      return variant.name;
+    }
+  }
+
+  const template = allTemplates.find((t) => t.templateId === block.blockType);
+  return template?.name || block.blockType;
 }
 
 // モバイル用タブ型定義
@@ -48,8 +63,15 @@ function generateId() {
 interface LPBlock {
   id: string;
   blockType: BlockType;
-  content: BlockContent;
+  content: BlockContentWithMeta;
   order: number;
+}
+
+interface ProductOption {
+  id: string;
+  title: string;
+  lpId?: string | null;
+  isAvailable: boolean;
 }
 
 export default function EditLPNewPage() {
@@ -88,6 +110,9 @@ export default function EditLPNewPage() {
   const [customThemeHex, setCustomThemeHex] = useState<string>('#DC2626');
   const [linkedProduct, setLinkedProduct] = useState<{ id: string; title?: string | null } | null>(null);
   const [linkedSalon, setLinkedSalon] = useState<{ id: string; title?: string | null; public_path?: string | null } | null>(null);
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+  const [isProductLinkUpdating, setIsProductLinkUpdating] = useState(false);
+  const [productLinkError, setProductLinkError] = useState<string | null>(null);
   
   // サイドバー可変幅の状態管理
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
@@ -95,6 +120,33 @@ export default function EditLPNewPage() {
   const [isLeftSidebarVisible, setIsLeftSidebarVisible] = useState(true);
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true);
   const [isResizing, setIsResizing] = useState<'left' | 'right' | null>(null);
+
+  const previewScrollRef = useRef<HTMLDivElement | null>(null);
+  const blockElementMap = useRef<Map<string, HTMLElement>>(new Map());
+
+  const registerBlockElement = useCallback((blockId: string, element: HTMLElement | null) => {
+    const registry = blockElementMap.current;
+    if (element) {
+      registry.set(blockId, element);
+    } else {
+      registry.delete(blockId);
+    }
+  }, []);
+
+  const scrollToBlock = useCallback((blockId: string) => {
+    const container = previewScrollRef.current;
+    const target = blockElementMap.current.get(blockId);
+    if (!container || !target) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const offset = targetRect.top - containerRect.top + container.scrollTop;
+
+    container.scrollTo({
+      top: Math.max(offset - container.clientHeight / 3, 0),
+      behavior: 'smooth',
+    });
+  }, []);
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -106,6 +158,11 @@ export default function EditLPNewPage() {
     }
     fetchLP();
   }, [isAuthenticated, isInitialized, lpId]);
+
+  useEffect(() => {
+    if (!selectedBlockId) return;
+    scrollToBlock(selectedBlockId);
+  }, [selectedBlockId, scrollToBlock]);
 
   // サイドバーの状態をlocalStorageから復元
   useEffect(() => {
@@ -152,6 +209,39 @@ export default function EditLPNewPage() {
       setLinkedProduct(null);
     }
   };
+
+  const fetchProductOptions = useCallback(async () => {
+    try {
+      const response = await productApi.list({ limit: 200 });
+      const rawPayload = response.data as unknown;
+      const extractProducts = (payload: unknown): any[] => {
+        if (!payload) return [];
+        if (Array.isArray(payload)) return payload;
+        if (typeof payload === 'object') {
+          const record = payload as Record<string, unknown>;
+          if (Array.isArray(record.data)) return record.data;
+          if (Array.isArray(record.products)) return record.products;
+        }
+        return [];
+      };
+
+      const items = extractProducts(rawPayload).map((product: any) => ({
+        id: String(product?.id ?? ''),
+        title: product?.title || '名称未設定の商品',
+        lpId: product?.lp_id ? String(product.lp_id) : product?.lp_id ?? null,
+        isAvailable: product?.is_available !== false,
+      })) as ProductOption[];
+
+      setProductOptions(items);
+    } catch (error) {
+      console.error('Failed to fetch product list:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    fetchProductOptions();
+  }, [isAuthenticated, fetchProductOptions]);
 
   const fetchLP = async () => {
     try {
@@ -251,9 +341,9 @@ export default function EditLPNewPage() {
       // ステップデータをブロックに変換
       const convertedBlocks: LPBlock[] = response.data.steps.map((step: any) => {
         // content_dataが存在すれば使用、なければデフォルト
-        let content: BlockContent;
+        let content: BlockContentWithMeta;
         if (step.content_data && Object.keys(step.content_data).length > 0) {
-          content = step.content_data as BlockContent;
+        content = step.content_data as BlockContentWithMeta;
         } else {
           // 旧形式（image_urlのみ）の場合のフォールバック
           content = {
@@ -265,10 +355,23 @@ export default function EditLPNewPage() {
           } as any;
         }
 
+        const templateMetaSource = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
+        const existingTemplateId = (content as any).__templateId as string | undefined;
+        const templateMatchById = existingTemplateId
+          ? templateMetaSource.find((tpl) => tpl.id === existingTemplateId)
+          : undefined;
+        const templateMatchByType = templateMatchById || templateMetaSource.find((tpl) => tpl.templateId === (step.block_type || 'top-hero-1'));
+
+        const normalizedContent = {
+          ...content,
+          __templateId: templateMatchById?.id || existingTemplateId || templateMatchByType?.id,
+          __templateName: templateMatchById?.name || (content as any).__templateName || templateMatchByType?.name,
+        } as BlockContentWithMeta;
+
         return {
           id: step.id,
           blockType: (step.block_type || 'top-hero-1') as BlockType,
-          content,
+          content: normalizedContent,
           order: step.step_order,
         };
       });
@@ -285,14 +388,18 @@ export default function EditLPNewPage() {
     const newBlock: LPBlock = {
       id: generateId(),
       blockType: template.templateId,
-      content: { ...template.defaultContent },
+      content: {
+        ...template.defaultContent,
+        __templateId: template.id,
+        __templateName: template.name,
+      } as BlockContentWithMeta,
       order: blocks.length,
     };
     setBlocks([...blocks, newBlock]);
   };
 
   const handleUpdateBlock = (blockId: string, field: string, value: any) => {
-    const setNestedValue = (content: BlockContent, path: string, newValue: any): BlockContent => {
+    const setNestedValue = (content: BlockContentWithMeta, path: string, newValue: any): BlockContentWithMeta => {
       if (!path.includes('.')) {
         return {
           ...content,
@@ -329,7 +436,7 @@ export default function EditLPNewPage() {
         cursor[lastKey] = newValue;
       }
 
-      return cloned as BlockContent;
+      return cloned as BlockContentWithMeta;
     };
 
     setBlocks((prev) =>
@@ -397,9 +504,14 @@ export default function EditLPNewPage() {
           shades
         );
 
+        const themedContent = {
+          ...block.content,
+          ...(themed.content ?? {}),
+        } as BlockContentWithMeta;
+
         return {
           ...block,
-          content: ((themed.content ?? {}) as unknown) as BlockContent,
+          content: themedContent,
         };
       })
     );
@@ -428,6 +540,59 @@ export default function EditLPNewPage() {
       console.error('❌ テーマ保存エラー:', err);
       const errorDetail = err?.response?.data?.detail || err?.message || '不明なエラー';
       setError(`テーマの保存に失敗しました: ${errorDetail}`);
+    }
+  };
+
+  const handleChangeLinkedProduct = async (newValue: string) => {
+    setIsProductLinkUpdating(true);
+    setProductLinkError(null);
+    try {
+      const nextProductId = newValue === 'none' ? null : newValue;
+
+      if ((linkedProduct?.id ?? null) === nextProductId) {
+        setIsProductLinkUpdating(false);
+        return;
+      }
+
+      if (linkedProduct?.id && linkedProduct.id !== nextProductId) {
+        await productApi.update(linkedProduct.id, { lp_id: null });
+      }
+
+      if (nextProductId) {
+        await productApi.update(nextProductId, { lp_id: lpId });
+        await lpApi.update(lpId, { product_id: nextProductId });
+        const selectedOption = productOptions.find((option) => option.id === nextProductId);
+        setLinkedProduct({ id: nextProductId, title: selectedOption?.title });
+        setLp((prev) =>
+          prev
+            ? {
+                ...prev,
+                product_id: nextProductId,
+              }
+            : prev
+        );
+      } else {
+        await lpApi.update(lpId, { product_id: null });
+        setLinkedProduct(null);
+        setLp((prev) =>
+          prev
+            ? {
+                ...prev,
+                product_id: undefined,
+              }
+            : prev
+        );
+      }
+
+      await fetchProductOptions();
+      await fetchLinkedProduct(lpId);
+    } catch (error: any) {
+      console.error('Failed to update product link:', error);
+      const detail = error?.response?.data?.detail;
+      const message = typeof detail === 'string' ? detail : error?.message || '商品連携の更新に失敗しました';
+      setProductLinkError(message);
+    } finally {
+      setIsProductLinkUpdating(false);
     }
   };
 
@@ -549,7 +714,7 @@ export default function EditLPNewPage() {
       const updatedSteps = bulkResponse.data?.steps ?? [];
 
       const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
-        const contentData = (step.content_data || {}) as BlockContent;
+        const contentData = (step.content_data || {}) as BlockContentWithMeta;
         const contentRecord = contentData as unknown as Record<string, unknown>;
         const blockTypeValue =
           (typeof step.block_type === 'string' && step.block_type.trim().length > 0
@@ -589,6 +754,18 @@ export default function EditLPNewPage() {
       alert('LPを公開しました！');
     } catch (err: any) {
       alert(err.response?.data?.detail || 'LPの公開に失敗しました');
+    }
+  };
+
+  const handleUnpublish = async () => {
+    if (!confirm('このLPを非公開に戻しますか？')) return;
+
+    try {
+      await lpApi.unpublish(lpId);
+      await fetchLP();
+      alert('LPを非公開に戻しました。');
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'LPの非公開化に失敗しました');
     }
   };
 
@@ -722,6 +899,15 @@ export default function EditLPNewPage() {
                 className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
               >
                 公開
+              </button>
+            )}
+
+            {lp.status === 'published' && (
+              <button
+                onClick={handleUnpublish}
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+              >
+                非公開に戻す
               </button>
             )}
 
@@ -871,14 +1057,25 @@ export default function EditLPNewPage() {
                   </button>
                 )}
                 {lp.status === 'published' && (
-                  <a
-                    href={`/view/${lp.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center"
-                  >
-                    プレビュー
-                  </a>
+                  <div className="space-y-2">
+                    <a
+                      href={`/view/${lp.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center"
+                    >
+                      プレビュー
+                    </a>
+                    <button
+                      onClick={() => {
+                        handleUnpublish();
+                        setShowMobileMenu(false);
+                      }}
+                      className="w-full px-4 py-3 bg-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-300 transition-colors min-h-[48px] flex items-center justify-center"
+                    >
+                      非公開に戻す
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -1043,6 +1240,43 @@ export default function EditLPNewPage() {
               </label>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
+                  <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">商品・サービス連携</h5>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    CTAボタンで販売したい商品を選択できます。連携中は一次ボタンが自動で購入導線に切り替わります。
+                  </p>
+                </div>
+                <select
+                  value={linkedProduct?.id ?? 'none'}
+                  onChange={(event) => handleChangeLinkedProduct(event.target.value)}
+                  disabled={isProductLinkUpdating}
+                  className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                >
+                  <option value="none">連携しない</option>
+                  {productOptions.map((option) => {
+                    const isAssignedElsewhere = Boolean(option.lpId && option.lpId !== lpId);
+                    return (
+                      <option key={option.id} value={option.id} disabled={isAssignedElsewhere}>
+                        {option.title}
+                        {isAssignedElsewhere ? '（他LPで使用中）' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+                {isProductLinkUpdating ? (
+                  <p className="text-xs text-slate-500">商品連携を更新しています...</p>
+                ) : null}
+                {productLinkError ? (
+                  <p className="text-xs text-red-600">{productLinkError}</p>
+                ) : null}
+                <div className="flex items-center justify-between text-[11px] text-slate-500">
+                  <span>{linkedProduct?.title ? `現在: ${linkedProduct.title}` : '現在未連携'}</span>
+                  <Link href="/products/manage" className="text-blue-600 hover:text-blue-700 font-semibold">
+                    商品を管理
+                  </Link>
+                </div>
+              </div>
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
+                <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">LP名</h5>
                   <p className="text-[11px] text-slate-500 mt-1">ダッシュボードに表示されるLP名を設定できます。</p>
                 </div>
@@ -1114,6 +1348,7 @@ export default function EditLPNewPage() {
                           setMobileTab('edit');
                         }
                         setSelectedBlockId(block.id);
+                        scrollToBlock(block.id);
                       }}
                       onDragStart={(e) => {
                         e.dataTransfer.effectAllowed = 'move';
@@ -1140,10 +1375,10 @@ export default function EditLPNewPage() {
                           handleReorderBlocks(newBlocks);
                         }
                       }}
-                      className={`w-full p-3 lg:p-3.5 cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
+                      className={`w-full p-3 lg:p-3.5 cursor-pointer lg:cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center rounded-lg border ${
                         selectedBlockId === block.id
-                          ? 'bg-blue-50 border-l-2 border-blue-600'
-                          : 'bg-white border-l border-slate-200 hover:bg-slate-50'
+                          ? 'bg-blue-50 border-blue-400 shadow-sm'
+                          : 'bg-white border-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex-1 min-w-0">
@@ -1159,7 +1394,7 @@ export default function EditLPNewPage() {
                             削除
                           </button>
                         </div>
-                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(block.blockType)}</div>
+                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(block)}</div>
                       </div>
                     </div>
                   ))}
@@ -1217,7 +1452,7 @@ export default function EditLPNewPage() {
 
           {/* プレビューエリア */}
           <div className="flex-1 overflow-hidden">
-            <div className="h-full overflow-y-auto">
+            <div ref={previewScrollRef} className="h-full overflow-y-auto">
               <DraggableBlockEditor
                 blocks={blocks}
                 onUpdateBlock={() => {}}
@@ -1227,6 +1462,7 @@ export default function EditLPNewPage() {
                 onSelectBlock={setSelectedBlockId}
                 selectedBlockId={selectedBlockId || undefined}
                 withinEditor
+                onMountBlock={registerBlockElement}
               />
             </div>
           </div>
@@ -1337,6 +1573,43 @@ export default function EditLPNewPage() {
                   <p className="text-xs text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
+                <div>
+                  <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">商品・サービス連携</h5>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    CTAボタンで販売したい商品を選択できます。連携中は一次ボタンが自動で購入導線に切り替わります。
+                  </p>
+                </div>
+                <select
+                  value={linkedProduct?.id ?? 'none'}
+                  onChange={(event) => handleChangeLinkedProduct(event.target.value)}
+                  disabled={isProductLinkUpdating}
+                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                >
+                  <option value="none">連携しない</option>
+                  {productOptions.map((option) => {
+                    const isAssignedElsewhere = Boolean(option.lpId && option.lpId !== lpId);
+                    return (
+                      <option key={option.id} value={option.id} disabled={isAssignedElsewhere}>
+                        {option.title}
+                        {isAssignedElsewhere ? '（他LPで使用中）' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+                {isProductLinkUpdating ? (
+                  <p className="text-xs text-slate-500">商品連携を更新しています...</p>
+                ) : null}
+                {productLinkError ? (
+                  <p className="text-xs text-red-600">{productLinkError}</p>
+                ) : null}
+                <div className="flex items-center justify-between text-[11px] text-slate-500">
+                  <span>{linkedProduct?.title ? `現在: ${linkedProduct.title}` : '現在未連携'}</span>
+                  <Link href="/products/manage" className="text-blue-600 hover:text-blue-700 font-semibold">
+                    商品を管理
+                  </Link>
+                </div>
+              </div>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">LP名</h5>
