@@ -270,21 +270,25 @@ function ProductsContent() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mb-8">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 mb-8">
               {currentProducts.map((product) => {
                 const sellerUsername = typeof product.seller_username === 'string' ? product.seller_username : '';
                 const thumbnailUrl = getThumbnailUrl(product);
                 const lpSlug = typeof product.lp_slug === 'string' ? product.lp_slug : undefined;
                 const targetHref = lpSlug ? `/view/${lpSlug}` : `/products/${product.id}`;
+                const priceLabel = product.allow_point_purchase
+                  ? `${(Number(product.price_in_points) || 0).toLocaleString()} pt`
+                  : product.allow_jpy_purchase
+                    ? `${(Number(product.price_jpy) || 0).toLocaleString()} 円`
+                    : '価格未設定';
 
                 return (
                   <Link
                     key={product.id}
                     href={targetHref}
-                    className="bg-white rounded-2xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
+                    className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
                   >
-                    {/* サムネイル */}
-                    <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
+                    <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
                       {thumbnailUrl ? (
                         isVideoUrl(thumbnailUrl) ? (
                           <video
@@ -306,75 +310,49 @@ function ProductsContent() {
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center p-4 text-slate-600">
                             <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
-                            <div className="text-sm font-semibold line-clamp-2">{product.title}</div>
+                            <div className="text-xs font-semibold line-clamp-2 md:text-sm">{product.title}</div>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* 商品情報 */}
-                    <div className="p-4">
-                      {sellerUsername && (
-                        <Link
-                          href={`/u/${sellerUsername}`}
-                          className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
-                            {sellerUsername.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="text-blue-600 hover:text-blue-500 text-xs">
-                            {sellerUsername}
+                    <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide md:text-[11px] ${
+                              product.is_available
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-slate-200 text-slate-600'
+                            }`}
+                          >
+                            {product.is_available ? '販売中' : '停止中'}
                           </span>
-                        </Link>
-                      )}
+                          <span className="inline-flex items-center gap-1 text-[10px] text-slate-400 md:text-[11px]">
+                            <ShoppingBagIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                            {(product.total_sales || 0).toLocaleString()} 件
+                          </span>
+                          {product.created_at ? (
+                            <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 md:text-[11px]">
+                              {new Date(product.created_at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                            </span>
+                          ) : null}
+                        </div>
 
-                      <h3 className="text-slate-900 font-semibold text-base mb-2 line-clamp-2">
-                        {product.title}
-                      </h3>
+                        <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">
+                          {product.title}
+                        </h3>
 
-                      <p className="text-sm text-slate-500 line-clamp-2 mb-3">
-                        {product.description || '詳細情報は商品ページをご確認ください。'}
-                      </p>
-
-                      <div className="flex items-center justify-between mb-3 text-sm">
-                        <span className="inline-flex items-center gap-1 text-slate-500">
-                          <ShoppingBagIcon className="h-4 w-4" aria-hidden="true" />
-                          {(product.total_sales || 0).toLocaleString()} 件販売
-                        </span>
-                        <span
-                          className={`text-xs px-2 py-1 rounded ${
-                            product.is_available
-                              ? 'bg-emerald-100 text-emerald-600'
-                              : 'bg-slate-200 text-slate-600'
-                          }`}
-                        >
-                          {product.is_available ? '販売中' : '販売停止'}
-                        </span>
+                        <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">
+                          {product.description || '詳細情報は商品ページをご確認ください。'}
+                        </p>
                       </div>
 
-                      <div className="space-y-2 mb-3 text-sm font-semibold text-slate-700">
-                        {product.allow_point_purchase && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-slate-500">ポイント</span>
-                            <span>{(Number(product.price_in_points) || 0).toLocaleString()} P</span>
-                          </div>
-                        )}
-                        {product.allow_jpy_purchase && (
-                          <div className="flex items-center justify-between text-emerald-600">
-                            <span className="text-slate-500">日本円</span>
-                            <span>{(Number(product.price_jpy) || 0).toLocaleString()} 円</span>
-                          </div>
-                        )}
-                        {!product.allow_point_purchase && !product.allow_jpy_purchase && (
-                          <div className="flex items-center justify-between text-slate-400">
-                            <span>価格未設定</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
-                        詳細を見る
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 md:text-xs">
+                        <span className="font-medium text-slate-500">@{sellerUsername || 'unknown'}</span>
+                        <span className="font-semibold text-emerald-600">
+                          {priceLabel}
+                        </span>
                       </div>
                     </div>
                   </Link>
