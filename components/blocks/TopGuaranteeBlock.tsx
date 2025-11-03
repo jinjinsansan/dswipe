@@ -40,7 +40,7 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
@@ -73,9 +73,9 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
           </div>
         ) : null}
 
-        <div className="flex flex-col items-center gap-4 text-center">
+        <div className="responsive-stack items-center text-center">
           <span
-            className="rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em]"
+            className="rounded-full border px-3 py-1 font-semibold typo-eyebrow"
             style={{
               borderColor: withAlpha(accentColor, 0.6, accentColor),
               backgroundColor: withAlpha(accentColor, 0.12, accentColor),
@@ -86,14 +86,14 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
             {badgeText}
           </span>
           <h2
-            className="text-3xl font-bold sm:text-4xl"
+            className="typo-headline text-pretty font-bold"
             style={{ color: textColor }}
             onClick={focusField<HTMLHeadingElement>('guarantee.title')}
           >
             {title}
           </h2>
           <p
-            className="max-w-2xl text-base sm:text-lg"
+            className="max-w-2xl typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.75, textColor) }}
             onClick={focusField<HTMLParagraphElement>('guarantee.subtitle')}
           >
@@ -102,14 +102,14 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
         </div>
 
         <div
-          className="rounded-3xl border p-6 backdrop-blur"
+          className="responsive-panel rounded-card border backdrop-blur"
           style={{
             borderColor: withAlpha(textColor, 0.12, textColor),
             backgroundColor: withAlpha(textColor, 0.08, textColor),
           }}
         >
           <p
-            className="text-sm leading-relaxed"
+            className="typo-body"
             style={{ color: withAlpha(textColor, 0.85, textColor) }}
             contentEditable={isEditing}
             suppressContentEditableWarning
@@ -119,7 +119,7 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
             {guaranteeDetails}
           </p>
 
-          <ul className="mt-6 flex flex-col gap-3 text-sm" style={{ color: withAlpha(textColor, 0.85, textColor) }}>
+          <ul className="mt-6 flex flex-col gap-3 typo-body" style={{ color: withAlpha(textColor, 0.85, textColor) }}>
             {bulletPoints.map((point, index) => (
               <li key={index} className="flex items-start gap-2">
                 <span

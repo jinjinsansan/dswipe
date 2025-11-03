@@ -20,6 +20,19 @@
   --radius-button: 0.75rem;
   --font-body: var(--font-roboto), var(--font-noto-sans-jp), var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-roboto), var(--font-noto-sans-jp), var(--font-inter), system-ui, sans-serif;
+  --type-display: clamp(2.75rem, 3.5vw + 1.8rem, 4.75rem);
+  --type-headline: clamp(1.9rem, 2.2vw + 1.2rem, 3.2rem);
+  --type-subheadline: clamp(1.25rem, 1.4vw + 0.9rem, 2rem);
+  --type-highlight: clamp(1.05rem, 1.1vw + 0.85rem, 1.55rem);
+  --type-body-lg: clamp(1.02rem, 0.9vw + 0.85rem, 1.3rem);
+  --type-body: clamp(0.94rem, 0.7vw + 0.82rem, 1.14rem);
+  --type-caption: clamp(0.78rem, 0.5vw + 0.68rem, 0.92rem);
+  --line-display: 1.12;
+  --line-headline: 1.2;
+  --line-subheadline: 1.35;
+  --line-body: 1.6;
+  --space-card-padding: clamp(1.5rem, 2.2vw + 1rem, 2.75rem);
+  --space-card-gap: clamp(1rem, 1.5vw + 0.6rem, 1.75rem);
 }
 
 /* Tablet and above: restore original section padding */
@@ -55,6 +68,16 @@ body {
 }
 
 @layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+  .typo-display { font-size: var(--type-display); line-height: var(--line-display); letter-spacing: -0.02em; }
+  .typo-headline { font-size: var(--type-headline); line-height: var(--line-headline); letter-spacing: -0.015em; }
+  .typo-subheadline { font-size: var(--type-subheadline); line-height: var(--line-subheadline); }
+  .typo-highlight { font-size: var(--type-highlight); line-height: 1.3; letter-spacing: 0.08em; }
+  .typo-eyebrow { font-size: var(--type-caption); line-height: 1.4; letter-spacing: 0.35em; text-transform: uppercase; }
+  .typo-body-lg { font-size: var(--type-body-lg); line-height: var(--line-body); }
+  .typo-body { font-size: var(--type-body); line-height: var(--line-body); }
+  .typo-caption { font-size: var(--type-caption); line-height: 1.4; }
   .bg-surface-base { background-color: var(--color-surface-base); }
   .bg-surface-tint { background-color: var(--color-surface-tint); }
   .bg-surface-alt { background-color: var(--color-surface-alt); }
@@ -88,6 +111,25 @@ body {
   .text-gradient-aqua { background-image: linear-gradient(135deg, #38bdf8, #6366f1); color: transparent; background-clip: text; }
   .text-gradient-magenta { background-image: linear-gradient(135deg, #ec4899, #f97316); color: transparent; background-clip: text; }
   .text-pure-white { color: #ffffff !important; }
+}
+
+.responsive-panel {
+  padding: var(--space-card-padding);
+  border-radius: var(--radius-card);
+  gap: var(--space-card-gap);
+}
+
+.responsive-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-card-gap);
+}
+
+.aspect-card {
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  border-radius: var(--radius-card);
+  overflow: hidden;
 }
 
 

@@ -67,22 +67,22 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {/* ヘッダー */}
-        <div className="text-center">
+        <div className="responsive-stack items-center text-center">
           {subtitle && (
             <span
-              className="text-xs font-semibold tracking-wider uppercase opacity-60"
+              className="font-semibold typo-eyebrow"
               style={{ color: textColor }}
             >
               {subtitle}
             </span>
           )}
           <h2
-            className="text-3xl font-bold sm:text-4xl mt-3"
+            className="typo-headline text-pretty font-bold"
             style={{ color: textColor }}
           >
             {title}
@@ -91,7 +91,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
 
         {/* アコーディオンリスト */}
         <div
-          className="flex flex-col overflow-hidden rounded-2xl border backdrop-blur"
+          className="flex flex-col overflow-hidden rounded-card border backdrop-blur"
           style={{
             borderColor: withAlpha(textColor, 0.16, textColor),
             backgroundColor: withAlpha(textColor, 0.05, cardBackgroundColor),
@@ -116,15 +116,15 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <IconComponent
-                      className="w-5 h-5 flex-shrink-0"
+                      className="h-5 w-5 flex-shrink-0"
                       style={{ color: textColor, opacity: 0.6 }}
                     />
-                    <span className="text-sm font-bold uppercase tracking-wide">
+                    <span className="font-semibold typo-eyebrow text-pretty opacity-90">
                       {item.label}
                     </span>
                   </div>
                   <ChevronDownIcon
-                    className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${
+                    className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                     style={{ color: textColor, opacity: 0.6 }}
@@ -134,7 +134,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
                 {/* アコーディオン内容 */}
                 {isOpen && (
                   <div
-                    className="px-5 pb-5 pt-2 text-sm leading-relaxed whitespace-pre-wrap"
+                    className="whitespace-pre-wrap px-5 pb-5 pt-2 typo-body text-pretty"
                     style={{ color: withAlpha(textColor, 0.78, textColor) }}
                   >
                     {item.value}
@@ -148,7 +148,7 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
         {/* フッター注釈 */}
         <div className="text-center">
           <p
-            className="text-xs opacity-60"
+            className="typo-caption opacity-60"
             style={{ color: textColor }}
           >
             ※ この表記は特定商取引法に基づき義務付けられています

@@ -57,7 +57,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
     };
 
   return (
-    <section className="relative w-full py-16 sm:py-20" style={{ backgroundColor, color: textColor }}>
+    <section className="relative w-full py-section-sm sm:py-section" style={{ backgroundColor, color: textColor }}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
@@ -76,12 +76,12 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           </div>
         ) : null}
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+        <div className="responsive-stack items-center text-center">
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
             {title}
           </h2>
           <p
-            className="mt-3 text-base sm:text-lg"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.72, textColor) }}
           >
             {subtitle}
@@ -92,14 +92,14 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           {testimonials.map((item, index) => (
             <div
               key={index}
-              className="flex h-full flex-row gap-4 rounded-2xl border p-5 shadow-sm sm:flex-col sm:p-6"
+              className="flex h-full flex-row gap-4 rounded-card border p-5 shadow-sm sm:flex-col sm:p-6"
               style={{
                 borderColor: withAlpha(accentColor, 0.2, accentColor),
                 backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
               }}
             >
               <div
-                className="flex-1 text-sm leading-relaxed sm:text-base"
+                className="flex-1 typo-body text-pretty"
                 style={{ color: withAlpha(textColor, 0.82, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
@@ -110,7 +110,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
 
               <div className="flex w-36 flex-col gap-1 border-l border-white/40 pl-4 sm:w-full sm:border-l-0 sm:border-t sm:pl-0 sm:pt-4">
                 <span
-                  className="text-sm font-semibold"
+                  className="font-semibold typo-body-lg text-pretty"
                   style={{ color: accentColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -119,7 +119,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
                   {item.name}
                 </span>
                 <span
-                  className="text-xs uppercase tracking-wide"
+                  className="typo-caption uppercase tracking-[0.35em]"
                   style={{ color: withAlpha(textColor, 0.6, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning

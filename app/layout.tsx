@@ -103,12 +103,13 @@ const fontConfig = {
 export const metadata: Metadata = {
   title: "D-swipe - デジタルコンテンツ特化型LP作成プラットフォーム",
   description: "デジタルコンテンツに特化したランディングページを簡単に作成・公開できるプラットフォーム",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({

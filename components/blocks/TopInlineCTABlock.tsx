@@ -51,7 +51,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
       style={{ backgroundColor: content?.backgroundColor ?? '#FFFFFF', color: textColor }}
     >
       <div
-        className="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-3xl border px-6 py-10 text-center shadow-sm sm:px-10"
+        className="responsive-panel mx-auto w-full max-w-4xl rounded-card border text-center shadow-sm"
         style={{
           borderColor: withAlpha(accentColor, 0.25, accentColor),
           backgroundColor: withAlpha(accentColor, 0.06, accentColor),
@@ -93,21 +93,21 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
         ) : null}
 
         <span
-          className="text-xs font-semibold uppercase tracking-[0.35em]"
+          className="font-semibold typo-eyebrow"
           style={{ color: accentColor }}
           onClick={createFieldFocusHandler<HTMLSpanElement>('inlineCTA.eyebrow')}
         >
           {eyebrow}
         </span>
         <h2
-          className="text-2xl font-bold sm:text-3xl"
+          className="typo-headline text-pretty font-bold"
           style={{ color: textColor }}
           onClick={createFieldFocusHandler<HTMLHeadingElement>('inlineCTA.title')}
         >
           {title}
         </h2>
         <p
-          className="text-sm leading-relaxed sm:text-base"
+          className="typo-body text-pretty"
           style={{ color: withAlpha(textColor, 0.75, textColor) }}
           onClick={createFieldFocusHandler<HTMLParagraphElement>('inlineCTA.subtitle')}
         >
@@ -122,7 +122,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
                 onCtaClick?.(primaryCtaId, 'primary');
                 onProductClick?.(productId);
               })}
-              className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >
               {buttonText}
@@ -133,7 +133,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
               onClick={createFieldFocusHandler<HTMLAnchorElement>('inlineCTA.buttonText', () => {
                 onCtaClick?.(primaryCtaId, 'primary');
               })}
-              className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >
               {buttonText}

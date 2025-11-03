@@ -150,9 +150,9 @@ export default function TopHeroBlock({
           </div>
         ) : null}
 
-        <div className="space-y-6">
+        <div className="responsive-stack items-center">
           <div
-            className="inline-flex items-center justify-center rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]"
+            className="inline-flex items-center justify-center rounded-full border px-4 py-1 font-semibold typo-eyebrow"
             style={{
               color: accentColor,
               borderColor: withAlpha(accentColor, 0.4, accentColor),
@@ -164,7 +164,7 @@ export default function TopHeroBlock({
           </div>
 
           <h1
-            className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
+            className="typo-display text-balance font-bold"
             style={{ color: textColor }}
             onClick={createFieldFocusHandler<HTMLHeadingElement>('hero.title')}
           >
@@ -172,7 +172,7 @@ export default function TopHeroBlock({
           </h1>
 
           <div
-            className="text-lg font-medium tracking-widest sm:text-xl"
+            className="typo-highlight font-medium text-pretty"
             style={{ color: accentColor }}
             onClick={createFieldFocusHandler<HTMLDivElement>('hero.highlightText')}
           >
@@ -180,7 +180,7 @@ export default function TopHeroBlock({
           </div>
 
           <p
-            className="mx-auto max-w-3xl text-base sm:text-lg"
+            className="mx-auto max-w-3xl typo-body-lg text-pretty"
             style={{ color: withAlpha(textColor, 0.85, textColor) }}
             onClick={createFieldFocusHandler<HTMLParagraphElement>('hero.subtitle')}
           >

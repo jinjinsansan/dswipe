@@ -138,10 +138,10 @@ export default function TopHeroImageBlock({
           </div>
         ) : null}
 
-        <div className="space-y-6">
+        <div className="responsive-stack items-center">
           {tagline ? (
             <div
-              className="inline-flex items-center justify-center rounded-full border px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]"
+              className="inline-flex items-center justify-center rounded-full border px-4 py-1 font-semibold typo-eyebrow"
               style={{
                 color: accentColor,
                 borderColor: withAlpha(accentColor, 0.4, accentColor),
@@ -152,13 +152,13 @@ export default function TopHeroImageBlock({
             </div>
           ) : null}
 
-          <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl" style={{ color: textColor }}>
+          <h1 className="typo-display text-balance font-bold" style={{ color: textColor }}>
             {title}
           </h1>
 
           {highlightText ? (
             <div
-              className="text-lg font-medium tracking-widest sm:text-xl"
+              className="typo-highlight font-medium text-pretty"
               style={{ color: accentColor }}
             >
               {highlightText}
@@ -167,7 +167,7 @@ export default function TopHeroImageBlock({
 
           {subtitle ? (
             <p
-              className="mx-auto max-w-3xl text-base sm:text-lg"
+              className="mx-auto max-w-3xl typo-body-lg text-pretty"
               style={{ color: withAlpha(textColor, 0.85, textColor) }}
             >
               {subtitle}
@@ -183,7 +183,7 @@ export default function TopHeroImageBlock({
                     onCtaClick?.(primaryCtaId, 'primary');
                     onProductClick(productId);
                   }}
-                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
                   {primaryText}
@@ -192,7 +192,7 @@ export default function TopHeroImageBlock({
                 <Link
                   href={content?.buttonUrl ?? '#'}
                   onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
-                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
                   {primaryText}
@@ -204,7 +204,7 @@ export default function TopHeroImageBlock({
               <Link
                 href={content?.secondaryButtonUrl ?? '#'}
                 onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
-                className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
                 style={secondaryButtonStyle}
               >
                 {secondaryText}

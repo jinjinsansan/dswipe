@@ -26,7 +26,7 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{
         backgroundColor,
         color: textColor,
@@ -45,28 +45,28 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
           </div>
         ) : null}
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+        <div className="responsive-stack items-center text-center">
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
             {title}
           </h2>
         </div>
 
         <div
-          className="grid grid-cols-1 gap-6 rounded-3xl border p-6 sm:grid-cols-2 sm:p-10"
+          className="grid grid-cols-1 gap-6 rounded-card border p-6 sm:grid-cols-2 sm:p-10"
           style={{
             borderColor: withAlpha(textColor, 0.14, textColor),
             backgroundColor: withAlpha(textColor, 0.06, textColor),
           }}
         >
           <div
-            className="flex flex-col gap-4 rounded-2xl p-5"
+            className="responsive-stack rounded-card p-5"
             style={{
               backgroundColor: withAlpha(textColor, 0.08, textColor),
               color: textColor,
             }}
           >
             <span
-              className="text-xs font-semibold uppercase tracking-[0.4em]"
+              className="font-semibold typo-eyebrow"
               style={{ color: beforeAccent }}
               contentEditable={isEditing}
               suppressContentEditableWarning
@@ -75,7 +75,7 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
               {before.label}
             </span>
             <p
-              className="text-sm leading-relaxed"
+              className="typo-body text-pretty"
               style={{ color: withAlpha(textColor, 0.85, textColor) }}
               contentEditable={isEditing}
               suppressContentEditableWarning
@@ -86,14 +86,14 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
           </div>
 
           <div
-            className="flex flex-col gap-4 rounded-2xl p-5"
+            className="responsive-stack rounded-card p-5"
             style={{
               backgroundColor: '#FFFFFF',
               color: '#0F172A',
             }}
           >
             <span
-              className="text-xs font-semibold uppercase tracking-[0.4em]"
+              className="font-semibold typo-eyebrow"
               style={{ color: afterAccent }}
               contentEditable={isEditing}
               suppressContentEditableWarning
@@ -102,7 +102,7 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
               {after.label}
             </span>
             <p
-              className="text-sm leading-relaxed"
+              className="typo-body text-pretty"
               contentEditable={isEditing}
               suppressContentEditableWarning
               onBlur={(event) => onEdit?.('after', { ...after, description: event.currentTarget.textContent ?? '' })}

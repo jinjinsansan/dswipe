@@ -31,7 +31,7 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
@@ -52,12 +52,12 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
           </div>
         ) : null}
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+        <div className="responsive-stack items-center text-center">
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
             {title}
           </h2>
           <p
-            className="mt-3 text-base sm:text-lg"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.7, textColor) }}
           >
             {subtitle}
@@ -68,14 +68,14 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
           {problems.map((problem, index) => (
             <div
               key={index}
-              className="flex items-start gap-3 rounded-2xl border p-4 shadow-sm"
+              className="flex items-start gap-3 rounded-card border p-4 shadow-sm"
               style={{
                 borderColor: withAlpha(textColor, 0.12, textColor),
                 backgroundColor: withAlpha(accentColor, 0.05, '#FFFFFF'),
               }}
             >
               <span
-                className="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+                className="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full font-semibold typo-body"
                 style={{
                   backgroundColor: accentColor,
                   color: '#FFFFFF',
@@ -84,7 +84,7 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
                 {index + 1}
               </span>
               <div
-                className="text-sm leading-relaxed"
+                className="typo-body text-pretty"
                 style={{ color: withAlpha(textColor, 0.85, textColor) }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning

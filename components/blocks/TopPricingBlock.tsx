@@ -78,7 +78,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   };
 
   return (
-    <section className="relative w-full py-16 sm:py-20" style={{ backgroundColor, color: textColor }}>
+    <section className="relative w-full py-section-sm sm:py-section" style={{ backgroundColor, color: textColor }}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
@@ -97,12 +97,12 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
           </div>
         ) : null}
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>
+        <div className="responsive-stack items-center text-center">
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
             {title}
           </h2>
           <p
-            className="mt-3 text-base sm:text-lg"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.7, textColor) }}
           >
             {subtitle}
@@ -137,14 +137,14 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
             const isSingle = singlePlan;
             return (
-              <div
-                key={index}
-                className={`flex h-full flex-col rounded-2xl border transition ${isSingle ? 'w-full p-8 sm:p-10 gap-6 shadow-xl border-2' : 'p-6 gap-5'}`}
+            <div
+              key={index}
+              className={`flex h-full flex-col rounded-card border transition ${isSingle ? 'w-full gap-6 p-8 sm:p-10 shadow-xl border-2' : 'gap-5 p-6'}`}
                 style={cardStyle}
               >
                 <div className="flex items-center justify-between">
                   <div
-                    className={`font-medium uppercase tracking-wide ${isSingle ? 'text-base' : 'text-sm'}`}
+                  className={`font-semibold typo-eyebrow ${isSingle ? 'text-pretty' : ''}`}
                     style={{ color: accentColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
@@ -169,7 +169,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
                 <div className="flex items-baseline gap-2">
                   <span
-                    className={`${isSingle ? 'text-4xl sm:text-5xl' : 'text-3xl'} font-bold`}
+                    className={`${isSingle ? 'typo-display' : 'typo-headline'} font-bold`}
                     style={{ color: textColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
@@ -178,7 +178,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                     {plan.price}
                   </span>
                   <span
-                    className="text-sm"
+                    className="typo-body"
                     style={{ color: withAlpha(textColor, 0.6, textColor) }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
@@ -189,7 +189,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                 </div>
 
                 <p
-                  className={`${isSingle ? 'text-base leading-relaxed' : 'text-sm'}`}
+                  className={`${isSingle ? 'typo-body-lg' : 'typo-body'} text-pretty`}
                   style={{ color: withAlpha(textColor, 0.7, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -198,7 +198,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   {plan.description ?? ''}
                 </p>
 
-                <ul className={`flex flex-1 flex-col ${isSingle ? 'gap-3 text-base' : 'gap-2 text-sm'}`} style={{ color: withAlpha(textColor, 0.75, textColor) }}>
+                <ul className={`flex flex-1 flex-col ${isSingle ? 'gap-3 typo-body-lg' : 'gap-2 typo-body'}`} style={{ color: withAlpha(textColor, 0.75, textColor) }}>
                   {(plan.features ?? []).map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-2">
                       <span
@@ -225,7 +225,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
                 {onProductClick && productId ? (
                   <button
-                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
+                    className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3' : 'py-2'}`}
                     type="button"
                     style={{
                       ...buttonStyle,
@@ -252,7 +252,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   <Link
                     href={plan.buttonUrl}
                     onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
-                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
+                    className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center ${isSingle ? 'py-3' : 'py-2'}`}
                     style={{
                       ...buttonStyle,
                       outlineColor: withAlpha(accentColor, 0.45, accentColor),
@@ -275,7 +275,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   </Link>
                 ) : (
                   <button
-                    className={`w-full rounded-lg font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3 text-base' : 'py-2 text-sm'}`}
+                    className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3' : 'py-2'}`}
                     type="button"
                     style={{
                       ...buttonStyle,

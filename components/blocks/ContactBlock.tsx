@@ -24,33 +24,33 @@ export default function ContactBlock({ content }: ContactBlockProps) {
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
-        <div className="text-center">
+        <div className="responsive-stack items-center text-center">
           {subtitle && (
             <span
-              className="text-xs font-semibold uppercase tracking-[0.35em]"
+              className="font-semibold typo-eyebrow"
               style={{ color: buttonColor }}
             >
               {subtitle}
             </span>
           )}
-          <h2 className="text-3xl font-bold sm:text-4xl mt-3" style={{ color: textColor }}>
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
             {title}
           </h2>
         </div>
 
         <div
-          className="rounded-2xl border p-6 shadow-sm text-center"
+          className="rounded-card border p-6 text-center shadow-sm"
           style={{
             borderColor: withAlpha(buttonColor, 0.2, buttonColor),
             backgroundColor: withAlpha(buttonColor, 0.06, '#FFFFFF'),
           }}
         >
           <p
-            className="text-base leading-relaxed"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.82, textColor) }}
           >
             {description}
@@ -61,7 +61,7 @@ export default function ContactBlock({ content }: ContactBlockProps) {
               href={buttonUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 backgroundColor: buttonColor,
                 color: buttonTextFinal,
@@ -70,7 +70,7 @@ export default function ContactBlock({ content }: ContactBlockProps) {
               }}
             >
               <svg
-                className="w-5 h-5"
+                className="h-5 w-5"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"

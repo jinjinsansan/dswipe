@@ -151,14 +151,14 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
   return (
     <section
-      className="relative flex w-full"
+      className="relative flex w-full py-section-sm sm:py-section"
       style={{
         backgroundColor,
         color: textColor,
         minHeight: '100%',
       }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-14 sm:px-6 md:py-16">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 sm:px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/70 p-4 text-sm text-slate-700">
             <input
@@ -176,14 +176,14 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
           </div>
         ) : null}
 
-        <div className="text-center">
+        <div className="responsive-stack items-center text-center">
           <p
-            className="text-xs font-semibold uppercase tracking-[0.35em]"
+            className="font-semibold typo-eyebrow"
             style={{ color: accentColor }}
           >
             {tagline}
           </p>
-          <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ color: content?.textColor ?? '#0F172A' }}>
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: content?.textColor ?? '#0F172A' }}>
             {title}
           </h2>
         </div>
@@ -194,7 +194,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
             return (
               <div
                 key={index}
-                className="flex h-full flex-row flex-wrap items-start gap-4 rounded-2xl border p-4 shadow-sm sm:flex-col sm:flex-nowrap sm:items-center sm:text-center sm:p-5 sm:gap-3 md:p-6 md:gap-4"
+                className="flex h-full flex-row flex-wrap items-start gap-4 rounded-card border p-4 shadow-sm sm:flex-col sm:flex-nowrap sm:items-center sm:text-center sm:p-5 sm:gap-3 md:p-6 md:gap-4"
                 style={{
                   borderColor: withAlpha(accentColor, 0.2, accentColor),
                   backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
@@ -208,7 +208,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                   {IconComponent ? (
                     <IconComponent className="h-6 w-6 sm:h-7 sm:w-7" />
                   ) : (
-                    <span className="text-sm font-semibold uppercase tracking-wide sm:text-base">
+                    <span className="font-semibold typo-body text-pretty sm:text-base">
                       {getFallbackLabel(feature.icon)}
                     </span>
                   )}
@@ -216,7 +216,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
                 <div className="flex-1 sm:flex-none sm:w-full">
                   <h3
-                    className="text-base font-semibold sm:text-lg"
+                    className="font-semibold typo-subheadline text-pretty"
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={handleFeatureBlur(index, 'title')}
@@ -224,7 +224,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                     {feature.title}
                   </h3>
                   <p
-                    className="mt-1 text-sm leading-relaxed sm:text-base"
+                    className="mt-1 typo-body text-pretty"
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={handleFeatureBlur(index, 'description')}

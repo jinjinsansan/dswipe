@@ -33,7 +33,7 @@ export default function HandwrittenCTABlock({
 
   return (
     <section
-      className="py-12 md:py-20 px-4 md:px-6"
+      className="px-4 py-section-sm sm:py-section md:px-6"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-4xl">
@@ -53,7 +53,7 @@ export default function HandwrittenCTABlock({
           <div className="text-center">
             {content.eyebrow && (
               <p
-                className="text-sm font-bold uppercase tracking-widest mb-4 text-black"
+                className="mb-4 font-bold uppercase tracking-widest text-black typo-eyebrow"
                 style={{ fontFamily: "'Indie Flower', cursive" }}
               >
                 {content.eyebrow}
@@ -61,7 +61,7 @@ export default function HandwrittenCTABlock({
             )}
 
             <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-black mb-4 md:mb-6 text-black"
+              className="mb-4 font-black text-black typo-headline text-pretty md:mb-6"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.title}
@@ -69,7 +69,7 @@ export default function HandwrittenCTABlock({
 
             {content.subtitle && (
               <p
-                className="text-base md:text-xl mb-6 md:mb-10 text-gray-700"
+                className="mb-6 text-gray-700 typo-body-lg text-pretty md:mb-10"
                 style={{ fontFamily: "'Indie Flower', cursive" }}
               >
                 {content.subtitle}
@@ -79,7 +79,7 @@ export default function HandwrittenCTABlock({
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => handleClick('primary')}
-                className="px-6 md:px-10 py-3 md:py-5 text-base md:text-lg font-bold border-3 md:border-4 border-black bg-white"
+                className="px-6 py-3 font-bold typo-body-lg border-3 border-black bg-white md:px-10 md:py-5 md:border-4"
                 style={{ fontFamily: "'Architects Daughter', cursive" }}
                 disabled={isEditing}
               >
@@ -89,7 +89,7 @@ export default function HandwrittenCTABlock({
               {content.secondaryButtonText && (
                 <button
                   onClick={() => handleClick('secondary')}
-                  className="px-6 md:px-10 py-3 md:py-5 text-base md:text-lg font-bold border-3 md:border-4 border-black bg-white"
+                  className="px-6 py-3 font-bold typo-body-lg border-3 border-black bg-white md:px-10 md:py-5 md:border-4"
                   style={{ fontFamily: "'Architects Daughter', cursive" }}
                   disabled={isEditing}
                 >

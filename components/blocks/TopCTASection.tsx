@@ -43,7 +43,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
     if (!primaryText) return null;
 
     const commonClasses =
-      'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent shadow-sm';
+      'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent shadow-sm';
 
     if (onProductClick && productId) {
       return (
@@ -85,7 +85,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
     if (!secondaryText) return null;
 
     const classes =
-      'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent border';
+      'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent border';
 
     return (
       <Link
@@ -104,7 +104,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   };
 
   return (
-    <section className="relative w-full overflow-hidden py-20" style={backgroundStyle}>
+    <section className="relative w-full overflow-hidden py-section-sm sm:py-section" style={backgroundStyle}>
       <div
         className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full opacity-40"
         style={{
@@ -169,7 +169,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
         ) : null}
 
         <div
-          className="relative w-full overflow-hidden rounded-[32px] border border-white/10 p-8 sm:p-12"
+          className="relative w-full overflow-hidden rounded-card border border-white/10 p-8 sm:p-12"
           style={{ backgroundColor: surfaceColor }}
         >
           <div
@@ -179,21 +179,21 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
             }}
           />
 
-          <div className="relative flex flex-col items-center gap-6 sm:gap-8">
+          <div className="relative responsive-stack items-center sm:gap-8">
             {eyebrow ? (
               <span
-                className="text-xs font-semibold uppercase tracking-[0.45em]"
+                className="font-semibold typo-eyebrow"
                 style={{ color: accentColor }}
               >
                 {eyebrow}
               </span>
             ) : null}
 
-            <h2 className="text-4xl font-bold sm:text-5xl" style={{ color: textColor }}>
+            <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
               {title}
             </h2>
             <p
-              className="max-w-2xl text-base sm:text-lg"
+              className="max-w-2xl typo-body-lg text-pretty"
               style={{ color: textColor, opacity: 0.82 }}
             >
               {subtitle}

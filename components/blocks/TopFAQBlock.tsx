@@ -48,7 +48,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
@@ -69,16 +69,16 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
           </div>
         ) : null}
 
-        <div className="text-center">
+        <div className="responsive-stack items-center text-center">
           <h2
-            className="text-3xl font-bold sm:text-4xl"
+            className="typo-headline text-pretty font-bold"
             style={{ color: textColor }}
             onClick={focusField<HTMLHeadingElement>('faq.title')}
           >
             {title}
           </h2>
           <p
-            className="mt-3 text-base sm:text-lg"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.72, textColor) }}
             onClick={focusField<HTMLParagraphElement>('faq.subtitle')}
           >
@@ -87,7 +87,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
         </div>
 
         <div
-          className="flex flex-col overflow-hidden rounded-2xl border backdrop-blur"
+          className="flex flex-col overflow-hidden rounded-card border backdrop-blur"
           style={{
             borderColor: withAlpha(textColor, 0.16, textColor),
             backgroundColor: withAlpha(textColor, 0.05, textColor),
@@ -96,7 +96,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
           {items.map((item, index) => (
             <div key={index} className="group">
               <button
-                className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left text-base font-medium"
+                className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left font-medium typo-body-lg"
                 style={{ color: textColor }}
                 type="button"
                 onClick={focusField<HTMLButtonElement>(`faq.items.${index}.question`)}
@@ -118,7 +118,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
                 </span>
               </button>
               <div
-                className="px-5 pb-6 text-sm leading-relaxed"
+                className="px-5 pb-6 typo-body"
                 style={{ color: withAlpha(textColor, 0.78, textColor) }}
               >
                 <div

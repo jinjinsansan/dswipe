@@ -53,7 +53,7 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{
         backgroundColor,
         color: textColor,
@@ -84,7 +84,7 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
           </div>
         ) : null}
 
-        <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+        <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>{title}</h2>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {([
@@ -95,15 +95,15 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
           ] as const).map((segment) => (
             <div
               key={segment.label}
-              className="rounded-2xl px-4 py-6"
+              className="rounded-card px-4 py-6"
               style={{
                 backgroundColor: withAlpha(textColor, 0.15, textColor),
                 color: textColor,
               }}
             >
-              <div className="text-3xl font-bold tracking-wide sm:text-4xl">{segment.value}</div>
+              <div className="typo-headline font-bold tracking-wide text-pretty">{segment.value}</div>
               <div
-                className="mt-2 text-xs uppercase tracking-[0.4em]"
+                className="mt-2 font-semibold typo-eyebrow"
                 style={{ color: withAlpha(textColor, 0.7, textColor) }}
               >
                 {segment.label}
@@ -113,7 +113,7 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
         </div>
 
         <p
-          className="text-sm leading-relaxed sm:text-base"
+          className="typo-body text-pretty"
           style={{ color: withAlpha(textColor, 0.85, textColor) }}
         >
           {urgencyText}

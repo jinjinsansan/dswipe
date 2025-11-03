@@ -59,7 +59,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
@@ -86,10 +86,10 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           </div>
         ) : null}
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+        <div className="responsive-stack items-center text-center">
+          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>{title}</h2>
           <p
-            className="mt-3 text-base sm:text-lg"
+            className="typo-body text-pretty"
             style={{ color: withAlpha(textColor, 0.72, textColor) }}
           >
             {subtitle}
@@ -100,7 +100,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           {bonuses.map((bonus, index) => (
             <div
               key={index}
-              className="flex h-full flex-row items-start gap-4 rounded-2xl border p-4 shadow-sm sm:flex-col sm:p-5"
+              className="flex h-full flex-row items-start gap-4 rounded-card border p-4 shadow-sm sm:flex-col sm:p-5"
               style={{
                 borderColor: withAlpha(accentColor, 0.2, accentColor),
                 backgroundColor: withAlpha(accentColor, 0.08, '#FFFFFF'),
@@ -108,7 +108,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
             >
               <div className="flex-1">
                 <div
-                  className="text-sm font-semibold sm:text-base"
+                  className="font-semibold typo-body-lg text-pretty"
                   style={{ color: accentColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -117,7 +117,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
                   {bonus.title}
                 </div>
                 <div
-                  className="mt-2 text-sm leading-relaxed sm:text-base"
+                  className="mt-2 typo-body text-pretty"
                   style={{ color: withAlpha(textColor, 0.8, textColor) }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
@@ -128,7 +128,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
               </div>
               <div className="flex flex-shrink-0 items-center sm:w-full sm:justify-center">
                 <div
-                  className="rounded-full px-3 py-1 text-xs font-semibold sm:px-4 sm:py-1.5 sm:text-sm"
+                  className="rounded-full px-3 py-1 font-semibold typo-body sm:px-4 sm:py-1.5"
                   style={{
                     backgroundColor: withAlpha(accentColor, 0.18, accentColor),
                     color: accentColor,
@@ -145,7 +145,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
         </div>
 
         <div
-          className="rounded-2xl border px-6 py-4 text-center text-sm font-semibold"
+          className="rounded-card border px-6 py-4 text-center font-semibold typo-body-lg"
           style={{
             borderColor: withAlpha(accentColor, 0.35, accentColor),
             backgroundColor: withAlpha(accentColor, 0.12, accentColor),

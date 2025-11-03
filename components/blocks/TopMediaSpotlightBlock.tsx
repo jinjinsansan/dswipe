@@ -49,7 +49,7 @@ export default function TopMediaSpotlightBlock({
     if (!buttonText) return null;
 
     const commonClasses =
-      'inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
+      'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
 
     if (onProductClick && productId) {
       return (
@@ -91,14 +91,14 @@ export default function TopMediaSpotlightBlock({
 
   return (
     <section
-      className="relative w-full py-16 sm:py-20"
+      className="relative w-full py-section-sm sm:py-section"
       style={{ backgroundColor, color: textColor }}
     >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {/* ヘッダー */}
-        <div className="text-center">
+        <div className="responsive-stack items-center text-center">
           <span
-            className="text-xs font-semibold uppercase tracking-[0.35em]"
+            className="font-semibold typo-eyebrow"
             style={{ color: accentColor }}
             contentEditable={isEditing}
             suppressContentEditableWarning
@@ -107,7 +107,7 @@ export default function TopMediaSpotlightBlock({
             {tagline}
           </span>
           <h2
-            className="text-3xl font-bold sm:text-4xl mt-3"
+            className="typo-headline text-pretty font-bold"
             style={{ color: textColor }}
             contentEditable={isEditing}
             suppressContentEditableWarning
@@ -116,7 +116,7 @@ export default function TopMediaSpotlightBlock({
             {title}
           </h2>
           <p
-            className="mt-3 text-base leading-relaxed sm:text-lg"
+            className="typo-body-lg text-pretty"
             style={{ color: withAlpha(textColor, 0.72, textColor) }}
             contentEditable={isEditing}
             suppressContentEditableWarning
@@ -128,23 +128,23 @@ export default function TopMediaSpotlightBlock({
 
         {/* 画像カード */}
         <div
-          className="rounded-2xl border p-6 shadow-sm"
+          className="rounded-card border p-6 shadow-sm"
           style={{
             borderColor: withAlpha(accentColor, 0.2, accentColor),
             backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
           }}
         >
           {/* 画像 */}
-          <div className="w-full overflow-hidden rounded-xl mb-6">
+          <div className="mb-6 w-full overflow-hidden rounded-card">
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={imageAlt}
-                className="w-full h-auto max-h-[600px] object-contain bg-black/5"
+                className="h-auto w-full max-h-[600px] bg-black/5 object-contain"
               />
             ) : (
               <div
-                className="flex h-64 w-full items-center justify-center bg-gradient-to-br from-transparent via-white/10 to-white/20 text-sm font-medium rounded-xl"
+                className="flex h-64 w-full items-center justify-center rounded-card bg-gradient-to-br from-transparent via-white/10 to-white/20 font-medium typo-body"
                 style={{ color: withAlpha(textColor, 0.5, textColor) }}
               >
                 画像を設定してください
@@ -155,7 +155,7 @@ export default function TopMediaSpotlightBlock({
           {/* キャプション */}
           {caption && (
             <div
-              className="text-xs uppercase tracking-[0.2em] mb-4 text-center"
+              className="mb-4 text-center typo-caption uppercase tracking-[0.35em]"
               style={{ color: withAlpha(textColor, 0.6, textColor) }}
               contentEditable={isEditing}
               suppressContentEditableWarning

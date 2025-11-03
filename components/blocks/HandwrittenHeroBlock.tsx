@@ -33,7 +33,7 @@ export default function HandwrittenHeroBlock({
 
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden py-section-sm sm:py-section"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* ワイヤーフレーム風ブラウザフレーム */}
@@ -49,11 +49,11 @@ export default function HandwrittenHeroBlock({
             <div className="flex-1 border-2 border-black rounded-full px-1.5 md:px-4 py-0.5 md:py-1 text-[9px] md:text-sm text-gray-500">https://your-url.com</div>
           </div>
 
-      <div className="container relative z-10 mx-auto px-3 md:px-6 py-3 md:py-12 text-center">
+      <div className="container relative z-10 mx-auto px-3 py-3 text-center md:px-6 md:py-12">
         {content.tagline && (
           <div className="mb-6 inline-block">
             <span
-              className="px-6 py-2 text-sm font-bold uppercase tracking-widest border-3 border-black bg-white"
+              className="px-6 py-2 font-bold uppercase tracking-widest typo-eyebrow border-3 border-black bg-white"
               style={{
                 fontFamily: "'Architects Daughter', cursive",
               }}
@@ -64,7 +64,7 @@ export default function HandwrittenHeroBlock({
         )}
 
         <h1
-          className="mx-auto max-w-4xl text-2xl md:text-5xl lg:text-7xl font-black mb-2 md:mb-6 leading-tight text-black"
+          className="mx-auto mb-2 max-w-4xl font-black leading-tight text-black typo-display md:mb-6"
           style={{
             fontFamily: "'Architects Daughter', cursive",
           }}
@@ -74,7 +74,7 @@ export default function HandwrittenHeroBlock({
 
         {content.subtitle && (
           <p
-            className="mx-auto max-w-2xl text-xs md:text-xl lg:text-2xl mb-2 md:mb-10 leading-snug md:leading-relaxed text-gray-700"
+            className="mx-auto mb-2 max-w-2xl leading-snug text-gray-700 typo-body-lg md:mb-10 md:leading-relaxed"
             style={{
               fontFamily: "'Indie Flower', cursive",
             }}
@@ -85,7 +85,7 @@ export default function HandwrittenHeroBlock({
 
         {content.highlightText && (
           <div className="mb-2 md:mb-10">
-            <div className="inline-block relative">
+            <div className="relative inline-block">
               {/* ハッチングパターン背景 */}
               <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
                 <defs>
@@ -96,7 +96,7 @@ export default function HandwrittenHeroBlock({
                 <rect width="100%" height="100%" fill="url(#hash-pattern)" />
               </svg>
               <span
-                className="relative z-10 inline-block px-2 md:px-6 py-1 md:py-3 text-xs md:text-lg font-bold border-2 md:border-3 border-black"
+                className="relative z-10 inline-block px-2 py-1 font-bold typo-body border-2 border-black md:px-6 md:py-3 md:border-3"
                 style={{
                   fontFamily: "'Architects Daughter', cursive",
                 }}
@@ -107,10 +107,10 @@ export default function HandwrittenHeroBlock({
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row md:gap-4">
           <button
             onClick={() => handleButtonClick('primary')}
-            className="px-3 md:px-8 py-1.5 md:py-4 text-xs md:text-lg font-bold border-2 md:border-3 border-black bg-white"
+            className="px-3 py-1.5 font-bold typo-body-lg border-2 border-black bg-white md:px-8 md:py-4 md:border-3"
             style={{
               fontFamily: "'Architects Daughter', cursive",
             }}
@@ -122,7 +122,7 @@ export default function HandwrittenHeroBlock({
           {content.secondaryButtonText && (
             <button
               onClick={() => handleButtonClick('secondary')}
-              className="px-3 md:px-8 py-1.5 md:py-4 text-xs md:text-lg font-bold border-2 md:border-3 border-black bg-white"
+                className="px-3 py-1.5 font-bold typo-body-lg border-2 border-black bg-white md:px-8 md:py-4 md:border-3"
               style={{
                 fontFamily: "'Architects Daughter', cursive",
               }}

@@ -14,7 +14,7 @@ export default function HandwrittenBonusBlock({
 }: HandwrittenBonusBlockProps) {
   return (
     <section
-      className="py-12 md:py-20 px-4 md:px-6"
+      className="px-4 py-section-sm sm:py-section md:px-6"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="container mx-auto max-w-5xl">
@@ -33,7 +33,7 @@ export default function HandwrittenBonusBlock({
 
           {content.title && (
             <h2
-              className="text-center text-2xl md:text-4xl lg:text-5xl font-black mb-8 md:mb-12 text-black"
+              className="mb-8 text-center font-black text-black typo-headline text-pretty md:mb-12"
               style={{ fontFamily: "'Architects Daughter', cursive" }}
             >
               {content.title}
@@ -68,14 +68,14 @@ export default function HandwrittenBonusBlock({
 
                 <div className="flex-1">
                   <h3
-                    className="text-sm md:text-2xl font-bold mb-1 text-black"
+                    className="mb-1 font-bold text-black typo-subheadline text-pretty"
                     style={{ fontFamily: "'Architects Daughter', cursive" }}
                   >
                     {bonus.title}
                   </h3>
                   {bonus.description && (
                     <p
-                      className="mb-1.5 md:mb-3 text-[10px] md:text-base leading-tight text-gray-700"
+                      className="mb-1.5 text-gray-700 typo-body text-pretty md:mb-3"
                       style={{ fontFamily: "'Indie Flower', cursive" }}
                     >
                       {bonus.description}
@@ -83,7 +83,7 @@ export default function HandwrittenBonusBlock({
                   )}
                   {bonus.value && (
                     <p
-                      className="text-xs md:text-lg font-bold text-black"
+                      className="font-bold text-black typo-body-lg text-pretty"
                       style={{ fontFamily: "'Architects Daughter', cursive" }}
                     >
                       価値: {bonus.value}
@@ -97,7 +97,7 @@ export default function HandwrittenBonusBlock({
           {content.totalValue && (
             <div className="mt-4 md:mt-8 text-center border-t-2 md:border-t-3 border-black pt-3 md:pt-6">
               <p
-                className="text-lg md:text-3xl font-black text-black"
+                className="font-black text-black typo-headline text-pretty"
                 style={{ fontFamily: "'Architects Daughter', cursive" }}
               >
                 合計価値: {content.totalValue}
