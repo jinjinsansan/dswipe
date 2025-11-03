@@ -169,7 +169,7 @@ export default function NotesMarketplacePage() {
                 <Link
                   key={note.id}
                   href={`/notes/${note.slug}`}
-                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0"
+                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
                 >
                   <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-slate-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
                     {note.cover_image_url ? (
@@ -183,7 +183,7 @@ export default function NotesMarketplacePage() {
                       <DefaultCover />
                     )}
                   </div>
-                  <div className="flex flex-1 flex-col justify-between gap-2 px-3 py-3 md:px-4 md:py-4">
+                  <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
                     <div className="flex flex-col gap-2">
                       <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                         <span
