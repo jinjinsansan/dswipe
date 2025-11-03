@@ -169,9 +169,9 @@ export default function NotesMarketplacePage() {
                 <Link
                   key={note.id}
                   href={`/notes/${note.slug}`}
-                  className="group flex items-stretch gap-3 rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:overflow-hidden md:gap-0"
+                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0"
                 >
-                  <div className="relative h-20 w-28 flex-none overflow-hidden rounded-lg bg-slate-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
+                  <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-slate-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
                     {note.cover_image_url ? (
                       <Image
                         src={note.cover_image_url}
