@@ -996,6 +996,11 @@ export interface OperatorMessage {
   admin_hidden: boolean;
   admin_archived_at?: string | null;
   segment_summary: OperatorMessageSegment[];
+  send_email?: boolean;
+  email_subject?: string | null;
+  email_from_name?: string | null;
+  email_from_address?: string | null;
+  email_reply_to?: string | null;
 }
 
 export interface OperatorMessageListResponse {
@@ -1041,6 +1046,11 @@ export interface OperatorMessageCreatePayload {
   send_at?: string | null;
   send_now?: boolean;
   target_segments?: OperatorMessageSegment[];
+  send_email?: boolean;
+  email_subject?: string | null;
+  email_from_name?: string | null;
+  email_from_address?: string | null;
+  email_reply_to?: string | null;
 }
 
 export interface OperatorMessageUpdatePayload {
@@ -1051,6 +1061,11 @@ export interface OperatorMessageUpdatePayload {
   priority?: string;
   send_at?: string | null;
   target_segments?: OperatorMessageSegment[];
+  send_email?: boolean;
+  email_subject?: string | null;
+  email_from_name?: string | null;
+  email_from_address?: string | null;
+  email_reply_to?: string | null;
 }
 
 export interface OperatorMessageReadRequest {

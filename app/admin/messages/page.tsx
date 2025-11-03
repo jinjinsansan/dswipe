@@ -177,6 +177,11 @@ const INITIAL_CREATE_FORM = {
   targetType: "all_sellers" as TargetType,
   targetUserIds: "",
   targetEmails: "",
+  sendEmail: false,
+  emailSubject: "",
+  emailFromName: "",
+  emailFromAddress: "",
+  emailReplyTo: "",
 };
 
 export default function AdminMessagesPage() {
@@ -205,6 +210,11 @@ export default function AdminMessagesPage() {
     targetType: "all_sellers" as TargetType,
     targetUserIds: "",
     targetEmails: "",
+    sendEmail: false,
+    emailSubject: "",
+    emailFromName: "",
+    emailFromAddress: "",
+    emailReplyTo: "",
   });
 
   const isCreateValid = useMemo(() => {
@@ -267,6 +277,11 @@ export default function AdminMessagesPage() {
         targetType: segmentInfo.targetType,
         targetUserIds: segmentInfo.targetUserIds,
         targetEmails: segmentInfo.targetEmails,
+        sendEmail: Boolean(detail.send_email),
+        emailSubject: detail.email_subject ?? "",
+        emailFromName: detail.email_from_name ?? "",
+        emailFromAddress: detail.email_from_address ?? "",
+        emailReplyTo: detail.email_reply_to ?? "",
       });
     } catch (error) {
       console.error("Failed to fetch message detail", error);
@@ -318,6 +333,11 @@ export default function AdminMessagesPage() {
             ? undefined
             : new Date(createForm.send_at).toISOString(),
           target_segments: buildSegments(createForm.targetType, createForm.targetUserIds, createForm.targetEmails),
+          send_email: createForm.sendEmail,
+          email_subject: createForm.emailSubject.trim() || undefined,
+          email_from_name: createForm.emailFromName.trim() || undefined,
+          email_from_address: createForm.emailFromAddress.trim() || undefined,
+          email_reply_to: createForm.emailReplyTo.trim() || undefined,
         };
 
         await adminMessageApi.create(payload);
@@ -354,6 +374,11 @@ export default function AdminMessagesPage() {
         priority: detailForm.priority || selectedMessage.priority,
         send_at: detailForm.send_at ? new Date(detailForm.send_at).toISOString() : undefined,
         target_segments: buildSegments(detailForm.targetType, detailForm.targetUserIds, detailForm.targetEmails),
+        send_email: detailForm.sendEmail,
+        email_subject: detailForm.emailSubject.trim() || undefined,
+        email_from_name: detailForm.emailFromName.trim() || undefined,
+        email_from_address: detailForm.emailFromAddress.trim() || undefined,
+        email_reply_to: detailForm.emailReplyTo.trim() || undefined,
       };
 
       await adminMessageApi.update(selectedMessage.id, payload);
@@ -687,6 +712,63 @@ export default function AdminMessagesPage() {
                   </label>
                 )}
               </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={createForm.sendEmail}
+                    onChange={(event) => setCreateForm((prev) => ({ ...prev, sendEmail: event.target.checked }))}
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  メールでも配信する（Mailgun）
+                </label>
+                <p className="mt-1 text-xs text-slate-500">
+                  チェックを入れると、対象ユーザーのメールアドレス宛に同じ内容を送信します。未入力項目はデフォルト値（タイトル・既定差出人）を使用します。
+                </p>
+                {createForm.sendEmail && (
+                  <div className="mt-3 grid gap-2">
+                    <label className="flex flex-col gap-1 text-sm">
+                      <span className="font-semibold text-slate-700">メール件名（未入力時はタイトルを使用）</span>
+                      <input
+                        value={createForm.emailSubject}
+                        onChange={(event) => setCreateForm((prev) => ({ ...prev, emailSubject: event.target.value }))}
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                        placeholder="例: 【重要】メンテナンスのお知らせ"
+                      />
+                    </label>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <label className="flex flex-col gap-1 text-sm">
+                        <span className="font-semibold text-slate-700">差出人名（任意）</span>
+                        <input
+                          value={createForm.emailFromName}
+                          onChange={(event) => setCreateForm((prev) => ({ ...prev, emailFromName: event.target.value }))}
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                          placeholder="例: D-swipe運営事務局"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm">
+                        <span className="font-semibold text-slate-700">差出人メール（任意）</span>
+                        <input
+                          value={createForm.emailFromAddress}
+                          onChange={(event) => setCreateForm((prev) => ({ ...prev, emailFromAddress: event.target.value }))}
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                          placeholder="例: no-reply@mg.example.com"
+                        />
+                      </label>
+                    </div>
+                    <label className="flex flex-col gap-1 text-sm">
+                      <span className="font-semibold text-slate-700">返信先メール（任意）</span>
+                      <input
+                        value={createForm.emailReplyTo}
+                        onChange={(event) => setCreateForm((prev) => ({ ...prev, emailReplyTo: event.target.value }))}
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                        placeholder="例: support@example.com"
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center justify-end">
@@ -719,6 +801,13 @@ export default function AdminMessagesPage() {
                   <div className="flex flex-wrap gap-2">
                     <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(selectedMessage.status)} ${selectedMessage.admin_hidden ? "line-through" : ""}`}>
                       {selectedMessage.status ?? "draft"}
+                    </span>
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                        selectedMessage.send_email ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"
+                      }`}
+                    >
+                      メール配信 {selectedMessage.send_email ? "ON" : "OFF"}
                     </span>
                     {selectedMessage.admin_archived_at ? (
                       <span className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
@@ -883,6 +972,68 @@ export default function AdminMessagesPage() {
                       />
                       <span className="text-xs text-slate-500">※指定したメールアドレスに一致するユーザーのみが対象になります。</span>
                     </label>
+                  )}
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <label className={`flex items-center gap-2 text-sm font-semibold ${canUpdate ? "text-slate-700" : "text-slate-500"}`}>
+                    <input
+                      type="checkbox"
+                      checked={detailForm.sendEmail}
+                      onChange={(event) => setDetailForm((prev) => ({ ...prev, sendEmail: event.target.checked }))}
+                      disabled={!canUpdate}
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
+                    />
+                    メールでも配信する（Mailgun）
+                  </label>
+                  <p className="mt-1 text-xs text-slate-500">
+                    同報メールの設定です。空欄の項目はタイトルや既定差出人にフォールバックします。
+                  </p>
+                  {detailForm.sendEmail && (
+                    <div className="mt-3 grid gap-2">
+                      <label className="flex flex-col gap-1 text-sm">
+                        <span className="font-semibold text-slate-700">メール件名</span>
+                        <input
+                          value={detailForm.emailSubject}
+                          onChange={(event) => setDetailForm((prev) => ({ ...prev, emailSubject: event.target.value }))}
+                          disabled={!canUpdate}
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                          placeholder="未入力時はタイトルを使用"
+                        />
+                      </label>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <label className="flex flex-col gap-1 text-sm">
+                          <span className="font-semibold text-slate-700">差出人名</span>
+                          <input
+                            value={detailForm.emailFromName}
+                            onChange={(event) => setDetailForm((prev) => ({ ...prev, emailFromName: event.target.value }))}
+                            disabled={!canUpdate}
+                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                            placeholder="例: D-swipe運営事務局"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1 text-sm">
+                          <span className="font-semibold text-slate-700">差出人メール</span>
+                          <input
+                            value={detailForm.emailFromAddress}
+                            onChange={(event) => setDetailForm((prev) => ({ ...prev, emailFromAddress: event.target.value }))}
+                            disabled={!canUpdate}
+                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                            placeholder="例: no-reply@mg.example.com"
+                          />
+                        </label>
+                      </div>
+                      <label className="flex flex-col gap-1 text-sm">
+                        <span className="font-semibold text-slate-700">返信先メール</span>
+                        <input
+                          value={detailForm.emailReplyTo}
+                          onChange={(event) => setDetailForm((prev) => ({ ...prev, emailReplyTo: event.target.value }))}
+                          disabled={!canUpdate}
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                          placeholder="例: support@example.com"
+                        />
+                      </label>
+                    </div>
                   )}
                 </div>
               </div>
