@@ -987,6 +987,8 @@ export interface OperatorMessage {
   created_by?: string | null;
   created_at: string;
   updated_at: string;
+  admin_hidden: boolean;
+  admin_archived_at?: string | null;
   segment_summary: OperatorMessageSegment[];
 }
 
@@ -1048,6 +1050,14 @@ export interface OperatorMessageUpdatePayload {
 export interface OperatorMessageReadRequest {
   read: boolean;
   archive?: boolean | null;
+}
+
+export interface OperatorMessageHideRequest {
+  hidden: boolean;
+}
+
+export interface OperatorMessageArchiveRequest {
+  archived: boolean;
 }
 
 // トランザクション型

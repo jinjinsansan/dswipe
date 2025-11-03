@@ -76,6 +76,8 @@ export type {
   OperatorMessageUnreadCountResponse,
   OperatorMessageCreatePayload,
   OperatorMessageUpdatePayload,
+  OperatorMessageHideRequest,
+  OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
   SalonMember,
   SalonMemberListResult,

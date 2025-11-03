@@ -76,6 +76,8 @@ import type {
   OperatorMessageUnreadCountResponse,
   OperatorMessageCreatePayload,
   OperatorMessageUpdatePayload,
+  OperatorMessageHideRequest,
+  OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
 } from '@/types/api';
 import type {
@@ -422,7 +424,7 @@ export const operatorMessageApi = {
 };
 
 export const adminMessageApi = {
-  list: (params?: { limit?: number; offset?: number }) =>
+  list: (params?: { limit?: number; offset?: number; visibility?: 'active' | 'hidden' | 'archived' | 'all' }) =>
     api.get<OperatorMessageListResponse>('/admin/messages', { params }),
   get: (messageId: string) => api.get<OperatorMessage>(`/admin/messages/${messageId}`),
   create: (payload: OperatorMessageCreatePayload) =>
@@ -431,6 +433,11 @@ export const adminMessageApi = {
     api.patch<OperatorMessage>(`/admin/messages/${messageId}`, payload),
   dispatch: (messageId: string) => api.post(`/admin/messages/${messageId}/dispatch`, {}),
   processDue: () => api.post('/admin/messages/process-due', {}),
+  hide: (messageId: string, payload: OperatorMessageHideRequest) =>
+    api.post<OperatorMessage>(`/admin/messages/${messageId}/hide`, payload),
+  archive: (messageId: string, payload: OperatorMessageArchiveRequest) =>
+    api.post<OperatorMessage>(`/admin/messages/${messageId}/archive`, payload),
+  delete: (messageId: string) => api.delete(`/admin/messages/${messageId}`),
 };
 
 export const adminPayoutApi = {

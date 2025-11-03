@@ -7,6 +7,11 @@ import {
   PaperAirplaneIcon,
   PlusCircleIcon,
   ClockIcon,
+  EyeSlashIcon,
+  EyeIcon,
+  ArchiveBoxArrowDownIcon,
+  ArrowUturnLeftIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +27,12 @@ import type {
 } from "@/types/api";
 
 type TargetType = "all_sellers" | "all_users" | "user_ids" | "emails";
+type VisibilityFilter = "active" | "hidden" | "archived" | "all";
+
+const SUPER_ADMIN_EMAILS = new Set([
+  "dswipeofficialgoldbenchan@gmail.com",
+  "hakudasama@gmail.com",
+]);
 
 const toDatetimeLocalValue = (value?: string | null) => {
   if (!value) return "";
@@ -169,7 +180,8 @@ const INITIAL_CREATE_FORM = {
 };
 
 export default function AdminMessagesPage() {
-  const { isAdmin, isAuthenticated, isInitialized } = useAuthStore();
+  const { isAdmin, isAuthenticated, isInitialized, user } = useAuthStore();
+  const isSuperAdmin = useMemo(() => SUPER_ADMIN_EMAILS.has((user?.email ?? "").toLowerCase()), [user?.email]);
   const router = useRouter();
   const [messages, setMessages] = useState<OperatorMessage[]>([]);
   const [total, setTotal] = useState(0);
@@ -177,6 +189,7 @@ export default function AdminMessagesPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<OperatorMessage | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>("active");
   const [createForm, setCreateForm] = useState(INITIAL_CREATE_FORM);
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -209,13 +222,18 @@ export default function AdminMessagesPage() {
   const fetchList = useCallback(async () => {
     setListLoading(true);
     try {
-      const response = await adminMessageApi.list({ limit: 100, offset: 0 });
+      const response = await adminMessageApi.list({ limit: 100, offset: 0, visibility: visibilityFilter });
       const payload = response.data as OperatorMessageListResponse;
       const rows = Array.isArray(payload.data) ? payload.data : [];
       setMessages(rows);
       setTotal(payload.total ?? rows.length);
       if (rows.length > 0) {
-        setSelectedId((prev) => prev ?? rows[0].id);
+        setSelectedId((prev) => {
+          if (prev && rows.some((row) => row.id === prev)) {
+            return prev;
+          }
+          return rows[0].id;
+        });
       } else {
         setSelectedId(null);
         setSelectedMessage(null);
@@ -229,7 +247,7 @@ export default function AdminMessagesPage() {
     } finally {
       setListLoading(false);
     }
-  }, []);
+  }, [visibilityFilter]);
 
   const fetchDetail = useCallback(async (messageId: string) => {
     setDetailLoading(true);
@@ -368,6 +386,56 @@ export default function AdminMessagesPage() {
     }
   }, [fetchDetail, fetchList, selectedMessage]);
 
+  const handleHideToggle = useCallback(
+    async (message: OperatorMessage, nextHidden: boolean) => {
+      try {
+        const response = await adminMessageApi.hide(message.id, { hidden: nextHidden });
+        const updated = response.data as OperatorMessage;
+        setSelectedMessage((prev) => (prev?.id === updated.id ? updated : prev));
+        await fetchList();
+      } catch (error) {
+        console.error("Failed to toggle message visibility", error);
+        alert("表示状態の更新に失敗しました");
+      }
+    },
+    [fetchList]
+  );
+
+  const handleArchiveToggle = useCallback(
+    async (message: OperatorMessage, nextArchived: boolean) => {
+      try {
+        const response = await adminMessageApi.archive(message.id, { archived: nextArchived });
+        const updated = response.data as OperatorMessage;
+        setSelectedMessage((prev) => (prev?.id === updated.id ? updated : prev));
+        await fetchList();
+      } catch (error) {
+        console.error("Failed to toggle message archive", error);
+        alert("アーカイブ状態の更新に失敗しました");
+      }
+    },
+    [fetchList]
+  );
+
+  const handleDelete = useCallback(
+    async (message: OperatorMessage) => {
+      if (!window.confirm("このメッセージを完全に削除しますか？この操作は元に戻せません。")) {
+        return;
+      }
+      try {
+        await adminMessageApi.delete(message.id);
+        setSelectedId(null);
+        setSelectedMessage(null);
+        await fetchList();
+        alert("メッセージを削除しました");
+      } catch (error) {
+        console.error("Failed to delete message", error);
+        const messageText = extractErrorMessage(error) ?? "メッセージの削除に失敗しました";
+        alert(messageText);
+      }
+    },
+    [fetchList]
+  );
+
   const handleProcessDue = useCallback(async () => {
     setProcessLoading(true);
     try {
@@ -421,14 +489,26 @@ export default function AdminMessagesPage() {
                   <ClockIcon className="h-4 w-4" aria-hidden="true" />
                   {processLoading ? "処理中…" : "予約配信を処理"}
                 </button>
-                <button
-                  type="button"
-                  onClick={fetchList}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
-                >
-                  <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
-                  更新
-                </button>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={visibilityFilter}
+                    onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
+                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 focus:border-blue-400 focus:outline-none"
+                  >
+                    <option value="active">表示中のみ</option>
+                    <option value="archived">アーカイブ</option>
+                    <option value="hidden">非表示</option>
+                    <option value="all">すべて</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={fetchList}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
+                  >
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    更新
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -443,6 +523,8 @@ export default function AdminMessagesPage() {
                 <ul className="space-y-3">
                   {messages.map((message) => {
                     const isActive = selectedId === message.id;
+                    const isHidden = message.admin_hidden;
+                    const isArchived = Boolean(message.admin_archived_at);
                     return (
                       <li key={message.id}>
                         <button
@@ -460,6 +542,14 @@ export default function AdminMessagesPage() {
                           </div>
                           <div className="text-xs text-slate-500">
                             予定日時: {message.send_at ? new Date(message.send_at).toLocaleString("ja-JP") : "未設定"}
+                          </div>
+                          <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+                            {isHidden ? (
+                              <span className="rounded-full bg-slate-200 px-2 py-0.5 font-semibold text-slate-600">非表示</span>
+                            ) : null}
+                            {isArchived ? (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-700">アーカイブ</span>
+                            ) : null}
                           </div>
                         </button>
                       </li>
@@ -626,20 +716,66 @@ export default function AdminMessagesPage() {
                   <h2 className="text-lg font-semibold text-slate-900">{selectedMessage.title}</h2>
                   <p className="text-xs text-slate-500">作成: {new Date(selectedMessage.created_at).toLocaleString("ja-JP")}</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(selectedMessage.status)}`}>
-                    {selectedMessage.status ?? "draft"}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleDispatch}
-                    disabled={dispatchLoading || selectedMessage.status === "sent"}
-                    className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <PaperAirplaneIcon className="h-4 w-4" aria-hidden="true" />
-                    {dispatchLoading ? "配信中…" : "今すぐ配信"}
-                  </button>
-                </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(selectedMessage.status)} ${selectedMessage.admin_hidden ? "line-through" : ""}`}>
+                      {selectedMessage.status ?? "draft"}
+                    </span>
+                    {selectedMessage.admin_archived_at ? (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                        アーカイブ済み
+                      </span>
+                    ) : null}
+                    {selectedMessage.admin_hidden ? (
+                      <span className="inline-flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                        非表示
+                      </span>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={handleDispatch}
+                      disabled={dispatchLoading || selectedMessage.status === "sent"}
+                      className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <PaperAirplaneIcon className="h-4 w-4" aria-hidden="true" />
+                      {dispatchLoading ? "配信中…" : "今すぐ配信"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleHideToggle(selectedMessage, !selectedMessage.admin_hidden)}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                    >
+                      {selectedMessage.admin_hidden ? (
+                        <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                      ) : (
+                        <EyeSlashIcon className="h-4 w-4" aria-hidden="true" />
+                      )}
+                      {selectedMessage.admin_hidden ? "表示に戻す" : "非表示"}
+                    </button>
+                    {isSuperAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => handleArchiveToggle(selectedMessage, !selectedMessage.admin_archived_at)}
+                        className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:bg-amber-100"
+                      >
+                        {selectedMessage.admin_archived_at ? (
+                          <ArrowUturnLeftIcon className="h-4 w-4" aria-hidden="true" />
+                        ) : (
+                          <ArchiveBoxArrowDownIcon className="h-4 w-4" aria-hidden="true" />
+                        )}
+                        {selectedMessage.admin_archived_at ? "アーカイブ解除" : "アーカイブ"}
+                      </button>
+                    )}
+                    {isSuperAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(selectedMessage)}
+                        className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+                      >
+                        <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                        完全削除
+                      </button>
+                    )}
+                  </div>
               </div>
 
               <div className="grid gap-3">
