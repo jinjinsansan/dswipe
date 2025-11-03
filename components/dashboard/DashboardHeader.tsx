@@ -13,6 +13,7 @@ import {
   BuildingStorefrontIcon,
   ClipboardDocumentListIcon,
   ShieldCheckIcon,
+  MegaphoneIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
@@ -20,6 +21,7 @@ import {
   getDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 
 const MOBILE_LABEL_MAP: Record<string, string> = {
   '/': 'ホーム',
@@ -32,6 +34,7 @@ const MOBILE_LABEL_MAP: Record<string, string> = {
   'https://d-swipe.com/products': 'マーケット',
   '/products/manage': '商品管理',
   'https://d-swipe.com/products/manage': '商品管理',
+  '/messages': 'お知らせ',
   '/sales': '販売履歴',
   '/notes': 'NOTE一覧',
   '/note/create': '新規NOTE',
@@ -125,7 +128,8 @@ export default function DashboardHeader({
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const isAdmin = user?.user_type === 'admin';
-  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
+  const { unreadCount } = useOperatorMessageStore();
+  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type, unreadMessageCount: unreadCount });
   const navLinkMap = useMemo(() => {
     const map = new Map<string, (typeof navLinks)[number]>();
     navLinks.forEach((link) => {
@@ -171,6 +175,14 @@ export default function DashboardHeader({
             href: '/dashboard',
             groupOverride: 'core',
             labelOverride: 'ダッシュ',
+          },
+          {
+            kind: 'customLink',
+            key: 'messages',
+            href: '/messages',
+            label: unreadCount > 0 ? `お知らせ (${unreadCount > 99 ? '99+' : unreadCount})` : 'お知らせ',
+            icon: resolveIcon('/messages', <MegaphoneIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'core',
           },
           {
             kind: 'logout',
@@ -286,7 +298,7 @@ export default function DashboardHeader({
         ],
       },
     ];
-  }, [navLinks, navLinkMap, user]);
+  }, [navLinks, navLinkMap, unreadCount, user]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);

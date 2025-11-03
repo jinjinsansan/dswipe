@@ -6,6 +6,7 @@ import {
   PhotoIcon,
   WrenchScrewdriverIcon,
   ShieldCheckIcon,
+  MegaphoneIcon,
   GiftIcon,
   ClipboardDocumentListIcon,
   DocumentTextIcon,
@@ -197,6 +198,7 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
 
 export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
+  { href: '/messages', label: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
   { href: '/profile', label: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
   { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
   { href: '/products', label: 'マーケット', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
@@ -219,7 +221,11 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
 ];
 
-export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: string }): DashboardNavLink[] => {
+export const getDashboardNavLinks = (options?: {
+  isAdmin?: boolean;
+  userType?: string;
+  unreadMessageCount?: number;
+}): DashboardNavLink[] => {
   const links = [...BASE_DASHBOARD_NAV_LINKS];
 
   if (options?.userType === 'seller' && !links.some((link) => link.href === '/products/manage')) {
@@ -253,7 +259,22 @@ export const getDashboardNavLinks = (options?: { isAdmin?: boolean; userType?: s
     });
   }
 
-  return links;
+  const unreadCount = options?.unreadMessageCount ?? 0;
+  if (!links.some((link) => link.href === '/messages')) {
+    return links;
+  }
+
+  const badgeLabel = unreadCount > 99 ? '99+' : unreadCount > 0 ? String(unreadCount) : undefined;
+
+  return links.map((link) => {
+    if (link.href !== '/messages') {
+      return link;
+    }
+    return {
+      ...link,
+      badge: badgeLabel,
+    };
+  });
 };
 
 export interface DashboardNavGroup {

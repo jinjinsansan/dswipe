@@ -969,6 +969,87 @@ export interface AdminPayoutEventPayload {
   metadata?: Record<string, unknown>;
 }
 
+// 運営メッセージ
+export interface OperatorMessageSegment {
+  segment_type: string;
+  segment_payload: Record<string, unknown>;
+}
+
+export interface OperatorMessage {
+  id: string;
+  title: string;
+  body_text?: string | null;
+  body_html?: string | null;
+  category: string;
+  priority: string;
+  status: string;
+  send_at?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+  segment_summary: OperatorMessageSegment[];
+}
+
+export interface OperatorMessageListResponse {
+  data: OperatorMessage[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface OperatorMessageRecipient {
+  id: string;
+  message_id: string;
+  user_id: string;
+  title: string;
+  body_text?: string | null;
+  body_html?: string | null;
+  category: string;
+  priority: string;
+  delivery_status: string;
+  read_at?: string | null;
+  archived: boolean;
+  send_at?: string | null;
+  created_at: string;
+}
+
+export interface OperatorMessageFeedResponse {
+  data: OperatorMessageRecipient[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface OperatorMessageUnreadCountResponse {
+  unread_count: number;
+}
+
+export interface OperatorMessageCreatePayload {
+  title: string;
+  body_text?: string | null;
+  body_html?: string | null;
+  category?: string;
+  priority?: string;
+  send_at?: string | null;
+  send_now?: boolean;
+  target_segments?: OperatorMessageSegment[];
+}
+
+export interface OperatorMessageUpdatePayload {
+  title?: string;
+  body_text?: string | null;
+  body_html?: string | null;
+  category?: string;
+  priority?: string;
+  send_at?: string | null;
+  target_segments?: OperatorMessageSegment[];
+}
+
+export interface OperatorMessageReadRequest {
+  read: boolean;
+  archive?: boolean | null;
+}
+
 // トランザクション型
 export interface Transaction {
   id: string;

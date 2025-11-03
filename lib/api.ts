@@ -70,6 +70,13 @@ import type {
   AdminPayoutTxRecordPayload,
   AdminPayoutEventPayload,
   AdminRiskOrderListResponse,
+  OperatorMessage,
+  OperatorMessageListResponse,
+  OperatorMessageFeedResponse,
+  OperatorMessageUnreadCountResponse,
+  OperatorMessageCreatePayload,
+  OperatorMessageUpdatePayload,
+  OperatorMessageReadRequest,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -404,6 +411,26 @@ export const payoutApi = {
   getSettings: () => api.get<PayoutSettings | null>('/payouts/settings'),
   updateSettings: (payload: PayoutSettingsUpsertPayload) => api.put<PayoutSettings>('/payouts/settings', payload),
   getDetail: (payoutId: string) => api.get<PayoutLedgerEntry>(`/payouts/ledger/${payoutId}`),
+};
+
+export const operatorMessageApi = {
+  list: (params?: { filter_mode?: 'unread' | 'read' | 'archived'; limit?: number; offset?: number }) =>
+    api.get<OperatorMessageFeedResponse>('/messages', { params }),
+  unreadCount: () => api.get<OperatorMessageUnreadCountResponse>('/messages/unread-count'),
+  markMessage: (messageId: string, payload: OperatorMessageReadRequest) =>
+    api.post(`/messages/${messageId}/read`, payload),
+};
+
+export const adminMessageApi = {
+  list: (params?: { limit?: number; offset?: number }) =>
+    api.get<OperatorMessageListResponse>('/admin/messages', { params }),
+  get: (messageId: string) => api.get<OperatorMessage>(`/admin/messages/${messageId}`),
+  create: (payload: OperatorMessageCreatePayload) =>
+    api.post<OperatorMessage>('/admin/messages', payload),
+  update: (messageId: string, payload: OperatorMessageUpdatePayload) =>
+    api.patch<OperatorMessage>(`/admin/messages/${messageId}`, payload),
+  dispatch: (messageId: string) => api.post(`/admin/messages/${messageId}/dispatch`, {}),
+  processDue: () => api.post('/admin/messages/process-due', {}),
 };
 
 export const adminPayoutApi = {

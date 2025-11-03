@@ -8,8 +8,9 @@ import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import { pointsApi } from '@/lib/api';
+import { operatorMessageApi, pointsApi } from '@/lib/api';
 import { redirectToLogin } from '@/lib/navigation';
+import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 import {
   type DashboardNavGroupKey,
   getDashboardNavLinks,
@@ -18,6 +19,7 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+import type { OperatorMessageUnreadCountResponse } from '@/types/api';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -43,11 +45,12 @@ export default function DashboardLayout({
     pointBalance,
     setPointBalance,
   } = useAuthStore();
+  const { unreadCount, setUnreadCount, lastFetchedAt } = useOperatorMessageStore();
   const lastFetchedUserRef = useRef<string | null>(null);
 
   const navLinks = useMemo(
-    () => getDashboardNavLinks({ isAdmin, userType: user?.user_type }),
-    [isAdmin, user?.user_type]
+    () => getDashboardNavLinks({ isAdmin, userType: user?.user_type, unreadMessageCount: unreadCount }),
+    [isAdmin, unreadCount, user?.user_type]
   );
   const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
   const activeNavLink = useMemo(
@@ -115,6 +118,37 @@ export default function DashboardLayout({
       isActive = false;
     };
   }, [isInitialized, isAuthenticated, user?.id, setPointBalance]);
+
+  useEffect(() => {
+    if (!isInitialized || !isAuthenticated || !user?.id) {
+      return;
+    }
+
+    const now = Date.now();
+    if (lastFetchedAt && now - lastFetchedAt < 60_000) {
+      return;
+    }
+
+    let isMounted = true;
+    const fetchUnread = async () => {
+      try {
+        const response = await operatorMessageApi.unreadCount();
+        if (!isMounted) return;
+        const count = (response.data as OperatorMessageUnreadCountResponse | { unread_count?: number }).unread_count ?? 0;
+        setUnreadCount(count, Date.now());
+      } catch (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Failed to fetch message unread count', error);
+        }
+      }
+    };
+
+    fetchUnread();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isInitialized, isAuthenticated, user?.id, lastFetchedAt, setUnreadCount]);
 
   const handleLogout = () => {
     logout();

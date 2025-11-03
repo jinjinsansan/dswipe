@@ -14,6 +14,7 @@ import {
 } from 'react';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { useAuthStore } from '@/store/authStore';
+import { operatorMessageApi } from '@/lib/api';
 import {
   getDashboardNavClasses,
   getDashboardNavGroupMeta,
@@ -21,6 +22,8 @@ import {
   groupDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
+import { useOperatorMessageStore } from '@/store/operatorMessageStore';
+import type { OperatorMessageUnreadCountResponse } from '@/types/api';
 
 interface StickySiteHeaderProps {
   rightSlot?: ReactNode;
@@ -39,11 +42,12 @@ export default function StickySiteHeader({
 }: StickySiteHeaderProps) {
   const pathname = usePathname();
   const { user, isAuthenticated, isAdmin: isAdminUser, logout } = useAuthStore();
+  const { unreadCount, setUnreadCount, lastFetchedAt } = useOperatorMessageStore();
   const userType = (user?.user_type ?? undefined) as 'seller' | 'buyer' | 'admin' | undefined;
   const isAdmin = userType === 'admin';
   const navLinks = useMemo(
-    () => getDashboardNavLinks({ isAdmin, userType }),
-    [isAdmin, userType]
+    () => getDashboardNavLinks({ isAdmin, userType, unreadMessageCount: unreadCount }),
+    [isAdmin, unreadCount, userType]
   );
   const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
 
@@ -72,6 +76,37 @@ export default function StickySiteHeader({
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) {
+      return;
+    }
+
+    const now = Date.now();
+    if (lastFetchedAt && now - lastFetchedAt < 60_000) {
+      return;
+    }
+
+    let isMounted = true;
+    const fetchUnread = async () => {
+      try {
+        const response = await operatorMessageApi.unreadCount();
+        if (!isMounted) return;
+        const count = (response.data as OperatorMessageUnreadCountResponse | { unread_count?: number }).unread_count ?? 0;
+        setUnreadCount(count, Date.now());
+      } catch (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Failed to fetch message unread count', error);
+        }
+      }
+    };
+
+    fetchUnread();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, user?.id, lastFetchedAt, setUnreadCount]);
 
   useLayoutEffect(() => {
     const updateOffset = () => {

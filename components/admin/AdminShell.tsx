@@ -65,6 +65,12 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     description: '公式LINEキャンペーン設定',
   },
   {
+    href: '/admin/messages',
+    label: '運営メッセージ',
+    icon: MegaphoneIcon,
+    description: 'お知らせ配信の作成・配信管理',
+  },
+  {
     href: '/admin/payouts',
     label: '支払い管理',
     icon: BanknotesIcon,
