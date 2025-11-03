@@ -30,8 +30,8 @@ type TargetType = "all_sellers" | "all_users" | "user_ids" | "emails";
 type VisibilityFilter = "active" | "hidden" | "archived" | "all";
 
 const SUPER_ADMIN_EMAILS = new Set([
-  "dswipeofficialgoldbenchan@gmail.com",
-  "hakudasama@gmail.com",
+  "goldbenchan@gmail.com",
+  "kusanokiyoshi1@gmail.com",
 ]);
 
 const toDatetimeLocalValue = (value?: string | null) => {
