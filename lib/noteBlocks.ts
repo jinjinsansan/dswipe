@@ -8,6 +8,7 @@ const BLOCK_TYPE_LABELS: Record<NoteBlockType, string> = {
   divider: '区切り線',
   list: 'リスト',
   link: 'リンク',
+  spacer: '改行',
 };
 
 export const NOTE_BLOCK_TYPE_OPTIONS = (Object.keys(BLOCK_TYPE_LABELS) as NoteBlockType[]).map((type) => ({
@@ -52,6 +53,9 @@ export const createEmptyBlock = (type: NoteBlockType): NoteBlock => {
       break;
     case 'link':
       base.data = { title: '', url: '', description: '' };
+      break;
+    case 'spacer':
+      base.data = { size: 'md' };
       break;
     case 'divider':
     default:
@@ -126,6 +130,14 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
         title,
         url,
         description,
+      };
+      break;
+    }
+    case 'spacer': {
+      const size = typeof data.size === 'string' ? data.size : 'md';
+      const allowed = ['sm', 'md', 'lg'];
+      normalized.data = {
+        size: allowed.includes(size) ? size : 'md',
       };
       break;
     }

@@ -80,6 +80,12 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       }
       case 'divider':
         return <div className="h-px w-full bg-slate-200" />;
+      case 'spacer': {
+        const size = typeof (data as { size?: unknown }).size === 'string' ? (data as { size?: string }).size : 'md';
+        const heightClass =
+          size === 'sm' ? 'h-6' : size === 'lg' ? 'h-16' : 'h-10';
+        return <div aria-hidden className={`w-full ${heightClass}`} />;
+      }
       case 'link': {
         const url = typeof data.url === 'string' ? data.url.trim() : '';
         const title = typeof data.title === 'string' ? data.title : '';
@@ -151,12 +157,12 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       return null;
     }
 
-    const isDivider = block.type === 'divider';
+    const isSimpleBlock = block.type === 'divider' || block.type === 'spacer';
 
     return (
       <div
         key={key}
-        className={`note-block w-full ${isDivider ? 'py-2' : 'space-y-2'}`}
+        className={`note-block w-full ${isSimpleBlock ? 'py-2' : 'space-y-2'}`}
       >
         {content}
       </div>

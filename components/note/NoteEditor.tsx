@@ -54,6 +54,12 @@ const toListItems = (value: string): string[] =>
     .map((item) => item.trim())
     .filter((item) => item.length > 0);
 
+const SPACER_SIZE_OPTIONS = [
+  { value: 'sm', label: '小' },
+  { value: 'md', label: '中' },
+  { value: 'lg', label: '大' },
+];
+
 export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
   const blocks = useMemo(() => value.map((block) => normalizeBlock(block)), [value]);
   const [mediaTargetIndex, setMediaTargetIndex] = useState<number | null>(null);
@@ -487,6 +493,26 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     onChange={(event) => handleDataChange(index, { description: event.target.value })}
                     disabled={disabled}
                   />
+                </div>
+              )}
+
+              {block.type === 'spacer' && (
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    高さ
+                  </label>
+                  <select
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    value={typeof block.data?.size === 'string' ? block.data.size : 'md'}
+                    onChange={(event) => handleDataChange(index, { size: event.target.value })}
+                    disabled={disabled}
+                  >
+                    {SPACER_SIZE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
 
