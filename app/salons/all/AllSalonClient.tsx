@@ -265,19 +265,19 @@ export default function AllSalonClient() {
         ) : null}
 
         {salons.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {salons.map((item) => (
-                  <article key={item.id} className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                    <div className="relative h-48 w-full bg-slate-100">
+                  <article key={item.id} className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-sky-200 hover:shadow-md">
+                    <div className="relative aspect-[4/3] w-full bg-slate-100">
                       {item.thumbnail_url ? (
-                        <img src={item.thumbnail_url} alt={`${item.title}のサムネイル`} className="h-full w-full object-cover" />
+                        <img src={item.thumbnail_url} alt={`${item.title}のサムネイル`} className="absolute inset-0 h-full w-full object-cover" />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                        <div className="absolute inset-0 flex items-center justify-center text-xs text-slate-400">
                           サムネイル未設定
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-1 flex-col gap-3 px-6 py-5">
+                    <div className="flex flex-1 flex-col gap-3 px-4 py-4">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           {item.category ? (
@@ -285,7 +285,7 @@ export default function AllSalonClient() {
                               {item.category}
                             </span>
                           ) : null}
-                          <h3 className="mt-2 text-lg font-semibold text-slate-900 line-clamp-2">{item.title}</h3>
+                          <h3 className="mt-2 text-base font-semibold text-slate-900 line-clamp-2">{item.title}</h3>
                         </div>
                         <div className="text-right text-xs text-slate-500">
                           <p>{formatDate(item.created_at)}</p>
@@ -294,7 +294,7 @@ export default function AllSalonClient() {
                       </div>
 
                       {item.description ? (
-                        <p className="text-sm text-slate-600 line-clamp-3">{item.description}</p>
+                        <p className="text-sm text-slate-600 line-clamp-2">{item.description}</p>
                       ) : null}
 
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
@@ -325,7 +325,7 @@ export default function AllSalonClient() {
                         </div>
                         <Link
                           href={`/salons/${item.id}/public`}
-                          className="ml-auto inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
+                          className="ml-auto inline-flex items-center justify-center rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
                         >
                           公開ページを見る
                         </Link>

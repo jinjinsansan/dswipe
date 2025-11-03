@@ -63,7 +63,7 @@ export default function NotesMarketplacePage() {
 
   return (
     <DashboardLayout pageTitle="AllNOTES" pageSubtitle="情報発信者が投稿したNOTE記事をここで発見できます" requireAuth={false}>
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 pb-20 pt-6 sm:gap-12">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 pb-20 pt-6 sm:px-6 sm:gap-12">
 
         <section className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -150,14 +150,14 @@ export default function NotesMarketplacePage() {
             </div>
           </section>
         ) : (
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {filteredNotes.map((note) => (
               <Link
                 key={note.id}
                 href={`/notes/${note.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
               >
-                <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
                   {note.cover_image_url ? (
                     <Image
                       src={note.cover_image_url}
@@ -169,7 +169,7 @@ export default function NotesMarketplacePage() {
                     <DefaultCover />
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-3 px-5 py-6">
+                <div className="flex flex-1 flex-col gap-3 px-4 py-5">
                   <div className="flex items-center gap-2">
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
@@ -184,9 +184,9 @@ export default function NotesMarketplacePage() {
                       {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
                     </span>
                   </div>
-                  <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">{note.title}</h3>
+                  <h3 className="line-clamp-2 text-base font-semibold text-slate-900">{note.title}</h3>
                   {note.excerpt ? (
-                    <p className="line-clamp-3 text-sm text-slate-600">{note.excerpt}</p>
+                    <p className="line-clamp-2 text-sm text-slate-600">{note.excerpt}</p>
                   ) : (
                     <p className="text-sm text-slate-500">概要未設定の記事です。</p>
                   )}
@@ -224,7 +224,7 @@ function SpinIndicator() {
 
 function DefaultCover() {
   return (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-200 to-slate-100 text-slate-400">
+    <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-200 to-slate-100 text-slate-400">
       <SparklesIcon className="h-8 w-8" aria-hidden="true" />
     </div>
   );

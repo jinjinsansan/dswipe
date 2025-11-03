@@ -18,6 +18,8 @@ import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import { redirectToLogin } from '@/lib/navigation';
 
+const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
+
 interface NoteDetailClientProps {
   slug: string;
 }
@@ -68,6 +70,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<'points' | 'yen'>('points');
+  const [shareUrl, setShareUrl] = useState('');
 
   const fetchNote = useCallback(async () => {
     if (!slug) return;
@@ -117,6 +120,12 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     if (!isInitialized) return;
     fetchNote();
   }, [fetchNote, isInitialized]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setShareUrl(window.location.href);
+    }
+  }, [slug]);
 
   const handlePurchase = async () => {
     if (!note) return;
@@ -190,6 +199,25 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     if (!note || !user) return false;
     return note.author_id === user.id;
   }, [note, user]);
+
+  const canonicalUrl = useMemo(() => {
+    const normalizedOrigin = SITE_ORIGIN ? SITE_ORIGIN.replace(/\/$/, '') : '';
+    if (shareUrl) {
+      return shareUrl;
+    }
+    const slugValue = note?.slug || slug;
+    return `${normalizedOrigin}/notes/${slugValue}`;
+  }, [note?.slug, shareUrl, slug]);
+
+  const shareLinks = useMemo(() => {
+    const title = note?.title ? `${note.title}` : 'NOTE';
+    const encodedUrl = encodeURIComponent(canonicalUrl);
+    const encodedTitle = encodeURIComponent(title);
+    return {
+      x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      line: `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`,
+    };
+  }, [canonicalUrl, note?.title]);
 
   if (!isInitialized) {
     return (
@@ -425,6 +453,30 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
             </div>
           </div>
         ) : null}
+
+        <div className="mt-10 border-t border-slate-200 pt-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">SNSでシェア</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <a
+              href={shareLinks.x}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              <XIcon className="h-4 w-4" />
+              Xでシェア
+            </a>
+            <a
+              href={shareLinks.line}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100"
+            >
+              <LineIcon className="h-4 w-4" />
+              LINEでシェア
+            </a>
+          </div>
+        </div>
       </section>
 
       {note.is_paid && note.has_access ? (
@@ -457,5 +509,39 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
         <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>
       </footer>
     </article>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M18.3 4.5H21l-6.32 7.21L21.67 19.5H16.2l-4.05-4.73-4.63 4.73H3.15l6.75-7.09L2.67 4.5h5.58l3.65 4.26 4.4-4.26Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function LineIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 3.5c-5.24 0-9.5 3.47-9.5 7.76 0 3.06 1.97 5.66 4.92 6.93-.1.79-.36 2.18-.41 2.46-.06.37.14.36.3.27.13-.07 2.13-1.4 2.99-1.97.7.1 1.42.16 2.17.16 5.24 0 9.5-3.47 9.5-7.75 0-4.29-4.26-7.76-9.5-7.76Zm-2.3 9.35H7.97V8.25a.5.5 0 0 1 1 0v3.6h.73a.5.5 0 1 1 0 1Zm3.29 0H12a.5.5 0 0 1-.5-.5V8.25a.5.5 0 1 1 1 0v3.6h.49a.5.5 0 1 1 0 1Zm3.76 0h-1.98a.5.5 0 0 1-.5-.5V8.25a.5.5 0 1 1 1 0v3.1h1.48a.5.5 0 1 1 0 1Z"
+        fill="currentColor"
+      />
+    </svg>
   );
 }

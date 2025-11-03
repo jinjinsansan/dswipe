@@ -270,7 +270,7 @@ function ProductsContent() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mb-8">
               {currentProducts.map((product) => {
                 const sellerUsername = typeof product.seller_username === 'string' ? product.seller_username : '';
                 const thumbnailUrl = getThumbnailUrl(product);
@@ -281,15 +281,15 @@ function ProductsContent() {
                   <Link
                     key={product.id}
                     href={targetHref}
-                    className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
+                    className="bg-white rounded-2xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group block shadow-sm"
                   >
                     {/* サムネイル */}
-                    <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden relative">
+                    <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
                       {thumbnailUrl ? (
                         isVideoUrl(thumbnailUrl) ? (
                           <video
                             src={thumbnailUrl}
-                            className="w-full h-full object-cover"
+                            className="absolute inset-0 h-full w-full object-cover"
                             autoPlay
                             loop
                             muted
@@ -299,11 +299,11 @@ function ProductsContent() {
                           <img
                             src={thumbnailUrl}
                             alt={product.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         )
                       ) : (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center p-4 text-slate-600">
                             <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
                             <div className="text-sm font-semibold line-clamp-2">{product.title}</div>
@@ -329,7 +329,7 @@ function ProductsContent() {
                         </Link>
                       )}
 
-                      <h3 className="text-slate-900 font-semibold text-base sm:text-lg mb-2 line-clamp-2">
+                      <h3 className="text-slate-900 font-semibold text-base mb-2 line-clamp-2">
                         {product.title}
                       </h3>
 
