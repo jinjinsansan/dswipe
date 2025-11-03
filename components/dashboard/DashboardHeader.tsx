@@ -184,13 +184,6 @@ export default function DashboardHeader({
             icon: resolveIcon('/messages', <MegaphoneIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'core',
           },
-          {
-            kind: 'logout',
-            key: 'logout',
-            label: 'ログアウト',
-            icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />, 
-            groupKey: 'core',
-          },
         ],
       },
       {
@@ -295,6 +288,13 @@ export default function DashboardHeader({
           { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
           { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media', labelOverride: '競馬予想AI' },
           { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
+          {
+            kind: 'logout',
+            key: 'logout',
+            label: 'ログアウト',
+            icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />, 
+            groupKey: 'info' as DashboardNavGroupKey,
+          },
         ],
       },
     ];
