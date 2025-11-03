@@ -86,6 +86,7 @@ export default function MessagesClient() {
   const [total, setTotal] = useState(0);
   const [selectedMessage, setSelectedMessage] = useState<OperatorMessageRecipient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -146,6 +147,7 @@ export default function MessagesClient() {
       setError("メッセージの取得に失敗しました");
     } finally {
       setIsLoading(false);
+      setHasLoadedOnce(true);
     }
   }, [currentPage, filter, setUnreadCount]);
 
@@ -179,6 +181,10 @@ export default function MessagesClient() {
     return buildBodyHtml(selectedMessage);
   }, [selectedMessage]);
 
+  if (isLoading && !hasLoadedOnce && !error) {
+    return <PageLoader />;
+  }
+
   return (
     <DashboardLayout
       pageTitle="運営からのお知らせ"
@@ -198,10 +204,11 @@ export default function MessagesClient() {
           <button
             type="button"
             onClick={handleRefresh}
+            disabled={isLoading}
             className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
           >
-            <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
-            再読込
+            <ArrowPathIcon className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} aria-hidden="true" />
+            {isLoading ? "更新中…" : "再読込"}
           </button>
         </div>
 
@@ -235,11 +242,7 @@ export default function MessagesClient() {
           })}
         </div>
 
-        {isLoading ? (
-          <div className="flex min-h-[320px] items-center justify-center rounded-3xl border border-slate-200 bg-white">
-            <PageLoader />
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-600">
             {error}
           </div>
@@ -247,7 +250,11 @@ export default function MessagesClient() {
           <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <div className="flex flex-col gap-3">
               <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
-                {messages.length === 0 ? (
+                {isLoading && hasLoadedOnce ? (
+                  <div className="flex min-h-[240px] items-center justify-center">
+                    <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-400" aria-hidden="true" />
+                  </div>
+                ) : messages.length === 0 ? (
                   <p className="px-4 py-6 text-center text-sm text-slate-500">対象のメッセージはありません。</p>
                 ) : (
                   <ul className="divide-y divide-slate-200">
