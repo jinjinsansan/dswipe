@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
 import {
@@ -38,6 +38,9 @@ import type {
   ShareLogItem,
   ShareFraudAlert,
   ShareRewardSettings,
+  FeaturedProductSummary,
+  FeaturedNoteSummary,
+  FeaturedSalonSummary,
 } from '@/types';
 import NoteModerationCenter from '@/components/admin/note-moderation/NoteModerationCenter';
 import SalonManagementCenter from '@/components/admin/salon-management/SalonManagementCenter';
@@ -51,6 +54,8 @@ type TabKey =
   | 'analytics'
   | 'announcements'
   | 'logs';
+
+type FeaturedKey = 'product' | 'note' | 'salon';
 
 const TABS: Array<AdminPageTab & { id: TabKey }> = [
   { id: 'users', label: 'ユーザー管理', icon: UserGroupIcon },
@@ -200,6 +205,14 @@ export default function AdminPanelPage() {
   const [marketLoading, setMarketLoading] = useState(false);
   const [marketError, setMarketError] = useState<string | null>(null);
 
+  const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductSummary[]>([]);
+  const [featuredNotes, setFeaturedNotes] = useState<FeaturedNoteSummary[]>([]);
+  const [featuredSalons, setFeaturedSalons] = useState<FeaturedSalonSummary[]>([]);
+  const [featuredSearch, setFeaturedSearch] = useState({ product: '', note: '', salon: '' });
+  const [featuredLoading, setFeaturedLoading] = useState({ product: false, note: false, salon: false });
+  const [featuredErrors, setFeaturedErrors] = useState<{ product?: string; note?: string; salon?: string }>({});
+  const [featuredToggleLoading, setFeaturedToggleLoading] = useState<string | null>(null);
+
   const [analytics, setAnalytics] = useState<AdminPointAnalytics | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsError, setAnalyticsError] = useState<string | null>(null);
@@ -297,6 +310,9 @@ export default function AdminPanelPage() {
           fetchAnnouncements(),
           fetchMaintenanceData(maintenanceScopeFilter),
           fetchStatusCheckData(),
+          fetchFeaturedProducts(),
+          fetchFeaturedNotes(),
+          fetchFeaturedSalons(),
         ]);
       } finally {
         setPageLoading(false);
@@ -382,6 +398,60 @@ export default function AdminPanelPage() {
       setMarketLoading(false);
     }
   };
+
+  const fetchFeaturedProducts = useCallback(async (query?: string) => {
+    setFeaturedLoading((prev) => ({ ...prev, product: true }));
+    const sanitized = query?.trim() || undefined;
+    try {
+      const response = await adminApi.listFeaturedProducts({ search: sanitized, limit: 100 });
+      const payload = response.data as { data?: FeaturedProductSummary[] };
+      const rows = Array.isArray(payload?.data) ? payload.data : [];
+      setFeaturedProducts(rows ?? []);
+      setFeaturedErrors((prev) => ({ ...prev, product: undefined }));
+    } catch (error) {
+      const message = getErrorMessage(error, '人気LP一覧の取得に失敗しました');
+      console.error(error);
+      setFeaturedErrors((prev) => ({ ...prev, product: message }));
+    } finally {
+      setFeaturedLoading((prev) => ({ ...prev, product: false }));
+    }
+  }, []);
+
+  const fetchFeaturedNotes = useCallback(async (query?: string) => {
+    setFeaturedLoading((prev) => ({ ...prev, note: true }));
+    const sanitized = query?.trim() || undefined;
+    try {
+      const response = await adminApi.listFeaturedNotes({ search: sanitized, limit: 100 });
+      const payload = response.data as { data?: FeaturedNoteSummary[] };
+      const rows = Array.isArray(payload?.data) ? payload.data : [];
+      setFeaturedNotes(rows ?? []);
+      setFeaturedErrors((prev) => ({ ...prev, note: undefined }));
+    } catch (error) {
+      const message = getErrorMessage(error, '人気NOTE一覧の取得に失敗しました');
+      console.error(error);
+      setFeaturedErrors((prev) => ({ ...prev, note: message }));
+    } finally {
+      setFeaturedLoading((prev) => ({ ...prev, note: false }));
+    }
+  }, []);
+
+  const fetchFeaturedSalons = useCallback(async (query?: string) => {
+    setFeaturedLoading((prev) => ({ ...prev, salon: true }));
+    const sanitized = query?.trim() || undefined;
+    try {
+      const response = await adminApi.listFeaturedSalons({ search: sanitized, limit: 100 });
+      const payload = response.data as { data?: FeaturedSalonSummary[] };
+      const rows = Array.isArray(payload?.data) ? payload.data : [];
+      setFeaturedSalons(rows ?? []);
+      setFeaturedErrors((prev) => ({ ...prev, salon: undefined }));
+    } catch (error) {
+      const message = getErrorMessage(error, '人気サロン一覧の取得に失敗しました');
+      console.error(error);
+      setFeaturedErrors((prev) => ({ ...prev, salon: message }));
+    } finally {
+      setFeaturedLoading((prev) => ({ ...prev, salon: false }));
+    }
+  }, []);
 
   const fetchAnalytics = async () => {
     setAnalyticsLoading(true);
@@ -865,6 +935,177 @@ export default function AdminPanelPage() {
     }
   };
 
+  const handleToggleFeatured = useCallback(
+    async (entityType: 'product' | 'note' | 'salon', entityId: string, isCurrentlyFeatured: boolean) => {
+      const loadingKey = `${entityType}:${entityId}`;
+      setFeaturedToggleLoading(loadingKey);
+      try {
+        await adminApi.toggleFeatured({ entity_type: entityType, entity_id: entityId, is_featured: !isCurrentlyFeatured });
+        if (entityType === 'product') {
+          await fetchFeaturedProducts(featuredSearch.product);
+        } else if (entityType === 'note') {
+          await fetchFeaturedNotes(featuredSearch.note);
+        } else {
+          await fetchFeaturedSalons(featuredSearch.salon);
+        }
+      } catch (error) {
+        const message = getErrorMessage(error, '人気設定の更新に失敗しました');
+        console.error(error);
+        window.alert(message);
+      } finally {
+        setFeaturedToggleLoading(null);
+      }
+    },
+    [fetchFeaturedProducts, fetchFeaturedNotes, fetchFeaturedSalons, featuredSearch],
+  );
+
+  const renderFeaturedCard = (
+    entityType: FeaturedKey,
+    title: string,
+    subtitle: string,
+    items: Array<FeaturedProductSummary | FeaturedNoteSummary | FeaturedSalonSummary>,
+    loading: boolean,
+    errorMessage?: string,
+  ) => {
+    const searchKey: FeaturedKey = entityType;
+    const searchValue = featuredSearch[searchKey];
+
+    const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (entityType === 'product') {
+        fetchFeaturedProducts(searchValue);
+      } else if (entityType === 'note') {
+        fetchFeaturedNotes(searchValue);
+      } else {
+        fetchFeaturedSalons(searchValue);
+      }
+    };
+
+    const handleReset = () => {
+      setFeaturedSearch((prev) => ({ ...prev, [searchKey]: '' } as typeof prev));
+      if (entityType === 'product') {
+        fetchFeaturedProducts();
+      } else if (entityType === 'note') {
+        fetchFeaturedNotes();
+      } else {
+        fetchFeaturedSalons();
+      }
+    };
+
+    const detailLine = (item: FeaturedProductSummary | FeaturedNoteSummary | FeaturedSalonSummary) => {
+      if (entityType === 'product') {
+        const product = item as FeaturedProductSummary;
+        const seller = product.seller_username ? `@${product.seller_username}` : '@-';
+        const slug = product.lp_slug ? ` / ${product.lp_slug}` : '';
+        const status = product.is_available ? '販売中' : '停止中';
+        return `${seller}${slug} · ${status}`;
+      }
+      if (entityType === 'note') {
+        const note = item as FeaturedNoteSummary;
+        const author = note.author_username ? `@${note.author_username}` : '@-';
+        const status = note.status ?? 'published';
+        return `${author} · ${status}`;
+      }
+      const salon = item as FeaturedSalonSummary;
+      const owner = salon.owner_username ? `@${salon.owner_username}` : '@-';
+      const status = salon.is_active ? '公開中' : '停止中';
+      return `${owner} · ${status}`;
+    };
+
+    const createdLabel = (item: FeaturedProductSummary | FeaturedNoteSummary | FeaturedSalonSummary) => {
+      const raw = (item as { created_at?: string | null }).created_at;
+      if (!raw) return null;
+      const date = new Date(raw);
+      if (Number.isNaN(date.getTime())) return null;
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    };
+
+    return (
+      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+            <p className="text-[11px] text-slate-500">{subtitle}</p>
+          </div>
+          {loading ? <span className="text-[11px] text-slate-400">読み込み中...</span> : null}
+        </div>
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+          <input
+            type="text"
+            value={searchValue}
+            onChange={(event) =>
+              setFeaturedSearch((prev) => ({ ...prev, [searchKey]: event.target.value } as typeof prev))
+            }
+            placeholder="キーワード検索"
+            className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+          >
+            検索
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+          >
+            クリア
+          </button>
+        </form>
+        {errorMessage ? (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-600">{errorMessage}</div>
+        ) : null}
+        <div className="max-h-60 space-y-2 overflow-y-auto pr-1">
+          {loading ? (
+            <div className="flex items-center justify-center py-6 text-xs text-slate-500">読み込み中...</div>
+          ) : items.length === 0 ? (
+            <div className="flex items-center justify-center py-6 text-xs text-slate-500">該当データがありません</div>
+          ) : (
+            items.map((item) => {
+              const key = `${entityType}:${item.id}`;
+              const inProgress = featuredToggleLoading === key;
+              const created = createdLabel(item);
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2"
+                >
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm font-semibold text-slate-900">{item.title}</span>
+                      {item.is_featured ? (
+                        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+                          人気
+                        </span>
+                      ) : null}
+                      {created ? (
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400">{created}</span>
+                      ) : null}
+                    </div>
+                    <div className="truncate text-[11px] text-slate-500">{detailLine(item)}</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleFeatured(entityType, item.id, item.is_featured)}
+                    disabled={inProgress}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                      item.is_featured
+                        ? 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                        : 'bg-amber-500 text-white hover:bg-amber-600'
+                    } ${inProgress ? 'cursor-not-allowed opacity-60' : ''}`}
+                  >
+                    {item.is_featured ? '人気解除' : '人気に設定'}
+                  </button>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const totals = analytics?.totals;
 
   const topDailyBreakdown = useMemo<AdminPointAnalyticsBreakdown[]>(() => {
@@ -897,6 +1138,9 @@ export default function AdminPanelPage() {
         fetchAnnouncements(),
         fetchMaintenanceData(maintenanceScopeFilter),
         fetchStatusCheckData(),
+        fetchFeaturedProducts(featuredSearch.product),
+        fetchFeaturedNotes(featuredSearch.note),
+        fetchFeaturedSalons(featuredSearch.salon),
       ]);
     } finally {
       setPageLoading(false);
@@ -1956,6 +2200,18 @@ export default function AdminPanelPage() {
                     </div>
                   ))
                 )}
+              </div>
+
+              <div className="rounded-3xl border border-gray-200 bg-white/90 p-5 shadow-sm">
+                <div className="mb-4 flex flex-col gap-1">
+                  <h3 className="text-lg font-semibold text-gray-900">人気バッジ管理</h3>
+                  <p className="text-xs text-gray-500">「人気」バッジを付与したLP / NOTE / サロンは公開ページで常に上位表示されます。</p>
+                </div>
+                <div className="grid gap-4 lg:grid-cols-3">
+                  {renderFeaturedCard('product', 'LP / 商品', 'LPマーケットに表示される商品を固定表示します', featuredProducts, featuredLoading.product, featuredErrors.product)}
+                  {renderFeaturedCard('note', 'NOTE', 'NOTEマーケットに表示される記事を固定表示します', featuredNotes, featuredLoading.note, featuredErrors.note)}
+                  {renderFeaturedCard('salon', 'オンラインサロン', 'サロン一覧の掲載順を優先表示します', featuredSalons, featuredLoading.salon, featuredErrors.salon)}
+                </div>
               </div>
             </div>
           )}

@@ -670,6 +670,18 @@ export const adminApi = {
   updateLPStatus: (lpId: string, data: { status: 'published' | 'archived'; reason?: string }) =>
     api.post(`/admin/marketplace/lps/${lpId}/status`, data),
 
+  listFeaturedProducts: (params?: { search?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/featured/products', { params }),
+
+  listFeaturedNotes: (params?: { search?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/featured/notes', { params }),
+
+  listFeaturedSalons: (params?: { search?: string; limit?: number; offset?: number }) =>
+    api.get('/admin/featured/salons', { params }),
+
+  toggleFeatured: (payload: { entity_type: 'product' | 'note' | 'salon'; entity_id: string; is_featured: boolean }) =>
+    api.post('/admin/featured/toggle', payload),
+
   getPointAnalytics: (params?: { date_from?: string; date_to?: string; limit_days?: number }) =>
     api.get('/admin/analytics/points', { params }),
 

@@ -123,6 +123,7 @@ export interface Product {
   tax_inclusive: boolean;
   stock_quantity?: number | null;
   is_available: boolean;
+  is_featured: boolean;
   total_sales: number;
   created_at: string;
   updated_at: string;
@@ -156,6 +157,7 @@ export interface NoteSummary {
   status: NoteStatus;
   published_at?: string | null;
   updated_at: string;
+  is_featured: boolean;
   categories: string[];
   allow_share_unlock?: boolean;
   official_share_tweet_id?: string | null;
@@ -217,6 +219,7 @@ export interface PublicNoteSummary {
   tax_inclusive: boolean;
   author_username?: string | null;
   published_at?: string | null;
+  is_featured: boolean;
   categories: string[];
   allow_share_unlock?: boolean;
   official_share_tweet_id?: string | null;
@@ -246,6 +249,7 @@ export interface PublicNoteDetail {
   allow_jpy_purchase: boolean;
   tax_rate?: number | null;
   tax_inclusive: boolean;
+  is_featured: boolean;
   has_access: boolean;
   content_blocks: NoteBlock[];
   published_at?: string | null;
@@ -376,6 +380,7 @@ export interface SalonPublicDetail {
   allow_jpy_subscription: boolean;
   created_at: string;
   updated_at: string;
+  is_featured: boolean;
 }
 
 export interface SalonPublicListItem {
@@ -393,6 +398,7 @@ export interface SalonPublicListItem {
   monthly_price_jpy?: number | null;
   allow_jpy_subscription: boolean;
   created_at: string;
+  is_featured: boolean;
 }
 
 export interface SalonPublicListResult {
@@ -1207,6 +1213,63 @@ export interface AdminMarketplaceLP {
   created_at: string;
   updated_at: string;
   product_count: number;
+}
+
+export interface FeaturedProductSummary {
+  id: string;
+  title: string;
+  lp_slug?: string | null;
+  seller_username?: string | null;
+  is_available: boolean;
+  is_featured: boolean;
+  created_at?: string | null;
+}
+
+export interface FeaturedProductListResponse {
+  data: FeaturedProductSummary[];
+  total: number;
+}
+
+export interface FeaturedNoteSummary {
+  id: string;
+  title: string;
+  slug?: string | null;
+  author_username?: string | null;
+  status?: string | null;
+  is_featured: boolean;
+  published_at?: string | null;
+}
+
+export interface FeaturedNoteListResponse {
+  data: FeaturedNoteSummary[];
+  total: number;
+}
+
+export interface FeaturedSalonSummary {
+  id: string;
+  title: string;
+  owner_username?: string | null;
+  is_active: boolean;
+  is_featured: boolean;
+  created_at?: string | null;
+}
+
+export interface FeaturedSalonListResponse {
+  data: FeaturedSalonSummary[];
+  total: number;
+}
+
+export interface FeaturedToggleRequest {
+  entity_type: 'product' | 'note' | 'salon';
+  entity_id: string;
+  is_featured: boolean;
+}
+
+export interface FeaturedToggleResponse {
+  entity_type: 'product' | 'note' | 'salon';
+  entity_id: string;
+  title: string;
+  is_featured: boolean;
 }
 
 export interface AdminPointAnalyticsTotals {

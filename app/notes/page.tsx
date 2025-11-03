@@ -186,6 +186,11 @@ export default function NotesMarketplacePage() {
                   <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
                     <div className="flex flex-col gap-2">
                       <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
+                        {note.is_featured ? (
+                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
+                            人気
+                          </span>
+                        ) : null}
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide md:text-[11px] ${
                             note.is_paid
