@@ -21,7 +21,7 @@ import type {
   OperatorMessageUpdatePayload,
 } from "@/types/api";
 
-type TargetType = "all_sellers" | "all_users" | "user_ids";
+type TargetType = "all_sellers" | "all_users" | "user_ids" | "emails";
 
 const toDatetimeLocalValue = (value?: string | null) => {
   if (!value) return "";
@@ -32,14 +32,87 @@ const toDatetimeLocalValue = (value?: string | null) => {
   return localDate.toISOString().slice(0, 16);
 };
 
+const parseUserIds = (value: string): string[] =>
+  value
+    .split(/[\,\s]+/)
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+const parseEmails = (value: string): string[] =>
+  value
+    .split(/[\s,;]+/)
+    .map((email) => email.trim())
+    .filter(Boolean);
+
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+const validateTargetInput = (targetType: TargetType, targetUserIds: string, targetEmails: string) => {
+  if (targetType === "user_ids") {
+    const ids = parseUserIds(targetUserIds);
+    if (ids.length === 0) {
+      return { valid: false as const, message: "ユーザーIDを入力してください" };
+    }
+    return { valid: true as const, ids };
+  }
+  if (targetType === "emails") {
+    const emails = parseEmails(targetEmails);
+    if (emails.length === 0) {
+      return { valid: false as const, message: "メールアドレスを入力してください" };
+    }
+    const invalid = emails.filter((email) => !isValidEmail(email));
+    if (invalid.length > 0) {
+      return { valid: false as const, message: `メールアドレスの形式が正しくありません: ${invalid.join(", ")}` };
+    }
+    return { valid: true as const, emails };
+  }
+  return { valid: true as const };
+};
+
+const extractErrorMessage = (error: unknown): string | null => {
+  const detail = (error as any)?.response?.data?.detail;
+  if (!detail) return null;
+  if (typeof detail === "string") return detail;
+  if (typeof detail === "object" && detail !== null) {
+    const message = typeof detail.message === "string" ? detail.message : null;
+    const missingEmails = Array.isArray(detail.missing_emails) ? detail.missing_emails : [];
+    if (message && missingEmails.length > 0) {
+      return `${message} (${missingEmails.join(", ")})`;
+    }
+    if (message) {
+      return message;
+    }
+  }
+  return null;
+};
+
 const segmentsToTarget = (segments: OperatorMessageSegment[] | undefined) => {
   if (!segments || segments.length === 0) {
-    return { targetType: "all_sellers" as TargetType, targetUserIds: "" };
+    return { targetType: "all_sellers" as TargetType, targetUserIds: "", targetEmails: "" };
   }
+
+  const emailSegment = segments.find((segment) => segment.segment_type === "emails");
+  if (emailSegment) {
+    const raw = emailSegment.segment_payload?.emails;
+    const emails = Array.isArray(raw)
+      ? (raw as unknown[]).map((item) => (typeof item === "string" ? item.trim() : "")).filter(Boolean)
+      : typeof raw === "string"
+        ? raw
+            .split(/[\s,;]+/)
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : [];
+    return {
+      targetType: "emails" as TargetType,
+      targetUserIds: "",
+      targetEmails: emails.join(","),
+    };
+  }
+
   const hasAllUsers = segments.some((segment) => segment.segment_type === "all_users");
   if (hasAllUsers) {
-    return { targetType: "all_users" as TargetType, targetUserIds: "" };
+    return { targetType: "all_users" as TargetType, targetUserIds: "", targetEmails: "" };
   }
+
   const userIdSegment = segments.find((segment) => segment.segment_type === "user_ids");
   if (userIdSegment && Array.isArray(userIdSegment.segment_payload?.user_ids)) {
     return {
@@ -48,21 +121,29 @@ const segmentsToTarget = (segments: OperatorMessageSegment[] | undefined) => {
         .map((id) => (typeof id === "string" ? id.trim() : ""))
         .filter(Boolean)
         .join(","),
+      targetEmails: "",
     };
   }
-  return { targetType: "all_sellers" as TargetType, targetUserIds: "" };
+
+  return { targetType: "all_sellers" as TargetType, targetUserIds: "", targetEmails: "" };
 };
 
-const buildSegments = (targetType: TargetType, targetUserIds: string): OperatorMessageSegment[] => {
+const buildSegments = (targetType: TargetType, targetUserIds: string, targetEmails: string): OperatorMessageSegment[] => {
   if (targetType === "user_ids") {
-    const ids = targetUserIds
-      .split(/[,\s]+/)
-      .map((id) => id.trim())
-      .filter(Boolean);
+    const ids = parseUserIds(targetUserIds);
     return [
       {
         segment_type: "user_ids",
         segment_payload: { user_ids: ids },
+      },
+    ];
+  }
+  if (targetType === "emails") {
+    const emails = Array.from(new Set(parseEmails(targetEmails)));
+    return [
+      {
+        segment_type: "emails",
+        segment_payload: { emails },
       },
     ];
   }
@@ -84,6 +165,7 @@ const INITIAL_CREATE_FORM = {
   send_at: "",
   targetType: "all_sellers" as TargetType,
   targetUserIds: "",
+  targetEmails: "",
 };
 
 export default function AdminMessagesPage() {
@@ -109,11 +191,14 @@ export default function AdminMessagesPage() {
     send_at: "",
     targetType: "all_sellers" as TargetType,
     targetUserIds: "",
+    targetEmails: "",
   });
 
   const isCreateValid = useMemo(() => {
-    return createForm.title.trim().length > 0 && (createForm.body_text.trim().length > 0 || createForm.body_html.trim().length > 0);
-  }, [createForm.body_html, createForm.body_text, createForm.title]);
+    const hasBody = createForm.title.trim().length > 0 && (createForm.body_text.trim().length > 0 || createForm.body_html.trim().length > 0);
+    if (!hasBody) return false;
+    return validateTargetInput(createForm.targetType, createForm.targetUserIds, createForm.targetEmails).valid;
+  }, [createForm.body_html, createForm.body_text, createForm.targetEmails, createForm.targetType, createForm.targetUserIds, createForm.title]);
 
   const canUpdate = useMemo(() => {
     if (!selectedMessage) return false;
@@ -163,6 +248,7 @@ export default function AdminMessagesPage() {
         send_at: toDatetimeLocalValue(detail.send_at),
         targetType: segmentInfo.targetType,
         targetUserIds: segmentInfo.targetUserIds,
+        targetEmails: segmentInfo.targetEmails,
       });
     } catch (error) {
       console.error("Failed to fetch message detail", error);
@@ -191,7 +277,13 @@ export default function AdminMessagesPage() {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!isCreateValid) {
-        alert("タイトルと本文を入力してください");
+        alert("入力内容を確認してください（タイトル・本文・配信対象）");
+        return;
+      }
+
+      const targetValidation = validateTargetInput(createForm.targetType, createForm.targetUserIds, createForm.targetEmails);
+      if (!targetValidation.valid) {
+        alert(targetValidation.message);
         return;
       }
 
@@ -207,7 +299,7 @@ export default function AdminMessagesPage() {
           send_at: createForm.send_now || !createForm.send_at
             ? undefined
             : new Date(createForm.send_at).toISOString(),
-          target_segments: buildSegments(createForm.targetType, createForm.targetUserIds),
+          target_segments: buildSegments(createForm.targetType, createForm.targetUserIds, createForm.targetEmails),
         };
 
         await adminMessageApi.create(payload);
@@ -216,7 +308,8 @@ export default function AdminMessagesPage() {
         await fetchList();
       } catch (error) {
         console.error("Failed to create operator message", error);
-        alert("メッセージの作成に失敗しました");
+        const message = extractErrorMessage(error) ?? "メッセージの作成に失敗しました";
+        alert(message);
       } finally {
         setCreateLoading(false);
       }
@@ -226,6 +319,13 @@ export default function AdminMessagesPage() {
 
   const handleUpdate = useCallback(async () => {
     if (!selectedMessage) return;
+
+    const targetValidation = validateTargetInput(detailForm.targetType, detailForm.targetUserIds, detailForm.targetEmails);
+    if (!targetValidation.valid) {
+      alert(targetValidation.message);
+      return;
+    }
+
     setUpdateLoading(true);
     try {
       const payload: OperatorMessageUpdatePayload = {
@@ -235,7 +335,7 @@ export default function AdminMessagesPage() {
         category: detailForm.category || selectedMessage.category,
         priority: detailForm.priority || selectedMessage.priority,
         send_at: detailForm.send_at ? new Date(detailForm.send_at).toISOString() : undefined,
-        target_segments: buildSegments(detailForm.targetType, detailForm.targetUserIds),
+        target_segments: buildSegments(detailForm.targetType, detailForm.targetUserIds, detailForm.targetEmails),
       };
 
       await adminMessageApi.update(selectedMessage.id, payload);
@@ -244,7 +344,8 @@ export default function AdminMessagesPage() {
       await fetchDetail(selectedMessage.id);
     } catch (error) {
       console.error("Failed to update operator message", error);
-      alert("メッセージの更新に失敗しました");
+      const message = extractErrorMessage(error) ?? "メッセージの更新に失敗しました";
+      alert(message);
     } finally {
       setUpdateLoading(false);
     }
@@ -260,7 +361,8 @@ export default function AdminMessagesPage() {
       await fetchDetail(selectedMessage.id);
     } catch (error) {
       console.error("Failed to dispatch message", error);
-      alert("配信処理に失敗しました");
+      const message = extractErrorMessage(error) ?? "配信処理に失敗しました";
+      alert(message);
     } finally {
       setDispatchLoading(false);
     }
@@ -456,12 +558,16 @@ export default function AdminMessagesPage() {
                   <span className="font-semibold text-slate-700">配信対象</span>
                   <select
                     value={createForm.targetType}
-                    onChange={(event) => setCreateForm((prev) => ({ ...prev, targetType: event.target.value as TargetType }))}
+                    onChange={(event) => {
+                      const nextType = event.target.value as TargetType;
+                      setCreateForm((prev) => ({ ...prev, targetType: nextType }));
+                    }}
                     className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-400 focus:outline-none"
                   >
                     <option value="all_sellers">全販売者</option>
                     <option value="all_users">全ユーザー</option>
                     <option value="user_ids">ユーザーID指定</option>
+                    <option value="emails">メールアドレス指定</option>
                   </select>
                 </label>
                 {createForm.targetType === "user_ids" && (
@@ -474,6 +580,20 @@ export default function AdminMessagesPage() {
                       placeholder="id1,id2,id3"
                       required
                     />
+                  </label>
+                )}
+                {createForm.targetType === "emails" && (
+                  <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+                    <span className="font-semibold text-slate-700">メールアドレス（カンマ・改行区切り）</span>
+                    <textarea
+                      value={createForm.targetEmails}
+                      onChange={(event) => setCreateForm((prev) => ({ ...prev, targetEmails: event.target.value }))}
+                      rows={3}
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                      placeholder="user1@example.com, user2@example.com"
+                      required
+                    />
+                    <span className="text-xs text-slate-500">※指定したメールアドレスに一致するユーザーのみが対象になります。</span>
                   </label>
                 )}
               </div>
@@ -591,13 +711,17 @@ export default function AdminMessagesPage() {
                     <span className="font-semibold text-slate-700">配信対象</span>
                     <select
                       value={detailForm.targetType}
-                      onChange={(event) => setDetailForm((prev) => ({ ...prev, targetType: event.target.value as TargetType }))}
+                      onChange={(event) => {
+                        const nextType = event.target.value as TargetType;
+                        setDetailForm((prev) => ({ ...prev, targetType: nextType }));
+                      }}
                       disabled={!canUpdate}
                       className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
                     >
                       <option value="all_sellers">全販売者</option>
                       <option value="all_users">全ユーザー</option>
                       <option value="user_ids">ユーザーID指定</option>
+                      <option value="emails">メールアドレス指定</option>
                     </select>
                   </label>
                   {detailForm.targetType === "user_ids" && (
@@ -609,6 +733,19 @@ export default function AdminMessagesPage() {
                         disabled={!canUpdate}
                         className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
                       />
+                    </label>
+                  )}
+                  {detailForm.targetType === "emails" && (
+                    <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+                      <span className="font-semibold text-slate-700">メールアドレス（カンマ・改行区切り）</span>
+                      <textarea
+                        value={detailForm.targetEmails}
+                        onChange={(event) => setDetailForm((prev) => ({ ...prev, targetEmails: event.target.value }))}
+                        disabled={!canUpdate}
+                        rows={3}
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                      />
+                      <span className="text-xs text-slate-500">※指定したメールアドレスに一致するユーザーのみが対象になります。</span>
                     </label>
                   )}
                 </div>
