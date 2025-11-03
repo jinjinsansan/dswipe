@@ -38,6 +38,7 @@ interface BlockRendererProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  onRequestFieldFocus?: (field: string) => void;
 }
 
 export default function BlockRenderer({
@@ -50,6 +51,7 @@ export default function BlockRenderer({
   onProductClick,
   ctaIds,
   onCtaClick,
+  onRequestFieldFocus,
 }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   let element: React.ReactElement;
@@ -65,6 +67,7 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          onFieldFocus={onRequestFieldFocus}
         />
       );
       break;
@@ -102,7 +105,14 @@ export default function BlockRenderer({
       element = <TopTestimonialsBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     case 'top-faq-1':
-      element = <TopFAQBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = (
+        <TopFAQBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          onFieldFocus={onRequestFieldFocus}
+        />
+      );
       break;
     case 'top-pricing-1':
       element = (
@@ -127,7 +137,14 @@ export default function BlockRenderer({
       element = <TopBonusBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     case 'top-guarantee-1':
-      element = <TopGuaranteeBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
+      element = (
+        <TopGuaranteeBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
+          onFieldFocus={onRequestFieldFocus}
+        />
+      );
       break;
     case 'top-countdown-1':
       element = <TopCountdownBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
@@ -142,6 +159,7 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          onFieldFocus={onRequestFieldFocus}
         />
       );
       break;

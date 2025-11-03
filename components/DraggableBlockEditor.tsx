@@ -39,6 +39,7 @@ interface DraggableBlockEditorProps {
   selectedBlockId?: string;
   withinEditor?: boolean;
   onMountBlock?: (blockId: string, element: HTMLElement | null) => void;
+  onRequestFieldFocus?: (blockId: string, field: string) => void;
 }
 
 // ドラッグ可能なブロックアイテム
@@ -51,6 +52,7 @@ function SortableBlock({
   onSelect,
   withinEditor,
   onRegister,
+  onRequestFieldFocus,
 }: {
   block: Block;
   isEditing: boolean;
@@ -60,6 +62,7 @@ function SortableBlock({
   onSelect: () => void;
   withinEditor?: boolean;
   onRegister?: (element: HTMLElement | null) => void;
+  onRequestFieldFocus?: (field: string) => void;
 }) {
   const {
     attributes,
@@ -149,6 +152,7 @@ function SortableBlock({
           isEditing={isEditing}
           onEdit={onUpdateBlock}
           withinEditor={withinEditor}
+          onRequestFieldFocus={onRequestFieldFocus}
         />
       </div>
     </div>
@@ -161,12 +165,14 @@ function PreviewBlock({
   onSelect,
   withinEditor,
   onRegister,
+  onRequestFieldFocus,
 }: {
   block: Block;
   isSelected: boolean;
   onSelect?: () => void;
   withinEditor?: boolean;
   onRegister?: (element: HTMLElement | null) => void;
+  onRequestFieldFocus?: (field: string) => void;
 }) {
   const handleRef = (element: HTMLElement | null) => {
     onRegister?.(element);
@@ -186,6 +192,7 @@ function PreviewBlock({
           isEditing={false}
           onEdit={() => {}}
           withinEditor={withinEditor}
+          onRequestFieldFocus={onRequestFieldFocus}
         />
       </div>
     </div>
@@ -202,6 +209,7 @@ export default function DraggableBlockEditor({
   selectedBlockId,
   withinEditor,
   onMountBlock,
+  onRequestFieldFocus,
 }: DraggableBlockEditorProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -227,6 +235,7 @@ export default function DraggableBlockEditor({
             onSelect={() => onSelectBlock?.(block.id)}
             withinEditor={withinEditor}
             onRegister={(element) => onMountBlock?.(block.id, element)}
+            onRequestFieldFocus={(field) => onRequestFieldFocus?.(block.id, field)}
           />
         ))}
       </div>
@@ -288,6 +297,7 @@ export default function DraggableBlockEditor({
               onSelect={() => onSelectBlock?.(block.id)}
               withinEditor={withinEditor}
               onRegister={(element) => onMountBlock?.(block.id, element)}
+              onRequestFieldFocus={(field) => onRequestFieldFocus?.(block.id, field)}
             />
           ))}
         </div>

@@ -5,9 +5,10 @@ interface TopFAQBlockProps {
   content: FAQBlockContent;
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
+  onFieldFocus?: (field: string) => void;
 }
 
-export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockProps) {
+export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }: TopFAQBlockProps) {
   const title = content?.title ?? 'よくある質問';
   const subtitle = content?.subtitle ?? '導入前によくいただく質問をまとめました。';
   const items = Array.isArray(content?.items) && content.items.length > 0
@@ -25,6 +26,13 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
   const backgroundColor = content?.backgroundColor ?? '#0F172A';
   const textColor = content?.textColor ?? '#F8FAFC';
   const accentColor = content?.accentColor ?? '#38BDF8';
+
+  const focusField = <T extends HTMLElement>(field: string) => (event: React.MouseEvent<T>) => {
+    if (!onFieldFocus) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onFieldFocus(field);
+  };
 
   const updateItem = (index: number, field: 'question' | 'answer') =>
     (event: React.FocusEvent<HTMLDivElement | HTMLTextAreaElement>) => {
@@ -62,10 +70,17 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
         ) : null}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+          <h2
+            className="text-3xl font-bold sm:text-4xl"
+            style={{ color: textColor }}
+            onClick={focusField<HTMLHeadingElement>('faq.title')}
+          >
+            {title}
+          </h2>
           <p
             className="mt-3 text-base sm:text-lg"
             style={{ color: withAlpha(textColor, 0.72, textColor) }}
+            onClick={focusField<HTMLParagraphElement>('faq.subtitle')}
           >
             {subtitle}
           </p>
@@ -84,12 +99,14 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
                 className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left text-base font-medium"
                 style={{ color: textColor }}
                 type="button"
+                onClick={focusField<HTMLButtonElement>(`faq.items.${index}.question`)}
               >
                 <span
                   className="flex-1"
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateItem(index, 'question')}
+                  onClick={focusField<HTMLSpanElement>(`faq.items.${index}.question`)}
                 >
                   {item.question}
                 </span>
@@ -108,6 +125,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit }: TopFAQBlockP
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateItem(index, 'answer')}
+                  onClick={focusField<HTMLDivElement>(`faq.items.${index}.answer`)}
                 >
                   {item.answer}
                 </div>

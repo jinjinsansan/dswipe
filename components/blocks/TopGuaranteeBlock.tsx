@@ -5,9 +5,10 @@ interface TopGuaranteeBlockProps {
   content: GuaranteeBlockContent;
   isEditing?: boolean;
   onEdit?: (field: string, value: any) => void;
+  onFieldFocus?: (field: string) => void;
 }
 
-export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGuaranteeBlockProps) {
+export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldFocus }: TopGuaranteeBlockProps) {
   const title = content?.title ?? '30日間 全額返金保証';
   const subtitle = content?.subtitle ?? 'リスクゼロで体験いただくために、安心の保証制度を用意しています。';
   const guaranteeDetails = content?.guaranteeDetails ?? '条件は一切ありません。実際に使ってみてご満足いただけなければ、メール一本で全額返金いたします。';
@@ -29,6 +30,13 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
   const backgroundColor = content?.backgroundColor ?? '#020617';
   const textColor = content?.textColor ?? '#F8FAFC';
   const accentColor = content?.accentColor ?? '#34D399';
+
+  const focusField = <T extends HTMLElement>(field: string) => (event: React.MouseEvent<T>) => {
+    if (!onFieldFocus) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onFieldFocus(field);
+  };
 
   return (
     <section
@@ -73,13 +81,21 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
               backgroundColor: withAlpha(accentColor, 0.12, accentColor),
               color: withAlpha(accentColor, 0.9, accentColor),
             }}
+            onClick={focusField<HTMLSpanElement>('guarantee.badgeText')}
           >
             {badgeText}
           </span>
-          <h2 className="text-3xl font-bold sm:text-4xl" style={{ color: textColor }}>{title}</h2>
+          <h2
+            className="text-3xl font-bold sm:text-4xl"
+            style={{ color: textColor }}
+            onClick={focusField<HTMLHeadingElement>('guarantee.title')}
+          >
+            {title}
+          </h2>
           <p
             className="max-w-2xl text-base sm:text-lg"
             style={{ color: withAlpha(textColor, 0.75, textColor) }}
+            onClick={focusField<HTMLParagraphElement>('guarantee.subtitle')}
           >
             {subtitle}
           </p>
@@ -98,6 +114,7 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
             contentEditable={isEditing}
             suppressContentEditableWarning
             onBlur={(event) => onEdit?.('guaranteeDetails', event.currentTarget.textContent ?? '')}
+            onClick={focusField<HTMLParagraphElement>('guarantee.guaranteeDetails')}
           >
             {guaranteeDetails}
           </p>
@@ -119,6 +136,7 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit }: TopGua
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateBullet(index)}
+                  onClick={focusField<HTMLDivElement>(`guarantee.bulletPoints.${index}`)}
                 >
                   {point}
                 </div>

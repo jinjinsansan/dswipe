@@ -11,9 +11,10 @@ interface TopInlineCTABlockProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  onFieldFocus?: (field: string) => void;
 }
 
-export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopInlineCTABlockProps) {
+export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, onFieldFocus }: TopInlineCTABlockProps) {
   const eyebrow = content?.eyebrow ?? '限定プログラム';
   const title = content?.title ?? '今すぐAIローンチを体験する';
   const subtitle = content?.subtitle ?? 'アカウント作成から公開までを最短5分で完了。初月の成果創出まで伴走します。';
@@ -23,6 +24,19 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
   const primaryCtaId = ctaIds?.[0];
+
+  const createFieldFocusHandler = <T extends HTMLElement>(field: string, fallback?: () => void) => {
+    return (event: React.MouseEvent<T>) => {
+      if (onFieldFocus) {
+        event.preventDefault();
+        event.stopPropagation();
+        onFieldFocus(field);
+        return;
+      }
+
+      fallback?.();
+    };
+  };
 
   const primaryButtonStyle: CSSProperties = {
     backgroundColor: buttonColor,
@@ -81,13 +95,21 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
         <span
           className="text-xs font-semibold uppercase tracking-[0.35em]"
           style={{ color: accentColor }}
+          onClick={createFieldFocusHandler<HTMLSpanElement>('inlineCTA.eyebrow')}
         >
           {eyebrow}
         </span>
-        <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: textColor }}>{title}</h2>
+        <h2
+          className="text-2xl font-bold sm:text-3xl"
+          style={{ color: textColor }}
+          onClick={createFieldFocusHandler<HTMLHeadingElement>('inlineCTA.title')}
+        >
+          {title}
+        </h2>
         <p
           className="text-sm leading-relaxed sm:text-base"
           style={{ color: withAlpha(textColor, 0.75, textColor) }}
+          onClick={createFieldFocusHandler<HTMLParagraphElement>('inlineCTA.subtitle')}
         >
           {subtitle}
         </p>
@@ -96,10 +118,10 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           {onProductClick && productId ? (
             <button
               type="button"
-              onClick={() => {
+              onClick={createFieldFocusHandler<HTMLButtonElement>('inlineCTA.buttonText', () => {
                 onCtaClick?.(primaryCtaId, 'primary');
-                onProductClick(productId);
-              }}
+                onProductClick?.(productId);
+              })}
               className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >
@@ -108,7 +130,9 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           ) : (
             <Link
               href={buttonUrl}
-              onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
+              onClick={createFieldFocusHandler<HTMLAnchorElement>('inlineCTA.buttonText', () => {
+                onCtaClick?.(primaryCtaId, 'primary');
+              })}
               className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={primaryButtonStyle}
             >

@@ -15,7 +15,14 @@ import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
-import { TEMPLATE_LIBRARY, INFO_PRODUCT_BLOCKS } from '@/lib/templates';
+import {
+  TEMPLATE_LIBRARY,
+  INFO_PRODUCT_BLOCKS,
+  CONTACT_BLOCKS,
+  TOKUSHO_BLOCKS,
+  NEWSLETTER_BLOCKS,
+  HANDWRITTEN_BLOCKS,
+} from '@/lib/templates';
 import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
@@ -35,21 +42,92 @@ type BlockContentWithMeta = BlockContent & {
   __templateName?: string;
 };
 
+const TEMPLATE_META_SOURCE = [
+  ...TEMPLATE_LIBRARY,
+  ...INFO_PRODUCT_BLOCKS,
+  ...CONTACT_BLOCKS,
+  ...TOKUSHO_BLOCKS,
+  ...NEWSLETTER_BLOCKS,
+  ...HANDWRITTEN_BLOCKS,
+];
+const KNOWN_BLOCK_TYPES = Array.from(
+  new Set(TEMPLATE_META_SOURCE.map((template) => template.templateId))
+) as BlockType[];
+
+function isKnownBlockType(value: string | null | undefined): value is BlockType {
+  if (!value) return false;
+  return KNOWN_BLOCK_TYPES.includes(value as BlockType);
+}
+
+function resolveTemplateMetadata(
+  rawBlockType: string | null | undefined,
+  content?: Partial<BlockContentWithMeta> | Record<string, any>
+) {
+  const normalizedRaw = typeof rawBlockType === 'string' ? rawBlockType.trim() : undefined;
+  const contentRecord = (content ?? {}) as Record<string, any>;
+  const contentTemplateId =
+    typeof contentRecord.__templateId === 'string' ? contentRecord.__templateId : undefined;
+  const contentBlockType =
+    typeof contentRecord.block_type === 'string' ? contentRecord.block_type.trim() : undefined;
+  const contentBlockField =
+    typeof contentRecord.blockType === 'string' ? contentRecord.blockType.trim() : undefined;
+
+  const candidateVariantKeys = [
+    contentTemplateId,
+    normalizedRaw,
+    contentBlockType,
+    contentBlockField,
+  ].filter((value): value is string => Boolean(value));
+
+  const variant =
+    candidateVariantKeys
+      .map((key) => TEMPLATE_META_SOURCE.find((template) => template.id === key))
+      .find((match) => Boolean(match)) ?? undefined;
+
+  const template =
+    variant ??
+    (normalizedRaw
+      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === normalizedRaw)
+      : undefined) ??
+    (contentBlockType
+      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === contentBlockType)
+      : undefined) ??
+    (contentBlockField
+      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === contentBlockField)
+      : undefined);
+
+  const canonicalBlockType: BlockType =
+    (variant?.templateId as BlockType | undefined) ??
+    (template?.templateId as BlockType | undefined) ??
+    (isKnownBlockType(normalizedRaw) ? (normalizedRaw as BlockType) : 'top-hero-1');
+
+  const templateId = variant?.id ?? contentTemplateId ?? template?.id;
+  const templateName =
+    variant?.name ??
+    (typeof contentRecord.__templateName === 'string' ? contentRecord.__templateName : undefined) ??
+    template?.name;
+
+  return {
+    canonicalBlockType,
+    templateId,
+    templateName,
+  };
+}
+
 // ブロックタイプから日本語名を取得するヘルパー関数
 function getBlockDisplayName(block: { blockType: BlockType; content: BlockContentWithMeta }): string {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
   const metaName = (block.content as any)?.__templateName as string | undefined;
   if (metaName) return metaName;
 
   const metaId = (block.content as any)?.__templateId as string | undefined;
   if (metaId) {
-    const variant = allTemplates.find((template) => template.id === metaId);
+    const variant = TEMPLATE_META_SOURCE.find((template) => template.id === metaId);
     if (variant?.name) {
       return variant.name;
     }
   }
 
-  const template = allTemplates.find((t) => t.templateId === block.blockType);
+  const template = TEMPLATE_META_SOURCE.find((t) => t.templateId === block.blockType);
   return template?.name || block.blockType;
 }
 
@@ -89,6 +167,7 @@ export default function EditLPNewPage() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
   const [lpTitle, setLpTitle] = useState('');
@@ -355,22 +434,20 @@ export default function EditLPNewPage() {
           } as any;
         }
 
-        const templateMetaSource = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS];
-        const existingTemplateId = (content as any).__templateId as string | undefined;
-        const templateMatchById = existingTemplateId
-          ? templateMetaSource.find((tpl) => tpl.id === existingTemplateId)
-          : undefined;
-        const templateMatchByType = templateMatchById || templateMetaSource.find((tpl) => tpl.templateId === (step.block_type || 'top-hero-1'));
+        const { canonicalBlockType, templateId, templateName } = resolveTemplateMetadata(
+          step.block_type,
+          content
+        );
 
         const normalizedContent = {
           ...content,
-          __templateId: templateMatchById?.id || existingTemplateId || templateMatchByType?.id,
-          __templateName: templateMatchById?.name || (content as any).__templateName || templateMatchByType?.name,
+          __templateId: templateId,
+          __templateName: templateName,
         } as BlockContentWithMeta;
 
         return {
           id: step.id,
-          blockType: (step.block_type || 'top-hero-1') as BlockType,
+          blockType: canonicalBlockType,
           content: normalizedContent,
           order: step.step_order,
         };
@@ -454,6 +531,7 @@ export default function EditLPNewPage() {
     setBlocks(blocks.filter(block => block.id !== blockId));
     if (selectedBlockId === blockId) {
       setSelectedBlockId(null);
+      setFocusedField(null);
     }
   };
 
@@ -622,6 +700,7 @@ export default function EditLPNewPage() {
 
   const handleClosePropertyPanel = () => {
     setSelectedBlockId(null);
+    setFocusedField(null);
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setMobileTab('blocks');
     }
@@ -652,101 +731,149 @@ export default function EditLPNewPage() {
     setBlocks(newBlocks);
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    setError('');
-    
-    try {
-      const orderedBlocks = blocks.map((block, index) => ({
-        ...block,
-        order: index,
-      }));
+  const handleSelectBlock = useCallback(
+    (blockId: string) => {
+      setSelectedBlockId(blockId);
+      setFocusedField(null);
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setMobileTab('edit');
+      }
+      scrollToBlock(blockId);
+    },
+    [scrollToBlock]
+  );
 
-      const normalizeMetaValue = (value: string) => {
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? trimmed : null;
-      };
+  const handleFieldFocusRequest = useCallback(
+    (blockId: string, field: string) => {
+      setSelectedBlockId(blockId);
+      setFocusedField(field);
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setMobileTab('edit');
+      }
+      scrollToBlock(blockId);
+    },
+    [scrollToBlock]
+  );
 
-      // LP本体の表示設定を更新
-      const lpUpdateResponse = await lpApi.update(lpId, {
-        title: lpTitle.trim() || undefined,
-        show_swipe_hint: lpSettings.showSwipeHint,
-        floating_cta: false,
-        swipe_direction: lpSettings.swipeDirection,
-        meta_title: normalizeMetaValue(metaSettings.title),
-        meta_description: normalizeMetaValue(metaSettings.description),
-        meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
-        meta_site_name: normalizeMetaValue(metaSettings.siteName),
-        custom_theme_hex: customThemeHex,
-        custom_theme_shades: customThemeShades as unknown as Record<string, string> | null,
-      });
-      setLp((prev) =>
-        prev
-          ? {
-              ...prev,
-              ...lpUpdateResponse.data,
-            }
-          : prev
-      );
+  const executeSave = useCallback(
+    async ({ showFeedback = false }: { showFeedback?: boolean } = {}) => {
+      setIsSaving(true);
+      setError('');
 
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      try {
+        const orderedBlocks = [...blocks]
+          .sort((a, b) => a.order - b.order)
+          .map((block, index) => ({
+            ...block,
+            order: index,
+          }));
 
-      const bulkPayload = orderedBlocks.map((block, index) => {
-        const clonedContent = JSON.parse(JSON.stringify(block.content)) as Record<string, unknown>;
-        const rawImageUrl = (clonedContent as any)?.imageUrl;
-        const imageUrl = typeof rawImageUrl === 'string' && rawImageUrl.trim().length > 0
-          ? rawImageUrl
-          : '/placeholder.jpg';
-        const rawVideoUrl = (clonedContent as any)?.videoUrl;
-        const videoUrl = typeof rawVideoUrl === 'string' && rawVideoUrl.trim().length > 0 ? rawVideoUrl : null;
-
-        return {
-          id: block.id && uuidRegex.test(block.id) ? block.id : undefined,
-          block_type: block.blockType,
-          content_data: clonedContent,
-          step_order: index,
-          image_url: imageUrl,
-          video_url: videoUrl,
+        const normalizeMetaValue = (value: string) => {
+          const trimmed = value.trim();
+          return trimmed.length > 0 ? trimmed : null;
         };
-      });
 
-      const bulkResponse = await lpApi.updateBlocks(lpId, bulkPayload);
-      const updatedSteps = bulkResponse.data?.steps ?? [];
+        const lpUpdateResponse = await lpApi.update(lpId, {
+          title: lpTitle.trim() || undefined,
+          show_swipe_hint: lpSettings.showSwipeHint,
+          floating_cta: false,
+          swipe_direction: lpSettings.swipeDirection,
+          meta_title: normalizeMetaValue(metaSettings.title),
+          meta_description: normalizeMetaValue(metaSettings.description),
+          meta_image_url: normalizeMetaValue(metaSettings.imageUrl),
+          meta_site_name: normalizeMetaValue(metaSettings.siteName),
+          custom_theme_hex: customThemeHex,
+          custom_theme_shades: customThemeShades as unknown as Record<string, string> | null,
+        });
+        setLp((prev) =>
+          prev
+            ? {
+                ...prev,
+                ...lpUpdateResponse.data,
+              }
+            : prev
+        );
 
-      const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
-        const contentData = (step.content_data || {}) as BlockContentWithMeta;
-        const contentRecord = contentData as unknown as Record<string, unknown>;
-        const blockTypeValue =
-          (typeof step.block_type === 'string' && step.block_type.trim().length > 0
-            ? step.block_type
-            : typeof contentRecord['block_type'] === 'string'
-            ? (contentRecord['block_type'] as string)
-            : undefined) || 'top-hero-1';
-        const blockType = blockTypeValue as BlockType;
-        return {
-          id: step.id,
-          blockType,
-          content: contentData,
-          order: step.step_order ?? 0,
-        };
-      });
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-      setBlocks(normalizedBlocks);
-      // 成功通知を表示
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || '保存に失敗しました';
-      setError(errorMessage);
-      // エラー通知（3秒後に自動消去）
-      setTimeout(() => setError(''), 3000);
-    } finally {
-      setIsSaving(false);
-    }
+        const bulkPayload = orderedBlocks.map((block, index) => {
+          const clonedContent = JSON.parse(JSON.stringify(block.content)) as Record<string, any>;
+          clonedContent.__templateId = (block.content as any).__templateId ?? clonedContent.__templateId;
+          clonedContent.__templateName = (block.content as any).__templateName ?? clonedContent.__templateName;
+          clonedContent.block_type = block.blockType;
+
+          const rawImageUrl = clonedContent.imageUrl;
+          const imageUrl = typeof rawImageUrl === 'string' && rawImageUrl.trim().length > 0
+            ? rawImageUrl
+            : '/placeholder.jpg';
+          const rawVideoUrl = clonedContent.videoUrl;
+          const videoUrl = typeof rawVideoUrl === 'string' && rawVideoUrl.trim().length > 0 ? rawVideoUrl : null;
+
+          return {
+            id: block.id && uuidRegex.test(block.id) ? block.id : undefined,
+            block_type: block.blockType,
+            content_data: clonedContent,
+            step_order: index,
+            image_url: imageUrl,
+            video_url: videoUrl,
+          };
+        });
+
+        const bulkResponse = await lpApi.updateBlocks(lpId, bulkPayload);
+        const updatedSteps = bulkResponse.data?.steps ?? [];
+
+        const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
+          const contentData = (step.content_data || {}) as BlockContentWithMeta;
+          const { canonicalBlockType, templateId, templateName } = resolveTemplateMetadata(
+            step.block_type,
+            contentData
+          );
+
+          const normalizedContent = {
+            ...contentData,
+            __templateId: templateId,
+            __templateName: templateName,
+          } as BlockContentWithMeta;
+
+          return {
+            id: step.id,
+            blockType: canonicalBlockType,
+            content: normalizedContent,
+            order: step.step_order ?? 0,
+          };
+        });
+
+        setBlocks(normalizedBlocks);
+        if (showFeedback) {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        }
+
+        return { ok: true as const };
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.detail || '保存に失敗しました';
+        setError(errorMessage);
+        setTimeout(() => setError(''), 3000);
+        return { ok: false as const, errorMessage };
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [blocks, customThemeHex, customThemeShades, lpId, lpSettings, lpTitle, metaSettings]
+  );
+
+  const handleSave = () => {
+    void executeSave({ showFeedback: true });
   };
 
   const handlePublish = async () => {
     if (!confirm('このLPを公開しますか？')) return;
+
+    const result = await executeSave({ showFeedback: false });
+    if (!result.ok) {
+      alert(`公開前の保存に失敗しました: ${result.errorMessage}`);
+      return;
+    }
 
     try {
       await lpApi.publish(lpId);
@@ -761,11 +888,39 @@ export default function EditLPNewPage() {
     if (!confirm('このLPを非公開に戻しますか？')) return;
 
     try {
-      await lpApi.unpublish(lpId);
+      console.log('[LP Editor] Unpublish request start', {
+        lpId,
+        currentStatus: lp?.status,
+        timestamp: new Date().toISOString(),
+      });
+
+      const response = await lpApi.unpublish(lpId, {
+        seller_id: lp?.seller_id,
+      });
+
+      console.log('[LP Editor] Unpublish request succeeded', {
+        lpId,
+        nextStatus: response?.data?.status,
+        timestamp: new Date().toISOString(),
+      });
+
       await fetchLP();
       alert('LPを非公開に戻しました。');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'LPの非公開化に失敗しました');
+      const detailPayload = err?.response?.data;
+      console.error('[LP Editor] Unpublish request failed', {
+        lpId,
+        error: err,
+        responseStatus: err?.response?.status,
+        responseDetail: detailPayload,
+        timestamp: new Date().toISOString(),
+      });
+
+      const errorMessage =
+        (typeof detailPayload === 'string' && detailPayload.trim().length > 0)
+          ? detailPayload
+          : detailPayload?.detail || detailPayload?.message || err?.message || 'LPの非公開化に失敗しました';
+      alert(errorMessage);
     }
   };
 
@@ -880,6 +1035,7 @@ export default function EditLPNewPage() {
                   プレビュー
                 </a>
                 <button
+                  type="button"
                   onClick={() => {
                     const url = `${window.location.origin}/view/${lp.slug}`;
                     navigator.clipboard.writeText(url);
@@ -893,8 +1049,9 @@ export default function EditLPNewPage() {
               </>
             )}
 
-            {lp.status === 'draft' && (
+            {lp.status !== 'published' && (
               <button
+                type="button"
                 onClick={handlePublish}
                 className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
               >
@@ -904,6 +1061,7 @@ export default function EditLPNewPage() {
 
             {lp.status === 'published' && (
               <button
+                type="button"
                 onClick={handleUnpublish}
                 className="px-3 py-1.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
               >
@@ -912,6 +1070,7 @@ export default function EditLPNewPage() {
             )}
 
             <button
+              type="button"
               onClick={handleSave}
               disabled={isSaving}
               className="px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
@@ -937,6 +1096,7 @@ export default function EditLPNewPage() {
           <div className="flex lg:hidden items-center gap-1.5 flex-shrink-0">
             {/* Quick Save Button */}
             <button
+              type="button"
               onClick={handleSave}
               disabled={isSaving}
               className="px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -959,8 +1119,9 @@ export default function EditLPNewPage() {
             </button>
 
             {/* Quick Publish Button */}
-            {lp.status === 'draft' && (
+            {lp.status !== 'published' && (
               <button
+                type="button"
                 onClick={handlePublish}
                 className="p-2 text-green-600 hover:text-green-700 transition-colors"
                 title="公開"
@@ -973,6 +1134,7 @@ export default function EditLPNewPage() {
 
             {/* Menu Button */}
             <button
+              type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="p-2 text-slate-600 hover:text-slate-900 transition-colors"
               title="メニュー"
@@ -993,6 +1155,7 @@ export default function EditLPNewPage() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
               <h3 className="text-slate-900 font-semibold">メニュー</h3>
               <button
+                type="button"
                 onClick={() => setShowMobileMenu(false)}
                 className="text-slate-400 hover:text-slate-900 transition-colors text-2xl leading-none"
               >
@@ -1018,6 +1181,7 @@ export default function EditLPNewPage() {
               <div className="space-y-3 pt-2">
                 {/* Save Button */}
                 <button
+                  type="button"
                   onClick={() => {
                     handleSave();
                     setShowMobileMenu(false);
@@ -1044,8 +1208,9 @@ export default function EditLPNewPage() {
                 </button>
 
                 {/* Publish/Preview Button */}
-                {lp.status === 'draft' && (
+                {lp.status !== 'published' && (
                   <button
+                    type="button"
                     onClick={() => {
                       handlePublish();
                       setShowMobileMenu(false);
@@ -1067,6 +1232,7 @@ export default function EditLPNewPage() {
                       プレビュー
                     </a>
                     <button
+                      type="button"
                       onClick={() => {
                         handleUnpublish();
                         setShowMobileMenu(false);
@@ -1083,6 +1249,7 @@ export default function EditLPNewPage() {
               {lp.status === 'published' && (
                 <div className="pt-4 border-t border-slate-200 space-y-2">
                   <button
+                    type="button"
                     onClick={() => {
                       const url = `${window.location.origin}/view/${lp.slug}`;
                       navigator.clipboard.writeText(url);
@@ -1113,6 +1280,7 @@ export default function EditLPNewPage() {
         <div className="lg:hidden flex-shrink-0 border-b border-slate-200 bg-white/50">
           <div className="flex gap-1 px-2 py-2 overflow-x-auto">
             <button
+              type="button"
               onClick={() => setMobileTab('blocks')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'blocks'
@@ -1126,6 +1294,7 @@ export default function EditLPNewPage() {
               </span>
             </button>
             <button
+              type="button"
               onClick={() => setMobileTab('edit')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'edit'
@@ -1139,6 +1308,7 @@ export default function EditLPNewPage() {
               </span>
             </button>
             <button
+              type="button"
               onClick={() => setMobileTab('preview')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'preview'
@@ -1149,6 +1319,7 @@ export default function EditLPNewPage() {
               <span className="inline-flex items-center">プレビュー</span>
             </button>
             <button
+              type="button"
               onClick={() => setMobileTab('settings')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'settings'
@@ -1176,6 +1347,7 @@ export default function EditLPNewPage() {
           >
           <div className="py-3 lg:py-3 px-3">
             <button
+              type="button"
               onClick={() => setShowTemplateSelector(true)}
               className="w-full px-3 py-2.5 lg:py-2 bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors min-h-[44px] lg:min-h-auto"
             >
@@ -1189,6 +1361,7 @@ export default function EditLPNewPage() {
               <h4 className="text-xs font-bold text-slate-700 tracking-wide">LP設定</h4>
 
               <button
+                type="button"
                 onClick={() => setShowColorGenerator(true)}
                 className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors flex items-center justify-center gap-2"
               >
@@ -1342,14 +1515,7 @@ export default function EditLPNewPage() {
                     <div
                       key={block.id}
                       draggable
-                      onClick={() => {
-                        // モバイル表示ではブロッククリック時に自動的に編集タブに切り替え
-                        if (window.innerWidth < 1024) {
-                          setMobileTab('edit');
-                        }
-                        setSelectedBlockId(block.id);
-                        scrollToBlock(block.id);
-                      }}
+                      onClick={() => handleSelectBlock(block.id)}
                       onDragStart={(e) => {
                         e.dataTransfer.effectAllowed = 'move';
                         e.dataTransfer.setData('text/html', block.id);
@@ -1459,10 +1625,11 @@ export default function EditLPNewPage() {
                 onDeleteBlock={() => {}}
                 onReorderBlocks={handleReorderBlocks}
                 isEditing={false}
-                onSelectBlock={setSelectedBlockId}
+                onSelectBlock={handleSelectBlock}
                 selectedBlockId={selectedBlockId || undefined}
                 withinEditor
                 onMountBlock={registerBlockElement}
+                onRequestFieldFocus={handleFieldFocusRequest}
               />
             </div>
           </div>
@@ -1502,6 +1669,8 @@ export default function EditLPNewPage() {
                 onGenerateAI={handleGenerateAI}
                 linkedProduct={linkedProduct}
                 linkedSalon={linkedSalon}
+                focusedField={focusedField}
+                onFocusedFieldChange={setFocusedField}
               />
             ) : (
               <div className="p-6 text-center text-slate-500 font-medium text-sm">
@@ -1681,6 +1850,8 @@ export default function EditLPNewPage() {
               onGenerateAI={handleGenerateAI}
               linkedProduct={linkedProduct}
               linkedSalon={linkedSalon}
+              focusedField={focusedField}
+              onFocusedFieldChange={setFocusedField}
             />
             ) : (
               <div className="p-6 text-center text-slate-500 text-sm font-medium">

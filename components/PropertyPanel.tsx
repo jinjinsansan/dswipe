@@ -34,6 +34,8 @@ interface PropertyPanelProps {
   onGenerateAI?: (type: 'headline' | 'subtitle' | 'description' | 'cta', field: string) => void;
   linkedProduct?: { id: string; title?: string | null } | null;
   linkedSalon?: { id: string; title?: string | null; public_path?: string | null } | null;
+  focusedField?: string | null;
+  onFocusedFieldChange?: (field: string | null) => void;
 }
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -47,7 +49,7 @@ function SectionHeader({ icon: Icon, label }: { icon: IconComponent; label: stri
   );
 }
 
-export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI, linkedProduct, linkedSalon }: PropertyPanelProps) {
+export default function PropertyPanel({ block, onUpdateContent, onClose, onGenerateAI, linkedProduct, linkedSalon, focusedField, onFocusedFieldChange }: PropertyPanelProps) {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -81,6 +83,54 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       console.error('カラーコードのコピーに失敗しました:', error);
       alert('カラーコードのコピーに失敗しました');
     }
+  };
+
+  const blockType = block?.blockType as BlockType | undefined;
+
+  const FIELD_ID_MAP: Partial<Record<BlockType, Record<string, string>>> = {
+    'top-hero-1': {
+      tagline: 'hero.tagline',
+      highlightText: 'hero.highlightText',
+      title: 'hero.title',
+      subtitle: 'hero.subtitle',
+      buttonText: 'hero.buttonText',
+      buttonUrl: 'hero.buttonText',
+      secondaryButtonText: 'hero.secondaryButtonText',
+      secondaryButtonUrl: 'hero.secondaryButtonText',
+      badgeText: 'hero.badgeText',
+    },
+    'top-inline-cta-1': {
+      eyebrow: 'inlineCTA.eyebrow',
+      title: 'inlineCTA.title',
+      subtitle: 'inlineCTA.subtitle',
+      buttonText: 'inlineCTA.buttonText',
+      buttonUrl: 'inlineCTA.buttonText',
+    },
+    'top-faq-1': {
+      title: 'faq.title',
+      subtitle: 'faq.subtitle',
+    },
+    'top-guarantee-1': {
+      badgeText: 'guarantee.badgeText',
+      title: 'guarantee.title',
+      subtitle: 'guarantee.subtitle',
+      guaranteeDetails: 'guarantee.guaranteeDetails',
+    },
+  };
+
+  const resolveFieldId = (field: string) => {
+    if (!blockType) return field;
+    const mapping = FIELD_ID_MAP[blockType];
+    return mapping?.[field] ?? field;
+  };
+
+  const focusRingClass = (active: boolean) =>
+    active ? 'ring-2 ring-blue-400/60 ring-offset-2 ring-offset-white shadow-sm' : '';
+
+  const isFocusedField = (field: string) => focusedField === field;
+
+  const handleFocusChange = (field: string | null) => {
+    onFocusedFieldChange?.(field);
   };
 
   // 色フィールドと表示名のマッピング
@@ -182,7 +232,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   };
 
   const renderColorSection = () => {
-    const blockType = block?.blockType as BlockType | undefined;
     if (!blockType) return null;
 
     const fields = COLOR_FIELD_MAP[blockType];
@@ -241,7 +290,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   }
 
   const content = block.content;
-  const blockType = block.blockType as BlockType;
   const baseFaqItems = Array.isArray((content as any).items) ? [...((content as any).items as Array<{ question: string; answer: string }>)] : [];
   const faqItems = baseFaqItems.length > 0 ? baseFaqItems : [
     { question: '質問内容を入力', answer: '回答内容を入力' },
@@ -249,7 +297,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const guaranteeBullets = Array.isArray((content as any).bulletPoints)
     ? [...((content as any).bulletPoints as string[])]
     : ['保証の詳細を入力'];
-  const supportsProductLink = PRODUCT_CTA_BLOCKS.includes(blockType);
+  const supportsProductLink = blockType ? PRODUCT_CTA_BLOCKS.includes(blockType) : false;
   const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
   const isSalonLinked = Boolean(linkedSalon?.id) && supportsProductLink;
   const isPrimaryLinkLocked = isProductLinked || isSalonLinked;
@@ -313,7 +361,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {/* テキストコンテンツ */}
         {('tagline' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('tagline')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               タグライン
             </label>
@@ -321,6 +369,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).tagline || ''}
               onChange={(e) => onUpdateContent('tagline', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('tagline'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タグラインを入力"
             />
@@ -328,7 +377,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('eyebrow' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('eyebrow')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               {blockType === 'top-inline-cta-1' ? 'タグライン（上部テキスト）' : 'アイキャッチテキスト'}
             </label>
@@ -336,6 +385,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).eyebrow || ''}
               onChange={(e) => onUpdateContent('eyebrow', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('eyebrow'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="上部の小見出しを入力"
             />
@@ -343,7 +393,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('title' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('title')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               タイトル
             </label>
@@ -351,6 +401,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).title || ''}
               onChange={(e) => onUpdateContent('title', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('title'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タイトルを入力"
             />
@@ -358,7 +409,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('subtitle' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('subtitle')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               サブタイトル
             </label>
@@ -366,6 +417,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).subtitle || ''}
               onChange={(e) => onUpdateContent('subtitle', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('subtitle'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="サブタイトルを入力"
             />
@@ -388,7 +440,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('highlightText' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('highlightText')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               ハイライトテキスト
             </label>
@@ -396,6 +448,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).highlightText || ''}
               onChange={(e) => onUpdateContent('highlightText', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('highlightText'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ハイライトテキストを入力"
             />
@@ -433,7 +486,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('buttonText' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('buttonText')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               ボタンテキスト
             </label>
@@ -441,6 +494,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).buttonText || ''}
               onChange={(e) => onUpdateContent('buttonText', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('buttonText'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
@@ -545,7 +599,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('buttonUrl' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('buttonUrl')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               ボタンURL
             </label>
@@ -554,6 +608,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).buttonUrl || ''}
               onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
               readOnly={isPrimaryLinkLocked}
+              onFocus={() => handleFocusChange(resolveFieldId('buttonUrl'))}
               className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
               placeholder="https://..."
             />
@@ -566,7 +621,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('secondaryButtonText' in content) && (
-          <div>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('secondaryButtonText')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               セカンダリーボタン
             </label>
@@ -574,6 +629,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).secondaryButtonText || ''}
               onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
@@ -582,6 +638,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 type="text"
                 value={(content as any).secondaryButtonUrl || ''}
                 onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
+                onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
                 className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
                 placeholder="セカンダリーボタンのURL"
               />
@@ -590,6 +647,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 onClick={() => {
                   onUpdateContent('secondaryButtonText', '');
                   onUpdateContent('secondaryButtonUrl', '');
+                  handleFocusChange(null);
                 }}
                 className="px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100"
               >
@@ -604,7 +662,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {blockType === 'top-faq-1' && (
           <div className="space-y-4 pt-4 border-t border-slate-200">
             <SectionHeader icon={InformationCircleIcon} label="FAQ項目" />
-            {faqItems.map((item, index) => (
+            {faqItems.map((item, index) => {
+              const questionFieldId = `faq.items.${index}.question`;
+              const answerFieldId = `faq.items.${index}.answer`;
+              return (
               <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-500">Q{index + 1}</span>
@@ -621,30 +682,36 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     削除
                   </button>
                 </div>
-                <input
-                  type="text"
-                  value={item.question}
-                  onChange={(e) => {
-                    const next = [...faqItems];
-                    next[index] = { ...next[index], question: e.target.value };
-                    onUpdateContent('items', next);
-                  }}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
-                  placeholder="質問文を入力"
-                />
-                <textarea
-                  value={item.answer}
-                  onChange={(e) => {
-                    const next = [...faqItems];
-                    next[index] = { ...next[index], answer: e.target.value };
-                    onUpdateContent('items', next);
-                  }}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm resize-none"
-                  rows={3}
-                  placeholder="回答文を入力"
-                />
+                <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(questionFieldId))}`}>
+                  <input
+                    type="text"
+                    value={item.question}
+                    onChange={(e) => {
+                      const next = [...faqItems];
+                      next[index] = { ...next[index], question: e.target.value };
+                      onUpdateContent('items', next);
+                    }}
+                    onFocus={() => handleFocusChange(questionFieldId)}
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
+                    placeholder="質問文を入力"
+                  />
+                </div>
+                <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(answerFieldId))}`}>
+                  <textarea
+                    value={item.answer}
+                    onChange={(e) => {
+                      const next = [...faqItems];
+                      next[index] = { ...next[index], answer: e.target.value };
+                      onUpdateContent('items', next);
+                    }}
+                    onFocus={() => handleFocusChange(answerFieldId)}
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm resize-none"
+                    rows={3}
+                    placeholder="回答文を入力"
+                  />
+                </div>
               </div>
-            ))}
+            );})}
             <button
               type="button"
               onClick={() => onUpdateContent('items', [...faqItems, { question: '', answer: '' }])}
@@ -658,45 +725,54 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {blockType === 'top-guarantee-1' && (
           <div className="space-y-4 pt-4 border-t border-slate-200">
             <SectionHeader icon={InformationCircleIcon} label="保証コンテンツ" />
-            <div className="space-y-2">
+            <div className={`space-y-2 -m-1 p-1 rounded-lg ${focusRingClass(isFocusedField('guarantee.guaranteeDetails'))}`}>
               <label className="text-sm font-medium text-slate-700">保証詳細</label>
               <textarea
                 value={(content as any).guaranteeDetails || ''}
                 onChange={(e) => onUpdateContent('guaranteeDetails', e.target.value)}
                 rows={4}
+                onFocus={() => handleFocusChange('guarantee.guaranteeDetails')}
                 className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
                 placeholder="保証内容を入力"
               />
             </div>
             <div className="space-y-3">
               <label className="text-sm font-medium text-slate-700">保証項目</label>
-              {guaranteeBullets.map((point, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={point}
-                    onChange={(e) => {
-                      const next = [...guaranteeBullets];
-                      next[index] = e.target.value;
-                      onUpdateContent('bulletPoints', next);
-                    }}
-                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
-                    placeholder="保証項目を入力"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const next = [...guaranteeBullets];
-                      next.splice(index, 1);
-                      onUpdateContent('bulletPoints', next.length ? next : ['']);
-                    }}
-                    className="px-3 py-2 text-xs text-red-500 hover:text-red-600"
-                    disabled={guaranteeBullets.length <= 1}
+              {guaranteeBullets.map((point, index) => {
+                const bulletFieldId = `guarantee.bulletPoints.${index}`;
+                return (
+                  <div
+                    key={index}
+                    className={`flex gap-2 -m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(bulletFieldId))}`}
                   >
-                    削除
-                  </button>
-                </div>
-              ))}
+                    <input
+                      type="text"
+                      value={point}
+                      onChange={(e) => {
+                        const next = [...guaranteeBullets];
+                        next[index] = e.target.value;
+                        onUpdateContent('bulletPoints', next);
+                      }}
+                      onFocus={() => handleFocusChange(bulletFieldId)}
+                      className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm"
+                      placeholder="保証項目を入力"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = [...guaranteeBullets];
+                        next.splice(index, 1);
+                        onUpdateContent('bulletPoints', next.length ? next : ['']);
+                        handleFocusChange(null);
+                      }}
+                      className="px-3 py-2 text-xs text-red-500 hover:text-red-600"
+                      disabled={guaranteeBullets.length <= 1}
+                    >
+                      削除
+                    </button>
+                  </div>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => onUpdateContent('bulletPoints', [...guaranteeBullets, ''])}

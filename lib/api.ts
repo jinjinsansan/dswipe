@@ -156,6 +156,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // リクエストインターセプター（トークンを自動で付与）
@@ -225,8 +226,8 @@ export const lpApi = {
   publish: (id: string) =>
     api.post(`/lp/${id}/publish`),
 
-  unpublish: (id: string) =>
-    api.post(`/lp/${id}/unpublish`),
+  unpublish: (id: string, data?: Record<string, unknown>) =>
+    api.post(`/lp/${id}/unpublish`, data ?? {}, { withCredentials: true }),
   
   // ステップ管理
   addStep: (lpId: string, data: { step_order: number; image_url: string; block_type?: string; content_data?: Record<string, unknown> }) =>
