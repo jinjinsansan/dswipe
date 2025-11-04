@@ -23,7 +23,9 @@ import type {
   ProductCreatePayload,
   ProductUpdatePayload,
   ProductPurchasePayload,
+  ProductOrderStatusResponse,
   SubscriptionCheckoutPayload,
+  SubscriptionSessionStatusResponse,
   Salon,
   SalonListResult,
   SalonPublicDetail,
@@ -313,6 +315,14 @@ export const productApi = {
   
   purchase: (id: string, data: ProductPurchasePayload) =>
     api.post(`/products/${id}/purchase`, data),
+  orderStatus: (externalId: string, config?: Parameters<typeof api.get>[1]) =>
+    api.get<ProductOrderStatusResponse>('/products/orders/status', {
+      ...(config ?? {}),
+      params: {
+        ...(config?.params ?? {}),
+        external_id: externalId,
+      },
+    }),
   
   getPublic: (params?: { sort?: 'popular' | 'latest'; limit?: number; offset?: number; seller_username?: string; lp_id?: string }) =>
     axios.get(`${API_URL}/products/public`, { params }),
@@ -374,6 +384,14 @@ export const subscriptionApi = {
   getSubscriptions: () => api.get('/subscriptions'),
   createCheckout: (data: SubscriptionCheckoutPayload) => api.post('/subscriptions/checkout', data),
   cancel: (subscriptionId: string) => api.post(`/subscriptions/${subscriptionId}/cancel`),
+  sessionStatus: (externalId: string, config?: Parameters<typeof api.get>[1]) =>
+    api.get<SubscriptionSessionStatusResponse>('/subscriptions/session-status', {
+      ...(config ?? {}),
+      params: {
+        ...(config?.params ?? {}),
+        external_id: externalId,
+      },
+    }),
 };
 
 export const salonApi = {

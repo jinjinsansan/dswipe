@@ -33,6 +33,7 @@ export type {
   PublicNoteDetail,
   NotePurchaseResult,
   NotePurchaseStatusResponse,
+  ProductOrderStatusResponse,
   NoteCreateRequest,
   NoteUpdateRequest,
   OfficialShareConfig,
@@ -114,6 +115,7 @@ export type {
   SalonRoleCreatePayload,
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
+  SubscriptionSessionStatusResponse,
 } from './index';
 
 export interface PointsBalance {

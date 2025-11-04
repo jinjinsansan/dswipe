@@ -290,6 +290,48 @@ export interface NotePurchaseStatusResponse {
   };
 }
 
+export interface ProductOrderStatusResponse {
+  status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REJECTED' | 'EXPIRED' | 'UNKNOWN';
+  external_id: string;
+  product_id?: string | null;
+  notification_sent: boolean;
+  payment_method?: string | null;
+  amount_jpy?: number | null;
+  completed_at?: string | null;
+  thanks_lp_slug?: string | null;
+  redirect_url?: string | null;
+  product?: {
+    id?: string | null;
+    title?: string | null;
+  };
+}
+
+export interface SubscriptionSessionStatusResponse {
+  external_id: string;
+  session_status: string;
+  subscription_status: string;
+  notification_sent: boolean;
+  is_completed: boolean;
+  last_event_type?: string | null;
+  last_event_at?: string | null;
+  recurrent_payment_id?: string | null;
+  plan?: {
+    key: string;
+    label: string;
+    points: number;
+    usd_amount: number;
+  } | null;
+  seller?: {
+    id?: string | null;
+    username?: string | null;
+  } | null;
+  salon?: {
+    id?: string | null;
+    title?: string | null;
+  } | null;
+  membership_status?: string | null;
+}
+
 export interface NoteCreateRequest {
   title: string;
   cover_image_url?: string | null;
