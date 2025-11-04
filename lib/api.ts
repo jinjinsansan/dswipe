@@ -17,6 +17,7 @@ import type {
   NoteCreateRequest,
   NoteUpdateRequest,
   NotePurchaseResult,
+  NotePurchaseStatusResponse,
   PublicNoteListResult,
   PublicNoteDetail,
   ProductCreatePayload,
@@ -342,6 +343,15 @@ export const noteApi = {
 
   purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points') =>
     api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, { params: { payment_method: paymentMethod } }),
+
+  purchaseStatus: (externalId: string, config?: Parameters<typeof api.get>[1]) =>
+    api.get<NotePurchaseStatusResponse>('/notes/purchase/status', {
+      ...(config ?? {}),
+      params: {
+        ...(config?.params ?? {}),
+        external_id: externalId,
+      },
+    }),
 
   getMetrics: () =>
     api.get<NoteMetrics>('/notes/metrics'),

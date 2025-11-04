@@ -275,6 +275,18 @@ export interface NotePurchaseResult {
   external_id?: string | null;
 }
 
+export interface NotePurchaseStatusResponse {
+  status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REJECTED' | 'EXPIRED' | 'UNKNOWN';
+  external_id: string;
+  note_id?: string | null;
+  notification_sent: boolean;
+  note?: {
+    id?: string | null;
+    slug?: string | null;
+    title?: string | null;
+  };
+}
+
 export interface NoteCreateRequest {
   title: string;
   cover_image_url?: string | null;
