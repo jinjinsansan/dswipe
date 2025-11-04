@@ -32,6 +32,7 @@ export type {
   PublicNoteListResult,
   PublicNoteDetail,
   NotePurchaseResult,
+  NotePurchaseStatusResponse,
   NoteCreateRequest,
   NoteUpdateRequest,
   OfficialShareConfig,

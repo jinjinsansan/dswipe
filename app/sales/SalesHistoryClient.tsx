@@ -69,13 +69,13 @@ type ClearingStateConfig = {
 const CLEARING_STATE_DISPLAY: Record<string, ClearingStateConfig> = {
   pending: {
     label: "決済待機中",
-    description: "カード会社での決済確定を待っています。",
+    description: "カード会社での決済確定を待っています。通常は数分～数時間で完了します。",
     badgeClass: "bg-slate-100 text-slate-600",
     icon: ClockIcon,
   },
   clearing: {
     label: "決済確認中",
-    description: "チャージバック確認期間中のため支払いを保留しています。",
+    description: "決済内容の確認が終わると自動的に支払い対象へ切り替わります。",
     badgeClass: "bg-amber-100 text-amber-700",
     icon: ClockIcon,
   },
@@ -117,14 +117,6 @@ const resolveClearingState = (sale: SalesProductRecord | SalesNoteRecord) => {
     return sale.ready_for_payout_at ? "ready" : "pending";
   }
   return state;
-};
-
-const riskBadgeClass = (riskLevel?: string | null) => {
-  if (!riskLevel) return "bg-slate-100 text-slate-600";
-  const level = riskLevel.toLowerCase();
-  if (level === "high") return "bg-rose-100 text-rose-600";
-  if (level === "medium") return "bg-amber-100 text-amber-700";
-  return "bg-emerald-100 text-emerald-600";
 };
 
 const getLpLink = (record: SalesProductRecord) => (record.lp_slug ? `/view/${record.lp_slug}` : null);
@@ -242,7 +234,7 @@ export default function SalesHistoryClient() {
     ];
   }, [history]);
 
-  const renderClearingStatus = useCallback(
+  const renderPaymentStatus = useCallback(
     (sale: SalesProductRecord | SalesNoteRecord) => {
       if (sale.payment_method !== "yen") {
         return null;
@@ -250,30 +242,18 @@ export default function SalesHistoryClient() {
       const stateKey = resolveClearingState(sale);
       const config = CLEARING_STATE_DISPLAY[stateKey] ?? CLEARING_STATE_DISPLAY.pending;
       const Icon = config.icon;
-      const riskLevel = sale.risk_level ?? undefined;
       const readyAt = formatShortDate(sale.ready_for_payout_at);
       const holdUntil = formatShortDate(sale.chargeback_hold_until);
-      const reserve = sale.reserve_amount_usd && sale.reserve_amount_usd > 0 ? `${sale.reserve_amount_usd.toFixed(2)} USD` : null;
-      const riskScore = sale.risk_score !== null && sale.risk_score !== undefined ? sale.risk_score : null;
-      const riskFactors = sale.risk_factors && typeof sale.risk_factors === "object" ? Object.keys(sale.risk_factors) : [];
 
       return (
-        <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-4 rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-slate-100 px-4 py-4 shadow-inner">
+          <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${config.badgeClass}`}>
               <Icon className="h-4 w-4" aria-hidden="true" />
               {config.label}
             </span>
-            {riskLevel && (
-              <span
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${riskBadgeClass(riskLevel)}`}
-              >
-                リスク {riskLevel.toUpperCase()}
-                {riskScore !== null && <span className="ml-1 text-[11px] font-normal">(スコア {riskScore})</span>}
-              </span>
-            )}
           </div>
-          <p className="mt-2 text-xs text-slate-600">{config.description}</p>
+          <p className="mt-3 text-xs text-slate-600">{config.description}</p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-500">
             {readyAt && (
               <span>
@@ -282,30 +262,13 @@ export default function SalesHistoryClient() {
             )}
             {holdUntil && holdUntil !== readyAt && (
               <span>
-                ホールド期限: <span className="font-semibold text-slate-700">{holdUntil}</span>
-              </span>
-            )}
-            {reserve && (
-              <span>
-                留保額: <span className="font-semibold text-slate-700">{reserve}</span>
+                保留期限: <span className="font-semibold text-slate-700">{holdUntil}</span>
               </span>
             )}
           </div>
-          {riskFactors.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {riskFactors.map((factorKey) => (
-                <span
-                  key={factorKey}
-                  className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600"
-                >
-                  {factorKey.replace(/_/g, " ")}
-                </span>
-              ))}
-            </div>
-          )}
-          {sale.dispute_flag && sale.dispute_status && (
-            <p className="mt-2 text-xs font-semibold text-rose-600">
-              カード会社調査ステータス: {sale.dispute_status}
+          {sale.dispute_flag && (
+            <p className="mt-3 rounded-2xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">
+              現在カード会社で内容確認中のため入金を一時停止しています。
             </p>
           )}
         </div>
@@ -346,12 +309,12 @@ export default function SalesHistoryClient() {
         </div>
 
         <div className="rounded-3xl border border-amber-200 bg-amber-50 px-5 py-4 text-xs leading-relaxed text-amber-800">
-          <p className="font-semibold">クレジット決済の支払いタイミング</p>
+          <p className="font-semibold">クレジット決済の入金サイクル</p>
           <p className="mt-1">
-            決済完了後はカード会社のチャージバック確認期間として最大45日間「決済確認中」となります。リスクスコアが高い取引は安全のため一部金額を留保し、調査が完了次第に送金対象へ切り替わります。
+            決済完了後はカード会社の確認期間として最大45日間「決済確認中」と表示されます。確認が終わると自動的に「支払い対象」へ切り替わり、次回の振込に含まれます。
           </p>
           <p className="mt-1">
-            支払い状況・留保額・ホールド期限はそれぞれの決済カード内で確認できます。調査中の決済についてご不明点がある場合はサポート窓口までお問い合わせください。
+            支払い目安や保留期限は各決済カードの「ステータス」欄から確認できます。ご不明点がある場合はサポート窓口までお問い合わせください。
           </p>
         </div>
 
@@ -599,37 +562,48 @@ export default function SalesHistoryClient() {
                 return (
                   <li
                     key={sale.sale_id}
-                    className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    className="group rounded-3xl border border-slate-100 bg-white/95 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-2">
-                      <p className="text-sm font-semibold text-slate-900">{sale.product_title ?? "名称未設定の商品"}</p>
-                      <p className="text-xs text-slate-500">
-                        購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}
-                      </p>
-                      {sale.description ? <p className="text-xs text-slate-500">{sale.description}</p> : null}
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                        <div className="flex items-start gap-3">
+                          <span
+                            className={`mt-1 inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
+                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-purple-50 text-purple-600"
+                            }`}
+                          >
+                            <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                          <div className="flex flex-col gap-1">
+                            <p className="text-sm font-semibold text-slate-900">{sale.product_title ?? "名称未設定の商品"}</p>
+                            <p className="text-xs text-slate-500">購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}</p>
+                            {sale.description ? <p className="text-xs text-slate-500">{sale.description}</p> : null}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 text-right">
+                          <span className={`text-base font-semibold ${amountClass}`}>{amountDisplay}</span>
+                          {lpLink ? (
+                            <Link
+                              href={lpLink}
+                              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                            >
+                              公開LPを見る
+                              <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                            </Link>
+                          ) : null}
+                        </div>
+                      </div>
                       <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide ${
+                          className={`inline-flex items-center rounded-full px-2.5 py-1 font-semibold uppercase tracking-wide ${
                             isYen ? "bg-emerald-100 text-emerald-600" : "bg-purple-100 text-purple-600"
                           }`}
                         >
                           {methodLabel}
                         </span>
+                        <span>購入日時: {formatDateTime(sale.purchased_at)}</span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(sale.purchased_at)}</p>
-                      {renderClearingStatus(sale)}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className={`text-sm font-semibold ${amountClass}`}>{amountDisplay}</span>
-                      {lpLink ? (
-                        <Link
-                          href={lpLink}
-                          className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-white px-3 py-1.5 text-xs font-semibold text-purple-600 transition hover:bg-purple-50"
-                        >
-                          公開LPを見る
-                          <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                        </Link>
-                      ) : null}
+                      {renderPaymentStatus(sale)}
                     </div>
                   </li>
                 );
@@ -664,36 +638,47 @@ export default function SalesHistoryClient() {
                 return (
                   <li
                     key={sale.sale_id}
-                    className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    className="group rounded-3xl border border-slate-100 bg-white/95 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-2">
-                      <p className="text-sm font-semibold text-slate-900">{sale.note_title ?? "タイトル未設定のNOTE"}</p>
-                      <p className="text-xs text-slate-500">
-                        購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}
-                      </p>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                        <div className="flex items-start gap-3">
+                          <span
+                            className={`mt-1 inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
+                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-sky-50 text-sky-600"
+                            }`}
+                          >
+                            <BookOpenIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                          <div className="flex flex-col gap-1">
+                            <p className="text-sm font-semibold text-slate-900">{sale.note_title ?? "タイトル未設定のNOTE"}</p>
+                            <p className="text-xs text-slate-500">購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}</p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 text-right">
+                          <span className={`text-base font-semibold ${amountClass}`}>{amountDisplay}</span>
+                          {noteLink ? (
+                            <Link
+                              href={noteLink}
+                              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                            >
+                              NOTEを開く
+                              <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                            </Link>
+                          ) : null}
+                        </div>
+                      </div>
                       <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide ${
+                          className={`inline-flex items-center rounded-full px-2.5 py-1 font-semibold uppercase tracking-wide ${
                             isYen ? "bg-emerald-100 text-emerald-600" : "bg-sky-100 text-sky-600"
                           }`}
                         >
                           {methodLabel}
                         </span>
+                        <span>購入日時: {formatDateTime(sale.purchased_at)}</span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(sale.purchased_at)}</p>
-                      {renderClearingStatus(sale)}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className={`text-sm font-semibold ${amountClass}`}>{amountDisplay}</span>
-                      {noteLink ? (
-                        <Link
-                          href={noteLink}
-                          className="inline-flex items-center gap-1 rounded-full border border-sky-200 bg-white px-3 py-1.5 text-xs font-semibold text-sky-600 transition hover:bg-sky-50"
-                        >
-                          NOTEを開く
-                          <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                        </Link>
-                      ) : null}
+                      {renderPaymentStatus(sale)}
                     </div>
                   </li>
                 );
