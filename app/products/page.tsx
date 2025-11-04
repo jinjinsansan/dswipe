@@ -169,7 +169,7 @@ function ProductsContent() {
   }
 
   return (
-    <DashboardLayout pageTitle="商品マーケット" pageSubtitle={`${filteredProducts.length} 件のLPを表示`} requireAuth={false}>
+    <DashboardLayout pageTitle="AllLP" pageSubtitle={`${filteredProducts.length} 件のLPを表示`} requireAuth={false}>
       <div className="max-w-7xl mx-auto px-4 pb-16 pt-6 sm:px-6 lg:px-8">
         {/* Filters */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">

@@ -83,7 +83,7 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
               href="/notes"
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
             >
-              ← AllNOTEへ戻る
+              ← AllNOTESへ戻る
             </Link>
             <Link
               href="/note"

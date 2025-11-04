@@ -197,7 +197,7 @@ export default function DashboardLayout({
                 </p>
                 <div className="space-y-1">
                   <Link href="/products" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    商品マーケット
+                    AllLP
                   </Link>
                   <Link href="/notes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
                     AllNOTES
