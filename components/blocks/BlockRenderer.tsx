@@ -39,6 +39,10 @@ interface BlockRendererProps {
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
   onRequestFieldFocus?: (field: string) => void;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
 export default function BlockRenderer({
@@ -52,6 +56,7 @@ export default function BlockRenderer({
   ctaIds,
   onCtaClick,
   onRequestFieldFocus,
+  primaryLinkLock,
 }: BlockRendererProps) {
   // ブロックタイプに応じて適切なコンポーネントをレンダリング
   let element: React.ReactElement;
@@ -68,6 +73,8 @@ export default function BlockRenderer({
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
           onFieldFocus={onRequestFieldFocus}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
         />
       );
       break;
@@ -81,6 +88,8 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
         />
       );
       break;
@@ -98,6 +107,8 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
         />
       );
       break;
@@ -124,6 +135,8 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
         />
       );
       break;
@@ -159,6 +172,8 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
           onFieldFocus={onRequestFieldFocus}
         />
       );
@@ -173,6 +188,8 @@ export default function BlockRenderer({
           onProductClick={onProductClick}
           ctaIds={ctaIds}
           onCtaClick={onCtaClick}
+          withinEditor={withinEditor}
+          primaryLinkLock={primaryLinkLock}
         />
       );
       break;

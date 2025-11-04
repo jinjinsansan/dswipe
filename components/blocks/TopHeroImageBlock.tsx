@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
 
 interface TopHeroImageBlockProps {
   content: HeroBlockContent;
@@ -11,6 +12,11 @@ interface TopHeroImageBlockProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80';
@@ -23,6 +29,8 @@ export default function TopHeroImageBlock({
   onProductClick,
   ctaIds,
   onCtaClick,
+  withinEditor,
+  primaryLinkLock,
 }: TopHeroImageBlockProps) {
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '最新プロジェクトの裏側を公開';
@@ -40,15 +48,20 @@ export default function TopHeroImageBlock({
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
+  const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
+  const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
 
   const overlayStyle: CSSProperties = {
     background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.35, accentColor)}, ${withAlpha(overlayBase, 0.85, overlayBase)})`,
   };
 
   const primaryButtonStyle: CSSProperties = {
-    backgroundColor: buttonColor,
-    color: getContrastColor(buttonColor),
-    border: `1px solid ${buttonColor}`,
+    backgroundColor: isLocked ? withAlpha('#64748b', 0.2, '#64748b') : buttonColor,
+    color: isLocked ? '#475569' : getContrastColor(buttonColor),
+    border: `1px solid ${isLocked ? withAlpha('#64748b', 0.4, '#64748b') : buttonColor}`,
+    cursor: isLocked ? 'not-allowed' : undefined,
   };
 
   const secondaryStrokeColor = secondaryButtonColor;
@@ -127,7 +140,7 @@ export default function TopHeroImageBlock({
               className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
               value={content?.secondaryButtonUrl ?? ''}
               onChange={handleEdit('secondaryButtonUrl')}
-              placeholder="二次ボタンURL"
+              placeholder="http://"
             />
             <input
               className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
@@ -176,7 +189,16 @@ export default function TopHeroImageBlock({
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             {primaryText ? (
-              onProductClick && productId ? (
+              isLocked ? (
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition"
+                  style={primaryButtonStyle}
+                  disabled
+                >
+                  {primaryText}
+                </button>
+              ) : onProductClick && productId ? (
                 <button
                   type="button"
                   onClick={() => {
@@ -190,7 +212,7 @@ export default function TopHeroImageBlock({
                 </button>
               ) : (
                 <Link
-                  href={content?.buttonUrl ?? '#'}
+                  href={resolvedPrimaryUrl}
                   onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
@@ -202,7 +224,7 @@ export default function TopHeroImageBlock({
 
             {secondaryText ? (
               <Link
-                href={content?.secondaryButtonUrl ?? '#'}
+                href={resolvedSecondaryUrl}
                 onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
                 className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
                 style={secondaryButtonStyle}
@@ -211,6 +233,12 @@ export default function TopHeroImageBlock({
               </Link>
             ) : null}
           </div>
+          {isLocked && (
+            <p className="mt-2 text-xs text-slate-200">
+              {lockMessage}
+              {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+            </p>
+          )}
         </div>
       </div>
     </section>

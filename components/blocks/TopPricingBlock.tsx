@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
 import { PricingBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
 
 interface TopPricingBlockProps {
   content: PricingBlockContent;
@@ -12,9 +13,14 @@ interface TopPricingBlockProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
-export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopPricingBlockProps) {
+export default function TopPricingBlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, withinEditor, primaryLinkLock }: TopPricingBlockProps) {
   const title = content?.title ?? 'プランと料金';
   const subtitle = content?.subtitle ?? 'ローンチの規模に合わせて選べる柔軟なプランをご用意しています。';
   const plans = useMemo(() => (
@@ -61,6 +67,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const updatePlanField = (index: number, field: keyof (typeof plans)[number]) =>
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -223,7 +231,33 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   ))}
                 </ul>
 
-                {onProductClick && productId ? (
+                {isLocked ? (
+                  <button
+                    className={`w-full rounded-lg font-semibold typo-body-lg transition ${isSingle ? 'py-3' : 'py-2'}`}
+                    type="button"
+                    style={{
+                      ...buttonStyle,
+                      outlineColor: withAlpha(accentColor, 0.45, accentColor),
+                      backgroundColor: withAlpha('#64748b', 0.12, '#64748b'),
+                      color: '#475569',
+                      border: `1px solid ${withAlpha('#64748b', 0.35, '#64748b')}`,
+                      cursor: 'not-allowed',
+                    }}
+                    disabled
+                  >
+                    <span
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning
+                      onBlur={(event) => {
+                        const next = [...plans];
+                        next[index] = { ...next[index], buttonText: event.currentTarget.textContent ?? '' };
+                        onEdit?.('plans', next);
+                      }}
+                    >
+                      {plan.buttonText}
+                    </span>
+                  </button>
+                ) : onProductClick && productId ? (
                   <button
                     className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3' : 'py-2'}`}
                     type="button"
@@ -250,7 +284,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   </button>
                 ) : plan.buttonUrl ? (
                   <Link
-                    href={plan.buttonUrl}
+                    href={withinEditor ? plan.buttonUrl : resolveButtonUrl(plan.buttonUrl)}
                     onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
                     className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center ${isSingle ? 'py-3' : 'py-2'}`}
                     style={{
@@ -300,6 +334,12 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
             );
           })}
         </div>
+        {isLocked && (
+          <p className="text-center text-xs text-slate-500">
+            {lockMessage}
+            {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+          </p>
+        )}
       </div>
     </section>
   );

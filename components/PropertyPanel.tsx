@@ -640,7 +640,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
                 onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
                 className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-                placeholder="セカンダリーボタンのURL"
+                  placeholder="http://"
               />
               <button
                 type="button"

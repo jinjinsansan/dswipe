@@ -29,6 +29,11 @@ interface Block {
   order: number;
 }
 
+type PrimaryLinkLockInfo = {
+  type: 'product' | 'salon';
+  label: string;
+};
+
 interface DraggableBlockEditorProps {
   blocks: Block[];
   onUpdateBlock: (blockId: string, field: string, value: any) => void;
@@ -40,6 +45,7 @@ interface DraggableBlockEditorProps {
   withinEditor?: boolean;
   onMountBlock?: (blockId: string, element: HTMLElement | null) => void;
   onRequestFieldFocus?: (blockId: string, field: string) => void;
+  primaryLinkLock?: PrimaryLinkLockInfo | null;
 }
 
 // ドラッグ可能なブロックアイテム
@@ -53,6 +59,7 @@ function SortableBlock({
   withinEditor,
   onRegister,
   onRequestFieldFocus,
+  primaryLinkLock,
 }: {
   block: Block;
   isEditing: boolean;
@@ -63,6 +70,7 @@ function SortableBlock({
   withinEditor?: boolean;
   onRegister?: (element: HTMLElement | null) => void;
   onRequestFieldFocus?: (field: string) => void;
+  primaryLinkLock?: PrimaryLinkLockInfo | null;
 }) {
   const {
     attributes,
@@ -153,6 +161,7 @@ function SortableBlock({
           onEdit={onUpdateBlock}
           withinEditor={withinEditor}
           onRequestFieldFocus={onRequestFieldFocus}
+          primaryLinkLock={primaryLinkLock || undefined}
         />
       </div>
     </div>
@@ -166,6 +175,7 @@ function PreviewBlock({
   withinEditor,
   onRegister,
   onRequestFieldFocus,
+  primaryLinkLock,
 }: {
   block: Block;
   isSelected: boolean;
@@ -173,6 +183,7 @@ function PreviewBlock({
   withinEditor?: boolean;
   onRegister?: (element: HTMLElement | null) => void;
   onRequestFieldFocus?: (field: string) => void;
+  primaryLinkLock?: PrimaryLinkLockInfo | null;
 }) {
   const handleRef = (element: HTMLElement | null) => {
     onRegister?.(element);
@@ -193,6 +204,7 @@ function PreviewBlock({
           onEdit={() => {}}
           withinEditor={withinEditor}
           onRequestFieldFocus={onRequestFieldFocus}
+          primaryLinkLock={primaryLinkLock || undefined}
         />
       </div>
     </div>
@@ -210,6 +222,7 @@ export default function DraggableBlockEditor({
   withinEditor,
   onMountBlock,
   onRequestFieldFocus,
+  primaryLinkLock,
 }: DraggableBlockEditorProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -236,6 +249,7 @@ export default function DraggableBlockEditor({
             withinEditor={withinEditor}
             onRegister={(element) => onMountBlock?.(block.id, element)}
             onRequestFieldFocus={(field) => onRequestFieldFocus?.(block.id, field)}
+            primaryLinkLock={primaryLinkLock}
           />
         ))}
       </div>
@@ -298,6 +312,7 @@ export default function DraggableBlockEditor({
               withinEditor={withinEditor}
               onRegister={(element) => onMountBlock?.(block.id, element)}
               onRequestFieldFocus={(field) => onRequestFieldFocus?.(block.id, field)}
+              primaryLinkLock={primaryLinkLock}
             />
           ))}
         </div>

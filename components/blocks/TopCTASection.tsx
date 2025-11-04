@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { CTABlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
 
 interface TopCTASectionProps {
   content: CTABlockContent;
@@ -11,9 +12,14 @@ interface TopCTASectionProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
-export default function TopCTASection({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick }: TopCTASectionProps) {
+export default function TopCTASection({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, withinEditor, primaryLinkLock }: TopCTASectionProps) {
   const textColor = content?.textColor ?? '#ECFEFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? accentColor;
@@ -26,6 +32,10 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const secondaryText = content?.secondaryButtonText ?? '';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
+  const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
+  const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
 
   const backgroundStyle: CSSProperties = {
     backgroundColor: content?.backgroundColor ?? '#07182F',
@@ -44,6 +54,24 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
 
     const commonClasses =
       'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent shadow-sm';
+
+    if (isLocked) {
+      return (
+        <button
+          type="button"
+          className={commonClasses}
+          style={{
+            backgroundColor: withAlpha('#64748b', 0.2, '#64748b'),
+            color: '#475569',
+            border: '1px solid rgba(100,116,139,0.4)',
+            cursor: 'not-allowed',
+          }}
+          disabled
+        >
+          {primaryText}
+        </button>
+      );
+    }
 
     if (onProductClick && productId) {
       return (
@@ -67,7 +95,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
 
     return (
       <Link
-        href={content?.buttonUrl ?? '#'}
+        href={resolvedPrimaryUrl}
         onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
         className={commonClasses}
         style={{
@@ -89,7 +117,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
 
     return (
       <Link
-        href={content?.secondaryButtonUrl ?? '#'}
+        href={resolvedSecondaryUrl}
         onClick={() => onCtaClick?.(secondaryCtaId, 'secondary')}
         className={classes}
         style={{
@@ -162,7 +190,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
                 className="w-full rounded-md border border-slate-200 px-3 py-2"
                 value={content?.secondaryButtonUrl ?? ''}
                 onChange={(e) => onEdit?.('secondaryButtonUrl', e.target.value)}
-                placeholder="二次ボタンURL"
+                placeholder="http://"
               />
             </div>
           </div>
@@ -204,6 +232,12 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
               <SecondaryAction />
             </div>
           </div>
+            {isLocked && (
+              <p className="mt-2 text-xs text-cyan-100">
+                {lockMessage}
+                {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+              </p>
+            )}
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { MediaSpotlightBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
 
 interface TopMediaSpotlightBlockProps {
   content: MediaSpotlightBlockContent;
@@ -10,6 +11,11 @@ interface TopMediaSpotlightBlockProps {
   onProductClick?: (productId?: string) => void;
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
 export default function TopMediaSpotlightBlock({
@@ -20,6 +26,8 @@ export default function TopMediaSpotlightBlock({
   onProductClick,
   ctaIds,
   onCtaClick,
+  withinEditor,
+  primaryLinkLock,
 }: TopMediaSpotlightBlockProps) {
   const tagline = content?.tagline ?? '制作事例ハイライト';
   const title = content?.title ?? '制作の裏側に迫る、最新プロジェクトレポート';
@@ -29,12 +37,15 @@ export default function TopMediaSpotlightBlock({
   const imageAlt = content?.imageAlt ?? 'プロジェクトイメージ';
   const buttonText = content?.buttonText ?? '';
   const primaryCtaId = ctaIds?.[0];
+  const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
 
   const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
   const buttonTextColor = getContrastColor(buttonColor, '#F8FAFC', '#0F172A');
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const handleTextBlur = (field: keyof MediaSpotlightBlockContent) =>
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -50,6 +61,24 @@ export default function TopMediaSpotlightBlock({
 
     const commonClasses =
       'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
+
+    if (isLocked) {
+      return (
+        <button
+          type="button"
+          className={commonClasses}
+          style={{
+            backgroundColor: withAlpha('#64748b', 0.2, '#64748b'),
+            color: '#475569',
+            border: '1px solid rgba(100,116,139,0.4)',
+            cursor: 'not-allowed',
+          }}
+          disabled
+        >
+          {buttonText}
+        </button>
+      );
+    }
 
     if (onProductClick && productId) {
       return (
@@ -74,7 +103,7 @@ export default function TopMediaSpotlightBlock({
 
     return (
       <Link
-        href={content?.buttonUrl ?? '#'}
+        href={resolvedPrimaryUrl}
         onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
         className={commonClasses}
         style={{
@@ -170,6 +199,12 @@ export default function TopMediaSpotlightBlock({
             <div className="flex justify-center">
               {renderButton()}
             </div>
+          )}
+          {isLocked && (
+            <p className="mt-2 text-center text-xs text-slate-500">
+              {lockMessage}
+              {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+            </p>
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
@@ -192,6 +192,22 @@ export default function EditLPNewPage() {
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
   const [isProductLinkUpdating, setIsProductLinkUpdating] = useState(false);
   const [productLinkError, setProductLinkError] = useState<string | null>(null);
+
+  const primaryLinkLock = useMemo(() => {
+    if (linkedSalon?.id) {
+      return {
+        type: 'salon' as const,
+        label: linkedSalon.title ?? '選択中のサロン',
+      };
+    }
+    if (linkedProduct?.id) {
+      return {
+        type: 'product' as const,
+        label: linkedProduct.title ?? '選択中の商品',
+      };
+    }
+    return null;
+  }, [linkedProduct, linkedSalon]);
   
   // サイドバー可変幅の状態管理
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
@@ -1630,6 +1646,7 @@ export default function EditLPNewPage() {
                 withinEditor
                 onMountBlock={registerBlockElement}
                 onRequestFieldFocus={handleFieldFocusRequest}
+                primaryLinkLock={primaryLinkLock ?? undefined}
               />
             </div>
           </div>

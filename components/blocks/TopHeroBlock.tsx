@@ -3,6 +3,9 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
+
+const FALLBACK_VIDEO = 'https://storage.googleapis.com/d-swipe-assets/videos/launch-loop.mp4';
 
 interface TopHeroBlockProps {
   content: HeroBlockContent;
@@ -13,20 +16,14 @@ interface TopHeroBlockProps {
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
   onFieldFocus?: (field: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
-const FALLBACK_VIDEO = '/videos/pixta.mp4';
-
-export default function TopHeroBlock({
-  content,
-  isEditing,
-  onEdit,
-  productId,
-  onProductClick,
-  ctaIds,
-  onCtaClick,
-  onFieldFocus,
-}: TopHeroBlockProps) {
+export default function TopHeroBlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, onFieldFocus, withinEditor, primaryLinkLock }: TopHeroBlockProps) {
   const tagline = content?.tagline ?? 'NEXT LAUNCH';
   const highlightText = content?.highlightText ?? '５分でLP公開';
   const title = content?.title ?? '情報には鮮度がある。';
@@ -41,6 +38,8 @@ export default function TopHeroBlock({
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const createFieldFocusHandler = <T extends HTMLElement>(field: string, fallback?: () => void) => {
     return (event: React.MouseEvent<T>) => {
@@ -60,10 +59,14 @@ export default function TopHeroBlock({
   };
 
   const primaryButtonStyle: CSSProperties = {
-    backgroundColor: buttonColor,
-    color: getContrastColor(buttonColor),
-    border: `1px solid ${buttonColor}`,
+    backgroundColor: isLocked ? withAlpha('#64748b', 0.2, '#64748b') : buttonColor,
+    color: isLocked ? '#475569' : getContrastColor(buttonColor),
+    border: `1px solid ${isLocked ? withAlpha('#64748b', 0.4, '#64748b') : buttonColor}`,
+    cursor: isLocked ? 'not-allowed' : undefined,
+    boxShadow: isLocked ? undefined : `0 20px 45px -18px ${withAlpha(buttonColor, 0.4, buttonColor)}`,
   };
+  const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
+  const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
 
   const secondaryStrokeColor = secondaryButtonColor;
   const secondaryButtonStyle: CSSProperties = {
@@ -139,7 +142,7 @@ export default function TopHeroBlock({
               className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
               value={content?.secondaryButtonUrl ?? ''}
               onChange={handleEdit('secondaryButtonUrl')}
-              placeholder="二次ボタンURL"
+              placeholder="http://"
             />
             <input
               className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
@@ -189,13 +192,22 @@ export default function TopHeroBlock({
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             {primaryText ? (
-              onProductClick && productId ? (
+              isLocked ? (
                 <button
                   type="button"
-              onClick={createFieldFocusHandler<HTMLButtonElement>('hero.buttonText', () => {
-                onCtaClick?.(primaryCtaId, 'primary');
-                onProductClick?.(productId);
-              })}
+                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition"
+                  style={primaryButtonStyle}
+                  disabled
+                >
+                  {primaryText}
+                </button>
+              ) : onProductClick && productId ? (
+                <button
+                  type="button"
+                  onClick={createFieldFocusHandler<HTMLButtonElement>('hero.buttonText', () => {
+                    onCtaClick?.(primaryCtaId, 'primary');
+                    onProductClick?.(productId);
+                  })}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -203,10 +215,10 @@ export default function TopHeroBlock({
                 </button>
               ) : (
                 <Link
-                  href={content?.buttonUrl ?? '#'}
-              onClick={createFieldFocusHandler<HTMLAnchorElement>('hero.buttonText', () => {
-                onCtaClick?.(primaryCtaId, 'primary');
-              })}
+                  href={resolvedPrimaryUrl}
+                  onClick={createFieldFocusHandler<HTMLAnchorElement>('hero.buttonText', () => {
+                    onCtaClick?.(primaryCtaId, 'primary');
+                  })}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
@@ -217,7 +229,7 @@ export default function TopHeroBlock({
 
             {secondaryText ? (
               <Link
-                href={content?.secondaryButtonUrl ?? '#'}
+                href={resolvedSecondaryUrl}
                 onClick={createFieldFocusHandler<HTMLAnchorElement>('hero.secondaryButtonText', () => {
                   onCtaClick?.(secondaryCtaId, 'secondary');
                 })}
@@ -228,6 +240,12 @@ export default function TopHeroBlock({
               </Link>
             ) : null}
           </div>
+          {isLocked && (
+            <p className="mt-2 text-xs text-slate-500">
+              {lockMessage}
+              {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+            </p>
+          )}
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { InlineCTABlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { resolveButtonUrl } from '@/lib/url';
 
 interface TopInlineCTABlockProps {
   content: InlineCTABlockContent;
@@ -12,18 +13,26 @@ interface TopInlineCTABlockProps {
   ctaIds?: string[];
   onCtaClick?: (ctaId?: string, variant?: string) => void;
   onFieldFocus?: (field: string) => void;
+  withinEditor?: boolean;
+  primaryLinkLock?: {
+    type: 'product' | 'salon';
+    label: string;
+  };
 }
 
-export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, onFieldFocus }: TopInlineCTABlockProps) {
+export default function TopInlineCTABlock({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, onFieldFocus, withinEditor, primaryLinkLock }: TopInlineCTABlockProps) {
   const eyebrow = content?.eyebrow ?? '限定プログラム';
   const title = content?.title ?? '今すぐAIローンチを体験する';
   const subtitle = content?.subtitle ?? 'アカウント作成から公開までを最短5分で完了。初月の成果創出まで伴走します。';
   const buttonText = content?.buttonText ?? '無料で始める';
   const buttonUrl = content?.buttonUrl ?? '/register';
+  const resolvedButtonUrl = withinEditor ? buttonUrl : resolveButtonUrl(buttonUrl);
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
   const primaryCtaId = ctaIds?.[0];
+  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const createFieldFocusHandler = <T extends HTMLElement>(field: string, fallback?: () => void) => {
     return (event: React.MouseEvent<T>) => {
@@ -39,10 +48,11 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   };
 
   const primaryButtonStyle: CSSProperties = {
-    backgroundColor: buttonColor,
-    color: getContrastColor(buttonColor),
-    border: `1px solid ${buttonColor}`,
+    backgroundColor: isLocked ? withAlpha('#64748b', 0.2, '#64748b') : buttonColor,
+    color: isLocked ? '#475569' : getContrastColor(buttonColor),
+    border: `1px solid ${isLocked ? withAlpha('#64748b', 0.4, '#64748b') : buttonColor}`,
     outlineColor: withAlpha(accentColor, 0.5, accentColor),
+    cursor: isLocked ? 'not-allowed' : undefined,
   };
 
   return (
@@ -114,8 +124,17 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
           {subtitle}
         </p>
 
-        <div className="mt-2 flex justify-center">
-          {onProductClick && productId ? (
+        <div className="mt-2 flex flex-col items-center justify-center gap-2">
+          {isLocked ? (
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition"
+              style={primaryButtonStyle}
+              disabled
+            >
+              {buttonText}
+            </button>
+          ) : onProductClick && productId ? (
             <button
               type="button"
               onClick={createFieldFocusHandler<HTMLButtonElement>('inlineCTA.buttonText', () => {
@@ -129,7 +148,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
             </button>
           ) : (
             <Link
-              href={buttonUrl}
+              href={resolvedButtonUrl}
               onClick={createFieldFocusHandler<HTMLAnchorElement>('inlineCTA.buttonText', () => {
                 onCtaClick?.(primaryCtaId, 'primary');
               })}
@@ -138,6 +157,12 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
             >
               {buttonText}
             </Link>
+          )}
+          {isLocked && (
+            <p className="text-xs text-slate-500">
+              {lockMessage}
+              {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
+            </p>
           )}
         </div>
       </div>
