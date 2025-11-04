@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import AuthShell from '@/components/auth/AuthShell';
@@ -11,6 +12,12 @@ const GoogleSignInButton = dynamic(() => import('@/components/auth/GoogleSignInB
 export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectParam = searchParams?.get('redirect') ?? undefined;
+  const registerHref = useMemo(() => {
+    if (!redirectParam) {
+      return '/register';
+    }
+    return `/register?redirect=${encodeURIComponent(redirectParam)}`;
+  }, [redirectParam]);
 
   return (
     <AuthShell
@@ -19,7 +26,7 @@ export default function LoginPage() {
       helper={
         <span>
           アカウントをお持ちでない方は{' '}
-          <Link href="/register" className="font-bold text-blue-600 hover:text-cyan-500 underline">
+          <Link href={registerHref} className="font-bold text-blue-600 hover:text-cyan-500 underline">
             新規登録
           </Link>
         </span>

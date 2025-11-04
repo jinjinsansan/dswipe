@@ -1,14 +1,26 @@
 
+
 'use client';
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import AuthShell from '@/components/auth/AuthShell';
 
 const GoogleSignInButton = dynamic(() => import('@/components/auth/GoogleSignInButton'), { ssr: false });
 
 export default function RegisterPage() {
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams?.get('redirect') ?? undefined;
+  const loginHref = useMemo(() => {
+    if (!redirectParam) {
+      return '/login';
+    }
+    return `/login?redirect=${encodeURIComponent(redirectParam)}`;
+  }, [redirectParam]);
+
   return (
     <AuthShell
       cardTitle="Googleで新規登録"
@@ -16,7 +28,7 @@ export default function RegisterPage() {
       helper={
         <span>
           既にアカウントをお持ちの方は{' '}
-          <Link href="/login" className="font-bold text-blue-600 hover:text-cyan-500 underline">
+          <Link href={loginHref} className="font-bold text-blue-600 hover:text-cyan-500 underline">
             ログイン
           </Link>
         </span>
@@ -34,6 +46,7 @@ export default function RegisterPage() {
       }}
     >
       <GoogleSignInButton
+        redirectPath={redirectParam}
         title="Googleで新規登録"
         description="初回ログイン時にアカウントが自動的に作成されます。"
       />
