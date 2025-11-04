@@ -201,8 +201,10 @@ const FALLBACK_NOTE_METRICS: NoteMetrics = {
   free_notes: 0,
   total_sales_count: 0,
   total_sales_points: 0,
+  total_sales_amount_jpy: 0,
   monthly_sales_count: 0,
   monthly_sales_points: 0,
+  monthly_sales_amount_jpy: 0,
   recent_published_count: 0,
   average_paid_price: 0,
   latest_published_at: null,
@@ -231,6 +233,22 @@ const formatAccountDate = (value?: string | null, includeTime = false) => {
   return new Intl.DateTimeFormat('ja-JP', options).format(date);
 };
 
+const formatYenCompact = (amount: number) => `${new Intl.NumberFormat('ja-JP').format(amount)}円`;
+const formatPointsCompact = (points: number) => `${new Intl.NumberFormat('ja-JP').format(points)}P`;
+const composeSalesLabel = (yenAmount: number, pointAmount: number) => {
+  const parts: string[] = [];
+  if (yenAmount > 0) {
+    parts.push(formatYenCompact(yenAmount));
+  }
+  if (pointAmount > 0) {
+    parts.push(formatPointsCompact(pointAmount));
+  }
+  if (parts.length === 0) {
+    return '—';
+  }
+  return parts.join(' / ');
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isInitialized } = useAuthStore();
@@ -256,8 +274,8 @@ export default function DashboardPage() {
   const latestNotePublishedLabel = noteSummary.latest_published_at
     ? formatAccountDate(noteSummary.latest_published_at, true)
     : '未公開';
-  const monthlyNoteSalesLabel = `${noteSummary.monthly_sales_points.toLocaleString()}P / ${noteSummary.monthly_sales_count}件`;
-  const totalNoteSalesLabel = `${noteSummary.total_sales_points.toLocaleString()}P`;
+  const monthlyNoteSalesLabel = `${composeSalesLabel(noteSummary.monthly_sales_amount_jpy, noteSummary.monthly_sales_points)} / ${noteSummary.monthly_sales_count}件`;
+  const totalNoteSalesLabel = composeSalesLabel(noteSummary.total_sales_amount_jpy, noteSummary.total_sales_points);
   const averagePaidPriceLabel = noteSummary.average_paid_price > 0
     ? `${noteSummary.average_paid_price.toLocaleString()}P`
     : '—';
@@ -924,7 +942,9 @@ export default function DashboardPage() {
               </div>
               {topNote ? (
                 <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
-                  販売: {topNote.purchase_count}件 / {topNote.points_earned.toLocaleString()}P
+                  販売: {topNote.purchase_count}件
+                  {topNote.points_earned > 0 ? ` / ${topNote.points_earned.toLocaleString()}P` : ''}
+                  {topNote.amount_jpy && topNote.amount_jpy > 0 ? ` / ${formatYenCompact(topNote.amount_jpy)}` : ''}
                 </p>
               ) : null}
               {resolvedTopCategories.length > 0 ? (

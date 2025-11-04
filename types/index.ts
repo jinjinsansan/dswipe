@@ -185,6 +185,7 @@ export interface NoteMetricsTopNote {
   slug?: string | null;
   purchase_count: number;
   points_earned: number;
+  amount_jpy?: number;
 }
 
 export interface NoteMetrics {
@@ -195,8 +196,10 @@ export interface NoteMetrics {
   free_notes: number;
   total_sales_count: number;
   total_sales_points: number;
+  total_sales_amount_jpy: number;
   monthly_sales_count: number;
   monthly_sales_points: number;
+  monthly_sales_amount_jpy: number;
   recent_published_count: number;
   average_paid_price: number;
   latest_published_at?: string | null;
