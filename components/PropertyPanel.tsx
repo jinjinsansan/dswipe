@@ -1310,7 +1310,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 type="button"
                 onClick={() => {
                   const testimonials = Array.isArray((content as any).testimonials) ? [...(content as any).testimonials] : [];
-                  testimonials.push({ name: '', text: '', role: '', rating: 5, company: '' });
+                  testimonials.push({ name: '', quote: '', role: '', rating: 5 });
                   onUpdateContent('testimonials', testimonials);
                 }}
                 className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
@@ -1348,36 +1348,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   placeholder="肩書き"
                 />
                 <textarea
-                  value={testimonial.text || ''}
-                  onChange={(e) => onUpdateContent(`testimonials.${index}.text`, e.target.value)}
+                  value={testimonial.quote || ''}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.quote`, e.target.value)}
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   rows={3}
                   placeholder="コメント"
                 />
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    value={testimonial.company || ''}
-                    onChange={(e) => onUpdateContent(`testimonials.${index}.company`, e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="会社名等（任意）"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={testimonial.rating ?? 5}
-                    onChange={(e) => onUpdateContent(`testimonials.${index}.rating`, Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="評価 (1-5)"
-                  />
-                </div>
                 <input
-                  type="text"
-                  value={testimonial.imageUrl || ''}
-                  onChange={(e) => onUpdateContent(`testimonials.${index}.imageUrl`, e.target.value)}
+                  type="number"
+                  min={1}
+                  max={5}
+                  value={testimonial.rating ?? 5}
+                  onChange={(e) => onUpdateContent(`testimonials.${index}.rating`, Number(e.target.value))}
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
-                  placeholder="画像URL (任意)"
+                  placeholder="評価 (1-5)"
                 />
               </div>
             ))}
