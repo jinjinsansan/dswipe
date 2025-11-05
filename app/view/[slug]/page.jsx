@@ -25,6 +25,107 @@ async function fetchLPMetadata(slug) {
   }
 }
 
+function normalizeLpPayload(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return null;
+  }
+
+  const steps = Array.isArray(payload.steps) ? payload.steps : [];
+  const sortedSteps = [...steps].sort((a, b) => {
+    const orderA = typeof a?.step_order === 'number' ? a.step_order : Number.MAX_SAFE_INTEGER;
+    const orderB = typeof b?.step_order === 'number' ? b.step_order : Number.MAX_SAFE_INTEGER;
+    return orderA - orderB;
+  });
+
+  const validSteps = sortedSteps.filter((step) => {
+    const hasValidBlockType = typeof step?.block_type === 'string' && step.block_type.trim().length > 0;
+    const hasValidImageUrl = typeof step?.image_url === 'string' && step.image_url.trim().length > 0;
+    return hasValidBlockType || hasValidImageUrl;
+  });
+
+  return {
+    ...payload,
+    steps: validSteps,
+    ctas: Array.isArray(payload.ctas) ? payload.ctas : [],
+  };
+}
+
+function mapPublicProducts(rawList) {
+  if (!Array.isArray(rawList)) return [];
+
+  return rawList
+    .map((item) => {
+      if (!item) return null;
+
+      const pricePointsRaw = item.price_in_points;
+      const priceYenRaw = item.price_jpy;
+      const taxRateRaw = item.tax_rate;
+      const stockRaw = item.stock_quantity;
+      const createdAt = typeof item.created_at === 'string' ? item.created_at : new Date().toISOString();
+      const updatedAt = typeof item.updated_at === 'string' ? item.updated_at : createdAt;
+
+      return {
+        id: String(item.id ?? ''),
+        seller_id: String(item.seller_id ?? ''),
+        lp_id: item.lp_id ?? undefined,
+        product_type: (item.product_type === 'salon' ? 'salon' : 'points'),
+        salon_id: item.salon_id ?? undefined,
+        title: item.title ?? '',
+        description: item.description ?? undefined,
+        price_in_points: Number.isFinite(Number(pricePointsRaw)) ? Number(pricePointsRaw) : 0,
+        price_jpy: Number.isFinite(Number(priceYenRaw)) ? Number(priceYenRaw) : null,
+        allow_point_purchase: Boolean(item.allow_point_purchase ?? false),
+        allow_jpy_purchase: Boolean(item.allow_jpy_purchase ?? false),
+        tax_rate: taxRateRaw === null || taxRateRaw === undefined ? undefined : Number(taxRateRaw),
+        tax_inclusive: Boolean(item.tax_inclusive ?? true),
+        stock_quantity:
+          stockRaw === null || stockRaw === undefined || stockRaw === ''
+            ? null
+            : Number(stockRaw),
+        is_available: Boolean(item.is_available ?? false),
+        is_featured: Boolean(item.is_featured ?? false),
+        total_sales: Number.isFinite(Number(item.total_sales)) ? Number(item.total_sales) : 0,
+        created_at: createdAt,
+        updated_at: updatedAt,
+      };
+    })
+    .filter((product) => product && product.is_available);
+}
+
+async function fetchInitialBundle(slug) {
+  const lpData = await fetchLPMetadata(slug);
+  if (!lpData) {
+    return { lp: null, products: [] };
+  }
+
+  let products = [];
+  const lpId = lpData?.id;
+  if (lpId) {
+    try {
+      const query = new URLSearchParams({ lp_id: String(lpId), limit: '20' });
+      const response = await fetch(`${API_BASE_URL}/products/public?${query.toString()}`, {
+        next: { revalidate },
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const list = Array.isArray(data?.data) ? data.data : data;
+        products = mapPublicProducts(list);
+      }
+    } catch (error) {
+      console.error('Failed to prefetch LP products:', error);
+    }
+  }
+
+  return {
+    lp: normalizeLpPayload(lpData),
+    products,
+  };
+}
+
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
@@ -105,5 +206,8 @@ export default async function LPViewerPageComponent({ params }) {
   const resolvedParams = await params;
   const slugParam = resolvedParams?.slug;
   const slug = typeof slugParam === 'string' ? slugParam : '';
-  return <LPViewerClient slug={slug} />;
+
+  const { lp: initialLp, products: initialProducts } = await fetchInitialBundle(slug);
+
+  return <LPViewerClient slug={slug} initialLp={initialLp} initialProducts={initialProducts} />;
 }

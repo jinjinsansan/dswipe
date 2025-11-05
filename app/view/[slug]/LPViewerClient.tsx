@@ -21,13 +21,15 @@ import 'swiper/css/effect-creative';
 
 interface LPViewerClientProps {
   slug: string;
+  initialLp?: LPDetail | null;
+  initialProducts?: Product[];
 }
 
-export default function LPViewerClient({ slug }: LPViewerClientProps) {
+export default function LPViewerClient({ slug, initialLp = null, initialProducts = [] }: LPViewerClientProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
-  const [lp, setLp] = useState<LPDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [lp, setLp] = useState<LPDetail | null>(initialLp);
+  const [isLoading, setIsLoading] = useState(!initialLp);
   const [error, setError] = useState('');
   const [sessionId] = useState(`session-${Date.now()}-${Math.random()}`);
   const viewTrackedRef = useRef(false);
@@ -35,7 +37,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   const [requiredActions, setRequiredActions] = useState<RequiredActionsStatus | null>(null);
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [email, setEmail] = useState('');
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [pointBalance, setPointBalance] = useState(0);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -105,6 +107,13 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   };
 
   useEffect(() => {
+    setLp(initialLp ?? null);
+    setProducts(initialProducts ?? []);
+    setIsLoading(!initialLp);
+    setError('');
+  }, [initialLp, initialProducts]);
+
+  useEffect(() => {
     viewTrackedRef.current = false;
     viewedStepsRef.current = new Set();
 
@@ -150,6 +159,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
       }
 
       setLp(newLp);
+      setIsLoading(false);
 
       if (response.data.linked_salon) {
         setProducts([]);
