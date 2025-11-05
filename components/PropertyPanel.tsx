@@ -376,6 +376,22 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('badgeText' in content) && (
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('badgeText')))}`}>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              バッジテキスト
+            </label>
+            <input
+              type="text"
+              value={(content as any).badgeText || ''}
+              onChange={(e) => onUpdateContent('badgeText', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('badgeText'))}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="バッジテキストを入力"
+            />
+          </div>
+        )}
+
         {('eyebrow' in content) && (
           <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('eyebrow')))}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
