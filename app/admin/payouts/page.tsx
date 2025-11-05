@@ -143,7 +143,7 @@ export default function AdminPayoutsPage() {
   const handleGenerate = useCallback(async () => {
     try {
       setGenerateLoading(true);
-      const payload: AdminPayoutGeneratePayload = { lookback_days: 14, fee_percent: 5 };
+      const payload: AdminPayoutGeneratePayload = { lookback_days: 14, fee_percent: 10 };
       const result = await adminPayoutApi.generate(payload);
       const createdList = Array.isArray((result.data as { created?: unknown[] }).created)
         ? ((result.data as { created: unknown[] }).created.length)

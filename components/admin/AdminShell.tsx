@@ -10,6 +10,7 @@ import {
   ShareIcon,
   XMarkIcon,
   BanknotesIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -75,6 +76,12 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     label: '支払い管理',
     icon: BanknotesIcon,
     description: '販売者へのUSDT支払いキューと送金状況',
+  },
+  {
+    href: '/admin/payment-settings',
+    label: '決済設定',
+    icon: Cog6ToothIcon,
+    description: '為替レート・スプレッド・手数料の管理',
   },
 ];
 

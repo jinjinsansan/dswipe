@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { salonPublicApi, subscriptionApi } from "@/lib/api";
+import { platformSettingsApi, salonPublicApi, subscriptionApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { SalonPublicDetail } from "@/types/api";
 
@@ -19,6 +19,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
   const [error, setError] = useState<string | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoiningYen, setIsJoiningYen] = useState(false);
+  const [effectiveRate, setEffectiveRate] = useState<number>(145);
   const { isAuthenticated, isInitialized } = useAuthStore();
 
   useEffect(() => {
@@ -67,6 +68,21 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     };
   }, [salonId, initialSalon]);
 
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await platformSettingsApi.getPaymentSettings();
+        const data = response.data as { effective_exchange_rate?: number };
+        if (data?.effective_exchange_rate && Number.isFinite(data.effective_exchange_rate)) {
+          setEffectiveRate(data.effective_exchange_rate);
+        }
+      } catch (err) {
+        console.warn("Failed to fetch platform payment settings", err);
+      }
+    };
+    void loadSettings();
+  }, []);
+
   const priceLabelPoints = useMemo(() => {
     const points = salon?.plan?.points ?? 0;
     return points > 0 ? `月額 ${points.toLocaleString("ja-JP")}ポイント` : "月額プラン";
@@ -79,11 +95,11 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     }
     const usdAmount = salon?.plan?.usd_amount;
     if (usdAmount && usdAmount > 0) {
-      const estimated = Math.round(usdAmount * 145);
+      const estimated = Math.round(usdAmount * effectiveRate);
       return estimated > 0 ? `月額 約${estimated.toLocaleString("ja-JP") }円` : null;
     }
     return null;
-  }, [salon]);
+  }, [salon, effectiveRate]);
 
   const handleJoinWithPoints = () => {
     if (!salon) return;

@@ -314,7 +314,7 @@ export default function HomeSwiper() {
                       </div>
                       <div>
                         <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 mb-1">10日間おきにUSDTでお支払い</h3>
-                        <p className="text-xs sm:text-sm text-slate-600 font-medium">手数料は業界最安の7.5%のみ</p>
+                        <p className="text-xs sm:text-sm text-slate-600 font-medium">手数料はシンプルな10%のみ</p>
                       </div>
                     </div>
                   </div>

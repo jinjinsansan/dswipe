@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <DashboardLayout pageTitle="利用規約" pageSubtitle="最終更新日：2025年10月22日" requireAuth={false}>
+    <DashboardLayout pageTitle="利用規約" pageSubtitle="最終更新日：2025年11月5日" requireAuth={false}>
       <div className="relative min-h-screen bg-slate-950 text-slate-200">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
         <div
@@ -79,9 +79,29 @@ export default function TermsPage() {
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-2xl font-semibold text-white">第7条（規約の変更）</h2>
+              <h2 className="text-2xl font-semibold text-white">第7条（決済手数料）</h2>
               <p>
-                当社は必要と判断した場合には、ユーザーに通知することなく本規約を変更することができます。変更後の規約は、当社のウェブサイトに掲載した時点から効力を生じるものとします。
+                当社は、プラットフォームを通じた売上金の精算時に、一律10％の決済手数料を申し受けます。手数料は決済代行費用、システム運用費その他の関連費用に充当され、当社が別途定める方法で算出・控除されます。
+              </p>
+              <p>
+                当社は、手数料率を変更する場合、相当の周知期間を設けたうえで、当社ウェブサイトもしくは当社指定の方法によりユーザーへ通知します。変更後の手数料率は、通知に定める適用開始日以降に成立した取引から適用されます。
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-2xl font-semibold text-white">第8条（為替手数料および換算レート）</h2>
+              <p>
+                外貨建ての決済または精算が発生する場合、当社は市場実勢レートに当社所定の為替スプレッド（目安：1米ドルあたり3円前後）を加算した換算レートを適用します。適用レートは日々または必要に応じて更新され、更新後のレートは当社が指定する管理画面等に表示されます。
+              </p>
+              <p>
+                為替レートの更新またはスプレッドの変更が行われた場合、当社は合理的な方法でユーザーに通知します。換算レートは、売上金の送金時点または当社が定める基準時点において最新のレートを適用するものとします。
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-2xl font-semibold text-white">第9条（規約の変更）</h2>
+              <p>
+                当社は必要と判断した場合には、ユーザーに通知することなく本規約を変更することができます。変更後の規約は、当社のウェブサイトに掲載した時点から効力を生じるものとします。ただし、手数料その他ユーザーに重大な影響を及ぼす変更を行う場合には、合理的な周知期間を設けます。
               </p>
             </section>
 

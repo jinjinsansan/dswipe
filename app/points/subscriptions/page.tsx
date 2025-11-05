@@ -4,7 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
-import { subscriptionApi } from '@/lib/api';
+import { platformSettingsApi, subscriptionApi } from '@/lib/api';
 import type {
   SubscriptionPlan,
   SubscriptionPlanListResponse,
@@ -12,8 +12,6 @@ import type {
   UserSubscription,
   UserSubscriptionListResponse,
 } from '@/types/api';
-
-const USD_TO_JPY = 145;
 
 const formatDateTime = (value?: string | null) => {
   if (!value) return '---';
@@ -65,11 +63,6 @@ const statusMeta: Record<string, { label: string; className: string }> = {
   },
 };
 
-const yenLabel = (usdAmount: number) => {
-  const yen = Math.round(usdAmount * USD_TO_JPY);
-  return `約${yen.toLocaleString('ja-JP')}円 / 月`;
-};
-
 function SubscriptionPageContent() {
   const searchParams = useSearchParams();
   const sellerUsername = searchParams.get('seller') ?? undefined;
@@ -96,6 +89,7 @@ function SubscriptionPageContent() {
   const [restrictedPlanKey, setRestrictedPlanKey] = useState<string | null>(null);
   const [restrictedPlanId, setRestrictedPlanId] = useState<string | null>(null);
   const [restrictedPlanPoints, setRestrictedPlanPoints] = useState<number | null>(null);
+  const [effectiveRate, setEffectiveRate] = useState<number>(145);
 
   const fetchPlansAndSubscriptions = useCallback(async () => {
     try {
@@ -154,6 +148,32 @@ function SubscriptionPageContent() {
   useEffect(() => {
     fetchPlansAndSubscriptions();
   }, [fetchPlansAndSubscriptions]);
+
+  useEffect(() => {
+    const loadPlatformSettings = async () => {
+      try {
+        const response = await platformSettingsApi.getPaymentSettings();
+        const data = response.data as {
+          effective_exchange_rate?: number;
+        };
+        if (data?.effective_exchange_rate && Number.isFinite(data.effective_exchange_rate)) {
+          setEffectiveRate(data.effective_exchange_rate);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch platform payment settings', error);
+      }
+    };
+    void loadPlatformSettings();
+  }, []);
+
+  const yenLabel = useCallback(
+    (usdAmount: number) => {
+      if (!usdAmount || Number.isNaN(usdAmount)) return '約0円 / 月';
+      const yen = Math.round(usdAmount * effectiveRate);
+      return `約${yen.toLocaleString('ja-JP')}円 / 月`;
+    },
+    [effectiveRate],
+  );
 
   const handleSubscribe = async (planKey: string) => {
     if (restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) {

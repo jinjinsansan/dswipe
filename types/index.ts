@@ -1013,6 +1013,20 @@ export interface AdminPayoutGeneratePayload {
   min_net_threshold_usd?: number;
 }
 
+export interface PlatformPaymentSettings {
+  exchange_rate_usd_jpy: number;
+  spread_jpy: number;
+  platform_fee_percent: number;
+  updated_at?: string | null;
+  updated_by?: string | null;
+}
+
+export interface PlatformPaymentSettingsUpdatePayload {
+  exchange_rate_usd_jpy: number;
+  spread_jpy: number;
+  platform_fee_percent: number;
+}
+
 export interface AdminPayoutStatusUpdatePayload {
   status: string;
   note?: string | null;

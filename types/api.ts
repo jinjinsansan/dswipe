@@ -70,6 +70,8 @@ export type {
   AdminPayoutStatusUpdatePayload,
   AdminPayoutTxRecordPayload,
   AdminPayoutEventPayload,
+  PlatformPaymentSettings,
+  PlatformPaymentSettingsUpdatePayload,
   AdminMarketplaceLP,
   FeaturedProductSummary,
   FeaturedProductListResponse,

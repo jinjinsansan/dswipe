@@ -73,6 +73,8 @@ import type {
   AdminPayoutTxRecordPayload,
   AdminPayoutEventPayload,
   AdminRiskOrderListResponse,
+  PlatformPaymentSettings,
+  PlatformPaymentSettingsUpdatePayload,
   OperatorMessage,
   OperatorMessageListResponse,
   OperatorMessageFeedResponse,
@@ -457,6 +459,13 @@ export const salesApi = {
   }) => api.get<SalesHistoryResponse>('/sales/history', { params }),
 };
 
+export const platformSettingsApi = {
+  getPaymentSettings: () =>
+    api.get<{ exchange_rate_usd_jpy: number; spread_jpy: number; effective_exchange_rate: number; platform_fee_percent: number }>(
+      '/public/platform/payment-settings',
+    ),
+};
+
 export const payoutApi = {
   getDashboard: () => api.get<PayoutDashboardResponse>('/payouts/dashboard'),
   getSettings: () => api.get<PayoutSettings | null>('/payouts/settings'),
@@ -499,6 +508,12 @@ export const adminPayoutApi = {
     api.post<PayoutLedgerEntry>(`/admin/payouts/${payoutId}/transaction`, payload),
   addEvent: (payoutId: string, payload: AdminPayoutEventPayload) => api.post(`/admin/payouts/${payoutId}/events`, payload),
   listRiskOrders: (params?: { limit?: number }) => api.get<AdminRiskOrderListResponse>('/admin/payouts/risk', { params }),
+};
+
+export const adminPaymentSettingsApi = {
+  get: () => api.get<PlatformPaymentSettings>('/admin/payment-settings'),
+  update: (payload: PlatformPaymentSettingsUpdatePayload) =>
+    api.put<PlatformPaymentSettings>('/admin/payment-settings', payload),
 };
 
 export const salonFeedApi = {
