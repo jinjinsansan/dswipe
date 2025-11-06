@@ -324,6 +324,7 @@ export default function DashboardPage() {
     ? formatAccountDate(noteSummary.latest_published_at, true)
     : '未公開';
   const totalNoteSalesLabel = composeSalesLabel(noteSummary.total_sales_amount_jpy, noteSummary.total_sales_points);
+  const monthlyNoteSalesLabel = composeSalesLabel(noteSummary.monthly_sales_amount_jpy ?? 0, noteSummary.monthly_sales_points ?? 0);
   const averagePaidPriceLabel = noteSummary.average_paid_price > 0
     ? `${noteSummary.average_paid_price.toLocaleString()}P`
     : '—';
