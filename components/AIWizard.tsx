@@ -683,6 +683,16 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 )}
               </div>
             </div>
+
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={onSkip}
+          className="w-full rounded-lg border border-gray-700/60 bg-gray-900/60 px-4 py-2 text-sm font-light text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+        >
+          後で回答する
+        </button>
+      </div>
           </div>
         </div>
       );
