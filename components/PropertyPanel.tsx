@@ -360,31 +360,6 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
-        {supportsProductLink && (
-          <label
-            className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-xs transition ${useLinkedProduct ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
-          >
-            <input
-              type="checkbox"
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-              checked={useLinkedProduct}
-              onChange={(event) => onUpdateContent('useLinkedProduct', event.target.checked)}
-            />
-            <span className="leading-relaxed">
-              商品・サロン連携のCTAとして使用する
-              <span className="block text-[11px] text-slate-500">
-                有効にすると公開時に商品モーダルまたはサロンページが優先されます。
-              </span>
-            </span>
-          </label>
-        )}
-
-        {supportsProductLink && useLinkedProduct && !(isProductLinked || isSalonLinked) && (
-          <p className="text-xs text-orange-600">
-            商品またはサロンを連携すると公開時に自動で誘導されます（現在は設定したURLが利用されます）。
-          </p>
-        )}
-
         {/* テキストコンテンツ */}
         {('tagline' in content) && (
           <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('tagline')))}`}>
@@ -661,6 +636,27 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             {isPrimaryLinkLocked && (
               <p className="mt-2 text-xs text-blue-600">
                 {isSalonLinked ? 'サロンに連動しているため、公開時はサロン公開ページへ遷移します。' : '商品に連動しているため、公開時はこのURLではなく購入モーダルが開きます。'}
+              </p>
+            )}
+            {supportsProductLink && (
+              <label className="mt-3 flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  checked={useLinkedProduct}
+                  onChange={(event) => onUpdateContent('useLinkedProduct', event.target.checked)}
+                />
+                <span className="leading-relaxed">
+                  商品・サロン連携のCTAとして使用する
+                  <span className="block text-[11px] text-slate-500">
+                    有効にすると公開時に商品モーダルまたはサロンページが優先されます。
+                  </span>
+                </span>
+              </label>
+            )}
+            {supportsProductLink && useLinkedProduct && !(isProductLinked || isSalonLinked) && (
+              <p className="mt-2 text-xs text-orange-600">
+                商品またはサロンを連携すると公開時に自動で誘導されます（現在は設定したURLが利用されます）。
               </p>
             )}
           </div>

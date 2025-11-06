@@ -55,6 +55,29 @@ const KNOWN_BLOCK_TYPES = Array.from(
   new Set(TEMPLATE_META_SOURCE.map((template) => template.templateId))
 ) as BlockType[];
 
+const PRODUCT_CTA_URL_KEYS = new Set(['buttonUrl', 'secondaryButtonUrl', 'button_url']);
+
+const LEGACY_PRODUCT_CTA_URLS = new Set([
+  '/register',
+  '/assessment',
+  '/webinar',
+  '/contact',
+  '/bootcamp',
+  '/trial',
+  '/consulting',
+  '/reserve',
+  '/product',
+  '/community',
+  '/templates',
+  '/case-study',
+  '/profile/mizuno',
+  'https://line.me/R/ti/p/@example',
+  'https://example.com/newsletter',
+  'https://example.com/contact',
+  'https://example.com/subscribe',
+  'https://example.com/vip-newsletter',
+]);
+
 function isKnownBlockType(value: string | null | undefined): value is BlockType {
   if (!value) return false;
   return KNOWN_BLOCK_TYPES.includes(value as BlockType);
@@ -114,6 +137,89 @@ function resolveTemplateMetadata(
     templateName,
   };
 }
+
+function sanitizeUrlValue(value: unknown, mode: 'blank-all' | 'legacy-only') {
+  if (typeof value !== 'string') {
+    return value as string | undefined;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return '';
+  }
+
+  if (mode === 'blank-all') {
+    return '';
+  }
+
+  if (mode === 'legacy-only' && LEGACY_PRODUCT_CTA_URLS.has(trimmed)) {
+    return '';
+  }
+
+  return value;
+}
+
+function transformProductCtaContent(
+  blockType: BlockType,
+  content: BlockContent,
+  mode: 'blank-all' | 'legacy-only'
+): BlockContent {
+  if (!isProductCtaBlock(blockType)) {
+    return content;
+  }
+
+  const cloned = structuredClone(content) as Record<string, any>;
+  const shouldSanitizeUrls =
+    mode === 'blank-all' || (mode === 'legacy-only' && typeof cloned.useLinkedProduct !== 'boolean');
+
+  if (!shouldSanitizeUrls) {
+    if (typeof cloned.useLinkedProduct !== 'boolean') {
+      cloned.useLinkedProduct = false;
+    }
+    return cloned as BlockContent;
+  }
+
+  const sanitizeNode = (node: any): any => {
+    if (Array.isArray(node)) {
+      return node.map((item) => sanitizeNode(item));
+    }
+
+    if (node && typeof node === 'object') {
+      const nextEntry: Record<string, any> = {};
+
+      Object.entries(node).forEach(([key, value]) => {
+        if (PRODUCT_CTA_URL_KEYS.has(key)) {
+          nextEntry[key] = sanitizeUrlValue(value, mode);
+        } else {
+          nextEntry[key] = sanitizeNode(value);
+        }
+      });
+
+      if ('useLinkedProduct' in nextEntry && typeof nextEntry.useLinkedProduct !== 'boolean') {
+        nextEntry.useLinkedProduct = false;
+      }
+
+      return nextEntry;
+    }
+
+    return node;
+  };
+
+  const sanitized = sanitizeNode(cloned) as Record<string, any>;
+
+  if (typeof sanitized.useLinkedProduct !== 'boolean') {
+    sanitized.useLinkedProduct = false;
+  }
+
+  return sanitized as BlockContent;
+}
+
+const sanitizeNewProductCtaContent = (blockType: BlockType, content: BlockContent): BlockContent =>
+  transformProductCtaContent(blockType, content, 'blank-all');
+
+const sanitizeExistingProductCtaContent = (blockType: BlockType, content: BlockContent): BlockContent =>
+  transformProductCtaContent(blockType, content, 'legacy-only');
 
 // ブロックタイプから日本語名を取得するヘルパー関数
 function getBlockDisplayName(block: { blockType: BlockType; content: BlockContentWithMeta }): string {
@@ -439,7 +545,7 @@ export default function EditLPNewPage() {
         // content_dataが存在すれば使用、なければデフォルト
         let content: BlockContentWithMeta;
         if (step.content_data && Object.keys(step.content_data).length > 0) {
-        content = step.content_data as BlockContentWithMeta;
+          content = step.content_data as BlockContentWithMeta;
         } else {
           // 旧形式（image_urlのみ）の場合のフォールバック
           content = {
@@ -469,8 +575,13 @@ export default function EditLPNewPage() {
           order: step.step_order,
         };
       });
-      
-      setBlocks(convertedBlocks);
+
+      const normalizedBlocks = convertedBlocks.map((block) => ({
+        ...block,
+        content: sanitizeExistingProductCtaContent(block.blockType, block.content) as BlockContentWithMeta,
+      }));
+
+      setBlocks(normalizedBlocks);
     } catch (err) {
       setError('LPの読み込みに失敗しました');
     } finally {
@@ -478,42 +589,8 @@ export default function EditLPNewPage() {
     }
   };
 
-  const sanitizeTemplateContent = (blockType: BlockType, content: BlockContent): BlockContent => {
-    if (!isProductCtaBlock(blockType)) {
-      return content;
-    }
-
-    const resetNode = (node: any): any => {
-      if (Array.isArray(node)) {
-        return node.map((item) => resetNode(item));
-      }
-
-      if (node && typeof node === 'object') {
-        const nextEntry: Record<string, any> = {};
-
-        Object.entries(node).forEach(([key, value]) => {
-          if (key === 'buttonUrl' || key === 'secondaryButtonUrl' || key === 'button_url') {
-            nextEntry[key] = '';
-            return;
-          }
-
-          nextEntry[key] = resetNode(value);
-        });
-
-        if ('useLinkedProduct' in nextEntry) {
-          nextEntry.useLinkedProduct = false;
-        }
-
-        return nextEntry;
-      }
-
-      return node;
-    };
-
-    const sanitized = resetNode(content) as Record<string, any>;
-    sanitized.useLinkedProduct = false;
-    return sanitized as BlockContent;
-  };
+  const sanitizeTemplateContent = (blockType: BlockType, content: BlockContent): BlockContent =>
+    sanitizeNewProductCtaContent(blockType, content);
 
   const handleAddTemplate = (template: TemplateBlock) => {
     const clonedContent = structuredClone(template.defaultContent) as BlockContent;
@@ -880,7 +957,7 @@ export default function EditLPNewPage() {
           return {
             id: step.id,
             blockType: canonicalBlockType,
-            content: normalizedContent,
+            content: sanitizeExistingProductCtaContent(canonicalBlockType, normalizedContent) as BlockContentWithMeta,
             order: step.step_order ?? 0,
           };
         });
