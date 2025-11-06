@@ -1226,13 +1226,56 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   rows={2}
                   placeholder="説明"
                 />
-                <textarea
-                  value={Array.isArray(plan.features) ? plan.features.join('\n') : ''}
-                  onChange={(e) => onUpdateContent(`plans.${index}.features`, e.target.value.split('\n').filter(Boolean))}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
-                  rows={3}
-                  placeholder="機能リスト（1行につき1項目）"
-                />
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-600">機能リスト</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const features = Array.isArray(plan.features) ? [...plan.features] : [];
+                        features.push('');
+                        onUpdateContent(`plans.${index}.features`, features);
+                      }}
+                      className="text-xs text-blue-500 hover:text-blue-400"
+                    >
+                      + 追加
+                    </button>
+                  </div>
+                  {(Array.isArray(plan.features) && plan.features.length > 0 ? plan.features : ['']).map((feature, featureIndex) => (
+                    <div key={featureIndex} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(e) => {
+                          const features = Array.isArray(plan.features) ? [...plan.features] : [];
+                          if (features.length === 0) {
+                            features.push('');
+                          }
+                          features[featureIndex] = e.target.value;
+                          onUpdateContent(`plans.${index}.features`, features);
+                        }}
+                        className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                        placeholder={`項目 ${featureIndex + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const features = Array.isArray(plan.features) ? [...plan.features] : [];
+                          if (features.length <= 1) {
+                            onUpdateContent(`plans.${index}.features`, ['']);
+                            return;
+                          }
+                          const next = features.filter((_, idx) => idx !== featureIndex);
+                          onUpdateContent(`plans.${index}.features`, next);
+                        }}
+                        className="px-2 py-1 text-xs text-slate-600 hover:text-red-500"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     type="text"
