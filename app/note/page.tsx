@@ -245,6 +245,21 @@ export default function NoteDashboardPage() {
                           >
                             {isPublished ? '公開中' : '下書き'}
                           </span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                              note.visibility === 'public'
+                                ? 'bg-blue-100 text-blue-700'
+                                : note.visibility === 'limited'
+                                  ? 'bg-purple-100 text-purple-700'
+                                  : 'bg-slate-100 text-slate-600'
+                            }`}
+                          >
+                            {note.visibility === 'public'
+                              ? '一般公開'
+                              : note.visibility === 'limited'
+                                ? '限定公開'
+                                : '非公開'}
+                          </span>
                           {note.is_paid ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
                               <LockClosedIcon className="h-3.5 w-3.5" aria-hidden="true" />有料
@@ -279,6 +294,25 @@ export default function NoteDashboardPage() {
                           {note.is_paid ? <span>{note.price_points.toLocaleString()} P</span> : <span>無料公開</span>}
                           <span>スラッグ: {note.slug}</span>
                         </div>
+                        {note.visibility === 'limited' ? (
+                          <div className="mt-2 flex flex-col gap-1 text-xs text-slate-500">
+                            <span className="font-semibold text-slate-600">限定公開URL:</span>
+                            {note.share_url ? (
+                              <a
+                                href={note.share_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="break-all rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] font-semibold text-blue-700 transition hover:bg-blue-100"
+                              >
+                                {note.share_url}
+                              </a>
+                            ) : (
+                              <span className="break-all rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+                                編集画面で保存するとURLが生成されます
+                              </span>
+                            )}
+                          </div>
+                        ) : null}
                         
                         {/* シェア統計 */}
                         {shareStats[note.id] && shareStats[note.id].total_shares > 0 ? (

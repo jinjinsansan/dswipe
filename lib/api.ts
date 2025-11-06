@@ -353,6 +353,9 @@ export const noteApi = {
   unpublish: (noteId: string) =>
     api.post<NoteDetail>(`/notes/${noteId}/unpublish`),
 
+  rotateShareToken: (noteId: string) =>
+    api.post<NoteDetail>(`/notes/${noteId}/share-token/rotate`),
+
   purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points') =>
     api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, { params: { payment_method: paymentMethod } }),
 
@@ -835,6 +838,13 @@ export const publicApi = {
 
   getNote: (slug: string, options?: { accessToken?: string }) =>
     axios.get<PublicNoteDetail>(`${API_URL}/notes/public/${slug}`, {
+      headers: options?.accessToken
+        ? { Authorization: `Bearer ${options.accessToken}` }
+        : undefined,
+    }),
+
+  getNoteByShareToken: (token: string, options?: { accessToken?: string }) =>
+    axios.get<PublicNoteDetail>(`${API_URL}/notes/share/${token}`, {
       headers: options?.accessToken
         ? { Authorization: `Bearer ${options.accessToken}` }
         : undefined,

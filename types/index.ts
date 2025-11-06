@@ -130,6 +130,7 @@ export interface Product {
 }
 
 export type NoteStatus = 'draft' | 'published';
+export type NoteVisibility = 'public' | 'limited' | 'private';
 export type NoteAccessLevel = 'public' | 'paid';
 export type NoteBlockType = 'paragraph' | 'heading' | 'quote' | 'image' | 'divider' | 'list' | 'link' | 'spacer';
 
@@ -165,6 +166,9 @@ export interface NoteSummary {
   official_share_x_user_id?: string | null;
   official_share_x_username?: string | null;
   official_share_set_at?: string | null;
+  visibility: NoteVisibility;
+  share_url?: string | null;
+  share_token_rotated_at?: string | null;
 }
 
 export interface NoteDetail extends NoteSummary {
@@ -346,6 +350,7 @@ export interface NoteCreateRequest {
   tax_inclusive?: boolean;
   categories: string[];
   salon_ids: string[];
+  visibility?: NoteVisibility;
 }
 
 export interface NoteUpdateRequest {
@@ -362,6 +367,7 @@ export interface NoteUpdateRequest {
   tax_inclusive?: boolean;
   categories?: string[];
   salon_ids?: string[];
+  visibility?: NoteVisibility;
 }
 
 export interface OfficialShareConfig {

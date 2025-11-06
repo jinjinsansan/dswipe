@@ -21,7 +21,8 @@ import { redirectToLogin } from '@/lib/navigation';
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
 
 interface NoteDetailClientProps {
-  slug: string;
+  slug?: string;
+  shareToken?: string;
 }
 
 type LoadingState = 'idle' | 'loading' | 'error';
@@ -59,7 +60,7 @@ const extractErrorInfo = (error: unknown) => {
   return { status: undefined, detail: undefined };
 };
 
-export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
+export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientProps) {
   const router = useRouter();
   const { token, isAuthenticated, isInitialized, user } = useAuthStore();
 
@@ -73,13 +74,17 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
   const [shareUrl, setShareUrl] = useState('');
 
   const fetchNote = useCallback(async () => {
-    if (!slug) return;
+    if (!slug && !shareToken) return;
     setLoading('loading');
     setError(null);
     try {
-      const response = await publicApi.getNote(slug, {
-        accessToken: token ?? undefined,
-      });
+      const response = shareToken
+        ? await publicApi.getNoteByShareToken(shareToken, {
+            accessToken: token ?? undefined,
+          })
+        : await publicApi.getNote(slug!, {
+            accessToken: token ?? undefined,
+          });
       const data = response.data;
       setNote(data);
       if (data.allow_point_purchase) {
@@ -94,7 +99,9 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       const { status, detail } = extractErrorInfo(err);
       if (status === 401 || status === 403) {
         try {
-          const fallback = await publicApi.getNote(slug);
+          const fallback = shareToken
+            ? await publicApi.getNoteByShareToken(shareToken)
+            : await publicApi.getNote(slug!);
           const fallbackData = fallback.data;
           setNote(fallbackData);
           if (fallbackData.allow_point_purchase) {
@@ -114,7 +121,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
       }
       setLoading('error');
     }
-  }, [slug, token]);
+  }, [shareToken, slug, token]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -125,7 +132,7 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     if (typeof window !== 'undefined') {
       setShareUrl(window.location.href);
     }
-  }, [slug]);
+  }, [shareToken, slug]);
 
   const handlePurchase = async () => {
     if (!note) return;
@@ -205,9 +212,12 @@ export default function NoteDetailClient({ slug }: NoteDetailClientProps) {
     if (shareUrl) {
       return shareUrl;
     }
+    if (shareToken) {
+      return `${normalizedOrigin}/notes/share/${shareToken}`;
+    }
     const slugValue = note?.slug || slug;
     return `${normalizedOrigin}/notes/${slugValue}`;
-  }, [note?.slug, shareUrl, slug]);
+  }, [note?.slug, shareToken, shareUrl, slug]);
 
   const shareLinks = useMemo(() => {
     const title = note?.title ? `${note.title}` : 'NOTE';

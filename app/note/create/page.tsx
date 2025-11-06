@@ -8,13 +8,35 @@ import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { NoteBlock, Salon, SalonListResult } from '@/types';
+import type { NoteBlock, NoteVisibility, Salon, SalonListResult } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;
+
+const NOTE_VISIBILITY_OPTIONS: Array<{
+  value: NoteVisibility;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: 'public',
+    label: '公開',
+    description: 'マーケットに掲載され、全ユーザーが閲覧できます',
+  },
+  {
+    value: 'limited',
+    label: '限定公開',
+    description: 'URLを知っている人のみ閲覧できます（認証不要）',
+  },
+  {
+    value: 'private',
+    label: '非公開',
+    description: '作者のみ閲覧できる状態です',
+  },
+];
 
 export default function NoteCreatePage() {
   const router = useRouter();
@@ -39,6 +61,7 @@ export default function NoteCreatePage() {
   const [isCoverUploading, setIsCoverUploading] = useState(false);
   const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
   const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
+  const [visibility, setVisibility] = useState<NoteVisibility>('private');
 
   useEffect(() => {
     const loadSalons = async () => {
@@ -169,6 +192,10 @@ export default function NoteCreatePage() {
     );
   };
 
+  const handleVisibilityChange = (value: NoteVisibility) => {
+    setVisibility(value);
+  };
+
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
       return 'タイトルを3文字以上で入力してください';
@@ -252,6 +279,7 @@ export default function NoteCreatePage() {
         tax_inclusive: effectivePaid ? taxInclusive : true,
         categories,
         salon_ids: selectedSalonIds,
+        visibility,
       };
 
       const response = await noteApi.create(payload);
@@ -399,6 +427,40 @@ export default function NoteCreatePage() {
                     >
                       {option.label}
                     </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+              <p className="text-sm font-semibold text-slate-800">公開範囲を選択</p>
+              <p className="mt-1 text-xs text-slate-500">限定公開を選ぶと、保存後に共有URLが自動発行されます。</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {NOTE_VISIBILITY_OPTIONS.map((option) => {
+                  const isChecked = visibility === option.value;
+                  return (
+                    <label
+                      key={option.value}
+                      className={`flex cursor-pointer flex-col gap-1 rounded-2xl border px-3 py-3 text-sm transition ${
+                        isChecked
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="note-visibility"
+                          value={option.value}
+                          checked={isChecked}
+                          onChange={() => handleVisibilityChange(option.value)}
+                          disabled={saving}
+                          className="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="font-semibold">{option.label}</span>
+                      </div>
+                      <p className="text-xs text-slate-500">{option.description}</p>
+                    </label>
                   );
                 })}
               </div>

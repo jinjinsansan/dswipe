@@ -9,13 +9,35 @@ import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { NoteBlock, NoteDetail, OfficialShareConfig, Salon, SalonListResult } from '@/types';
+import type { NoteBlock, NoteDetail, NoteVisibility, OfficialShareConfig, Salon, SalonListResult } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;
+
+const NOTE_VISIBILITY_OPTIONS: Array<{
+  value: NoteVisibility;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: 'public',
+    label: '公開',
+    description: 'マーケットに掲載され、誰でも閲覧できます',
+  },
+  {
+    value: 'limited',
+    label: '限定公開',
+    description: 'URLを知っている人のみ閲覧できます（認証不要）',
+  },
+  {
+    value: 'private',
+    label: '非公開',
+    description: '作者のみ閲覧できる状態です',
+  },
+];
 
 const formatDateTime = (value?: string | null) => {
   if (!value) return null;
@@ -78,6 +100,12 @@ export default function NoteEditPage() {
   const [isCoverUploading, setIsCoverUploading] = useState(false);
   const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
   const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
+  const [visibility, setVisibility] = useState<NoteVisibility>('private');
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareTokenRotatedAt, setShareTokenRotatedAt] = useState<string | null>(null);
+  const [shareActionLoading, setShareActionLoading] = useState(false);
+  const [shareActionError, setShareActionError] = useState<string | null>(null);
+  const [shareActionMessage, setShareActionMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSalons = async () => {
@@ -92,6 +120,13 @@ export default function NoteEditPage() {
 
     loadSalons();
   }, []);
+
+  useEffect(() => {
+    if (visibility !== 'limited') {
+      setShareActionError(null);
+      setShareActionMessage(null);
+    }
+  }, [visibility]);
 
   const extractErrorDetail = (err: unknown): string | undefined => {
     if (typeof err === 'object' && err) {
@@ -192,6 +227,11 @@ export default function NoteEditPage() {
         });
         setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
         setSelectedSalonIds(Array.isArray(detail.salon_access_ids) ? detail.salon_access_ids : []);
+        setVisibility(detail.visibility ?? 'private');
+        setShareUrl(detail.share_url ?? null);
+        setShareTokenRotatedAt(detail.share_token_rotated_at ?? null);
+        setShareActionError(null);
+        setShareActionMessage(null);
         if (detail.allow_share_unlock) {
           loadOfficialShareConfig();
         } else {
@@ -408,6 +448,10 @@ export default function NoteEditPage() {
     );
   }, []);
 
+  const handleVisibilityChange = (value: NoteVisibility) => {
+    setVisibility(value);
+  };
+
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
       return 'タイトルを3文字以上で入力してください';
@@ -499,12 +543,16 @@ export default function NoteEditPage() {
         categories,
         allow_share_unlock: allowShareUnlock,
         salon_ids: selectedSalonIds,
+        visibility,
       };
 
       const response = await noteApi.update(noteId, payload);
       setInfo('下書きとして保存しました。最新情報に更新されました。');
       setStatus(response.data?.status ?? status);
       setPublishedAt(response.data?.published_at ?? publishedAt);
+      setVisibility(response.data?.visibility ?? visibility);
+      setShareUrl(response.data?.share_url ?? null);
+      setShareTokenRotatedAt(response.data?.share_token_rotated_at ?? null);
     } catch (err: unknown) {
       const detail = extractErrorDetail(err);
       setErrorMessage(typeof detail === 'string' ? detail : 'NOTEの保存に失敗しました');
@@ -521,16 +569,26 @@ export default function NoteEditPage() {
     try {
       setActionLoading(true);
       if (action === 'publish') {
-        await noteApi.publish(noteId);
-        setStatus('published');
-        setPublishedAt(new Date().toISOString());
+        const response = await noteApi.publish(noteId);
+        const detail = response.data;
+        setStatus(detail?.status ?? 'published');
+        setPublishedAt(detail?.published_at ?? new Date().toISOString());
+        setVisibility(detail?.visibility ?? visibility);
+        setShareUrl(detail?.share_url ?? shareUrl);
+        setShareTokenRotatedAt(detail?.share_token_rotated_at ?? shareTokenRotatedAt);
         setInfo('記事を公開しました');
       } else {
-        await noteApi.unpublish(noteId);
-        setStatus('draft');
-        setPublishedAt(null);
+        const response = await noteApi.unpublish(noteId);
+        const detail = response.data;
+        setStatus(detail?.status ?? 'draft');
+        setPublishedAt(detail?.published_at ?? null);
+        setVisibility(detail?.visibility ?? visibility);
+        setShareUrl(detail?.share_url ?? shareUrl);
+        setShareTokenRotatedAt(detail?.share_token_rotated_at ?? shareTokenRotatedAt);
         setInfo('記事を下書きに戻しました');
       }
+      setShareActionError(null);
+      setShareActionMessage(null);
     } catch (err: unknown) {
       const detail = extractErrorDetail(err);
       setErrorMessage(
@@ -559,6 +617,55 @@ export default function NoteEditPage() {
       const detail = extractErrorDetail(err);
       setErrorMessage(typeof detail === 'string' ? detail : '削除に失敗しました');
       setActionLoading(false);
+    }
+  };
+
+  const handleCopyShareUrl = async () => {
+    if (!shareUrl) return;
+    setShareActionError(null);
+    setShareActionMessage(null);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareActionMessage('共有URLをコピーしました');
+        return;
+      }
+    } catch (error) {
+      console.error('Failed to copy share URL', error);
+    }
+
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = shareUrl;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setShareActionMessage('共有URLをコピーしました');
+    } catch (error) {
+      console.error('Fallback copy failed', error);
+      setShareActionError('クリップボードへのコピーに失敗しました');
+    }
+  };
+
+  const handleRotateShareUrl = async () => {
+    if (!noteId || shareActionLoading) return;
+    setShareActionLoading(true);
+    setShareActionError(null);
+    setShareActionMessage(null);
+    try {
+      const response = await noteApi.rotateShareToken(noteId);
+      const detail = response.data;
+      setShareUrl(detail?.share_url ?? null);
+      setShareTokenRotatedAt(detail?.share_token_rotated_at ?? null);
+      setShareActionMessage('共有URLを再発行しました');
+    } catch (err: unknown) {
+      const detail = extractErrorDetail(err);
+      setShareActionError(typeof detail === 'string' ? detail : '共有URLの再発行に失敗しました');
+    } finally {
+      setShareActionLoading(false);
     }
   };
 
@@ -777,6 +884,94 @@ export default function NoteEditPage() {
                   );
                 })}
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">公開範囲を選択</p>
+                  <p className="text-xs text-slate-500">限定公開を選ぶと、保存後に共有URLが自動発行されます。</p>
+                </div>
+                <div className="flex flex-col gap-1 text-xs text-slate-500 sm:items-end">
+                  <span>現在の公開範囲: <strong className="text-slate-700">{visibility === 'public' ? '公開' : visibility === 'limited' ? '限定公開' : '非公開'}</strong></span>
+                  {visibility === 'limited' && shareTokenRotatedAt ? (
+                    <span>最終更新: {formatDateTime(shareTokenRotatedAt) ?? '---'}</span>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {NOTE_VISIBILITY_OPTIONS.map((option) => {
+                  const isChecked = visibility === option.value;
+                  return (
+                    <label
+                      key={option.value}
+                      className={`flex cursor-pointer flex-col gap-1 rounded-2xl border px-3 py-3 text-sm transition ${
+                        isChecked
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="note-visibility"
+                          value={option.value}
+                          checked={isChecked}
+                          onChange={() => handleVisibilityChange(option.value)}
+                          disabled={saving || actionLoading}
+                          className="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="font-semibold">{option.label}</span>
+                      </div>
+                      <p className="text-xs text-slate-500">{option.description}</p>
+                    </label>
+                  );
+                })}
+              </div>
+
+              {visibility === 'limited' ? (
+                <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                  <p className="text-sm font-semibold text-blue-900">限定公開URL</p>
+                  {shareUrl ? (
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <input
+                        type="text"
+                        readOnly
+                        value={shareUrl}
+                        className="w-full flex-1 rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={handleCopyShareUrl}
+                          className="inline-flex items-center gap-1 rounded-full border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={shareActionLoading || !shareUrl}
+                        >
+                          <ShareIcon className={`h-4 w-4 ${shareActionLoading ? 'animate-pulse' : ''}`} aria-hidden="true" />
+                          コピー
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleRotateShareUrl}
+                          className="inline-flex items-center gap-1 rounded-full border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={shareActionLoading || !shareUrl}
+                        >
+                          <ArrowPathIcon className={`h-4 w-4 ${shareActionLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
+                          再発行
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-blue-900">保存後に共有URLが表示されます。</p>
+                  )}
+                  {shareActionMessage ? (
+                    <p className="mt-2 text-xs font-semibold text-blue-900">{shareActionMessage}</p>
+                  ) : null}
+                  {shareActionError ? (
+                    <p className="mt-2 text-xs font-semibold text-red-600">{shareActionError}</p>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
