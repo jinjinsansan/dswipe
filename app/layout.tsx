@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_JP, Inter, M_PLUS_1p, Zen_Kaku_Gothic_New, BIZ_UDPGothic, Sawarabi_Gothic, Zen_Maru_Gothic, Roboto } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import TeamProvider from "@/components/TeamProvider";
 import NextTopLoader from 'nextjs-toploader';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -132,12 +133,16 @@ export default function RootLayout({
         {shouldUseGoogleProvider ? (
           <GoogleOAuthProvider clientId={googleClientId!}>
             <AuthProvider>
-              {children}
+              <TeamProvider>
+                {children}
+              </TeamProvider>
             </AuthProvider>
           </GoogleOAuthProvider>
         ) : (
           <AuthProvider>
-            {children}
+            <TeamProvider>
+              {children}
+            </TeamProvider>
           </AuthProvider>
         )}
       </body>

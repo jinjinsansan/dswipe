@@ -13,6 +13,30 @@ export interface User {
   last_login_at?: string | null;
 }
 
+export interface TeamSummary {
+  id: string;
+  name?: string | null;
+  owner_user_id: string;
+  role: 'owner' | 'manager';
+  created_at?: string | null;
+}
+
+export interface TeamMember {
+  user_id: string;
+  email?: string | null;
+  username?: string | null;
+  role: 'owner' | 'manager';
+  status: 'active' | 'invited' | 'disabled';
+  invited_at?: string | null;
+  accepted_at?: string | null;
+  last_login_at?: string | null;
+}
+
+export interface TeamMemberListResponse {
+  team_id: string;
+  members: TeamMember[];
+}
+
 export interface PublicUserProfile {
   username: string;
   bio?: string | null;

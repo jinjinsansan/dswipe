@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import TopGuaranteeBlock from '@/components/blocks/TopGuaranteeBlock';
 import type { GuaranteeBlockContent } from '@/types/templates';
 
