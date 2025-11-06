@@ -2367,10 +2367,18 @@ export const TEMPLATE_CATEGORIES = [
   { id: 'conversion', name: 'コンバージョン', icon: 'Conversion' },
   { id: 'trust', name: '信頼・実績', icon: 'Trust' },
   { id: 'urgency', name: '緊急性', icon: 'Urgency' },
+  { id: 'handwritten', name: '手書き風', icon: 'Handwritten' },
 ];
 
 export function getTemplatesByCategory(category: string) {
-  const allTemplates = [...TEMPLATE_LIBRARY, ...INFO_PRODUCT_BLOCKS, ...CONTACT_BLOCKS, ...TOKUSHO_BLOCKS, ...NEWSLETTER_BLOCKS];
+  const allTemplates = [
+    ...TEMPLATE_LIBRARY,
+    ...INFO_PRODUCT_BLOCKS,
+    ...CONTACT_BLOCKS,
+    ...TOKUSHO_BLOCKS,
+    ...NEWSLETTER_BLOCKS,
+    ...HANDWRITTEN_BLOCKS,
+  ];
   return allTemplates.filter((template) => template.category === category);
 }
 
@@ -2659,7 +2667,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-hero-casual',
     templateId: 'handwritten-hero-1',
     name: '手書き風ヒーロー（カジュアル）',
-    category: 'header',
+    category: 'handwritten',
     description: '親しみやすい手書き風デザイン。個人ブランド・コーチング・教育コンテンツに最適。',
     defaultContent: {
       title: 'あなたの夢を\n一緒に叶えよう！',
@@ -2680,7 +2688,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-features-simple',
     templateId: 'handwritten-features-1',
     name: '手書き風機能ハイライト',
-    category: 'content',
+    category: 'handwritten',
     description: 'スケッチ風のアイコンで特徴を紹介。カジュアルで親しみやすい印象。',
     defaultContent: {
       title: 'こんな特徴があります',
@@ -2711,7 +2719,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-faq-friendly',
     templateId: 'handwritten-faq-1',
     name: '手書き風よくある質問',
-    category: 'content',
+    category: 'handwritten',
     description: '手書きメモ風のFAQセクション。カジュアルで質問しやすい雰囲気。',
     defaultContent: {
       title: 'よくある質問',
@@ -2738,7 +2746,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-cta-friendly',
     templateId: 'handwritten-cta-1',
     name: '手書き風CTA',
-    category: 'conversion',
+    category: 'handwritten',
     description: '手書き風デザインのCTAセクション。親しみやすく行動を促します。',
     defaultContent: {
       title: '今すぐ始めよう！',
@@ -2755,7 +2763,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-testimonials-friendly',
     templateId: 'handwritten-testimonials-1',
     name: '手書き風お客様の声',
-    category: 'trust',
+    category: 'handwritten',
     description: '手書きメモ風のお客様の声。信頼感と親しみやすさを両立。',
     defaultContent: {
       title: 'お客様の声',
@@ -2787,7 +2795,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-pricing-friendly',
     templateId: 'handwritten-pricing-1',
     name: '手書き風料金表',
-    category: 'conversion',
+    category: 'handwritten',
     description: 'ワイヤーフレーム風の料金表。シンプルで比較しやすい。',
     defaultContent: {
       title: '料金プラン',
@@ -2841,7 +2849,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-problem-friendly',
     templateId: 'handwritten-problem-1',
     name: '手書き風問題提起',
-    category: 'content',
+    category: 'handwritten',
     description: 'ワイヤーフレーム風の問題提起。課題を明確に訴求。',
     defaultContent: {
       title: 'こんなお悩みありませんか？',
@@ -2860,7 +2868,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-bonus-friendly',
     templateId: 'handwritten-bonus-1',
     name: '手書き風特典',
-    category: 'content',
+    category: 'handwritten',
     description: 'ワイヤーフレーム風の特典リスト。価値を分かりやすく伝える。',
     defaultContent: {
       title: '今だけの特典',
@@ -2890,7 +2898,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-guarantee-friendly',
     templateId: 'handwritten-guarantee-1',
     name: '手書き風返金保証',
-    category: 'content',
+    category: 'handwritten',
     description: 'ワイヤーフレーム風の保証セクション。安心感を与える。',
     defaultContent: {
       title: '30日間返金保証',
@@ -2910,7 +2918,7 @@ export const HANDWRITTEN_BLOCKS: TemplateBlock[] = [
     id: 'handwritten-contact-friendly',
     templateId: 'handwritten-contact-1',
     name: '手書き風お問い合わせ',
-    category: 'conversion',
+    category: 'handwritten',
     description: 'ワイヤーフレーム風のお問い合わせCTA。気軽に連絡しやすい。',
     defaultContent: {
       title: 'お問い合わせ',

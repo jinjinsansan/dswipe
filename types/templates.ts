@@ -38,7 +38,8 @@ export type BlockCategory =
   | 'content'       // コンテンツ系
   | 'conversion'    // コンバージョン系
   | 'trust'         // 社会的証明・信頼
-  | 'urgency';      // 緊急性訴求
+  | 'urgency'       // 緊急性訴求
+  | 'handwritten';  // 手書き風シリーズ
 
 export type TemplateThemeKey =
   | 'urgent_red'

@@ -53,6 +53,12 @@ const CATEGORY_META = TEMPLATE_CATEGORIES.reduce<Record<string, { name: string; 
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 3" />
         </svg>
       ),
+      handwritten: (
+        <svg className={iconClass} fill="none" stroke="currentColor" strokeWidth={1.6} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m4 17 5.5-2.5L9 9l6 2 5-4" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 20h16" />
+        </svg>
+      ),
     };
 
     acc[category.id] = {
