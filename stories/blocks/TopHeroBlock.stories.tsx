@@ -1,5 +1,4 @@
-// eslint-disable-next-line storybook/no-renderer-packages
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import TopHeroBlock from '@/components/blocks/TopHeroBlock';
 import type { HeroBlockContent } from '@/types/templates';
 

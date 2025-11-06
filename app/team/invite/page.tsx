@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { isAxiosError } from 'axios';
@@ -11,22 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 
 type InviteStatus = 'idle' | 'loading' | 'success' | 'error';
 
-const loadingFallback = (
-  <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-emerald-50 px-4 py-16">
-    <div className="w-full max-w-lg rounded-3xl border border-white/60 bg-white/90 p-8 shadow-xl backdrop-blur">
-      <header className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold text-slate-900">チーム招待の承認</h1>
-        <p className="mt-2 text-sm text-slate-600">運営チームからの招待を確認しています。</p>
-      </header>
-      <div className="flex items-center justify-center gap-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-4 text-sm text-blue-700">
-        <ArrowPathIcon className="h-5 w-5 animate-spin" aria-hidden="true" />
-        <span>読み込み中です...</span>
-      </div>
-    </div>
-  </main>
-);
-
-function TeamInviteContent() {
+export default function TeamInviteAcceptPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
@@ -126,13 +111,5 @@ function TeamInviteContent() {
         </div>
       </div>
     </main>
-  );
-}
-
-export default function TeamInviteAcceptPage() {
-  return (
-    <Suspense fallback={loadingFallback}>
-      <TeamInviteContent />
-    </Suspense>
   );
 }

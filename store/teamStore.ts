@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { teamApi } from '@/lib/api';
-import type { TeamMemberListResponse, TeamSummary } from '@/types';
+import type { TeamMemberListResponse, TeamSummary } from '@/types/api';
 
 const STORAGE_KEY = 'dswipe_selected_team_id';
 

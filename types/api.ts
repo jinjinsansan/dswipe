@@ -72,6 +72,9 @@ export type {
   AdminPayoutEventPayload,
   PlatformPaymentSettings,
   PlatformPaymentSettingsUpdatePayload,
+  TeamSummary,
+  TeamMember,
+  TeamMemberListResponse,
   AdminMarketplaceLP,
   FeaturedProductSummary,
   FeaturedProductListResponse,
@@ -117,6 +120,9 @@ export type {
   SalonRoleCreatePayload,
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
+  TeamSummary,
+  TeamMember,
+  TeamMemberListResponse,
   SubscriptionSessionStatusResponse,
 } from './index';
 
