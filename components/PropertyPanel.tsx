@@ -618,18 +618,22 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {('buttonUrl' in content) && (
-          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('buttonUrl')))}`}>
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('buttonUrl')))} ${isPrimaryLinkLocked ? 'opacity-90' : ''}`}>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               ボタンURL
             </label>
             <input
               type="text"
               value={(content as any).buttonUrl || ''}
-              onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
+              onChange={(e) => {
+                if (isPrimaryLinkLocked) return;
+                onUpdateContent('buttonUrl', e.target.value);
+              }}
               readOnly={isPrimaryLinkLocked}
               onFocus={() => handleFocusChange(resolveFieldId('buttonUrl'))}
-              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
-              placeholder="https://..."
+              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
+              placeholder="http://"
+              aria-disabled={isPrimaryLinkLocked}
             />
             {isPrimaryLinkLocked && (
               <p className="mt-2 text-xs text-blue-600">
@@ -1287,10 +1291,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   <input
                     type="text"
                     value={plan.buttonUrl || ''}
-                    onChange={(e) => onUpdateContent(`plans.${index}.buttonUrl`, e.target.value)}
+                    onChange={(e) => {
+                      if (isPrimaryLinkLocked) return;
+                      onUpdateContent(`plans.${index}.buttonUrl`, e.target.value);
+                    }}
                     readOnly={isPrimaryLinkLocked}
-                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-50/60 cursor-not-allowed' : 'border-slate-300'}`}
-                    placeholder="ボタンURL"
+                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-400 ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
+                    placeholder="http://"
+                    aria-disabled={isPrimaryLinkLocked}
                   />
                 </div>
                 {isPrimaryLinkLocked && (

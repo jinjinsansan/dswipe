@@ -175,10 +175,12 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
                 placeholder="一次ボタンテキスト"
               />
               <input
-                className="w-full rounded-md border border-slate-200 px-3 py-2"
+                className={`w-full rounded-md border px-3 py-2 bg-white ${isLocked ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed' : 'border-slate-200'}`}
                 value={content?.buttonUrl ?? ''}
-                onChange={(e) => onEdit?.('buttonUrl', e.target.value)}
-                placeholder="一次ボタンURL"
+                onChange={isLocked ? undefined : ((e) => onEdit?.('buttonUrl', e.target.value))}
+                placeholder="http://"
+                readOnly={isLocked}
+                aria-disabled={isLocked}
               />
               <input
                 className="w-full rounded-md border border-slate-200 px-3 py-2"

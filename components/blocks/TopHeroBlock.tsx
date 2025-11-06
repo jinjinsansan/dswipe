@@ -127,10 +127,12 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
               placeholder="一次ボタンテキスト"
             />
             <input
-              className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
+              className={`w-full rounded-md border px-3 py-2 text-sm ${isLocked ? 'border-white/20 bg-black/30 text-white/60 cursor-not-allowed' : 'border-white/20 bg-black/40'}`}
               value={content?.buttonUrl ?? ''}
-              onChange={handleEdit('buttonUrl')}
-              placeholder="一次ボタンURL"
+              onChange={isLocked ? undefined : handleEdit('buttonUrl')}
+              placeholder="http://"
+              readOnly={isLocked}
+              aria-disabled={isLocked}
             />
             <input
               className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"

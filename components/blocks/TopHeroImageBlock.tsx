@@ -125,10 +125,12 @@ export default function TopHeroImageBlock({
               placeholder="一次ボタンテキスト"
             />
             <input
-              className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
+              className={`w-full rounded-md border px-3 py-2 ${isLocked ? 'border-white/40 bg-white/30 text-slate-200 cursor-not-allowed' : 'border-white/30 bg-white/50'}`}
               value={content?.buttonUrl ?? ''}
-              onChange={handleEdit('buttonUrl')}
-              placeholder="一次ボタンURL"
+              onChange={isLocked ? undefined : handleEdit('buttonUrl')}
+              placeholder="http://"
+              readOnly={isLocked}
+              aria-disabled={isLocked}
             />
             <input
               className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"

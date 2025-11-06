@@ -94,10 +94,12 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
               placeholder="ボタンテキスト"
             />
             <input
-              className="w-full rounded-md border border-slate-200 px-3 py-2"
+              className={`w-full rounded-md border px-3 py-2 bg-white ${isLocked ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed' : 'border-slate-200'}`}
               value={buttonUrl}
-              onChange={(e) => onEdit?.('buttonUrl', e.target.value)}
-              placeholder="ボタンURL"
+              onChange={isLocked ? undefined : ((e) => onEdit?.('buttonUrl', e.target.value))}
+              placeholder="http://"
+              readOnly={isLocked}
+              aria-disabled={isLocked}
             />
           </div>
         ) : null}
