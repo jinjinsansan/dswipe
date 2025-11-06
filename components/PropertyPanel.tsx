@@ -8,20 +8,12 @@ import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
 import MediaLibraryModal from './MediaLibraryModal';
+import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 
 const THEME_ENTRIES = Object.entries(COLOR_THEMES) as Array<[
   ColorThemeKey,
   (typeof COLOR_THEMES)[ColorThemeKey]
 ]>;
-
-const PRODUCT_CTA_BLOCKS: BlockType[] = [
-  'top-hero-1',
-  'top-hero-image-1',
-  'top-cta-1',
-  'top-inline-cta-1',
-  'top-media-spotlight-1',
-  'top-pricing-1',
-];
 
 interface PropertyPanelProps {
   block: {
@@ -300,10 +292,16 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const problemItems = Array.isArray((content as any).problems)
     ? [...((content as any).problems as string[])]
     : null;
-  const supportsProductLink = blockType ? PRODUCT_CTA_BLOCKS.includes(blockType) : false;
+  const supportsProductLink = isProductCtaBlock(blockType);
   const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
   const isSalonLinked = Boolean(linkedSalon?.id) && supportsProductLink;
-  const isPrimaryLinkLocked = isProductLinked || isSalonLinked;
+  const rawUseLinkedProduct = (content as any).useLinkedProduct;
+  const useLinkedProduct = supportsProductLink
+    ? typeof rawUseLinkedProduct === 'boolean'
+      ? rawUseLinkedProduct
+      : Boolean(isProductLinked || isSalonLinked)
+    : false;
+  const isPrimaryLinkLocked = supportsProductLink && useLinkedProduct && (isProductLinked || isSalonLinked);
   const supportsThemeSelection = false;
   const currentThemeKey = (content as any).themeKey as ColorThemeKey | undefined;
   const textFieldCandidates = [
@@ -360,6 +358,31 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               プレビューではリンク先を表示していますが、公開時は{linkedTargetKind}への導線が優先されます。
             </p>
           </div>
+        )}
+
+        {supportsProductLink && (
+          <label
+            className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-xs transition ${useLinkedProduct ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
+          >
+            <input
+              type="checkbox"
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              checked={useLinkedProduct}
+              onChange={(event) => onUpdateContent('useLinkedProduct', event.target.checked)}
+            />
+            <span className="leading-relaxed">
+              商品・サロン連携のCTAとして使用する
+              <span className="block text-[11px] text-slate-500">
+                有効にすると公開時に商品モーダルまたはサロンページが優先されます。
+              </span>
+            </span>
+          </label>
+        )}
+
+        {supportsProductLink && useLinkedProduct && !(isProductLinked || isSalonLinked) && (
+          <p className="text-xs text-orange-600">
+            商品またはサロンを連携すると公開時に自動で誘導されます（現在は設定したURLが利用されます）。
+          </p>
         )}
 
         {/* テキストコンテンツ */}
@@ -632,7 +655,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               readOnly={isPrimaryLinkLocked}
               onFocus={() => handleFocusChange(resolveFieldId('buttonUrl'))}
               className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
-              placeholder="http://"
+              placeholder="https://"
               aria-disabled={isPrimaryLinkLocked}
             />
             {isPrimaryLinkLocked && (
@@ -663,7 +686,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
                 onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
                 className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-                  placeholder="http://"
+                placeholder="https://"
               />
               <button
                 type="button"
@@ -1297,7 +1320,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     }}
                     readOnly={isPrimaryLinkLocked}
                     className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-400 ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
-                    placeholder="http://"
+                    placeholder="https://"
                     aria-disabled={isPrimaryLinkLocked}
                   />
                 </div>

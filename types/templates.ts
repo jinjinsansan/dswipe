@@ -74,6 +74,7 @@ export interface HeroBlockContent extends BaseBlockContent {
   buttonColor?: string;
   secondaryButtonColor?: string;
   overlayColor?: string;
+  useLinkedProduct?: boolean;
 }
 
 // 特徴・ハイライト
@@ -101,6 +102,7 @@ export interface CTABlockContent extends BaseBlockContent {
   secondaryButtonColor?: string;
   surfaceColor?: string;
   backgroundGradient?: string;
+  useLinkedProduct?: boolean;
 }
 
 // お客様の声
@@ -140,6 +142,7 @@ export interface PricingBlockContent extends BaseBlockContent {
     highlighted?: boolean;
   }[];
   buttonColor?: string;
+  useLinkedProduct?: boolean;
 }
 
 // ビフォーアフター
@@ -198,6 +201,7 @@ export interface InlineCTABlockContent extends BaseBlockContent {
   buttonText: string;
   buttonUrl?: string;
   buttonColor?: string;
+  useLinkedProduct?: boolean;
 }
 
 // メディアスポットライト
@@ -211,6 +215,7 @@ export interface MediaSpotlightBlockContent extends BaseBlockContent {
   buttonText?: string;
   buttonUrl?: string;
   buttonColor?: string;
+  useLinkedProduct?: boolean;
 }
 
 // お問い合わせブロック

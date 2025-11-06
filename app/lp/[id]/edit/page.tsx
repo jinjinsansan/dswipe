@@ -15,6 +15,7 @@ import ColorThemeGenerator from '@/components/ColorThemeGenerator';
 import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
+import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 import {
   TEMPLATE_LIBRARY,
   INFO_PRODUCT_BLOCKS,
@@ -477,12 +478,52 @@ export default function EditLPNewPage() {
     }
   };
 
+  const sanitizeTemplateContent = (blockType: BlockType, content: BlockContent): BlockContent => {
+    if (!isProductCtaBlock(blockType)) {
+      return content;
+    }
+
+    const resetNode = (node: any): any => {
+      if (Array.isArray(node)) {
+        return node.map((item) => resetNode(item));
+      }
+
+      if (node && typeof node === 'object') {
+        const nextEntry: Record<string, any> = {};
+
+        Object.entries(node).forEach(([key, value]) => {
+          if (key === 'buttonUrl' || key === 'secondaryButtonUrl' || key === 'button_url') {
+            nextEntry[key] = '';
+            return;
+          }
+
+          nextEntry[key] = resetNode(value);
+        });
+
+        if ('useLinkedProduct' in nextEntry) {
+          nextEntry.useLinkedProduct = false;
+        }
+
+        return nextEntry;
+      }
+
+      return node;
+    };
+
+    const sanitized = resetNode(content) as Record<string, any>;
+    sanitized.useLinkedProduct = false;
+    return sanitized as BlockContent;
+  };
+
   const handleAddTemplate = (template: TemplateBlock) => {
+    const clonedContent = structuredClone(template.defaultContent) as BlockContent;
+    const sanitizedContent = sanitizeTemplateContent(template.templateId as BlockType, clonedContent) as BlockContentWithMeta;
+
     const newBlock: LPBlock = {
       id: generateId(),
       blockType: template.templateId,
       content: {
-        ...template.defaultContent,
+        ...sanitizedContent,
         __templateId: template.id,
         __templateName: template.name,
       } as BlockContentWithMeta,

@@ -32,10 +32,14 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const secondaryText = content?.secondaryButtonText ?? '';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
   const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
+  const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
   const backgroundStyle: CSSProperties = {
     backgroundColor: content?.backgroundColor ?? '#07182F',
@@ -73,13 +77,13 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
       );
     }
 
-    if (onProductClick && productId) {
+    if (shouldUseProductCTA) {
       return (
         <button
           type="button"
           onClick={() => {
             onCtaClick?.(primaryCtaId, 'primary');
-            onProductClick(productId);
+            onProductClick?.(productId);
           }}
           className={commonClasses}
           style={{
@@ -178,7 +182,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
                 className={`w-full rounded-md border px-3 py-2 bg-white ${isLocked ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed' : 'border-slate-200'}`}
                 value={content?.buttonUrl ?? ''}
                 onChange={isLocked ? undefined : ((e) => onEdit?.('buttonUrl', e.target.value))}
-                placeholder="http://"
+                placeholder="https://"
                 readOnly={isLocked}
                 aria-disabled={isLocked}
               />
@@ -192,7 +196,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
                 className="w-full rounded-md border border-slate-200 px-3 py-2"
                 value={content?.secondaryButtonUrl ?? ''}
                 onChange={(e) => onEdit?.('secondaryButtonUrl', e.target.value)}
-                placeholder="http://"
+                placeholder="https://"
               />
             </div>
           </div>
@@ -234,7 +238,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
               <SecondaryAction />
             </div>
           </div>
-            {isLocked && (
+            {useLinkedProduct && isLocked && (
               <p className="mt-2 text-xs text-cyan-100">
                 {lockMessage}
                 {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}

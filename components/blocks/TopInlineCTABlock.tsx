@@ -25,14 +25,18 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   const title = content?.title ?? '今すぐAIローンチを体験する';
   const subtitle = content?.subtitle ?? 'アカウント作成から公開までを最短5分で完了。初月の成果創出まで伴走します。';
   const buttonText = content?.buttonText ?? '無料で始める';
-  const buttonUrl = content?.buttonUrl ?? '/register';
-  const resolvedButtonUrl = withinEditor ? buttonUrl : resolveButtonUrl(buttonUrl);
+  const buttonUrl = content?.buttonUrl ?? '';
+  const resolvedButtonUrl = withinEditor ? (buttonUrl || '#') : resolveButtonUrl(buttonUrl);
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
   const primaryCtaId = ctaIds?.[0];
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
+  const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
   const createFieldFocusHandler = <T extends HTMLElement>(field: string, fallback?: () => void) => {
     return (event: React.MouseEvent<T>) => {
@@ -97,7 +101,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
               className={`w-full rounded-md border px-3 py-2 bg-white ${isLocked ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed' : 'border-slate-200'}`}
               value={buttonUrl}
               onChange={isLocked ? undefined : ((e) => onEdit?.('buttonUrl', e.target.value))}
-              placeholder="http://"
+              placeholder="https://"
               readOnly={isLocked}
               aria-disabled={isLocked}
             />
@@ -136,7 +140,7 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
             >
               {buttonText}
             </button>
-          ) : onProductClick && productId ? (
+          ) : shouldUseProductCTA ? (
             <button
               type="button"
               onClick={createFieldFocusHandler<HTMLButtonElement>('inlineCTA.buttonText', () => {

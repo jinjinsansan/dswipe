@@ -48,10 +48,14 @@ export default function TopHeroImageBlock({
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
   const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
+  const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
   const overlayStyle: CSSProperties = {
     background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.35, accentColor)}, ${withAlpha(overlayBase, 0.85, overlayBase)})`,
@@ -128,7 +132,7 @@ export default function TopHeroImageBlock({
               className={`w-full rounded-md border px-3 py-2 ${isLocked ? 'border-white/40 bg-white/30 text-slate-200 cursor-not-allowed' : 'border-white/30 bg-white/50'}`}
               value={content?.buttonUrl ?? ''}
               onChange={isLocked ? undefined : handleEdit('buttonUrl')}
-              placeholder="http://"
+              placeholder="https://"
               readOnly={isLocked}
               aria-disabled={isLocked}
             />
@@ -142,7 +146,7 @@ export default function TopHeroImageBlock({
               className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
               value={content?.secondaryButtonUrl ?? ''}
               onChange={handleEdit('secondaryButtonUrl')}
-              placeholder="http://"
+              placeholder="https://"
             />
             <input
               className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
@@ -200,12 +204,12 @@ export default function TopHeroImageBlock({
                 >
                   {primaryText}
                 </button>
-              ) : onProductClick && productId ? (
+              ) : shouldUseProductCTA ? (
                 <button
                   type="button"
                   onClick={() => {
                     onCtaClick?.(primaryCtaId, 'primary');
-                    onProductClick(productId);
+                    onProductClick?.(productId);
                   }}
                   className="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}

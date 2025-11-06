@@ -44,8 +44,12 @@ export default function TopMediaSpotlightBlock({
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
   const buttonTextColor = getContrastColor(buttonColor, '#F8FAFC', '#0F172A');
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
+  const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
   const handleTextBlur = (field: keyof MediaSpotlightBlockContent) =>
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -80,13 +84,13 @@ export default function TopMediaSpotlightBlock({
       );
     }
 
-    if (onProductClick && productId) {
+    if (shouldUseProductCTA) {
       return (
         <button
           type="button"
           onClick={() => {
             onCtaClick?.(primaryCtaId, 'primary');
-            onProductClick(productId);
+            onProductClick?.(productId);
           }}
           className={commonClasses}
           style={{
@@ -200,7 +204,7 @@ export default function TopMediaSpotlightBlock({
               {renderButton()}
             </div>
           )}
-          {isLocked && (
+          {useLinkedProduct && isLocked && (
             <p className="mt-2 text-center text-xs text-slate-500">
               {lockMessage}
               {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}

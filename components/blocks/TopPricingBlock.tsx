@@ -67,7 +67,10 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const updatePlanField = (index: number, field: keyof (typeof plans)[number]) =>
@@ -257,7 +260,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                       {plan.buttonText}
                     </span>
                   </button>
-                ) : onProductClick && productId ? (
+                ) : useLinkedProduct && onProductClick && productId ? (
                   <button
                     className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isSingle ? 'py-3' : 'py-2'}`}
                     type="button"
@@ -267,7 +270,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                     }}
                     onClick={() => {
                       onCtaClick?.(mappedCtaId, `plan-${index}`);
-                      onProductClick(productId);
+                      onProductClick?.(productId);
                     }}
                   >
                     <span
@@ -284,7 +287,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                   </button>
                 ) : plan.buttonUrl ? (
                   <Link
-                    href={withinEditor ? plan.buttonUrl : resolveButtonUrl(plan.buttonUrl)}
+                    href={withinEditor ? plan.buttonUrl || '#' : resolveButtonUrl(plan.buttonUrl)}
                     onClick={() => onCtaClick?.(mappedCtaId, `plan-${index}`)}
                     className={`w-full rounded-lg font-semibold typo-body-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 text-center ${isSingle ? 'py-3' : 'py-2'}`}
                     style={{
@@ -334,7 +337,7 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
             );
           })}
         </div>
-        {isLocked && (
+        {useLinkedProduct && isLocked && (
           <p className="text-center text-xs text-slate-500">
             {lockMessage}
             {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}

@@ -38,7 +38,10 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
-  const isLocked = Boolean(primaryLinkLock) && withinEditor;
+  const rawUseLinkedProduct = content?.useLinkedProduct;
+  const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
+  const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
+  const isLocked = Boolean(primaryLinkLock) && withinEditor && useLinkedProduct;
   const lockMessage = primaryLinkLock?.type === 'salon' ? 'オンラインサロンに紐づけされています' : '商品に紐づけされています';
 
   const createFieldFocusHandler = <T extends HTMLElement>(field: string, fallback?: () => void) => {
@@ -67,6 +70,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   };
   const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
+  const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
   const secondaryStrokeColor = secondaryButtonColor;
   const secondaryButtonStyle: CSSProperties = {
@@ -130,7 +134,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
               className={`w-full rounded-md border px-3 py-2 text-sm ${isLocked ? 'border-white/20 bg-black/30 text-white/60 cursor-not-allowed' : 'border-white/20 bg-black/40'}`}
               value={content?.buttonUrl ?? ''}
               onChange={isLocked ? undefined : handleEdit('buttonUrl')}
-              placeholder="http://"
+              placeholder="https://"
               readOnly={isLocked}
               aria-disabled={isLocked}
             />
@@ -144,7 +148,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
               className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
               value={content?.secondaryButtonUrl ?? ''}
               onChange={handleEdit('secondaryButtonUrl')}
-              placeholder="http://"
+              placeholder="https://"
             />
             <input
               className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
@@ -203,7 +207,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
                 >
                   {primaryText}
                 </button>
-              ) : onProductClick && productId ? (
+              ) : shouldUseProductCTA ? (
                 <button
                   type="button"
                   onClick={createFieldFocusHandler<HTMLButtonElement>('hero.buttonText', () => {
