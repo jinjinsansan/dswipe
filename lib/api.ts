@@ -84,10 +84,6 @@ import type {
   OperatorMessageHideRequest,
   OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
-  TeamSummary,
-  TeamMemberListResponse,
-  TeamInviteRequest,
-  TeamInviteResponse,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -401,16 +397,6 @@ export const subscriptionApi = {
         external_id: externalId,
       },
     }),
-};
-
-export const teamApi = {
-  listMyTeams: () => api.get<TeamSummary[]>('/teams/me'),
-  getMembers: (teamId: string) => api.get<TeamMemberListResponse>(`/teams/${teamId}/members`),
-  inviteMember: (teamId: string, payload: TeamInviteRequest) =>
-    api.post<TeamInviteResponse>(`/teams/${teamId}/invitations`, payload),
-  removeMember: (teamId: string, memberUserId: string) =>
-    api.delete(`/teams/${teamId}/members/${memberUserId}`),
-  acceptInvitation: (token: string) => api.post(`/teams/invitations/${token}/accept`),
 };
 
 export const salonApi = {

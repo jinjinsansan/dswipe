@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/react';
 import TopInlineCTABlock from '@/components/blocks/TopInlineCTABlock';
 import type { InlineCTABlockContent } from '@/types/templates';
 

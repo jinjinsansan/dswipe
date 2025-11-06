@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/react';
 import TopHeroBlock from '@/components/blocks/TopHeroBlock';
 import type { HeroBlockContent } from '@/types/templates';
 

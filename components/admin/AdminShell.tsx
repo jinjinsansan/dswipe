@@ -11,12 +11,10 @@ import {
   XMarkIcon,
   BanknotesIcon,
   Cog6ToothIcon,
-  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { useAuthStore } from '@/store/authStore';
-import TeamSwitcher from '@/components/team/TeamSwitcher';
 
 export type AdminNavItem = {
   href: string;
@@ -84,12 +82,6 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     label: '決済設定',
     icon: Cog6ToothIcon,
     description: '為替レート・スプレッド・手数料の管理',
-  },
-  {
-    href: '/admin/team',
-    label: 'チーム共有',
-    icon: UserGroupIcon,
-    description: '管理者アカウントの共同利用とメンバー管理',
   },
 ];
 
@@ -236,7 +228,6 @@ export default function AdminShell({
             </div>
           </div>
           <div className="flex items-center gap-3 text-right">
-            <TeamSwitcher compact />
             {user && (
               <div className="hidden sm:block">
                 <p className="text-sm font-semibold text-gray-900">{user.username}</p>
@@ -359,7 +350,6 @@ export default function AdminShell({
               {pageSubtitle && <p className="mt-1 text-sm text-gray-500">{pageSubtitle}</p>}
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <TeamSwitcher />
               {headerActions}
               <div className="rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 text-sm text-gray-600">
                 <span className="font-semibold text-gray-800">{user?.username ?? 'Admin'}</span>

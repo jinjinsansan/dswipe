@@ -72,9 +72,6 @@ export type {
   AdminPayoutEventPayload,
   PlatformPaymentSettings,
   PlatformPaymentSettingsUpdatePayload,
-  TeamSummary,
-  TeamMember,
-  TeamMemberListResponse,
   AdminMarketplaceLP,
   FeaturedProductSummary,
   FeaturedProductListResponse,
@@ -120,9 +117,6 @@ export type {
   SalonRoleCreatePayload,
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
-  TeamSummary,
-  TeamMember,
-  TeamMemberListResponse,
   SubscriptionSessionStatusResponse,
 } from './index';
 
@@ -348,19 +342,6 @@ export interface LPListResponse {
 // API エラーレスポンス
 export interface APIError {
   detail: string;
-}
-
-export interface TeamInviteRequest {
-  email: string;
-}
-
-export interface TeamInviteResponse {
-  invitation_id: string;
-  team_id: string;
-  email: string;
-  role: 'manager';
-  status: string;
-  expires_at: string;
 }
 
 export interface SubscriptionPlan {
