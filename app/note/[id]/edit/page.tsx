@@ -1257,22 +1257,16 @@ export default function NoteEditPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => handlePublishToggle(status === 'published' ? 'unpublish' : 'publish')}
-              disabled={actionLoading}
-              className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition ${
-                status === 'published'
-                  ? 'border border-slate-300 text-slate-600 hover:border-slate-400'
-                  : 'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700'
-              } disabled:cursor-not-allowed disabled:opacity-60`}
-            >
-              {actionLoading
-                ? '処理中...'
-                : status === 'published'
-                  ? '非公開にする'
-                  : '公開する'}
-            </button>
+            {status !== 'published' ? (
+              <button
+                type="button"
+                onClick={() => handlePublishToggle('publish')}
+                disabled={actionLoading}
+                className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {actionLoading ? '処理中...' : '公開する'}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={handleDelete}
