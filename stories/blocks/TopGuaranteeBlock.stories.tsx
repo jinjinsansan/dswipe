@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+// eslint-disable-next-line storybook/no-renderer-packages
+import type { Meta, StoryObj } from '@storybook/react';
 import TopGuaranteeBlock from '@/components/blocks/TopGuaranteeBlock';
 import type { GuaranteeBlockContent } from '@/types/templates';
 

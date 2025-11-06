@@ -9,7 +9,7 @@ import { teamApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { useTeamStore } from '@/store/teamStore';
 import type { TeamMember } from '@/types';
-import type { TeamMemberListResponse } from '@/types/api';
+import type { TeamMemberListResponse } from '@/types';
 import { cn } from '@/lib/utils';
 
 const STATUS_LABEL: Record<string, string> = {

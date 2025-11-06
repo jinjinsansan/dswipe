@@ -84,11 +84,10 @@ import type {
   OperatorMessageHideRequest,
   OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
-  TeamSummary,
-  TeamMemberListResponse,
   TeamInviteRequest,
   TeamInviteResponse,
 } from '@/types/api';
+import type { TeamSummary, TeamMemberListResponse } from '@/types';
 import type {
   NoteModerationDetail,
   NoteModerationListResponse,
