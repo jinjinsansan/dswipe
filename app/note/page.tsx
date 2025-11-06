@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import {
@@ -14,6 +14,7 @@ import {
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { noteApi } from '@/lib/api';
+import { loadCache, saveCache } from '@/lib/cache';
 import type { NoteSummary } from '@/types';
 import { getCategoryLabel } from '@/lib/noteCategories';
 
@@ -26,6 +27,9 @@ interface NoteShareStats {
   suspicious_shares: number;
 }
 
+const NOTE_LIST_CACHE_TTL = 120_000; // 2 minutes
+const NOTE_SHARE_CACHE_TTL = 300_000; // 5 minutes
+
 export default function NoteDashboardPage() {
   const { user, isAuthenticated, isInitialized, token } = useAuthStore();
   const [notes, setNotes] = useState<NoteSummary[]>([]);
@@ -35,12 +39,82 @@ export default function NoteDashboardPage() {
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [shareStats, setShareStats] = useState<Record<string, NoteShareStats>>({});
+  const didHydrateFromCacheRef = useRef(false);
+
+  const cacheKeyForFilter = useCallback((filterValue: FilterValue) => `note-dashboard-${filterValue}`, []);
+
+  const hydrateFromCache = useCallback((filterValue: FilterValue) => {
+    if (didHydrateFromCacheRef.current) return;
+    const cached = loadCache<{ notes: NoteSummary[] }>(cacheKeyForFilter(filterValue), NOTE_LIST_CACHE_TTL);
+    if (cached && Array.isArray(cached.notes)) {
+      setNotes(cached.notes);
+      const cachedStats: Record<string, NoteShareStats> = {};
+      for (const note of cached.notes) {
+        const stat = loadCache<NoteShareStats>(`note-share-${note.id}`, NOTE_SHARE_CACHE_TTL);
+        if (stat) {
+          cachedStats[note.id] = stat;
+        }
+      }
+      if (Object.keys(cachedStats).length > 0) {
+        setShareStats(cachedStats);
+      }
+      setLoading(false);
+      didHydrateFromCacheRef.current = true;
+    }
+  }, [cacheKeyForFilter]);
+
+  const fetchShareStats = useCallback(async (noteList: NoteSummary[]) => {
+    if (!token) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
+    const stats: Record<string, NoteShareStats> = {};
+
+    const pending: Array<Promise<void>> = [];
+
+    for (const note of noteList) {
+      const cacheKey = `note-share-${note.id}`;
+      const cached = loadCache<NoteShareStats>(cacheKey, NOTE_SHARE_CACHE_TTL);
+      if (cached) {
+        stats[note.id] = cached;
+        continue;
+      }
+
+      pending.push(
+        (async () => {
+          try {
+            const response = await fetch(`${apiUrl}/notes/${note.id}/share-stats`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (response.ok) {
+              const payload = (await response.json()) as NoteShareStats;
+              stats[note.id] = payload;
+              saveCache(cacheKey, payload);
+            }
+          } catch (error) {
+            console.error(`Failed to fetch share stats for note ${note.id}:`, error);
+          }
+        })()
+      );
+    }
+
+    if (pending.length > 0) {
+      await Promise.all(pending);
+    }
+
+    if (Object.keys(stats).length > 0) {
+      setShareStats((prev) => ({ ...prev, ...stats }));
+    }
+  }, [token]);
 
   const fetchNotes = useCallback(
-    async (status: FilterValue) => {
+    async (status: FilterValue, options?: { showSpinner?: boolean }) => {
       if (!isAuthenticated) return;
       setError(null);
-      setLoading(true);
+      const showSpinner = options?.showSpinner ?? true;
+      if (showSpinner) {
+        setLoading(true);
+      }
       try {
         const params: { status_filter?: 'draft' | 'published'; limit: number; offset: number } = {
           limit: 100,
@@ -52,6 +126,7 @@ export default function NoteDashboardPage() {
         const response = await noteApi.list(params);
         const fetchedNotes = response.data?.data ?? [];
         setNotes(fetchedNotes);
+        saveCache(cacheKeyForFilter(status), { notes: fetchedNotes });
         
         // 各NOTEのシェア統計を取得
         fetchShareStats(fetchedNotes);
@@ -63,45 +138,22 @@ export default function NoteDashboardPage() {
         setIsRefreshing(false);
       }
     },
-    [isAuthenticated]
+    [cacheKeyForFilter, fetchShareStats, isAuthenticated]
   );
-
-  const fetchShareStats = async (noteList: NoteSummary[]) => {
-    if (!token) return;
-    
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
-    const stats: Record<string, NoteShareStats> = {};
-    
-    // 各NOTEのシェア統計を並行取得
-    await Promise.all(
-      noteList.map(async (note) => {
-        try {
-          const response = await fetch(`${apiUrl}/notes/${note.id}/share-stats`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          
-          if (response.ok) {
-            stats[note.id] = await response.json();
-          }
-        } catch (error) {
-          console.error(`Failed to fetch share stats for note ${note.id}:`, error);
-        }
-      })
-    );
-    
-    setShareStats(stats);
   };
 
   useEffect(() => {
     if (!isInitialized || !isAuthenticated) return;
-    fetchNotes(filter);
-  }, [fetchNotes, filter, isInitialized, isAuthenticated]);
+    didHydrateFromCacheRef.current = false;
+    hydrateFromCache(filter);
+    const showSpinner = !didHydrateFromCacheRef.current;
+    fetchNotes(filter, { showSpinner });
+  }, [fetchNotes, filter, hydrateFromCache, isInitialized, isAuthenticated]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    fetchNotes(filter);
+    didHydrateFromCacheRef.current = false;
+    fetchNotes(filter, { showSpinner: true });
   };
 
   const filteredNotes = useMemo(() => {

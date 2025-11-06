@@ -3,7 +3,7 @@
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import Image from 'next/image';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
@@ -13,6 +13,7 @@ import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { redirectToLogin } from '@/lib/navigation';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
+import { loadCache, saveCache } from '@/lib/cache';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -212,6 +213,15 @@ const FALLBACK_NOTE_METRICS: NoteMetrics = {
   top_note: null,
 };
 
+const DASHBOARD_CACHE_KEY = 'dashboard-home';
+const DASHBOARD_CACHE_TTL = 120_000; // 2 minutes
+
+interface DashboardCacheSnapshot {
+  lps: DashboardLp[];
+  noteMetrics: NoteMetrics | null;
+  announcements: DashboardAnnouncement[];
+}
+
 const formatAnnouncementDate = (value?: string) => {
   if (!value) return '-';
   const date = new Date(value);
@@ -260,6 +270,21 @@ export default function DashboardPage() {
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
   const [activeAnnouncement, setActiveAnnouncement] = useState<DashboardAnnouncement | null>(null);
+  const didHydrateFromCacheRef = useRef(false);
+
+  const hydrateFromCache = useCallback(() => {
+    if (didHydrateFromCacheRef.current) return;
+    const cached = loadCache<DashboardCacheSnapshot>(DASHBOARD_CACHE_KEY, DASHBOARD_CACHE_TTL);
+    if (!cached) return;
+
+    setLps(Array.isArray(cached.lps) ? cached.lps : []);
+    setNoteMetrics(cached.noteMetrics ?? null);
+    setAnnouncements(Array.isArray(cached.announcements) ? cached.announcements : []);
+    setAnnouncementsLoading(false);
+    setAnnouncementsError(null);
+    setIsLoading(false);
+    didHydrateFromCacheRef.current = true;
+  }, []);
   const formattedCreatedAt = formatAccountDate(user?.created_at);
   const formattedLastLogin = formatAccountDate(user?.last_login_at ?? null, true);
   const continuityDays = user?.created_at
@@ -274,10 +299,13 @@ export default function DashboardPage() {
   const latestNotePublishedLabel = noteSummary.latest_published_at
     ? formatAccountDate(noteSummary.latest_published_at, true)
     : '未公開';
-  const monthlyNoteSalesLabel = `${composeSalesLabel(noteSummary.monthly_sales_amount_jpy, noteSummary.monthly_sales_points)} / ${noteSummary.monthly_sales_count}件`;
+      return rows;
+    } catch (error) {
   const totalNoteSalesLabel = composeSalesLabel(noteSummary.total_sales_amount_jpy, noteSummary.total_sales_points);
   const averagePaidPriceLabel = noteSummary.average_paid_price > 0
-    ? `${noteSummary.average_paid_price.toLocaleString()}P`
+      setAnnouncements([]);
+      return [];
+    } finally {
     : '—';
   const topNote = noteSummary.top_note ?? null;
   const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
@@ -616,7 +644,14 @@ export default function DashboardPage() {
 
       setNoteMetrics(metrics);
 
-      await announcementPromise;
+      const announcementRows = await announcementPromise;
+
+      saveCache(DASHBOARD_CACHE_KEY, {
+        lps: enrichedLps,
+        noteMetrics: metrics,
+        announcements: announcementRows ?? [],
+      });
+      didHydrateFromCacheRef.current = true;
     } catch (error) {
       console.error('Failed to fetch data:', error);
       setNoteMetrics(null);
@@ -633,8 +668,9 @@ export default function DashboardPage() {
       return;
     }
 
+    hydrateFromCache();
     void fetchData();
-  }, [fetchData, isAuthenticated, isInitialized, router]);
+  }, [fetchData, hydrateFromCache, isAuthenticated, isInitialized, router]);
 
   const handleDeleteLP = async (lpId: string) => {
     if (!confirm('本当にこのLPを削除しますか？この操作は取り消せません。')) {

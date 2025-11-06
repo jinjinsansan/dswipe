@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
+import { loadCache, saveCache } from '@/lib/cache';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -102,6 +103,13 @@ const FILTERS: Array<{ label: string; value: string | null }> = [
   { label: '返金', value: 'refund' },
 ];
 
+const POINT_HISTORY_CACHE_TTL = 90_000; // 90 seconds
+
+interface PointHistoryCacheSnapshot {
+  transactions: Transaction[];
+  total: number;
+}
+
 export default function PointHistoryPage() {
   const { isAuthenticated, isInitialized } = useAuthStore();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -110,9 +118,13 @@ export default function PointHistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
-  const fetchTransactions = useCallback(async () => {
+  const cacheKey = useMemo(() => `points-history-${filterType ?? 'all'}`, [filterType]);
+
+  const fetchTransactions = useCallback(async (options?: { showSpinner?: boolean }) => {
     try {
-      setIsLoading(true);
+      if (options?.showSpinner ?? true) {
+        setIsLoading(true);
+      }
       setError(null);
 
       const response = await pointsApi.getTransactions({
@@ -131,6 +143,10 @@ export default function PointHistoryPage() {
       setTransactions(rows);
       const reportedTotal = (payload as TransactionListResponse)?.total;
       setTotal(typeof reportedTotal === 'number' ? reportedTotal : rows.length);
+      saveCache(cacheKey, {
+        transactions: rows,
+        total: typeof reportedTotal === 'number' ? reportedTotal : rows.length,
+      });
     } catch (err: unknown) {
       console.error('Error fetching transactions:', err);
       const message = err instanceof Error ? err.message : undefined;
@@ -138,14 +154,25 @@ export default function PointHistoryPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [filterType]);
+  }, [cacheKey, filterType]);
 
   useEffect(() => {
     if (!isInitialized || !isAuthenticated) {
       return;
     }
-    fetchTransactions();
-  }, [isInitialized, isAuthenticated, fetchTransactions]);
+    const cached = loadCache<PointHistoryCacheSnapshot>(cacheKey, POINT_HISTORY_CACHE_TTL);
+    if (cached) {
+      setTransactions(Array.isArray(cached.transactions) ? cached.transactions : []);
+      setTotal(typeof cached.total === 'number' ? cached.total : 0);
+      setError(null);
+      setIsLoading(false);
+      fetchTransactions({ showSpinner: false }).catch(() => {
+        /* background refresh errors handled inside */
+      });
+    } else {
+      fetchTransactions({ showSpinner: true });
+    }
+  }, [cacheKey, fetchTransactions, isAuthenticated, isInitialized]);
 
   const summary = useMemo(() => {
     const income = transactions.filter((tx) => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
