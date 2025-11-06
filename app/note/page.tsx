@@ -127,9 +127,9 @@ export default function NoteDashboardPage() {
         const fetchedNotes = response.data?.data ?? [];
         setNotes(fetchedNotes);
         saveCache(cacheKeyForFilter(status), { notes: fetchedNotes });
-        
-        // 各NOTEのシェア統計を取得
-        fetchShareStats(fetchedNotes);
+
+        // 各NOTEのシェア統計を取得（非同期で更新）
+        void fetchShareStats(fetchedNotes);
       } catch (err: any) {
         const detail = err?.response?.data?.detail;
         setError(typeof detail === 'string' ? detail : 'NOTE一覧の取得に失敗しました');
@@ -140,7 +140,6 @@ export default function NoteDashboardPage() {
     },
     [cacheKeyForFilter, fetchShareStats, isAuthenticated]
   );
-  };
 
   useEffect(() => {
     if (!isInitialized || !isAuthenticated) return;

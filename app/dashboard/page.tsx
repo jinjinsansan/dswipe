@@ -295,22 +295,7 @@ export default function DashboardPage() {
     : null;
   const continuityLabel = continuityDays !== null ? `${continuityDays}日` : '記録なし';
 
-  const noteSummary = noteMetrics ?? FALLBACK_NOTE_METRICS;
-  const latestNotePublishedLabel = noteSummary.latest_published_at
-    ? formatAccountDate(noteSummary.latest_published_at, true)
-    : '未公開';
-      return rows;
-    } catch (error) {
-  const totalNoteSalesLabel = composeSalesLabel(noteSummary.total_sales_amount_jpy, noteSummary.total_sales_points);
-  const averagePaidPriceLabel = noteSummary.average_paid_price > 0
-      setAnnouncements([]);
-      return [];
-    } finally {
-    : '—';
-  const topNote = noteSummary.top_note ?? null;
-  const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
-
-  const loadAnnouncements = useCallback(async () => {
+  const loadAnnouncements = useCallback(async (): Promise<DashboardAnnouncement[]> => {
     setAnnouncementsLoading(true);
     try {
       const response = await announcementApi.list({ limit: 6 });
@@ -323,13 +308,27 @@ export default function DashboardPage() {
       }
       setAnnouncements(rows);
       setAnnouncementsError(null);
+      return rows;
     } catch (error) {
       console.error('Failed to fetch announcements:', error);
       setAnnouncementsError('お知らせの取得に失敗しました');
+      setAnnouncements([]);
+      return [];
     } finally {
       setAnnouncementsLoading(false);
     }
   }, []);
+
+  const noteSummary = noteMetrics ?? FALLBACK_NOTE_METRICS;
+  const latestNotePublishedLabel = noteSummary.latest_published_at
+    ? formatAccountDate(noteSummary.latest_published_at, true)
+    : '未公開';
+  const totalNoteSalesLabel = composeSalesLabel(noteSummary.total_sales_amount_jpy, noteSummary.total_sales_points);
+  const averagePaidPriceLabel = noteSummary.average_paid_price > 0
+    ? `${noteSummary.average_paid_price.toLocaleString()}P`
+    : '—';
+  const topNote = noteSummary.top_note ?? null;
+  const resolvedTopCategories = noteSummary.top_categories.map((category) => getCategoryLabel(category));
 
   const fetchData = useCallback(async () => {
     try {
