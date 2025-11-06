@@ -323,7 +323,6 @@ export default function DashboardHeader({
         defaultGroup: 'media',
         items: [
           { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
-          { kind: 'link', href: 'https://www.dlogicai.in/', groupOverride: 'media', labelOverride: '競馬予想AI' },
           { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
           {
             kind: 'logout',
@@ -535,7 +534,7 @@ export default function DashboardHeader({
                 <div className="flex flex-col gap-3">
                   {mobileSections.map((section) => {
                     const items: (MobileMenuItem | null)[] = [...section.items];
-                    while (items.length < 3) {
+                    while (items.length % 3 !== 0) {
                       items.push(null);
                     }
 

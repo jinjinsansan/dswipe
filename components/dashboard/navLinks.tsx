@@ -217,7 +217,6 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
   { href: '/tokusho', label: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },
   { href: '/privacy', label: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
-  { href: 'https://www.dlogicai.in/', label: '競馬予想AIDlogic', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 30, external: true },
   { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
 ];
 
