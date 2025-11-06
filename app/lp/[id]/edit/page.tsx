@@ -565,28 +565,13 @@ export default function EditLPNewPage() {
     setCustomThemeShades(shades);
     setCustomThemeHex(hex);
     
-    // ブロックタイプによってカラー適用するかを判定
-    const colorableBlockTypes = [
-      'top-hero-1',
-      'top-highlights-1',
-      'top-cta-1',
-      'top-testimonials-1',
-      'top-faq-1',
-      'top-pricing-1',
-      'top-before-after-1',
-      'top-problem-1',
-      'top-bonus-1',
-      'top-guarantee-1',
-      'top-countdown-1',
-      'top-inline-cta-1',
-      'top-hero-image-1',
-      'top-media-spotlight-1',
-    ];
-    
+    const shouldApplyTheme = (blockType: BlockType) =>
+      blockType.startsWith('top-') || blockType.startsWith('handwritten-');
+
     // 11段階のシェードをブロックごとに適用
     setBlocks((prev) =>
       prev.map((block) => {
-        if (!colorableBlockTypes.includes(block.blockType)) {
+        if (!shouldApplyTheme(block.blockType)) {
           return block;
         }
 

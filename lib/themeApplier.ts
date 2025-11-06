@@ -32,73 +32,73 @@ export function applyThemeShadesToBlock<T extends ThemeBlock>(
   shades: ColorShades
 ): T {
   const blockType = block.blockType ?? '';
+  const normalizedBlockType = blockType.replace(/^(top|handwritten)-/, '');
   const content: ThemeContent = { ...(block.content ?? {}) };
 
-  // PropertyPanel で設定された個別カラーを保存（微調整用として保持）
-  const individualColors = {
-    titleColor: content.titleColor,
-    descriptionColor: content.descriptionColor,
-    iconColor: content.iconColor,
+  const baseUpdate: ThemeContent = {
+    backgroundColor: shades[50],
   };
 
-  // 基本的なカラー割り当て（個別設定がなければテーマから）
-  const baseUpdate: ThemeContent = {
-    backgroundColor: content.backgroundColor || shades[50],
-    textColor: content.textColor || shades[800],
-    accentColor: content.accentColor || shades[600],
-    buttonColor: content.buttonColor || shades[500],
+  const assignOptionalShade = (key: string, shade: keyof ColorShades) => {
+    if (Object.prototype.hasOwnProperty.call(content, key)) {
+      baseUpdate[key as keyof ThemeContent] = shades[shade];
+    }
   };
+
+  assignOptionalShade('textColor', 900);
+  assignOptionalShade('titleColor', 900);
+  assignOptionalShade('descriptionColor', 700);
+  assignOptionalShade('accentColor', 600);
+  assignOptionalShade('buttonColor', 500);
+  assignOptionalShade('secondaryButtonColor', 200);
+  assignOptionalShade('buttonTextColor', 50);
+  assignOptionalShade('surfaceColor', 100);
+  assignOptionalShade('cardBackgroundColor', 100);
+  assignOptionalShade('borderColor', 200);
+  assignOptionalShade('iconColor', 600);
+  assignOptionalShade('badgeColor', 500);
+  assignOptionalShade('badgeTextColor', 50);
+  assignOptionalShade('overlayColor', 800);
 
   let updatedContent: ThemeContent = { ...content, ...baseUpdate };
 
   // ブロックタイプ別の詳細な色割り当て
-  if (blockType.startsWith('hero')) {
+  if (normalizedBlockType.startsWith('hero')) {
     updatedContent = applyHeroTheme(updatedContent, shades);
-  } else if (blockType.startsWith('pricing')) {
+  } else if (normalizedBlockType.startsWith('pricing')) {
     updatedContent = applyPricingTheme(updatedContent, shades);
-  } else if (blockType.startsWith('testimonial')) {
+  } else if (normalizedBlockType.startsWith('testimonial')) {
     updatedContent = applyTestimonialTheme(updatedContent, shades);
-  } else if (blockType.startsWith('faq')) {
+  } else if (normalizedBlockType.startsWith('faq')) {
     updatedContent = applyFAQTheme(updatedContent, shades);
-  } else if (blockType.startsWith('features')) {
+  } else if (normalizedBlockType.startsWith('features')) {
     updatedContent = applyFeaturesTheme(updatedContent, shades);
-  } else if (blockType.startsWith('cta')) {
+  } else if (normalizedBlockType.startsWith('cta')) {
     updatedContent = applyCTATheme(updatedContent, shades);
-  } else if (blockType.startsWith('text-img')) {
+  } else if (normalizedBlockType.startsWith('text-img')) {
     updatedContent = applyTextImageTheme(updatedContent, shades);
-  } else if (blockType.startsWith('stats')) {
+  } else if (normalizedBlockType.startsWith('stats')) {
     updatedContent = applyStatsTheme(updatedContent, shades);
-  } else if (blockType.startsWith('comparison')) {
+  } else if (normalizedBlockType.startsWith('comparison')) {
     updatedContent = applyComparisonTheme(updatedContent, shades);
-  } else if (blockType.startsWith('bonus-list')) {
+  } else if (normalizedBlockType.startsWith('bonus-list')) {
     updatedContent = applyBonusListTheme(updatedContent, shades);
-  } else if (blockType.startsWith('guarantee')) {
+  } else if (normalizedBlockType.startsWith('guarantee')) {
     updatedContent = applyGuaranteeTheme(updatedContent, shades);
-  } else if (blockType.startsWith('problem')) {
+  } else if (normalizedBlockType.startsWith('problem')) {
     updatedContent = applyProblemTheme(updatedContent, shades);
-  } else if (blockType.startsWith('special-price')) {
+  } else if (normalizedBlockType.startsWith('special-price')) {
     updatedContent = applySpecialPriceTheme(updatedContent, shades);
-  } else if (blockType.startsWith('before-after')) {
+  } else if (normalizedBlockType.startsWith('before-after')) {
     updatedContent = applyBeforeAfterTheme(updatedContent, shades);
-  } else if (blockType.startsWith('author-profile')) {
+  } else if (normalizedBlockType.startsWith('author-profile')) {
     updatedContent = applyAuthorProfileTheme(updatedContent, shades);
-  } else if (blockType.startsWith('scarcity')) {
+  } else if (normalizedBlockType.startsWith('scarcity')) {
     updatedContent = applyScarcityTheme(updatedContent, shades);
-  } else if (blockType.startsWith('urgency')) {
+  } else if (normalizedBlockType.startsWith('urgency')) {
     updatedContent = applyUrgencyTheme(updatedContent, shades);
-  } else if (blockType.startsWith('countdown')) {
+  } else if (normalizedBlockType.startsWith('countdown')) {
     updatedContent = applyCountdownTheme(updatedContent, shades);
-  }
-
-  // PropertyPanel の個別設定を優先（微調整として上書き）
-  if (individualColors.titleColor) {
-    updatedContent.titleColor = individualColors.titleColor;
-  }
-  if (individualColors.descriptionColor) {
-    updatedContent.descriptionColor = individualColors.descriptionColor;
-  }
-  if (individualColors.iconColor) {
-    updatedContent.iconColor = individualColors.iconColor;
   }
 
   return {
