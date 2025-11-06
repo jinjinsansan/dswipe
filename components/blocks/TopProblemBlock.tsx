@@ -15,8 +15,6 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
     : [
         '構成やコピーをゼロから考える時間がない',
         'デザイン調整とコーディングで徹夜続き',
-        '決済連携や会員エリアの仕組み化が難しい',
-        '旬な情報を出したいのに公開までが遅い',
       ];
 
   const updateProblem = (index: number) => (event: React.FocusEvent<HTMLDivElement>) => {

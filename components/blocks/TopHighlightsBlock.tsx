@@ -113,6 +113,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
   const accentColor = content?.accentColor ?? '#2563EB';
   const backgroundColor = content?.backgroundColor ?? '#F1F5F9';
   const textColor = content?.textColor ?? '#0F172A';
+  const isListLayout = content?.layout === 'list';
   const features = useMemo(() => (
     Array.isArray(content?.features) && content.features.length > 0
       ? content.features
@@ -127,13 +128,26 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
             title: 'ドメイン・サーバー整備が面倒',
             description: '取得・SSL対応まで段取りに追われ、初動が遅れる。',
           },
-          {
-            icon: 'payment',
-            title: '決済機能の実装ハードル',
-            description: '安全な決済フローの準備には高い技術とセキュリティ知識が必要。',
-          },
         ]
   ), [content?.features]);
+
+  const gridColumnsClass = useMemo(() => {
+    if (isListLayout) {
+      return 'grid-cols-1';
+    }
+
+    const count = features.length;
+
+    if (count <= 1) {
+      return 'grid-cols-1 max-w-2xl mx-auto';
+    }
+
+    if (count === 2) {
+      return 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto';
+    }
+
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  }, [features.length, isListLayout]);
 
   const updateFeature = (index: number, value: Record<string, string>) => {
     const next = [...features];
@@ -187,8 +201,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
             {title}
           </h2>
         </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className={`grid gap-4 ${gridColumnsClass}`}>
           {features.map((feature, index) => {
             const IconComponent = resolveIcon(feature.icon);
             return (
