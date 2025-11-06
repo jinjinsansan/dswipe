@@ -297,6 +297,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const guaranteeBullets = Array.isArray((content as any).bulletPoints)
     ? [...((content as any).bulletPoints as string[])]
     : ['保証の詳細を入力'];
+  const problemItems = Array.isArray((content as any).problems)
+    ? [...((content as any).problems as string[])]
+    : null;
   const supportsProductLink = blockType ? PRODUCT_CTA_BLOCKS.includes(blockType) : false;
   const isProductLinked = Boolean(linkedProduct?.id) && supportsProductLink;
   const isSalonLinked = Boolean(linkedSalon?.id) && supportsProductLink;
@@ -1448,16 +1451,50 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
-        {Array.isArray((content as any).problems) && (
+        {problemItems && (
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-300">問題提起リスト</label>
-            <textarea
-              value={Array.isArray((content as any).problems) ? (content as any).problems.join('\n') : ''}
-              onChange={(e) => onUpdateContent('problems', e.target.value.split('\n').filter(Boolean))}
-              className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
-              rows={6}
-              placeholder="問題提起を1行につき1つ入力"
-            />
+            <label className="block text-sm font-medium text-slate-700">問題提起リスト</label>
+            <div className="space-y-2">
+              {problemItems.map((problem, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={problem}
+                    onChange={(e) => {
+                      const next = [...problemItems];
+                      next[index] = e.target.value;
+                      onUpdateContent('problems', next);
+                    }}
+                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder={`問題提起 ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (problemItems.length <= 1) {
+                        onUpdateContent('problems', ['問題を入力']);
+                        return;
+                      }
+                      const next = problemItems.filter((_, itemIndex) => itemIndex !== index);
+                      onUpdateContent('problems', next);
+                    }}
+                    className="px-2 py-1 text-xs text-slate-600 hover:text-red-500"
+                  >
+                    削除
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const next = [...problemItems, '問題を入力'];
+                  onUpdateContent('problems', next);
+                }}
+                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+              >
+                <span>＋ 問題提起を追加</span>
+              </button>
+            </div>
           </div>
         )}
 
