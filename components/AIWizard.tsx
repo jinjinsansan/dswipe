@@ -684,15 +684,6 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               </div>
             </div>
 
-      <div className="mt-4">
-        <button
-          type="button"
-          onClick={onSkip}
-          className="w-full rounded-lg border border-gray-700/60 bg-gray-900/60 px-4 py-2 text-sm font-light text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
-        >
-          後で回答する
-        </button>
-      </div>
           </div>
         </div>
       );
@@ -740,60 +731,70 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
         {renderStep()}
 
         {/* ナビゲーション */}
-        <div className="mt-6 flex gap-3">
-          {step > 1 && (
-            <button
-              onClick={() => setStep(step - 1)}
-              className="px-4 py-2 bg-gray-800/50 text-white/90 text-sm font-light rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              ← 戻る
-            </button>
-          )}
-          
-          <div className="flex-1">
-            {step < 7 ? (
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-1 gap-3">
+            {step > 1 && (
               <button
-                onClick={() => setStep(step + 1)}
-                disabled={!canProceed()}
-                className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => setStep(step - 1)}
+                className="px-4 py-2 bg-gray-800/50 text-white/90 text-sm font-light rounded-lg hover:bg-gray-800 transition-colors"
               >
-                次へ →
-              </button>
-            ) : (
-              <button
-                onClick={handleGenerateLP}
-                disabled={isLoading || !canProceed()}
-                className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    生成中... {elapsedTime}秒
-                  </span>
-                ) : (
-                  'AI構成を生成'
-                )}
+                ← 戻る
               </button>
             )}
-            
-            {isLoading && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-light text-gray-500">進行状況</span>
-                  <span className="text-xs font-light text-gray-500">{Math.round(progress)}%</span>
+
+            <div className="flex-1">
+              {step < 7 ? (
+                <button
+                  onClick={() => setStep(step + 1)}
+                  disabled={!canProceed()}
+                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  次へ →
+                </button>
+              ) : (
+                <button
+                  onClick={handleGenerateLP}
+                  disabled={isLoading || !canProceed()}
+                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      生成中... {elapsedTime}秒
+                    </span>
+                  ) : (
+                    'AI構成を生成'
+                  )}
+                </button>
+              )}
+
+              {isLoading && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-light text-gray-500">進行状況</span>
+                    <span className="text-xs font-light text-gray-500">{Math.round(progress)}%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={onSkip}
+            className="w-full rounded-lg border border-gray-700/60 bg-gray-900/60 px-4 py-2 text-sm font-light text-gray-300 transition-colors hover:bg-gray-800 hover:text-white sm:w-40"
+          >
+            後で回答する
+          </button>
         </div>
       </div>
     </div>
