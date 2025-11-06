@@ -216,7 +216,9 @@ export default function PointHistoryPage() {
                 ))}
               </div>
               <button
-                onClick={fetchTransactions}
+                onClick={() => {
+                  void fetchTransactions({ showSpinner: true });
+                }}
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
                 <ArrowPathIcon className="h-4 w-4" />
