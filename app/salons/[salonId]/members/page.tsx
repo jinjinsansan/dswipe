@@ -17,7 +17,10 @@ import type { Salon, SalonMember, SalonMemberListResult } from "@/types/api";
 
 const PAGE_SIZE = 20;
 
-const STATUS_STYLES: Record<string, string> = {
+const STATUS_KEYS = ["ACTIVE", "PENDING", "UNPAID", "CANCELED", "CANCELLED"] as const;
+type StatusKey = (typeof STATUS_KEYS)[number];
+
+const STATUS_STYLES: Record<StatusKey, string> = {
   ACTIVE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
   PENDING: "bg-amber-50 text-amber-600 border border-amber-200",
   UNPAID: "bg-rose-50 text-rose-600 border border-rose-200",
@@ -202,7 +205,9 @@ export default function SalonMembersPage() {
                   </tr>
                 ) : (
                   members.map((member) => {
-                    const status = statusMeta[member.status?.toUpperCase() ?? ""];
+                    const rawStatus = (member.status ?? "").toUpperCase();
+                    const statusKey = STATUS_KEYS.includes(rawStatus as StatusKey) ? (rawStatus as StatusKey) : undefined;
+                    const status = statusKey ? statusMeta[statusKey] : undefined;
                     return (
                       <tr key={member.id} className="bg-white">
                         <td className="px-4 py-3 font-mono text-xs text-slate-500">{member.user_id}</td>
