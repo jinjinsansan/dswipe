@@ -142,6 +142,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         setError(typeof detail === 'string' ? detail : t('fetchError'));
       }
       setLoading('error');
+    }
   }, [shareToken, slug, token, t, locale]);
 
   useEffect(() => {

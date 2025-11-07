@@ -304,6 +304,7 @@ export interface PublicNoteSummary {
   official_share_tweet_id?: string | null;
   official_share_tweet_url?: string | null;
   official_share_x_username?: string | null;
+  total_sales?: number | null;
 }
 
 export interface PublicNoteListResult {

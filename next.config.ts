@@ -1,4 +1,7 @@
-import type { NextConfig } from "next";
+import createIntlPlugin from 'next-intl/plugin';
+import type { NextConfig } from 'next';
+
+const withNextIntl = createIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -25,4 +28,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
