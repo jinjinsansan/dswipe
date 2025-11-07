@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import NoteDetailClient from '@/components/note/NoteDetailClient';
 
 type NoteSharePageProps = {
@@ -27,24 +28,42 @@ async function getNoteData(token: string) {
 export async function generateMetadata({ params }: NoteSharePageProps): Promise<Metadata> {
   const { token } = await params;
   const note = await getNoteData(token);
+  const locale = await getLocale();
+  const t = await getTranslations('noteShare.metadata');
+  const localeCode = locale === 'en' ? 'en_US' : 'ja_JP';
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || 'https://d-swipe.com').replace(/\/$/, '');
+  const url = `${origin}/notes/share/${token}`;
 
   if (!note) {
     return {
-      title: '限定公開NOTE | D-swipe',
+      title: t('notFoundTitle'),
+      description: t('notFoundDescription'),
       robots: {
         index: false,
         follow: false,
       },
+      openGraph: {
+        title: t('notFoundTitle'),
+        description: t('notFoundDescription'),
+        url,
+        siteName: t('siteName'),
+        locale: localeCode,
+        type: 'article',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: t('notFoundTitle'),
+        description: t('notFoundDescription'),
+      },
     };
   }
 
-  const title = note.title || '限定公開NOTE';
-  const description = note.excerpt || '限定共有リンクを知っている人だけが閲覧できるNOTEです。';
+  const title = note.title || t('defaultTitle');
+  const description = note.excerpt || t('defaultDescription');
   const coverImage = note.cover_image_url || 'https://d-swipe.com/og-default.svg';
-  const url = `https://d-swipe.com/notes/share/${token}`;
 
   return {
-    title: `${title} | 限定公開NOTE`,
+    title: t('titleTemplate', { title }),
     description,
     robots: {
       index: false,
@@ -54,7 +73,7 @@ export async function generateMetadata({ params }: NoteSharePageProps): Promise<
       title,
       description,
       url,
-      siteName: 'D-swipe',
+      siteName: t('siteName'),
       images: [
         {
           url: coverImage,
@@ -63,7 +82,7 @@ export async function generateMetadata({ params }: NoteSharePageProps): Promise<
           alt: title,
         },
       ],
-      locale: 'ja_JP',
+      locale: localeCode,
       type: 'article',
     },
     twitter: {

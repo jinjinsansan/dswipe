@@ -82,6 +82,20 @@
     "backToNotes": "← AllNOTESへ戻る",
     "editNote": "NOTE編集"
   },
+  "noteRenderer": {
+    "paidAreaLabel": "ここから先は有料エリアです",
+    "linkFallback": "リンク"
+  },
+  "noteShare": {
+    "metadata": {
+      "notFoundTitle": "限定公開NOTE | D-swipe",
+      "notFoundDescription": "限定公開のNOTEページです。",
+      "defaultTitle": "限定公開NOTE",
+      "defaultDescription": "限定共有リンクを知っている人だけが閲覧できるNOTEです。",
+      "titleTemplate": "{title} | 限定公開NOTE",
+      "siteName": "D-swipe"
+    }
+  },
   "shareUnlock": {
     "checking": "確認中...",
     "defaultUsername": "公式アカウント",

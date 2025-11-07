@@ -82,6 +82,20 @@
     "backToNotes": "← Back to All Notes",
     "editNote": "Edit NOTE"
   },
+  "noteRenderer": {
+    "paidAreaLabel": "Paid readers only beyond this point",
+    "linkFallback": "Link"
+  },
+  "noteShare": {
+    "metadata": {
+      "notFoundTitle": "Private NOTE | D-swipe",
+      "notFoundDescription": "This is a private NOTE page.",
+      "defaultTitle": "Private NOTE",
+      "defaultDescription": "Only those with the shared link can view this NOTE.",
+      "titleTemplate": "{title} | Private NOTE",
+      "siteName": "D-swipe"
+    }
+  },
   "shareUnlock": {
     "checking": "Checking...",
     "defaultUsername": "official",

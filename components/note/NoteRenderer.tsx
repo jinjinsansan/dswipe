@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import type { NoteBlock } from '@/types';
 import { getFontStack } from '@/lib/fonts';
+import { useTranslations } from 'next-intl';
 
 interface NoteRendererProps {
   blocks: NoteBlock[];
@@ -11,6 +12,7 @@ interface NoteRendererProps {
 }
 
 export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRendererProps) {
+  const t = useTranslations('noteRenderer');
   // 無料エリアと有料エリアを分ける
   const freeBlocks = blocks.filter(block => block.access !== 'paid');
   const paidBlocks = blocks.filter(block => block.access === 'paid');
@@ -109,7 +111,7 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
               />
             ) : null}
             <div className="flex flex-col gap-1 px-4 py-3">
-              <span className="text-sm font-semibold text-slate-900 line-clamp-2">{ogTitle || url || 'リンク'}</span>
+              <span className="text-sm font-semibold text-slate-900 line-clamp-2">{ogTitle || url || t('linkFallback')}</span>
               {ogDescription ? (
                 <span className="text-xs text-slate-600 line-clamp-2">{ogDescription}</span>
               ) : null}
@@ -182,7 +184,7 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
             <div className="relative flex justify-center">
               <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
                 <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
-                <span className="text-sm font-bold text-amber-900">ここから先は有料エリアです</span>
+                <span className="text-sm font-bold text-amber-900">{t('paidAreaLabel')}</span>
               </div>
             </div>
           </div>
