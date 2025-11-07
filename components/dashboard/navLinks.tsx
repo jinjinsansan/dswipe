@@ -18,6 +18,7 @@ import {
   UserGroupIcon,
   ShoppingBagIcon,
   UserCircleIcon,
+  ShareIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
@@ -213,6 +214,7 @@ export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
   { href: '/purchases', label: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
   { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
   { href: '/settings', label: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
+  { href: '/settings/share', label: '共有機能', icon: <ShareIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 30 },
   { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
   { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
   { href: '/tokusho', label: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },

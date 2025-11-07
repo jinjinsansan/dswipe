@@ -14,6 +14,7 @@ import {
   ClipboardDocumentListIcon,
   ShieldCheckIcon,
   MegaphoneIcon,
+  ShareIcon,
 } from '@heroicons/react/24/outline';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
@@ -87,6 +88,7 @@ const MOBILE_LABEL_MAP: Record<string, string> = {
   '/media': 'メディア',
   '/line/bonus': 'LINE連携',
   '/settings': 'X連携',
+  '/settings/share': '共有',
   '/admin': '管理',
   '/terms': '利用規約',
   '/privacy': 'プライバシー',
@@ -288,6 +290,14 @@ export default function DashboardHeader({
           { kind: 'link', href: '/profile', groupOverride: 'line', labelOverride: 'プロフィール' },
           { kind: 'link', href: '/line/bonus', groupOverride: 'line', labelOverride: 'LINE連携' },
           { kind: 'link', href: '/settings', groupOverride: 'line', labelOverride: 'X連携' },
+          {
+            kind: 'customLink',
+            key: 'account-share',
+            href: '/settings/share',
+            label: '共有機能',
+            icon: resolveIcon('/settings/share', <ShareIcon className="h-6 w-6" aria-hidden="true" />),
+            groupKey: 'line' as DashboardNavGroupKey,
+          },
           {
             kind: 'customLink',
             key: 'sales-history',
