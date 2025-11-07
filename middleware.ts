@@ -5,6 +5,8 @@ const PUBLIC_FILE = /\.[^/]+$/;
 const LOCALE_PREFIX = '/en';
 const DEFAULT_LOCALE: 'ja' = 'ja';
 
+const SUPPORTED_EN_PREFIX = '/notes';
+
 function normalizeCookieLocale(value: string | undefined) {
   if (!value) return undefined;
   return SUPPORTED_LOCALES.has(value) ? (value as 'ja' | 'en') : undefined;
@@ -26,6 +28,8 @@ export function middleware(request: NextRequest) {
 
   const cookieLocale = normalizeCookieLocale(request.cookies.get('NEXT_LOCALE')?.value);
   const isEnglishPath = pathname.startsWith(LOCALE_PREFIX);
+  const normalizedPath = isEnglishPath ? pathname.slice(LOCALE_PREFIX.length) || '/' : pathname;
+  const isSupportedPath = normalizedPath.startsWith(SUPPORTED_EN_PREFIX);
 
   if (isEnglishPath) {
     const response = NextResponse.next();
@@ -35,7 +39,7 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  if (cookieLocale === 'en') {
+  if (cookieLocale === 'en' && isSupportedPath) {
     const url = request.nextUrl.clone();
     url.pathname = buildPrefixedPath(pathname);
     const response = NextResponse.redirect(url);
@@ -51,5 +55,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/:path*'],
+  matcher: ['/notes/:path*', '/en/notes/:path*'],
 };

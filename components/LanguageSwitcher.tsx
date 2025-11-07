@@ -9,24 +9,37 @@ import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 const LOCALE_PREFIX = '/en';
+const EN_SUPPORTED_BASE_PREFIX = '/notes';
+const DEFAULT_EN_DESTINATION = '/en/notes';
 
-function resolvePathname(pathname: string, targetLocale: 'ja' | 'en') {
-  if (targetLocale === 'en') {
-    if (pathname === '/' || pathname === '') {
-      return LOCALE_PREFIX;
-    }
-    if (pathname.startsWith(LOCALE_PREFIX)) {
-      return pathname;
-    }
-    return `${LOCALE_PREFIX}${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
-  }
+const ensureLeadingSlash = (value: string) => (value.startsWith('/') ? value : `/${value}`);
 
+function stripLocalePrefix(pathname: string) {
   if (pathname.startsWith(LOCALE_PREFIX)) {
     const stripped = pathname.slice(LOCALE_PREFIX.length) || '/';
-    return stripped.startsWith('/') ? stripped : `/${stripped}`;
+    return ensureLeadingSlash(stripped);
+  }
+  return pathname || '/';
+}
+
+function resolvePathname(pathname: string, targetLocale: 'ja' | 'en') {
+  const safePath = pathname || '/';
+  if (targetLocale === 'en') {
+    const normalized = stripLocalePrefix(safePath);
+    if (!normalized.startsWith(EN_SUPPORTED_BASE_PREFIX)) {
+      return DEFAULT_EN_DESTINATION;
+    }
+    if (safePath.startsWith(LOCALE_PREFIX)) {
+      return safePath;
+    }
+    return `${LOCALE_PREFIX}${ensureLeadingSlash(normalized)}`;
   }
 
-  return pathname || '/';
+  if (safePath.startsWith(LOCALE_PREFIX)) {
+    return stripLocalePrefix(safePath);
+  }
+
+  return safePath;
 }
 
 export default function LanguageSwitcher() {
