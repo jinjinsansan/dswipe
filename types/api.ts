@@ -118,6 +118,17 @@ export type {
   SalonRoleUpdatePayload,
   SalonRoleAssignPayload,
   SubscriptionSessionStatusResponse,
+  AccountShareOwnerShare,
+  AccountShareDelegateShare,
+  AccountShareOwnerListResponse,
+  AccountShareDelegateListResponse,
+  AccountShareInviteRequest,
+  AccountShareInviteResponse,
+  AccountShareAcceptResponse,
+  AccountAccessibleOwner,
+  AccountAccessibleOwnersResponse,
+  AccountShareSessionRequest,
+  AccountShareSessionResponse,
 } from './index';
 
 export interface PointsBalance {

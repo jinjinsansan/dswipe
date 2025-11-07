@@ -13,6 +13,77 @@ export interface User {
   last_login_at?: string | null;
 }
 
+export interface AccountShareOwnerShare {
+  share_id: string;
+  delegate_user_id: string;
+  delegate_email?: string | null;
+  delegate_username?: string | null;
+  status: 'pending' | 'active' | 'revoked';
+  invited_at: string;
+  accepted_at?: string | null;
+  expires_at: string;
+}
+
+export interface AccountShareDelegateShare {
+  share_id: string;
+  owner_user_id: string;
+  owner_email?: string | null;
+  owner_username?: string | null;
+  status: 'pending' | 'active' | 'revoked';
+  invited_at: string;
+  accepted_at?: string | null;
+  expires_at: string;
+}
+
+export interface AccountShareOwnerListResponse {
+  shares: AccountShareOwnerShare[];
+}
+
+export interface AccountShareDelegateListResponse {
+  shares: AccountShareDelegateShare[];
+}
+
+export interface AccountShareInviteRequest {
+  email: string;
+}
+
+export interface AccountShareInviteResponse {
+  share_id: string;
+  status: 'pending' | 'active' | 'revoked';
+  expires_at: string;
+  invite_url: string;
+}
+
+export interface AccountShareAcceptResponse {
+  share_id: string;
+  owner_user_id: string;
+  delegate_user_id: string;
+  status: 'pending' | 'active' | 'revoked';
+  accepted_at: string;
+}
+
+export interface AccountAccessibleOwner {
+  owner_user_id: string;
+  owner_email?: string | null;
+  owner_username?: string | null;
+  is_self: boolean;
+}
+
+export interface AccountAccessibleOwnersResponse {
+  owners: AccountAccessibleOwner[];
+}
+
+export interface AccountShareSessionRequest {
+  owner_user_id: string;
+}
+
+export interface AccountShareSessionResponse {
+  owner_user_id: string;
+  delegate_user_id?: string | null;
+  access_token: string;
+  expires_in: number;
+}
+
 export interface PublicUserProfile {
   username: string;
   bio?: string | null;

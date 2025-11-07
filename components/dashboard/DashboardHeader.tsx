@@ -22,6 +22,7 @@ import {
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
 import { useOperatorMessageStore } from '@/store/operatorMessageStore';
+import { AccountSwitcher } from '@/components/account/AccountSwitcher';
 
 const KNOWN_SITE_ORIGINS = [
   typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined,
@@ -430,6 +431,7 @@ export default function DashboardHeader({
           <div className="hidden sm:flex items-center space-x-4">
             {user ? (
               <>
+                <AccountSwitcher />
                 <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200 min-w-[150px] justify-between">
                   <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
                   {renderBalanceValue()}
@@ -465,6 +467,7 @@ export default function DashboardHeader({
           <div className="sm:hidden flex items-center space-x-3">
             {user ? (
               <>
+                <AccountSwitcher className="flex-1" buttonClassName="w-full" />
                 <div className="text-right">
                   {isBalanceLoading ? (
                     <span className="inline-flex items-center gap-2">

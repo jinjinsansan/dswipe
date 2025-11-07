@@ -84,6 +84,14 @@ import type {
   OperatorMessageHideRequest,
   OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
+  AccountShareOwnerListResponse,
+  AccountShareDelegateListResponse,
+  AccountShareInviteRequest,
+  AccountShareInviteResponse,
+  AccountShareAcceptResponse,
+  AccountAccessibleOwnersResponse,
+  AccountShareSessionRequest,
+  AccountShareSessionResponse,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -460,6 +468,19 @@ export const salesApi = {
     note_limit?: number;
     salon_limit?: number;
   }) => api.get<SalesHistoryResponse>('/sales/history', { params }),
+};
+
+export const accountShareApi = {
+  listOwnerShares: () => api.get<AccountShareOwnerListResponse>('/account-share'),
+  listDelegateShares: () => api.get<AccountShareDelegateListResponse>('/account-share/delegated'),
+  listAccessibleOwners: () => api.get<AccountAccessibleOwnersResponse>('/account-share/accessible'),
+  invite: (payload: AccountShareInviteRequest) =>
+    api.post<AccountShareInviteResponse>('/account-share/invitations', payload),
+  acceptInvitation: (token: string) =>
+    api.post<AccountShareAcceptResponse>(`/account-share/invitations/${token}/accept`),
+  revoke: (shareId: string) => api.delete(`/account-share/${shareId}`),
+  createSession: (payload: AccountShareSessionRequest) =>
+    api.post<AccountShareSessionResponse>('/account-share/sessions', payload),
 };
 
 export const platformSettingsApi = {
