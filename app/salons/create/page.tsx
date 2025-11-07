@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -42,6 +43,8 @@ const INITIAL_FORM: FormState = {
 
 export default function SalonCreatePage() {
   const router = useRouter();
+  const t = useTranslations("salons.create");
+  const formatter = useFormatter();
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [usedPlanIds, setUsedPlanIds] = useState<Set<string>>(new Set());
@@ -81,7 +84,7 @@ export default function SalonCreatePage() {
       } catch (requestError: any) {
         console.error("Failed to initialize salon creation", requestError);
         const detail = requestError?.response?.data?.detail;
-        setError(typeof detail === "string" ? detail : "サロン作成に必要な情報を取得できませんでした");
+        setError(typeof detail === "string" ? detail : t("errors.initFailed"));
       } finally {
         setIsLoading(false);
       }
@@ -107,11 +110,11 @@ export default function SalonCreatePage() {
     setSuccessMessage(null);
 
     if (!form.title.trim()) {
-      setError("サロン名を入力してください");
+      setError(t("errors.titleRequired"));
       return;
     }
     if (!form.subscription_plan_id) {
-      setError("紐付けるサブスクプランを選択してください");
+      setError(t("errors.planRequired"));
       return;
     }
 
@@ -119,17 +122,17 @@ export default function SalonCreatePage() {
     const allowJpy = form.allow_jpy_subscription;
 
     if (!allowPoint && !allowJpy) {
-      setError("少なくとも1つの決済方法を有効にしてください");
+      setError(t("errors.paymentMethodRequired"));
       return;
     }
 
     if (allowJpy) {
       if (!selectedPlan) {
-        setError("日本円サブスクを有効にするにはサブスクプランを選択してください");
+        setError(t("errors.jpyRequiresPlan"));
         return;
       }
       if (!Number.isFinite(selectedPlan.points) || selectedPlan.points <= 0) {
-        setError("選択したプランのポイント数が正しく設定されていません");
+        setError(t("errors.planPointsInvalid"));
         return;
       }
     }
@@ -137,7 +140,7 @@ export default function SalonCreatePage() {
     const taxRateInput = form.tax_rate.trim();
     const parsedTaxRate = taxRateInput === "" ? null : Number(taxRateInput);
     if (parsedTaxRate !== null && (Number.isNaN(parsedTaxRate) || parsedTaxRate < 0 || parsedTaxRate > 100)) {
-      setError("消費税率は0〜100の範囲で入力してください");
+      setError(t("errors.taxRateRange"));
       return;
     }
 
@@ -157,7 +160,7 @@ export default function SalonCreatePage() {
 
       const response = await salonApi.create(payload);
       const created = response.data as Salon;
-      setSuccessMessage("サロンを作成しました。詳細ページに移動します。");
+      setSuccessMessage(t("messages.created"));
 
       setTimeout(() => {
         router.replace(`/salons/${created.id}`);
@@ -165,7 +168,7 @@ export default function SalonCreatePage() {
     } catch (submitError: any) {
       console.error("Failed to create salon", submitError);
       const detail = submitError?.response?.data?.detail;
-      setError(typeof detail === "string" ? detail : "サロンの作成に失敗しました");
+      setError(typeof detail === "string" ? detail : t("errors.createFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -177,8 +180,8 @@ export default function SalonCreatePage() {
 
   return (
     <DashboardLayout
-      pageTitle="サロン新規作成"
-      pageSubtitle="サロン名称とサブスクプランを設定するとオンラインサロンを開始できます"
+      pageTitle={t("pageTitle")}
+      pageSubtitle={t("pageSubtitle")}
       requireAuth
     >
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
@@ -187,7 +190,7 @@ export default function SalonCreatePage() {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-700"
         >
           <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-          サロン一覧に戻る
+          {t("nav.backToList")}
         </Link>
 
         {error ? (
@@ -208,52 +211,52 @@ export default function SalonCreatePage() {
           <div className="space-y-6">
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                サロン名
+                {t("labels.title")}
               </label>
               <input
                 type="text"
                 value={form.title}
                 onChange={(event) => handleChange("title", event.target.value)}
-                placeholder="例：デジタルクリエイターズラボ"
+                placeholder={t("placeholders.title")}
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                サロン概要
+                {t("labels.description")}
               </label>
               <textarea
                 value={form.description}
                 onChange={(event) => handleChange("description", event.target.value)}
                 rows={4}
-                placeholder="サロン内容や特典を記載してください"
+                placeholder={t("placeholders.description")}
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                サムネイルURL (任意)
+                {t("labels.thumbnail")}
               </label>
               <input
                 type="url"
                 value={form.thumbnail_url}
                 onChange={(event) => handleChange("thumbnail_url", event.target.value)}
-                placeholder="https://example.com/thumbnail.jpg"
+                placeholder={t("placeholders.thumbnail")}
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
-              <p className="text-xs text-slate-400">Mediaライブラリの画像URLなどを設定できます。</p>
+              <p className="text-xs text-slate-400">{t("helpers.thumbnail")}</p>
             </div>
 
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                サブスクプラン
+                {t("labels.plan")}
               </label>
               <div className="grid gap-3">
                 {availablePlans.length === 0 ? (
                   <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                    サブスクプランが見つかりません。事前にONE.lat側でプランを設定してください。
+                    {t("helpers.noPlans")}
                   </p>
                 ) : (
                   availablePlans.map((plan) => {
@@ -274,10 +277,13 @@ export default function SalonCreatePage() {
                       >
                         <span className="text-sm font-semibold text-slate-900">{plan.label}</span>
                         <span className="text-xs text-slate-500">
-                          {plan.points.toLocaleString("ja-JP")}pt / ${plan.usd_amount.toFixed(2)}
+                          {t("plan.summary", {
+                            points: formatter.number(plan.points ?? 0),
+                            usd: plan.usd_amount.toFixed(2),
+                          })}
                         </span>
                         {isDisabled ? (
-                          <span className="mt-1 text-xs font-semibold text-rose-500">このプランは既に利用中です</span>
+                          <span className="mt-1 text-xs font-semibold text-rose-500">{t("plan.inUse")}</span>
                         ) : null}
                       </button>
                     );
@@ -294,10 +300,8 @@ export default function SalonCreatePage() {
             <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 sm:px-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">決済方法設定</div>
-                  <p className="text-xs text-slate-500">
-                    ポイント／日本円どちらで会費を徴収するか選択し、必要に応じて価格と税率を設定してください。
-                  </p>
+                  <div className="text-sm font-semibold text-slate-900">{t("sections.payment.title")}</div>
+                  <p className="text-xs text-slate-500">{t("sections.payment.description")}</p>
                 </div>
               </div>
 
@@ -305,8 +309,8 @@ export default function SalonCreatePage() {
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">ポイントサブスク</div>
-                      <p className="text-xs text-slate-500">ONE.latプランと連携したポイント決済を利用します。</p>
+                      <div className="text-sm font-semibold text-slate-900">{t("sections.payment.point.title")}</div>
+                      <p className="text-xs text-slate-500">{t("sections.payment.point.description")}</p>
                     </div>
                     <label className="inline-flex items-center gap-2 text-sm text-slate-700">
                       <input
@@ -315,19 +319,17 @@ export default function SalonCreatePage() {
                         onChange={(event) => handleChange("allow_point_subscription", event.target.checked)}
                         className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
                       />
-                      有効化
+                      {t("toggles.enable")}
                     </label>
                   </div>
-                  <p className="mt-3 text-xs text-slate-500">
-                    ポイント決済を無効にして日本円のみで運用したい場合はチェックを外してください。
-                  </p>
+                  <p className="mt-3 text-xs text-slate-500">{t("sections.payment.point.helper")}</p>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">日本円サブスク</div>
-                      <p className="text-xs text-slate-500">one.latの月額決済を利用して日本円で課金します。</p>
+                      <div className="text-sm font-semibold text-slate-900">{t("sections.payment.jpy.title")}</div>
+                      <p className="text-xs text-slate-500">{t("sections.payment.jpy.description")}</p>
                     </div>
                     <label className="inline-flex items-center gap-2 text-sm text-slate-700">
                       <input
@@ -336,7 +338,7 @@ export default function SalonCreatePage() {
                         onChange={(event) => handleChange("allow_jpy_subscription", event.target.checked)}
                         className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
                       />
-                      有効化
+                      {t("toggles.enable")}
                     </label>
                   </div>
                   <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
@@ -344,26 +346,28 @@ export default function SalonCreatePage() {
                       <div className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900">
                         <span>
                           {selectedPlan && form.allow_jpy_subscription
-                            ? `${selectedPlan.points.toLocaleString("ja-JP")} 円 / 月`
-                            : "プラン選択で自動計算"}
+                            ? t("sections.payment.jpy.priceComputed", {
+                                amount: formatter.number(selectedPlan.points ?? 0),
+                              })
+                            : t("sections.payment.jpy.pricePlaceholder")}
                         </span>
                       </div>
                     </div>
-                  <div className="text-xs text-slate-500">
-                    <p>ONE.lat側のプランポイント数をそのまま日本円表示に利用します。</p>
-                    <p>税込・税抜の表示は下記の税設定に準拠します。</p>
-                    {form.allow_jpy_subscription && !selectedPlan ? (
-                      <span className="mt-1 block text-rose-500">先にサブスクプランを選択してください。</span>
-                    ) : null}
-                  </div>
+                    <div className="text-xs text-slate-500">
+                      <p>{t("sections.payment.jpy.helperLine1")}</p>
+                      <p>{t("sections.payment.jpy.helperLine2")}</p>
+                      {form.allow_jpy_subscription && !selectedPlan ? (
+                        <span className="mt-1 block text-rose-500">{t("sections.payment.jpy.selectPlanWarning")}</span>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">税込表示設定</div>
-                      <p className="text-xs text-slate-500">日本円決済の表示と決済データに反映される税率を設定します。</p>
+                      <div className="text-sm font-semibold text-slate-900">{t("sections.tax.title")}</div>
+                      <p className="text-xs text-slate-500">{t("sections.tax.description")}</p>
                     </div>
                     <label className="inline-flex items-center gap-2 text-sm text-slate-700">
                       <input
@@ -372,17 +376,17 @@ export default function SalonCreatePage() {
                         onChange={(event) => handleChange("tax_inclusive", event.target.checked)}
                         className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
                       />
-                      税込として扱う
+                      {t("toggles.taxInclusive")}
                     </label>
                   </div>
                   <div className="mt-3">
-                    <label className="mb-2 block text-xs font-semibold text-slate-600">消費税率</label>
+                    <label className="mb-2 block text-xs font-semibold text-slate-600">{t("labels.taxRate")}</label>
                     <input
                       type="number"
                       min="0"
                       max="100"
                       step="0.1"
-                      placeholder="10"
+                      placeholder={t("placeholders.taxRate")}
                       value={form.tax_rate}
                       onChange={(event) => handleChange("tax_rate", event.target.value)}
                       className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
@@ -397,7 +401,7 @@ export default function SalonCreatePage() {
                 href="/salons"
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
               >
-                キャンセル
+                {t("actions.cancel")}
               </Link>
               <button
                 type="button"
@@ -405,7 +409,7 @@ export default function SalonCreatePage() {
                 onClick={handleSubmit}
                 className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "作成中..." : "サロンを作成"}
+                {isSubmitting ? t("actions.creating") : t("actions.submit")}
               </button>
             </div>
           </div>

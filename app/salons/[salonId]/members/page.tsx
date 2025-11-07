@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   ArrowLeftIcon,
   AdjustmentsHorizontalIcon,
@@ -16,40 +17,20 @@ import type { Salon, SalonMember, SalonMemberListResult } from "@/types/api";
 
 const PAGE_SIZE = 20;
 
-const STATUS_META: Record<string, { label: string; className: string }> = {
-  ACTIVE: {
-    label: "有効",
-    className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-  },
-  PENDING: {
-    label: "保留",
-    className: "bg-amber-50 text-amber-600 border border-amber-200",
-  },
-  UNPAID: {
-    label: "未入金",
-    className: "bg-rose-50 text-rose-600 border border-rose-200",
-  },
-  CANCELED: {
-    label: "解約",
-    className: "bg-slate-100 text-slate-500 border border-slate-200",
-  },
-  CANCELLED: {
-    label: "解約",
-    className: "bg-slate-100 text-slate-500 border border-slate-200",
-  },
+const STATUS_STYLES: Record<string, string> = {
+  ACTIVE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+  PENDING: "bg-amber-50 text-amber-600 border border-amber-200",
+  UNPAID: "bg-rose-50 text-rose-600 border border-rose-200",
+  CANCELED: "bg-slate-100 text-slate-500 border border-slate-200",
+  CANCELLED: "bg-slate-100 text-slate-500 border border-slate-200",
 };
-
-const statusOptions = [
-  { value: "", label: "すべて" },
-  { value: "ACTIVE", label: "有効" },
-  { value: "PENDING", label: "保留" },
-  { value: "UNPAID", label: "未入金" },
-  { value: "CANCELED", label: "解約" },
-];
 
 export default function SalonMembersPage() {
   const params = useParams<{ salonId: string }>();
   const salonId = params?.salonId;
+  const t = useTranslations("salons.members");
+  const commonT = useTranslations("salons.common");
+  const formatter = useFormatter();
 
   const [salon, setSalon] = useState<Salon | null>(null);
   const [members, setMembers] = useState<SalonMember[]>([]);
@@ -59,6 +40,28 @@ export default function SalonMembersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "", label: t("filters.status.all") },
+      { value: "ACTIVE", label: t("filters.status.active") },
+      { value: "PENDING", label: t("filters.status.pending") },
+      { value: "UNPAID", label: t("filters.status.unpaid") },
+      { value: "CANCELED", label: t("filters.status.cancelled") },
+    ],
+    [t],
+  );
+
+  const statusMeta = useMemo(
+    () => ({
+      ACTIVE: { label: t("status.active"), className: STATUS_STYLES.ACTIVE },
+      PENDING: { label: t("status.pending"), className: STATUS_STYLES.PENDING },
+      UNPAID: { label: t("status.unpaid"), className: STATUS_STYLES.UNPAID },
+      CANCELED: { label: t("status.cancelled"), className: STATUS_STYLES.CANCELED },
+      CANCELLED: { label: t("status.cancelled"), className: STATUS_STYLES.CANCELLED },
+    }),
+    [t],
+  );
 
   useEffect(() => {
     const loadSalon = async () => {
@@ -90,12 +93,12 @@ export default function SalonMembersPage() {
     } catch (memberError: any) {
       console.error("Failed to load members", memberError);
       const detail = memberError?.response?.data?.detail;
-      setError(typeof detail === "string" ? detail : "会員情報の取得に失敗しました");
+      setError(typeof detail === "string" ? detail : t("errors.load"));
     } finally {
       setIsFetching(false);
       setIsLoading(false);
     }
-  }, [page, salonId, statusFilter]);
+  }, [page, salonId, statusFilter, t]);
 
   useEffect(() => {
     fetchMembers();
@@ -104,6 +107,20 @@ export default function SalonMembersPage() {
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(total / PAGE_SIZE));
   }, [total]);
+
+  const formatDateTime = useCallback(
+    (value?: string | null) => {
+      if (!value) {
+        return commonT("placeholders.empty");
+      }
+      try {
+        return formatter.dateTime(new Date(value), { dateStyle: "medium", timeStyle: "short" });
+      } catch (_error) {
+        return value;
+      }
+    },
+    [commonT, formatter],
+  );
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
@@ -116,8 +133,12 @@ export default function SalonMembersPage() {
 
   return (
     <DashboardLayout
-      pageTitle="サロン会員管理"
-      pageSubtitle={salon ? `${salon.title} の会員状況を確認できます` : "サロン会員状況を確認できます"}
+      pageTitle={t("pageTitle")}
+      pageSubtitle={
+        salon
+          ? t("pageSubtitleWithSalon", { title: salon.title || commonT("untitledSalon") })
+          : t("pageSubtitle")
+      }
       requireAuth
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
@@ -126,7 +147,7 @@ export default function SalonMembersPage() {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-700"
         >
           <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-          サロン詳細に戻る
+          {t("nav.backToDetail")}
         </Link>
 
         {error ? (
@@ -140,7 +161,7 @@ export default function SalonMembersPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-slate-500">
-                合計 {total.toLocaleString()} 名の会員が登録されています。
+                {t("summary.total", { count: formatter.number(total) })}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -165,43 +186,43 @@ export default function SalonMembersPage() {
             <table className="min-w-full divide-y divide-slate-100">
               <thead className="bg-slate-50">
                 <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  <th scope="col" className="px-4 py-3">ユーザーID</th>
-                  <th scope="col" className="px-4 py-3">ステータス</th>
-                  <th scope="col" className="px-4 py-3">初回参加</th>
-                  <th scope="col" className="px-4 py-3">次回課金予定</th>
-                  <th scope="col" className="px-4 py-3">最終決済</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.userId")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.status")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.joinedAt")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.nextCharge")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.lastCharge")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
                 {members.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-10 text-center text-sm text-slate-500">
-                      {isFetching ? "読み込み中です..." : "該当する会員が見つかりませんでした。"}
+                      {isFetching ? t("table.loading") : t("table.empty")}
                     </td>
                   </tr>
                 ) : (
                   members.map((member) => {
-                    const status = STATUS_META[member.status?.toUpperCase() ?? ""];
+                    const status = statusMeta[member.status?.toUpperCase() ?? ""];
                     return (
                       <tr key={member.id} className="bg-white">
                         <td className="px-4 py-3 font-mono text-xs text-slate-500">{member.user_id}</td>
                         <td className="px-4 py-3">
                           <span
                             className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                              status?.className ?? "bg-slate-100 text-slate-500 border border-slate-200"
+                              status?.className ?? STATUS_STYLES.CANCELED
                             }`}
                           >
                             {status?.label ?? member.status}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-600">
-                          {member.joined_at ? new Date(member.joined_at).toLocaleString("ja-JP") : "---"}
+                          {formatDateTime(member.joined_at)}
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-600">
-                          {member.next_charge_at ? new Date(member.next_charge_at).toLocaleString("ja-JP") : "---"}
+                          {formatDateTime(member.next_charge_at)}
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-600">
-                          {member.last_charged_at ? new Date(member.last_charged_at).toLocaleString("ja-JP") : "---"}
+                          {formatDateTime(member.last_charged_at)}
                         </td>
                       </tr>
                     );
@@ -214,7 +235,10 @@ export default function SalonMembersPage() {
           <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <UsersIcon className="h-4 w-4" aria-hidden="true" />
-              {total.toLocaleString()}名の会員 / {totalPages}ページ
+              {t("summary.pagination", {
+                count: formatter.number(total),
+                pages: formatter.number(totalPages),
+              })}
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -223,10 +247,10 @@ export default function SalonMembersPage() {
                 disabled={page <= 1 || isFetching}
                 className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                前へ
+                {t("pagination.prev")}
               </button>
               <span className="text-sm text-slate-500">
-                {page} / {totalPages}
+                {t("pagination.pageOf", { current: formatter.number(page), total: formatter.number(totalPages) })}
               </span>
               <button
                 type="button"
@@ -234,7 +258,7 @@ export default function SalonMembersPage() {
                 disabled={page >= totalPages || isFetching}
                 className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                次へ
+                {t("pagination.next")}
               </button>
             </div>
           </div>

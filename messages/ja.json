@@ -248,6 +248,344 @@
       "saveDraft": "下書きを保存"
     }
   },
+  "salons": {
+    "common": {
+      "status": {
+        "active": "公開中",
+        "inactive": "非公開"
+      },
+      "untitledSalon": "無題のサロン",
+      "fields": {
+        "memberCount": "会員数",
+        "memberCountValue": "{count}名",
+        "plan": "課金プラン",
+        "planUnassigned": "未設定",
+        "salonId": "サロンID"
+      },
+      "ownerUnknown": "unknown",
+      "placeholders": {
+        "empty": "---"
+      }
+    },
+    "create": {
+      "pageTitle": "サロン新規作成",
+      "pageSubtitle": "サロン名称とサブスクプランを設定するとオンラインサロンを開始できます",
+      "nav": {
+        "backToList": "サロン一覧に戻る"
+      },
+      "labels": {
+        "title": "サロン名",
+        "description": "サロン概要",
+        "thumbnail": "サムネイルURL (任意)",
+        "plan": "サブスクプラン",
+        "taxRate": "消費税率"
+      },
+      "placeholders": {
+        "title": "例：デジタルクリエイターズラボ",
+        "description": "サロン内容や特典を記載してください",
+        "thumbnail": "https://example.com/thumbnail.jpg",
+        "taxRate": "10"
+      },
+      "helpers": {
+        "thumbnail": "Mediaライブラリの画像URLなどを設定できます。",
+        "noPlans": "サブスクプランが見つかりません。事前にONE.lat側でプランを設定してください。"
+      },
+      "plan": {
+        "summary": "{points}pt / ${usd}",
+        "inUse": "このプランは既に利用中です"
+      },
+      "sections": {
+        "payment": {
+          "title": "決済方法設定",
+          "description": "ポイント／日本円どちらで会費を徴収するか選択し、必要に応じて価格と税率を設定してください。",
+          "point": {
+            "title": "ポイントサブスク",
+            "description": "ONE.latプランと連携したポイント決済を利用します。",
+            "helper": "ポイント決済を無効にして日本円のみで運用したい場合はチェックを外してください。"
+          },
+          "jpy": {
+            "title": "日本円サブスク",
+            "description": "one.latの月額決済を利用して日本円で課金します。",
+            "priceComputed": "{amount} 円 / 月",
+            "pricePlaceholder": "プラン選択で自動計算",
+            "helperLine1": "ONE.lat側のプランポイント数をそのまま日本円表示に利用します。",
+            "helperLine2": "税込・税抜の表示は下記の税設定に準拠します。",
+            "selectPlanWarning": "先にサブスクプランを選択してください。"
+          }
+        },
+        "tax": {
+          "title": "税込表示設定",
+          "description": "日本円決済の表示と決済データに反映される税率を設定します。"
+        }
+      },
+      "toggles": {
+        "enable": "有効化",
+        "taxInclusive": "税込表示として扱う"
+      },
+      "messages": {
+        "created": "サロンを作成しました。詳細ページに移動します。"
+      },
+      "errors": {
+        "initFailed": "サロン作成に必要な情報を取得できませんでした",
+        "titleRequired": "サロン名を入力してください",
+        "planRequired": "紐付けるサブスクプランを選択してください",
+        "paymentMethodRequired": "少なくとも1つの決済方法を有効にしてください",
+        "jpyRequiresPlan": "日本円サブスクを有効にするにはサブスクプランを選択してください",
+        "planPointsInvalid": "選択したプランのポイント数が正しく設定されていません",
+        "taxRateRange": "消費税率は0〜100の範囲で入力してください",
+        "createFailed": "サロンの作成に失敗しました"
+      },
+      "actions": {
+        "cancel": "キャンセル",
+        "creating": "作成中...",
+        "submit": "サロンを作成"
+      }
+    },
+    "list": {
+      "pageTitle": "オンラインサロン管理",
+      "pageSubtitle": "サロンを作成・編集し、会員を管理できます",
+      "summary": {
+        "empty": "まだオンラインサロンは作成されていません。",
+        "count": "{count}件のサロンが登録されています。"
+      },
+      "actions": {
+        "refresh": "再読込",
+        "createSalon": "サロン作成",
+        "createFirstSalon": "サロンを新規作成"
+      },
+      "empty": {
+        "title": "オンラインサロンを開設しましょう",
+        "description": "サロンを作成してサブスク会員に限定コンテンツを公開できます。自動課金で継続収益を構築しましょう。"
+      },
+      "errors": {
+        "loadList": "サロン情報の取得に失敗しました"
+      },
+      "card": {
+        "planSummary": "{points}pt / ${usd}",
+        "actions": {
+          "manage": "詳細・編集",
+          "members": "会員管理"
+        }
+      }
+    },
+    "publicList": {
+      "pageTitle": "AllSalon",
+      "pageSubtitle": "公開中のオンラインサロンを探す",
+      "filters": {
+        "labels": {
+          "category": "カテゴリ",
+          "price": "価格帯",
+          "owner": "オーナー",
+          "sort": "並び替え"
+        },
+        "placeholders": {
+          "category": "例: 投資、競馬",
+          "owner": "ユーザー名で検索"
+        },
+        "price": {
+          "any": "価格帯: 指定なし",
+          "under1000": "〜 ¥1,000",
+          "1000to3000": "¥1,000〜¥3,000",
+          "3000to5000": "¥3,000〜¥5,000",
+          "over5000": "¥5,000以上"
+        },
+        "sort": {
+          "new": "新着順",
+          "popular": "人気順"
+        },
+        "actions": {
+          "apply": "絞り込む",
+          "reset": "条件をクリア"
+        }
+      },
+      "errors": {
+        "load": "公開サロン一覧の取得に失敗しました"
+      },
+      "empty": "条件に一致するサロンが見つかりませんでした。",
+      "card": {
+        "thumbnailAlt": "{title}のサムネイル",
+        "thumbnailFallback": "サムネイル未設定",
+        "featured": "人気",
+        "descriptionFallback": "紹介文は準備中です。",
+        "priceUnconfigured": "プラン未設定",
+        "viewPublic": "公開ページを見る"
+      },
+      "actions": {
+        "loading": "読み込み中...",
+        "loadMore": "もっと見る"
+      }
+    },
+    "detail": {
+      "pageTitle": "サロン詳細",
+      "pageSubtitle": "サロン情報の編集とサブスク導線を管理できます",
+      "errors": {
+        "missingId": "サロンIDが指定されていません",
+        "loadDetail": "サロン情報の取得に失敗しました",
+        "updateFailed": "サロン情報の更新に失敗しました",
+        "notFound": "サロン情報が見つかりませんでした"
+      },
+      "validation": {
+        "titleRequired": "サロン名を入力してください"
+      },
+      "messages": {
+        "updateSuccess": "サロン情報を更新しました"
+      },
+      "delete": {
+        "confirm": "このサロンを削除しますか？会員データやコンテンツは復元できません。",
+        "success": "サロンを削除しました",
+        "error": "サロンの削除に失敗しました",
+        "title": "サロンを削除",
+        "description": "サロンを削除すると関連するお知らせ・アセット・ロール設定も全て削除され、元に戻すことはできません。現在の会員がいる場合は先に解約・退会処理を完了させてください。",
+        "deleting": "削除中...",
+        "button": "サロンを削除する"
+      },
+      "nav": {
+        "backToList": "サロン一覧に戻る"
+      },
+      "sections": {
+        "announcements": {
+          "title": "サロンからのお知らせ",
+          "description": "最新のお知らせやピン留め情報を確認できます。",
+          "manageLink": "お知らせ管理へ",
+          "empty": "現在表示できるお知らせはありません。",
+          "pinned": "ピン留め",
+          "errors": {
+            "load": "お知らせの取得に失敗しました"
+          },
+          "scheduleRange": "{start} 〜 {end}",
+          "scheduleFrom": "{start} 以降",
+          "scheduleUntil": "〜 {end}",
+          "scheduleUnset": "期間指定なし"
+        }
+      },
+      "form": {
+        "fields": {
+          "title": "サロン名",
+          "description": "サロン概要",
+          "thumbnail": "サムネイル",
+          "lp": "紐づけるLP"
+        },
+        "placeholders": {
+          "thumbnail": "https://example.com/thumbnail.jpg"
+        },
+        "actions": {
+          "chooseImage": "画像を選択",
+          "saving": "保存中...",
+          "save": "変更を保存"
+        },
+        "helpers": {
+          "thumbnail": "URL を直接入力するか、画像を選択してください。推奨サイズ 1200×630px。",
+          "lp": "LPを選択すると、そのLPのCTAボタンがこのサロンの公開ページに自動的にリンクされます。"
+        },
+        "thumbnailAlt": "サロンのサムネイル",
+        "thumbnailFallback": "サムネイル未設定",
+        "options": {
+          "noLp": "選択しない"
+        },
+        "visibility": {
+          "title": "公開設定",
+          "description": "非公開にするとサブスク経由の新規会員は追加されません。",
+          "toggle": "公開する"
+        }
+      },
+      "infoPanel": {
+        "title": "サロン情報",
+        "fields": {
+          "memberCount": "会員数",
+          "plan": "課金プラン",
+          "salonId": "サロンID"
+        },
+        "memberCountValue": "{count}名",
+        "planUnassigned": "未設定",
+        "planSummary": "{points}pt / ${usd}"
+      },
+      "shortcuts": {
+        "members": "会員管理ページへ",
+        "feed": "コミュニティフィード",
+        "events": "イベント管理",
+        "announcements": "お知らせ管理",
+        "roles": "ロール管理",
+        "assets": "アセットライブラリ",
+        "copySuccess": "コピーしました",
+        "copyLink": "公開URLをコピー",
+        "openPublic": "公開ページを開く"
+      },
+      "thumbnailPicker": {
+        "closeAria": "サムネイル選択を閉じる",
+        "title": "サムネイル画像を選択",
+        "description": "画像をアップロードするか、ライブラリから選択してください。",
+        "tabs": {
+          "upload": "アップロード",
+          "library": "ライブラリ"
+        },
+        "errors": {
+          "loadAssets": "画像ライブラリの取得に失敗しました",
+          "upload": "サムネイルのアップロードに失敗しました"
+        },
+        "upload": {
+          "label": "画像ファイルを選択",
+          "selectDevice": "デバイスから選択",
+          "selected": "選択中: {name}",
+          "helper": "推奨: JPG / PNG（2MB以内）。アップロードするとアセットライブラリにも保存されます。",
+          "uploading": "アップロード中です…"
+        },
+        "library": {
+          "loading": "画像を読み込み中です…",
+          "empty": "選択できる画像がありません。アップロードしてみましょう。",
+          "thumbnailAlt": "サロン画像",
+          "noPreview": "プレビューなし",
+          "nameFallback": "名称未設定",
+          "visibilityFallback": "MEMBERS"
+        }
+      }
+    },
+    "members": {
+      "pageTitle": "サロン会員管理",
+      "pageSubtitle": "サロン会員状況を確認できます",
+      "pageSubtitleWithSalon": "{title} の会員状況を確認できます",
+      "nav": {
+        "backToDetail": "サロン詳細に戻る"
+      },
+      "filters": {
+        "status": {
+          "all": "すべて",
+          "active": "有効",
+          "pending": "保留",
+          "unpaid": "未入金",
+          "cancelled": "解約"
+        }
+      },
+      "status": {
+        "active": "有効",
+        "pending": "保留",
+        "unpaid": "未入金",
+        "cancelled": "解約"
+      },
+      "errors": {
+        "load": "会員情報の取得に失敗しました"
+      },
+      "summary": {
+        "total": "合計 {count} 名の会員が登録されています。",
+        "pagination": "{count}名の会員 / {pages}ページ"
+      },
+      "columns": {
+        "userId": "ユーザーID",
+        "status": "ステータス",
+        "joinedAt": "初回参加",
+        "nextCharge": "次回課金予定",
+        "lastCharge": "最終決済"
+      },
+      "table": {
+        "loading": "読み込み中です...",
+        "empty": "該当する会員が見つかりませんでした。"
+      },
+      "pagination": {
+        "prev": "前へ",
+        "next": "次へ",
+        "pageOf": "{current} / {total}"
+      }
+    }
+  },
   "noteShare": {
     "metadata": {
       "notFoundTitle": "限定公開NOTE | D-swipe",

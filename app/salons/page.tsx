@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   ArrowPathIcon,
   PlusCircleIcon,
@@ -20,26 +21,32 @@ import type {
 } from "@/types/api";
 import { useAuthStore } from "@/store/authStore";
 
-const statusBadge = (active: boolean) =>
-  active
-    ? {
-        label: "公開中",
-        className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-        Icon: CheckCircleIcon,
-      }
-    : {
-        label: "非公開",
-        className: "bg-slate-100 text-slate-500 border border-slate-200",
-        Icon: XCircleIcon,
-      };
-
 export default function SalonListPage() {
+  const t = useTranslations("salons.list");
+  const commonT = useTranslations("salons.common");
+  const formatter = useFormatter();
   const [salons, setSalons] = useState<Salon[]>([]);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuthStore();
+
+  const getStatusBadge = useCallback(
+    (active: boolean) =>
+      active
+        ? {
+            label: commonT("status.active"),
+            className: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+            Icon: CheckCircleIcon,
+          }
+        : {
+            label: commonT("status.inactive"),
+            className: "bg-slate-100 text-slate-500 border border-slate-200",
+            Icon: XCircleIcon,
+          },
+    [commonT],
+  );
 
   const fetchSalons = useCallback(async () => {
     setError(null);
@@ -59,12 +66,12 @@ export default function SalonListPage() {
     } catch (requestError: any) {
       console.error("Failed to load salons", requestError);
       const detail = requestError?.response?.data?.detail;
-      setError(typeof detail === "string" ? detail : "サロン情報の取得に失敗しました");
+      setError(typeof detail === "string" ? detail : t("errors.loadList"));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchSalons();
@@ -87,8 +94,8 @@ export default function SalonListPage() {
   return (
     <DashboardLayout
       requireAuth
-      pageTitle="オンラインサロン管理"
-      pageSubtitle="サロンを作成・編集し、会員を管理できます"
+      pageTitle={t("pageTitle")}
+      pageSubtitle={t("pageSubtitle")}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -100,8 +107,8 @@ export default function SalonListPage() {
             ) : (
               <p className="text-sm text-slate-500">
                 {salons.length === 0
-                  ? "まだオンラインサロンは作成されていません。"
-                  : `${salons.length}件のサロンが登録されています。`}
+                  ? t("summary.empty")
+                  : t("summary.count", { count: formatter.number(salons.length) })}
               </p>
             )}
           </div>
@@ -113,14 +120,14 @@ export default function SalonListPage() {
               className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <ArrowPathIcon className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden="true" />
-              再読込
+              {t("actions.refresh")}
             </button>
             <Link
               href="/salons/create"
               className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-500"
             >
               <PlusCircleIcon className="h-4 w-4" aria-hidden="true" />
-              サロン作成
+              {t("actions.createSalon")}
             </Link>
           </div>
         </div>
@@ -128,22 +135,20 @@ export default function SalonListPage() {
         {salons.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white px-8 py-16 text-center">
             <UsersIcon className="h-12 w-12 text-slate-300" aria-hidden="true" />
-            <h2 className="mt-4 text-lg font-semibold text-slate-900">オンラインサロンを開設しましょう</h2>
-            <p className="mt-2 max-w-lg text-sm text-slate-500">
-              サロンを作成してサブスク会員に限定コンテンツを公開できます。自動課金で継続収益を構築しましょう。
-            </p>
+            <h2 className="mt-4 text-lg font-semibold text-slate-900">{t("empty.title")}</h2>
+            <p className="mt-2 max-w-lg text-sm text-slate-500">{t("empty.description")}</p>
             <Link
               href="/salons/create"
               className="mt-6 inline-flex items-center gap-2 rounded-full bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-500"
             >
               <PlusCircleIcon className="h-4 w-4" aria-hidden="true" />
-              サロンを新規作成
+              {t("actions.createFirstSalon")}
             </Link>
           </div>
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
             {salons.map((salon) => {
-              const badge = statusBadge(Boolean(salon.is_active));
+              const badge = getStatusBadge(Boolean(salon.is_active));
               const plan = planLabelMap.get(salon.subscription_plan_id ?? "");
               const memberCount = salon.member_count ?? 0;
 
@@ -151,7 +156,7 @@ export default function SalonListPage() {
                 <div key={salon.id} className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-900">{salon.title || '無題のサロン'}</h3>
+                      <h3 className="text-lg font-semibold text-slate-900">{salon.title || commonT("untitledSalon")}</h3>
                       {salon.description ? (
                         <p className="mt-1 text-sm text-slate-500 line-clamp-2">{salon.description}</p>
                       ) : null}
@@ -164,16 +169,19 @@ export default function SalonListPage() {
 
                   <dl className="grid grid-cols-2 gap-3 text-sm text-slate-600">
                     <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">会員数</dt>
-                      <dd className="mt-1 text-base font-semibold text-slate-900">{memberCount.toLocaleString()}名</dd>
+                      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{commonT("fields.memberCount")}</dt>
+                      <dd className="mt-1 text-base font-semibold text-slate-900">{commonT("fields.memberCountValue", { count: formatter.number(memberCount) })}</dd>
                     </div>
                     <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">課金プラン</dt>
+                      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{commonT("fields.plan")}</dt>
                       <dd className="mt-1 text-sm font-semibold text-slate-900">
-                        {plan?.label ?? salon.subscription_plan_id ?? '未設定'}
+                        {plan?.label ?? salon.subscription_plan_id ?? commonT("fields.planUnassigned")}
                       </dd>
                       {plan ? (
-                        <p className="text-xs text-slate-500">{plan.points.toLocaleString()}pt / ${plan.usd_amount.toFixed(2)}</p>
+                        <p className="text-xs text-slate-500">{t("card.planSummary", {
+                          points: formatter.number(Number(plan.points ?? 0)),
+                          usd: plan.usd_amount.toFixed(2),
+                        })}</p>
                       ) : null}
                     </div>
                   </dl>
@@ -183,13 +191,13 @@ export default function SalonListPage() {
                       href={`/salons/${salon.id}`}
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     >
-                      詳細・編集
+                      {t("card.actions.manage")}
                     </Link>
                     <Link
                       href={`/salons/${salon.id}/members`}
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     >
-                      会員管理
+                      {t("card.actions.members")}
                     </Link>
                   </div>
                 </div>

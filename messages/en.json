@@ -248,6 +248,344 @@
       "saveDraft": "Save draft"
     }
   },
+  "salons": {
+    "common": {
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "untitledSalon": "Untitled salon",
+      "fields": {
+        "memberCount": "Members",
+        "memberCountValue": "{count} members",
+        "plan": "Pricing plan",
+        "planUnassigned": "Not set",
+        "salonId": "Salon ID"
+      },
+      "ownerUnknown": "unknown",
+      "placeholders": {
+        "empty": "---"
+      }
+    },
+    "create": {
+      "pageTitle": "Create salon",
+      "pageSubtitle": "Configure the name and subscription plan to launch your online salon",
+      "nav": {
+        "backToList": "Back to salon list"
+      },
+      "labels": {
+        "title": "Salon name",
+        "description": "Salon summary",
+        "thumbnail": "Thumbnail URL (optional)",
+        "plan": "Subscription plan",
+        "taxRate": "Tax rate"
+      },
+      "placeholders": {
+        "title": "e.g. Digital Creators Lab",
+        "description": "Describe the benefits members will receive",
+        "thumbnail": "https://example.com/thumbnail.jpg",
+        "taxRate": "10"
+      },
+      "helpers": {
+        "thumbnail": "You can paste an image URL from the media library.",
+        "noPlans": "No subscription plans found. Please configure plans in ONE.lat first."
+      },
+      "plan": {
+        "summary": "{points}pt / ${usd}",
+        "inUse": "This plan is already in use"
+      },
+      "sections": {
+        "payment": {
+          "title": "Payment methods",
+          "description": "Choose whether to charge in points or JPY, then configure pricing and tax settings.",
+          "point": {
+            "title": "Points subscription",
+            "description": "Use ONE.lat plans for point-based billing.",
+            "helper": "Disable this if you only want to charge in JPY."
+          },
+          "jpy": {
+            "title": "JPY subscription",
+            "description": "Charge in Japanese yen via ONE.lat monthly billing.",
+            "priceComputed": "¥{amount} / month",
+            "pricePlaceholder": "Calculated automatically after selecting a plan",
+            "helperLine1": "Displays the ONE.lat plan point amount as a yen price.",
+            "helperLine2": "Tax inclusive/exclusive display follows the settings below.",
+            "selectPlanWarning": "Select a subscription plan first."
+          }
+        },
+        "tax": {
+          "title": "Tax display",
+          "description": "Configure the tax rate applied to JPY billing."
+        }
+      },
+      "toggles": {
+        "enable": "Enable",
+        "taxInclusive": "Treat price as tax inclusive"
+      },
+      "messages": {
+        "created": "Salon created. Redirecting to the detail page."
+      },
+      "errors": {
+        "initFailed": "Failed to load the required data for salon creation",
+        "titleRequired": "Enter a salon name",
+        "planRequired": "Select a subscription plan to link",
+        "paymentMethodRequired": "Enable at least one payment method",
+        "jpyRequiresPlan": "Select a subscription plan before enabling JPY billing",
+        "planPointsInvalid": "The selected plan's point amount is not configured correctly",
+        "taxRateRange": "Enter a tax rate between 0 and 100",
+        "createFailed": "Failed to create the salon"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "submit": "Create salon"
+      }
+    },
+    "list": {
+      "pageTitle": "Salon management",
+      "pageSubtitle": "Create new salons, edit details, and manage memberships",
+      "summary": {
+        "empty": "No online salons created yet.",
+        "count": "{count} salons registered."
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "createSalon": "Create salon",
+        "createFirstSalon": "Create your first salon"
+      },
+      "empty": {
+        "title": "Launch your online salon",
+        "description": "Create a salon to publish members-only content and build recurring revenue with subscriptions."
+      },
+      "errors": {
+        "loadList": "Failed to load salon information"
+      },
+      "card": {
+        "planSummary": "{points}pt / ${usd}",
+        "actions": {
+          "manage": "View & edit",
+          "members": "Manage members"
+        }
+      }
+    },
+    "publicList": {
+      "pageTitle": "AllSalon",
+      "pageSubtitle": "Discover public online salons",
+      "filters": {
+        "labels": {
+          "category": "Category",
+          "price": "Price range",
+          "owner": "Owner",
+          "sort": "Sort"
+        },
+        "placeholders": {
+          "category": "e.g. Investing, Marketing",
+          "owner": "Search by username"
+        },
+        "price": {
+          "any": "Any price",
+          "under1000": "Up to ¥1,000",
+          "1000to3000": "¥1,000–¥3,000",
+          "3000to5000": "¥3,000–¥5,000",
+          "over5000": "¥5,000+"
+        },
+        "sort": {
+          "new": "Newest",
+          "popular": "Most popular"
+        },
+        "actions": {
+          "apply": "Apply filters",
+          "reset": "Clear filters"
+        }
+      },
+      "errors": {
+        "load": "Failed to load public salons"
+      },
+      "empty": "No salons matched your filters.",
+      "card": {
+        "thumbnailAlt": "{title} thumbnail",
+        "thumbnailFallback": "No thumbnail",
+        "featured": "Featured",
+        "descriptionFallback": "Description coming soon.",
+        "priceUnconfigured": "Plan not set",
+        "viewPublic": "View public page"
+      },
+      "actions": {
+        "loading": "Loading...",
+        "loadMore": "Load more"
+      }
+    },
+    "detail": {
+      "pageTitle": "Salon details",
+      "pageSubtitle": "Edit salon information and manage subscription funnels",
+      "errors": {
+        "missingId": "Salon ID is required",
+        "loadDetail": "Failed to load salon details",
+        "updateFailed": "Failed to update salon details",
+        "notFound": "Salon details not found"
+      },
+      "validation": {
+        "titleRequired": "Enter a salon name"
+      },
+      "messages": {
+        "updateSuccess": "Salon details updated"
+      },
+      "delete": {
+        "confirm": "Delete this salon? Member data and content cannot be recovered.",
+        "success": "Salon deleted",
+        "error": "Failed to delete the salon",
+        "title": "Delete salon",
+        "description": "Deleting a salon removes all announcements, assets, and role settings permanently. Please cancel memberships before continuing.",
+        "deleting": "Deleting...",
+        "button": "Delete salon"
+      },
+      "nav": {
+        "backToList": "Back to salon list"
+      },
+      "sections": {
+        "announcements": {
+          "title": "Salon announcements",
+          "description": "Review the latest announcements and pinned updates.",
+          "manageLink": "Manage announcements",
+          "empty": "No announcements to display.",
+          "pinned": "Pinned",
+          "errors": {
+            "load": "Failed to load announcements"
+          },
+          "scheduleRange": "{start} – {end}",
+          "scheduleFrom": "From {start}",
+          "scheduleUntil": "Until {end}",
+          "scheduleUnset": "No schedule set"
+        }
+      },
+      "form": {
+        "fields": {
+          "title": "Salon name",
+          "description": "Salon summary",
+          "thumbnail": "Thumbnail",
+          "lp": "Linked LP"
+        },
+        "placeholders": {
+          "thumbnail": "https://example.com/thumbnail.jpg"
+        },
+        "actions": {
+          "chooseImage": "Choose image",
+          "saving": "Saving...",
+          "save": "Save changes"
+        },
+        "helpers": {
+          "thumbnail": "Enter a URL directly or choose an image. Recommended size 1200×630px.",
+          "lp": "Linking an LP automatically connects its CTA button to this salon's public page."
+        },
+        "thumbnailAlt": "Salon thumbnail",
+        "thumbnailFallback": "No thumbnail",
+        "options": {
+          "noLp": "Do not link"
+        },
+        "visibility": {
+          "title": "Visibility",
+          "description": "If disabled, new subscribers cannot join.",
+          "toggle": "Set to public"
+        }
+      },
+      "infoPanel": {
+        "title": "Salon info",
+        "fields": {
+          "memberCount": "Members",
+          "plan": "Pricing plan",
+          "salonId": "Salon ID"
+        },
+        "memberCountValue": "{count} members",
+        "planUnassigned": "Not set",
+        "planSummary": "{points}pt / ${usd}"
+      },
+      "shortcuts": {
+        "members": "Go to member management",
+        "feed": "Open community feed",
+        "events": "Manage events",
+        "announcements": "Manage announcements",
+        "roles": "Manage roles",
+        "assets": "Asset library",
+        "copySuccess": "Copied",
+        "copyLink": "Copy public URL",
+        "openPublic": "Open public page"
+      },
+      "thumbnailPicker": {
+        "closeAria": "Close thumbnail picker",
+        "title": "Select a thumbnail image",
+        "description": "Upload a new image or choose one from your library.",
+        "tabs": {
+          "upload": "Upload",
+          "library": "Library"
+        },
+        "errors": {
+          "loadAssets": "Failed to load image library",
+          "upload": "Failed to upload thumbnail"
+        },
+        "upload": {
+          "label": "Choose image file",
+          "selectDevice": "Choose from device",
+          "selected": "Selected: {name}",
+          "helper": "Recommended: JPG / PNG (up to 2MB). Uploaded images are saved to the asset library.",
+          "uploading": "Uploading..."
+        },
+        "library": {
+          "loading": "Loading images...",
+          "empty": "No images available. Upload one to get started.",
+          "thumbnailAlt": "Salon image",
+          "noPreview": "No preview",
+          "nameFallback": "Untitled asset",
+          "visibilityFallback": "MEMBERS"
+        }
+      }
+    },
+    "members": {
+      "pageTitle": "Salon members",
+      "pageSubtitle": "Review current membership status",
+      "pageSubtitleWithSalon": "Review member status for {title}",
+      "nav": {
+        "backToDetail": "Back to salon details"
+      },
+      "filters": {
+        "status": {
+          "all": "All statuses",
+          "active": "Active",
+          "pending": "Pending",
+          "unpaid": "Unpaid",
+          "cancelled": "Cancelled"
+        }
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "unpaid": "Unpaid",
+        "cancelled": "Cancelled"
+      },
+      "errors": {
+        "load": "Failed to load member information"
+      },
+      "summary": {
+        "total": "A total of {count} members are registered.",
+        "pagination": "{count} members / {pages} pages"
+      },
+      "columns": {
+        "userId": "User ID",
+        "status": "Status",
+        "joinedAt": "Joined",
+        "nextCharge": "Next charge",
+        "lastCharge": "Last payment"
+      },
+      "table": {
+        "loading": "Loading...",
+        "empty": "No members found."
+      },
+      "pagination": {
+        "prev": "Previous",
+        "next": "Next",
+        "pageOf": "{current} / {total}"
+      }
+    }
+  },
   "noteShare": {
     "metadata": {
       "notFoundTitle": "Private NOTE | D-swipe",

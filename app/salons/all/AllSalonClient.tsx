@@ -2,24 +2,24 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { PageLoader } from "@/components/LoadingSpinner";
 import { salonPublicApi } from "@/lib/api";
 import type { SalonPublicListItem, SalonPublicListResult } from "@/types/api";
 
 const PAGE_SIZE = 12;
 
-const PRICE_FILTER_OPTIONS: { value: string; label: string }[] = [
-  { value: "", label: "価格帯: 指定なし" },
-  { value: "under_1000", label: "〜 ¥1,000" },
-  { value: "1000_3000", label: "¥1,000〜¥3,000" },
-  { value: "3000_5000", label: "¥3,000〜¥5,000" },
-  { value: "over_5000", label: "¥5,000以上" },
+const PRICE_FILTER_OPTIONS: Array<{ value: string; key: string }> = [
+  { value: "", key: "any" },
+  { value: "under_1000", key: "under1000" },
+  { value: "1000_3000", key: "1000to3000" },
+  { value: "3000_5000", key: "3000to5000" },
+  { value: "over_5000", key: "over5000" },
 ];
 
-const SORT_OPTIONS: { value: "new" | "popular"; label: string }[] = [
-  { value: "new", label: "新着順" },
-  { value: "popular", label: "人気順" },
+const SORT_OPTIONS: Array<{ value: "new" | "popular"; key: string }> = [
+  { value: "new", key: "new" },
+  { value: "popular", key: "popular" },
 ];
 
 interface FilterState {
@@ -30,6 +30,9 @@ interface FilterState {
 }
 
 export default function AllSalonClient() {
+  const t = useTranslations("salons.publicList");
+  const commonT = useTranslations("salons.common");
+  const formatter = useFormatter();
   const [filters, setFilters] = useState<FilterState>({
     category: "",
     price_range: "",
@@ -44,6 +47,16 @@ export default function AllSalonClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const priceFilterOptions = useMemo(
+    () => PRICE_FILTER_OPTIONS.map((option) => ({ value: option.value, label: t(`filters.price.${option.key}`) })),
+    [t],
+  );
+
+  const sortOptions = useMemo(
+    () => SORT_OPTIONS.map((option) => ({ value: option.value, label: t(`filters.sort.${option.key}`) })),
+    [t],
+  );
 
   useEffect(() => {
     setDraftCategory(filters.category);
@@ -99,7 +112,7 @@ export default function AllSalonClient() {
       } catch (requestError: any) {
         console.error("Failed to load public salons", requestError);
         const detail = requestError?.response?.data?.detail;
-        setError(typeof detail === "string" ? detail : "公開サロン一覧の取得に失敗しました");
+        setError(typeof detail === "string" ? detail : t("errors.load"));
         if (!append) {
           setSalons([]);
         }
@@ -138,33 +151,39 @@ export default function AllSalonClient() {
 
   const hasMore = salons.length < total;
 
-  const priceLabel = useCallback((item: SalonPublicListItem) => {
-    if (!item.plan_label) {
-      return "プラン未設定";
-    }
-    return item.plan_label;
-  }, []);
+  const priceLabel = useCallback(
+    (item: SalonPublicListItem) => {
+      if (!item.plan_label) {
+        return t("card.priceUnconfigured");
+      }
+      return item.plan_label;
+    },
+    [t],
+  );
 
-  const formatDate = useCallback((value: string) => {
-    try {
-      return new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "short", day: "numeric" }).format(new Date(value));
-    } catch (_error) {
-      return value;
-    }
-  }, []);
+  const formatDate = useCallback(
+    (value: string) => {
+      try {
+        return formatter.dateTime(new Date(value), { dateStyle: "medium" });
+      } catch (_error) {
+        return value;
+      }
+    },
+    [formatter],
+  );
 
   const categoryOptions = useMemo(() => {
     return categorySuggestions.map((option) => ({ value: option, label: option }));
   }, [categorySuggestions]);
 
   return (
-    <DashboardLayout requireAuth={false} pageTitle="AllSalon" pageSubtitle="公開中のオンラインサロンを探す">
+    <DashboardLayout requireAuth={false} pageTitle={t("pageTitle")} pageSubtitle={t("pageSubtitle")}>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <form className="grid gap-4 md:grid-cols-5" onSubmit={handleFilterSubmit}>
             <div className="md:col-span-2">
               <label htmlFor="category" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                カテゴリ
+                {t("filters.labels.category")}
               </label>
               <input
                 id="category"
@@ -172,7 +191,7 @@ export default function AllSalonClient() {
                 value={draftCategory}
                 onChange={(event) => setDraftCategory(event.target.value)}
                 list="salon-category-options"
-                placeholder="例: 投資、競馬"
+                placeholder={t("filters.placeholders.category")}
                 className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               />
               <datalist id="salon-category-options">
@@ -184,7 +203,7 @@ export default function AllSalonClient() {
 
             <div>
               <label htmlFor="price_range" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                価格帯
+                {t("filters.labels.price")}
               </label>
               <select
                 id="price_range"
@@ -192,7 +211,7 @@ export default function AllSalonClient() {
                 onChange={(event) => setFilters((prev) => ({ ...prev, price_range: event.target.value }))}
                 className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               >
-                {PRICE_FILTER_OPTIONS.map((option) => (
+                {priceFilterOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -202,21 +221,21 @@ export default function AllSalonClient() {
 
             <div>
               <label htmlFor="seller" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                オーナー
+                {t("filters.labels.owner")}
               </label>
               <input
                 id="seller"
                 type="text"
                 value={draftSeller}
                 onChange={(event) => setDraftSeller(event.target.value)}
-                placeholder="ユーザー名で検索"
+                placeholder={t("filters.placeholders.owner")}
                 className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               />
             </div>
 
             <div>
               <label htmlFor="sort" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                並び替え
+                {t("filters.labels.sort")}
               </label>
               <select
                 id="sort"
@@ -226,7 +245,7 @@ export default function AllSalonClient() {
                 }
                 className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               >
-                {SORT_OPTIONS.map((option) => (
+                {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -239,14 +258,14 @@ export default function AllSalonClient() {
                 type="submit"
                 className="inline-flex items-center justify-center rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
               >
-                絞り込む
+                {t("filters.actions.apply")}
               </button>
               <button
                 type="button"
                 onClick={handleResetFilters}
                 className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
               >
-                条件をクリア
+                {t("filters.actions.reset")}
               </button>
             </div>
           </form>
@@ -260,7 +279,7 @@ export default function AllSalonClient() {
 
         {salons.length === 0 && !error ? (
           <div className="rounded-3xl border border-slate-200 bg-white px-8 py-16 text-center shadow-sm">
-            <p className="text-sm text-slate-600">条件に一致するサロンが見つかりませんでした。</p>
+            <p className="text-sm text-slate-600">{t("empty")}</p>
           </div>
         ) : null}
 
@@ -275,12 +294,12 @@ export default function AllSalonClient() {
                   {item.thumbnail_url ? (
                     <img
                       src={item.thumbnail_url}
-                      alt={`${item.title}のサムネイル`}
+                      alt={t("card.thumbnailAlt", { title: item.title })}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-[10px] text-slate-400">
-                      サムネイル未設定
+                      {t("card.thumbnailFallback")}
                     </div>
                   )}
                 </div>
@@ -289,7 +308,7 @@ export default function AllSalonClient() {
                     <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                         {item.is_featured ? (
                           <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
-                            人気
+                            {t("card.featured")}
                           </span>
                         ) : null}
                       {item.category ? (
@@ -301,18 +320,18 @@ export default function AllSalonClient() {
                         {formatDate(item.created_at)}
                       </span>
                       <span className="text-[10px] text-slate-400 md:text-[11px]">
-                        {item.plan_label}
+                        {priceLabel(item)}
                       </span>
                     </div>
                     <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">{item.title}</h3>
                     {item.description ? (
                       <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">{item.description}</p>
                     ) : (
-                      <p className="text-xs text-slate-500 md:text-sm">紹介文は準備中です。</p>
+                      <p className="text-xs text-slate-500 md:text-sm">{t("card.descriptionFallback")}</p>
                     )}
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-400 md:text-xs">
-                    <span className="font-medium text-slate-500">@{item.owner_username ?? 'unknown'}</span>
+                    <span className="font-medium text-slate-500">@{item.owner_username ?? commonT("ownerUnknown")}</span>
                     <span className="font-semibold text-sky-600">{priceLabel(item)}</span>
                   </div>
                 </div>
@@ -320,7 +339,7 @@ export default function AllSalonClient() {
                   href={`/salons/${item.id}/public`}
                   className="hidden text-sm font-semibold text-sky-700 md:flex md:w-full md:items-center md:justify-center md:bg-sky-50 md:py-3 md:transition md:hover:bg-sky-100"
                 >
-                  公開ページを見る
+                  {t("card.viewPublic")}
                 </Link>
               </article>
             ))}
@@ -335,7 +354,7 @@ export default function AllSalonClient() {
                   disabled={isLoadingMore}
                   className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isLoadingMore ? "読み込み中..." : "もっと見る"}
+                  {isLoadingMore ? t("actions.loading") : t("actions.loadMore")}
                 </button>
           </div>
         ) : null}
