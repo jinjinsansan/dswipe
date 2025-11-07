@@ -9,30 +9,33 @@ import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 const LOCALE_PREFIX = '/en';
-const EN_SUPPORTED_BASE_PREFIX = '/notes';
-const DEFAULT_EN_DESTINATION = '/en/notes';
+const EN_SUPPORTED_PREFIXES = ['/notes'];
 
 const ensureLeadingSlash = (value: string) => (value.startsWith('/') ? value : `/${value}`);
 
-function stripLocalePrefix(pathname: string) {
+const stripLocalePrefix = (pathname: string) => {
   if (pathname.startsWith(LOCALE_PREFIX)) {
     const stripped = pathname.slice(LOCALE_PREFIX.length) || '/';
     return ensureLeadingSlash(stripped);
   }
   return pathname || '/';
-}
+};
+
+const usesEnglishPathPrefix = (pathname: string) => {
+  const base = ensureLeadingSlash(stripLocalePrefix(pathname));
+  return EN_SUPPORTED_PREFIXES.some((prefix) => base === prefix || base.startsWith(`${prefix}/`));
+};
 
 function resolvePathname(pathname: string, targetLocale: 'ja' | 'en') {
   const safePath = pathname || '/';
   if (targetLocale === 'en') {
-    const normalized = stripLocalePrefix(safePath);
-    if (!normalized.startsWith(EN_SUPPORTED_BASE_PREFIX)) {
-      return DEFAULT_EN_DESTINATION;
-    }
     if (safePath.startsWith(LOCALE_PREFIX)) {
       return safePath;
     }
-    return `${LOCALE_PREFIX}${ensureLeadingSlash(normalized)}`;
+    if (usesEnglishPathPrefix(safePath)) {
+      return `${LOCALE_PREFIX}${ensureLeadingSlash(stripLocalePrefix(safePath))}`;
+    }
+    return ensureLeadingSlash(stripLocalePrefix(safePath));
   }
 
   if (safePath.startsWith(LOCALE_PREFIX)) {
