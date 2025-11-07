@@ -61,6 +61,7 @@ export default function LanguageSwitcher() {
     const nextPath = resolvePathname(pathname, nextLocale);
     const queryString = searchParams?.toString();
     const href = queryString ? `${nextPath}?${queryString}` : nextPath;
+    const currentHref = queryString ? `${pathname}?${queryString}` : pathname;
 
     document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000`;
 
@@ -82,7 +83,11 @@ export default function LanguageSwitcher() {
     }
 
     startTransition(() => {
-      router.push(href);
+      if (href === currentHref) {
+        router.refresh();
+      } else {
+        router.push(href);
+      }
     });
   };
 
