@@ -86,6 +86,168 @@
     "paidAreaLabel": "Paid readers only beyond this point",
     "linkFallback": "Link"
   },
+  "noteEditor": {
+    "fields": {
+      "font": "Font",
+      "textColor": "Text color",
+      "headingSize": "Size:",
+      "spacerHeight": "Height"
+    },
+    "fonts": {
+      "system": "Standard (Smart match)",
+      "sans": "Sans serif (Clean)",
+      "serif": "Serif (Classic)",
+      "rounded": "Rounded (Soft)",
+      "mono": "Monospace (Tech)"
+    },
+    "buttons": {
+      "reset": "Reset",
+      "uploadImage": "Upload image",
+      "chooseFromMedia": "Choose from media"
+    },
+    "textColors": {
+      "dark": "Dark (Default)",
+      "slate": "Slate",
+      "midnight": "Midnight",
+      "sky": "Sky blue",
+      "blue": "Blue",
+      "purple": "Purple",
+      "red": "Red",
+      "emerald": "Emerald",
+      "amber": "Amber",
+      "gray": "Gray"
+    },
+    "alerts": {
+      "imageUploadFailed": "Failed to upload the image. Please try again later."
+    },
+    "errors": {
+      "uploadMissingUrl": "Upload response does not contain a URL",
+      "imageUploadFailed": "Failed to upload image"
+    },
+    "blockMeta": {
+      "paid": "Paid block",
+      "free": "Free block"
+    },
+    "placeholders": {
+      "paragraph": "Enter content",
+      "heading": "Enter heading",
+      "quote": "Enter quotation",
+      "quoteCite": "Citation (optional)",
+      "imageUrl": "Image URL",
+      "imageCaption": "Caption (optional)",
+      "listItems": "Enter list items one per line\nExample:\n- Benefit 1\n- Benefit 2",
+      "linkTitle": "Link title",
+      "linkDescription": "Link description (optional)"
+    },
+    "status": {
+      "uploading": "Uploading..."
+    },
+    "headingSizes": {
+      "h2": "Large",
+      "h3": "Medium"
+    },
+    "spacerSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "actions": {
+      "addBlock": "Add block"
+    },
+    "blockTypes": {
+      "paragraph": "Paragraph",
+      "heading": "Heading",
+      "quote": "Quote",
+      "image": "Image",
+      "divider": "Divider",
+      "list": "List",
+      "link": "Link",
+      "spacer": "Spacer"
+    }
+  },
+  "noteCreate": {
+    "pageTitle": "Create NOTE",
+    "pageSubtitle": "Compose note-style articles with flexible content blocks",
+    "labels": {
+      "title": "Title",
+      "excerpt": "Summary",
+      "coverImage": "Cover image",
+      "draftStatusTitle": "Draft status",
+      "draftStatusDescription": "Saving from this page keeps the NOTE as a draft. Publish it from the edit screen.",
+      "categoryTitle": "Choose categories",
+      "categoryDescription": "Select up to {max} categories that best match your topic.",
+      "categoriesSelected": "Selected:",
+      "visibilityTitle": "Choose visibility",
+      "visibilityDescription": "Limited visibility generates a shareable URL automatically after saving.",
+      "paidTitle": "Sell as a paid NOTE",
+      "paidDescription": "Marking blocks as paid automatically treats the NOTE as paid content.",
+      "manualPaidToggle": "Manually enable paid status",
+      "pointsPayment": "Points payment",
+      "enable": "Enable",
+      "pointsDescription": "Charges the buyer's point balance.",
+      "jpyPayment": "JPY payment",
+      "jpyDescription": "Charges via the one.lat payment provider.",
+      "taxRate": "Tax rate (%)",
+      "taxInclusive": "Treat price as tax inclusive",
+      "paidStatus": {
+        "free": "All blocks will be published for free.",
+        "withPaidBlocks": "Paid blocks detected; the NOTE will be sold using the selected payment methods.",
+        "manual": "Paid status is enabled. Review payment methods and pricing before publishing."
+      },
+      "salonAccessTitle": "Allow salon members to view for free",
+      "salonAccessDescription": "Members of the selected online salons can access without consuming points.",
+      "salonEmptyMessage": "No online salons are registered yet. Create one from the salon menu to grant members free access.",
+      "untitledSalon": "Untitled salon",
+      "salonMemberCount": "{count} members",
+      "contentBlocksTitle": "Content blocks",
+      "contentBlocksDescription": "Combine paragraphs, headings, images, and more to structure your NOTE.",
+      "blockCount": "{count} blocks"
+    },
+    "visibility": {
+      "public": {
+        "label": "Public",
+        "description": "Listed in the marketplace and visible to all users."
+      },
+      "limited": {
+        "label": "Limited",
+        "description": "Accessible only via shared URL (no authentication required)."
+      },
+      "private": {
+        "label": "Private",
+        "description": "Only the author can view it."
+      }
+    },
+    "placeholders": {
+      "title": "Example: The complete workflow behind my ¥1M/month online course",
+      "excerpt": "Add a summary or lead paragraph for the NOTE.",
+      "coverImageUrl": "https://...",
+      "pointsExample": "e.g. 1200",
+      "jpyExample": "e.g. 14800"
+    },
+    "alerts": {
+      "maxCategories": "You can select up to {max} categories.",
+      "requirePaymentMethod": "Enable at least one payment method.",
+      "coverUploadFailed": "Failed to upload the cover image. Please try again later."
+    },
+    "errors": {
+      "coverUploadMissingUrl": "Upload response does not contain a URL.",
+      "coverUploadFailed": "Failed to upload the cover image.",
+      "titleTooShort": "Enter a title with at least {min} characters.",
+      "bodyRequired": "Add content to the NOTE.",
+      "requirePaymentMethodForPaid": "Enable at least one payment method for paid NOTES.",
+      "invalidPointsPrice": "Set a points price of at least 1 point.",
+      "invalidYenPrice": "Set a JPY price of at least ¥1.",
+      "createFailed": "Failed to create the NOTE."
+    },
+    "messages": {
+      "savedDraft": "Saved as a draft. Redirecting to the edit screen."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveDraft": "Save draft"
+    }
+  },
   "noteShare": {
     "metadata": {
       "notFoundTitle": "Private NOTE | D-swipe",

@@ -3,6 +3,7 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useFormatter, useTranslations } from 'next-intl';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
@@ -16,29 +17,11 @@ import { PageLoader } from '@/components/LoadingSpinner';
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;
 
-const NOTE_VISIBILITY_OPTIONS: Array<{
-  value: NoteVisibility;
-  label: string;
-  description: string;
-}> = [
-  {
-    value: 'public',
-    label: '公開',
-    description: 'マーケットに掲載され、全ユーザーが閲覧できます',
-  },
-  {
-    value: 'limited',
-    label: '限定公開',
-    description: 'URLを知っている人のみ閲覧できます（認証不要）',
-  },
-  {
-    value: 'private',
-    label: '非公開',
-    description: '作者のみ閲覧できる状態です',
-  },
-];
-
 export default function NoteCreatePage() {
+  const t = useTranslations('noteCreate');
+  const categoryT = useTranslations('notePublic.categories');
+  const noteEditorT = useTranslations('noteEditor');
+  const formatter = useFormatter();
   const router = useRouter();
   const { isAuthenticated, isInitialized } = useAuthStore();
 
@@ -62,6 +45,27 @@ export default function NoteCreatePage() {
   const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
   const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<NoteVisibility>('private');
+
+  const visibilityOptions = useMemo(
+    () => ([
+      {
+        value: 'public' as NoteVisibility,
+        label: t('visibility.public.label'),
+        description: t('visibility.public.description'),
+      },
+      {
+        value: 'limited' as NoteVisibility,
+        label: t('visibility.limited.label'),
+        description: t('visibility.limited.description'),
+      },
+      {
+        value: 'private' as NoteVisibility,
+        label: t('visibility.private.label'),
+        description: t('visibility.private.description'),
+      },
+    ]),
+    [t],
+  );
 
   useEffect(() => {
     const loadSalons = async () => {
@@ -103,12 +107,12 @@ export default function NoteCreatePage() {
       });
       const url: string | undefined = response.data?.url;
       if (!url) {
-        throw new Error('アップロード結果にURLが含まれていません');
+        throw new Error(t('errors.coverUploadMissingUrl'));
       }
       setCoverImageUrl(url);
     } catch (uploadError) {
-      console.error('カバー画像のアップロードに失敗しました', uploadError);
-      alert('カバー画像のアップロードに失敗しました。時間をおいて再度お試しください。');
+      console.error(t('errors.coverUploadFailed'), uploadError);
+      alert(t('alerts.coverUploadFailed'));
     } finally {
       setIsCoverUploading(false);
       event.target.value = '';
@@ -121,7 +125,7 @@ export default function NoteCreatePage() {
         return prev.filter((category) => category !== value);
       }
       if (prev.length >= MAX_CATEGORIES) {
-        alert(`カテゴリは最大${MAX_CATEGORIES}件まで選択できます`);
+        alert(t('alerts.maxCategories', { max: MAX_CATEGORIES }));
         return prev;
       }
       return [...prev, value];
@@ -135,9 +139,16 @@ export default function NoteCreatePage() {
   const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
   const effectivePaid = isPaid || paidBlockExists;
 
+  const paidStatusMessage = useMemo(() => {
+    if (!effectivePaid) {
+      return t('labels.paidStatus.free');
+    }
+    return paidBlockExists ? t('labels.paidStatus.withPaidBlocks') : t('labels.paidStatus.manual');
+  }, [effectivePaid, paidBlockExists, t]);
+
   const handleAllowPointPurchaseChange = (checked: boolean) => {
     if (!checked && effectivePaid && !allowJpyPurchase) {
-      alert('少なくとも1つの決済方法を有効にしてください');
+      alert(t('alerts.requirePaymentMethod'));
       return;
     }
     setAllowPointPurchase(checked);
@@ -148,7 +159,7 @@ export default function NoteCreatePage() {
 
   const handleAllowJpyPurchaseChange = (checked: boolean) => {
     if (!checked && effectivePaid && !allowPointPurchase) {
-      alert('少なくとも1つの決済方法を有効にしてください');
+      alert(t('alerts.requirePaymentMethod'));
       return;
     }
     setAllowJpyPurchase(checked);
@@ -198,7 +209,7 @@ export default function NoteCreatePage() {
 
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
-      return 'タイトルを3文字以上で入力してください';
+      return t('errors.titleTooShort', { min: MIN_TITLE_LENGTH });
     }
 
     const hasContent = blocks.some((block) => {
@@ -215,25 +226,25 @@ export default function NoteCreatePage() {
     });
 
     if (!hasContent) {
-      return '本文を入力してください';
+      return t('errors.bodyRequired');
     }
 
     if (effectivePaid) {
       if (!allowPointPurchase && !allowJpyPurchase) {
-        return '有料記事は少なくとも1つの決済方法を有効にしてください';
+        return t('errors.requirePaymentMethodForPaid');
       }
 
       if (allowPointPurchase) {
         const priceValue = Number(pricePoints);
         if (!Number.isFinite(priceValue) || priceValue <= 0) {
-          return 'ポイント決済の価格を1ポイント以上で設定してください';
+          return t('errors.invalidPointsPrice');
         }
       }
 
       if (allowJpyPurchase) {
         const priceValueJpy = Number(priceJpy);
         if (!Number.isFinite(priceValueJpy) || priceValueJpy <= 0) {
-          return '日本円決済の価格を1円以上で設定してください';
+          return t('errors.invalidYenPrice');
         }
       }
     }
@@ -283,13 +294,13 @@ export default function NoteCreatePage() {
       };
 
       const response = await noteApi.create(payload);
-      setInfo('下書きとして保存しました。編集画面に移動します。');
+      setInfo(t('messages.savedDraft'));
       setTimeout(() => {
         router.push(`/note/${response.data.id}/edit`);
       }, 600);
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
-      setError(typeof detail === 'string' ? detail : 'NOTEの作成に失敗しました');
+      setError(typeof detail === 'string' ? detail : t('errors.createFailed'));
     } finally {
       setSaving(false);
     }
@@ -305,8 +316,8 @@ export default function NoteCreatePage() {
 
   return (
     <DashboardLayout
-      pageTitle="新規NOTE作成"
-      pageSubtitle="noteスタイルの記事をブロック単位で作成できます"
+      pageTitle={t('pageTitle')}
+      pageSubtitle={t('pageSubtitle')}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 sm:px-6 sm:py-6">
         {error ? (
@@ -319,12 +330,12 @@ export default function NoteCreatePage() {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.title')}</label>
               <input
                 type="text"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="例：月収100万円を達成したオンライン講座運営の全ステップ"
+                placeholder={t('placeholders.title')}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 disabled={saving}
               />
@@ -332,18 +343,18 @@ export default function NoteCreatePage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">概要</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.excerpt')}</label>
                 <textarea
                   rows={3}
                   value={excerpt}
                   onChange={(event) => setExcerpt(event.target.value)}
-                  placeholder="記事の要約やリード文を入力してください"
+                  placeholder={t('placeholders.excerpt')}
                   className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   disabled={saving}
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">カバー画像</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.coverImage')}</label>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
@@ -351,7 +362,7 @@ export default function NoteCreatePage() {
                     disabled={saving}
                     className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    画像をアップロード
+                    {noteEditorT('buttons.uploadImage')}
                   </button>
                   <button
                     type="button"
@@ -359,7 +370,7 @@ export default function NoteCreatePage() {
                     disabled={saving}
                     className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    メディアから選択
+                    {noteEditorT('buttons.chooseFromMedia')}
                   </button>
                   <input
                     ref={coverFileInputRef}
@@ -370,13 +381,13 @@ export default function NoteCreatePage() {
                   />
                 </div>
                 {isCoverUploading ? (
-                  <p className="mt-2 text-xs font-semibold text-blue-600">アップロード中...</p>
+                  <p className="mt-2 text-xs font-semibold text-blue-600">{noteEditorT('status.uploading')}</p>
                 ) : null}
                 <input
                   type="text"
                   value={coverImageUrl}
                   onChange={(event) => setCoverImageUrl(event.target.value)}
-                  placeholder="https://..."
+                  placeholder={t('placeholders.coverImageUrl')}
                   className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   disabled={saving}
                 />
@@ -387,26 +398,26 @@ export default function NoteCreatePage() {
                 ) : null}
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-                <p className="font-semibold text-slate-600">公開ステータス</p>
-                <p className="mt-1">このページでは下書きが保存されます。公開は編集画面で切り替えられます。</p>
+                <p className="font-semibold text-slate-600">{t('labels.draftStatusTitle')}</p>
+                <p className="mt-1">{t('labels.draftStatusDescription')}</p>
               </div>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">カテゴリーを選択</p>
-                  <p className="text-xs text-slate-500">最大{MAX_CATEGORIES}件まで選択できます。記事のテーマに近いものを選んでください。</p>
+                  <p className="text-sm font-semibold text-slate-800">{t('labels.categoryTitle')}</p>
+                  <p className="text-xs text-slate-500">{t('labels.categoryDescription', { max: MAX_CATEGORIES })}</p>
                 </div>
                 {categories.length > 0 ? (
                   <div className="flex flex-wrap items-center gap-1 text-[10px] text-slate-500">
-                    <span>選択中:</span>
+                    <span>{t('labels.categoriesSelected')}</span>
                     {categories.map((category) => (
                       <span
                         key={category}
                         className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 font-semibold text-blue-600"
                       >
-                        #{NOTE_CATEGORY_OPTIONS.find((option) => option.value === category)?.label ?? category}
+                        #{categoryT(category)}
                       </span>
                     ))}
                   </div>
@@ -425,7 +436,7 @@ export default function NoteCreatePage() {
                         isActive ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
-                      {option.label}
+                      {categoryT(option.value)}
                     </button>
                   );
                 })}
@@ -433,10 +444,10 @@ export default function NoteCreatePage() {
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-              <p className="text-sm font-semibold text-slate-800">公開範囲を選択</p>
-              <p className="mt-1 text-xs text-slate-500">限定公開を選ぶと、保存後に共有URLが自動発行されます。</p>
+              <p className="text-sm font-semibold text-slate-800">{t('labels.visibilityTitle')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('labels.visibilityDescription')}</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {NOTE_VISIBILITY_OPTIONS.map((option) => {
+                {visibilityOptions.map((option) => {
                   const isChecked = visibility === option.value;
                   return (
                     <label
@@ -469,8 +480,8 @@ export default function NoteCreatePage() {
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">有料記事として販売する</p>
-                  <p className="text-xs text-slate-500">ブロック単位の有料設定を行うと自動的に有料記事扱いになります。</p>
+                  <p className="text-sm font-semibold text-slate-800">{t('labels.paidTitle')}</p>
+                  <p className="text-xs text-slate-500">{t('labels.paidDescription')}</p>
                 </div>
                 <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                   <input
@@ -480,13 +491,13 @@ export default function NoteCreatePage() {
                     onChange={(event) => handlePaidToggle(event.target.checked)}
                     disabled={saving}
                   />
-                  有料設定を手動でオンにする
+                  {t('labels.manualPaidToggle')}
                 </label>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-slate-800">ポイント決済</p>
+                    <p className="text-sm font-semibold text-slate-800">{t('labels.pointsPayment')}</p>
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
@@ -495,7 +506,7 @@ export default function NoteCreatePage() {
                         onChange={(event) => handleAllowPointPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
                       />
-                      有効化
+                      {t('labels.enable')}
                     </label>
                   </div>
                   <input
@@ -503,15 +514,15 @@ export default function NoteCreatePage() {
                     inputMode="numeric"
                     value={pricePoints}
                     onChange={(event) => handlePriceChange(event.target.value)}
-                    placeholder="例: 1200"
+                    placeholder={t('placeholders.pointsExample')}
                     className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || !allowPointPurchase}
                   />
-                  <p className="mt-2 text-xs text-slate-500">購入者のポイント残高から差し引かれます。</p>
+                  <p className="mt-2 text-xs text-slate-500">{t('labels.pointsDescription')}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-slate-800">日本円決済</p>
+                    <p className="text-sm font-semibold text-slate-800">{t('labels.jpyPayment')}</p>
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
@@ -520,7 +531,7 @@ export default function NoteCreatePage() {
                         onChange={(event) => handleAllowJpyPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
                       />
-                      有効化
+                      {t('labels.enable')}
                     </label>
                   </div>
                   <input
@@ -528,16 +539,16 @@ export default function NoteCreatePage() {
                     inputMode="numeric"
                     value={priceJpy}
                     onChange={(event) => handlePriceJpyChange(event.target.value)}
-                    placeholder="例: 14800"
+                    placeholder={t('placeholders.jpyExample')}
                     className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || !allowJpyPurchase}
                   />
-                  <p className="mt-2 text-xs text-slate-500">決済プロバイダー(one.lat)経由で課金されます。</p>
+                  <p className="mt-2 text-xs text-slate-500">{t('labels.jpyDescription')}</p>
                 </div>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">消費税率 (%)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.taxRate')}</label>
                   <input
                     type="text"
                     inputMode="decimal"
@@ -556,17 +567,11 @@ export default function NoteCreatePage() {
                       onChange={(event) => setTaxInclusive(event.target.checked)}
                       disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
                     />
-                    税込表示として扱う
+                    {t('labels.taxInclusive')}
                   </label>
                 </div>
                 <div className="sm:col-span-3 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-xs text-slate-600">
-                  <p>
-                    {effectivePaid
-                      ? paidBlockExists
-                        ? '有料ブロックが含まれているため自動的に有料記事になります。選択した決済方法で販売されます。'
-                        : '有料設定がオンです。公開前に決済方法と価格を確認してください。'
-                      : 'すべてのブロックが無料公開されます。'}
-                  </p>
+                  <p>{paidStatusMessage}</p>
                 </div>
               </div>
             </div>
@@ -574,13 +579,13 @@ export default function NoteCreatePage() {
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">サロン会員は無料閲覧</p>
-                  <p className="text-xs text-slate-500">選択したオンラインサロンの会員はポイント消費なしで記事を閲覧できます。</p>
+                  <p className="text-sm font-semibold text-slate-800">{t('labels.salonAccessTitle')}</p>
+                  <p className="text-xs text-slate-500">{t('labels.salonAccessDescription')}</p>
                 </div>
               </div>
               {salonOptions.length === 0 ? (
                 <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-                  まだオンラインサロンが登録されていません。サロンメニューから新規作成すると会員向けに無料公開できます。
+                  {t('labels.salonEmptyMessage')}
                 </div>
               ) : (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -598,9 +603,11 @@ export default function NoteCreatePage() {
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                       >
-                        {salon.title ?? '無題のサロン'}
+                        {salon.title ?? t('labels.untitledSalon')}
                         <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
-                          {salon.member_count?.toLocaleString() ?? 0}名
+                          {t('labels.salonMemberCount', {
+                            count: formatter.number(salon.member_count ?? 0),
+                          })}
                         </span>
                       </button>
                     );
@@ -614,11 +621,11 @@ export default function NoteCreatePage() {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">本文ブロック</h2>
-              <p className="mt-1 text-xs text-slate-500">段落・見出し・画像などを自由に組み合わせて記事を構成できます。</p>
+              <h2 className="text-lg font-semibold text-slate-900">{t('labels.contentBlocksTitle')}</h2>
+              <p className="mt-1 text-xs text-slate-500">{t('labels.contentBlocksDescription')}</p>
             </div>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
-              {blocks.length} ブロック
+              {t('labels.blockCount', { count: formatter.number(blocks.length) })}
             </div>
           </div>
           <NoteEditor value={blocks} onChange={handleBlocksChange} disabled={saving} />
@@ -629,7 +636,7 @@ export default function NoteCreatePage() {
             href="/note"
             className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-400"
           >
-            キャンセル
+            {t('buttons.cancel')}
           </Link>
           <button
             type="button"
@@ -637,7 +644,7 @@ export default function NoteCreatePage() {
             disabled={saving}
             className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? '保存中...' : '下書きを保存'}
+            {saving ? t('buttons.saving') : t('buttons.saveDraft')}
           </button>
         </div>
       </div>

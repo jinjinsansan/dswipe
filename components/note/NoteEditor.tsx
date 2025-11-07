@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { NoteBlock, NoteBlockType } from '@/types';
 import {
   NOTE_BLOCK_TYPE_OPTIONS,
@@ -23,17 +24,17 @@ import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi } from '@/lib/api';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS, getFontStack } from '@/lib/fonts';
 
-const TEXT_COLOR_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: '#0f172a', label: 'ダーク (標準)' },
-  { value: '#1e293b', label: 'スレート' },
-  { value: '#334155', label: 'ミッドナイト' },
-  { value: '#0369a1', label: 'スカイブルー' },
-  { value: '#2563eb', label: 'ブルー' },
-  { value: '#9333ea', label: 'パープル' },
-  { value: '#dc2626', label: 'レッド' },
-  { value: '#047857', label: 'エメラルド' },
-  { value: '#d97706', label: 'アンバー' },
-  { value: '#475569', label: 'グレー' },
+const TEXT_COLOR_OPTIONS: Array<{ value: string; key: string }> = [
+  { value: '#0f172a', key: 'dark' },
+  { value: '#1e293b', key: 'slate' },
+  { value: '#334155', key: 'midnight' },
+  { value: '#0369a1', key: 'sky' },
+  { value: '#2563eb', key: 'blue' },
+  { value: '#9333ea', key: 'purple' },
+  { value: '#dc2626', key: 'red' },
+  { value: '#047857', key: 'emerald' },
+  { value: '#d97706', key: 'amber' },
+  { value: '#475569', key: 'gray' },
 ];
 
 type NoteEditorProps = {
@@ -55,12 +56,13 @@ const toListItems = (value: string): string[] =>
     .filter((item) => item.length > 0);
 
 const SPACER_SIZE_OPTIONS = [
-  { value: 'sm', label: '小' },
-  { value: 'md', label: '中' },
-  { value: 'lg', label: '大' },
+  { value: 'sm', key: 'small' },
+  { value: 'md', key: 'medium' },
+  { value: 'lg', key: 'large' },
 ];
 
 export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
+  const t = useTranslations('noteEditor');
   const blocks = useMemo(() => value.map((block) => normalizeBlock(block)), [value]);
   const [mediaTargetIndex, setMediaTargetIndex] = useState<number | null>(null);
   const [isMediaLibraryOpen, setIsMediaLibraryOpen] = useState(false);
@@ -150,13 +152,13 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
       const response = await mediaApi.upload(file, { optimize: true, max_width: 1920, max_height: 1080 });
       const imageUrl: string | undefined = response.data?.url;
       if (!imageUrl) {
-        throw new Error('アップロード結果にURLが含まれていません');
+        throw new Error(t('errors.uploadMissingUrl'));
       }
       const caption = typeof block.data?.caption === 'string' ? block.data.caption : '';
       handleDataChange(index, { url: imageUrl, caption });
     } catch (error) {
-      console.error('画像のアップロードに失敗しました', error);
-      alert('画像のアップロードに失敗しました。時間をおいて再度お試しください。');
+      console.error(t('errors.imageUploadFailed'), error);
+      alert(t('alerts.imageUploadFailed'));
     } finally {
       setUploadingBlockId(null);
       event.target.value = '';
@@ -192,7 +194,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
       <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-slate-600">フォント</span>
+            <span className="font-semibold text-slate-600">{t('fields.font')}</span>
             <select
               value={currentFontKey}
               onChange={(event) => handleDataChange(index, { fontKey: event.target.value })}
@@ -201,7 +203,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
             >
               {FONT_OPTIONS.map((option) => (
                 <option key={option.key} value={option.key}>
-                  {option.label}
+                  {t(`fonts.${option.key}`)}
                 </option>
               ))}
             </select>
@@ -214,11 +216,11 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               disabled ? 'cursor-not-allowed opacity-60' : ''
             }`}
           >
-            リセット
+            {t('buttons.reset')}
           </button>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold text-slate-600">文字色</span>
+          <span className="font-semibold text-slate-600">{t('fields.textColor')}</span>
           <div className="flex flex-wrap items-center gap-1.5">
             {TEXT_COLOR_OPTIONS.map((option) => {
               const isActive = option.value.toLowerCase() === currentColor.toLowerCase();
@@ -232,7 +234,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     isActive ? 'border-blue-500 ring-2 ring-blue-300/50' : 'border-slate-200 hover:border-slate-400'
                   } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
                   style={{ backgroundColor: option.value }}
-                  title={option.label}
+                  title={t(`textColors.${option.key}`)}
                 />
               );
             })}
@@ -264,7 +266,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 >
                   {NOTE_BLOCK_TYPE_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
-                      {option.label}
+                      {t(`blockTypes.${option.value}`)}
                     </option>
                   ))}
                 </select>
@@ -283,7 +285,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   ) : (
                     <LockOpenIcon className="h-4 w-4" aria-hidden="true" />
                   )}
-                  {isPaid ? '有料ブロック' : '無料ブロック'}
+                  {isPaid ? t('blockMeta.paid') : t('blockMeta.free')}
                 </button>
               </div>
 
@@ -328,7 +330,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 <textarea
                   rows={5}
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                  placeholder="本文を入力"
+                  placeholder={t('placeholders.paragraph')}
                   value={typeof block.data?.text === 'string' ? block.data.text : ''}
                   onChange={(event) => handleDataChange(index, { text: event.target.value })}
                   disabled={disabled}
@@ -340,13 +342,13 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="見出しを入力"
+                    placeholder={t('placeholders.heading')}
                     value={typeof block.data?.text === 'string' ? block.data.text : ''}
                     onChange={(event) => handleDataChange(index, { text: event.target.value, level: block.data?.level ?? 'h2' })}
                     disabled={disabled}
                   />
                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span>サイズ:</span>
+                    <span>{t('fields.headingSize')}</span>
                     <div className="flex items-center gap-1">
                       {(['h2', 'h3'] as const).map((level) => (
                         <button
@@ -360,7 +362,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
                         >
-                          {level === 'h2' ? '大' : '中'}
+                          {t(`headingSizes.${level}`)}
                         </button>
                       ))}
                     </div>
@@ -373,7 +375,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <textarea
                     rows={4}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm italic text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="引用文を入力"
+                    placeholder={t('placeholders.quote')}
                     value={typeof block.data?.text === 'string' ? block.data.text : ''}
                     onChange={(event) => handleDataChange(index, { text: event.target.value, cite: block.data?.cite ?? '' })}
                     disabled={disabled}
@@ -381,7 +383,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="引用元 (任意)"
+                    placeholder={t('placeholders.quoteCite')}
                     value={typeof block.data?.cite === 'string' ? block.data.cite : ''}
                     onChange={(event) => handleDataChange(index, { text: block.data?.text ?? '', cite: event.target.value })}
                     disabled={disabled}
@@ -399,7 +401,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <PhotoIcon className="h-4 w-4" aria-hidden="true" />
-                      画像をアップロード
+                      {t('buttons.uploadImage')}
                     </button>
                     <button
                       type="button"
@@ -407,7 +409,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       disabled={disabled}
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      メディアから選択
+                      {t('buttons.chooseFromMedia')}
                     </button>
                     <input
                       type="file"
@@ -420,12 +422,12 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     />
                   </div>
                   {uploadingBlockId === blockKey ? (
-                    <p className="text-xs font-semibold text-blue-600">アップロード中...</p>
+                    <p className="text-xs font-semibold text-blue-600">{t('status.uploading')}</p>
                   ) : null}
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="画像URL"
+                    placeholder={t('placeholders.imageUrl')}
                     value={typeof block.data?.url === 'string' ? block.data.url : ''}
                     onChange={(event) => handleDataChange(index, { url: event.target.value, caption: block.data?.caption ?? '' })}
                     disabled={disabled}
@@ -433,7 +435,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="キャプション (任意)"
+                    placeholder={t('placeholders.imageCaption')}
                     value={typeof block.data?.caption === 'string' ? block.data.caption : ''}
                     onChange={(event) => handleDataChange(index, { url: block.data?.url ?? '', caption: event.target.value })}
                     disabled={disabled}
@@ -454,7 +456,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 <textarea
                   rows={5}
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                  placeholder={`リスト項目を1行ずつ入力\n例:\n・メリット1\n・メリット2`}
+                  placeholder={t('placeholders.listItems')}
                   value={getListTextareaValue(block)}
                   onChange={(event) => handleDataChange(index, { items: toListItems(event.target.value) })}
                   disabled={disabled}
@@ -472,7 +474,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="リンクタイトル"
+                    placeholder={t('placeholders.linkTitle')}
                     value={typeof block.data?.title === 'string' ? block.data.title : ''}
                     onChange={(event) => handleDataChange(index, { title: event.target.value })}
                     disabled={disabled}
@@ -488,7 +490,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <textarea
                     rows={3}
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                    placeholder="リンクの説明 (任意)"
+                    placeholder={t('placeholders.linkDescription')}
                     value={typeof block.data?.description === 'string' ? block.data.description : ''}
                     onChange={(event) => handleDataChange(index, { description: event.target.value })}
                     disabled={disabled}
@@ -499,7 +501,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               {block.type === 'spacer' && (
                 <div className="space-y-2">
                   <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                    高さ
+                    {t('fields.spacerHeight')}
                   </label>
                   <select
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
@@ -509,7 +511,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   >
                     {SPACER_SIZE_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(`spacerSizes.${option.key}`)}
                       </option>
                     ))}
                   </select>
@@ -525,7 +527,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
       })}
 
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 px-4 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">ブロックを追加</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{t('actions.addBlock')}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {NOTE_BLOCK_TYPE_OPTIONS.map((option) => (
             <button
@@ -536,7 +538,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <SquaresPlusIcon className="h-4 w-4" aria-hidden="true" />
-              {option.label}
+              {t(`blockTypes.${option.value}`)}
             </button>
           ))}
         </div>

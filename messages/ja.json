@@ -86,6 +86,168 @@
     "paidAreaLabel": "ここから先は有料エリアです",
     "linkFallback": "リンク"
   },
+  "noteEditor": {
+    "fields": {
+      "font": "フォント",
+      "textColor": "文字色",
+      "headingSize": "サイズ:",
+      "spacerHeight": "高さ"
+    },
+    "fonts": {
+      "system": "標準 (スマートマッチ)",
+      "sans": "サンセリフ (スッキリ)",
+      "serif": "セリフ (クラシック)",
+      "rounded": "丸ゴシック (柔らかい)",
+      "mono": "等幅 (テック)"
+    },
+    "buttons": {
+      "reset": "リセット",
+      "uploadImage": "画像をアップロード",
+      "chooseFromMedia": "メディアから選択"
+    },
+    "textColors": {
+      "dark": "ダーク (標準)",
+      "slate": "スレート",
+      "midnight": "ミッドナイト",
+      "sky": "スカイブルー",
+      "blue": "ブルー",
+      "purple": "パープル",
+      "red": "レッド",
+      "emerald": "エメラルド",
+      "amber": "アンバー",
+      "gray": "グレー"
+    },
+    "alerts": {
+      "imageUploadFailed": "画像のアップロードに失敗しました。時間をおいて再度お試しください。"
+    },
+    "errors": {
+      "uploadMissingUrl": "アップロード結果にURLが含まれていません",
+      "imageUploadFailed": "画像のアップロードに失敗しました"
+    },
+    "blockMeta": {
+      "paid": "有料ブロック",
+      "free": "無料ブロック"
+    },
+    "placeholders": {
+      "paragraph": "本文を入力",
+      "heading": "見出しを入力",
+      "quote": "引用文を入力",
+      "quoteCite": "引用元 (任意)",
+      "imageUrl": "画像URL",
+      "imageCaption": "キャプション (任意)",
+      "listItems": "リスト項目を1行ずつ入力\n例:\n・メリット1\n・メリット2",
+      "linkTitle": "リンクタイトル",
+      "linkDescription": "リンクの説明 (任意)"
+    },
+    "status": {
+      "uploading": "アップロード中..."
+    },
+    "headingSizes": {
+      "h2": "大",
+      "h3": "中"
+    },
+    "spacerSizes": {
+      "small": "小",
+      "medium": "中",
+      "large": "大"
+    },
+    "actions": {
+      "addBlock": "ブロックを追加"
+    },
+    "blockTypes": {
+      "paragraph": "テキスト",
+      "heading": "見出し",
+      "quote": "引用",
+      "image": "画像",
+      "divider": "区切り線",
+      "list": "リスト",
+      "link": "リンク",
+      "spacer": "改行"
+    }
+  },
+  "noteCreate": {
+    "pageTitle": "新規NOTE作成",
+    "pageSubtitle": "noteスタイルの記事をブロック単位で作成できます",
+    "labels": {
+      "title": "タイトル",
+      "excerpt": "概要",
+      "coverImage": "カバー画像",
+      "draftStatusTitle": "公開ステータス",
+      "draftStatusDescription": "このページでは下書きが保存されます。公開は編集画面で切り替えられます。",
+      "categoryTitle": "カテゴリーを選択",
+      "categoryDescription": "最大{max}件まで選択できます。記事のテーマに近いものを選んでください。",
+      "categoriesSelected": "選択中:",
+      "visibilityTitle": "公開範囲を選択",
+      "visibilityDescription": "限定公開を選ぶと、保存後に共有URLが自動発行されます。",
+      "paidTitle": "有料記事として販売する",
+      "paidDescription": "ブロック単位の有料設定を行うと自動的に有料記事扱いになります。",
+      "manualPaidToggle": "有料設定を手動でオンにする",
+      "pointsPayment": "ポイント決済",
+      "enable": "有効化",
+      "pointsDescription": "購入者のポイント残高から差し引かれます。",
+      "jpyPayment": "日本円決済",
+      "jpyDescription": "決済プロバイダー(one.lat)経由で課金されます。",
+      "taxRate": "消費税率 (%)",
+      "taxInclusive": "税込表示として扱う",
+      "paidStatus": {
+        "free": "すべてのブロックが無料公開されます。",
+        "withPaidBlocks": "有料ブロックが含まれているため自動的に有料記事になります。選択した決済方法で販売されます。",
+        "manual": "有料設定がオンです。公開前に決済方法と価格を確認してください。"
+      },
+      "salonAccessTitle": "サロン会員は無料閲覧",
+      "salonAccessDescription": "選択したオンラインサロンの会員はポイント消費なしで記事を閲覧できます。",
+      "salonEmptyMessage": "まだオンラインサロンが登録されていません。サロンメニューから新規作成すると会員向けに無料公開できます。",
+      "untitledSalon": "無題のサロン",
+      "salonMemberCount": "{count}名",
+      "contentBlocksTitle": "本文ブロック",
+      "contentBlocksDescription": "段落・見出し・画像などを自由に組み合わせて記事を構成できます。",
+      "blockCount": "{count} ブロック"
+    },
+    "visibility": {
+      "public": {
+        "label": "公開",
+        "description": "マーケットに掲載され、全ユーザーが閲覧できます"
+      },
+      "limited": {
+        "label": "限定公開",
+        "description": "URLを知っている人のみ閲覧できます（認証不要）"
+      },
+      "private": {
+        "label": "非公開",
+        "description": "作者のみ閲覧できる状態です"
+      }
+    },
+    "placeholders": {
+      "title": "例：月収100万円を達成したオンライン講座運営の全ステップ",
+      "excerpt": "記事の要約やリード文を入力してください",
+      "coverImageUrl": "https://...",
+      "pointsExample": "例: 1200",
+      "jpyExample": "例: 14800"
+    },
+    "alerts": {
+      "maxCategories": "カテゴリは最大{max}件まで選択できます",
+      "requirePaymentMethod": "少なくとも1つの決済方法を有効にしてください",
+      "coverUploadFailed": "カバー画像のアップロードに失敗しました。時間をおいて再度お試しください。"
+    },
+    "errors": {
+      "coverUploadMissingUrl": "アップロード結果にURLが含まれていません",
+      "coverUploadFailed": "カバー画像のアップロードに失敗しました",
+      "titleTooShort": "タイトルを{min}文字以上で入力してください",
+      "bodyRequired": "本文を入力してください",
+      "requirePaymentMethodForPaid": "有料記事は少なくとも1つの決済方法を有効にしてください",
+      "invalidPointsPrice": "ポイント決済の価格を1ポイント以上で設定してください",
+      "invalidYenPrice": "日本円決済の価格を1円以上で設定してください",
+      "createFailed": "NOTEの作成に失敗しました"
+    },
+    "messages": {
+      "savedDraft": "下書きとして保存しました。編集画面に移動します。"
+    },
+    "buttons": {
+      "cancel": "キャンセル",
+      "saving": "保存中...",
+      "saveDraft": "下書きを保存"
+    }
+  },
   "noteShare": {
     "metadata": {
       "notFoundTitle": "限定公開NOTE | D-swipe",
