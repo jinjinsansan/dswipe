@@ -3,23 +3,18 @@ import {NextRequest, NextResponse} from 'next/server';
 const SUPPORTED_LOCALES = new Set(['ja', 'en']);
 const PUBLIC_FILE = /\.[^/]+$/;
 const LOCALE_PREFIX = '/en';
+const DEFAULT_LOCALE: 'ja' = 'ja';
 
-function resolvePreferredLocale(request: NextRequest): 'ja' | 'en' {
-  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-  if (cookieLocale && SUPPORTED_LOCALES.has(cookieLocale)) {
-    return cookieLocale as 'ja' | 'en';
+function normalizeCookieLocale(value: string | undefined) {
+  if (!value) return undefined;
+  return SUPPORTED_LOCALES.has(value) ? (value as 'ja' | 'en') : undefined;
+}
+
+function buildPrefixedPath(pathname: string) {
+  if (pathname === '/' || pathname === '') {
+    return LOCALE_PREFIX;
   }
-
-  const acceptLanguage = request.headers.get('accept-language');
-  if (acceptLanguage) {
-    const [primary] = acceptLanguage.split(',');
-    const code = primary?.split('-')[0]?.trim();
-    if (code && SUPPORTED_LOCALES.has(code)) {
-      return code as 'ja' | 'en';
-    }
-  }
-
-  return 'ja';
+  return `${LOCALE_PREFIX}${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
 }
 
 export function middleware(request: NextRequest) {
@@ -29,27 +24,32 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith(LOCALE_PREFIX)) {
-    return NextResponse.next();
+  const cookieLocale = normalizeCookieLocale(request.cookies.get('NEXT_LOCALE')?.value);
+  const isEnglishPath = pathname.startsWith(LOCALE_PREFIX);
+
+  if (isEnglishPath) {
+    const response = NextResponse.next();
+    if (cookieLocale !== 'en') {
+      response.cookies.set('NEXT_LOCALE', 'en', { path: '/', maxAge: 60 * 60 * 24 * 365 });
+    }
+    return response;
   }
 
-  const preferredLocale = resolvePreferredLocale(request);
-
-  if (preferredLocale === 'en') {
+  if (cookieLocale === 'en') {
     const url = request.nextUrl.clone();
-    url.pathname = pathname === '/' ? LOCALE_PREFIX : `${LOCALE_PREFIX}${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
-    return NextResponse.redirect(url);
+    url.pathname = buildPrefixedPath(pathname);
+    const response = NextResponse.redirect(url);
+    response.cookies.set('NEXT_LOCALE', 'en', { path: '/', maxAge: 60 * 60 * 24 * 365 });
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  if (!cookieLocale) {
+    response.cookies.set('NEXT_LOCALE', DEFAULT_LOCALE, { path: '/', maxAge: 60 * 60 * 24 * 365 });
+  }
+  return response;
 }
 
 export const config = {
-  matcher: [
-    '/notes/:path*',
-    '/points/purchase/:path*',
-    '/notes/share/:path*',
-    '/en/notes/:path*',
-    '/en/points/purchase/:path*',
-  ],
+  matcher: ['/:path*'],
 };

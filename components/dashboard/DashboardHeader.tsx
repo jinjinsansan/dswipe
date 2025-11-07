@@ -25,6 +25,7 @@ import {
 import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 import { AccountSwitcher } from '@/components/account/AccountSwitcher';
 import {useTranslations} from 'next-intl';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const KNOWN_SITE_ORIGINS = [
   typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined,
@@ -407,6 +408,7 @@ export default function DashboardHeader({
           </div>
 
           <div className="hidden sm:flex items-center space-x-4">
+            <LanguageSwitcher />
             {user ? (
               <>
                 <AccountSwitcher />
@@ -443,6 +445,7 @@ export default function DashboardHeader({
           </div>
 
           <div className="sm:hidden flex items-center space-x-3">
+            <LanguageSwitcher />
             {user ? (
               <>
                 <AccountSwitcher className="flex-1" buttonClassName="w-full" />

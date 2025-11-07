@@ -90,7 +90,7 @@ const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'poi
 
 const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfig> = {
   core: {
-    labelKey: 'dashboard.navigation.groups.core',
+    labelKey: 'groups.core',
     defaultLabel: 'ホーム',
     headingClass: 'text-slate-500',
     desktop: {
@@ -107,7 +107,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   lp: {
-    labelKey: 'dashboard.navigation.groups.lp',
+    labelKey: 'groups.lp',
     defaultLabel: 'LPメニュー',
     headingClass: 'text-blue-500',
     desktop: {
@@ -124,7 +124,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   note: {
-    labelKey: 'dashboard.navigation.groups.note',
+    labelKey: 'groups.note',
     defaultLabel: 'NOTEメニュー',
     headingClass: 'text-slate-500',
     desktop: {
@@ -141,7 +141,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   salon: {
-    labelKey: 'dashboard.navigation.groups.salon',
+    labelKey: 'groups.salon',
     defaultLabel: 'サロン',
     headingClass: 'text-sky-500',
     desktop: {
@@ -158,7 +158,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   points: {
-    labelKey: 'dashboard.navigation.groups.points',
+    labelKey: 'groups.points',
     defaultLabel: 'ポイント',
     headingClass: 'text-violet-500',
     desktop: {
@@ -175,7 +175,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   line: {
-    labelKey: 'dashboard.navigation.groups.line',
+    labelKey: 'groups.line',
     defaultLabel: 'LINE連携',
     headingClass: 'text-emerald-500',
     desktop: {
@@ -194,7 +194,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   media: {
-    labelKey: 'dashboard.navigation.groups.media',
+    labelKey: 'groups.media',
     defaultLabel: '外部連携',
     headingClass: 'text-indigo-500',
     desktop: {
@@ -211,7 +211,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
     },
   },
   info: {
-    labelKey: 'dashboard.navigation.groups.info',
+    labelKey: 'groups.info',
     defaultLabel: 'サポート',
     headingClass: 'text-slate-400',
     desktop: {
@@ -230,28 +230,28 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
 };
 
 const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
-  { href: '/dashboard', labelKey: 'dashboard.navigation.links.dashboard', defaultLabel: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
-  { href: '/messages', labelKey: 'dashboard.navigation.links.messages', defaultLabel: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
-  { href: '/profile', labelKey: 'dashboard.navigation.links.profile', defaultLabel: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
-  { href: '/lp/create', labelKey: 'dashboard.navigation.links.lpCreate', defaultLabel: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
-  { href: '/products', labelKey: 'dashboard.navigation.links.products', defaultLabel: 'AllLP', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
-  { href: '/note/create', labelKey: 'dashboard.navigation.links.noteCreate', defaultLabel: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
-  { href: '/note', labelKey: 'dashboard.navigation.links.noteEdit', defaultLabel: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
-  { href: '/notes', labelKey: 'dashboard.navigation.links.notes', defaultLabel: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
-  { href: '/salons', labelKey: 'dashboard.navigation.links.salons', defaultLabel: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
-  { href: '/salons/create', labelKey: 'dashboard.navigation.links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
-  { href: '/salons/all', labelKey: 'dashboard.navigation.links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
-  { href: '/points/purchase', labelKey: 'dashboard.navigation.links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
-  { href: '/points/history', labelKey: 'dashboard.navigation.links.pointsHistory', defaultLabel: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
-  { href: '/purchases', labelKey: 'dashboard.navigation.links.purchases', defaultLabel: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
-  { href: '/line/bonus', labelKey: 'dashboard.navigation.links.lineBonus', defaultLabel: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badgeKey: 'dashboard.navigation.links.lineBonusBadge', defaultBadge: '300P' },
-  { href: '/settings', labelKey: 'dashboard.navigation.links.settings', defaultLabel: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
-  { href: '/settings/share', labelKey: 'dashboard.navigation.links.settingsShare', defaultLabel: '共有機能', icon: <ShareIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 30 },
-  { href: '/media', labelKey: 'dashboard.navigation.links.media', defaultLabel: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
-  { href: '/terms', labelKey: 'dashboard.navigation.links.terms', defaultLabel: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
-  { href: '/tokusho', labelKey: 'dashboard.navigation.links.tokusho', defaultLabel: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },
-  { href: '/privacy', labelKey: 'dashboard.navigation.links.privacy', defaultLabel: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
-  { href: 'https://lin.ee/lYIZWhd', labelKey: 'dashboard.navigation.links.contact', defaultLabel: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
+  { href: '/dashboard', labelKey: 'links.dashboard', defaultLabel: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
+  { href: '/messages', labelKey: 'links.messages', defaultLabel: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
+  { href: '/profile', labelKey: 'links.profile', defaultLabel: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
+  { href: '/lp/create', labelKey: 'links.lpCreate', defaultLabel: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
+  { href: '/products', labelKey: 'links.products', defaultLabel: 'AllLP', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
+  { href: '/note/create', labelKey: 'links.noteCreate', defaultLabel: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
+  { href: '/note', labelKey: 'links.noteEdit', defaultLabel: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
+  { href: '/notes', labelKey: 'links.notes', defaultLabel: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
+  { href: '/salons', labelKey: 'links.salons', defaultLabel: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
+  { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
+  { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
+  { href: '/points/purchase', labelKey: 'links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
+  { href: '/points/history', labelKey: 'links.pointsHistory', defaultLabel: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
+  { href: '/purchases', labelKey: 'links.purchases', defaultLabel: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
+  { href: '/line/bonus', labelKey: 'links.lineBonus', defaultLabel: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badgeKey: 'links.lineBonusBadge', defaultBadge: '300P' },
+  { href: '/settings', labelKey: 'links.settings', defaultLabel: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
+  { href: '/settings/share', labelKey: 'links.settingsShare', defaultLabel: '共有機能', icon: <ShareIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 30 },
+  { href: '/media', labelKey: 'links.media', defaultLabel: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
+  { href: '/terms', labelKey: 'links.terms', defaultLabel: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
+  { href: '/tokusho', labelKey: 'links.tokusho', defaultLabel: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },
+  { href: '/privacy', labelKey: 'links.privacy', defaultLabel: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
+  { href: 'https://lin.ee/lYIZWhd', labelKey: 'links.contact', defaultLabel: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
 ];
 
 const safeTranslate = (translate: TranslateFn | undefined, key: string, fallback: string) => {
@@ -260,7 +260,10 @@ const safeTranslate = (translate: TranslateFn | undefined, key: string, fallback
   }
   try {
     const value = translate(key);
-    return value ?? fallback;
+    if (!value || value === key) {
+      return fallback;
+    }
+    return value;
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(`Missing translation for key: ${key}`);
@@ -299,7 +302,7 @@ export const getDashboardNavLinks = (options?: {
       createNavLink(
         {
           href: '/products/manage',
-          labelKey: 'dashboard.navigation.links.productsManage',
+          labelKey: 'links.productsManage',
           defaultLabel: '商品管理',
           icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" />,
           group: 'lp',
@@ -315,7 +318,7 @@ export const getDashboardNavLinks = (options?: {
       createNavLink(
         {
           href: '/sales',
-          labelKey: 'dashboard.navigation.links.sales',
+          labelKey: 'links.sales',
           defaultLabel: '販売履歴',
           icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />,
           group: 'points',
@@ -331,7 +334,7 @@ export const getDashboardNavLinks = (options?: {
       createNavLink(
         {
           href: '/admin',
-          labelKey: 'dashboard.navigation.links.admin',
+          labelKey: 'links.admin',
           defaultLabel: '管理者パネル',
           icon: <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />,
           group: 'core',
