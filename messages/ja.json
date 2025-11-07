@@ -1,0 +1,609 @@
+{
+  "common": {
+    "languageSwitcher": {
+      "label": "言語",
+      "localeName": {
+        "ja": "日本語",
+        "en": "English"
+      }
+    }
+  },
+  "notePublic": {
+    "pageTitle": "AllNOTES",
+    "pageSubtitle": "情報発信者が投稿したNOTE記事をここで発見できます",
+    "filters": {
+      "all": "すべて",
+      "free": "無料記事",
+      "paid": "有料記事"
+    },
+    "searchPlaceholder": "記事タイトル・概要で検索",
+    "allCategoriesLabel": "全カテゴリー",
+    "featuredBadge": "人気",
+    "categories": {
+      "business": "ビジネス戦略",
+      "marketing": "マーケティング",
+      "technology": "テクノロジー",
+      "education": "教育・ノウハウ",
+      "finance": "資産形成・投資",
+      "mindset": "マインドセット",
+      "lifestyle": "ライフスタイル",
+      "community": "コミュニティ運営",
+      "case-study": "事例・ケーススタディ",
+      "news": "最新トレンド",
+      "other": "その他"
+    },
+    "loading": "読み込み中...",
+    "loadError": "記事一覧の取得に失敗しました",
+    "emptyTitle": "記事が見つかりませんでした",
+    "emptyDescription": "条件を変更するか、キーワードを変えて再検索してください。無料記事と有料記事を切り替えることもできます。",
+    "emptyBadge": "新しいNOTEは順次追加予定です",
+    "unpublishedLabel": "未公開",
+    "paidBadge": "有料",
+    "freeBadge": "FREE",
+    "views": "{count, number} views"
+  },
+  "noteDetail": {
+    "unpublishedLabel": "非公開",
+    "fetchError": "NOTEの取得に失敗しました",
+    "pointsNotAvailable": "このNOTEはポイント決済に対応していません",
+    "yenNotAvailable": "このNOTEは日本円決済に対応していません",
+    "confirmPointsPurchase": "以下のNOTEを購入しますか？\n\nタイトル: {title}\n価格: {pricePoints, number} ポイント\n\nポイントが消費されます。よろしいですか？",
+    "confirmYenPurchase": "以下のNOTEを日本円決済で購入しますか？\n\nタイトル: {title}\n価格: ¥{priceYen, number}\n\n決済ページ(one.lat)に遷移します。よろしいですか？",
+    "pointsPurchaseSuccess": "購入が完了しました。残りポイント: {remainingPoints, number} pt",
+    "redirectingToCheckout": "決済ページに遷移します。完了後に再読み込みしてください。",
+    "checkoutUrlError": "決済URLの取得に失敗しました",
+    "genericPurchaseError": "購入に失敗しました。もう一度お試しください。",
+    "initializing": "初期化中...",
+    "loading": "読み込み中...",
+    "notFound": "NOTEが見つかりませんでした",
+    "loginToPurchase": "ログインして購入",
+    "publishedAtLabel": "公開日:",
+    "priceLabel": "価格:",
+    "priceNotConfigured": "販売設定未設定",
+    "freeLabel": "無料",
+    "authorLabel": "著者:",
+    "youAreAuthor": "あなたの記事です",
+    "paidContentTitle": "この続きは有料コンテンツです",
+    "paidContentDescription": "購入すると残りのコンテンツがすべて解放されます。",
+    "pointsPaymentTitle": "ポイント決済",
+    "pointsPaymentNote": "保有ポイントから差し引かれます",
+    "yenPaymentTitle": "日本円決済",
+    "yenPaymentNote": "one.lat決済ページに移動します",
+    "noPaymentMethods": "現在購入できる決済方法が設定されていません。",
+    "processing": "処理中...",
+    "purchaseButtonPoints": "{pricePoints, number} ポイントで購入",
+    "purchaseButtonYen": "{priceYen, number} 円で購入",
+    "purchaseDisclaimer": "デジタルコンテンツの性質上、購入完了後のポイントおよび提供済みコンテンツはキャンセルできません。",
+    "loginPrompt": "アカウントをお持ちでない場合はこちらからログイン/登録",
+    "shareHeading": "SNSでシェア",
+    "shareOnX": "Xでシェア",
+    "shareOnLine": "LINEでシェア",
+    "accessGrantedMessage": "現在あなたは有料エリアを閲覧中です。",
+    "backToNotes": "← AllNOTESへ戻る",
+    "editNote": "NOTE編集"
+  },
+  "shareUnlock": {
+    "checking": "確認中...",
+    "defaultUsername": "公式アカウント",
+    "alreadySharedTitle": "リツイート済み - 記事が解放されました！",
+    "viewRetweet": "リツイートを表示 →",
+    "shareHeading": "Xでリツイートして無料で読む",
+    "shareDescription": "@{username} の公式ポストをリツイートすると、{pricePoints, number}P の支払いなしで全文を読むことができます。",
+    "shareHintPrimary": "ボタンを押すと連携済みのXアカウントで自動的にリツイートします。",
+    "shareHintSecondary": "ログインとX連携が必要です。",
+    "viewOfficialPost": "公式ポストを確認する → {url}",
+    "officialMissing": "販売者が公式ポストを設定するまでリツイート解放は利用できません。",
+    "shareButton": "Xでリツイートして無料で読む",
+    "shareProcessing": "リツイート処理中...",
+    "connectHint": "アカウントを連携すると、リツイート解放が利用できます。",
+    "errorTitle": "エラー",
+    "requiresXLink": "X連携が必要です。設定画面で連携してください。",
+    "alreadySharedError": "既にこのNOTEをリツイート済みです。",
+    "unavailableError": "販売者が公式ポストを設定していないため、現在リツイート解放は利用できません。",
+    "genericError": "リツイート処理中にエラーが発生しました。もう一度お試しください。",
+    "navigateToSettings": "設定画面でX連携する →"
+  },
+  "checkout": {
+    "heading": "決済が完了しました！",
+    "description": "NOTE の購入が正常に完了しました。すぐに記事へ移動して内容をご確認ください。",
+    "statusLabel": "決済ステータス",
+    "statuses": {
+      "COMPLETED": "完了",
+      "PENDING": "確認中",
+      "CANCELLED": "キャンセル",
+      "REJECTED": "拒否",
+      "EXPIRED": "期限切れ",
+      "UNKNOWN": "確認中"
+    },
+    "transactionId": "トランザクションID: {id}",
+    "checkingStatus": "決済状況を確認しています…",
+    "notificationSent": "運営からのお知らせにテンプレートメッセージを送信しました。",
+    "notificationPending": "運営からのお知らせへの反映には数秒かかる場合があります。",
+    "statusError": "決済状態の確認に失敗しました。数秒後に再試行します。",
+    "autoRedirect": "{seconds}秒後に自動で記事ページに戻ります...",
+    "manualRedirect": "記事ページに戻るリンクからお進みください。",
+    "goToArticle": "記事ページへ移動する",
+    "goToDashboard": "ダッシュボードに戻る"
+  },
+  "profile": {
+    "page": {
+      "title": "プロフィール",
+      "subtitle": "アカウント情報と公開設定の管理",
+      "sections": {
+        "account": {
+          "heading": "アカウント設定",
+          "description": "ユーザー名やプロフィール情報を最新の状態に保ちましょう。"
+        },
+        "current": {
+          "heading": "現在の情報",
+          "publicProfile": "公開プロフィール"
+        },
+        "username": {
+          "heading": "ユーザー名の変更",
+          "description": "3〜20文字の英数字とアンダースコア（_）のみ使用可能です。"
+        },
+        "profile": {
+          "heading": "公開プロフィール設定"
+        }
+      }
+    },
+    "validation": {
+      "usernameRequired": "ユーザー名を入力してください",
+      "usernameLength": "ユーザー名は3〜20文字で入力してください",
+      "usernamePattern": "ユーザー名は英数字とアンダースコアのみ使用できます",
+      "usernameUnchanged": "現在のユーザー名と同じです"
+    },
+    "errors": {
+      "usernameUpdateFailed": "ユーザー名の更新に失敗しました",
+      "profileUpdateFailed": "プロフィールの更新に失敗しました",
+      "uploadFailed": "画像のアップロードに失敗しました"
+    },
+    "messages": {
+      "usernameUpdated": "ユーザー名を更新しました",
+      "profileUpdated": "プロフィール情報を更新しました"
+    },
+    "buttons": {
+      "copyLink": "リンクをコピー",
+      "copied": "コピー済み",
+      "updateUsername": "更新する",
+      "uploadImage": "画像をアップロード",
+      "uploadingImage": "アップロード中…",
+      "removeImage": "画像を削除",
+      "savingProfile": "更新中…",
+      "saveProfile": "保存する"
+    },
+    "fields": {
+      "email": "メールアドレス",
+      "username": "ユーザー名",
+      "pointBalance": "ポイント残高",
+      "newUsernameLabel": "新しいユーザー名",
+      "newUsernamePlaceholder": "新しいユーザー名を入力",
+      "bioLabel": "自己紹介",
+      "bioPlaceholder": "あなたやビジネスの紹介を入力してください",
+      "bioCounter": "{current}/{max}",
+      "snsLabel": "SNSリンク",
+      "snsHint": "例: X（旧Twitter）やInstagramなどのプロフィールURL",
+      "lineLabel": "公式LINEリンク",
+      "lineHint": "例: https://lin.ee/ から始まるリンク",
+      "imageLabel": "プロフィール画像",
+      "imagePreviewAlt": "プロフィール画像プレビュー",
+      "noImage": "画像なし",
+      "imageHint": "正方形画像を推奨（最大512px）。自動で最適化されます。"
+    }
+  },
+  "settings": {
+    "page": {
+      "title": "設定",
+      "subtitle": "アカウント設定と連携管理",
+      "sections": {
+        "integrations": {
+          "heading": "外部サービス連携"
+        },
+        "accountSharing": {
+          "heading": "アカウント共有",
+          "description": "信頼できるユーザーにダッシュボードの閲覧・編集を委任できます。共有中の相手はいつでも管理画面から確認・解除できます。",
+          "button": "共有設定を開く"
+        }
+      }
+    },
+    "sharePage": {
+      "title": "アカウント共有",
+      "subtitle": "信頼するユーザーにダッシュボードを委任できます"
+    },
+    "xConnection": {
+      "title": "X (Twitter) 連携",
+      "description": "有料NOTEをXでシェアして無料で読めるようにします",
+      "status": {
+        "connected": "連携済み",
+        "disconnected": "未連携"
+      },
+      "alerts": {
+        "loginRequired": "ログインが必要です",
+        "startFailed": "X連携の開始に失敗しました。もう一度お試しください。",
+        "disconnectSuccess": "X連携を解除しました",
+        "disconnectFailed": "連携解除に失敗しました。もう一度お試しください。"
+      },
+      "errors": {
+        "authorizationFailed": "認証URLの取得に失敗しました",
+        "disconnectFailed": "連携解除に失敗しました"
+      },
+      "confirmDisconnect": "X（Twitter）連携を解除しますか？\n解除すると、シェアによるNOTE無料解放ができなくなります。",
+      "connected": {
+        "heading": "連携済み",
+        "accountLabel": "アカウント:",
+        "followersLabel": "フォロワー:",
+        "followersValue": "{count}人",
+        "connectedAtLabel": "連携日:",
+        "disconnecting": "解除中…",
+        "disconnectButton": "連携を解除"
+      },
+      "benefits": {
+        "heading": "連携するとできること",
+        "items": [
+          "有料NOTEをXでシェアして無料で読める",
+          "お金をかけずに気になる記事を閲覧可能",
+          "シェアするだけで簡単に記事が解放される"
+        ]
+      },
+      "connectButton": "Xアカウントと連携する",
+      "permissionsNote": "連携すると、X（Twitter）でのツイート投稿権限が付与されます"
+    },
+    "accountShare": {
+      "sections": {
+        "invite": {
+          "heading": "共有招待を送る",
+          "description": "招待されたユーザーは承認後、あなたのダッシュボードを閲覧・編集できます。リンクの有効期限は数日間です。",
+          "emailLabel": "招待するユーザーのメールアドレス",
+          "emailPlaceholder": "example@example.com",
+          "linkHeading": "招待リンク"
+        },
+        "owner": {
+          "heading": "共有中のユーザー",
+          "description": "承認待ち・有効な共有の状況を確認できます。",
+          "empty": "現在共有中のユーザーはいません。",
+          "table": {
+            "user": "ユーザー",
+            "status": "状態",
+            "dates": "招待日 / 承認日",
+            "actions": "操作"
+          }
+        },
+        "delegate": {
+          "heading": "共有を受けているアカウント",
+          "description": "あなたがアクセス可能なアカウントの一覧です。",
+          "empty": "他のユーザーから共有されているアカウントはありません。"
+        }
+      },
+      "buttons": {
+        "sendInvite": "招待メールを送信",
+        "sendingInvite": "送信中…",
+        "copyInvite": "招待リンクをコピー",
+        "revokeShare": "共有を解除"
+      },
+      "feedback": {
+        "emailRequired": "招待する相手のメールアドレスを入力してください。",
+        "inviteSent": "招待メールを送信しました。必要に応じてリンクを共有してください。",
+        "copySuccess": "招待リンクをクリップボードにコピーしました。",
+        "copyError": "クリップボードにコピーできませんでした。",
+        "revokeSuccess": "共有を解除しました。"
+      },
+      "status": {
+        "pending": "承認待ち",
+        "active": "有効",
+        "revoked": "解除済み"
+      },
+      "date": {
+        "notAvailable": "-",
+        "invited": "招待: {value}",
+        "expires": "有効期限: {value}",
+        "accepted": "承認: {value}"
+      },
+      "confirm": {
+        "revoke": "共有を解除すると、相手はあなたのアカウントにアクセスできなくなります。続行しますか？"
+      },
+      "misc": {
+        "unknownUser": "不明なユーザー",
+        "emailMissing": "メール未取得",
+        "ownerUnknown": "オーナー情報なし"
+      }
+    }
+  },
+  "media": {
+    "page": {
+      "title": "メディアライブラリ",
+      "subtitle": "画像や動画をアップロードして、LPやNOTEですぐに利用できます",
+      "upload": {
+        "heading": "アップロード",
+        "description": "PNG・JPG・WEBP をサポートしています。複数ファイルを一括選択できます。",
+        "button": "メディアを追加",
+        "buttonUploading": "アップロード中...",
+        "backButton": "マーケットへ戻る"
+      },
+      "empty": {
+        "title": "まだメディアがありません",
+        "description": "「メディアを追加」から画像をアップロードするとここに表示されます。"
+      },
+      "list": {
+        "itemAlt": "アップロードしたメディア"
+      }
+    },
+    "actions": {
+      "view": "表示",
+      "copy": "コピー",
+      "delete": "削除"
+    },
+    "errors": {
+      "fetch": "メディアの取得に失敗しました",
+      "upload": "アップロードに失敗しました",
+      "copy": "コピーに失敗しました"
+    },
+    "confirm": {
+      "delete": "このメディアを削除しますか？"
+    }
+  },
+  "pointsPurchase": {
+    "pageTitle": "ポイント購入",
+    "pageSubtitle": "安全な決済でポイントを追加できます",
+    "packages": {
+      "heading": "ポイントパッケージ",
+      "description": "利用規模に合わせて柔軟に選択できます",
+      "secureLabel": "SECURE PURCHASE",
+      "pointsLabel": "{points} P",
+      "bonusBadge": "+{bonus}P ボーナス",
+      "selectedLabel": "選択中",
+      "priceLabel": "{price}"
+    },
+    "payments": {
+      "heading": "支払い方法",
+      "methods": {
+        "one_lat": {
+          "name": "カード・USDT決済（ONE.lat）"
+        },
+        "jpyc": {
+          "name": "JPYC決済"
+        },
+        "stripe": {
+          "name": "クレジットカード"
+        },
+        "paypal": {
+          "name": "PayPal"
+        },
+        "bank": {
+          "name": "銀行振込"
+        }
+      },
+      "statusBadge": {
+        "comingSoon": "準備中",
+        "selected": "選択済み",
+        "select": "選択"
+      }
+    },
+    "summary": {
+      "purchasePointsLabel": "購入ポイント",
+      "paymentAmountLabel": "お支払い金額",
+      "pointsValue": "{points} P",
+      "paymentValue": "{amount}",
+      "processing": "処理中...",
+      "proceedButton": "購入手続きへ進む",
+      "paymentNotices": {
+        "one_lat": "ONE.latの安全な決済ページに移動します（クレジットカード・USDT・その他決済方法対応）",
+        "jpyc": "JPYC決済は近日公開予定です。ウォレット接続でガスレス決済（手数料無料）を実現します。",
+        "comingSoon": "この決済方法は現在準備中です。ONE.lat決済をご利用ください。"
+      }
+    },
+    "balance": {
+      "sectionLabel": "CURRENT BALANCE",
+      "pointsSuffix": "P",
+      "projected": "購入後の見込み残高: {balance}{suffix}"
+    },
+    "transactions": {
+      "heading": "直近のポイント購入",
+      "empty": "まだ購入履歴がありません",
+      "pointsAdded": "+{points} P",
+      "statusCompleted": "完了"
+    },
+    "guidelines": {
+      "heading": "ポイント運用ガイドライン",
+      "items": [
+        "1ポイント = 1円相当。全ての決済にご利用いただけます。",
+        "ポイントに有効期限はありません。年度を跨いでも繰り越し可能です。",
+        "ポイントを一度購入するとキャンセルおよび払い戻しは不可となります。",
+        "決済完了後は即時にポイントへ反映されます（遅延が発生した場合はサポートまで）。"
+      ]
+    },
+    "alerts": {
+      "loginRequired": "ポイント購入にはログインが必要です。",
+      "jpycComingSoon": "JPYC決済は近日公開予定です。\n\n実装予定機能：\n- ウォレット接続（MetaMask等）\n- ガスレス決済（手数料無料）\n- 1 JPYC = 1円\n\n現在はONE.lat決済をご利用ください。",
+      "comingSoon": "この決済方法は準備中です。\nONE.lat決済（カード・USDT対応）をご利用ください。",
+      "missingToken": "認証トークンが見つかりません。再ログインしてください。",
+      "purchaseStartFailed": "決済の開始に失敗しました ({status}): {details}",
+      "purchaseError": "決済エラー:\n{message}"
+    },
+    "errors": {
+      "fetch": "データの取得に失敗しました。時間をおいて再度お試しください。"
+    }
+  },
+  "pointsHistory": {
+    "pageTitle": "ポイント履歴",
+    "pageSubtitleDefault": "最新のポイント活動を確認できます",
+    "pageSubtitleWithTotal": "{total}件のトランザクション",
+    "filters": {
+      "all": "すべて",
+      "purchase": "ポイント購入",
+      "productPurchase": "LP購入",
+      "bonus": "ボーナス",
+      "refund": "返金"
+    },
+    "actions": {
+      "refresh": "更新"
+    },
+    "summary": {
+      "pointsSuffix": "P",
+      "income": {
+        "title": "累計加算",
+        "description": "ポイント購入やボーナスの合計"
+      },
+      "spending": {
+        "title": "累計消費",
+        "description": "LP購入などの合計"
+      },
+      "bonuses": {
+        "title": "ボーナス",
+        "description": "キャンペーンや特典による加算"
+      }
+    },
+    "transactions": {
+      "empty": "トランザクション履歴がありません",
+      "idLabel": "ID: {value}",
+      "productIdLabel": "商品ID: {value}",
+      "types": {
+        "purchase": "ポイント購入",
+        "productPurchase": "LP購入",
+        "bonus": "ボーナス",
+        "refund": "返金",
+        "unknown": "{value}"
+      }
+    },
+    "errors": {
+      "fetch": "トランザクション履歴の取得に失敗しました"
+    }
+  },
+  "pointsSubscriptions": {
+    "pageTitle": "サブスク自動チャージ",
+    "pageSubtitle": "毎月自動でポイントをチャージして購入忘れをゼロに",
+    "placeholders": {
+      "none": "---"
+    },
+    "sellerNotice": {
+      "title": "このリンクは「{seller}」向けのサブスク申込ページです。",
+      "description": "申込完了後は自動的にポイントがチャージされ、販売者のコンテンツ利用にご使用いただけます。"
+    },
+    "selection": {
+      "heading": "プランを選択",
+      "description": "毎月自動でポイントがチャージされます。いつでも停止できます。",
+      "restrictionNotice": "このサロンでは「{label}」のみお申し込みいただけます。",
+      "restrictionDefaultLabel": "指定プラン",
+      "pointsPerMonthLabel": "{points}{suffix}",
+      "pointsSuffix": "ポイント / 月",
+      "yenLabel": "約{amount} / 月",
+      "approxZero": "約0円 / 月",
+      "usdNote": "決済はONE.lat経由でUSD建てとなります。",
+      "subscribeButton": "このプランで申込む",
+      "redirecting": "リダイレクト中…"
+    },
+    "subscriptions": {
+      "heading": "契約中のサブスク",
+      "description": "ステータスや次回課金日を確認できます。必要に応じて自動更新を停止してください。",
+      "empty": "現在アクティブなサブスクはありません。上のプランからお申し込みいただけます。",
+      "statusUnknown": "ステータス不明",
+      "pricePerCycle": "{points}{suffix} ・ {yen}",
+      "sellerLabel": "販売者: {seller}",
+      "cancelButton": "自動更新を停止",
+      "canceling": "処理中…",
+      "cancelUnavailable": "このサブスクは現在キャンセルできません。",
+      "fields": {
+        "nextCharge": "次回課金予定",
+        "lastCharge": "最終課金",
+        "lastEvent": "最新イベント",
+        "contractId": "契約ID"
+      }
+    },
+    "status": {
+      "ACTIVE": "有効",
+      "COMPLETE": "決済完了",
+      "PENDING": "処理中",
+      "UNPAID": "未入金",
+      "CANCELED": "解約済",
+      "CANCELLED": "解約済",
+      "REJECTED": "拒否"
+    },
+    "errors": {
+      "load": "データの取得に失敗しました。時間をおいて再度お試しください。",
+      "checkout": "サブスク決済の開始に失敗しました。もう一度お試しください。",
+      "missingCheckoutUrl": "Checkout URLが取得できませんでした",
+      "restrictedPlan": "このサロンでは指定されたプランのみお申し込みいただけます。",
+      "cancel": "解約処理に失敗しました。時間をおいて再度お試しください。"
+    },
+    "confirm": {
+      "cancel": "自動更新を停止します。よろしいですか？"
+    }
+  },
+  "dashboard": {
+    "layout": {
+      "defaultTitle": "ダッシュボード",
+      "guest": {
+        "prompt": "アカウントをお持ちの方",
+        "login": "ログイン",
+        "register": "無料で始める",
+        "explore": "探す"
+      },
+      "logout": "ログアウト"
+    },
+    "navigation": {
+      "groups": {
+        "core": "ホーム",
+        "lp": "LPメニュー",
+        "note": "NOTEメニュー",
+        "salon": "サロン",
+        "points": "ポイント",
+        "line": "LINE連携",
+        "media": "外部連携",
+        "info": "サポート"
+      },
+      "links": {
+        "dashboard": "ダッシュボード",
+        "messages": "運営からのお知らせ",
+        "profile": "プロフィール",
+        "lpCreate": "新規LP作成",
+        "products": "AllLP",
+        "productsManage": "商品管理",
+        "noteCreate": "新規NOTE作成",
+        "noteEdit": "NOTE編集",
+        "notes": "AllNOTES",
+        "salons": "サロン一覧",
+        "salonsCreate": "サロン新規作成",
+        "salonsAll": "AllSalon",
+        "pointsPurchase": "ポイント購入",
+        "pointsHistory": "ポイント履歴",
+        "purchases": "購入履歴",
+        "sales": "販売履歴",
+        "lineBonus": "LINE連携",
+        "lineBonusBadge": "300P",
+        "settings": "X連携",
+        "settingsShare": "共有機能",
+        "media": "メディア",
+        "terms": "利用規約",
+        "tokusho": "特定商取引法",
+        "privacy": "プライバシー",
+        "contact": "お問い合わせ",
+        "admin": "管理者パネル"
+      }
+    },
+    "header": {
+      "menu": "メニュー",
+      "navigationLabel": "ナビゲーション",
+      "greeting": "{name} さん",
+      "userFallbackName": "ユーザー",
+      "closeMenuAria": "メニューを閉じる",
+      "loggedInFallback": "ログイン中",
+      "userType": {
+        "seller": "セラーアカウント",
+        "default": "ユーザー"
+      },
+      "sections": {
+        "home": "ホーム",
+        "settings": "設定",
+        "more": "その他"
+      },
+      "links": {
+        "home": "ホーム",
+        "dashboardShort": "ダッシュ"
+      },
+      "notifications": "お知らせ",
+      "notificationsWithCount": "お知らせ ({count})",
+      "subtitle": "ようこそ、{name}さん",
+      "pointBalanceLabel": "ポイント残高",
+      "avatarAlt": "ユーザーアイコン"
+    }
+  }
+}

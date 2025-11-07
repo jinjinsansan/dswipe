@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useFormatter, useTranslations} from 'next-intl';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { useAuthStore } from '@/store/authStore';
@@ -31,25 +32,6 @@ interface TransactionListResponse {
   offset: number;
   transaction_type_filter?: string;
 }
-
-const formatDate = (value: string) => {
-  if (!value) return value;
-  const normalized = value.includes('Z') || value.includes('+') ? value : `${value}Z`;
-  const date = new Date(normalized);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Tokyo',
-    timeZoneName: 'short',
-  }).format(date);
-};
-
-const formatPoints = (amount: number) => new Intl.NumberFormat('ja-JP').format(amount);
-
 const getTransactionIcon = (type: string) => {
   switch (type) {
     case 'purchase':
@@ -62,21 +44,6 @@ const getTransactionIcon = (type: string) => {
       return <ArrowPathIcon className="h-5 w-5 text-orange-500" />;
     default:
       return <ArrowTrendingUpIcon className="h-5 w-5 text-slate-500" />;
-  }
-};
-
-const getTransactionLabel = (type: string) => {
-  switch (type) {
-    case 'purchase':
-      return 'ポイント購入';
-    case 'product_purchase':
-      return 'LP購入';
-    case 'bonus':
-      return 'ボーナス';
-    case 'refund':
-      return '返金';
-    default:
-      return type;
   }
 };
 
@@ -95,13 +62,20 @@ const getTransactionBadgeClass = (type: string) => {
   }
 };
 
-const FILTERS: Array<{ label: string; value: string | null }> = [
-  { label: 'すべて', value: null },
-  { label: 'ポイント購入', value: 'purchase' },
-  { label: 'LP購入', value: 'product_purchase' },
-  { label: 'ボーナス', value: 'bonus' },
-  { label: '返金', value: 'refund' },
+const FILTERS: Array<{ translationKey: string; value: string | null }> = [
+  { translationKey: 'all', value: null },
+  { translationKey: 'purchase', value: 'purchase' },
+  { translationKey: 'productPurchase', value: 'product_purchase' },
+  { translationKey: 'bonus', value: 'bonus' },
+  { translationKey: 'refund', value: 'refund' },
 ];
+
+const TRANSACTION_TYPE_LABEL_MAP: Record<string, 'purchase' | 'productPurchase' | 'bonus' | 'refund'> = {
+  purchase: 'purchase',
+  product_purchase: 'productPurchase',
+  bonus: 'bonus',
+  refund: 'refund',
+};
 
 const POINT_HISTORY_CACHE_TTL = 90_000; // 90 seconds
 
@@ -117,7 +91,52 @@ export default function PointHistoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
+  const formatter = useFormatter();
+  const t = useTranslations('pointsHistory');
+  const filtersT = useTranslations('pointsHistory.filters');
+  const actionsT = useTranslations('pointsHistory.actions');
+  const summaryT = useTranslations('pointsHistory.summary');
+  const errorsT = useTranslations('pointsHistory.errors');
+  const transactionsT = useTranslations('pointsHistory.transactions');
 
+  const pointsSuffix = summaryT('pointsSuffix');
+
+  const formatDate = useCallback((value: string) => {
+    if (!value) return value;
+    const normalized = value.includes('Z') || value.includes('+') ? value : `${value}Z`;
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return value;
+    return formatter.dateTime(date, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Tokyo',
+      timeZoneName: 'short',
+    });
+  }, [formatter]);
+
+  const formatPoints = useCallback((amount: number) => formatter.number(Math.abs(amount)), [formatter]);
+
+  const formatSignedPoints = useCallback(
+    (value: number, options?: { showPlusForZero?: boolean }) => {
+      const prefix = value > 0 ? '+' : value < 0 ? '-' : options?.showPlusForZero ? '+' : '';
+      return `${prefix}${formatPoints(value)}${pointsSuffix}`;
+    },
+    [formatPoints, pointsSuffix]
+  );
+
+  const transactionTypeLabel = useCallback(
+    (type: string) => {
+      const key = TRANSACTION_TYPE_LABEL_MAP[type];
+      if (key) {
+        return transactionsT(`types.${key}`);
+      }
+      return transactionsT('types.unknown', { value: type });
+    },
+    [transactionsT]
+  );
   const cacheKey = useMemo(() => `points-history-${filterType ?? 'all'}`, [filterType]);
 
   const fetchTransactions = useCallback(async (options?: { showSpinner?: boolean }) => {
@@ -150,11 +169,11 @@ export default function PointHistoryPage() {
     } catch (err: unknown) {
       console.error('Error fetching transactions:', err);
       const message = err instanceof Error ? err.message : undefined;
-      setError(message ?? 'トランザクション履歴の取得に失敗しました');
+      setError(message ?? errorsT('fetch'));
     } finally {
       setIsLoading(false);
     }
-  }, [cacheKey, filterType]);
+  }, [cacheKey, errorsT, filterType]);
 
   useEffect(() => {
     if (!isInitialized || !isAuthenticated) {
@@ -188,14 +207,18 @@ export default function PointHistoryPage() {
     };
   }, [transactions]);
 
+  const pageSubtitle = total
+    ? t('pageSubtitleWithTotal', { total: formatter.number(total) })
+    : t('pageSubtitleDefault');
+
   if (isLoading) {
     return <PageLoader />;
   }
 
   return (
     <DashboardLayout
-      pageTitle="ポイント履歴"
-      pageSubtitle={total ? `${total}件のトランザクション` : '最新のポイント活動を確認できます'}
+      pageTitle={t('pageTitle')}
+      pageSubtitle={pageSubtitle}
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
         <>
@@ -203,7 +226,7 @@ export default function PointHistoryPage() {
               <div className="flex flex-wrap gap-2">
                 {FILTERS.map((filter) => (
                   <button
-                    key={filter.label}
+                    key={filter.translationKey}
                     onClick={() => setFilterType(filter.value)}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                       filterType === filter.value
@@ -211,7 +234,7 @@ export default function PointHistoryPage() {
                         : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                     }`}
                   >
-                    {filter.label}
+                    {filtersT(filter.translationKey)}
                   </button>
                 ))}
               </div>
@@ -222,31 +245,31 @@ export default function PointHistoryPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
                 <ArrowPathIcon className="h-4 w-4" />
-                更新
+                {actionsT('refresh')}
               </button>
             </div>
 
             <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">累計加算</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('income.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-emerald-600">
-                  +{formatPoints(summary.income)}P
+                  {formatSignedPoints(summary.income)}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">ポイント購入やボーナスの合計</p>
+                <p className="mt-1 text-xs text-slate-500">{summaryT('income.description')}</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">累計消費</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('spending.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-rose-600">
-                  {formatPoints(summary.spending)}P
+                  {formatSignedPoints(summary.spending)}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">LP購入などの合計</p>
+                <p className="mt-1 text-xs text-slate-500">{summaryT('spending.description')}</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">ボーナス</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('bonuses.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-blue-600">
-                  +{formatPoints(summary.bonuses)}P
+                  {formatSignedPoints(summary.bonuses, { showPlusForZero: true })}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">キャンペーンや特典による加算</p>
+                <p className="mt-1 text-xs text-slate-500">{summaryT('bonuses.description')}</p>
               </div>
             </div>
 
@@ -258,7 +281,7 @@ export default function PointHistoryPage() {
 
             {transactions.length === 0 ? (
               <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500 shadow-sm">
-                トランザクション履歴がありません
+                {transactionsT('empty')}
               </div>
             ) : (
               <div className="space-y-3">
@@ -279,7 +302,7 @@ export default function PointHistoryPage() {
                                 tx.transaction_type
                               )}`}
                             >
-                              {getTransactionLabel(tx.transaction_type)}
+                              {transactionTypeLabel(tx.transaction_type)}
                             </span>
                             {tx.description ? (
                               <p className="mt-2 text-sm text-slate-700">{tx.description}</p>
@@ -291,16 +314,17 @@ export default function PointHistoryPage() {
                                 tx.amount >= 0 ? 'text-emerald-600' : 'text-rose-600'
                               }`}
                             >
-                              {tx.amount > 0 ? '+' : ''}
-                              {formatPoints(tx.amount)}P
+                              {formatSignedPoints(tx.amount)}
                             </p>
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-4 text-xs text-slate-500">
                           <span>{formatDate(tx.created_at)}</span>
-                          <span className="text-slate-400">ID: {tx.id.slice(0, 8)}...</span>
+                          <span className="text-slate-400">{transactionsT('idLabel', { value: `${tx.id.slice(0, 8)}...` })}</span>
                           {tx.related_product_id ? (
-                            <span className="text-slate-400">商品ID: {tx.related_product_id.slice(0, 8)}...</span>
+                            <span className="text-slate-400">
+                              {transactionsT('productIdLabel', { value: `${tx.related_product_id.slice(0, 8)}...` })}
+                            </span>
                           ) : null}
                         </div>
                       </div>

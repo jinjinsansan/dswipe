@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Metadata } from 'next';
 import NoteDetailClient from '@/components/note/NoteDetailClient';
 
@@ -84,14 +83,6 @@ export default async function NoteSharePage({ params }: NoteSharePageProps) {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 sm:py-16">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-        <header className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/notes"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-          >
-            ← NOTE一覧に戻る
-          </Link>
-        </header>
         <section className="rounded-3xl border border-slate-200 bg-white/90 px-4 py-6 shadow-sm sm:px-6">
           <NoteDetailClient shareToken={token} />
         </section>

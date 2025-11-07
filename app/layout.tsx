@@ -5,6 +5,9 @@ import AuthProvider from "@/components/AuthProvider";
 import { AccountShareProvider } from "@/components/account/AccountShareProvider";
 import NextTopLoader from 'nextjs-toploader';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale, getMessages} from 'next-intl/server';
+import {ReactNode} from 'react';
 
 // オプション1: Noto Sans JP（現在使用中）- Google公式、企業サイトで最も使われている
 const notoSansJP = Noto_Sans_JP({
@@ -113,34 +116,38 @@ export const viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const shouldUseGoogleProvider = Boolean(googleClientId && googleClientId.trim().length > 0);
 
   return (
-    <html lang="ja">
+    <html lang={locale}>
       <body className={`${fontConfig[ACTIVE_FONT].className} antialiased`}>
-        <NextTopLoader
-          color="#3b82f6"
-          height={3}
-          showSpinner={false}
-          shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
-        />
-        {shouldUseGoogleProvider ? (
-          <GoogleOAuthProvider clientId={googleClientId!}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextTopLoader
+            color="#3b82f6"
+            height={3}
+            showSpinner={false}
+            shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
+          />
+          {shouldUseGoogleProvider ? (
+            <GoogleOAuthProvider clientId={googleClientId!}>
+              <AuthProvider>
+                <AccountShareProvider>{children}</AccountShareProvider>
+              </AuthProvider>
+            </GoogleOAuthProvider>
+          ) : (
             <AuthProvider>
               <AccountShareProvider>{children}</AccountShareProvider>
             </AuthProvider>
-          </GoogleOAuthProvider>
-        ) : (
-          <AuthProvider>
-            <AccountShareProvider>{children}</AccountShareProvider>
-          </AuthProvider>
-        )}
+          )}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

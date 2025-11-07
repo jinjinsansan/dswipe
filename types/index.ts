@@ -11,6 +11,7 @@ export interface User {
   line_url?: string | null;
   profile_image_url?: string | null;
   last_login_at?: string | null;
+  preferred_locale?: 'ja' | 'en';
 }
 
 export interface AccountShareOwnerShare {

@@ -1,0 +1,609 @@
+{
+  "common": {
+    "languageSwitcher": {
+      "label": "Language",
+      "localeName": {
+        "ja": "日本語",
+        "en": "English"
+      }
+    }
+  },
+  "notePublic": {
+    "pageTitle": "All Notes",
+    "pageSubtitle": "Discover premium and free NOTE articles from top creators.",
+    "filters": {
+      "all": "All",
+      "free": "Free",
+      "paid": "Paid"
+    },
+    "searchPlaceholder": "Search by title or description",
+    "allCategoriesLabel": "All categories",
+    "featuredBadge": "Hot",
+    "categories": {
+      "business": "Business strategy",
+      "marketing": "Marketing",
+      "technology": "Technology",
+      "education": "Education & know-how",
+      "finance": "Finance & investment",
+      "mindset": "Mindset",
+      "lifestyle": "Lifestyle",
+      "community": "Community management",
+      "case-study": "Case study",
+      "news": "Latest trends",
+      "other": "Other"
+    },
+    "loading": "Loading...",
+    "loadError": "Failed to load NOTE listings.",
+    "emptyTitle": "No notes found",
+    "emptyDescription": "Try adjusting the filters or using a different keyword. You can also toggle between free and paid notes.",
+    "emptyBadge": "New NOTE titles are coming soon",
+    "unpublishedLabel": "Draft",
+    "paidBadge": "PAID",
+    "freeBadge": "FREE",
+    "views": "{count, number} views"
+  },
+  "noteDetail": {
+    "unpublishedLabel": "Unpublished",
+    "fetchError": "Failed to load this note.",
+    "pointsNotAvailable": "This note is not available for point purchases.",
+    "yenNotAvailable": "This note does not support JPY payments.",
+    "confirmPointsPurchase": "Do you want to unlock this note with points?\n\nTitle: {title}\nPrice: {pricePoints, number} pts\n\nYour balance will be reduced. Continue?",
+    "confirmYenPurchase": "Do you want to purchase this note in JPY?\n\nTitle: {title}\nPrice: ¥{priceYen, number}\n\nYou will be redirected to the one.lat checkout page. Continue?",
+    "pointsPurchaseSuccess": "Purchase completed. Remaining balance: {remainingPoints, number} pts",
+    "redirectingToCheckout": "Redirecting to the checkout page. Please refresh after completing payment.",
+    "checkoutUrlError": "Failed to retrieve the checkout URL.",
+    "genericPurchaseError": "Purchase failed. Please try again.",
+    "initializing": "Initializing...",
+    "loading": "Loading...",
+    "notFound": "Note not found",
+    "loginToPurchase": "Sign in to purchase",
+    "publishedAtLabel": "Published:",
+    "priceLabel": "Price:",
+    "priceNotConfigured": "Payment not configured",
+    "freeLabel": "Free",
+    "authorLabel": "Author:",
+    "youAreAuthor": "This is your note",
+    "paidContentTitle": "Premium content ahead",
+    "paidContentDescription": "Unlock the remainder of this note to continue reading.",
+    "pointsPaymentTitle": "Pay with points",
+    "pointsPaymentNote": "Points will be deducted from your balance.",
+    "yenPaymentTitle": "Pay in JPY",
+    "yenPaymentNote": "You will be redirected to the one.lat checkout page.",
+    "noPaymentMethods": "No payment methods are currently available.",
+    "processing": "Processing...",
+    "purchaseButtonPoints": "Unlock for {pricePoints, number} pts",
+    "purchaseButtonYen": "Purchase for ¥{priceYen, number}",
+    "purchaseDisclaimer": "Digital purchases are final. Points and delivered content cannot be refunded.",
+    "loginPrompt": "Need an account? Sign in or register first.",
+    "shareHeading": "Share on social media",
+    "shareOnX": "Share on X",
+    "shareOnLine": "Share on LINE",
+    "accessGrantedMessage": "You currently have access to the premium section.",
+    "backToNotes": "← Back to All Notes",
+    "editNote": "Edit NOTE"
+  },
+  "shareUnlock": {
+    "checking": "Checking...",
+    "defaultUsername": "official",
+    "alreadySharedTitle": "Retweet confirmed – premium content unlocked!",
+    "viewRetweet": "View your retweet →",
+    "shareHeading": "Retweet on X to read for free",
+    "shareDescription": "Retweet the official post from @{username} to read the full note without paying {pricePoints, number} pts.",
+    "shareHintPrimary": "Tap the button to retweet automatically with your linked X account.",
+    "shareHintSecondary": "A logged-in account linked with X is required.",
+    "viewOfficialPost": "Open the official post → {url}",
+    "officialMissing": "Share-to-unlock will be available once the seller registers an official post.",
+    "shareButton": "Retweet on X to unlock",
+    "shareProcessing": "Processing retweet...",
+    "connectHint": "Link your account to unlock notes by retweeting.",
+    "errorTitle": "Error",
+    "requiresXLink": "Please connect your X account from the settings page.",
+    "alreadySharedError": "You have already retweeted this note.",
+    "unavailableError": "Share unlock is not available because the seller has not set an official post.",
+    "genericError": "An error occurred while processing the retweet. Please try again.",
+    "navigateToSettings": "Open X linking settings →"
+  },
+  "checkout": {
+    "heading": "Payment completed!",
+    "description": "Your purchase was successful. You can now access the full note immediately.",
+    "statusLabel": "Payment status",
+    "statuses": {
+      "COMPLETED": "Completed",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled",
+      "REJECTED": "Rejected",
+      "EXPIRED": "Expired",
+      "UNKNOWN": "Pending"
+    },
+    "transactionId": "Transaction ID: {id}",
+    "checkingStatus": "Checking payment status…",
+    "notificationSent": "We sent a confirmation message to your inbox.",
+    "notificationPending": "It may take a few seconds for the notification to appear.",
+    "statusError": "Failed to refresh payment status. We will retry in a moment.",
+    "autoRedirect": "You will be redirected to the note in {seconds} seconds…",
+    "manualRedirect": "Use the link below if you are not redirected automatically.",
+    "goToArticle": "Open the note",
+    "goToDashboard": "Back to dashboard"
+  },
+  "profile": {
+    "page": {
+      "title": "Profile",
+      "subtitle": "Manage your account info and public profile settings.",
+      "sections": {
+        "account": {
+          "heading": "Account settings",
+          "description": "Keep your username and profile info up to date."
+        },
+        "current": {
+          "heading": "Current details",
+          "publicProfile": "Public profile"
+        },
+        "username": {
+          "heading": "Change username",
+          "description": "Use 3–20 characters with letters, numbers, or underscores."
+        },
+        "profile": {
+          "heading": "Public profile settings"
+        }
+      }
+    },
+    "validation": {
+      "usernameRequired": "Enter a username",
+      "usernameLength": "Usernames must be 3–20 characters long.",
+      "usernamePattern": "Only letters, numbers, and underscores are allowed.",
+      "usernameUnchanged": "That is your current username."
+    },
+    "errors": {
+      "usernameUpdateFailed": "We couldn't update your username.",
+      "profileUpdateFailed": "We couldn't save your profile.",
+      "uploadFailed": "We couldn't upload the image."
+    },
+    "messages": {
+      "usernameUpdated": "Username updated successfully",
+      "profileUpdated": "Profile details updated"
+    },
+    "buttons": {
+      "copyLink": "Copy link",
+      "copied": "Copied!",
+      "updateUsername": "Update username",
+      "uploadImage": "Upload image",
+      "uploadingImage": "Uploading…",
+      "removeImage": "Remove image",
+      "savingProfile": "Saving…",
+      "saveProfile": "Save changes"
+    },
+    "fields": {
+      "email": "Email",
+      "username": "Username",
+      "pointBalance": "Point balance",
+      "newUsernameLabel": "New username",
+      "newUsernamePlaceholder": "Enter a new username",
+      "bioLabel": "Bio",
+      "bioPlaceholder": "Introduce yourself or your business",
+      "bioCounter": "{current}/{max}",
+      "snsLabel": "Social link",
+      "snsHint": "e.g. profile link for X (Twitter) or Instagram",
+      "lineLabel": "Official LINE link",
+      "lineHint": "e.g. links starting with https://lin.ee/",
+      "imageLabel": "Profile image",
+      "imagePreviewAlt": "Profile image preview",
+      "noImage": "No image",
+      "imageHint": "Use a square image (max 512px). We'll optimize it automatically."
+    }
+  },
+  "settings": {
+    "page": {
+      "title": "Settings",
+      "subtitle": "Manage integrations and account access.",
+      "sections": {
+        "integrations": {
+          "heading": "External integrations"
+        },
+        "accountSharing": {
+          "heading": "Account sharing",
+          "description": "Delegate dashboard access to trusted teammates. You can review or revoke shared access at any time.",
+          "button": "Open sharing settings"
+        }
+      }
+    },
+    "sharePage": {
+      "title": "Account sharing",
+      "subtitle": "Delegate dashboard access to trusted teammates."
+    },
+    "xConnection": {
+      "title": "X (Twitter) integration",
+      "description": "Let users unlock paid notes for free by sharing them on X.",
+      "status": {
+        "connected": "Connected",
+        "disconnected": "Not connected"
+      },
+      "alerts": {
+        "loginRequired": "Please sign in first.",
+        "startFailed": "We couldn't start the X connection. Please try again.",
+        "disconnectSuccess": "Disconnected from X successfully.",
+        "disconnectFailed": "We couldn't disconnect from X. Please try again."
+      },
+      "errors": {
+        "authorizationFailed": "We couldn't retrieve the authorization URL.",
+        "disconnectFailed": "We couldn't disconnect from X."
+      },
+      "confirmDisconnect": "Are you sure you want to disconnect X (Twitter)?\nIf you proceed, share-to-unlock for notes will no longer be available.",
+      "connected": {
+        "heading": "Connected",
+        "accountLabel": "Account:",
+        "followersLabel": "Followers:",
+        "followersValue": "{count} followers",
+        "connectedAtLabel": "Connected on:",
+        "disconnecting": "Disconnecting…",
+        "disconnectButton": "Disconnect"
+      },
+      "benefits": {
+        "heading": "What you get",
+        "items": [
+          "Unlock paid notes for free by sharing on X",
+          "Read content you care about without spending",
+          "Enjoy instant access just by sharing"
+        ]
+      },
+      "connectButton": "Connect X account",
+      "permissionsNote": "Connecting grants permission to post tweets on your behalf."
+    },
+    "accountShare": {
+      "sections": {
+        "invite": {
+          "heading": "Send an invite",
+          "description": "Once approved, invited users can view and edit your dashboard. Invite links remain valid for a few days.",
+          "emailLabel": "Email address to invite",
+          "emailPlaceholder": "example@example.com",
+          "linkHeading": "Invite link"
+        },
+        "owner": {
+          "heading": "Shared with collaborators",
+          "description": "Track pending and active shares at a glance.",
+          "empty": "No collaborators have access right now.",
+          "table": {
+            "user": "User",
+            "status": "Status",
+            "dates": "Invited / Approved",
+            "actions": "Actions"
+          }
+        },
+        "delegate": {
+          "heading": "Accounts shared with you",
+          "description": "These owners have granted you dashboard access.",
+          "empty": "No accounts have been shared with you."
+        }
+      },
+      "buttons": {
+        "sendInvite": "Send invite email",
+        "sendingInvite": "Sending…",
+        "copyInvite": "Copy invite link",
+        "revokeShare": "Remove access"
+      },
+      "feedback": {
+        "emailRequired": "Enter an email address to invite.",
+        "inviteSent": "Invite email sent. Share the link if needed.",
+        "copySuccess": "Invite link copied to your clipboard.",
+        "copyError": "We couldn't copy the link.",
+        "revokeSuccess": "Access removed successfully."
+      },
+      "status": {
+        "pending": "Pending approval",
+        "active": "Active",
+        "revoked": "Revoked"
+      },
+      "date": {
+        "notAvailable": "-",
+        "invited": "Invited: {value}",
+        "expires": "Expires: {value}",
+        "accepted": "Approved: {value}"
+      },
+      "confirm": {
+        "revoke": "Removing this share will revoke the other user's access. Continue?"
+      },
+      "misc": {
+        "unknownUser": "Unknown user",
+        "emailMissing": "Email unavailable",
+        "ownerUnknown": "Owner unavailable"
+      }
+    }
+  },
+  "media": {
+    "page": {
+      "title": "Media library",
+      "subtitle": "Upload images or videos and reuse them in your LPs and NOTES instantly.",
+      "upload": {
+        "heading": "Upload",
+        "description": "PNG, JPG, and WEBP are supported. You can select multiple files at once.",
+        "button": "Add media",
+        "buttonUploading": "Uploading...",
+        "backButton": "Back to marketplace"
+      },
+      "empty": {
+        "title": "No media yet",
+        "description": "Upload your first image with “Add media” and it will appear here."
+      },
+      "list": {
+        "itemAlt": "Uploaded media"
+      }
+    },
+    "actions": {
+      "view": "View",
+      "copy": "Copy",
+      "delete": "Delete"
+    },
+    "errors": {
+      "fetch": "We couldn't load your media.",
+      "upload": "We couldn't upload the file.",
+      "copy": "We couldn't copy the link."
+    },
+    "confirm": {
+      "delete": "Delete this media item?"
+    }
+  },
+  "pointsPurchase": {
+    "pageTitle": "Buy points",
+    "pageSubtitle": "Top up your balance with secure payment options.",
+    "packages": {
+      "heading": "Point packages",
+      "description": "Choose the amount that fits your usage.",
+      "secureLabel": "SECURE PURCHASE",
+      "pointsLabel": "{points} pts",
+      "bonusBadge": "+{bonus} pts bonus",
+      "selectedLabel": "Selected",
+      "priceLabel": "{price}"
+    },
+    "payments": {
+      "heading": "Payment methods",
+      "methods": {
+        "one_lat": {
+          "name": "Card & USDT (ONE.lat)"
+        },
+        "jpyc": {
+          "name": "JPYC"
+        },
+        "stripe": {
+          "name": "Credit card"
+        },
+        "paypal": {
+          "name": "PayPal"
+        },
+        "bank": {
+          "name": "Bank transfer"
+        }
+      },
+      "statusBadge": {
+        "comingSoon": "Coming soon",
+        "selected": "Selected",
+        "select": "Select"
+      }
+    },
+    "summary": {
+      "purchasePointsLabel": "Points to buy",
+      "paymentAmountLabel": "Payment amount",
+      "pointsValue": "{points} pts",
+      "paymentValue": "{amount}",
+      "processing": "Processing...",
+      "proceedButton": "Continue to checkout",
+      "paymentNotices": {
+        "one_lat": "You'll be redirected to ONE.lat's secure checkout (credit cards, USDT, and more).",
+        "jpyc": "JPYC payments are coming soon. Wallet connections with gasless transactions are on the way.",
+        "comingSoon": "This payment method is in preparation. Please use ONE.lat for now."
+      }
+    },
+    "balance": {
+      "sectionLabel": "CURRENT BALANCE",
+      "pointsSuffix": "pts",
+      "projected": "Projected balance after purchase: {balance} {suffix}"
+    },
+    "transactions": {
+      "heading": "Latest point purchases",
+      "empty": "No purchases yet",
+      "pointsAdded": "+{points} pts",
+      "statusCompleted": "Completed"
+    },
+    "guidelines": {
+      "heading": "Point usage guidelines",
+      "items": [
+        "1 point equals ¥1. You can use points for all transactions.",
+        "Points never expire and roll over to the next fiscal year.",
+        "Point purchases are final. Cancellations and refunds are not available.",
+        "Points are applied immediately after checkout. Contact support if you notice any delay."
+      ]
+    },
+    "alerts": {
+      "loginRequired": "Please sign in to purchase points.",
+      "jpycComingSoon": "JPYC payments are coming soon.\n\nPlanned features:\n- Wallet connections (MetaMask, etc.)\n- Gasless, zero-fee transactions\n- 1 JPYC = ¥1\n\nFor now, please use ONE.lat.",
+      "comingSoon": "This payment method isn't ready yet.\nPlease use ONE.lat (credit card or USDT) instead.",
+      "missingToken": "We couldn't find your auth token. Please sign in again.",
+      "purchaseStartFailed": "We couldn't start the checkout ({status}): {details}",
+      "purchaseError": "Checkout error:\n{message}"
+    },
+    "errors": {
+      "fetch": "We couldn't load your balance. Please try again later."
+    }
+  },
+  "pointsHistory": {
+    "pageTitle": "Points history",
+    "pageSubtitleDefault": "Review your latest point activity.",
+    "pageSubtitleWithTotal": "{total} transactions",
+    "filters": {
+      "all": "All",
+      "purchase": "Point purchases",
+      "productPurchase": "LP purchases",
+      "bonus": "Bonuses",
+      "refund": "Refunds"
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "summary": {
+      "pointsSuffix": "pts",
+      "income": {
+        "title": "TOTAL EARNED",
+        "description": "Combined point purchases and bonuses"
+      },
+      "spending": {
+        "title": "TOTAL SPENT",
+        "description": "LP purchases and other spending"
+      },
+      "bonuses": {
+        "title": "BONUSES",
+        "description": "Points added from campaigns and rewards"
+      }
+    },
+    "transactions": {
+      "empty": "No transaction history yet",
+      "idLabel": "ID: {value}",
+      "productIdLabel": "Product ID: {value}",
+      "types": {
+        "purchase": "Point purchase",
+        "productPurchase": "LP purchase",
+        "bonus": "Bonus",
+        "refund": "Refund",
+        "unknown": "{value}"
+      }
+    },
+    "errors": {
+      "fetch": "We couldn't load your transaction history."
+    }
+  },
+  "pointsSubscriptions": {
+    "pageTitle": "Automatic point subscriptions",
+    "pageSubtitle": "Top up your points every month without lifting a finger.",
+    "placeholders": {
+      "none": "---"
+    },
+    "sellerNotice": {
+      "title": "This link is for subscriptions offered by \"{seller}\".",
+      "description": "Once you subscribe, points will be charged automatically and can be used for this seller's content."
+    },
+    "selection": {
+      "heading": "Choose a plan",
+      "description": "Points will be charged automatically each month. You can pause at any time.",
+      "restrictionNotice": "Only \"{label}\" is available for this salon.",
+      "restrictionDefaultLabel": "Designated plan",
+      "pointsPerMonthLabel": "{points}{suffix}",
+      "pointsSuffix": " pts / month",
+      "yenLabel": "Approx. {amount} / month",
+      "approxZero": "Approx. ¥0 / month",
+      "usdNote": "Billing is processed in USD via ONE.lat.",
+      "subscribeButton": "Subscribe to this plan",
+      "redirecting": "Redirecting…"
+    },
+    "subscriptions": {
+      "heading": "Active subscriptions",
+      "description": "Review statuses and upcoming charges. Cancel auto-renew whenever you need.",
+      "empty": "You don't have any active subscriptions yet. Choose a plan above to get started.",
+      "statusUnknown": "Status unknown",
+      "pricePerCycle": "{points}{suffix} · {yen}",
+      "sellerLabel": "Seller: {seller}",
+      "cancelButton": "Cancel auto-renew",
+      "canceling": "Processing…",
+      "cancelUnavailable": "This subscription can't be cancelled right now.",
+      "fields": {
+        "nextCharge": "Next charge",
+        "lastCharge": "Last charge",
+        "lastEvent": "Latest event",
+        "contractId": "Subscription ID"
+      }
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "COMPLETE": "Completed",
+      "PENDING": "Processing",
+      "UNPAID": "Unpaid",
+      "CANCELED": "Cancelled",
+      "CANCELLED": "Cancelled",
+      "REJECTED": "Rejected"
+    },
+    "errors": {
+      "load": "We couldn't load subscription data. Please try again later.",
+      "checkout": "We couldn't start the subscription checkout. Please try again.",
+      "missingCheckoutUrl": "We couldn't obtain the checkout URL.",
+      "restrictedPlan": "Only the designated plan is available for this salon.",
+      "cancel": "We couldn't cancel the subscription. Please try again later."
+    },
+    "confirm": {
+      "cancel": "Stop automatic renewals?"
+    }
+  },
+  "dashboard": {
+    "layout": {
+      "defaultTitle": "Dashboard",
+      "guest": {
+        "prompt": "Already have an account?",
+        "login": "Log in",
+        "register": "Get started for free",
+        "explore": "Explore"
+      },
+      "logout": "Log out"
+    },
+    "navigation": {
+      "groups": {
+        "core": "Home",
+        "lp": "LP menu",
+        "note": "NOTE menu",
+        "salon": "Salons",
+        "points": "Points",
+        "line": "LINE Connect",
+        "media": "Integrations",
+        "info": "Support"
+      },
+      "links": {
+        "dashboard": "Dashboard",
+        "messages": "Announcements",
+        "profile": "Profile",
+        "lpCreate": "Create new LP",
+        "products": "All LPs",
+        "productsManage": "Manage LPs",
+        "noteCreate": "Create new NOTE",
+        "noteEdit": "Edit NOTE",
+        "notes": "All NOTES",
+        "salons": "Salon directory",
+        "salonsCreate": "Create salon",
+        "salonsAll": "All salons",
+        "pointsPurchase": "Buy points",
+        "pointsHistory": "Points history",
+        "purchases": "Purchase history",
+        "sales": "Sales history",
+        "lineBonus": "LINE bonus",
+        "lineBonusBadge": "300P",
+        "settings": "X integration",
+        "settingsShare": "Sharing features",
+        "media": "Media",
+        "terms": "Terms",
+        "tokusho": "Legal disclosure",
+        "privacy": "Privacy",
+        "contact": "Contact",
+        "admin": "Admin panel"
+      }
+    },
+    "header": {
+      "menu": "Menu",
+      "navigationLabel": "Navigation",
+      "greeting": "Hello, {name}",
+      "userFallbackName": "User",
+      "closeMenuAria": "Close menu",
+      "loggedInFallback": "Signed in",
+      "userType": {
+        "seller": "Seller account",
+        "default": "User"
+      },
+      "sections": {
+        "home": "Home",
+        "settings": "Settings",
+        "more": "More"
+      },
+      "links": {
+        "home": "Home",
+        "dashboardShort": "Dashboard"
+      },
+      "notifications": "Announcements",
+      "notificationsWithCount": "Announcements ({count})",
+      "subtitle": "Welcome, {name}",
+      "pointBalanceLabel": "Point balance",
+      "avatarAlt": "User avatar"
+    }
+  }
+}

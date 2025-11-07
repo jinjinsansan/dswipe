@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import {useFormatter, useTranslations} from 'next-intl';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { authApi, mediaApi } from '@/lib/api';
@@ -27,6 +28,13 @@ export default function ProfilePage() {
     pointBalance,
     setUser,
   } = useAuthStore();
+  const t = useTranslations('profile.page');
+  const validationT = useTranslations('profile.validation');
+  const errorsT = useTranslations('profile.errors');
+  const messagesT = useTranslations('profile.messages');
+  const buttonsT = useTranslations('profile.buttons');
+  const fieldsT = useTranslations('profile.fields');
+  const formatter = useFormatter();
 
   const [newUsername, setNewUsername] = useState<string>('');
   const [usernameError, setUsernameError] = useState<string>('');
@@ -77,22 +85,22 @@ export default function ProfilePage() {
 
     const trimmed = newUsername.trim();
     if (!trimmed) {
-      setUsernameError('ユーザー名を入力してください');
+      setUsernameError(validationT('usernameRequired'));
       return;
     }
 
     if (trimmed.length < 3 || trimmed.length > 20) {
-      setUsernameError('ユーザー名は3-20文字で入力してください');
+      setUsernameError(validationT('usernameLength'));
       return;
     }
 
     if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
-      setUsernameError('ユーザー名は英数字とアンダースコアのみ使用できます');
+      setUsernameError(validationT('usernamePattern'));
       return;
     }
 
     if (trimmed === user.username) {
-      setUsernameError('現在のユーザー名と同じです');
+      setUsernameError(validationT('usernameUnchanged'));
       return;
     }
 
@@ -106,7 +114,7 @@ export default function ProfilePage() {
       setNewUsername(updatedUser?.username ?? trimmed);
       setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (error: unknown) {
-      setUsernameError(extractErrorDetail(error, 'ユーザー名の更新に失敗しました'));
+      setUsernameError(extractErrorDetail(error, errorsT('usernameUpdateFailed')));
     }
   };
 
@@ -131,7 +139,7 @@ export default function ProfilePage() {
       setProfileUpdateSuccess(true);
       setTimeout(() => setProfileUpdateSuccess(false), 3000);
     } catch (error: unknown) {
-      setProfileUpdateError(extractErrorDetail(error, 'プロフィールの更新に失敗しました'));
+      setProfileUpdateError(extractErrorDetail(error, errorsT('profileUpdateFailed')));
     } finally {
       setIsSavingProfileInfo(false);
     }
@@ -150,7 +158,7 @@ export default function ProfilePage() {
         setProfileImageUrl(imageUrl);
       }
     } catch (error: unknown) {
-      setProfileUpdateError(extractErrorDetail(error, '画像のアップロードに失敗しました'));
+      setProfileUpdateError(extractErrorDetail(error, errorsT('uploadFailed')));
     } finally {
       setIsUploadingProfileImage(false);
       if (profileImageInputRef.current) {
@@ -172,36 +180,36 @@ export default function ProfilePage() {
   };
 
   return (
-    <DashboardLayout pageTitle="プロフィール" pageSubtitle="アカウント情報と公開設定の管理">
+    <DashboardLayout pageTitle={t('title')} pageSubtitle={t('subtitle')}>
       <div className="mx-auto w-full max-w-4xl space-y-8 px-3 py-6 sm:px-6">
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">アカウント設定</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">{t('sections.account.heading')}</h2>
           <p className="text-sm text-slate-600">
-            ユーザー名やプロフィール情報を最新の状態に保ちましょう。
+            {t('sections.account.description')}
           </p>
         </section>
 
         <section className="space-y-6">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">現在の情報</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">{t('sections.current.heading')}</h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                <span className="text-slate-500">メールアドレス</span>
+                <span className="text-slate-500">{fieldsT('email')}</span>
                 <span className="font-medium text-slate-900 break-all">{user.email}</span>
               </div>
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                <span className="text-slate-500">ユーザー名</span>
+                <span className="text-slate-500">{fieldsT('username')}</span>
                 <span className="font-medium text-slate-900">{user.username}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">ポイント残高</span>
-                <span className="font-semibold text-slate-900">{pointBalance.toLocaleString()} P</span>
+                <span className="text-slate-500">{fieldsT('pointBalance')}</span>
+                <span className="font-semibold text-slate-900">{formatter.number(pointBalance)} P</span>
               </div>
             </div>
 
             {profilePageUrl && (
               <div className="mt-5">
-                <p className="text-sm font-medium text-slate-900 mb-2">公開プロフィール</p>
+                <p className="text-sm font-medium text-slate-900 mb-2">{t('sections.current.publicProfile')}</p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <input
                     value={profilePageUrl}
@@ -213,7 +221,7 @@ export default function ProfilePage() {
                     onClick={handleCopyProfileLink}
                     className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
                   >
-                    {profileLinkCopied ? 'コピー済み' : 'リンクをコピー'}
+                    {profileLinkCopied ? buttonsT('copied') : buttonsT('copyLink')}
                   </button>
                 </div>
               </div>
@@ -222,23 +230,23 @@ export default function ProfilePage() {
 
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-5">
             <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">ユーザー名の変更</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('sections.username.heading')}</h3>
               <p className="text-sm text-slate-600">
-                3〜20文字の英数字とアンダースコア（_）のみ使用可能です。
+                {t('sections.username.description')}
               </p>
             </div>
 
             <form onSubmit={handleUsernameChange} className="space-y-4">
               <div>
                 <label htmlFor="newUsername" className="block text-sm font-medium text-slate-700 mb-2">
-                  新しいユーザー名
+                  {fieldsT('newUsernameLabel')}
                 </label>
                 <input
                   id="newUsername"
                   type="text"
                   value={newUsername}
                   onChange={(event) => setNewUsername(event.target.value)}
-                  placeholder="新しいユーザー名を入力"
+                  placeholder={fieldsT('newUsernamePlaceholder')}
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
@@ -252,7 +260,7 @@ export default function ProfilePage() {
               {updateSuccess && (
                 <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-lg text-sm">
                   <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
-                  ユーザー名を更新しました
+                  {messagesT('usernameUpdated')}
                 </div>
               )}
 
@@ -260,18 +268,18 @@ export default function ProfilePage() {
                 type="submit"
                 className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
               >
-                更新する
+                {buttonsT('updateUsername')}
               </button>
             </form>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">公開プロフィール設定</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">{t('sections.profile.heading')}</h3>
 
             <form onSubmit={handleProfileInfoSubmit} className="space-y-5">
               <div>
                 <label htmlFor="profileBio" className="block text-sm font-medium text-slate-700 mb-2">
-                  自己紹介
+                  {fieldsT('bioLabel')}
                 </label>
                 <textarea
                   id="profileBio"
@@ -281,15 +289,15 @@ export default function ProfilePage() {
                     setProfileBio(event.target.value);
                     setProfileUpdateError('');
                   }}
-                  placeholder="あなたやビジネスの紹介を入力してください"
+                  placeholder={fieldsT('bioPlaceholder')}
                   className="w-full min-h-[120px] px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
-                <div className="mt-1 text-xs text-slate-500 text-right">{profileBio.length}/600</div>
+                <div className="mt-1 text-xs text-slate-500 text-right">{fieldsT('bioCounter', { current: profileBio.length, max: 600 })}</div>
               </div>
 
               <div>
                 <label htmlFor="profileSnsUrl" className="block text-sm font-medium text-slate-700 mb-2">
-                  SNSリンク
+                  {fieldsT('snsLabel')}
                 </label>
                 <input
                   id="profileSnsUrl"
@@ -302,12 +310,12 @@ export default function ProfilePage() {
                   placeholder="https://"
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
-                <p className="text-xs text-slate-500 mt-1">例: X（旧Twitter）やInstagramなどのプロフィールURL</p>
+                <p className="text-xs text-slate-500 mt-1">{fieldsT('snsHint')}</p>
               </div>
 
               <div>
                 <label htmlFor="profileLineUrl" className="block text-sm font-medium text-slate-700 mb-2">
-                  公式LINEリンク
+                  {fieldsT('lineLabel')}
                 </label>
                 <input
                   id="profileLineUrl"
@@ -320,29 +328,29 @@ export default function ProfilePage() {
                   placeholder="https://"
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
-                <p className="text-xs text-slate-500 mt-1">例: https://lin.ee/ から始まるリンク</p>
+                <p className="text-xs text-slate-500 mt-1">{fieldsT('lineHint')}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">プロフィール画像</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">{fieldsT('imageLabel')}</label>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="relative w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center text-white text-xl">
                     {profileImageUrl ? (
                       <Image
                         src={profileImageUrl}
-                        alt="プロフィール画像プレビュー"
+                        alt={fieldsT('imagePreviewAlt')}
                         fill
                         className="object-cover"
                         sizes="80px"
                         unoptimized
                       />
                     ) : (
-                      <span className="text-slate-500">No Image</span>
+                      <span className="text-slate-500">{fieldsT('noImage')}</span>
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 text-sm">
                     <label className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer">
-                      {isUploadingProfileImage ? 'アップロード中…' : '画像をアップロード'}
+                      {isUploadingProfileImage ? buttonsT('uploadingImage') : buttonsT('uploadImage')}
                       <input
                         ref={profileImageInputRef}
                         type="file"
@@ -358,12 +366,12 @@ export default function ProfilePage() {
                         onClick={handleRemoveProfileImage}
                         className="inline-flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-2 font-semibold text-red-600 hover:bg-red-100 transition-colors"
                       >
-                        画像を削除
+                        {buttonsT('removeImage')}
                       </button>
                     )}
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-slate-500">正方形画像を推奨（最大512px）。自動で最適化されます。</p>
+                <p className="mt-2 text-xs text-slate-500">{fieldsT('imageHint')}</p>
               </div>
 
               {profileUpdateError && (
@@ -375,7 +383,7 @@ export default function ProfilePage() {
               {profileUpdateSuccess && (
                 <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-lg text-sm">
                   <CheckCircleIcon className="h-4 w-4" aria-hidden="true" />
-                  プロフィール情報を更新しました
+                  {messagesT('profileUpdated')}
                 </div>
               )}
 
@@ -388,7 +396,7 @@ export default function ProfilePage() {
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                {isSavingProfileInfo ? '更新中…' : '保存する'}
+                {isSavingProfileInfo ? buttonsT('savingProfile') : buttonsT('saveProfile')}
               </button>
             </form>
           </div>

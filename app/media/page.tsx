@@ -1,9 +1,5 @@
 "use client";
 
-import { PageLoader } from "@/components/LoadingSpinner";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { mediaApi } from "@/lib/api";
-import { useAuthStore } from "@/store/authStore";
 import {
   ArrowLeftIcon,
   ArrowUpTrayIcon,
@@ -14,7 +10,13 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import {useFormatter, useTranslations} from "next-intl";
+
+import { PageLoader } from "@/components/LoadingSpinner";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { mediaApi } from "@/lib/api";
+import { useAuthStore } from "@/store/authStore";
 
 type MediaItem = {
   url: string;
@@ -28,16 +30,13 @@ export default function MediaPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("media.page");
+  const actionsT = useTranslations("media.actions");
+  const errorsT = useTranslations("media.errors");
+  const confirmT = useTranslations("media.confirm");
+  const formatter = useFormatter();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    fetchMedia();
-  }, [isAuthenticated]);
-
-  const fetchMedia = () => {
+  const fetchMedia = useCallback(() => {
     try {
       const storedMedia = localStorage.getItem("uploaded_media");
       if (storedMedia) {
@@ -48,11 +47,19 @@ export default function MediaPage() {
       }
     } catch (err) {
       console.error("Failed to fetch media:", err);
-      setError("メディアの取得に失敗しました");
+      setError(errorsT("fetch"));
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [errorsT]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    fetchMedia();
+  }, [isAuthenticated, fetchMedia]);
 
   const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -80,7 +87,7 @@ export default function MediaPage() {
     } catch (err: any) {
       console.error("Upload failed:", err);
       const detail = err?.response?.data?.detail;
-      setError(typeof detail === "string" ? detail : "アップロードに失敗しました");
+      setError(typeof detail === "string" && detail.trim().length > 0 ? detail : errorsT("upload"));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -94,12 +101,12 @@ export default function MediaPage() {
       await navigator.clipboard.writeText(url);
     } catch (err) {
       console.error("Failed to copy:", err);
-      alert("コピーに失敗しました");
+      window.alert(errorsT("copy"));
     }
   };
 
   const handleDelete = async (url: string) => {
-    const confirmed = window.confirm("このメディアを削除しますか？");
+    const confirmed = window.confirm(confirmT("delete"));
     if (!confirmed) {
       return;
     }
@@ -121,17 +128,15 @@ export default function MediaPage() {
 
   return (
     <DashboardLayout
-      pageTitle="メディアライブラリ"
-      pageSubtitle="画像や動画をアップロードして、LPやNOTEですぐに利用できます"
+      pageTitle={t("title")}
+      pageSubtitle={t("subtitle")}
     >
       <div className="mx-auto w-full max-w-5xl space-y-6 px-3 py-6 sm:px-6">
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-slate-900">アップロード</p>
-              <p className="text-xs text-slate-500">
-                PNG・JPG・WEBP をサポートしています。複数ファイルを一括選択できます。
-              </p>
+              <p className="text-sm font-semibold text-slate-900">{t("upload.heading")}</p>
+              <p className="text-xs text-slate-500">{t("upload.description")}</p>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -149,14 +154,14 @@ export default function MediaPage() {
                 className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
-                {isUploading ? "アップロード中..." : "メディアを追加"}
+                {isUploading ? t("upload.buttonUploading") : t("upload.button")}
               </button>
               <Link
                 href="/products"
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
               >
                 <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-                マーケットへ戻る
+                {t("upload.backButton")}
               </Link>
             </div>
           </div>
@@ -176,10 +181,8 @@ export default function MediaPage() {
           <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
             <PhotoIcon className="h-10 w-10 text-slate-400" aria-hidden="true" />
             <div className="space-y-2">
-              <p className="text-base font-semibold text-slate-900">まだメディアがありません</p>
-              <p className="text-sm text-slate-500">
-                「メディアを追加」から画像をアップロードするとここに表示されます。
-              </p>
+              <p className="text-base font-semibold text-slate-900">{t("empty.title")}</p>
+              <p className="text-sm text-slate-500">{t("empty.description")}</p>
             </div>
           </div>
         ) : (
@@ -190,11 +193,11 @@ export default function MediaPage() {
                 className="group flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200">
-                  <img src={item.url} alt="uploaded media" className="h-full w-full object-cover" />
+                  <img src={item.url} alt={t("list.itemAlt")} className="h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-slate-900/0 transition group-hover:bg-slate-900/10" />
                 </div>
                 <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span>{new Date(item.uploaded_at).toLocaleString("ja-JP")}</span>
+                  <span>{formatter.dateTime(new Date(item.uploaded_at), {dateStyle: "short", timeStyle: "short"})}</span>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -202,7 +205,7 @@ export default function MediaPage() {
                       className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
                     >
                       <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                      表示
+                      {actionsT("view")}
                     </button>
                     <button
                       type="button"
@@ -210,7 +213,7 @@ export default function MediaPage() {
                       className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
                     >
                       <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />
-                      コピー
+                      {actionsT("copy")}
                     </button>
                     <button
                       type="button"
@@ -218,7 +221,7 @@ export default function MediaPage() {
                       className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 font-semibold text-red-600 transition hover:border-red-300 hover:text-red-700"
                     >
                       <TrashIcon className="h-4 w-4" aria-hidden="true" />
-                      削除
+                      {actionsT("delete")}
                     </button>
                   </div>
                 </div>

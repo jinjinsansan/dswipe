@@ -24,6 +24,7 @@ import {
 } from '@/components/dashboard/navLinks';
 import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 import { AccountSwitcher } from '@/components/account/AccountSwitcher';
+import {useTranslations} from 'next-intl';
 
 const KNOWN_SITE_ORIGINS = [
   typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined,
@@ -62,49 +63,11 @@ const isExternalHref = (href: string): boolean => {
   }
 };
 
-const MOBILE_LABEL_MAP: Record<string, string> = {
-  '/': 'ホーム',
-  'https://d-swipe.com/': 'ホーム',
-  '/dashboard': 'ダッシュ',
-  '/profile': 'プロフィール',
-  '/lp/create': '新規LP',
-  'https://d-swipe.com/lp/create': '新規LP',
-  '/products': 'ALLLP',
-  'https://d-swipe.com/products': 'ALLLP',
-  '/products/manage': '商品管理',
-  'https://d-swipe.com/products/manage': '商品管理',
-  '/messages': 'お知らせ',
-  '/sales': '販売履歴',
-  '/notes': 'ALLNOTES',
-  '/note/create': '新規NOTE',
-  '/purchases': '購入履歴',
-  '/purchases?type=seller': '販売履歴',
-  '/points/history': 'PT履歴',
-  '/points/purchase': 'PT購入',
-  '/points/subscriptions': '自動チャージ',
-  '/salons': 'サロン一覧',
-  '/salons/create': 'サロン作成',
-  '/salons/all': 'ALLSalon',
-  '/media': 'メディア',
-  '/line/bonus': 'LINE連携',
-  '/settings': 'X連携',
-  '/settings/share': '共有',
-  '/admin': '管理',
-  '/terms': '利用規約',
-  '/privacy': 'プライバシー',
-  '/tokusho': '特商表記',
-  'https://lin.ee/lYIZWhd': '問合せ',
-  'https://www.dlogicai.in/': '競馬AI',
-};
-
-const getCompactLabel = (href: string, fallback: string) => {
-  if (MOBILE_LABEL_MAP[href]) {
-    return MOBILE_LABEL_MAP[href];
-  }
-  if (fallback.length <= 6) {
+const getCompactLabel = (fallback: string) => {
+  if (fallback.length <= 8) {
     return fallback;
   }
-  return fallback.replace('新規', '新').slice(0, 6);
+  return fallback.slice(0, 8);
 };
 
 const MOBILE_GROUP_PILL_CLASSES: Record<DashboardNavGroupKey, string> = {
@@ -160,16 +123,19 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({
   user,
   pointBalance,
-  pageTitle = 'ダッシュボード',
+  pageTitle,
   pageSubtitle,
   isBalanceLoading = false,
   requireAuth = true,
   onLogout,
 }: DashboardHeaderProps) {
+  const navT = useTranslations('dashboard.navigation');
+  const layoutT = useTranslations('dashboard.layout');
+  const headerT = useTranslations('dashboard.header');
   const pathname = usePathname();
   const isAdmin = user?.user_type === 'admin';
   const { unreadCount } = useOperatorMessageStore();
-  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type, unreadMessageCount: unreadCount });
+  const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type, unreadMessageCount: unreadCount, translate: navT });
   const navLinkMap = useMemo(() => {
     const map = new Map<string, (typeof navLinks)[number]>();
     navLinks.forEach((link) => {
@@ -177,6 +143,7 @@ export default function DashboardHeader({
     });
     return map;
   }, [navLinks]);
+  const resolvedPageTitle = pageTitle ?? layoutT('defaultTitle');
 
   type MobileMenuItem =
     | { kind: 'link'; href: string; groupOverride?: DashboardNavGroupKey; labelOverride?: string }
@@ -196,17 +163,18 @@ export default function DashboardHeader({
     }
 
     const resolveIcon = (href: string, fallback: ReactNode) => navLinkMap.get(href)?.icon ?? fallback;
+    const notificationsCountLabel = unreadCount > 99 ? '99+' : String(unreadCount);
 
     return [
       {
-        label: 'ホームメニュー',
+        label: headerT('sections.home'),
         defaultGroup: 'core',
         items: [
           {
             kind: 'customLink',
             key: 'home-top',
             href: '/',
-            label: 'ホーム',
+            label: headerT('links.home'),
             icon: <HomeIcon className="h-6 w-6" aria-hidden="true" />, 
             groupKey: 'core',
           },
@@ -214,27 +182,27 @@ export default function DashboardHeader({
             kind: 'link',
             href: '/dashboard',
             groupOverride: 'core',
-            labelOverride: 'ダッシュ',
+            labelOverride: headerT('links.dashboardShort'),
           },
           {
             kind: 'customLink',
             key: 'messages',
             href: '/messages',
-            label: unreadCount > 0 ? `お知らせ (${unreadCount > 99 ? '99+' : unreadCount})` : 'お知らせ',
+            label: unreadCount > 0 ? headerT('notificationsWithCount', { count: notificationsCountLabel }) : headerT('notifications'),
             icon: resolveIcon('/messages', <MegaphoneIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'core',
           },
         ],
       },
       {
-        label: 'LPメニュー',
+        label: navT('groups.lp'),
         defaultGroup: 'lp',
         items: [
           {
             kind: 'customLink',
             key: 'lp-create',
             href: '/lp/create',
-            label: '新規LP',
+            label: navT('links.lpCreate'),
             icon: resolveIcon('/lp/create', <Square2StackIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'lp',
           },
@@ -242,7 +210,7 @@ export default function DashboardHeader({
             kind: 'customLink',
             key: 'products-manage',
             href: '/products/manage',
-            label: '商品管理',
+            label: navT('links.productsManage'),
             icon: resolveIcon('/products/manage', <WrenchScrewdriverIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'lp',
           },
@@ -250,51 +218,51 @@ export default function DashboardHeader({
             kind: 'customLink',
             key: 'products-market',
             href: '/products',
-            label: 'ALLLP',
+            label: navT('links.products'),
             icon: resolveIcon('/products', <BuildingStorefrontIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'lp',
           },
         ],
       },
       {
-        label: 'NOTEメニュー',
+        label: navT('groups.note'),
         defaultGroup: 'note',
         items: [
-          { kind: 'link', href: '/note/create', groupOverride: 'note', labelOverride: '新規NOTE' },
-          { kind: 'link', href: '/note', groupOverride: 'note', labelOverride: 'NOTE編集' },
-          { kind: 'link', href: '/notes', groupOverride: 'note', labelOverride: 'ALLNOTES' },
+          { kind: 'link', href: '/note/create', groupOverride: 'note' },
+          { kind: 'link', href: '/note', groupOverride: 'note' },
+          { kind: 'link', href: '/notes', groupOverride: 'note' },
         ],
       },
       {
-        label: 'サロン',
+        label: navT('groups.salon'),
         defaultGroup: 'salon',
         items: [
-          { kind: 'link', href: '/salons/create', groupOverride: 'salon', labelOverride: 'サロン作成' },
-          { kind: 'link', href: '/salons', groupOverride: 'salon', labelOverride: 'サロン一覧' },
-          { kind: 'link', href: '/salons/all', groupOverride: 'salon', labelOverride: 'ALLSalon' },
+          { kind: 'link', href: '/salons/create', groupOverride: 'salon' },
+          { kind: 'link', href: '/salons', groupOverride: 'salon' },
+          { kind: 'link', href: '/salons/all', groupOverride: 'salon' },
         ],
       },
       {
-        label: 'ポイント',
+        label: navT('groups.points'),
         defaultGroup: 'points',
         items: [
-          { kind: 'link', href: '/points/purchase', groupOverride: 'points', labelOverride: 'PT購入' },
-          { kind: 'link', href: '/points/history', groupOverride: 'points', labelOverride: 'PT履歴' },
-          { kind: 'link', href: '/purchases', groupOverride: 'points', labelOverride: '購入履歴' },
+          { kind: 'link', href: '/points/purchase', groupOverride: 'points' },
+          { kind: 'link', href: '/points/history', groupOverride: 'points' },
+          { kind: 'link', href: '/purchases', groupOverride: 'points' },
         ],
       },
       {
-        label: '設定',
+        label: headerT('sections.settings'),
         defaultGroup: 'line',
         items: [
-          { kind: 'link', href: '/profile', groupOverride: 'line', labelOverride: 'プロフィール' },
-          { kind: 'link', href: '/line/bonus', groupOverride: 'line', labelOverride: 'LINE連携' },
-          { kind: 'link', href: '/settings', groupOverride: 'line', labelOverride: 'X連携' },
+          { kind: 'link', href: '/profile', groupOverride: 'line' },
+          { kind: 'link', href: '/line/bonus', groupOverride: 'line' },
+          { kind: 'link', href: '/settings', groupOverride: 'line' },
           {
             kind: 'customLink',
             key: 'account-share',
             href: '/settings/share',
-            label: '共有機能',
+            label: navT('links.settingsShare'),
             icon: resolveIcon('/settings/share', <ShareIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'line' as DashboardNavGroupKey,
           },
@@ -302,7 +270,7 @@ export default function DashboardHeader({
             kind: 'customLink',
             key: 'sales-history',
             href: '/sales',
-            label: '販売履歴',
+            label: navT('links.sales'),
             icon: resolveIcon('/sales', <ClipboardDocumentListIcon className="h-6 w-6" aria-hidden="true" />),
             groupKey: 'line' as DashboardNavGroupKey,
           },
@@ -312,7 +280,7 @@ export default function DashboardHeader({
                   kind: 'customLink' as const,
                   key: 'admin-panel',
                   href: '/admin',
-                  label: '管理者パネル',
+                  label: navT('links.admin'),
                   icon: resolveIcon('/admin', <ShieldCheckIcon className="h-6 w-6" aria-hidden="true" />),
                   groupKey: 'line' as DashboardNavGroupKey,
                 },
@@ -321,37 +289,37 @@ export default function DashboardHeader({
         ],
       },
       {
-        label: 'サポート',
+        label: navT('groups.info'),
         defaultGroup: 'info',
         items: [
-          { kind: 'link', href: '/terms', groupOverride: 'info', labelOverride: '利用規約' },
-          { kind: 'link', href: '/tokusho', groupOverride: 'info', labelOverride: '特定商' },
-          { kind: 'link', href: '/privacy', groupOverride: 'info', labelOverride: 'プライバシー' },
+          { kind: 'link', href: '/terms', groupOverride: 'info' },
+          { kind: 'link', href: '/tokusho', groupOverride: 'info' },
+          { kind: 'link', href: '/privacy', groupOverride: 'info' },
         ],
       },
       {
-        label: 'その他',
+        label: headerT('sections.more'),
         defaultGroup: 'media',
         items: [
-          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info', labelOverride: 'お問い合わせ' },
-          { kind: 'link', href: '/media', groupOverride: 'media', labelOverride: 'メディア' },
+          { kind: 'link', href: 'https://lin.ee/lYIZWhd', groupOverride: 'info' },
+          { kind: 'link', href: '/media', groupOverride: 'media' },
           {
             kind: 'logout',
             key: 'logout',
-            label: 'ログアウト',
+            label: layoutT('logout'),
             icon: <ArrowRightOnRectangleIcon className="h-6 w-6" aria-hidden="true" />, 
             groupKey: 'info' as DashboardNavGroupKey,
           },
         ],
       },
     ];
-  }, [navLinks, navLinkMap, unreadCount, user]);
+  }, [headerT, layoutT, navLinks, navLinkMap, navT, unreadCount, user]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [menuTopOffset, setMenuTopOffset] = useState(0);
   const originalBodyOverflow = useRef<string>('');
 
-  const subtitle = pageSubtitle || (user ? `ようこそ、${user?.username}さん` : '');
+  const subtitle = pageSubtitle || (user ? headerT('subtitle', { name: user?.username ?? headerT('userFallbackName') }) : '');
   const formattedPointBalance = `${pointBalance.toLocaleString()} P`;
   const menuOffset = menuTopOffset || 112;
   const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
@@ -393,7 +361,7 @@ export default function DashboardHeader({
     if (!headerRef.current) return;
     const rect = headerRef.current.getBoundingClientRect();
     setMenuTopOffset(rect.height);
-  }, [isMenuOpen, pageTitle, subtitle]);
+  }, [isMenuOpen, resolvedPageTitle, subtitle]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -430,11 +398,11 @@ export default function DashboardHeader({
               <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
             </Link>
             <div className="hidden sm:block min-w-0">
-              <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">{pageTitle}</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">{resolvedPageTitle}</h1>
               <p className="text-slate-500 text-xs">{subtitle}</p>
             </div>
             <div className="sm:hidden min-w-0">
-              <h1 className="text-base font-semibold text-slate-900 truncate">{pageTitle}</h1>
+              <h1 className="text-base font-semibold text-slate-900 truncate">{resolvedPageTitle}</h1>
             </div>
           </div>
 
@@ -443,13 +411,13 @@ export default function DashboardHeader({
               <>
                 <AccountSwitcher />
                 <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded border border-slate-200 min-w-[150px] justify-between">
-                  <span className="text-slate-500 text-xs font-medium">ポイント残高</span>
+                  <span className="text-slate-500 text-xs font-medium">{headerT('pointBalanceLabel')}</span>
                   {renderBalanceValue()}
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-9 h-9 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm shadow-sm">
                     {user?.profile_image_url ? (
-                      <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                      <img src={user.profile_image_url} alt={headerT('avatarAlt')} className="w-full h-full object-cover" />
                     ) : (
                       user?.username?.charAt(0).toUpperCase() || 'U'
                     )}
@@ -462,13 +430,13 @@ export default function DashboardHeader({
                   href="/login"
                   className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
                 >
-                  ログイン
+                  {layoutT('guest.login')}
                 </Link>
                 <Link
                   href="/register"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
                 >
-                  無料で始める
+                  {layoutT('guest.register')}
                 </Link>
               </div>
             )}
@@ -489,7 +457,7 @@ export default function DashboardHeader({
                 </div>
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0 shadow-sm">
                   {user?.profile_image_url ? (
-                    <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                    <img src={user.profile_image_url} alt={headerT('avatarAlt')} className="w-full h-full object-cover" />
                   ) : (
                     user?.username?.charAt(0).toUpperCase() || 'U'
                   )}
@@ -500,7 +468,7 @@ export default function DashboardHeader({
                 href="/login"
                 className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
               >
-                ログイン
+                {layoutT('guest.login')}
               </Link>
             )}
           </div>
@@ -513,7 +481,7 @@ export default function DashboardHeader({
             aria-expanded={isMenuOpen}
             aria-controls="dashboard-mobile-menu"
           >
-            <span>メニュー</span>
+            <span>{headerT('menu')}</span>
             {isMenuOpen ? (
               <ChevronDownIcon className="h-5 w-5 text-slate-500" />
             ) : (
@@ -581,7 +549,7 @@ export default function DashboardHeader({
                             const cardClass = MOBILE_GROUP_CARD_CLASSES[groupKey] ?? 'border-slate-200 bg-white text-slate-700 hover:border-slate-300';
                             const iconClass = MOBILE_GROUP_ICON_CLASSES[groupKey] ?? 'bg-white/70 text-slate-600';
                             const pillClass = MOBILE_GROUP_PILL_CLASSES[groupKey] ?? 'bg-slate-100 text-slate-600 border border-transparent';
-                            const label = item.labelOverride ?? getCompactLabel(navLink.href, navLink.label);
+                            const label = item.labelOverride ?? getCompactLabel(navLink.label);
                             const linkProps = navLink.external
                               ? { href: navLink.href, target: '_blank' as const, rel: 'noopener noreferrer' }
                               : { href: navLink.href };

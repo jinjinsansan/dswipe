@@ -24,6 +24,7 @@ import {
 } from '@/components/dashboard/navLinks';
 import { useOperatorMessageStore } from '@/store/operatorMessageStore';
 import type { OperatorMessageUnreadCountResponse } from '@/types/api';
+import {useLocale, useTranslations} from 'next-intl';
 
 interface StickySiteHeaderProps {
   rightSlot?: ReactNode;
@@ -45,11 +46,15 @@ export default function StickySiteHeader({
   const { unreadCount, setUnreadCount, lastFetchedAt } = useOperatorMessageStore();
   const userType = (user?.user_type ?? undefined) as 'seller' | 'buyer' | 'admin' | undefined;
   const isAdmin = userType === 'admin';
+  const locale = useLocale();
+  const navT = useTranslations('dashboard.navigation');
+  const layoutT = useTranslations('dashboard.layout');
+  const headerT = useTranslations('dashboard.header');
   const navLinks = useMemo(
-    () => getDashboardNavLinks({ isAdmin, userType, unreadMessageCount: unreadCount }),
-    [isAdmin, unreadCount, userType]
+    () => getDashboardNavLinks({ isAdmin, userType, unreadMessageCount: unreadCount, translate: navT }),
+    [isAdmin, unreadCount, userType, navT]
   );
-  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
+  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks, { translate: navT, locale }), [navLinks, navT, locale]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -173,7 +178,7 @@ export default function StickySiteHeader({
           }`}
         >
           <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
-          <span>管理者パネル</span>
+          <span>{navT('links.admin')}</span>
         </Link>
       )}
       <button
@@ -184,7 +189,7 @@ export default function StickySiteHeader({
         aria-controls="global-menu"
       >
         <Bars3Icon className="h-5 w-5" aria-hidden="true" />
-        <span>メニュー</span>
+        <span>{headerT('menu')}</span>
       </button>
     </div>
   );
@@ -228,16 +233,20 @@ export default function StickySiteHeader({
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Navigation</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{headerT('navigationLabel')}</p>
                   <p className="mt-1 text-sm font-semibold">
-                    {isAuthenticated ? `${user?.username ?? 'ユーザー'} さん` : 'メニュー'}
+                    {isAuthenticated
+                      ? headerT('greeting', {
+                          name: user?.username ?? headerT('userFallbackName'),
+                        })
+                      : headerT('menu')}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={closeMenu}
                   className={`rounded-full p-2 transition-colors ${dark ? 'text-slate-200 hover:bg-white/10' : 'text-slate-500 hover:bg-slate-100'}`}
-                  aria-label="メニューを閉じる"
+                  aria-label={headerT('closeMenuAria')}
                 >
                   <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -246,8 +255,8 @@ export default function StickySiteHeader({
               {isAuthenticated ? (
                 <div className={`flex items-center justify-between rounded-2xl border px-3 py-2 text-sm ${dark ? 'border-white/15 bg-white/5 text-slate-200' : 'border-slate-200 bg-white text-slate-700'}`}>
                   <div className="min-w-0">
-                    <p className="font-semibold truncate">{user?.email ?? 'ログイン中'}</p>
-                    <p className="text-xs text-slate-400">{user?.user_type === 'seller' ? 'セラーアカウント' : 'ユーザー'}</p>
+                    <p className="font-semibold truncate">{user?.email ?? headerT('loggedInFallback')}</p>
+                    <p className="text-xs text-slate-400">{user?.user_type === 'seller' ? headerT('userType.seller') : headerT('userType.default')}</p>
                   </div>
                   <button
                     type="button"
@@ -255,7 +264,7 @@ export default function StickySiteHeader({
                     className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${dark ? 'bg-white/10 text-red-200 hover:bg-white/20' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" aria-hidden="true" />
-                    ログアウト
+                    {layoutT('logout')}
                   </button>
                 </div>
               ) : (
@@ -266,7 +275,7 @@ export default function StickySiteHeader({
                     dark ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20' : 'border border-slate-900 bg-slate-900 text-white hover:bg-slate-800'
                   }`}
                 >
-                  ログイン
+                  {layoutT('guest.login')}
                 </Link>
               )}
 
@@ -283,13 +292,13 @@ export default function StickySiteHeader({
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />
-                      <span>管理者パネル</span>
+                      <span>{navT('links.admin')}</span>
                     </span>
                   </Link>
                 )}
                 
                 {navGroups.map((group) => {
-                  const meta = getDashboardNavGroupMeta(group.key);
+                  const meta = getDashboardNavGroupMeta(group.key, navT);
                   return (
                     <div key={group.key} className="flex flex-col gap-2">
                       <span

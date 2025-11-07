@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import {useFormatter, useTranslations} from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -13,54 +14,14 @@ import type {
   UserSubscriptionListResponse,
 } from '@/types/api';
 
-const formatDateTime = (value?: string | null) => {
-  if (!value) return '---';
-  try {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-    return new Intl.DateTimeFormat('ja-JP', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
-  } catch (error) {
-    return value;
-  }
-};
-
-const statusMeta: Record<string, { label: string; className: string }> = {
-  ACTIVE: {
-    label: '有効',
-    className: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
-  },
-  COMPLETE: {
-    label: '決済完了',
-    className: 'bg-sky-50 text-sky-600 border border-sky-200',
-  },
-  PENDING: {
-    label: '処理中',
-    className: 'bg-amber-50 text-amber-600 border border-amber-200',
-  },
-  UNPAID: {
-    label: '未入金',
-    className: 'bg-rose-50 text-rose-600 border border-rose-200',
-  },
-  CANCELED: {
-    label: '解約済',
-    className: 'bg-slate-100 text-slate-500 border border-slate-200',
-  },
-  CANCELLED: {
-    label: '解約済',
-    className: 'bg-slate-100 text-slate-500 border border-slate-200',
-  },
-  REJECTED: {
-    label: '拒否',
-    className: 'bg-rose-50 text-rose-600 border border-rose-200',
-  },
+const STATUS_CLASS_MAP: Record<string, string> = {
+  ACTIVE: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+  COMPLETE: 'bg-sky-50 text-sky-600 border border-sky-200',
+  PENDING: 'bg-amber-50 text-amber-600 border border-amber-200',
+  UNPAID: 'bg-rose-50 text-rose-600 border border-rose-200',
+  CANCELED: 'bg-slate-100 text-slate-500 border border-slate-200',
+  CANCELLED: 'bg-slate-100 text-slate-500 border border-slate-200',
+  REJECTED: 'bg-rose-50 text-rose-600 border border-rose-200',
 };
 
 function SubscriptionPageContent() {
@@ -90,6 +51,65 @@ function SubscriptionPageContent() {
   const [restrictedPlanId, setRestrictedPlanId] = useState<string | null>(null);
   const [restrictedPlanPoints, setRestrictedPlanPoints] = useState<number | null>(null);
   const [effectiveRate, setEffectiveRate] = useState<number>(145);
+  const formatter = useFormatter();
+  const t = useTranslations('pointsSubscriptions');
+  const selectionT = useTranslations('pointsSubscriptions.selection');
+  const sellerNoticeT = useTranslations('pointsSubscriptions.sellerNotice');
+  const subscriptionsT = useTranslations('pointsSubscriptions.subscriptions');
+  const statusT = useTranslations('pointsSubscriptions.status');
+  const errorsT = useTranslations('pointsSubscriptions.errors');
+  const confirmT = useTranslations('pointsSubscriptions.confirm');
+  const placeholdersT = useTranslations('pointsSubscriptions.placeholders');
+  const statusLabels = useMemo(
+    () => ({
+      ACTIVE: statusT('ACTIVE'),
+      COMPLETE: statusT('COMPLETE'),
+      PENDING: statusT('PENDING'),
+      UNPAID: statusT('UNPAID'),
+      CANCELED: statusT('CANCELED'),
+      CANCELLED: statusT('CANCELLED'),
+      REJECTED: statusT('REJECTED'),
+    }),
+    [statusT]
+  );
+
+  const formatDateTime = useCallback(
+    (value?: string | null) => {
+      if (!value) return placeholdersT('none');
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      return formatter.dateTime(date, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    },
+    [formatter, placeholdersT]
+  );
+
+  const formatPoints = useCallback((points?: number | null) => {
+    if (points === undefined || points === null || Number.isNaN(points)) {
+      return placeholdersT('none');
+    }
+    return formatter.number(points);
+  }, [formatter, placeholdersT]);
+
+  const yenLabel = useCallback(
+    (usdAmount: number) => {
+      if (!usdAmount || Number.isNaN(usdAmount)) {
+        return selectionT('approxZero');
+      }
+      const yen = Math.round(usdAmount * effectiveRate);
+      return selectionT('yenLabel', {
+        amount: formatter.number(yen, { style: 'currency', currency: 'JPY' }),
+      });
+    },
+    [effectiveRate, formatter, selectionT]
+  );
 
   const fetchPlansAndSubscriptions = useCallback(async () => {
     try {
@@ -102,7 +122,7 @@ function SubscriptionPageContent() {
       const planData = (plansRes.data as SubscriptionPlanListResponse).data ?? [];
       const subscriptionData = (subsRes.data as UserSubscriptionListResponse).data ?? [];
 
-      // plan_idパラメータはplan_keyまたはsubscription_plan_idのどちらかの可能性がある
+      // The plan_id parameter may correspond to either plan_key or subscription_plan_id
       const matchedPlanById = planIdParam
         ? planData.find((plan) => plan.subscription_plan_id === planIdParam || plan.plan_key === planIdParam)
         : undefined;
@@ -136,14 +156,18 @@ function SubscriptionPageContent() {
 
       setPlans(planData);
       setSubscriptions(subscriptionData);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to load subscription data', error);
-      const detail = error?.response?.data?.detail ?? 'データの取得に失敗しました。時間をおいて再度お試しください。';
+      const detail =
+        typeof error === 'object' && error !== null && 'response' in error &&
+        typeof (error as { response?: { data?: { detail?: string } } }).response?.data?.detail === 'string'
+          ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string)
+          : errorsT('load');
       setErrorMessage(detail);
     } finally {
       setIsLoading(false);
     }
-  }, [planIdParam, planKeyParam, planPointsParam]);
+  }, [errorsT, planIdParam, planKeyParam, planPointsParam]);
 
   useEffect(() => {
     fetchPlansAndSubscriptions();
@@ -166,20 +190,11 @@ function SubscriptionPageContent() {
     void loadPlatformSettings();
   }, []);
 
-  const yenLabel = useCallback(
-    (usdAmount: number) => {
-      if (!usdAmount || Number.isNaN(usdAmount)) return '約0円 / 月';
-      const yen = Math.round(usdAmount * effectiveRate);
-      return `約${yen.toLocaleString('ja-JP')}円 / 月`;
-    },
-    [effectiveRate],
-  );
-
   const handleSubscribe = async (planKey: string) => {
     if (restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) {
       const targetPlan = plans.find((plan) => plan.plan_key === planKey);
       if (!targetPlan || !isPlanAllowed(targetPlan)) {
-        setErrorMessage('このサロンでは指定されたプランのみお申し込みいただけます。');
+        setErrorMessage(errorsT('restrictedPlan'));
         return;
       }
     }
@@ -200,11 +215,15 @@ function SubscriptionPageContent() {
       if (data.checkout_url) {
         window.location.href = data.checkout_url;
       } else {
-        throw new Error('Checkout URLが取得できませんでした');
+        throw new Error(errorsT('missingCheckoutUrl'));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to create subscription checkout', error);
-      const detail = error?.response?.data?.detail ?? 'サブスク決済の開始に失敗しました。もう一度お試しください。';
+      const detail =
+        typeof error === 'object' && error !== null && 'response' in error &&
+        typeof (error as { response?: { data?: { detail?: string } } }).response?.data?.detail === 'string'
+          ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string)
+          : errorsT('checkout');
       setErrorMessage(detail);
     } finally {
       setPlanLoadingKey(null);
@@ -234,7 +253,7 @@ function SubscriptionPageContent() {
     if (!restrictedPlanId && !restrictedPlanKey && !restrictedPlanPoints) {
       return plans;
     }
-    // サロン専用ページでは、許可されたプランのみ表示
+    // On salon-specific pages, show only allowed plans
     return plans.filter(isPlanAllowed);
   }, [plans, isPlanAllowed, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
 
@@ -250,7 +269,10 @@ function SubscriptionPageContent() {
       return primaryPlan.label;
     }
     if (restrictedPlanPoints) {
-      return `${restrictedPlanPoints.toLocaleString('ja-JP')}ポイント / 月`;
+      return selectionT('pointsPerMonthLabel', {
+        points: formatPoints(restrictedPlanPoints),
+        suffix: selectionT('pointsSuffix'),
+      });
     }
     if (restrictedPlanKey) {
       return restrictedPlanKey;
@@ -258,11 +280,11 @@ function SubscriptionPageContent() {
     if (restrictedPlanId) {
       return restrictedPlanId;
     }
-    return '指定プラン';
-  }, [primaryPlan, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints]);
+    return selectionT('restrictionDefaultLabel');
+  }, [formatPoints, primaryPlan, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints, selectionT]);
 
   const handleCancel = async (subscriptionId: string) => {
-    const confirmCancel = window.confirm('自動更新を停止します。よろしいですか？');
+    const confirmCancel = window.confirm(confirmT('cancel'));
     if (!confirmCancel) return;
 
     try {
@@ -270,9 +292,13 @@ function SubscriptionPageContent() {
       setCancelingId(subscriptionId);
       await subscriptionApi.cancel(subscriptionId);
       await fetchPlansAndSubscriptions();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to cancel subscription', error);
-      const detail = error?.response?.data?.detail ?? '解約処理に失敗しました。時間をおいて再度お試しください。';
+      const detail =
+        typeof error === 'object' && error !== null && 'response' in error &&
+        typeof (error as { response?: { data?: { detail?: string } } }).response?.data?.detail === 'string'
+          ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string)
+          : errorsT('cancel');
       setErrorMessage(detail);
     } finally {
       setCancelingId(null);
@@ -285,8 +311,8 @@ function SubscriptionPageContent() {
 
   return (
     <DashboardLayout
-      pageTitle="サブスク自動チャージ"
-      pageSubtitle="毎月自動でポイントをチャージして購入忘れをゼロに"
+      pageTitle={t('pageTitle')}
+      pageSubtitle={t('pageSubtitle')}
       requireAuth
     >
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
@@ -299,22 +325,22 @@ function SubscriptionPageContent() {
         {sellerUsername && (
           <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-700">
             <p className="font-medium">
-              このリンクは「{sellerUsername}」向けのサブスク申込ページです。
+              {sellerNoticeT('title', { seller: sellerUsername })}
             </p>
             <p className="mt-1 text-xs text-blue-600">
-              申込完了後は自動的にポイントがチャージされ、販売者のコンテンツ利用にご使用いただけます。
+              {sellerNoticeT('description')}
             </p>
           </div>
         )}
 
         <section className="mb-10">
-          <h2 className="text-lg font-semibold text-slate-900">プランを選択</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{selectionT('heading')}</h2>
           <p className="mt-1 text-sm text-slate-500">
-            毎月自動でポイントがチャージされます。いつでも停止できます。
+            {selectionT('description')}
           </p>
           {(restrictedPlanKey || restrictedPlanId || restrictedPlanPoints) && (
             <div className="mt-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-700">
-              このサロンでは「{restrictionNoticeLabel}」のみお申し込みいただけます。
+              {selectionT('restrictionNotice', { label: restrictionNoticeLabel })}
             </div>
           )}
 
@@ -332,11 +358,14 @@ function SubscriptionPageContent() {
                   <div>
                     <p className={`font-semibold text-slate-900 ${orderedPlans.length === 1 ? 'text-2xl' : 'text-lg'}`}>{plan.label}</p>
                     <p className={`mt-1 text-slate-500 ${orderedPlans.length === 1 ? 'text-base' : 'text-sm'}`}>
-                      {plan.points.toLocaleString('ja-JP')}ポイント / 月
+                      {selectionT('pointsPerMonthLabel', {
+                        points: formatPoints(plan.points),
+                        suffix: selectionT('pointsSuffix'),
+                      })}
                     </p>
                     <p className={`mt-2 font-medium text-slate-700 ${orderedPlans.length === 1 ? 'text-lg' : 'text-sm'}`}>{yenLabel(plan.usd_amount)}</p>
                     <p className={`mt-1 text-slate-400 ${orderedPlans.length === 1 ? 'text-sm' : 'text-xs'}`}>
-                      決済はONE.lat経由でUSD建てとなります。
+                      {selectionT('usdNote')}
                     </p>
                   </div>
                   <button
@@ -347,7 +376,7 @@ function SubscriptionPageContent() {
                       orderedPlans.length === 1 ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
                     }`}
                   >
-                    {isProcessing ? 'リダイレクト中…' : 'このプランで申込む'}
+                    {isProcessing ? selectionT('redirecting') : selectionT('subscribeButton')}
                   </button>
                 </div>
               );
@@ -356,25 +385,25 @@ function SubscriptionPageContent() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-slate-900">契約中のサブスク</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{subscriptionsT('heading')}</h2>
           <p className="mt-1 text-sm text-slate-500">
-            ステータスや次回課金日を確認できます。必要に応じて自動更新を停止してください。
+            {subscriptionsT('description')}
           </p>
 
           {subscriptions.length === 0 ? (
             <div className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-10 text-center">
               <p className="text-sm text-slate-500">
-                現在アクティブなサブスクはありません。上のプランからお申し込みいただけます。
+                {subscriptionsT('empty')}
               </p>
             </div>
           ) : (
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               {subscriptions.map((subscription) => {
                 const metaKey = subscription.status?.toUpperCase() ?? '';
-                const meta = statusMeta[metaKey] ?? {
-                  label: subscription.status,
-                  className: 'bg-slate-100 text-slate-600 border border-slate-200',
-                };
+                const className = STATUS_CLASS_MAP[metaKey] ?? 'bg-slate-100 text-slate-600 border border-slate-200';
+                const statusLabel = (statusLabels as Record<string, string>)[metaKey]
+                  ?? subscription.status
+                  ?? subscriptionsT('statusUnknown');
 
                 return (
                   <div
@@ -385,35 +414,39 @@ function SubscriptionPageContent() {
                       <div>
                         <p className="text-lg font-semibold text-slate-900">{subscription.label}</p>
                         <p className="mt-1 text-sm text-slate-500">
-                          {subscription.points_per_cycle.toLocaleString('ja-JP')}ポイント / 月 ・ {yenLabel(subscription.usd_amount)}
+                          {subscriptionsT('pricePerCycle', {
+                            points: formatPoints(subscription.points_per_cycle),
+                            suffix: selectionT('pointsSuffix'),
+                            yen: yenLabel(subscription.usd_amount),
+                          })}
                         </p>
                         {subscription.seller_username && (
                           <p className="mt-1 text-xs text-slate-500">
-                            販売者: {subscription.seller_username}
+                            {subscriptionsT('sellerLabel', { seller: subscription.seller_username })}
                           </p>
                         )}
                       </div>
-                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${meta.className}`}>
-                        {meta.label}
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${className}`}>
+                        {statusLabel}
                       </span>
                     </div>
 
                     <dl className="mt-4 grid grid-cols-1 gap-4 text-sm text-slate-600 sm:grid-cols-2">
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">次回課金予定</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.nextCharge')}</dt>
                         <dd className="mt-1 font-medium text-slate-800">{formatDateTime(subscription.next_charge_at)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">最終課金</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.lastCharge')}</dt>
                         <dd className="mt-1 font-medium text-slate-800">{formatDateTime(subscription.last_charge_at)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">最新イベント</dt>
-                        <dd className="mt-1 font-medium text-slate-800">{subscription.last_event_type ?? '---'}</dd>
+                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.lastEvent')}</dt>
+                        <dd className="mt-1 font-medium text-slate-800">{subscription.last_event_type ?? placeholdersT('none')}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">契約ID</dt>
-                        <dd className="mt-1 font-medium text-slate-800 break-all">{subscription.recurrent_payment_id ?? '---'}</dd>
+                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.contractId')}</dt>
+                        <dd className="mt-1 font-medium text-slate-800 break-all">{subscription.recurrent_payment_id ?? placeholdersT('none')}</dd>
                       </div>
                     </dl>
 
@@ -425,10 +458,12 @@ function SubscriptionPageContent() {
                           disabled={cancelingId === subscription.id}
                           className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
                         >
-                          {cancelingId === subscription.id ? '処理中…' : '自動更新を停止'}
+                          {cancelingId === subscription.id
+                            ? subscriptionsT('canceling')
+                            : subscriptionsT('cancelButton')}
                         </button>
                       ) : (
-                        <p className="text-xs text-slate-400">このサブスクは現在キャンセルできません。</p>
+                        <p className="text-xs text-slate-400">{subscriptionsT('cancelUnavailable')}</p>
                       )}
                     </div>
                   </div>

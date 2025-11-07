@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import {useTranslations, useLocale} from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -36,6 +37,9 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
+  const layoutT = useTranslations('dashboard.layout');
+  const navT = useTranslations('dashboard.navigation');
   const {
     user,
     isAuthenticated,
@@ -49,15 +53,24 @@ export default function DashboardLayout({
   const lastFetchedUserRef = useRef<string | null>(null);
 
   const navLinks = useMemo(
-    () => getDashboardNavLinks({ isAdmin, userType: user?.user_type, unreadMessageCount: unreadCount }),
-    [isAdmin, unreadCount, user?.user_type]
+    () =>
+      getDashboardNavLinks({
+        isAdmin,
+        userType: user?.user_type,
+        unreadMessageCount: unreadCount,
+        translate: navT,
+      }),
+    [isAdmin, unreadCount, user?.user_type, navT]
   );
-  const navGroups = useMemo(() => groupDashboardNavLinks(navLinks), [navLinks]);
+  const navGroups = useMemo(
+    () => groupDashboardNavLinks(navLinks, { translate: navT, locale }),
+    [navLinks, navT, locale]
+  );
   const activeNavLink = useMemo(
     () => navLinks.find((link) => isDashboardLinkActive(pathname, link.href)),
     [navLinks, pathname]
   );
-  const resolvedPageTitle = pageTitle ?? activeNavLink?.label ?? 'ダッシュボード';
+  const resolvedPageTitle = pageTitle ?? activeNavLink?.label ?? layoutT('defaultTitle');
   const resolvedSubtitle = pageSubtitle;
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
@@ -178,38 +191,38 @@ export default function DashboardLayout({
         <nav className="flex-1 p-3 overflow-y-auto">
           {!isAuthenticated ? (
             <div className="flex flex-col gap-3 p-3">
-              <p className="text-xs text-slate-500 mb-2">アカウントをお持ちの方</p>
+              <p className="text-xs text-slate-500 mb-2">{layoutT('guest.prompt')}</p>
               <Link
                 href="/login"
                 className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold text-center hover:bg-blue-700 transition-colors"
               >
-                ログイン
+                {layoutT('guest.login')}
               </Link>
               <Link
                 href="/register"
                 className="w-full px-4 py-2.5 bg-white border-2 border-blue-600 text-blue-600 rounded-lg text-sm font-semibold text-center hover:bg-blue-50 transition-colors"
               >
-                無料で始める
+                {layoutT('guest.register')}
               </Link>
               <div className="mt-4 pt-4 border-t border-slate-200">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400 mb-3 px-2">
-                  探す
+                  {layoutT('guest.explore')}
                 </p>
                 <div className="space-y-1">
                   <Link href="/products" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    AllLP
+                    {navT('links.products')}
                   </Link>
                   <Link href="/notes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    AllNOTES
+                    {navT('links.notes')}
                   </Link>
                   <Link href="/terms" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    利用規約
+                    {navT('links.terms')}
                   </Link>
                   <Link href="/tokusho" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    特定商取引法
+                    {navT('links.tokusho')}
                   </Link>
                   <Link href="/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
-                    プライバシーポリシー
+                    {navT('links.privacy')}
                   </Link>
                 </div>
               </div>
@@ -217,7 +230,7 @@ export default function DashboardLayout({
           ) : (
             <div className="flex flex-col gap-4">
               {navGroups.map((group) => {
-                const meta = getDashboardNavGroupMeta(group.key);
+                const meta = getDashboardNavGroupMeta(group.key, navT);
                 const isExpanded = expandedGroups[group.key] ?? false;
                 return (
                   <div key={group.key} className="space-y-2">
@@ -287,7 +300,7 @@ export default function DashboardLayout({
             onClick={handleLogout}
             className="w-full px-3 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-xs font-semibold"
           >
-            ログアウト
+            {layoutT('logout')}
           </button>
         </div>
         )}

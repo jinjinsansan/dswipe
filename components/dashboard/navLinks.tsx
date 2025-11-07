@@ -23,6 +23,8 @@ import {
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
 
+type TranslateFn = (key: string) => string;
+
 export type DashboardNavGroupKey =
   | 'core'
   | 'lp'
@@ -41,10 +43,25 @@ export interface DashboardNavLink {
   order?: number;
   badge?: string;
   external?: boolean;
+  labelKey?: string;
+  badgeKey?: string;
 }
 
-type DashboardNavGroupMeta = {
-  label: string;
+type DashboardNavLinkDefinition = {
+  href: string;
+  labelKey: string;
+  defaultLabel: string;
+  icon: ReactNode;
+  group: DashboardNavGroupKey;
+  order?: number;
+  badgeKey?: string;
+  defaultBadge?: string;
+  external?: boolean;
+};
+
+type DashboardNavGroupMetaConfig = {
+  labelKey: string;
+  defaultLabel: string;
   headingClass: string;
   desktop: {
     base: string;
@@ -62,11 +79,19 @@ type DashboardNavGroupMeta = {
   };
 };
 
+export type DashboardNavGroupMeta = {
+  label: string;
+  headingClass: string;
+  desktop: DashboardNavGroupMetaConfig['desktop'];
+  mobile: DashboardNavGroupMetaConfig['mobile'];
+};
+
 const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
 
-const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
+const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfig> = {
   core: {
-    label: 'ホーム',
+    labelKey: 'dashboard.navigation.groups.core',
+    defaultLabel: 'ホーム',
     headingClass: 'text-slate-500',
     desktop: {
       base: 'bg-slate-100 text-slate-700 hover:bg-slate-200',
@@ -82,7 +107,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   lp: {
-    label: 'LPメニュー',
+    labelKey: 'dashboard.navigation.groups.lp',
+    defaultLabel: 'LPメニュー',
     headingClass: 'text-blue-500',
     desktop: {
       base: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100',
@@ -98,7 +124,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   note: {
-    label: 'NOTEメニュー',
+    labelKey: 'dashboard.navigation.groups.note',
+    defaultLabel: 'NOTEメニュー',
     headingClass: 'text-slate-500',
     desktop: {
       base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
@@ -114,7 +141,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   salon: {
-    label: 'サロン',
+    labelKey: 'dashboard.navigation.groups.salon',
+    defaultLabel: 'サロン',
     headingClass: 'text-sky-500',
     desktop: {
       base: 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100',
@@ -130,7 +158,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   points: {
-    label: 'ポイント',
+    labelKey: 'dashboard.navigation.groups.points',
+    defaultLabel: 'ポイント',
     headingClass: 'text-violet-500',
     desktop: {
       base: 'bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-100',
@@ -146,7 +175,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   line: {
-    label: 'LINE連携',
+    labelKey: 'dashboard.navigation.groups.line',
+    defaultLabel: 'LINE連携',
     headingClass: 'text-emerald-500',
     desktop: {
       base: 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100',
@@ -164,7 +194,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   media: {
-    label: '外部連携',
+    labelKey: 'dashboard.navigation.groups.media',
+    defaultLabel: '外部連携',
     headingClass: 'text-indigo-500',
     desktop: {
       base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100',
@@ -180,7 +211,8 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
     },
   },
   info: {
-    label: 'サポート',
+    labelKey: 'dashboard.navigation.groups.info',
+    defaultLabel: 'サポート',
     headingClass: 'text-slate-400',
     desktop: {
       base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
@@ -197,85 +229,130 @@ const GROUP_META: Record<DashboardNavGroupKey, DashboardNavGroupMeta> = {
   },
 };
 
-export const BASE_DASHBOARD_NAV_LINKS: DashboardNavLink[] = [
-  { href: '/dashboard', label: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
-  { href: '/messages', label: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
-  { href: '/profile', label: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
-  { href: '/lp/create', label: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
-  { href: '/products', label: 'AllLP', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
-  { href: '/note/create', label: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
-  { href: '/note', label: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
-  { href: '/notes', label: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
-  { href: '/salons', label: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
-  { href: '/salons/create', label: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
-  { href: '/salons/all', label: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
-  { href: '/points/purchase', label: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
-  { href: '/points/history', label: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
-  { href: '/purchases', label: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
-  { href: '/line/bonus', label: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badge: '300P' },
-  { href: '/settings', label: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
-  { href: '/settings/share', label: '共有機能', icon: <ShareIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 30 },
-  { href: '/media', label: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
-  { href: '/terms', label: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
-  { href: '/tokusho', label: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },
-  { href: '/privacy', label: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
-  { href: 'https://lin.ee/lYIZWhd', label: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
+const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
+  { href: '/dashboard', labelKey: 'dashboard.navigation.links.dashboard', defaultLabel: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
+  { href: '/messages', labelKey: 'dashboard.navigation.links.messages', defaultLabel: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
+  { href: '/profile', labelKey: 'dashboard.navigation.links.profile', defaultLabel: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
+  { href: '/lp/create', labelKey: 'dashboard.navigation.links.lpCreate', defaultLabel: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
+  { href: '/products', labelKey: 'dashboard.navigation.links.products', defaultLabel: 'AllLP', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
+  { href: '/note/create', labelKey: 'dashboard.navigation.links.noteCreate', defaultLabel: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
+  { href: '/note', labelKey: 'dashboard.navigation.links.noteEdit', defaultLabel: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
+  { href: '/notes', labelKey: 'dashboard.navigation.links.notes', defaultLabel: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
+  { href: '/salons', labelKey: 'dashboard.navigation.links.salons', defaultLabel: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
+  { href: '/salons/create', labelKey: 'dashboard.navigation.links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
+  { href: '/salons/all', labelKey: 'dashboard.navigation.links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
+  { href: '/points/purchase', labelKey: 'dashboard.navigation.links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
+  { href: '/points/history', labelKey: 'dashboard.navigation.links.pointsHistory', defaultLabel: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
+  { href: '/purchases', labelKey: 'dashboard.navigation.links.purchases', defaultLabel: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
+  { href: '/line/bonus', labelKey: 'dashboard.navigation.links.lineBonus', defaultLabel: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badgeKey: 'dashboard.navigation.links.lineBonusBadge', defaultBadge: '300P' },
+  { href: '/settings', labelKey: 'dashboard.navigation.links.settings', defaultLabel: 'X連携', icon: <XLogo className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 25 },
+  { href: '/settings/share', labelKey: 'dashboard.navigation.links.settingsShare', defaultLabel: '共有機能', icon: <ShareIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 30 },
+  { href: '/media', labelKey: 'dashboard.navigation.links.media', defaultLabel: 'メディア', icon: <PhotoIcon className="h-5 w-5" aria-hidden="true" />, group: 'media', order: 10 },
+  { href: '/terms', labelKey: 'dashboard.navigation.links.terms', defaultLabel: '利用規約', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 10 },
+  { href: '/tokusho', labelKey: 'dashboard.navigation.links.tokusho', defaultLabel: '特定商取引法', icon: <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 15 },
+  { href: '/privacy', labelKey: 'dashboard.navigation.links.privacy', defaultLabel: 'プライバシー', icon: <LockClosedIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 20 },
+  { href: 'https://lin.ee/lYIZWhd', labelKey: 'dashboard.navigation.links.contact', defaultLabel: 'お問い合わせ', icon: <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />, group: 'info', order: 40, external: true },
 ];
+
+const safeTranslate = (translate: TranslateFn | undefined, key: string, fallback: string) => {
+  if (!translate) {
+    return fallback;
+  }
+  try {
+    const value = translate(key);
+    return value ?? fallback;
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`Missing translation for key: ${key}`);
+    }
+    return fallback;
+  }
+};
+
+const createNavLink = (definition: DashboardNavLinkDefinition, translate?: TranslateFn): DashboardNavLink => {
+  return {
+    href: definition.href,
+    label: safeTranslate(translate, definition.labelKey, definition.defaultLabel),
+    icon: definition.icon,
+    group: definition.group,
+    order: definition.order,
+    external: definition.external,
+    badge: definition.badgeKey
+      ? safeTranslate(translate, definition.badgeKey, definition.defaultBadge ?? '')
+      : definition.defaultBadge,
+    labelKey: definition.labelKey,
+    badgeKey: definition.badgeKey,
+  };
+};
 
 export const getDashboardNavLinks = (options?: {
   isAdmin?: boolean;
   userType?: string;
   unreadMessageCount?: number;
+  translate?: TranslateFn;
 }): DashboardNavLink[] => {
-  const links = [...BASE_DASHBOARD_NAV_LINKS];
+  const translate = options?.translate;
+  const links: DashboardNavLink[] = BASE_NAV_LINK_DEFINITIONS.map((definition) => createNavLink(definition, translate));
 
   if (options?.userType === 'seller' && !links.some((link) => link.href === '/products/manage')) {
-    const productsManageLink: DashboardNavLink = {
-      href: '/products/manage',
-      label: '商品管理',
-      icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" />,
-      group: 'lp',
-      order: 20,
-    };
-    links.push(productsManageLink);
+    links.push(
+      createNavLink(
+        {
+          href: '/products/manage',
+          labelKey: 'dashboard.navigation.links.productsManage',
+          defaultLabel: '商品管理',
+          icon: <WrenchScrewdriverIcon className="h-5 w-5" aria-hidden="true" />,
+          group: 'lp',
+          order: 20,
+        },
+        translate,
+      ),
+    );
   }
 
   if (options?.userType === 'seller' && !links.some((link) => link.href === '/sales')) {
-    links.push({
-      href: '/sales',
-      label: '販売履歴',
-      icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />,
-      group: 'points',
-      order: 22,
-    });
+    links.push(
+      createNavLink(
+        {
+          href: '/sales',
+          labelKey: 'dashboard.navigation.links.sales',
+          defaultLabel: '販売履歴',
+          icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />,
+          group: 'points',
+          order: 22,
+        },
+        translate,
+      ),
+    );
   }
 
   if (options?.isAdmin && !links.some((link) => link.href === '/admin')) {
-    links.push({
-      href: '/admin',
-      label: '管理者パネル',
-      icon: <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />,
-      group: 'core',
-      order: 50,
-    });
+    links.push(
+      createNavLink(
+        {
+          href: '/admin',
+          labelKey: 'dashboard.navigation.links.admin',
+          defaultLabel: '管理者パネル',
+          icon: <ShieldCheckIcon className="h-5 w-5" aria-hidden="true" />,
+          group: 'core',
+          order: 50,
+        },
+        translate,
+      ),
+    );
   }
 
   const unreadCount = options?.unreadMessageCount ?? 0;
-  if (!links.some((link) => link.href === '/messages')) {
-    return links;
+  if (links.some((link) => link.href === '/messages')) {
+    const badgeLabel = unreadCount > 99 ? '99+' : unreadCount > 0 ? String(unreadCount) : undefined;
+    links.forEach((link) => {
+      if (link.href === '/messages') {
+        link.badge = badgeLabel;
+      }
+    });
   }
 
-  const badgeLabel = unreadCount > 99 ? '99+' : unreadCount > 0 ? String(unreadCount) : undefined;
-
-  return links.map((link) => {
-    if (link.href !== '/messages') {
-      return link;
-    }
-    return {
-      ...link,
-      badge: badgeLabel,
-    };
-  });
+  return links;
 };
 
 export interface DashboardNavGroup {
@@ -284,7 +361,14 @@ export interface DashboardNavGroup {
   items: DashboardNavLink[];
 }
 
-export const groupDashboardNavLinks = (links: DashboardNavLink[]): DashboardNavGroup[] => {
+export const groupDashboardNavLinks = (
+  links: DashboardNavLink[],
+  options?: { translate?: TranslateFn; locale?: string }
+): DashboardNavGroup[] => {
+  const translate = options?.translate;
+  const locale = options?.locale ?? 'ja';
+  const collator = new Intl.Collator(locale, { sensitivity: 'base' });
+
   return GROUP_ORDER.map((group) => {
     const items = links
       .filter((link) => link.group === group)
@@ -292,26 +376,41 @@ export const groupDashboardNavLinks = (links: DashboardNavLink[]): DashboardNavG
         const aOrder = a.order ?? Number.MAX_SAFE_INTEGER;
         const bOrder = b.order ?? Number.MAX_SAFE_INTEGER;
         if (aOrder !== bOrder) return aOrder - bOrder;
-        return a.label.localeCompare(b.label, 'ja');
+        return collator.compare(a.label, b.label);
       });
+
     if (items.length === 0) {
       return null;
     }
+
+    const meta = getDashboardNavGroupMeta(group, translate);
+
     return {
       key: group,
-      label: GROUP_META[group].label,
+      label: meta.label,
       items,
     };
   }).filter((group): group is DashboardNavGroup => Boolean(group));
 };
 
-export const getDashboardNavGroupMeta = (group: DashboardNavGroupKey): DashboardNavGroupMeta => GROUP_META[group];
+export const getDashboardNavGroupMeta = (
+  group: DashboardNavGroupKey,
+  translate?: TranslateFn
+): DashboardNavGroupMeta => {
+  const config = GROUP_META_CONFIG[group];
+  return {
+    label: safeTranslate(translate, config.labelKey, config.defaultLabel),
+    headingClass: config.headingClass,
+    desktop: config.desktop,
+    mobile: config.mobile,
+  };
+};
 
 export const getDashboardNavClasses = (
   link: DashboardNavLink,
   options: { variant: 'desktop' | 'mobile'; active: boolean }
 ) => {
-  const meta = GROUP_META[link.group];
+  const meta = GROUP_META_CONFIG[link.group];
   if (options.variant === 'desktop') {
     return {
       container: options.active ? meta.desktop.active : meta.desktop.base,

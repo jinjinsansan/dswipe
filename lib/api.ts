@@ -212,6 +212,7 @@ export const authApi = {
     sns_url?: string | null;
     line_url?: string | null;
     profile_image_url?: string | null;
+    preferred_locale?: 'ja' | 'en';
   }) =>
     api.put('/auth/profile', data),
 };
@@ -364,8 +365,13 @@ export const noteApi = {
   rotateShareToken: (noteId: string) =>
     api.post<NoteDetail>(`/notes/${noteId}/share-token/rotate`),
 
-  purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points') =>
-    api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, { params: { payment_method: paymentMethod } }),
+  purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points', options?: { locale?: string }) =>
+    api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, {
+      params: {
+        payment_method: paymentMethod,
+        locale: options?.locale,
+      },
+    }),
 
   purchaseStatus: (externalId: string, config?: Parameters<typeof api.get>[1]) =>
     api.get<NotePurchaseStatusResponse>('/notes/purchase/status', {
@@ -851,23 +857,25 @@ export const publicApi = {
       params: sessionId ? { session_id: sessionId } : undefined,
     }),
 
-  listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[]; author_username?: string }) =>
+  listNotes: (params?: { limit?: number; offset?: number; search?: string; categories?: string[]; author_username?: string; locale?: string }) =>
     axios.get<PublicNoteListResult>(`${API_URL}/notes/public`, {
       params,
       paramsSerializer: (parameters) => buildQueryString(parameters as Record<string, unknown> | undefined),
     }),
 
-  getNote: (slug: string, options?: { accessToken?: string }) =>
+  getNote: (slug: string, options?: { accessToken?: string; locale?: string }) =>
     axios.get<PublicNoteDetail>(`${API_URL}/notes/public/${slug}`, {
       headers: options?.accessToken
         ? { Authorization: `Bearer ${options.accessToken}` }
         : undefined,
+      params: options?.locale ? { locale: options.locale } : undefined,
     }),
 
-  getNoteByShareToken: (token: string, options?: { accessToken?: string }) =>
+  getNoteByShareToken: (token: string, options?: { accessToken?: string; locale?: string }) =>
     axios.get<PublicNoteDetail>(`${API_URL}/notes/share/${token}`, {
       headers: options?.accessToken
         ? { Authorization: `Bearer ${options.accessToken}` }
         : undefined,
+      params: options?.locale ? { locale: options.locale } : undefined,
     }),
 };

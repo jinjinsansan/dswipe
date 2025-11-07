@@ -10,6 +10,7 @@ import {
   CurrencyYenIcon,
   SparklesIcon,
 } from '@heroicons/react/24/outline';
+import { useFormatter, useTranslations, useLocale } from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
 import { publicApi, noteApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
@@ -17,32 +18,29 @@ import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import { redirectToLogin } from '@/lib/navigation';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
+
+const withBasePath = (basePath: string, pathname: string) => {
+  if (!basePath || basePath === '/') {
+    return pathname;
+  }
+  if (pathname === '/') {
+    return basePath;
+  }
+  return `${basePath}${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
+};
 
 interface NoteDetailClientProps {
   slug?: string;
   shareToken?: string;
+  basePath?: string;
 }
 
 type LoadingState = 'idle' | 'loading' | 'error';
 
 type PurchaseState = 'idle' | 'processing' | 'success' | 'error';
-
-const formatDate = (value?: string | null) => {
-  if (!value) return '非公開';
-  try {
-    return new Date(value).toLocaleString('ja-JP', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
-};
 
 const extractErrorInfo = (error: unknown) => {
   if (typeof error === 'object' && error) {
@@ -60,8 +58,12 @@ const extractErrorInfo = (error: unknown) => {
   return { status: undefined, detail: undefined };
 };
 
-export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientProps) {
+export default function NoteDetailClient({ slug, shareToken, basePath = '' }: NoteDetailClientProps) {
   const router = useRouter();
+  const t = useTranslations('noteDetail');
+  const notePublicT = useTranslations('notePublic');
+  const format = useFormatter();
+  const locale = useLocale();
   const { token, isAuthenticated, isInitialized, user } = useAuthStore();
 
   const [note, setNote] = useState<PublicNoteDetail | null>(null);
@@ -73,6 +75,24 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
   const [selectedMethod, setSelectedMethod] = useState<'points' | 'yen'>('points');
   const [shareUrl, setShareUrl] = useState('');
 
+  const formatDate = useCallback(
+    (value?: string | null) => {
+      if (!value) return t('unpublishedLabel');
+      try {
+        return format.dateTime(new Date(value), {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch {
+        return value;
+      }
+    },
+    [format, t]
+  );
+
   const fetchNote = useCallback(async () => {
     if (!slug && !shareToken) return;
     setLoading('loading');
@@ -81,9 +101,11 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
       const response = shareToken
         ? await publicApi.getNoteByShareToken(shareToken, {
             accessToken: token ?? undefined,
+            locale,
           })
         : await publicApi.getNote(slug!, {
             accessToken: token ?? undefined,
+            locale,
           });
       const data = response.data;
       setNote(data);
@@ -100,8 +122,8 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
       if (status === 401 || status === 403) {
         try {
           const fallback = shareToken
-            ? await publicApi.getNoteByShareToken(shareToken)
-            : await publicApi.getNote(slug!);
+            ? await publicApi.getNoteByShareToken(shareToken, { locale })
+            : await publicApi.getNote(slug!, { locale });
           const fallbackData = fallback.data;
           setNote(fallbackData);
           if (fallbackData.allow_point_purchase) {
@@ -114,14 +136,13 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
           return;
         } catch (fallbackError: unknown) {
           const { detail: fallbackDetail } = extractErrorInfo(fallbackError);
-          setError(typeof fallbackDetail === 'string' ? fallbackDetail : 'NOTEの取得に失敗しました');
+          setError(typeof fallbackDetail === 'string' ? fallbackDetail : t('fetchError'));
         }
       } else {
-        setError(typeof detail === 'string' ? detail : 'NOTEの取得に失敗しました');
+        setError(typeof detail === 'string' ? detail : t('fetchError'));
       }
       setLoading('error');
-    }
-  }, [shareToken, slug, token]);
+  }, [shareToken, slug, token, t, locale]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -144,25 +165,25 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
 
     if (isPointsPurchase && !note.allow_point_purchase) {
       setPurchaseState('error');
-      setPurchaseError('このNOTEはポイント決済に対応していません');
+      setPurchaseError(t('pointsNotAvailable'));
       return;
     }
 
     if (!isPointsPurchase && (!note.allow_jpy_purchase || (note.price_jpy ?? 0) <= 0)) {
       setPurchaseState('error');
-      setPurchaseError('このNOTEは日本円決済に対応していません');
+      setPurchaseError(t('yenNotAvailable'));
       return;
     }
 
     const confirmMessage = isPointsPurchase
-      ? `以下のNOTEを購入しますか？\n\n` +
-        `タイトル: ${note.title}\n` +
-        `価格: ${note.price_points.toLocaleString()} ポイント\n\n` +
-        `ポイントが消費されます。よろしいですか？`
-      : `以下のNOTEを日本円決済で購入しますか？\n\n` +
-        `タイトル: ${note.title}\n` +
-        `価格: ${(note.price_jpy ?? 0).toLocaleString()} 円\n\n` +
-        `決済ページ(one.lat)に遷移します。よろしいですか？`;
+      ? t('confirmPointsPurchase', {
+          title: note.title ?? '',
+          pricePoints: note.price_points,
+        })
+      : t('confirmYenPurchase', {
+          title: note.title ?? '',
+          priceYen: note.price_jpy ?? 0,
+        });
 
     if (!window.confirm(confirmMessage)) {
       setPurchaseState('idle');
@@ -174,30 +195,30 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
     setPurchaseError(null);
 
     try {
-      const response = await noteApi.purchase(note.id, selectedMethod);
+      const response = await noteApi.purchase(note.id, selectedMethod, { locale });
       const result = response.data;
 
       if (isPointsPurchase) {
         setPurchaseState('success');
         setPurchaseMessage(
-          `購入が完了しました。残りポイント: ${result.remaining_points.toLocaleString()} pt`
+          t('pointsPurchaseSuccess', { remainingPoints: result.remaining_points })
         );
         setNote((prev) => (prev ? { ...prev, has_access: true } : prev));
       } else {
         const checkoutUrl = result.checkout_url;
         if (checkoutUrl) {
           setPurchaseState('success');
-          setPurchaseMessage('決済ページに遷移します。完了後に再読み込みしてください。');
+          setPurchaseMessage(t('redirectingToCheckout'));
           window.location.href = checkoutUrl;
           return;
         }
-        throw new Error('決済URLの取得に失敗しました');
+        throw new Error(t('checkoutUrlError'));
       }
     } catch (err: unknown) {
       const { detail } = extractErrorInfo(err);
       setPurchaseState('error');
       setPurchaseError(
-        typeof detail === 'string' ? detail : '購入に失敗しました。もう一度お試しください。'
+        typeof detail === 'string' ? detail : t('genericPurchaseError')
       );
     }
   };
@@ -209,15 +230,16 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
 
   const canonicalUrl = useMemo(() => {
     const normalizedOrigin = SITE_ORIGIN ? SITE_ORIGIN.replace(/\/$/, '') : '';
+    const normalizedBase = basePath && basePath !== '/' ? basePath : '';
     if (shareUrl) {
       return shareUrl;
     }
     if (shareToken) {
-      return `${normalizedOrigin}/notes/share/${shareToken}`;
+      return `${normalizedOrigin}${normalizedBase}/notes/share/${shareToken}`;
     }
     const slugValue = note?.slug || slug;
-    return `${normalizedOrigin}/notes/${slugValue}`;
-  }, [note?.slug, shareToken, shareUrl, slug]);
+    return `${normalizedOrigin}${normalizedBase}/notes/${slugValue}`;
+  }, [note?.slug, shareToken, shareUrl, slug, basePath]);
 
   const shareLinks = useMemo(() => {
     const title = note?.title ? `${note.title}` : 'NOTE';
@@ -231,7 +253,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
 
   if (!isInitialized) {
     return (
-      <div className="flex h-80 items-center justify-center text-slate-500">初期化中...</div>
+      <div className="flex h-80 items-center justify-center text-slate-500">{t('initializing')}</div>
     );
   }
 
@@ -239,7 +261,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
     return (
       <div className="flex h-80 items-center justify-center text-slate-500">
         <ArrowPathIcon className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-        読み込み中...
+        {t('loading')}
       </div>
     );
   }
@@ -247,7 +269,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
   if (loading === 'error' || !note) {
     return (
       <div className="mx-auto max-w-3xl rounded-3xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-700">
-        {error ?? 'NOTEが見つかりませんでした'}
+        {error ?? t('notFound')}
       </div>
     );
   }
@@ -258,10 +280,10 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
     ? note.allow_point_purchase
     : note.allow_jpy_purchase && (note.price_jpy ?? 0) > 0;
   const purchaseButtonLabel = !isAuthenticated
-    ? 'ログインして購入'
+    ? t('loginToPurchase')
     : isPointsSelected
-      ? `${note.price_points.toLocaleString()} ポイントで購入`
-      : `${(note.price_jpy ?? 0).toLocaleString()} 円で購入`;
+      ? t('purchaseButtonPoints', { pricePoints: note.price_points })
+      : t('purchaseButtonYen', { priceYen: note.price_jpy ?? 0 });
 
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -281,36 +303,40 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
       ) : null}
 
       <header className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
           <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
             <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
             NOTE
           </span>
-          <span>公開日: {formatDate(note.published_at)}</span>
+          <span>
+            {t('publishedAtLabel')}{' '}
+            {formatDate(note.published_at)}
+          </span>
           <span className="flex items-center gap-2">
-            価格:
+            {t('priceLabel')}
             {note.is_paid ? (
               <span className="flex items-center gap-2">
                 {note.allow_point_purchase && (
                   <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                    {note.price_points.toLocaleString()} pt
+                    {format.number(note.price_points)} pt
                   </span>
                 )}
                 {note.allow_jpy_purchase && (
                   <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
-                    {(note.price_jpy ?? 0).toLocaleString()} 円
+                    ¥{format.number(note.price_jpy ?? 0)}
                   </span>
                 )}
                 {!note.allow_point_purchase && !note.allow_jpy_purchase && (
-                  <span className="text-xs text-slate-500">販売設定未設定</span>
+                  <span className="text-xs text-slate-500">{t('priceNotConfigured')}</span>
                 )}
               </span>
             ) : (
-              '無料'
+              t('freeLabel')
             )}
           </span>
           <span className="flex items-center gap-1">
-            著者:
+            {t('authorLabel')}
             {note.author_username ? (
               <Link
                 href={`/u/${note.author_username}`}
@@ -322,7 +348,9 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
               <span>@unknown</span>
             )}
           </span>
-          {isAuthor ? <span className="font-semibold text-emerald-600">あなたの記事です</span> : null}
+          {isAuthor ? <span className="font-semibold text-emerald-600">{t('youAreAuthor')}</span> : null}
+          </div>
+          <LanguageSwitcher />
         </div>
 
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{note.title}</h1>
@@ -336,7 +364,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
                 key={category}
                 className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
               >
-                #{getCategoryLabel(category)}
+                #{notePublicT(`categories.${category}`, { default: getCategoryLabel(category) })}
               </span>
             ))}
           </div>
@@ -351,7 +379,6 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
 
         {note.is_paid && !note.has_access ? (
           <div className="mt-10 space-y-4">
-            {/* Xシェアで無料解放オプション */}
             {note.allow_share_unlock && (
               <ShareToUnlockButton
                 noteId={note.id}
@@ -360,17 +387,16 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
                 officialTweetId={note.official_share_tweet_id}
                 officialTweetUrl={note.official_share_tweet_url}
                 officialXUsername={note.official_share_x_username}
+                basePath={basePath}
                 onShareSuccess={() => {
-                  // シェア成功後の処理（ページリロード）
+                  /** no-op */
                 }}
               />
             )}
-
-            {/* 通常のポイント購入 */}
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6 text-center text-sm text-amber-700">
-              <p className="font-semibold">この続きは有料コンテンツです</p>
+              <p className="font-semibold">{t('paidContentTitle')}</p>
               <p className="mt-2 text-xs text-amber-700/80">
-                購入すると残りのコンテンツがすべて解放されます。
+                {t('paidContentDescription')}
               </p>
               <div className="mt-4 flex flex-col gap-4">
                 {purchaseMessage ? (
@@ -396,12 +422,12 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
                         }`}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                          ポイント決済
+                          {t('pointsPaymentTitle')}
                         </p>
                         <p className="mt-1 text-lg font-bold text-blue-600">
-                          {note.price_points.toLocaleString()} pt
+                          {format.number(note.price_points)} pt
                         </p>
-                        <p className="mt-1 text-[11px] text-slate-500">保有ポイントから差し引かれます</p>
+                        <p className="mt-1 text-[11px] text-slate-500">{t('pointsPaymentNote')}</p>
                       </button>
                     )}
                     {note.allow_jpy_purchase && (
@@ -415,17 +441,17 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
                         }`}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                          日本円決済
+                          {t('yenPaymentTitle')}
                         </p>
                         <p className="mt-1 text-lg font-bold text-emerald-600">
-                          {(note.price_jpy ?? 0).toLocaleString()} 円
+                          ¥{format.number(note.price_jpy ?? 0)}
                         </p>
-                        <p className="mt-1 text-[11px] text-slate-500">one.lat決済ページに移動します</p>
+                        <p className="mt-1 text-[11px] text-slate-500">{t('yenPaymentNote')}</p>
                       </button>
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-amber-700/80">現在購入できる決済方法が設定されていません。</p>
+                  <p className="text-xs text-amber-700/80">{t('noPaymentMethods')}</p>
                 )}
                 <button
                   type="button"
@@ -446,17 +472,17 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
                       aria-hidden="true"
                     />
                   )}
-                  {purchaseState === 'processing' ? '処理中...' : purchaseButtonLabel}
+                  {purchaseState === 'processing' ? t('processing') : purchaseButtonLabel}
                 </button>
                 <p className="text-[11px] leading-relaxed text-slate-500">
-                  デジタルコンテンツの性質上、購入完了後のポイントおよび提供済みコンテンツはキャンセルできません。
+                  {t('purchaseDisclaimer')}
                 </p>
                 {!isAuthenticated ? (
                   <Link
                     href="/login"
                     className="text-xs font-semibold text-blue-600 underline underline-offset-4"
                   >
-                    アカウントをお持ちでない場合はこちらからログイン/登録
+                    {t('loginPrompt')}
                   </Link>
                 ) : null}
               </div>
@@ -465,7 +491,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
         ) : null}
 
         <div className="mt-10 border-t border-slate-200 pt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">SNSでシェア</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{t('shareHeading')}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <a
               href={shareLinks.x}
@@ -474,7 +500,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
             >
               <XIcon className="h-4 w-4" />
-              Xでシェア
+              {t('shareOnX')}
             </a>
             <a
               href={shareLinks.line}
@@ -483,7 +509,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
               className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100"
             >
               <LineIcon className="h-4 w-4" />
-              LINEでシェア
+              {t('shareOnLine')}
             </a>
           </div>
         </div>
@@ -493,7 +519,7 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
           <div className="flex items-center gap-2">
             <SparklesIcon className="h-4 w-4" aria-hidden="true" />
-            <span>現在あなたは有料エリアを閲覧中です。</span>
+            <span>{t('accessGrantedMessage')}</span>
           </div>
           {purchaseMessage ? (
             <p className="mt-2 text-xs text-emerald-600/80">{purchaseMessage}</p>
@@ -504,16 +530,16 @@ export default function NoteDetailClient({ slug, shareToken }: NoteDetailClientP
       <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500">
         <div className="flex flex-wrap gap-2">
           <Link
-            href="/notes"
+            href={withBasePath(basePath, '/notes')}
             className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
           >
-            ← AllNOTESへ戻る
+            {t('backToNotes')}
           </Link>
           <Link
-            href="/note"
+            href={withBasePath(basePath, '/note')}
             className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
           >
-            NOTE編集
+            {t('editNote')}
           </Link>
         </div>
         <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import {useFormatter, useTranslations} from 'next-intl';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
@@ -30,33 +31,26 @@ const POINT_PACKAGES = [
 const PAYMENT_METHODS = [
   {
     id: 'one_lat',
-    name: 'カード・USDT決済（ONE.lat）',
     icon: <CurrencyDollarIcon className="h-6 w-6" aria-hidden="true" />,
     status: 'active',
-    description: 'クレジットカード・仮想通貨対応',
   },
   {
     id: 'jpyc',
-    name: 'JPYC決済',
     icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />,
     status: 'coming_soon',
-    description: '日本円ステーブルコイン・手数料無料',
   },
   {
     id: 'stripe',
-    name: 'クレジットカード',
     icon: <CreditCardIcon className="h-6 w-6" aria-hidden="true" />,
     status: 'coming_soon',
   },
   {
     id: 'paypal',
-    name: 'PayPal',
     icon: <BanknotesIcon className="h-6 w-6" aria-hidden="true" />,
     status: 'coming_soon',
   },
   {
     id: 'bank',
-    name: '銀行振込',
     icon: <BuildingLibraryIcon className="h-6 w-6" aria-hidden="true" />,
     status: 'coming_soon',
   },
@@ -70,6 +64,20 @@ export default function PointPurchasePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const formatter = useFormatter();
+  const t = useTranslations('pointsPurchase');
+  const packagesT = useTranslations('pointsPurchase.packages');
+  const paymentsT = useTranslations('pointsPurchase.payments');
+  const summaryT = useTranslations('pointsPurchase.summary');
+  const alertsT = useTranslations('pointsPurchase.alerts');
+  const errorsT = useTranslations('pointsPurchase.errors');
+  const transactionsT = useTranslations('pointsPurchase.transactions');
+  const guidelinesT = useTranslations('pointsPurchase.guidelines');
+  const guidelineItems = useMemo(() => {
+    const rawItems = guidelinesT.raw('items');
+    return Array.isArray(rawItems) ? rawItems.map(String) : [];
+  }, [guidelinesT]);
 
   useEffect(() => {
     setCurrentBalance(pointBalance);
@@ -84,6 +92,8 @@ export default function PointPurchasePage() {
 
     const load = async () => {
       try {
+        setLoadError(null);
+
         const [balanceRes, transactionsRes] = await Promise.all([
           pointsApi.getBalance(),
           pointsApi.getTransactions({ transaction_type: 'purchase', limit: 10 }),
@@ -106,6 +116,9 @@ export default function PointPurchasePage() {
         );
       } catch (error) {
         console.error('Failed to fetch data:', error);
+        if (isActive) {
+          setLoadError(errorsT('fetch'));
+        }
       } finally {
         if (isActive) {
           setIsLoading(false);
@@ -118,23 +131,21 @@ export default function PointPurchasePage() {
     return () => {
       isActive = false;
     };
-  }, [isInitialized, isAuthenticated, setPointBalance]);
+  }, [errorsT, isInitialized, isAuthenticated, setPointBalance]);
 
   const handlePurchase = async () => {
     if (!isAuthenticated) {
-      alert('ポイント購入にはログインが必要です。');
+      alert(alertsT('loginRequired'));
       return;
     }
 
     if (selectedPaymentMethod.id === 'jpyc') {
-      alert(
-        'JPYC決済は近日公開予定です。\n\n実装予定機能：\n- ウォレット接続（MetaMask等）\n- ガスレス決済（手数料無料）\n- 1 JPYC = 1円\n\n現在はONE.lat決済をご利用ください。'
-      );
+      alert(alertsT('jpycComingSoon'));
       return;
     }
 
     if (selectedPaymentMethod.status === 'coming_soon') {
-      alert('この決済方法は準備中です。\nONE.lat決済（カード・USDT対応）をご利用ください。');
+      alert(alertsT('comingSoon'));
       return;
     }
 
@@ -146,7 +157,7 @@ export default function PointPurchasePage() {
         const token = localStorage.getItem('access_token');
 
         if (!token) {
-          throw new Error('認証トークンが見つかりません。再ログインしてください。');
+          throw new Error(alertsT('missingToken'));
         }
 
         const response = await fetch(`${apiUrl}/points/purchase/one-lat`, {
@@ -156,32 +167,41 @@ export default function PointPurchasePage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            amount: selectedPackage.points + selectedPackage.bonus,
+            amount: selectedTotalPoints,
           }),
         });
 
         if (!response.ok) {
           const errorBody = await response.text();
           console.error('API Error Response:', errorBody);
-          throw new Error(`決済の開始に失敗しました (${response.status}): ${errorBody}`);
+          throw new Error(
+            alertsT('purchaseStartFailed', {
+              status: String(response.status),
+              details: errorBody,
+            })
+          );
         }
 
         const data = await response.json();
         window.location.href = data.checkout_url;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Purchase error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-        });
-        alert(`決済エラー:\n${error.message}`);
+        if (error instanceof Error) {
+          console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+          });
+        }
+        const message = error instanceof Error ? error.message : String(error);
+        alert(alertsT('purchaseError', { message }));
       } finally {
         setIsPurchasing(false);
       }
     }
   };
 
-  const projectedBalance = currentBalance + selectedPackage.points + selectedPackage.bonus;
+  const selectedTotalPoints = selectedPackage.points + selectedPackage.bonus;
+  const projectedBalance = currentBalance + selectedTotalPoints;
 
   if (isLoading) {
     return <PageLoader />;
@@ -189,19 +209,24 @@ export default function PointPurchasePage() {
 
   return (
     <DashboardLayout
-      pageTitle="ポイント購入"
-      pageSubtitle="安全な決済でポイントを追加できます"
+      pageTitle={t('pageTitle')}
+      pageSubtitle={t('pageSubtitle')}
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
+        {loadError && (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {loadError}
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:gap-8">
             <div className="space-y-6 lg:col-span-2">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">ポイントパッケージ</h2>
-                    <p className="mt-1 text-sm text-slate-500">利用規模に合わせて柔軟に選択できます</p>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">{packagesT('heading')}</h2>
+                    <p className="mt-1 text-sm text-slate-500">{packagesT('description')}</p>
                   </div>
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">Secure purchase</span>
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{packagesT('secureLabel')}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                   {POINT_PACKAGES.map((pkg) => {
@@ -219,17 +244,21 @@ export default function PointPurchasePage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-xl font-semibold text-slate-900 sm:text-2xl">
-                              {pkg.points.toLocaleString()} P
+                              {packagesT('pointsLabel', { points: formatter.number(pkg.points) })}
                             </p>
                             {pkg.bonus > 0 && (
                               <span className="mt-1 inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-600">
-                                +{pkg.bonus.toLocaleString()}P ボーナス
+                                {packagesT('bonusBadge', { bonus: formatter.number(pkg.bonus) })}
                               </span>
                             )}
                           </div>
-                          {isSelected && <span className="text-sm font-semibold text-blue-600">選択中</span>}
+                          {isSelected && <span className="text-sm font-semibold text-blue-600">{packagesT('selectedLabel')}</span>}
                         </div>
-                        <p className="mt-4 text-sm text-slate-500">¥{pkg.price.toLocaleString()}</p>
+                        <p className="mt-4 text-sm text-slate-500">
+                          {packagesT('priceLabel', {
+                            price: formatter.number(pkg.price, { style: 'currency', currency: 'JPY' }),
+                          })}
+                        </p>
                       </button>
                     );
                   })}
@@ -237,7 +266,7 @@ export default function PointPurchasePage() {
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
-                <h2 className="mb-4 text-xl font-semibold text-slate-900 sm:mb-6">支払い方法</h2>
+                <h2 className="mb-4 text-xl font-semibold text-slate-900 sm:mb-6">{paymentsT('heading')}</h2>
                 <div className="space-y-3">
                   {PAYMENT_METHODS.map((method) => {
                     const isSelected = selectedPaymentMethod.id === method.id;
@@ -258,17 +287,17 @@ export default function PointPurchasePage() {
                             {method.icon}
                           </span>
                           <span className="truncate text-sm font-medium text-slate-900 sm:text-base">
-                            {method.name}
+                            {paymentsT(`methods.${method.id}.name`)}
                           </span>
                         </div>
                         {isComingSoon ? (
                           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
-                            準備中
+                            {paymentsT('statusBadge.comingSoon')}
                           </span>
                         ) : isSelected ? (
-                          <span className="text-sm font-semibold text-blue-600">選択済み</span>
+                          <span className="text-sm font-semibold text-blue-600">{paymentsT('statusBadge.selected')}</span>
                         ) : (
-                          <span className="text-sm text-slate-500">選択</span>
+                          <span className="text-sm text-slate-500">{paymentsT('statusBadge.select')}</span>
                         )}
                       </button>
                     );
@@ -279,15 +308,20 @@ export default function PointPurchasePage() {
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
                 <div className="mb-4 grid grid-cols-2 gap-4 sm:mb-6">
                   <div>
-                    <div className="text-xs text-slate-500 sm:text-sm">購入ポイント</div>
+                    <div className="text-xs text-slate-500 sm:text-sm">{summaryT('purchasePointsLabel')}</div>
                     <div className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-                      {(selectedPackage.points + selectedPackage.bonus).toLocaleString()} P
+                      {summaryT('pointsValue', { points: formatter.number(selectedTotalPoints) })}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-slate-500 sm:text-sm">お支払い金額</div>
+                    <div className="text-xs text-slate-500 sm:text-sm">{summaryT('paymentAmountLabel')}</div>
                     <div className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-                      ¥{selectedPackage.price.toLocaleString()}
+                      {summaryT('paymentValue', {
+                        amount: formatter.number(selectedPackage.price, {
+                          style: 'currency',
+                          currency: 'JPY',
+                        }),
+                      })}
                     </div>
                   </div>
                 </div>
@@ -296,21 +330,21 @@ export default function PointPurchasePage() {
                   disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
                   className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
                 >
-                  {isPurchasing ? '処理中...' : '購入手続きへ進む'}
+                  {isPurchasing ? summaryT('processing') : summaryT('proceedButton')}
                 </button>
                 {selectedPaymentMethod.id === 'one_lat' && (
                   <p className="mt-3 text-center text-xs text-slate-500 sm:mt-4 sm:text-sm">
-                    ONE.latの安全な決済ページに移動します（クレジットカード・USDT・その他決済方法対応）
+                    {summaryT('paymentNotices.one_lat')}
                   </p>
                 )}
                 {selectedPaymentMethod.id === 'jpyc' && (
                   <p className="mt-3 text-center text-xs text-slate-500 sm:mt-4 sm:text-sm">
-                    JPYC決済は近日公開予定です。ウォレット接続でガスレス決済（手数料無料）を実現します。
+                    {summaryT('paymentNotices.jpyc')}
                   </p>
                 )}
                 {selectedPaymentMethod.status === 'coming_soon' && selectedPaymentMethod.id !== 'jpyc' && (
                   <p className="mt-3 text-center text-xs text-slate-500 sm:mt-4 sm:text-sm">
-                    この決済方法は現在準備中です。ONE.lat決済をご利用ください。
+                    {summaryT('paymentNotices.comingSoon')}
                   </p>
                 )}
               </div>
@@ -318,36 +352,43 @@ export default function PointPurchasePage() {
 
             <div className="space-y-6">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-[0.25em] text-blue-500/70 sm:text-sm">Current balance</p>
+                <p className="text-xs uppercase tracking-[0.25em] text-blue-500/70 sm:text-sm">{t('balance.sectionLabel')}</p>
                 <p className="mt-3 text-2xl font-semibold text-slate-900 sm:text-4xl">
-                  {currentBalance.toLocaleString()} <span className="text-base font-normal text-blue-500/80 sm:text-xl">P</span>
+                  {formatter.number(currentBalance)}{' '}
+                  <span className="text-base font-normal text-blue-500/80 sm:text-xl">{t('balance.pointsSuffix')}</span>
                 </p>
                 <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-                  購入後の見込み残高: {projectedBalance.toLocaleString()}P
+                  {t('balance.projected', {
+                    balance: formatter.number(projectedBalance),
+                    suffix: t('balance.pointsSuffix'),
+                  })}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <h3 className="mb-4 text-lg font-semibold text-slate-900">直近のポイント購入</h3>
+                <h3 className="mb-4 text-lg font-semibold text-slate-900">{transactionsT('heading')}</h3>
                 {transactions.length === 0 ? (
                   <div className="rounded-xl border border-slate-200 bg-slate-50 py-10 text-center text-sm text-slate-500">
-                    まだ購入履歴がありません
+                    {transactionsT('empty')}
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-200">
                     {transactions.map((tx) => (
                       <div key={tx.id} className="flex items-center justify-between py-3">
                         <div>
-                          <p className="text-sm font-medium text-slate-900">+{Math.abs(tx.amount).toLocaleString()} P</p>
+                          <p className="text-sm font-medium text-slate-900">
+                            {transactionsT('pointsAdded', {
+                              points: formatter.number(Math.abs(tx.amount)),
+                            })}
+                          </p>
                           <p className="text-xs text-slate-500">
-                            {new Date(tx.created_at).toLocaleDateString('ja-JP', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
+                            {formatter.dateTime(new Date(tx.created_at), {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
                             })}
                           </p>
                         </div>
-                        <span className="text-xs font-semibold text-emerald-600">完了</span>
+                        <span className="text-xs font-semibold text-emerald-600">{transactionsT('statusCompleted')}</span>
                       </div>
                     ))}
                   </div>
@@ -355,24 +396,14 @@ export default function PointPurchasePage() {
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <h3 className="mb-3 text-sm font-semibold text-slate-900 sm:text-base">ポイント運用ガイドライン</h3>
+                <h3 className="mb-3 text-sm font-semibold text-slate-900 sm:text-base">{guidelinesT('heading')}</h3>
                 <ul className="space-y-3 text-xs text-slate-600 sm:text-sm">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
-                    <span>1ポイント = 1円相当。全ての決済にご利用いただけます。</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
-                    <span>ポイントに有効期限はありません。年度を跨いでも繰り越し可能です。</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
-                    <span>ポイントを一度購入するとキャンセルおよび払い戻しは不可となります。</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
-                    <span>決済完了後は即時にポイントへ反映されます（遅延が発生した場合はサポートまで）。</span>
-                  </li>
+                  {guidelineItems.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
