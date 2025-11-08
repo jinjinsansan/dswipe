@@ -289,7 +289,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       {note.cover_image_url ? (
-        <div className="relative w-full overflow-hidden rounded-3xl bg-slate-200">
+        <div className="relative w-full overflow-hidden bg-slate-200">
           <div className="relative aspect-[16/9] sm:aspect-[21/9]">
             <Image
               src={note.cover_image_url}

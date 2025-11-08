@@ -36,7 +36,7 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       }
       case 'quote':
         return (
-          <figure className="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <figure className="space-y-2 border border-slate-200 bg-slate-50 p-5">
             <blockquote className="text-base italic leading-relaxed text-slate-700" style={textStyle}>
               {typeof data.text === 'string' ? data.text : ''}
             </blockquote>
@@ -53,7 +53,7 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
               <img
                 src={data.url}
                 alt={typeof data.caption === 'string' ? data.caption : ''}
-                className="w-full rounded-3xl border border-slate-200 object-cover"
+                className="w-full border border-slate-200 object-cover"
               />
             ) : null}
             {typeof data.caption === 'string' && data.caption ? (
