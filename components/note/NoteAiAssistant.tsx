@@ -177,6 +177,7 @@ export default function NoteAiAssistant({
   const [reviewLoading, setReviewLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   const contextPayload = useMemo(
     () => buildContextPayload(title, excerpt, categories, language, tone, audience, blocks),
@@ -196,6 +197,7 @@ export default function NoteAiAssistant({
       return;
     }
     setRewriteLoading(true);
+    setActionMessage(null);
     setErrorMessage(null);
     try {
       const response = await noteAiApi.rewrite({
@@ -215,10 +217,16 @@ export default function NoteAiAssistant({
   const handleApplyRewrite = useCallback(() => {
     if (!rewriteResult) return;
     onApplyText(rewriteResult.block_id, rewriteResult.revised_text);
+    const unchanged = rewriteResult.revised_text.trim() === rewriteResult.original_text.trim();
+    setActionMessage(
+      unchanged ? '提案に変更点がなかったため原文を維持しました。' : 'AIのリライト結果をブロックへ適用しました。',
+    );
+    setTimeout(() => setActionMessage(null), 4000);
   }, [rewriteResult, onApplyText]);
 
   const handleProofread = useCallback(async () => {
     setProofreadLoading(true);
+    setActionMessage(null);
     setErrorMessage(null);
     try {
       const response = await noteAiApi.proofread({
@@ -236,12 +244,15 @@ export default function NoteAiAssistant({
   const handleApplyCorrection = useCallback(
     (correction: NoteProofreadCorrection) => {
       onApplyText(correction.block_id, correction.suggestion);
+      setActionMessage('校正の提案を適用しました。');
+      setTimeout(() => setActionMessage(null), 4000);
     },
     [onApplyText],
   );
 
   const handleStructure = useCallback(async () => {
     setStructureLoading(true);
+    setActionMessage(null);
     setErrorMessage(null);
     try {
       const response = await noteAiApi.structure({
@@ -258,6 +269,7 @@ export default function NoteAiAssistant({
 
   const handleReview = useCallback(async () => {
     setReviewLoading(true);
+    setActionMessage(null);
     setErrorMessage(null);
     try {
       const response = await noteAiApi.review({ context: contextPayload });
@@ -668,6 +680,12 @@ export default function NoteAiAssistant({
       {errorMessage ? (
         <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {errorMessage}
+        </div>
+      ) : null}
+
+      {actionMessage ? (
+        <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {actionMessage}
         </div>
       ) : null}
 
