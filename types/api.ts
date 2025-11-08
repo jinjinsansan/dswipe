@@ -264,6 +264,99 @@ export interface AIImprovementResponse {
   reasoning: string;
 }
 
+export interface NoteAIBlockPayload {
+  id: string;
+  type: string;
+  access?: string | null;
+  text?: string | null;
+  data: Record<string, unknown>;
+}
+
+export interface NoteAIContextPayload {
+  title: string;
+  excerpt?: string | null;
+  categories: string[];
+  tone?: string | null;
+  audience?: string | null;
+  language: 'ja' | 'en';
+  blocks: NoteAIBlockPayload[];
+}
+
+export interface NoteRewriteRequest {
+  context: NoteAIContextPayload;
+  target_block_id: string;
+  instructions?: string;
+  style_hint?: string;
+}
+
+export interface NoteRewriteResponse {
+  block_id: string;
+  original_text: string;
+  revised_text: string;
+  reasoning?: string;
+  tone_applied?: string;
+  alternatives?: string[];
+}
+
+export type NoteProofreadFocus = 'spelling' | 'style' | 'consistency';
+
+export interface NoteProofreadRequest {
+  context: NoteAIContextPayload;
+  focus?: NoteProofreadFocus;
+}
+
+export interface NoteProofreadCorrection {
+  block_id: string;
+  original: string;
+  suggestion: string;
+  explanation?: string;
+}
+
+export interface NoteProofreadResponse {
+  summary?: string;
+  corrections: NoteProofreadCorrection[];
+}
+
+export type NoteStructureAction = 'insert' | 'reorder' | 'expand' | 'trim';
+
+export interface NoteStructureSuggestionItem {
+  title: string;
+  description: string;
+  action: NoteStructureAction;
+  block_id?: string;
+  suggested_text?: string;
+}
+
+export interface NoteStructureRequest {
+  context: NoteAIContextPayload;
+  desired_outcome?: string;
+}
+
+export interface NoteStructureResponse {
+  outline?: string[];
+  suggestions: NoteStructureSuggestionItem[];
+}
+
+export interface NoteReviewRequest {
+  context: NoteAIContextPayload;
+}
+
+export type NoteReviewSeverity = 'info' | 'warn' | 'error';
+
+export interface NoteReviewIssueItem {
+  severity: NoteReviewSeverity;
+  message: string;
+  block_id?: string;
+  field?: string;
+}
+
+export interface NoteReviewResponse {
+  score: number;
+  summary: string;
+  issues: NoteReviewIssueItem[];
+  recommended_actions: string[];
+}
+
 export interface AIGenerationResponse {
   theme: string;
   palette: {

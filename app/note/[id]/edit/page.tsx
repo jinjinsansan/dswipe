@@ -2,10 +2,12 @@
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
+import NoteAiAssistant from '@/components/note/NoteAiAssistant';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
@@ -67,6 +69,7 @@ export default function NoteEditPage() {
   const params = useParams<{ id: string }>();
   const noteId = params?.id;
   const router = useRouter();
+  const locale = useLocale();
   const { isAuthenticated, isInitialized, token } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
@@ -375,6 +378,47 @@ export default function NoteEditPage() {
 
   const handleBlocksChange = useCallback((next: NoteBlock[]) => {
     setBlocks(next.map((block) => normalizeBlock(block)));
+  }, []);
+
+  const applyAiTextToBlock = useCallback((blockId: string, text: string) => {
+    setBlocks((prev) =>
+      prev.map((block) => {
+        const currentId = block.id ?? '';
+        if (currentId !== blockId) {
+          return block;
+        }
+        const data = { ...(block.data ?? {}) } as Record<string, unknown>;
+        if (block.type === 'list') {
+          data.items = text
+            .split(/\r?\n/)
+            .map((item) => item.trim())
+            .filter((item) => item.length > 0);
+        } else {
+          data.text = text;
+        }
+        return normalizeBlock({ ...block, data });
+      }),
+    );
+  }, []);
+
+  const insertAiSuggestion = useCallback((afterBlockId: string | null, text: string) => {
+    if (!text.trim()) {
+      return;
+    }
+    setBlocks((prev) => {
+      const newBlock = createEmptyBlock('paragraph');
+      newBlock.data = { ...(newBlock.data ?? {}), text };
+      const normalized = normalizeBlock(newBlock);
+      const next = [...prev];
+      if (!afterBlockId) {
+        next.push(normalized);
+        return next;
+      }
+      const index = next.findIndex((block) => (block.id ?? '') === afterBlockId);
+      const insertIndex = index >= 0 ? index + 1 : next.length;
+      next.splice(insertIndex, 0, normalized);
+      return next;
+    });
   }, []);
 
   const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
@@ -1254,6 +1298,17 @@ export default function NoteEditPage() {
           </div>
           <NoteEditor value={blocks} onChange={handleBlocksChange} disabled={saving || actionLoading} />
         </div>
+
+        <NoteAiAssistant
+          title={title}
+          excerpt={excerpt}
+          categories={categories}
+          language={locale === 'en' ? 'en' : 'ja'}
+          blocks={blocks}
+          disabled={saving || actionLoading}
+          onApplyText={applyAiTextToBlock}
+          onInsertBlock={insertAiSuggestion}
+        />
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">

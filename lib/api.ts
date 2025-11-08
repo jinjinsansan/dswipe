@@ -92,6 +92,14 @@ import type {
   AccountAccessibleOwnersResponse,
   AccountShareSessionRequest,
   AccountShareSessionResponse,
+  NoteRewriteRequest,
+  NoteRewriteResponse,
+  NoteProofreadRequest,
+  NoteProofreadResponse,
+  NoteStructureRequest,
+  NoteStructureResponse,
+  NoteReviewRequest,
+  NoteReviewResponse,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -384,6 +392,20 @@ export const noteApi = {
 
   getMetrics: () =>
     api.get<NoteMetrics>('/notes/metrics'),
+};
+
+export const noteAiApi = {
+  rewrite: (data: NoteRewriteRequest) =>
+    api.post<NoteRewriteResponse>('/ai/notes/rewrite', data),
+
+  proofread: (data: NoteProofreadRequest) =>
+    api.post<NoteProofreadResponse>('/ai/notes/proofread', data),
+
+  structure: (data: NoteStructureRequest) =>
+    api.post<NoteStructureResponse>('/ai/notes/structure', data),
+
+  review: (data: NoteReviewRequest) =>
+    api.post<NoteReviewResponse>('/ai/notes/review', data),
 };
 
 // ポイントAPI
