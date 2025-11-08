@@ -10,6 +10,7 @@ import NoteAiAssistant from '@/components/note/NoteAiAssistant';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
+import type { AiActionMetadata, AiActionRecord } from '@/types/aiAssistant';
 import type { NoteBlock, NoteVisibility, Salon, SalonListResult } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
@@ -17,6 +18,16 @@ import { PageLoader } from '@/components/LoadingSpinner';
 
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;
+const MAX_AI_HISTORY = 20;
+
+const generateActionId = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `ai_action_${Math.random().toString(16).slice(2, 10)}`;
+};
+
+const cloneBlock = (block: NoteBlock): NoteBlock => JSON.parse(JSON.stringify(block)) as NoteBlock;
 
 export default function NoteCreatePage() {
   const t = useTranslations('noteCreate');
@@ -38,6 +49,7 @@ export default function NoteCreatePage() {
   const [taxRate, setTaxRate] = useState('10');
   const [taxInclusive, setTaxInclusive] = useState(true);
   const [blocks, setBlocks] = useState<NoteBlock[]>(() => [createEmptyBlock('paragraph')]);
+  const [aiHistory, setAiHistory] = useState<AiActionRecord[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -138,15 +150,19 @@ export default function NoteCreatePage() {
     setBlocks(next.map((block) => normalizeBlock(block)));
   }, []);
 
-  const applyAiTextToBlock = useCallback((blockId: string, text: string) => {
-    setBlocks((prev) =>
-      prev.map((block) => {
-        const currentId = block.id ?? '';
-        if (currentId !== blockId) {
-          return block;
+  const applyAiTextToBlock = useCallback(
+    (blockId: string, text: string, metadata: AiActionMetadata) => {
+      let historyEntry: AiActionRecord | null = null;
+
+      setBlocks((prev) => {
+        const index = prev.findIndex((block) => (block.id ?? '') === blockId);
+        if (index === -1) {
+          return prev;
         }
-        const data = { ...(block.data ?? {}) } as Record<string, unknown>;
-        if (block.type === 'list') {
+
+        const targetBlock = prev[index];
+        const data = { ...(targetBlock.data ?? {}) } as Record<string, unknown>;
+        if (targetBlock.type === 'list') {
           data.items = text
             .split(/\r?\n/)
             .map((item) => item.trim())
@@ -154,63 +170,166 @@ export default function NoteCreatePage() {
         } else {
           data.text = text;
         }
-        return normalizeBlock({ ...block, data });
-      }),
-    );
-  }, []);
 
-  const insertAiSuggestion = useCallback((afterBlockId: string | null, text: string) => {
-    const normalizedText = text.replace(/\r\n/g, '\n').trim();
-    if (!normalizedText) {
-      return;
-    }
+        const updatedBlock = normalizeBlock({ ...targetBlock, data });
+        const beforeSnapshot = cloneBlock(targetBlock);
+        const afterSnapshot = cloneBlock(updatedBlock);
 
-    const createBlockFromSegment = (segment: string): NoteBlock => {
-      const lines = segment.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
-      const bulletPattern = /^([-*•・]|[0-9]+\.)\s+/;
-      const isList = lines.length > 1 && lines.every((line) => bulletPattern.test(line));
-
-      if (isList) {
-        const newBlock = createEmptyBlock('list');
-        newBlock.data = {
-          items: lines
-            .map((line) => line.replace(bulletPattern, '').trim())
-            .filter((item) => item.length > 0),
+        historyEntry = {
+          id: generateActionId(),
+          timestamp: Date.now(),
+          type: metadata.type,
+          label: metadata.label,
+          targetBlockIds: metadata.targetBlockIds ?? [blockId],
+          reasoning: metadata.reasoning,
+          lengthRatio: metadata.lengthRatio,
+          beforeBlocks: [beforeSnapshot],
+          afterBlocks: [afterSnapshot],
         };
-        return newBlock;
-      }
 
-      const newBlock = createEmptyBlock('paragraph');
-      newBlock.data = { ...(newBlock.data ?? {}), text: segment };
-      return newBlock;
-    };
-
-    const segments = normalizedText
-      .split(/\n{2,}/)
-      .map((segment) => segment.trim())
-      .filter((segment) => segment.length > 0);
-
-    setBlocks((prev) => {
-      const next = [...prev];
-      let insertIndex = next.length;
-
-      if (afterBlockId) {
-        const currentIndex = next.findIndex((block) => (block.id ?? '') === afterBlockId);
-        insertIndex = currentIndex >= 0 ? currentIndex + 1 : next.length;
-      }
-
-      const blocksToInsert = segments.length > 0 ? segments : [normalizedText];
-
-      blocksToInsert.forEach((segment) => {
-        const block = createBlockFromSegment(segment);
-        const normalizedBlock = normalizeBlock(block);
-        next.splice(insertIndex, 0, normalizedBlock);
-        insertIndex += 1;
+        const next = [...prev];
+        next[index] = updatedBlock;
+        return next;
       });
 
-      return next;
-    });
-  }, []);
+      if (historyEntry) {
+        setAiHistory((prevHistory) => {
+          const nextHistory = [...prevHistory, historyEntry as AiActionRecord];
+          return nextHistory.length > MAX_AI_HISTORY ? nextHistory.slice(-MAX_AI_HISTORY) : nextHistory;
+        });
+      }
+    },
+    [],
+  );
+
+  const insertAiSuggestion = useCallback(
+    (afterBlockId: string | null, text: string, metadata: AiActionMetadata) => {
+      const normalizedText = text.replace(/\r?\n/g, '\n').trim();
+      if (!normalizedText) {
+        return;
+      }
+
+      const createBlockFromSegment = (segment: string): NoteBlock => {
+        const lines = segment.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
+        const bulletPattern = /^([-*•・]|[0-9]+\.)\s+/;
+        const isList = lines.length > 1 && lines.every((line) => bulletPattern.test(line));
+
+        if (isList) {
+          const newBlock = createEmptyBlock('list');
+          newBlock.data = {
+            items: lines
+              .map((line) => line.replace(bulletPattern, '').trim())
+              .filter((item) => item.length > 0),
+          };
+          return newBlock;
+        }
+
+        const newBlock = createEmptyBlock('paragraph');
+        newBlock.data = { ...(newBlock.data ?? {}), text: segment };
+        return newBlock;
+      };
+
+      const segments = normalizedText
+        .split(/\n{2,}/)
+        .map((segment) => segment.trim())
+        .filter((segment) => segment.length > 0);
+
+      let historyEntry: AiActionRecord | null = null;
+      const insertedSnapshots: NoteBlock[] = [];
+
+      setBlocks((prev) => {
+        const next = [...prev];
+        let insertIndex = next.length;
+
+        if (afterBlockId) {
+          const currentIndex = next.findIndex((block) => (block.id ?? '') === afterBlockId);
+          insertIndex = currentIndex >= 0 ? currentIndex + 1 : next.length;
+        }
+
+        const blocksToInsert = segments.length > 0 ? segments : [normalizedText];
+
+        blocksToInsert.forEach((segment) => {
+          const block = createBlockFromSegment(segment);
+          const normalizedBlock = normalizeBlock(block);
+          next.splice(insertIndex, 0, normalizedBlock);
+          insertIndex += 1;
+          insertedSnapshots.push(cloneBlock(normalizedBlock));
+        });
+
+        historyEntry = insertedSnapshots.length
+          ? {
+              id: generateActionId(),
+              timestamp: Date.now(),
+              type: metadata.type,
+              label: metadata.label,
+              targetBlockIds: metadata.targetBlockIds ?? insertedSnapshots.map((block) => block.id ?? ''),
+              reasoning: metadata.reasoning,
+              lengthRatio: metadata.lengthRatio,
+              beforeBlocks: [],
+              afterBlocks: insertedSnapshots.map((block) => cloneBlock(block)),
+            }
+          : null;
+
+        return next;
+      });
+
+      if (historyEntry) {
+        setAiHistory((prevHistory) => {
+          const nextHistory = [...prevHistory, historyEntry as AiActionRecord];
+          return nextHistory.length > MAX_AI_HISTORY ? nextHistory.slice(-MAX_AI_HISTORY) : nextHistory;
+        });
+      }
+    },
+    [],
+  );
+
+  const undoAiAction = useCallback(
+    (entryId?: string): AiActionRecord | null => {
+      let undoneEntry: AiActionRecord | null = null;
+
+      setAiHistory((prevHistory) => {
+        if (prevHistory.length === 0) {
+          return prevHistory;
+        }
+
+        const nextHistory = [...prevHistory];
+        const index = entryId ? nextHistory.findIndex((entry) => entry.id === entryId) : nextHistory.length - 1;
+        if (index < 0) {
+          return prevHistory;
+        }
+
+        const entry = nextHistory[index];
+        undoneEntry = entry;
+
+        setBlocks((currentBlocks) => {
+          let nextBlocks = [...currentBlocks];
+
+          if (entry.type === 'structure') {
+            const removeIds = new Set((entry.targetBlockIds ?? entry.afterBlocks.map((block) => block.id ?? '')).filter(Boolean));
+            nextBlocks = nextBlocks.filter((block) => !removeIds.has(block.id ?? ''));
+          } else {
+            entry.beforeBlocks.forEach((before) => {
+              if (!before.id) {
+                return;
+              }
+              const blockIndex = nextBlocks.findIndex((block) => (block.id ?? '') === before.id);
+              if (blockIndex >= 0) {
+                nextBlocks[blockIndex] = cloneBlock(before);
+              }
+            });
+          }
+
+          return nextBlocks;
+        });
+
+        nextHistory.splice(index, 1);
+        return nextHistory;
+      });
+
+      return undoneEntry;
+    },
+    [],
+  );
 
   const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
   const effectivePaid = isPaid || paidBlockExists;
@@ -716,6 +835,8 @@ export default function NoteCreatePage() {
           disabled={saving}
           onApplyText={applyAiTextToBlock}
           onInsertBlock={insertAiSuggestion}
+          history={aiHistory}
+          onUndoAction={undoAiAction}
         />
 
         <div className="flex flex-wrap items-center justify-between gap-3">

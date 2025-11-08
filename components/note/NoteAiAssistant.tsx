@@ -13,6 +13,7 @@ import type {
   NoteStructureSuggestionItem,
   NoteReviewResponse,
 } from '@/types/api';
+import type { AiActionMetadata, AiActionRecord } from '@/types/aiAssistant';
 
 type NoteAiAssistantTab = 'rewrite' | 'proofread' | 'structure' | 'review';
 
@@ -25,8 +26,10 @@ interface NoteAiAssistantProps {
   disabled?: boolean;
   initialTone?: string;
   initialAudience?: string;
-  onApplyText: (blockId: string, text: string) => void;
-  onInsertBlock?: (afterBlockId: string | null, text: string) => void;
+  onApplyText: (blockId: string, text: string, metadata: AiActionMetadata) => void;
+  onInsertBlock?: (afterBlockId: string | null, text: string, metadata: AiActionMetadata) => void;
+  history?: AiActionRecord[];
+  onUndoAction?: (entryId?: string) => AiActionRecord | null;
 }
 
 const BLOCK_LABEL_MAP: Record<string, string> = {
@@ -224,6 +227,8 @@ export default function NoteAiAssistant({
   initialAudience,
   onApplyText,
   onInsertBlock,
+  history,
+  onUndoAction,
 }: NoteAiAssistantProps) {
   const [activeTab, setActiveTab] = useState<NoteAiAssistantTab>('rewrite');
   const [tone, setTone] = useState(initialTone ?? '');
@@ -344,12 +349,25 @@ export default function NoteAiAssistant({
 
   const handleApplyRewrite = useCallback(() => {
     if (!rewriteResult) return;
-    onApplyText(rewriteResult.block_id, rewriteResult.revised_text);
+    const blockId = rewriteResult.block_id;
+    const blockIndex = blocks.findIndex((block) => (block.id ?? '') === blockId);
+    const blockLabel =
+      selectedRewriteBlock && blockIndex >= 0
+        ? formatBlockLabel(selectedRewriteBlock, blockIndex)
+        : '選択ブロック';
+
+    onApplyText(blockId, rewriteResult.revised_text, {
+      type: 'rewrite',
+      label: `リライト: ${blockLabel}`,
+      targetBlockIds: [blockId],
+      reasoning: rewriteResult.reasoning ?? null,
+      lengthRatio: rewriteStats?.lengthRatio,
+    });
     const unchanged = rewriteResult.revised_text.trim() === rewriteResult.original_text.trim();
     showActionMessage(
       unchanged ? '提案に変更点がなかったため原文を維持しました。' : 'AIのリライト結果をブロックへ適用しました。',
     );
-  }, [rewriteResult, onApplyText, showActionMessage]);
+  }, [rewriteResult, onApplyText, showActionMessage, blocks, selectedRewriteBlock, rewriteStats]);
 
   const handleProofread = useCallback(async () => {
     setProofreadLoading(true);
@@ -370,7 +388,17 @@ export default function NoteAiAssistant({
 
   const handleApplyCorrection = useCallback(
     (correction: NoteProofreadCorrection) => {
-      onApplyText(correction.block_id, correction.suggestion);
+      const snippet = correction.original.trim().slice(0, 12);
+      const label = snippet
+        ? `校正: ${snippet}${correction.original.trim().length > 12 ? '…' : ''}`
+        : `校正: ${correction.block_id}`;
+
+      onApplyText(correction.block_id, correction.suggestion, {
+        type: 'proofread',
+        label,
+        targetBlockIds: [correction.block_id],
+        reasoning: correction.explanation ?? null,
+      });
       showActionMessage('校正の提案を適用しました。');
     },
     [onApplyText, showActionMessage],
@@ -408,7 +436,7 @@ export default function NoteAiAssistant({
   }, [contextPayload, clearActionMessage]);
 
   const handleInsertSuggestion = useCallback(
-    (afterBlockId: string | null, text: string, title?: string) => {
+    (afterBlockId: string | null, text: string, title?: string, description?: string) => {
       const content = text.replace(/\r\n/g, '\n').trim();
       if (!content) {
         showActionMessage('提案内容が空だったため挿入できませんでした。');
@@ -418,8 +446,12 @@ export default function NoteAiAssistant({
         showActionMessage('構成提案を挿入できる状態ではありません。');
         return;
       }
-      onInsertBlock(afterBlockId, content);
       const label = title?.trim();
+      onInsertBlock(afterBlockId, content, {
+        type: 'structure',
+        label: label ? `構成案: ${label}` : '構成案を挿入',
+        reasoning: description ?? null,
+      });
       showActionMessage(label ? `「${label}」の構成提案を挿入しました。` : '構成提案を挿入しました。');
     },
     [onInsertBlock, showActionMessage],
@@ -442,6 +474,19 @@ export default function NoteAiAssistant({
     }
   }, []);
 
+  const handleUndoAction = useCallback(
+    (entryId?: string) => {
+      if (!onUndoAction) {
+        return;
+      }
+      const undone = onUndoAction(entryId);
+      if (undone) {
+        showActionMessage(`「${undone.label}」を元に戻しました。`);
+      }
+    },
+    [onUndoAction, showActionMessage],
+  );
+
   const renderTabButton = (tab: NoteAiAssistantTab, label: string) => (
     <button
       type="button"
@@ -454,6 +499,55 @@ export default function NoteAiAssistant({
       {label}
     </button>
   );
+
+  const renderHistorySection = () => {
+    if (!history || history.length === 0) {
+      return null;
+    }
+
+    const recentEntries = [...history].sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+
+    return (
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">AI操作履歴</p>
+            <p className="text-[11px] text-slate-500">直近の提案適用を確認・取り消しできます。</p>
+          </div>
+          {onUndoAction ? (
+            <button
+              type="button"
+              onClick={() => handleUndoAction()}
+              className="text-xs font-semibold text-blue-600 underline"
+            >
+              最新を元に戻す
+            </button>
+          ) : null}
+        </div>
+        <ul className="mt-3 space-y-2 text-xs text-slate-600">
+          {recentEntries.map((entry) => (
+            <li key={entry.id} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 shadow-sm">
+              <div className="flex min-w-0 flex-col">
+                <span className="truncate font-semibold text-slate-700">{entry.label}</span>
+                <span className="text-[10px] text-slate-400">
+                  {new Date(entry.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              {onUndoAction ? (
+                <button
+                  type="button"
+                  onClick={() => handleUndoAction(entry.id)}
+                  className="shrink-0 text-xs font-semibold text-emerald-600 underline"
+                >
+                  元に戻す
+                </button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
 
   const renderRewriteTab = () => (
     <div className="space-y-5">
@@ -738,7 +832,8 @@ export default function NoteAiAssistant({
                     suggestion={suggestion}
                     onInsert={
                       onInsertBlock
-                        ? (afterBlockId, text) => handleInsertSuggestion(afterBlockId, text, suggestion.title)
+                        ? (afterBlockId, text) =>
+                            handleInsertSuggestion(afterBlockId, text, suggestion.title, suggestion.description)
                         : undefined
                     }
                     copyToClipboard={copyToClipboard}
@@ -865,6 +960,8 @@ export default function NoteAiAssistant({
         </div>
       </div>
 
+      {renderHistorySection()}
+
       {errorMessage ? (
         <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {errorMessage}
@@ -890,7 +987,7 @@ export default function NoteAiAssistant({
 
 interface StructureSuggestionCardProps {
   suggestion: NoteStructureSuggestionItem;
-  onInsert?: NoteAiAssistantProps['onInsertBlock'];
+  onInsert?: (afterBlockId: string | null, text: string) => void;
   copyToClipboard: (text: string) => void;
 }
 
