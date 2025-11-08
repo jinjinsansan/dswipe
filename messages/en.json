@@ -586,6 +586,234 @@
       }
     }
   },
+  "legal": {
+    "terms": {
+      "metadata": {
+        "title": "Terms of Service | D-swipe",
+        "description": "Review the Terms of Service for using the D-swipe platform before getting started."
+      },
+      "pageTitle": "Terms of Service",
+      "pageSubtitle": "Last updated: November 5, 2025",
+      "intro": "These Terms of Service (the \"Terms\") set forth the conditions for using the services provided by D-swipe (\"we\" or \"the Company\"). By using our services, you agree to be bound by these Terms.",
+      "sections": {
+        "application": {
+          "title": "Article 1 (Applicability)",
+          "paragraphs": [
+            "These Terms govern all relationships between the user and the Company in connection with the services. In addition to the Terms, we may establish usage guidelines or other policies as needed when providing the services."
+          ]
+        },
+        "registration": {
+          "title": "Article 2 (User Registration)",
+          "paragraphs": [
+            "Individuals who wish to use the services must complete user registration through the method specified by the Company.",
+            "If an applicant has previously had their usage rights revoked for violating these Terms, we may decline their registration."
+          ]
+        },
+        "prohibited": {
+          "title": "Article 3 (Prohibited Conduct)",
+          "description": "Users must not engage in any of the following acts while using the services:",
+          "items": [
+            "Acts that violate laws or public order and morals",
+            "Acts related to criminal activities",
+            "Acts that interfere with the operation of our services",
+            "Collecting or storing personal information about other users",
+            "Infringing the intellectual property, portrait, or privacy rights of the Company, other users, or third parties"
+          ]
+        },
+        "serviceSuspension": {
+          "title": "Article 4 (Suspension of Services)",
+          "description": "We may suspend or interrupt all or part of the services without prior notice to users if any of the following applies. The Company is not liable for any damages suffered by users or third parties as a result:",
+          "items": [
+            "When performing maintenance or updates on the system",
+            "When provision of the services becomes difficult due to force majeure such as earthquakes, lightning, fires, power outages, or natural disasters",
+            "When the Company otherwise determines that providing the services is difficult"
+          ]
+        },
+        "usageRestriction": {
+          "title": "Article 5 (Usage Restrictions and Termination)",
+          "paragraphs": [
+            "If a user violates any of these Terms, we may restrict their use of the services or terminate their registration without prior notice."
+          ]
+        },
+        "disclaimer": {
+          "title": "Article 6 (Disclaimer)",
+          "paragraphs": [
+            "The Company shall not be liable for any breach of contract unless caused by intentional misconduct or gross negligence. Furthermore, we assume no responsibility for disputes, communications, or transactions between users and other users or third parties in connection with the services."
+          ]
+        },
+        "transactionFee": {
+          "title": "Article 7 (Processing Fees)",
+          "paragraphs": [
+            "We charge a flat 10% processing fee when settling sales proceeds through the platform. The fee covers payment processing, system operations, and related expenses, and is calculated and deducted in accordance with methods separately designated by the Company.",
+            "If the fee rate changes, we will provide prior notice within a reasonable period through our website or another method designated by the Company. The revised fee rate applies to transactions concluded on or after the effective date specified in the notice."
+          ]
+        },
+        "forex": {
+          "title": "Article 8 (Foreign Exchange Fees and Conversion Rates)",
+          "paragraphs": [
+            "When transactions are settled in foreign currency, we apply a conversion rate consisting of the prevailing market rate plus a Company-defined spread (guideline: approximately JPY 3 per USD). Rates are updated daily or as needed and displayed in the management console specified by the Company.",
+            "When rates or spreads are updated, users will be notified through reasonable means. The conversion rate in effect at the time of remittance—or another reference time designated by the Company—will apply."
+          ]
+        },
+        "changes": {
+          "title": "Article 9 (Amendments)",
+          "paragraphs": [
+            "We may amend these Terms without prior notice to users whenever deemed necessary. The amended Terms become effective upon publication on our website. However, if changes materially affect users—such as fee revisions—we will provide reasonable advance notice."
+          ]
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "For inquiries regarding these Terms of Service:",
+        "organization": "D-swipe Customer Support",
+        "email": "info@dlogicai.com"
+      }
+    },
+    "privacy": {
+      "metadata": {
+        "title": "Privacy Policy | D-swipe",
+        "description": "Understand how D-swipe collects, uses, and protects your personal data."
+      },
+      "pageTitle": "Privacy Policy",
+      "pageSubtitle": "Last updated: October 22, 2025",
+      "intro": "At D-swipe (the \"Company\"), safeguarding user privacy is a top priority. We handle personal information in accordance with the following policy.",
+      "sections": {
+        "information": {
+          "title": "1. Information We Collect",
+          "description": "We collect only the information necessary to provide our services, including:",
+          "items": [
+            "Basic information such as name, email address, and contact details",
+            "Input data and usage history related to landing page creation and operations",
+            "Payment details required for processing transactions (credit card data is handled by the payment provider)",
+            "Log data and communications needed for support"
+          ]
+        },
+        "purpose": {
+          "title": "2. Purposes of Use",
+          "description": "Collected information is used for the following purposes:",
+          "items": [
+            "Providing, maintaining, safeguarding, and improving the services",
+            "Responding to user support requests and inquiries",
+            "Delivering announcements about new features, updates, or important notices",
+            "Preventing fraudulent activity and strengthening security"
+          ]
+        },
+        "thirdParty": {
+          "title": "3. Provision to Third Parties",
+          "paragraphs": [
+            "We do not provide personal information to third parties without user consent, except where required by law. However, we may share information with trusted contractors (e.g., payment processors, analytics providers) to the extent necessary to perform delegated services."
+          ]
+        },
+        "security": {
+          "title": "4. Security Measures",
+          "paragraphs": [
+            "We implement reasonable safeguards—including access controls, encryption, and audit log management—to prevent leakage, loss, or damage of personal information. Contractors are required to uphold comparable security measures."
+          ]
+        },
+        "rights": {
+          "title": "5. User Rights",
+          "paragraphs": [
+            "Users may request the disclosure, correction, suspension of use, or deletion of their personal data held by the Company. Please contact the point of contact listed below for assistance."
+          ]
+        },
+        "cookies": {
+          "title": "6. Use of Cookies",
+          "paragraphs": [
+            "We may use cookies or similar technologies to improve service quality. Users can disable cookies via browser settings, though some features may become unavailable."
+          ]
+        },
+        "changes": {
+          "title": "7. Policy Changes",
+          "paragraphs": [
+            "This policy may be updated without notice to comply with laws or enhance our services. Changes take effect once posted on this page."
+          ]
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "For privacy-related inquiries:",
+        "organization": "D-swipe Privacy Office",
+        "email": "info@dlogicai.com"
+      }
+    },
+    "tokusho": {
+      "metadata": {
+        "title": "Specified Commercial Transaction Act Disclosure | D-swipe",
+        "description": "Legal disclosures for D-Power, the operator of D-swipe, including company details and payment terms."
+      },
+      "pageTitle": "Specified Commercial Transaction Act Disclosure",
+      "pageSubtitle": "Last updated: November 1, 2025",
+      "intro": "This page outlines the legally required information for D-swipe (operated by D-Power) under the Specified Commercial Transaction Act. Please review before applying or purchasing.",
+      "sections": {
+        "seller": {
+          "title": "Seller Information",
+          "items": [
+            {
+              "label": "Company Name",
+              "values": ["D-Power"]
+            },
+            {
+              "label": "Registered Address",
+              "values": ["Registered Location: Samoa Office", "Location: Hong Kong"],
+              "variant": "highlight"
+            }
+          ]
+        },
+        "contact": {
+          "title": "Contact",
+          "items": [
+            {
+              "label": "Email",
+              "values": ["info@dlogicai.com"]
+            }
+          ]
+        },
+        "pricing": {
+          "title": "Pricing and Payment",
+          "items": [
+            {
+              "label": "Pricing",
+              "values": ["All prices shown on product pages include tax."]
+            },
+            {
+              "label": "Payment Methods",
+              "values": ["Credit Card", "USDT"],
+              "variant": "chips"
+            },
+            {
+              "label": "Payment Timing",
+              "values": ["Payments are processed immediately upon ordering."]
+            }
+          ]
+        },
+        "delivery": {
+          "title": "Delivery Timing",
+          "paragraphs": [
+            "Once payment is completed, digital content becomes immediately accessible or downloadable from the purchase history page. For online salons, membership procedures can be initiated right after payment."
+          ]
+        },
+        "returns": {
+          "title": "Returns and Cancellations",
+          "items": [
+            "Due to the nature of digital content, returns or cancellations are not accepted unless the data is significantly corrupted.",
+            "Point purchases are non-refundable once payment has been completed."
+          ]
+        },
+        "disclaimer": {
+          "title": "Disclaimers",
+          "paragraphs": [
+            "Any results or case studies presented on the site are examples only and do not guarantee outcomes. Actual results depend on each customer's environment and efforts."
+          ]
+        },
+        "updates": {
+          "title": "Updates",
+          "paragraphs": [
+            "The above information is subject to change without notice due to legal revisions, service updates, or new details. Please refer to this page for the latest information."
+          ]
+        }
+      }
+    }
+  },
   "noteShare": {
     "metadata": {
       "notFoundTitle": "Private NOTE | D-swipe",
