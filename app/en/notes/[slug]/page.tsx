@@ -21,10 +21,8 @@ export default async function NoteDetailPageEn({ params }: NoteDetailPageProps) 
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 sm:py-16">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-        <section className="rounded-3xl border border-slate-200 bg-white/90 px-4 py-6 shadow-sm sm:px-6">
-          <NoteDetailClient slug={slug} basePath="/en" />
-        </section>
+      <div className="mx-auto w-full max-w-4xl">
+        <NoteDetailClient slug={slug} basePath="/en" />
       </div>
     </main>
   );

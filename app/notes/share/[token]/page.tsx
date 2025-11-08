@@ -101,10 +101,8 @@ export default async function NoteSharePage({ params }: NoteSharePageProps) {
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 sm:py-16">
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-        <section className="bg-white px-4 py-6 sm:px-6">
-          <NoteDetailClient shareToken={token} />
-        </section>
+      <div className="mx-auto w-full max-w-4xl">
+        <NoteDetailClient shareToken={token} />
       </div>
     </main>
   );
