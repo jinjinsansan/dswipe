@@ -287,9 +287,9 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       : t('purchaseButtonYen', { priceYen: note.price_jpy ?? 0 });
 
   return (
-    <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+    <article className="mx-auto flex w-full max-w-3xl flex-col gap-10 rounded-3xl bg-white px-4 py-6 shadow-sm sm:px-10 sm:py-12">
       {note.cover_image_url ? (
-        <div className="relative w-full overflow-hidden bg-slate-200">
+        <div className="relative -mx-4 -mt-6 overflow-hidden bg-slate-200 sm:-mx-10">
           <div className="relative aspect-[16/9] sm:aspect-[21/9]">
             <Image
               src={note.cover_image_url}
@@ -303,7 +303,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         </div>
       ) : null}
 
-      <header className="space-y-4">
+      <header className="space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
           <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
@@ -372,14 +372,14 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         ) : null}
       </header>
 
-      <section className="bg-white p-6">
+      <section className="flex flex-col gap-8">
         <NoteRenderer 
           blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
           showPaidSeparator={note.is_paid && note.has_access}
         />
 
         {note.is_paid && !note.has_access ? (
-          <div className="mt-10 space-y-4">
+          <div className="space-y-4">
             {note.allow_share_unlock && (
               <ShareToUnlockButton
                 noteId={note.id}
