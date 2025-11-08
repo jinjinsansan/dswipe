@@ -41,27 +41,34 @@ const BLOCK_LABEL_MAP: Record<string, string> = {
 };
 
 const extractBlockText = (block: NoteBlock): string => {
-  const data = block.data ?? {};
-  if (!data || typeof data !== 'object') {
-    return '';
-  }
+  const record = (block.data ?? {}) as Record<string, unknown>;
+
   switch (block.type) {
     case 'paragraph':
     case 'heading':
-    case 'quote':
-      return typeof (data as Record<string, unknown>).text === 'string' ? (data as Record<string, unknown>).text : '';
-    case 'list':
-      return Array.isArray((data as Record<string, unknown>).items)
-        ? ((data as Record<string, unknown>).items as unknown[])
-            .filter((item): item is string => typeof item === 'string')
-            .join('\n')
-        : '';
-    case 'link':
-      return typeof (data as Record<string, unknown>).title === 'string'
-        ? (data as Record<string, unknown>).title as string
-        : typeof (data as Record<string, unknown>).description === 'string'
-          ? (data as Record<string, unknown>).description as string
-          : '';
+    case 'quote': {
+      const text = record.text;
+      return typeof text === 'string' ? text : '';
+    }
+    case 'list': {
+      const items = record.items;
+      if (Array.isArray(items)) {
+        return items
+          .map((item) => (typeof item === 'string' ? item : String(item ?? '')).trim())
+          .filter((item) => item.length > 0)
+          .join('\n');
+      }
+      const text = record.text;
+      return typeof text === 'string' ? text : '';
+    }
+    case 'link': {
+      const title = record.title;
+      if (typeof title === 'string') {
+        return title;
+      }
+      const description = record.description;
+      return typeof description === 'string' ? description : '';
+    }
     default:
       return '';
   }
