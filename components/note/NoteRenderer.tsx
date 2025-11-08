@@ -25,13 +25,17 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       case 'heading': {
         const level = data.level === 'h3' ? 'h3' : 'h2';
         const HeadingTag = level as 'h2' | 'h3';
+        if (!items.length) {
+          return null;
+        }
+
         return (
           <ul className="list-disc space-y-1 pl-6 text-sm text-slate-700" style={textStyle}>
             {items.map((item, index) => (
               <li key={`${index}-${item.slice(0, 16)}`}>{item}</li>
             ))}
           </ul>
-        ) : null;
+        );
               {typeof data.text === 'string' ? data.text : ''}
             </blockquote>
             {typeof data.cite === 'string' && data.cite ? (
