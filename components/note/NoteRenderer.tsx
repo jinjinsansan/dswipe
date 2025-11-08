@@ -25,17 +25,19 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
       case 'heading': {
         const level = data.level === 'h3' ? 'h3' : 'h2';
         const HeadingTag = level as 'h2' | 'h3';
-        if (!items.length) {
-          return null;
-        }
-
+        return (
+          <HeadingTag
+            className={`font-semibold text-slate-900 ${level === 'h2' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'}`}
+            style={textStyle}
+          >
+            {typeof data.text === 'string' ? data.text : ''}
+          </HeadingTag>
+        );
+      }
+      case 'quote':
         return (
           <figure className="space-y-2 border-l-4 border-slate-200 pl-4">
             <blockquote className="text-base italic leading-relaxed text-slate-700" style={textStyle}>
-              <li key={`${index}-${item.slice(0, 16)}`}>{item}</li>
-            ))}
-          </ul>
-        );
               {typeof data.text === 'string' ? data.text : ''}
             </blockquote>
             {typeof data.cite === 'string' && data.cite ? (
@@ -44,7 +46,14 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
           </figure>
         );
       case 'image':
-                className="w-full border border-slate-200 object-cover"
+        return (
+          <figure className="space-y-2">
+            {typeof data.url === 'string' && data.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={data.url}
+                alt={typeof data.caption === 'string' ? data.caption : ''}
+                className="w-full object-cover"
               />
             ) : null}
             {typeof data.caption === 'string' && data.caption ? (
@@ -57,19 +66,17 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
           ? ((data as { items?: unknown[] }).items ?? []).filter((item): item is string => typeof item === 'string' && item.length > 0)
           : [];
 
-        return items.length ? (
-          <ul
-            className="list-inside space-y-1 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-700 shadow-sm"
-            style={textStyle}
-          >
+        if (!items.length) {
+          return null;
+        }
+
+        return (
+          <ul className="list-disc space-y-1 pl-6 text-sm text-slate-700" style={textStyle}>
             {items.map((item, index) => (
-              <li key={`${index}-${item.slice(0, 16)}`} className="flex items-start gap-2">
-                <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
-                <span>{item}</span>
-              </li>
+              <li key={`${index}-${item.slice(0, 16)}`}>{item}</li>
             ))}
           </ul>
-        ) : null;
+        );
       }
       case 'divider':
         return <div className="h-px w-full bg-slate-200" />;
