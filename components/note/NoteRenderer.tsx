@@ -30,8 +30,8 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
         }
 
         return (
-          <ul className="list-disc space-y-1 pl-6 text-sm text-slate-700" style={textStyle}>
-            {items.map((item, index) => (
+          <figure className="space-y-2 border-l-4 border-slate-200 pl-4">
+            <blockquote className="text-base italic leading-relaxed text-slate-700" style={textStyle}>
               <li key={`${index}-${item.slice(0, 16)}`}>{item}</li>
             ))}
           </ul>
