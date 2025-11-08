@@ -26,18 +26,12 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
         const level = data.level === 'h3' ? 'h3' : 'h2';
         const HeadingTag = level as 'h2' | 'h3';
         return (
-          <HeadingTag
-            className={`font-semibold text-slate-900 ${level === 'h2' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'}`}
-            style={textStyle}
-          >
-            {typeof data.text === 'string' ? data.text : ''}
-          </HeadingTag>
-        );
-      }
-      case 'quote':
-        return (
-          <figure className="space-y-2 border border-slate-200 bg-slate-50 p-5">
-            <blockquote className="text-base italic leading-relaxed text-slate-700" style={textStyle}>
+          <ul className="list-disc space-y-1 pl-6 text-sm text-slate-700" style={textStyle}>
+            {items.map((item, index) => (
+              <li key={`${index}-${item.slice(0, 16)}`}>{item}</li>
+            ))}
+          </ul>
+        ) : null;
               {typeof data.text === 'string' ? data.text : ''}
             </blockquote>
             {typeof data.cite === 'string' && data.cite ? (
@@ -46,13 +40,6 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
           </figure>
         );
       case 'image':
-        return (
-          <figure className="space-y-2">
-            {typeof data.url === 'string' && data.url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={data.url}
-                alt={typeof data.caption === 'string' ? data.caption : ''}
                 className="w-full border border-slate-200 object-cover"
               />
             ) : null}

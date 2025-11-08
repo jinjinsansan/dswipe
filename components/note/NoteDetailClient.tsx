@@ -372,7 +372,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         ) : null}
       </header>
 
-      <section className="border border-slate-200 bg-white/90 p-6 shadow-sm">
+      <section className="bg-white p-6">
         <NoteRenderer 
           blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
           showPaidSeparator={note.is_paid && note.has_access}
