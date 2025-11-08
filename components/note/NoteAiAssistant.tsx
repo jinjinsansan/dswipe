@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { noteAiApi } from '@/lib/api';
 import type { NoteBlock } from '@/types';
 import type {
@@ -178,6 +178,36 @@ export default function NoteAiAssistant({
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const actionTimerRef = useRef<number | null>(null);
+
+  const clearActionMessage = useCallback(() => {
+    if (actionTimerRef.current) {
+      window.clearTimeout(actionTimerRef.current);
+      actionTimerRef.current = null;
+    }
+    setActionMessage(null);
+  }, []);
+
+  const showActionMessage = useCallback(
+    (message: string) => {
+      clearActionMessage();
+      setActionMessage(message);
+      actionTimerRef.current = window.setTimeout(() => {
+        setActionMessage(null);
+        actionTimerRef.current = null;
+      }, 4000);
+    },
+    [clearActionMessage],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (actionTimerRef.current) {
+        window.clearTimeout(actionTimerRef.current);
+        actionTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const contextPayload = useMemo(
     () => buildContextPayload(title, excerpt, categories, language, tone, audience, blocks),
@@ -197,7 +227,7 @@ export default function NoteAiAssistant({
       return;
     }
     setRewriteLoading(true);
-    setActionMessage(null);
+    clearActionMessage();
     setErrorMessage(null);
     try {
       const response = await noteAiApi.rewrite({
@@ -212,21 +242,20 @@ export default function NoteAiAssistant({
     } finally {
       setRewriteLoading(false);
     }
-  }, [contextPayload, selectedRewriteBlock, rewriteInstructions, styleHint]);
+  }, [contextPayload, selectedRewriteBlock, rewriteInstructions, styleHint, clearActionMessage]);
 
   const handleApplyRewrite = useCallback(() => {
     if (!rewriteResult) return;
     onApplyText(rewriteResult.block_id, rewriteResult.revised_text);
     const unchanged = rewriteResult.revised_text.trim() === rewriteResult.original_text.trim();
-    setActionMessage(
+    showActionMessage(
       unchanged ? '提案に変更点がなかったため原文を維持しました。' : 'AIのリライト結果をブロックへ適用しました。',
     );
-    setTimeout(() => setActionMessage(null), 4000);
-  }, [rewriteResult, onApplyText]);
+  }, [rewriteResult, onApplyText, showActionMessage]);
 
   const handleProofread = useCallback(async () => {
     setProofreadLoading(true);
-    setActionMessage(null);
+    clearActionMessage();
     setErrorMessage(null);
     try {
       const response = await noteAiApi.proofread({
@@ -239,20 +268,19 @@ export default function NoteAiAssistant({
     } finally {
       setProofreadLoading(false);
     }
-  }, [contextPayload, proofreadFocus]);
+  }, [contextPayload, proofreadFocus, clearActionMessage]);
 
   const handleApplyCorrection = useCallback(
     (correction: NoteProofreadCorrection) => {
       onApplyText(correction.block_id, correction.suggestion);
-      setActionMessage('校正の提案を適用しました。');
-      setTimeout(() => setActionMessage(null), 4000);
+      showActionMessage('校正の提案を適用しました。');
     },
-    [onApplyText],
+    [onApplyText, showActionMessage],
   );
 
   const handleStructure = useCallback(async () => {
     setStructureLoading(true);
-    setActionMessage(null);
+    clearActionMessage();
     setErrorMessage(null);
     try {
       const response = await noteAiApi.structure({
@@ -265,11 +293,11 @@ export default function NoteAiAssistant({
     } finally {
       setStructureLoading(false);
     }
-  }, [contextPayload, structureGoal]);
+  }, [contextPayload, structureGoal, clearActionMessage]);
 
   const handleReview = useCallback(async () => {
     setReviewLoading(true);
-    setActionMessage(null);
+    clearActionMessage();
     setErrorMessage(null);
     try {
       const response = await noteAiApi.review({ context: contextPayload });
@@ -279,7 +307,25 @@ export default function NoteAiAssistant({
     } finally {
       setReviewLoading(false);
     }
-  }, [contextPayload]);
+  }, [contextPayload, clearActionMessage]);
+
+  const handleInsertSuggestion = useCallback(
+    (afterBlockId: string | null, text: string, title?: string) => {
+      const content = text.replace(/\r\n/g, '\n').trim();
+      if (!content) {
+        showActionMessage('提案内容が空だったため挿入できませんでした。');
+        return;
+      }
+      if (!onInsertBlock) {
+        showActionMessage('構成提案を挿入できる状態ではありません。');
+        return;
+      }
+      onInsertBlock(afterBlockId, content);
+      const label = title?.trim();
+      showActionMessage(label ? `「${label}」の構成提案を挿入しました。` : '構成提案を挿入しました。');
+    },
+    [onInsertBlock, showActionMessage],
+  );
 
   const copyToClipboard = useCallback(async (text: string) => {
     try {
@@ -564,7 +610,11 @@ export default function NoteAiAssistant({
                   <StructureSuggestionCard
                     key={`structure-${index}`}
                     suggestion={suggestion}
-                    onInsert={onInsertBlock}
+                    onInsert={
+                      onInsertBlock
+                        ? (afterBlockId, text) => handleInsertSuggestion(afterBlockId, text, suggestion.title)
+                        : undefined
+                    }
                     copyToClipboard={copyToClipboard}
                   />
                 ))}

@@ -402,21 +402,54 @@ export default function NoteEditPage() {
   }, []);
 
   const insertAiSuggestion = useCallback((afterBlockId: string | null, text: string) => {
-    if (!text.trim()) {
+    const normalizedText = text.replace(/\r\n/g, '\n').trim();
+    if (!normalizedText) {
       return;
     }
-    setBlocks((prev) => {
-      const newBlock = createEmptyBlock('paragraph');
-      newBlock.data = { ...(newBlock.data ?? {}), text };
-      const normalized = normalizeBlock(newBlock);
-      const next = [...prev];
-      if (!afterBlockId) {
-        next.push(normalized);
-        return next;
+
+    const createBlockFromSegment = (segment: string): NoteBlock => {
+      const lines = segment.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
+      const bulletPattern = /^([-*•・]|[0-9]+\.)\s+/;
+      const isList = lines.length > 1 && lines.every((line) => bulletPattern.test(line));
+
+      if (isList) {
+        const newBlock = createEmptyBlock('list');
+        newBlock.data = {
+          items: lines
+            .map((line) => line.replace(bulletPattern, '').trim())
+            .filter((item) => item.length > 0),
+        };
+        return newBlock;
       }
-      const index = next.findIndex((block) => (block.id ?? '') === afterBlockId);
-      const insertIndex = index >= 0 ? index + 1 : next.length;
-      next.splice(insertIndex, 0, normalized);
+
+      const newBlock = createEmptyBlock('paragraph');
+      newBlock.data = { ...(newBlock.data ?? {}), text: segment };
+      return newBlock;
+    };
+
+    const segments = normalizedText
+      .split(/\n{2,}/)
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0);
+
+    setBlocks((prev) => {
+      const next = [...prev];
+      let insertIndex = next.length;
+
+      if (afterBlockId) {
+        const currentIndex = next.findIndex((block) => (block.id ?? '') === afterBlockId);
+        insertIndex = currentIndex >= 0 ? currentIndex + 1 : next.length;
+      }
+
+      const blocksToInsert = segments.length > 0 ? segments : [normalizedText];
+
+      blocksToInsert.forEach((segment) => {
+        const block = createBlockFromSegment(segment);
+        const normalizedBlock = normalizeBlock(block);
+        next.splice(insertIndex, 0, normalizedBlock);
+        insertIndex += 1;
+      });
+
       return next;
     });
   }, []);
