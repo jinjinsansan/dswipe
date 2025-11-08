@@ -269,7 +269,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
 
   if (loading === 'error' || !note) {
     return (
-      <div className="mx-auto max-w-3xl rounded-3xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-700">
+      <div className="mx-auto max-w-3xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-700">
         {error ?? t('notFound')}
       </div>
     );
@@ -372,7 +372,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         ) : null}
       </header>
 
-      <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+      <section className="border border-slate-200 bg-white/90 p-6 shadow-sm">
         <NoteRenderer 
           blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
           showPaidSeparator={note.is_paid && note.has_access}

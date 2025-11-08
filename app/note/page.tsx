@@ -215,25 +215,25 @@ export default function NoteDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">全記事</p>
             <p className="mt-2 text-2xl font-bold text-slate-900">{stats.total}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">公開中</p>
             <p className="mt-2 text-2xl font-bold text-emerald-600">{stats.published}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">下書き</p>
             <p className="mt-2 text-2xl font-bold text-slate-900">{stats.draft}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">有料記事</p>
             <p className="mt-2 text-2xl font-bold text-amber-600">{stats.paid}</p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col gap-3 border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               {(['all', 'draft', 'published'] as FilterValue[]).map((value) => (
@@ -265,9 +265,9 @@ export default function NoteDashboardPage() {
           {loading ? (
             <div className="flex h-52 items-center justify-center text-sm text-slate-500">読み込み中...</div>
           ) : error ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+            <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
           ) : filteredNotes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
+            <div className="flex flex-col items-center justify-center gap-3 border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
               <p>該当するNOTE記事がありません。</p>
               <Link
                 href="/note/create"
@@ -284,7 +284,7 @@ export default function NoteDashboardPage() {
                 return (
                   <div
                     key={note.id}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200"
+                    className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-2">

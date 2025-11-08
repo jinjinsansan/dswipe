@@ -88,7 +88,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
       requireAuth={false}
     >
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 pb-20 pt-6 sm:px-6 sm:gap-12">
-        <section className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm sm:p-6">
+        <section className="border border-slate-200 bg-white/80 p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               {([
@@ -161,11 +161,11 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
             <SpinIndicator /> {t('loading')}
           </div>
         ) : loading === 'error' ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+          <div className="border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
             {error ?? t('loadError')}
           </div>
         ) : filteredNotes.length === 0 ? (
-          <section className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-8 text-center shadow-sm">
+          <section className="border border-dashed border-slate-300 bg-white/70 p-8 text-center shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">{t('emptyTitle')}</h2>
             <p className="mt-3 text-sm text-slate-600">{t('emptyDescription')}</p>
             <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm">
@@ -193,7 +193,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                 <Link
                   key={note.id}
                   href={withBasePath(basePath, `/notes/${note.slug}`)}
-                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
+                  className="group flex items-center gap-3 border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
                 >
                   <div className="relative h-20 w-24 flex-none overflow-hidden bg-slate-100 md:h-auto md:w-full md:aspect-[3/2]">
                     {note.cover_image_url ? (

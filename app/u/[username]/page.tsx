@@ -355,7 +355,7 @@ export default function UserProfilePage() {
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">公開されたNOTE</h2>
 
         {notes.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-center py-12 bg-white border border-slate-200 shadow-sm">
             <p className="text-slate-600 text-lg mb-3">公開NOTEはまだありません</p>
             <p className="text-slate-500 text-sm">ユーザー名: {username}</p>
           </div>
@@ -365,7 +365,7 @@ export default function UserProfilePage() {
               <Link
                 key={note.id}
                 href={`/notes/${note.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+              className="group flex h-full flex-col overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
               >
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
                   {note.cover_image_url ? (
