@@ -60,7 +60,17 @@ export async function generateMetadata({ params }: NoteSharePageProps): Promise<
 
   const title = note.title || t('defaultTitle');
   const description = note.excerpt || t('defaultDescription');
-  const coverImage = note.cover_image_url || 'https://d-swipe.com/og-default.svg';
+  const coverImageSource = note.cover_image_url || `${origin}/og-default.svg`;
+  const coverImage = `${coverImageSource}${coverImageSource.includes('?') ? '&' : '?'}v=${note.updated_at || note.id || token}`;
+  const ogImages = [
+    {
+      url: coverImage,
+      secureUrl: coverImage,
+      width: 1200,
+      height: 630,
+      alt: title,
+    },
+  ];
 
   return {
     title: t('titleTemplate', { title }),
@@ -74,14 +84,7 @@ export async function generateMetadata({ params }: NoteSharePageProps): Promise<
       description,
       url,
       siteName: t('siteName'),
-      images: [
-        {
-          url: coverImage,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
+      images: ogImages,
       locale: localeCode,
       type: 'article',
     },
