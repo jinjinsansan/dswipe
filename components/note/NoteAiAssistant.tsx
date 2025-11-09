@@ -1576,6 +1576,24 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalM
   const originalLines = buildDiffLines(diffSegments, ['equal', 'removed']);
   const revisedLines = buildDiffLines(diffSegments, ['equal', 'added']);
 
+  const compliance = candidate.compliance;
+  const complianceStatus = compliance?.status ?? 'pass';
+  const canApply = compliance?.allow_application !== false;
+  const complianceBadgeClass =
+    complianceStatus === 'block'
+      ? 'bg-red-100 text-red-700'
+      : complianceStatus === 'caution'
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-emerald-100 text-emerald-700';
+  const complianceLabel =
+    complianceStatus === 'block' ? '適用不可' : complianceStatus === 'caution' ? '要確認' : '適用可能';
+  const complianceMessage =
+    complianceStatus === 'block'
+      ? 'コンプライアンスに抵触する可能性があるため適用できません。'
+      : complianceStatus === 'caution'
+        ? '適用前に法令・ガイドラインへの適合をご確認ください。'
+        : 'この候補はコンプライアンスチェックを通過しています。';
+
   const renderLine = (line: { type: DiffSegmentType; text: string }, index: number, variant: 'original' | 'revised') => {
     const isAdded = line.type === 'added';
     const isRemoved = line.type === 'removed';
