@@ -318,8 +318,8 @@ const purchaseSuccessMessages: Record<Locale, PurchaseSuccessMessages> = {
     notificationPending: 'It may take a few seconds for the notification to appear.',
     statusError: 'Failed to refresh payment status. We will retry in a moment.',
     autoRedirect: ({ seconds }) => `You will be redirected to the Swipe Column in ${seconds} seconds…`,
+    manualRedirect: 'Use the link below if you are not redirected automatically.',
     goToArticle: 'Open the Swipe Column',
-    goToArticle: 'Open the note',
     goToDashboard: 'Back to dashboard',
   },
 };
