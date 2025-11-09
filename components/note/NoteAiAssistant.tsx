@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { noteAiApi } from '@/lib/api';
 import type { NoteBlock } from '@/types';
 import type {
@@ -9,6 +9,9 @@ import type {
   NoteProofreadFocus,
   NoteProofreadResponse,
   NoteRewriteResponse,
+  NoteRewriteCandidate,
+  NoteRewriteMetrics,
+  NoteRewriteFeedbackRating,
   NoteStructureResponse,
   NoteStructureSuggestionItem,
   NoteReviewResponse,
@@ -16,6 +19,15 @@ import type {
 import type { AiActionMetadata, AiActionRecord } from '@/types/aiAssistant';
 
 type NoteAiAssistantTab = 'rewrite' | 'proofread' | 'structure' | 'review';
+
+type FeedbackPrompt = {
+  blockId: string;
+  candidateId: string;
+  startedAt: number;
+  complianceStatus: 'pass' | 'caution' | 'block' | null;
+  experimentId?: string | null;
+  variantId?: string | null;
+};
 
 interface NoteAiAssistantProps {
   title: string;
@@ -50,13 +62,51 @@ interface DiffSegment {
   text: string;
 }
 
-interface RewriteStats {
-  originalLines: number;
-  revisedLines: number;
-  originalLength: number;
-  revisedLength: number;
-  lengthRatio: number;
-}
+const splitParagraphs = (text: string): string[] => text.split(/\r?\n/).map((line) => line.trim()).filter((line) => line.length > 0);
+
+const countSentences = (text: string): number => {
+  const segments = text.split(/[。．.!?！？]+/).map((segment) => segment.trim()).filter((segment) => segment.length > 0);
+  return Math.max(1, segments.length);
+};
+
+const bulletPattern = /^([-*•●・]|[0-9]+[.)、．])\s*/;
+
+const countBullets = (text: string): number =>
+  text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && bulletPattern.test(line)).length;
+
+const estimateReadingTimeSeconds = (length: number): number => Math.max(15, Math.ceil((length / 420) * 60));
+
+const SAFETY_GUIDE_STORAGE_KEY = 'note-ai-assistant-safety-dismissed-v1';
+
+const FEEDBACK_RATING_OPTIONS: Array<{
+  value: NoteRewriteFeedbackRating;
+  label: string;
+  description: string;
+}> = [
+  { value: 'positive', label: '良い', description: '満足できる品質だった' },
+  { value: 'neutral', label: '普通', description: '一部修正が必要だった' },
+  { value: 'negative', label: '改善が必要', description: 'そのままでは使えなかった' },
+];
+
+const ISSUE_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'accuracy', label: '事実関係に誤りがある' },
+  { value: 'tone', label: 'トーンが不適切' },
+  { value: 'structure', label: '構成が不自然' },
+  { value: 'compliance', label: '法令・ガイドライン面が不安' },
+  { value: 'length', label: '長さ・ボリュームが不適切' },
+];
+
+const buildLocalMetrics = (text: string): NoteRewriteMetrics => ({
+  paragraph_count: splitParagraphs(text).length || 1,
+  sentence_count: countSentences(text),
+  length: text.length,
+  length_ratio: 1,
+  bullet_count: countBullets(text),
+  reading_time_seconds: estimateReadingTimeSeconds(text.length),
+});
 
 const extractBlockText = (block: NoteBlock): string => {
   const record = (block.data ?? {}) as Record<string, unknown>;
@@ -241,7 +291,24 @@ export default function NoteAiAssistant({
   const [styleHint, setStyleHint] = useState('');
   const [rewriteResult, setRewriteResult] = useState<NoteRewriteResponse | null>(null);
   const [rewriteLoading, setRewriteLoading] = useState(false);
+  const [selectedRewriteCandidateId, setSelectedRewriteCandidateId] = useState<string | null>(null);
   const [isRewritePreviewOpen, setIsRewritePreviewOpen] = useState(false);
+  const [showSafetyGuide, setShowSafetyGuide] = useState(true);
+  const [feedbackPrompt, setFeedbackPrompt] = useState<FeedbackPrompt | null>(null);
+  const [feedbackRating, setFeedbackRating] = useState<NoteRewriteFeedbackRating | null>(null);
+  const [feedbackIssues, setFeedbackIssues] = useState<string[]>([]);
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const stored = window.localStorage.getItem(SAFETY_GUIDE_STORAGE_KEY);
+    if (stored === 'true') {
+      setShowSafetyGuide(false);
+    }
+  }, []);
 
   const [proofreadFocus, setProofreadFocus] = useState<NoteProofreadFocus>('spelling');
   const [proofreadResult, setProofreadResult] = useState<NoteProofreadResponse | null>(null);
@@ -278,6 +345,21 @@ export default function NoteAiAssistant({
     [clearActionMessage],
   );
 
+  const handleDismissSafetyGuide = useCallback(() => {
+    setShowSafetyGuide(false);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(SAFETY_GUIDE_STORAGE_KEY, 'true');
+    }
+  }, []);
+
+  const closeFeedbackPrompt = useCallback(() => {
+    setFeedbackPrompt(null);
+    setFeedbackRating(null);
+    setFeedbackIssues([]);
+    setFeedbackComment('');
+    setFeedbackLoading(false);
+  }, []);
+
   useEffect(() => {
     return () => {
       if (actionTimerRef.current) {
@@ -299,29 +381,34 @@ export default function NoteAiAssistant({
     [rewritableBlocks, rewriteTargetId],
   );
 
-  const rewriteDiffSegments = useMemo<DiffSegment[]>(
-    () => (rewriteResult ? diffLines(rewriteResult.original_text ?? '', rewriteResult.revised_text ?? '') : []),
+  const rewriteCandidates = useMemo(() => rewriteResult?.candidates ?? [], [rewriteResult]);
+
+  const selectedRewriteCandidate = useMemo<NoteRewriteCandidate | null>(() => {
+    if (rewriteCandidates.length === 0) {
+      return null;
+    }
+    if (selectedRewriteCandidateId) {
+      const found = rewriteCandidates.find((candidate) => candidate.id === selectedRewriteCandidateId);
+      if (found) {
+        return found;
+      }
+    }
+    return rewriteCandidates[0];
+  }, [rewriteCandidates, selectedRewriteCandidateId]);
+
+  const originalRewriteMetrics = useMemo<NoteRewriteMetrics | null>(
+    () => (rewriteResult ? buildLocalMetrics(rewriteResult.original_text) : null),
     [rewriteResult],
   );
 
-  const rewriteStats = useMemo<RewriteStats | null>(() => {
-    if (!rewriteResult) {
-      return null;
-    }
-    const originalLines = rewriteResult.original_text.split(/\r?\n/).filter((line) => line.trim().length > 0);
-    const revisedLines = rewriteResult.revised_text.split(/\r?\n/).filter((line) => line.trim().length > 0);
-    const originalLength = rewriteResult.original_text.length;
-    const revisedLength = rewriteResult.revised_text.length;
-    const lengthRatio = originalLength === 0 ? 1 : revisedLength / originalLength;
+  const rewriteDiffSegments = useMemo<DiffSegment[]>(
+    () =>
+      rewriteResult && selectedRewriteCandidate
+        ? diffLines(rewriteResult.original_text ?? '', selectedRewriteCandidate.revised_text ?? '')
+        : [],
+    [rewriteResult, selectedRewriteCandidate],
+  );
 
-    return {
-      originalLines: originalLines.length,
-      revisedLines: revisedLines.length,
-      originalLength,
-      revisedLength,
-      lengthRatio,
-    };
-  }, [rewriteResult]);
 
   const handleRewrite = useCallback(async () => {
     if (!selectedRewriteBlock) {
@@ -332,14 +419,21 @@ export default function NoteAiAssistant({
     clearActionMessage();
     setErrorMessage(null);
     try {
+      setRewriteResult(null);
+      setSelectedRewriteCandidateId(null);
       const response = await noteAiApi.rewrite({
         context: contextPayload,
         target_block_id: selectedRewriteBlock.id ?? '',
         instructions: rewriteInstructions || undefined,
         style_hint: styleHint || undefined,
       });
-      setRewriteResult(response.data);
-      setIsRewritePreviewOpen(true);
+      const data = response.data;
+      setRewriteResult(data);
+      const recommendedId = data.recommended_candidate_id || data.candidates?.[0]?.id || null;
+      setSelectedRewriteCandidateId(recommendedId);
+      if (recommendedId) {
+        setIsRewritePreviewOpen(true);
+      }
     } catch (error) {
       setErrorMessage(resolveErrorMessage(error, 'AIリライトに失敗しました。'));
     } finally {
@@ -347,27 +441,121 @@ export default function NoteAiAssistant({
     }
   }, [contextPayload, selectedRewriteBlock, rewriteInstructions, styleHint, clearActionMessage]);
 
-  const handleApplyRewrite = useCallback(() => {
-    if (!rewriteResult) return;
-    const blockId = rewriteResult.block_id;
-    const blockIndex = blocks.findIndex((block) => (block.id ?? '') === blockId);
-    const blockLabel =
-      selectedRewriteBlock && blockIndex >= 0
-        ? formatBlockLabel(selectedRewriteBlock, blockIndex)
-        : '選択ブロック';
+  const handleApplyRewrite = useCallback(
+    (candidate?: NoteRewriteCandidate | null) => {
+      closeFeedbackPrompt();
+      if (!rewriteResult) {
+        return;
+      }
+      const targetCandidate = candidate ?? selectedRewriteCandidate;
+      if (!targetCandidate) {
+        showActionMessage('適用する候補を選択してください。');
+        return;
+      }
 
-    onApplyText(blockId, rewriteResult.revised_text, {
-      type: 'rewrite',
-      label: `リライト: ${blockLabel}`,
-      targetBlockIds: [blockId],
-      reasoning: rewriteResult.reasoning ?? null,
-      lengthRatio: rewriteStats?.lengthRatio,
-    });
-    const unchanged = rewriteResult.revised_text.trim() === rewriteResult.original_text.trim();
-    showActionMessage(
-      unchanged ? '提案に変更点がなかったため原文を維持しました。' : 'AIのリライト結果をブロックへ適用しました。',
-    );
-  }, [rewriteResult, onApplyText, showActionMessage, blocks, selectedRewriteBlock, rewriteStats]);
+      const compliance = targetCandidate.compliance;
+      if (compliance && compliance.allow_application === false) {
+        showActionMessage('コンプライアンス上の理由でこの候補は適用できません。');
+        return;
+      }
+
+      const blockId = rewriteResult.block_id;
+      const blockIndex = blocks.findIndex((block) => (block.id ?? '') === blockId);
+      const blockLabel =
+        selectedRewriteBlock && blockIndex >= 0
+          ? formatBlockLabel(selectedRewriteBlock, blockIndex)
+          : '選択ブロック';
+
+      onApplyText(blockId, targetCandidate.revised_text, {
+        type: 'rewrite',
+        label: `リライト: ${blockLabel}（${targetCandidate.title}）`,
+        targetBlockIds: [blockId],
+        reasoning: targetCandidate.reasoning ?? rewriteResult.evaluation_notes ?? null,
+        lengthRatio: targetCandidate.metrics.length_ratio,
+      });
+
+      const unchanged = targetCandidate.revised_text.trim() === rewriteResult.original_text.trim();
+      const complianceSuffix =
+        compliance && compliance.status === 'caution' ? '（コンプライアンス注意あり）' : '';
+      showActionMessage(
+        unchanged
+          ? '提案に変更点がなかったため原文を維持しました。'
+          : `「${targetCandidate.title}」のリライト案をブロックへ適用しました。${complianceSuffix}`,
+      );
+
+      const defaultIssues = compliance?.status === 'caution' ? ['compliance'] : [];
+      setFeedbackPrompt({
+        blockId,
+        candidateId: targetCandidate.id,
+        startedAt: Date.now(),
+        complianceStatus: compliance?.status ?? null,
+        experimentId: rewriteResult.experiment?.experiment_id ?? null,
+        variantId: rewriteResult.experiment?.variant_id ?? null,
+      });
+      setFeedbackRating(null);
+      setFeedbackIssues(defaultIssues);
+      setFeedbackComment('');
+      setFeedbackLoading(false);
+    },
+    [
+      rewriteResult,
+      selectedRewriteCandidate,
+      onApplyText,
+      showActionMessage,
+      blocks,
+      selectedRewriteBlock,
+      closeFeedbackPrompt,
+    ],
+  );
+
+  const toggleFeedbackIssue = useCallback((value: string) => {
+    setFeedbackIssues((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]));
+  }, []);
+
+  const handleFeedbackCommentChange = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
+    setFeedbackComment(event.target.value);
+  }, []);
+
+  const handleSubmitFeedback = useCallback(async () => {
+    if (!feedbackPrompt) {
+      return;
+    }
+    if (!feedbackRating) {
+      showActionMessage('評価を選択してください。');
+      return;
+    }
+    setFeedbackLoading(true);
+    try {
+      const durationSeconds = Math.max(0, Math.round((Date.now() - feedbackPrompt.startedAt) / 1000));
+      await noteAiApi.rewriteFeedback({
+        block_id: feedbackPrompt.blockId,
+        candidate_id: feedbackPrompt.candidateId,
+        rating: feedbackRating,
+        issues: feedbackIssues,
+        comment: feedbackComment.trim() || undefined,
+        applied: true,
+        duration_seconds: durationSeconds || undefined,
+        experiment_id: feedbackPrompt.experimentId || undefined,
+        variant_id: feedbackPrompt.variantId || undefined,
+      });
+      closeFeedbackPrompt();
+      showActionMessage('フィードバックを記録しました。ご協力ありがとうございます。');
+    } catch (error) {
+      setFeedbackLoading(false);
+      setErrorMessage(resolveErrorMessage(error, 'フィードバックの送信に失敗しました。'));
+    }
+  }, [
+    feedbackPrompt,
+    feedbackRating,
+    feedbackIssues,
+    feedbackComment,
+    closeFeedbackPrompt,
+    showActionMessage,
+  ]);
+
+  const handleSkipFeedback = useCallback(() => {
+    closeFeedbackPrompt();
+  }, [closeFeedbackPrompt]);
 
   const handleProofread = useCallback(async () => {
     setProofreadLoading(true);
@@ -461,10 +649,13 @@ export default function NoteAiAssistant({
     setIsRewritePreviewOpen(false);
   }, []);
 
-  const applyRewriteFromPreview = useCallback(() => {
-    handleApplyRewrite();
-    closeRewritePreview();
-  }, [handleApplyRewrite, closeRewritePreview]);
+  const applyRewriteFromPreview = useCallback(
+    (candidate?: NoteRewriteCandidate | null) => {
+      handleApplyRewrite(candidate);
+      closeRewritePreview();
+    },
+    [handleApplyRewrite, closeRewritePreview],
+  );
 
   const copyToClipboard = useCallback(async (text: string) => {
     try {
@@ -606,79 +797,105 @@ export default function NoteAiAssistant({
               {rewriteLoading ? '生成中…' : 'AIでリライト'}
             </button>
           </div>
+          <p className="text-[11px] text-slate-400">
+            生成後はコンプライアンス表示を確認し、必要に応じて修正してから適用してください。
+          </p>
 
           {rewriteResult ? (
-            <div className="rounded-3xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm text-slate-700">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">リライト候補</p>
-                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                      <p className="text-xs font-semibold text-slate-500">元の文章</p>
-                      <p className="mt-2 line-clamp-6 whitespace-pre-wrap text-sm text-slate-700">
-                        {rewriteResult.original_text}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-blue-500">提案された文章</p>
-                        <button
-                          type="button"
-                          className="text-xs font-semibold text-blue-600 underline"
-                          onClick={() => copyToClipboard(rewriteResult.revised_text)}
-                        >
-                          コピー
-                        </button>
-                      </div>
-                      <p className="mt-2 line-clamp-6 whitespace-pre-wrap text-sm text-slate-700">
-                        {rewriteResult.revised_text}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                {rewriteStats ? (
-                  <div className="rounded-2xl bg-white px-4 py-3 text-xs text-slate-600 shadow-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">メトリクス</p>
-                    <ul className="mt-2 space-y-1">
-                      <li>段落数：{rewriteStats.originalLines} → {rewriteStats.revisedLines}</li>
-                      <li>文字数：{rewriteStats.originalLength} → {rewriteStats.revisedLength}</li>
-                      <li>長さ比率：{Math.min(rewriteStats.lengthRatio, 9.99).toFixed(2)}×</li>
-                    </ul>
-                  </div>
-                ) : null}
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">元の文章</p>
+                <p className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap leading-relaxed">{rewriteResult.original_text}</p>
               </div>
 
-              {rewriteResult.reasoning ? (
-                <p className="mt-3 text-xs text-slate-500">{rewriteResult.reasoning}</p>
-              ) : null}
-              {rewriteResult.alternatives && rewriteResult.alternatives.length > 0 ? (
-                <div className="mt-3 space-y-2">
-                  <p className="text-xs font-semibold text-slate-500">その他の案</p>
-                  {rewriteResult.alternatives.map((alt, index) => (
-                    <div key={`alternative-${index}`} className="rounded-2xl bg-white px-4 py-2 text-sm shadow-sm">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-slate-700">{alt}</span>
-                        <button
-                          type="button"
-                          className="text-xs font-semibold text-blue-600 underline"
-                          onClick={() => copyToClipboard(alt)}
-                        >
-                          コピー
-                        </button>
-                      </div>
+              {rewriteResult.quality ? (
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-800">
+                        品質スコア: {rewriteResult.quality.global_score} / 100
+                      </p>
+                      <span
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                          rewriteResult.quality.ready_for_release
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}
+                      >
+                        {rewriteResult.quality.ready_for_release ? 'リリース推奨' : '要確認'}
+                      </span>
                     </div>
-                  ))}
+                    <span className="text-[11px] text-slate-400">評価バージョン: {rewriteResult.quality.scoring_version}</span>
+                  </div>
+                  {rewriteResult.quality.summary ? (
+                    <p className="mt-1 whitespace-pre-wrap text-slate-600">{rewriteResult.quality.summary}</p>
+                  ) : null}
+                  {rewriteResult.quality.alerts.length > 0 ? (
+                    <ul className="mt-2 list-disc space-y-1 pl-4 text-slate-600">
+                      {rewriteResult.quality.alerts.map((alert, index) => (
+                        <li key={`quality-alert-${index}`}>{alert}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {rewriteResult.quality.thresholds ? (
+                    <div className="mt-3 grid gap-2 text-[11px] text-slate-500 sm:grid-cols-3">
+                      {Object.entries(rewriteResult.quality.thresholds).map(([key, value]) => {
+                        const labelMap: Record<string, string> = {
+                          score_minimum: 'スコア閾値を満たす',
+                          compliance_pass: 'コンプライアンス通過',
+                          no_alerts: '重大警告なし',
+                        };
+                        const label = labelMap[key] ?? key;
+                        return (
+                          <div
+                            key={key}
+                            className={`rounded-xl border px-3 py-2 ${
+                              value
+                                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                : 'border-amber-200 bg-amber-50 text-amber-700'
+                            }`}
+                          >
+                            {label}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                  {rewriteResult.experiment ? (
+                    <p className="mt-2 text-[11px] text-slate-400">
+                      実験バリアント: {rewriteResult.experiment.variant_id}（{rewriteResult.experiment.experiment_id}）
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
-              <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsRewritePreviewOpen(true)}
-                  className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
-                >
-                  差分を確認する
-                </button>
-              </div>
+
+              {rewriteResult.evaluation_notes ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+                  {rewriteResult.evaluation_notes}
+                </div>
+              ) : null}
+
+              {rewriteCandidates.length > 0 ? (
+                <div className="space-y-3">
+                  {rewriteCandidates.map((candidate) => (
+                    <RewriteCandidateCard
+                      key={candidate.id}
+                      candidate={candidate}
+                      originalMetrics={originalRewriteMetrics}
+                      isSelected={selectedRewriteCandidate?.id === candidate.id}
+                      isRecommended={rewriteResult.recommended_candidate_id === candidate.id}
+                      onSelect={() => setSelectedRewriteCandidateId(candidate.id)}
+                      onPreview={() => {
+                        setSelectedRewriteCandidateId(candidate.id);
+                        setIsRewritePreviewOpen(true);
+                      }}
+                      onCopy={() => copyToClipboard(candidate.revised_text)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-500">候補を生成できませんでした。</p>
+              )}
             </div>
           ) : null}
         </div>
@@ -916,8 +1133,9 @@ export default function NoteAiAssistant({
           onClose={closeRewritePreview}
           onApply={applyRewriteFromPreview}
           diffSegments={rewriteDiffSegments}
-          stats={rewriteStats}
-          result={rewriteResult}
+          originalMetrics={originalRewriteMetrics}
+          candidate={selectedRewriteCandidate}
+          evaluationNotes={rewriteResult.evaluation_notes}
         />
       ) : null}
 
@@ -934,6 +1152,28 @@ export default function NoteAiAssistant({
           {renderTabButton('review', '最終レビュー')}
         </div>
       </div>
+
+      {showSafetyGuide ? (
+        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-2">
+              <p className="font-semibold text-amber-900">AI出力の取り扱いガイド</p>
+              <ul className="list-disc space-y-1 pl-5">
+                <li>公開前に必ず全文を確認し、事実・法令・社内ルールに適合しているか点検してください。</li>
+                <li>「注意」「適用不可」のラベルが付いた候補は、そのまま使わず修正または再生成してください。</li>
+                <li>固有名詞・金額・期間などの数値は最新情報と照合し、誤解を与える表現がないか確認してください。</li>
+              </ul>
+            </div>
+            <button
+              type="button"
+              onClick={handleDismissSafetyGuide}
+              className="self-start rounded-full border border-amber-300 px-3 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-100"
+            >
+              理解しました
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div className="space-y-1">
@@ -971,6 +1211,107 @@ export default function NoteAiAssistant({
       {actionMessage ? (
         <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           {actionMessage}
+        </div>
+      ) : null}
+
+      {feedbackPrompt ? (
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-xs text-slate-700">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-slate-800">AIリライトの品質を評価してください</p>
+            {feedbackPrompt.complianceStatus === 'caution' ? (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-700">
+                注意あり
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-2 text-slate-600">改善のヒントとして活用するため、1分以内の簡単なフィードバックにご協力ください。</p>
+
+          <div className="mt-3 space-y-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">全体評価</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {FEEDBACK_RATING_OPTIONS.map((option) => (
+                  <button
+                    type="button"
+                    key={option.value}
+                    onClick={() => setFeedbackRating(option.value)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                      feedbackRating === option.value
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
+                    }`}
+                    disabled={feedbackLoading}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              {feedbackRating ? (
+                <p className="mt-1 text-[11px] text-slate-500">
+                  {FEEDBACK_RATING_OPTIONS.find((option) => option.value === feedbackRating)?.description}
+                </p>
+              ) : null}
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">気になった点（任意）</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {ISSUE_OPTIONS.map((issue) => (
+                  <button
+                    type="button"
+                    key={issue.value}
+                    onClick={() => toggleFeedbackIssue(issue.value)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                      feedbackIssues.includes(issue.value)
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
+                    }`}
+                    disabled={feedbackLoading}
+                  >
+                    {issue.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400" htmlFor="rewrite-feedback-comment">
+                任意のコメント
+              </label>
+              <textarea
+                id="rewrite-feedback-comment"
+                value={feedbackComment}
+                onChange={handleFeedbackCommentChange}
+                rows={2}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                placeholder="修正したポイントや気になった点があれば入力してください"
+                disabled={feedbackLoading}
+              />
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-end gap-2 text-xs text-slate-500">
+            <button
+              type="button"
+              onClick={handleSkipFeedback}
+              className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100"
+              disabled={feedbackLoading}
+            >
+              今は評価しない
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmitFeedback}
+              className={`rounded-full px-5 py-2 text-xs font-semibold transition ${
+                feedbackRating && !feedbackLoading
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-slate-200 text-slate-500'
+              }`}
+              disabled={!feedbackRating || feedbackLoading}
+            >
+              {feedbackLoading ? '送信中…' : 'フィードバックを送信'}
+            </button>
+          </div>
         </div>
       ) : null}
 
@@ -1032,13 +1373,169 @@ function StructureSuggestionCard({ suggestion, onInsert, copyToClipboard }: Stru
   );
 }
 
+interface RewriteCandidateCardProps {
+  candidate: NoteRewriteCandidate;
+  originalMetrics: NoteRewriteMetrics | null;
+  isSelected: boolean;
+  isRecommended: boolean;
+  onSelect: () => void;
+  onPreview: () => void;
+  onCopy: () => void;
+}
+
+function RewriteCandidateCard({
+  candidate,
+  originalMetrics,
+  isSelected,
+  isRecommended,
+  onSelect,
+  onPreview,
+  onCopy,
+}: RewriteCandidateCardProps) {
+  const metrics = candidate.metrics;
+  const compliance = candidate.compliance;
+  const complianceStatus = compliance?.status ?? 'pass';
+  const canApply = compliance?.allow_application !== false;
+  const complianceBadgeClass =
+    complianceStatus === 'block'
+      ? 'bg-red-100 text-red-700'
+      : complianceStatus === 'caution'
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-emerald-100 text-emerald-700';
+  const complianceLabel =
+    complianceStatus === 'block' ? '適用不可（要修正）' : complianceStatus === 'caution' ? '注意（要確認）' : '適用可能';
+
+  const complianceMessage =
+    complianceStatus === 'block'
+      ? 'コンプライアンスに抵触する可能性があるため適用できません。'
+      : complianceStatus === 'caution'
+        ? '適用前に法令・ガイドラインへの適合をご確認ください。'
+        : 'この候補はコンプライアンスチェックを通過しています。';
+  const lengthRatioLabel = `${Math.min(metrics.length_ratio, 9.99).toFixed(2)}×`;
+  const paragraphLabel = `${originalMetrics?.paragraph_count ?? '–'} → ${metrics.paragraph_count}`;
+  const lengthLabel = `${originalMetrics?.length ?? '–'} → ${metrics.length}`;
+  const bulletLabel = `${originalMetrics?.bullet_count ?? 0} → ${metrics.bullet_count}`;
+  const readingSeconds = metrics.reading_time_seconds;
+  const readingLabel =
+    readingSeconds >= 60
+      ? `${Math.max(1, Math.round(readingSeconds / 60))}分程度`
+      : `${readingSeconds}秒程度`;
+
+  const wrapperClass = `rounded-2xl border px-4 py-3 shadow-sm transition ${
+    isSelected ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-200'
+  }`;
+
+  return (
+    <div className={wrapperClass}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-slate-800">{candidate.title}</p>
+            {isRecommended ? (
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                推奨
+              </span>
+            ) : null}
+            {isSelected ? (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+                選択中
+              </span>
+            ) : null}
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${complianceBadgeClass}`}>
+              {complianceLabel}
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-slate-500">スコア {candidate.score} / 100 ・ トーン {candidate.tone_applied ?? '指定なし'}</p>
+          <p
+            className={`mt-1 text-[11px] ${
+              complianceStatus === 'block' ? 'text-red-600' : complianceStatus === 'caution' ? 'text-amber-600' : 'text-emerald-600'
+            }`}
+          >
+            {complianceMessage}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onCopy}
+            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+          >
+            コピー
+          </button>
+          <button
+            type="button"
+            onClick={onPreview}
+            className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700"
+          >
+            差分を確認
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+        <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">段落数 {paragraphLabel}</div>
+        <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">文字数 {lengthLabel}</div>
+        <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">長さ {lengthRatioLabel}</div>
+        <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">箇条書き {bulletLabel}</div>
+        <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">読了 {readingLabel}</div>
+        <button
+          type="button"
+          onClick={onSelect}
+          disabled={!canApply}
+          className={`rounded-xl px-3 py-2 text-xs font-semibold ${
+            canApply
+              ? 'border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100'
+              : 'border border-slate-200 bg-slate-100 text-slate-400'
+          }`}
+        >
+          {canApply ? 'この候補を選択' : '適用不可'}
+        </button>
+      </div>
+
+      {candidate.reasoning ? (
+        <p className="mt-3 whitespace-pre-wrap text-xs text-slate-600">{candidate.reasoning}</p>
+      ) : null}
+
+      {candidate.strengths.length > 0 ? (
+        <div className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+          <p className="font-semibold text-emerald-800">強み</p>
+          <ul className="mt-1 list-disc space-y-1 pl-4">
+            {candidate.strengths.map((item, index) => (
+              <li key={`card-strength-${candidate.id}-${index}`}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {candidate.warnings.length > 0 ? (
+        <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <p className="font-semibold text-red-800">注意点</p>
+          <ul className="mt-1 list-disc space-y-1 pl-4">
+            {candidate.warnings.map((item, index) => (
+              <li key={`card-warning-${candidate.id}-${index}`}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+        <p className="font-semibold text-slate-700">リライト案</p>
+        <p className="mt-1 max-h-40 overflow-y-auto whitespace-pre-wrap text-sm text-slate-800">
+          {candidate.revised_text}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 interface RewritePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onApply: () => void;
+  onApply: (candidate?: NoteRewriteCandidate | null) => void;
   diffSegments: DiffSegment[];
-  stats: RewriteStats | null;
-  result: NoteRewriteResponse;
+  originalMetrics: NoteRewriteMetrics | null;
+  candidate: NoteRewriteCandidate | null;
+  evaluationNotes?: string | null;
 }
 
 const buildDiffLines = (segments: DiffSegment[], allowed: DiffSegmentType[]): Array<{ type: DiffSegmentType; text: string }> => {
@@ -1054,9 +1551,26 @@ const buildDiffLines = (segments: DiffSegment[], allowed: DiffSegmentType[]): Ar
   return lines;
 };
 
-function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, stats, result }: RewritePreviewModalProps) {
+function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalMetrics, candidate, evaluationNotes }: RewritePreviewModalProps) {
   if (!isOpen) {
     return null;
+  }
+
+  if (!candidate) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-2xl">
+          <p className="text-sm text-slate-600">表示できる候補がありません。もう一度リライトを実行してください。</p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700"
+          >
+            閉じる
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const originalLines = buildDiffLines(diffSegments, ['equal', 'removed']);
@@ -1079,32 +1593,72 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, stats, re
     );
   };
 
+  const metrics = candidate.metrics;
+  const paragraphLabel = `${originalMetrics?.paragraph_count ?? '–'} → ${metrics.paragraph_count}`;
+  const lengthLabel = `${originalMetrics?.length ?? '–'} → ${metrics.length}`;
+  const ratioLabel = `${Math.min(metrics.length_ratio, 9.99).toFixed(2)}×`;
+  const bulletLabel = `${originalMetrics?.bullet_count ?? 0} → ${metrics.bullet_count}`;
+  const readingSeconds = metrics.reading_time_seconds;
+  const readingLabel =
+    readingSeconds >= 60
+      ? `${Math.max(1, Math.round(readingSeconds / 60))}分程度`
+      : `${readingSeconds}秒程度`;
+  const toneLabel = candidate.tone_applied ?? '指定なし';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
             <p className="text-sm font-semibold text-slate-800">リライト差分プレビュー</p>
-            <p className="text-xs text-slate-500">適用前に変更内容を確認してください。</p>
+            <p className="text-xs text-slate-500">候補: {candidate.title}（スコア {candidate.score} / 100）</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
-          >
-            閉じる
-          </button>
+          <div className="flex items-center gap-2">
+            <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${complianceBadgeClass}`}>{complianceLabel}</span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+            >
+              閉じる
+            </button>
+          </div>
         </div>
 
         <div className="max-h-[70vh] overflow-y-auto px-6 py-5 space-y-5">
-          {stats ? (
-            <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 sm:grid-cols-4">
-              <div>段落数：{stats.originalLines} → {stats.revisedLines}</div>
-              <div>文字数：{stats.originalLength} → {stats.revisedLength}</div>
-              <div>長さ比率：{Math.min(stats.lengthRatio, 9.99).toFixed(2)}×</div>
-              <div>提案トーン：{result.tone_applied ?? '指定なし'}</div>
-            </div>
-          ) : null}
+          <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 sm:grid-cols-3 lg:grid-cols-6">
+            <div>段落数：{paragraphLabel}</div>
+            <div>文字数：{lengthLabel}</div>
+            <div>長さ比率：{ratioLabel}</div>
+            <div>箇条書き項目：{bulletLabel}</div>
+            <div>読了目安：{readingLabel}</div>
+            <div>適用トーン：{toneLabel}</div>
+          </div>
+
+          <div
+            className={`rounded-2xl border px-4 py-3 text-xs ${
+              complianceStatus === 'block'
+                ? 'border-red-200 bg-red-50 text-red-700'
+                : complianceStatus === 'caution'
+                  ? 'border-amber-200 bg-amber-50 text-amber-700'
+                  : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+            }`}
+          >
+            <p className="font-semibold">コンプライアンス評価</p>
+            <p className="mt-1 whitespace-pre-wrap">{complianceMessage}</p>
+            {compliance?.reasons && compliance.reasons.length > 0 ? (
+              <ul className="mt-2 list-disc space-y-1 pl-4">
+                {compliance.reasons.map((reason, index) => (
+                  <li key={`compliance-reason-${index}`}>{reason}</li>
+                ))}
+              </ul>
+            ) : null}
+            {compliance?.categories && compliance.categories.length > 0 ? (
+              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] opacity-70">
+                カテゴリ: {compliance.categories.join(', ')}
+              </p>
+            ) : null}
+          </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -1125,17 +1679,49 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, stats, re
             </div>
           </div>
 
-          {result.reasoning ? (
+          {candidate.reasoning ? (
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
               <p className="font-semibold text-slate-700">AIの説明</p>
-              <p className="mt-1 whitespace-pre-wrap">{result.reasoning}</p>
+              <p className="mt-1 whitespace-pre-wrap">{candidate.reasoning}</p>
+            </div>
+          ) : null}
+
+          {candidate.strengths.length > 0 ? (
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
+              <p className="font-semibold text-emerald-800">強み</p>
+              <ul className="mt-1 list-disc space-y-1 pl-4">
+                {candidate.strengths.map((item, index) => (
+                  <li key={`strength-${index}`}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {candidate.warnings.length > 0 ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+              <p className="font-semibold text-red-800">注意点</p>
+              <ul className="mt-1 list-disc space-y-1 pl-4">
+                {candidate.warnings.map((item, index) => (
+                  <li key={`warning-${index}`}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {evaluationNotes ? (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+              {evaluationNotes}
             </div>
           ) : null}
         </div>
 
         <div className="flex items-center justify-between border-t border-slate-200 px-6 py-4">
-          <div className="text-xs text-slate-500">
-            適用すると対象ブロックが即座に更新されます。元に戻す場合はブロックの取り消し機能をご利用ください。
+          <div className={`text-xs ${complianceStatus === 'block' ? 'text-red-600' : complianceStatus === 'caution' ? 'text-amber-600' : 'text-slate-500'}`}>
+            {complianceStatus === 'block'
+              ? 'コンプライアンスに抵触するためこの候補は適用できません。内容を修正してください。'
+              : complianceStatus === 'caution'
+                ? '適用後は必ず法令・ガイドラインの観点で内容を再確認してください。'
+                : `適用すると候補「${candidate.title}」に置き換わります。履歴から元に戻すことも可能です。`}
           </div>
           <div className="flex gap-3">
             <button
@@ -1147,10 +1733,15 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, stats, re
             </button>
             <button
               type="button"
-              onClick={onApply}
-              className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+              onClick={() => onApply(candidate)}
+              disabled={!canApply}
+              className={`rounded-full px-5 py-2 text-sm font-semibold shadow-sm transition ${
+                canApply
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  : 'bg-slate-200 text-slate-500'
+              }`}
             >
-              ブロックに適用
+              {canApply ? 'この候補を適用' : '適用できません'}
             </button>
           </div>
         </div>

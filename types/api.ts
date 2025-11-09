@@ -289,13 +289,88 @@ export interface NoteRewriteRequest {
   style_hint?: string;
 }
 
+export interface NoteRewriteMetrics {
+  paragraph_count: number;
+  sentence_count: number;
+  length: number;
+  length_ratio: number;
+  bullet_count: number;
+  reading_time_seconds: number;
+}
+
+export interface NoteRewriteExperiment {
+  experiment_id: string;
+  variant_id: string;
+  cohort_id?: string | null;
+  parameters: Record<string, unknown>;
+}
+
+export interface NoteRewriteQuality {
+  scoring_version: string;
+  evaluated_at: string;
+  global_score: number;
+  summary?: string | null;
+  alerts: string[];
+  thresholds: Record<string, boolean>;
+  ready_for_release: boolean;
+}
+
+export interface NoteRewriteCompliance {
+  status: 'pass' | 'caution' | 'block';
+  categories: string[];
+  reasons: string[];
+  allow_application: boolean;
+}
+
+export interface NoteRewriteCandidate {
+  id: string;
+  title: string;
+  revised_text: string;
+  reasoning?: string | null;
+  tone_applied?: string | null;
+  score: number;
+  metrics: NoteRewriteMetrics;
+  strengths: string[];
+  warnings: string[];
+  compliance?: NoteRewriteCompliance | null;
+}
+
 export interface NoteRewriteResponse {
   block_id: string;
   original_text: string;
-  revised_text: string;
-  reasoning?: string;
-  tone_applied?: string;
-  alternatives?: string[];
+  candidates: NoteRewriteCandidate[];
+  recommended_candidate_id: string;
+  evaluation_notes?: string | null;
+  quality?: NoteRewriteQuality | null;
+  experiment?: NoteRewriteExperiment | null;
+}
+
+export type NoteRewriteFeedbackRating = 'positive' | 'neutral' | 'negative';
+
+export interface NoteRewriteFeedbackRequest {
+  block_id: string;
+  candidate_id: string;
+  rating: NoteRewriteFeedbackRating;
+  issues?: string[];
+  comment?: string;
+  applied?: boolean;
+  duration_seconds?: number;
+  experiment_id?: string;
+  variant_id?: string;
+}
+
+export interface NoteRewriteFeedbackResponse {
+  status: 'ok';
+}
+
+export interface ExperimentAssignmentRequest {
+  user_id?: string;
+  note_id?: string;
+  seed?: string;
+}
+
+export interface ExperimentAssignmentResponse {
+  experiment: NoteRewriteExperiment;
 }
 
 export type NoteProofreadFocus = 'spelling' | 'style' | 'consistency';

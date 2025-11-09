@@ -4,6 +4,8 @@ import type {
   LP,
   LPDetail,
   CreateLPRequest,
+  ExperimentAssignmentRequest,
+  ExperimentAssignmentResponse,
   UpdateLPRequest,
   PointsBalance,
   AIWizardRequest,
@@ -94,6 +96,8 @@ import type {
   AccountShareSessionResponse,
   NoteRewriteRequest,
   NoteRewriteResponse,
+  NoteRewriteFeedbackRequest,
+  NoteRewriteFeedbackResponse,
   NoteProofreadRequest,
   NoteProofreadResponse,
   NoteStructureRequest,
@@ -406,6 +410,12 @@ export const noteAiApi = {
 
   review: (data: NoteReviewRequest) =>
     api.post<NoteReviewResponse>('/ai/notes/review', data),
+
+  rewriteFeedback: (data: NoteRewriteFeedbackRequest) =>
+    api.post<NoteRewriteFeedbackResponse>('/ai/notes/rewrite/feedback', data),
+
+  assignRewriteExperiment: (data: ExperimentAssignmentRequest) =>
+    api.post<ExperimentAssignmentResponse>('/ai/notes/rewrite/experiment', data),
 };
 
 // ポイントAPI
