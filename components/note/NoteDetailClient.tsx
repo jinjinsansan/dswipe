@@ -295,7 +295,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
               src={note.cover_image_url}
               alt={note.title}
               fill
-              className="object-cover object-center"
+              className="object-contain object-center bg-slate-200"
               sizes="(max-width: 640px) 100vw, 640px"
               priority
             />
