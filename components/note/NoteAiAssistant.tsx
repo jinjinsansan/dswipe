@@ -79,6 +79,8 @@ const countBullets = (text: string): number =>
 
 const estimateReadingTimeSeconds = (length: number): number => Math.max(15, Math.ceil((length / 420) * 60));
 
+const CONTEXT_FIELD_VISIBLE_TABS: NoteAiAssistantTab[] = ['rewrite', 'structure', 'review'];
+
 const SAFETY_GUIDE_STORAGE_KEY = 'note-ai-assistant-safety-dismissed-v1';
 
 const FEEDBACK_RATING_OPTIONS: Array<{
@@ -1180,30 +1182,32 @@ export default function NoteAiAssistant({
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">想定読者（任意）</label>
-          <input
-            type="text"
-            value={audience}
-            onChange={(event) => setAudience(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            placeholder="例：副業で月5万円を目指す社会人"
-            disabled={disabled}
-          />
+      {CONTEXT_FIELD_VISIBLE_TABS.includes(activeTab) ? (
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">想定読者（任意）</label>
+            <input
+              type="text"
+              value={audience}
+              onChange={(event) => setAudience(event.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              placeholder="例：副業で月5万円を目指す社会人"
+              disabled={disabled}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">希望するトーン（任意）</label>
+            <input
+              type="text"
+              value={tone}
+              onChange={(event) => setTone(event.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              placeholder="例：信頼感のある丁寧な語り口"
+              disabled={disabled}
+            />
+          </div>
         </div>
-        <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">希望するトーン（任意）</label>
-          <input
-            type="text"
-            value={tone}
-            onChange={(event) => setTone(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            placeholder="例：信頼感のある丁寧な語り口"
-            disabled={disabled}
-          />
-        </div>
-      </div>
+      ) : null}
 
       {renderHistorySection()}
 
