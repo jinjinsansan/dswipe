@@ -53,6 +53,7 @@
     "redirectingToCheckout": "Redirecting to the checkout page. Please refresh after completing payment.",
     "checkoutUrlError": "Failed to retrieve the checkout URL.",
     "genericPurchaseError": "Purchase failed. Please try again.",
+    "pointsBalanceInsufficient": "Your point balance is too low. Please buy more points or switch to JPY checkout.",
     "initializing": "Initializing...",
     "loading": "Loading...",
     "notFound": "Swipe Column not found",

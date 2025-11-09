@@ -64,7 +64,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
   const notePublicT = useTranslations('notePublic');
   const format = useFormatter();
   const locale = useLocale();
-  const { token, isAuthenticated, isInitialized, user } = useAuthStore();
+  const { token, isAuthenticated, isInitialized, user, pointBalance } = useAuthStore();
 
   const [note, setNote] = useState<PublicNoteDetail | null>(null);
   const [loading, setLoading] = useState<LoadingState>('loading');
@@ -73,6 +73,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<'points' | 'yen'>('points');
+  const [hasManualMethodSelection, setHasManualMethodSelection] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
 
   const formatDate = useCallback(
@@ -109,6 +110,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           });
       const data = response.data;
       setNote(data);
+      setHasManualMethodSelection(false);
       if (data.allow_point_purchase) {
         setSelectedMethod('points');
       } else if (data.allow_jpy_purchase) {
@@ -126,10 +128,13 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
             : await publicApi.getNote(slug!, { locale });
           const fallbackData = fallback.data;
           setNote(fallbackData);
+          setHasManualMethodSelection(false);
           if (fallbackData.allow_point_purchase) {
             setSelectedMethod('points');
           } else if (fallbackData.allow_jpy_purchase) {
             setSelectedMethod('yen');
+          } else {
+            setSelectedMethod('points');
           }
           setLoading('idle');
           setError(null);
@@ -144,6 +149,32 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       setLoading('error');
     }
   }, [shareToken, slug, token, t, locale]);
+
+  useEffect(() => {
+    if (!note || hasManualMethodSelection) {
+      return;
+    }
+    if (note.allow_point_purchase && note.allow_jpy_purchase) {
+      if (pointBalance < (note.price_points ?? 0)) {
+        setSelectedMethod('yen');
+        return;
+      }
+      setSelectedMethod('points');
+      return;
+    }
+    if (note.allow_point_purchase) {
+      setSelectedMethod('points');
+      return;
+    }
+    if (note.allow_jpy_purchase) {
+      setSelectedMethod('yen');
+    }
+  }, [note, pointBalance, hasManualMethodSelection]);
+
+  const handleMethodSelect = useCallback((method: 'points' | 'yen') => {
+    setHasManualMethodSelection(true);
+    setSelectedMethod(method);
+  }, []);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -218,9 +249,16 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     } catch (err: unknown) {
       const { detail } = extractErrorInfo(err);
       setPurchaseState('error');
-      setPurchaseError(
-        typeof detail === 'string' ? detail : t('genericPurchaseError')
-      );
+      const detailMessage = typeof detail === 'string' ? detail : null;
+      if (detailMessage) {
+        if (detailMessage.includes('ポイントが不足')) {
+          setPurchaseError(t('pointsBalanceInsufficient'));
+        } else {
+          setPurchaseError(detailMessage);
+        }
+      } else {
+        setPurchaseError(t('genericPurchaseError'));
+      }
     }
   };
 
@@ -415,7 +453,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                     {note.allow_point_purchase && (
                       <button
                         type="button"
-                        onClick={() => setSelectedMethod('points')}
+                        onClick={() => handleMethodSelect('points')}
                         className={`rounded-xl border px-4 py-3 text-left transition ${
                           isPointsSelected
                             ? 'border-blue-400 bg-white'
@@ -434,7 +472,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                     {note.allow_jpy_purchase && (
                       <button
                         type="button"
-                        onClick={() => setSelectedMethod('yen')}
+                        onClick={() => handleMethodSelect('yen')}
                         className={`rounded-xl border px-4 py-3 text-left transition ${
                           !isPointsSelected
                             ? 'border-emerald-400 bg-white'

@@ -53,6 +53,7 @@
     "redirectingToCheckout": "決済ページに遷移します。完了後に再読み込みしてください。",
     "checkoutUrlError": "決済URLの取得に失敗しました",
     "genericPurchaseError": "購入に失敗しました。もう一度お試しください。",
+    "pointsBalanceInsufficient": "ポイント残高が不足しています。ポイントを購入するか、日本円決済を選択してください。",
     "initializing": "初期化中...",
     "loading": "読み込み中...",
     "notFound": "Swipeコラムが見つかりませんでした",
