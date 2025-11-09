@@ -55,7 +55,7 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     href: '/admin/share-management',
-    label: 'NOTEシェア運用',
+    label: 'コラムシェア運用',
     icon: ShareIcon,
     description: 'シェア報酬・ログ・不正検知の管理',
   },
@@ -207,7 +207,7 @@ export default function AdminShell({
           </nav>
           <div className="border-t border-gray-200 px-6 py-5 text-sm text-gray-500">
             <p className="font-semibold text-gray-700">運営チームの皆さまへ</p>
-            <p className="mt-1 text-xs">この管理画面からNOTE・サロンの審査／通報対応・メンテナンス運用を統合的に行えます。</p>
+            <p className="mt-1 text-xs">この管理画面からSwipeコラム・サロンの審査／通報対応・メンテナンス運用を統合的に行えます。</p>
           </div>
         </aside>
 

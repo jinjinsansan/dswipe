@@ -21,8 +21,8 @@ async function getNoteData(slug: string) {
 }
 
 const fallbackDescription: Record<SupportedLocale, string> = {
-  ja: '有料NOTEをXでシェアして無料で読もう！',
-  en: 'Share premium NOTE articles on X and unlock them for free!',
+  ja: '有料SwipeコラムをXでシェアして無料で読もう！',
+  en: 'Share premium Swipe Columns on X and unlock them for free!',
 };
 
 const localeCode: Record<SupportedLocale, string> = {
@@ -42,16 +42,19 @@ export async function getNoteDetailMetadata(
 
   if (!note) {
     return {
-      title: locale === 'ja' ? 'NOTE - D-swipe' : 'NOTE | D-swipe',
+      title: locale === 'ja' ? 'Swipeコラム - D-swipe' : 'Swipe Column | D-swipe',
     };
   }
 
-  const title = note.title || 'NOTE';
+  const fallbackTitle = locale === 'ja' ? 'Swipeコラム' : 'Swipe Column';
+  const brandSuffix = locale === 'ja' ? 'D-swipe Swipeコラム' : 'D-swipe Swipe Column';
+
+  const title = note.title || fallbackTitle;
   const description = note.excerpt || fallbackDescription[locale];
   const coverImage = note.cover_image_url || 'https://d-swipe.com/og-default.svg';
 
   return {
-    title: `${title} | D-swipe NOTE`,
+    title: `${title} | ${brandSuffix}`,
     description,
     openGraph: {
       title,

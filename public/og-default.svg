@@ -17,11 +17,11 @@
   
   <!-- サブタイトル -->
   <text x="600" y="360" font-family="sans-serif" font-size="48" fill="rgba(255,255,255,0.9)" text-anchor="middle">
-    NOTE
+    Swipeコラム
   </text>
   
   <!-- 説明 -->
   <text x="600" y="450" font-family="sans-serif" font-size="32" fill="rgba(255,255,255,0.8)" text-anchor="middle">
-    有料NOTEをXでシェアして無料で読もう
+    有料SwipeコラムをXでシェアして無料で読もう
   </text>
 </svg>

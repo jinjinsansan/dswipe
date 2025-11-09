@@ -97,7 +97,7 @@ export default function NoteModerationCenter() {
       const { data } = await adminApi.listNoteModeration(params);
       setNotes(data.data);
     } catch (error) {
-      setListError(extractErrorMessage(error, 'NOTE一覧の取得に失敗しました'));
+      setListError(extractErrorMessage(error, 'Swipeコラム一覧の取得に失敗しました'));
     } finally {
       setListLoading(false);
     }
@@ -110,7 +110,7 @@ export default function NoteModerationCenter() {
       const { data } = await adminApi.getNoteModerationDetail(noteId);
       setNoteDetail(data);
     } catch (error) {
-      setDetailError(extractErrorMessage(error, 'NOTE詳細の取得に失敗しました'));
+      setDetailError(extractErrorMessage(error, 'Swipeコラム詳細の取得に失敗しました'));
     } finally {
       setDetailLoading(false);
     }
@@ -155,28 +155,28 @@ export default function NoteModerationCenter() {
     try {
       setActionTarget(note.id);
       await adminApi.unpublishUserNote(note.author_id, note.id, reason ? { reason } : undefined);
-      setActionMessage('NOTEを非公開にしました');
+      setActionMessage('Swipeコラムを非公開にしました');
       await fetchNotes();
       await fetchDetail(note.id);
     } catch (error) {
-      setActionMessage(extractErrorMessage(error, 'NOTEの非公開に失敗しました'));
+      setActionMessage(extractErrorMessage(error, 'Swipeコラムの非公開に失敗しました'));
     } finally {
       setActionTarget(null);
     }
   };
 
   const handleDelete = async (note: NoteModerationItem) => {
-    const confirmed = window.confirm('このNOTEを削除しますか？この操作は元に戻せません。');
+    const confirmed = window.confirm('このSwipeコラムを削除しますか？この操作は元に戻せません。');
     if (!confirmed) return;
     const reason = window.prompt('削除理由を入力してください（任意）') ?? undefined;
     try {
       setActionTarget(note.id);
       await adminApi.deleteUserNote(note.author_id, note.id, reason ? { reason } : undefined);
-      setActionMessage('NOTEを削除しました');
+      setActionMessage('Swipeコラムを削除しました');
       setSelectedNoteId(null);
       await fetchNotes();
     } catch (error) {
-      setActionMessage(extractErrorMessage(error, 'NOTEの削除に失敗しました'));
+      setActionMessage(extractErrorMessage(error, 'Swipeコラムの削除に失敗しました'));
     } finally {
       setActionTarget(null);
     }
@@ -192,9 +192,9 @@ export default function NoteModerationCenter() {
       <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-gray-900">NOTEモデレーションセンター</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Swipeコラムモデレーションセンター</h2>
             <p className="text-sm text-gray-600">
-              公開中のNOTEステータス、購入履歴、シェア状況を確認して審査アクションを実行できます。
+              公開中のSwipeコラムステータス、購入履歴、シェア状況を確認して審査アクションを実行できます。
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -216,7 +216,7 @@ export default function NoteModerationCenter() {
               type="text"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="NOTEタイトルで検索"
+              placeholder="Swipeコラムタイトルで検索"
               className="flex-1 bg-transparent text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none"
             />
           </div>
@@ -290,7 +290,7 @@ export default function NoteModerationCenter() {
             <table className="w-full text-sm text-gray-700">
               <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th className="px-4 py-3 text-left">NOTE</th>
+                  <th className="px-4 py-3 text-left">Swipeコラム</th>
                   <th className="px-4 py-3 text-left">販売者</th>
                   <th className="px-4 py-3 text-left">リスク</th>
                   <th className="px-4 py-3 text-center">購入</th>
@@ -308,7 +308,7 @@ export default function NoteModerationCenter() {
                 ) : notes.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-12 text-center text-sm text-gray-500">
-                      対象のNOTEがありません
+                      対象のSwipeコラムがありません
                     </td>
                   </tr>
                 ) : (
@@ -366,7 +366,7 @@ export default function NoteModerationCenter() {
         <div className="flex h-full flex-col gap-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             {!selectedNoteId && (
-              <div className="text-sm text-gray-500">NOTEを選択すると詳細が表示されます</div>
+              <div className="text-sm text-gray-500">Swipeコラムを選択すると詳細が表示されます</div>
             )}
             {selectedNoteId && (
               detailLoading ? (
@@ -483,7 +483,7 @@ export default function NoteModerationCenter() {
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-gray-500">NOTEを選択すると詳細が表示されます</div>
+                <div className="text-sm text-gray-500">Swipeコラムを選択すると詳細が表示されます</div>
               )
             )}
           </div>

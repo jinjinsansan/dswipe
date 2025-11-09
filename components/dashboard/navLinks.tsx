@@ -125,7 +125,7 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
   },
   note: {
     labelKey: 'groups.note',
-    defaultLabel: 'NOTEメニュー',
+    defaultLabel: 'コラム',
     headingClass: 'text-slate-500',
     desktop: {
       base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
@@ -235,9 +235,9 @@ const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
   { href: '/profile', labelKey: 'links.profile', defaultLabel: 'プロフィール', icon: <UserCircleIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 5 },
   { href: '/lp/create', labelKey: 'links.lpCreate', defaultLabel: '新規LP作成', icon: <Square2StackIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 10 },
   { href: '/products', labelKey: 'links.products', defaultLabel: 'AllLP', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'lp', order: 30 },
-  { href: '/note/create', labelKey: 'links.noteCreate', defaultLabel: '新規NOTE作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
-  { href: '/note', labelKey: 'links.noteEdit', defaultLabel: 'NOTE編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
-  { href: '/notes', labelKey: 'links.notes', defaultLabel: 'AllNOTES', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
+  { href: '/note/create', labelKey: 'links.noteCreate', defaultLabel: '新規コラム作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
+  { href: '/note', labelKey: 'links.noteEdit', defaultLabel: 'コラム編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
+  { href: '/notes', labelKey: 'links.notes', defaultLabel: '全コラム', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
   { href: '/salons', labelKey: 'links.salons', defaultLabel: 'サロン一覧', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
   { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
   { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },

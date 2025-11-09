@@ -208,7 +208,7 @@ export default function SalesHistoryClient() {
         icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />,
       },
       {
-        label: "NOTE売上件数",
+        label: "Swipeコラム売上件数",
         value: (summary?.note_orders ?? 0).toLocaleString(),
         accent: "bg-sky-50 text-sky-600 border-sky-200",
         icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />,
@@ -284,7 +284,7 @@ export default function SalesHistoryClient() {
   return (
     <DashboardLayout
       pageTitle="販売履歴"
-      pageSubtitle="LP商品・有料NOTE・オンラインサロンの販売状況と支払い予定を確認できます"
+      pageSubtitle="LP商品・有料Swipeコラム・オンラインサロンの販売状況と支払い予定を確認できます"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -619,8 +619,8 @@ export default function SalesHistoryClient() {
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">有料NOTE売上</h2>
-              <p className="text-sm text-slate-500">ポイント / 日本円決済で販売されたNOTEの履歴です</p>
+              <h2 className="text-lg font-semibold text-slate-900">有料Swipeコラム売上</h2>
+              <p className="text-sm text-slate-500">ポイント / 日本円決済で販売されたSwipeコラムの履歴です</p>
             </div>
             <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
               {history?.notes.length ?? 0} 件
@@ -651,7 +651,7 @@ export default function SalesHistoryClient() {
                             <BookOpenIcon className="h-5 w-5" aria-hidden="true" />
                           </span>
                           <div className="flex flex-col gap-1">
-                            <p className="text-sm font-semibold text-slate-900">{sale.note_title ?? "タイトル未設定のNOTE"}</p>
+                            <p className="text-sm font-semibold text-slate-900">{sale.note_title ?? "タイトル未設定のSwipeコラム"}</p>
                             <p className="text-xs text-slate-500">購入者: {sale.buyer_username ? `@${sale.buyer_username}` : "不明"}</p>
                           </div>
                         </div>
@@ -662,7 +662,7 @@ export default function SalesHistoryClient() {
                               href={noteLink}
                               className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
                             >
-                              NOTEを開く
+                              Swipeコラムを開く
                               <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
                             </Link>
                           ) : null}
@@ -686,7 +686,7 @@ export default function SalesHistoryClient() {
             </ul>
           ) : (
             <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
-              有料NOTEの販売履歴はまだありません。
+              有料Swipeコラムの販売履歴はまだありません。
             </div>
           )}
         </section>

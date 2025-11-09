@@ -223,7 +223,7 @@ export default function ShareManagementPage() {
 
   return (
     <AdminShell
-      pageTitle="NOTEシェア管理"
+      pageTitle="コラムシェア管理"
       pageSubtitle="シェア統計・不正検知・報酬設定"
       sideNavItems={SHARE_NAV_ITEMS}
       activeSideNav={activeTab}
@@ -300,11 +300,11 @@ export default function ShareManagementPage() {
                   </div>
                 </div>
 
-                {/* トップNOTE */}
+            {/* トップSwipeコラム */}
                 <div className="rounded-xl border border-slate-200 bg-white p-6">
                   <div className="mb-4 flex items-center gap-2">
                     <DocumentTextIcon className="h-6 w-6 text-slate-600" />
-                    <h3 className="text-lg font-semibold text-slate-900">トップNOTE</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">トップSwipeコラム</h3>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -360,7 +360,7 @@ export default function ShareManagementPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        <th className="px-4 py-3">NOTE</th>
+                        <th className="px-4 py-3">Swipeコラム</th>
                         <th className="px-4 py-3">著者</th>
                         <th className="px-4 py-3">シェア者</th>
                         <th className="px-4 py-3">日時</th>
@@ -466,7 +466,7 @@ export default function ShareManagementPage() {
                             </div>
                             <p className="mt-2 text-sm text-slate-700">{alert.description}</p>
                             <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
-                              {alert.note_title && <span>NOTE: {alert.note_title}</span>}
+                              {alert.note_title && <span>Swipeコラム: {alert.note_title}</span>}
                               {alert.username && <span>ユーザー: @{alert.username}</span>}
                               <span>{new Date(alert.created_at).toLocaleString('ja-JP')}</span>
                             </div>

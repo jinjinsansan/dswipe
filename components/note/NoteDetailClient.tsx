@@ -243,7 +243,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
   }, [note?.slug, shareToken, shareUrl, slug, basePath]);
 
   const shareLinks = useMemo(() => {
-    const title = note?.title ? `${note.title}` : 'NOTE';
+    const title = note?.title ? `${note.title}` : 'Swipeコラム';
     const encodedUrl = encodeURIComponent(canonicalUrl);
     const encodedTitle = encodeURIComponent(title);
     return {
@@ -308,7 +308,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
           <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
             <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
-            NOTE
+            Swipeコラム
           </span>
           <span>
             {t('publishedAtLabel')}{' '}

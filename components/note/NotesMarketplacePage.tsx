@@ -267,7 +267,7 @@ function SpinIndicator() {
 function DefaultCover() {
   return (
     <div className="flex h-full w-full items-center justify-center bg-slate-200 text-xs font-semibold text-slate-500">
-      NOTE
+      Swipeコラム
     </div>
   );
 }

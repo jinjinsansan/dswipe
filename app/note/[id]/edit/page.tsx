@@ -266,7 +266,7 @@ export default function NoteEditPage() {
         fetchShareStats();
       } catch (err: unknown) {
         const detail = extractErrorDetail(err);
-        setErrorMessage(typeof detail === 'string' ? detail : 'NOTEが見つかりませんでした');
+        setErrorMessage(typeof detail === 'string' ? detail : 'Swipeコラムが見つかりませんでした');
       } finally {
         setLoading(false);
       }
@@ -693,7 +693,7 @@ export default function NoteEditPage() {
     }
 
     if (!noteId) {
-      setErrorMessage('NOTE IDが見つかりません');
+      setErrorMessage('SwipeコラムIDが見つかりません');
       return;
     }
 
@@ -739,7 +739,7 @@ export default function NoteEditPage() {
       setShareTokenRotatedAt(response.data?.share_token_rotated_at ?? null);
     } catch (err: unknown) {
       const detail = extractErrorDetail(err);
-      setErrorMessage(typeof detail === 'string' ? detail : 'NOTEの保存に失敗しました');
+      setErrorMessage(typeof detail === 'string' ? detail : 'Swipeコラムの保存に失敗しました');
     } finally {
       setSaving(false);
     }
@@ -862,10 +862,10 @@ export default function NoteEditPage() {
   }
 
   const subtitle =
-    status === 'published' ? '公開中の記事を編集しています' : '下書きの記事を編集しています';
+    status === 'published' ? '公開中のSwipeコラムを編集しています' : '下書きのSwipeコラムを編集しています';
 
   return (
-    <DashboardLayout pageTitle="NOTE編集" pageSubtitle={subtitle}>
+    <DashboardLayout pageTitle="Swipeコラム編集" pageSubtitle={subtitle}>
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 sm:gap-3">

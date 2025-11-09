@@ -129,7 +129,7 @@ export default function UserProfilePage() {
   return (
     <DashboardLayout
       pageTitle={`${username}のプロフィール`}
-      pageSubtitle={`${stats.totalProducts}商品 • ${stats.totalSales}販売 • ${stats.totalNotes}NOTE • ${stats.totalSalons}サロン`}
+      pageSubtitle={`${stats.totalProducts}商品 • ${stats.totalSales}販売 • ${stats.totalNotes}Swipeコラム • ${stats.totalSalons}サロン`}
       requireAuth={false}
     >
       {/* Profile Header */}
@@ -170,7 +170,7 @@ export default function UserProfilePage() {
                 </div>
                 <div className="text-slate-600">
                   <span className="font-semibold text-amber-600">{stats.totalNotes}</span>
-                  <span className="text-slate-500 ml-1">公開NOTE</span>
+                  <span className="text-slate-500 ml-1">公開Swipeコラム</span>
                 </div>
                 <div className="text-slate-600">
                   <span className="font-semibold text-sky-600">{stats.totalSalons}</span>
@@ -352,11 +352,11 @@ export default function UserProfilePage() {
 
       {/* Notes Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">公開されたNOTE</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">公開されたSwipeコラム</h2>
 
         {notes.length === 0 ? (
           <div className="text-center py-12 bg-white border border-slate-200 shadow-sm">
-            <p className="text-slate-600 text-lg mb-3">公開NOTEはまだありません</p>
+            <p className="text-slate-600 text-lg mb-3">公開Swipeコラムはまだありません</p>
             <p className="text-slate-500 text-sm">ユーザー名: {username}</p>
           </div>
         ) : (

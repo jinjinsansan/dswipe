@@ -881,8 +881,8 @@ export default function DashboardPage() {
                   <DocumentTextIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE概要</div>
-                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{noteSummary.total_notes}本のNOTE</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">Swipeコラム概要</div>
+                  <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{noteSummary.total_notes}本のSwipeコラム</div>
                 </div>
               </div>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium">
@@ -899,7 +899,7 @@ export default function DashboardPage() {
                   <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE売上</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">Swipeコラム売上</div>
                   <div className="text-slate-900 text-xs sm:text-sm font-semibold">{totalNoteSalesLabel}</div>
                 </div>
               </div>
@@ -938,7 +938,7 @@ export default function DashboardPage() {
                   <SparklesIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">NOTE公開トレンド</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">Swipeコラム公開トレンド</div>
                   <div className="text-slate-900 text-xs sm:text-sm font-semibold truncate">{latestNotePublishedLabel}</div>
                 </div>
               </div>
@@ -946,10 +946,10 @@ export default function DashboardPage() {
                 直近30日: {noteSummary.recent_published_count}本公開
               </p>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
-                有料NOTE平均価格: {averagePaidPriceLabel}
+                有料Swipeコラム平均価格: {averagePaidPriceLabel}
               </p>
               <p className="text-slate-500 text-[10px] sm:text-xs font-medium mt-1">
-                有料NOTE: {noteSummary.paid_notes}本 / 無料: {noteSummary.free_notes}本
+                有料Swipeコラム: {noteSummary.paid_notes}本 / 無料: {noteSummary.free_notes}本
               </p>
             </div>
 
@@ -959,7 +959,7 @@ export default function DashboardPage() {
                   <TagIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">人気NOTEとカテゴリ</div>
+                  <div className="text-slate-500 text-[10px] sm:text-xs font-medium">人気Swipeコラムとカテゴリ</div>
                   {topNote ? (
                     topNote.slug ? (
                       <Link

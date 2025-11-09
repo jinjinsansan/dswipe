@@ -132,7 +132,7 @@ export default function NoteDashboardPage() {
         void fetchShareStats(fetchedNotes);
       } catch (err: any) {
         const detail = err?.response?.data?.detail;
-        setError(typeof detail === 'string' ? detail : 'NOTE一覧の取得に失敗しました');
+        setError(typeof detail === 'string' ? detail : 'Swipeコラム一覧の取得に失敗しました');
       } finally {
         setLoading(false);
         setIsRefreshing(false);
@@ -187,8 +187,8 @@ export default function NoteDashboardPage() {
 
   return (
     <DashboardLayout
-      pageTitle="NOTE編集"
-      pageSubtitle="作成したNOTE記事を管理・公開できます"
+      pageTitle="コラム編集"
+      pageSubtitle="作成したSwipeコラムを管理・公開できます"
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-3 py-4 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -209,7 +209,7 @@ export default function NoteDashboardPage() {
               className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
             >
               <DocumentPlusIcon className="h-4 w-4" aria-hidden="true" />
-              新規NOTE作成
+              新規コラム作成
             </Link>
           </div>
         </div>
@@ -268,13 +268,13 @@ export default function NoteDashboardPage() {
             <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
           ) : filteredNotes.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
-              <p>該当するNOTE記事がありません。</p>
+              <p>該当するSwipeコラムがありません。</p>
               <Link
                 href="/note/create"
                 className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
               >
                 <DocumentPlusIcon className="h-4 w-4" aria-hidden="true" />
-                新規NOTE作成
+                新規コラム作成
               </Link>
             </div>
           ) : (

@@ -283,7 +283,7 @@ export default function HomeSwiper() {
                         <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.5]" />
                       </div>
                       <div>
-                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 mb-1">有料・無料NOTE記事作成</h3>
+                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 mb-1">有料・無料Swipeコラム作成</h3>
                         <p className="text-xs sm:text-sm text-slate-600 font-medium">記事型コンテンツも販売可能</p>
                       </div>
                     </div>
@@ -340,7 +340,7 @@ export default function HomeSwiper() {
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold text-white shadow-md">
                         1
                       </div>
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900">スワイプLPかNOTEを作成</h3>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900">スワイプLPかSwipeコラムを作成</h3>
                     </div>
                     <p className="text-xs sm:text-sm text-slate-600 font-medium text-left pl-13 sm:pl-15">AIアシスタントで5分で完成</p>
                   </div>
@@ -583,7 +583,7 @@ export default function HomeSwiper() {
                 </Link>
 
                 <p className="mt-6 text-sm text-slate-600 font-medium">
-                  有料NOTE機能付き・商材審査なし・報酬支払はUSDT
+                  有料Swipeコラム機能付き・商材審査なし・報酬支払はUSDT
                 </p>
               </div>
             </div>

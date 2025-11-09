@@ -9,8 +9,8 @@
     }
   },
   "notePublic": {
-    "pageTitle": "All Notes",
-    "pageSubtitle": "Discover premium and free NOTE articles from top creators.",
+    "pageTitle": "Swipe Columns",
+    "pageSubtitle": "Discover premium and free Swipe Columns from top creators.",
     "filters": {
       "all": "All",
       "free": "Free",
@@ -33,10 +33,10 @@
       "other": "Other"
     },
     "loading": "Loading...",
-    "loadError": "Failed to load NOTE listings.",
-    "emptyTitle": "No notes found",
-    "emptyDescription": "Try adjusting the filters or using a different keyword. You can also toggle between free and paid notes.",
-    "emptyBadge": "New NOTE titles are coming soon",
+    "loadError": "Failed to load Swipe Column listings.",
+    "emptyTitle": "No Swipe Columns found",
+    "emptyDescription": "Try adjusting the filters or using a different keyword. You can also toggle between free and paid Swipe Columns.",
+    "emptyBadge": "New Swipe Columns are coming soon",
     "unpublishedLabel": "Draft",
     "paidBadge": "PAID",
     "freeBadge": "FREE",
@@ -44,26 +44,26 @@
   },
   "noteDetail": {
     "unpublishedLabel": "Unpublished",
-    "fetchError": "Failed to load this note.",
-    "pointsNotAvailable": "This note is not available for point purchases.",
-    "yenNotAvailable": "This note does not support JPY payments.",
-    "confirmPointsPurchase": "Do you want to unlock this note with points?\n\nTitle: {title}\nPrice: {pricePoints, number} pts\n\nYour balance will be reduced. Continue?",
-    "confirmYenPurchase": "Do you want to purchase this note in JPY?\n\nTitle: {title}\nPrice: ¥{priceYen, number}\n\nYou will be redirected to the one.lat checkout page. Continue?",
+    "fetchError": "Failed to load this Swipe Column.",
+    "pointsNotAvailable": "This Swipe Column is not available for point purchases.",
+    "yenNotAvailable": "This Swipe Column does not support JPY payments.",
+    "confirmPointsPurchase": "Do you want to unlock this Swipe Column with points?\n\nTitle: {title}\nPrice: {pricePoints, number} pts\n\nYour balance will be reduced. Continue?",
+    "confirmYenPurchase": "Do you want to purchase this Swipe Column in JPY?\n\nTitle: {title}\nPrice: ¥{priceYen, number}\n\nYou will be redirected to the one.lat checkout page. Continue?",
     "pointsPurchaseSuccess": "Purchase completed. Remaining balance: {remainingPoints, number} pts",
     "redirectingToCheckout": "Redirecting to the checkout page. Please refresh after completing payment.",
     "checkoutUrlError": "Failed to retrieve the checkout URL.",
     "genericPurchaseError": "Purchase failed. Please try again.",
     "initializing": "Initializing...",
     "loading": "Loading...",
-    "notFound": "Note not found",
+    "notFound": "Swipe Column not found",
     "loginToPurchase": "Sign in to purchase",
     "publishedAtLabel": "Published:",
     "priceLabel": "Price:",
     "priceNotConfigured": "Payment not configured",
     "freeLabel": "Free",
     "authorLabel": "Author:",
-    "youAreAuthor": "This is your note",
-    "paidContentTitle": "Premium content ahead",
+    "youAreAuthor": "This is your Swipe Column",
+    "paidContentDescription": "Unlock the remainder of this Swipe Column to continue reading.",
     "paidContentDescription": "Unlock the remainder of this note to continue reading.",
     "pointsPaymentTitle": "Pay with points",
     "pointsPaymentNote": "Points will be deducted from your balance.",
@@ -79,8 +79,8 @@
     "shareOnX": "Share on X",
     "shareOnLine": "Share on LINE",
     "accessGrantedMessage": "You currently have access to the premium section.",
-    "backToNotes": "← Back to All Notes",
-    "editNote": "Edit NOTE"
+    "backToNotes": "← Back to Swipe Columns",
+    "editNote": "Edit Swipe Column"
   },
   "noteRenderer": {
     "paidAreaLabel": "Paid readers only beyond this point",
@@ -166,21 +166,21 @@
     }
   },
   "noteCreate": {
-    "pageTitle": "Create NOTE",
+    "pageTitle": "Create Swipe Column",
     "pageSubtitle": "Compose note-style articles with flexible content blocks",
     "labels": {
       "title": "Title",
       "excerpt": "Summary",
       "coverImage": "Cover image",
       "draftStatusTitle": "Draft status",
-      "draftStatusDescription": "Saving from this page keeps the NOTE as a draft. Publish it from the edit screen.",
+      "draftStatusDescription": "Saving from this page keeps the Swipe Column as a draft. Publish it from the edit screen.",
       "categoryTitle": "Choose categories",
       "categoryDescription": "Select up to {max} categories that best match your topic.",
       "categoriesSelected": "Selected:",
       "visibilityTitle": "Choose visibility",
       "visibilityDescription": "Limited visibility generates a shareable URL automatically after saving.",
-      "paidTitle": "Sell as a paid NOTE",
-      "paidDescription": "Marking blocks as paid automatically treats the NOTE as paid content.",
+      "paidTitle": "Sell as a paid Swipe Column",
+      "paidDescription": "Marking blocks as paid automatically treats the Swipe Column as paid content.",
       "manualPaidToggle": "Manually enable paid status",
       "pointsPayment": "Points payment",
       "enable": "Enable",
@@ -191,7 +191,7 @@
       "taxInclusive": "Treat price as tax inclusive",
       "paidStatus": {
         "free": "All blocks will be published for free.",
-        "withPaidBlocks": "Paid blocks detected; the NOTE will be sold using the selected payment methods.",
+        "withPaidBlocks": "Paid blocks detected; the Swipe Column will be sold using the selected payment methods.",
         "manual": "Paid status is enabled. Review payment methods and pricing before publishing."
       },
       "salonAccessTitle": "Allow salon members to view for free",
@@ -200,7 +200,7 @@
       "untitledSalon": "Untitled salon",
       "salonMemberCount": "{count} members",
       "contentBlocksTitle": "Content blocks",
-      "contentBlocksDescription": "Combine paragraphs, headings, images, and more to structure your NOTE.",
+      "contentBlocksDescription": "Combine paragraphs, headings, images, and more to structure your Swipe Column.",
       "blockCount": "{count} blocks"
     },
     "visibility": {
@@ -219,7 +219,7 @@
     },
     "placeholders": {
       "title": "Example: The complete workflow behind my ¥1M/month online course",
-      "excerpt": "Add a summary or lead paragraph for the NOTE.",
+      "excerpt": "Add a summary or lead paragraph for the Swipe Column.",
       "coverImageUrl": "https://...",
       "pointsExample": "e.g. 1200",
       "jpyExample": "e.g. 14800"
@@ -233,11 +233,10 @@
       "coverUploadMissingUrl": "Upload response does not contain a URL.",
       "coverUploadFailed": "Failed to upload the cover image.",
       "titleTooShort": "Enter a title with at least {min} characters.",
-      "bodyRequired": "Add content to the NOTE.",
-      "requirePaymentMethodForPaid": "Enable at least one payment method for paid NOTES.",
-      "invalidPointsPrice": "Set a points price of at least 1 point.",
-      "invalidYenPrice": "Set a JPY price of at least ¥1.",
-      "createFailed": "Failed to create the NOTE."
+      "bodyRequired": "Add content to the Swipe Column.",
+      "requirePaymentMethodForPaid": "Enable at least one payment method for paid Swipe Columns.",
+      "createFailed": "Failed to create the Swipe Column.",
+      "invalidYenPrice": "Set a JPY price of at least ¥1."
     },
     "messages": {
       "savedDraft": "Saved as a draft. Redirecting to the edit screen."
@@ -816,11 +815,11 @@
   },
   "noteShare": {
     "metadata": {
-      "notFoundTitle": "Private NOTE | D-swipe",
-      "notFoundDescription": "This is a private NOTE page.",
-      "defaultTitle": "Private NOTE",
-      "defaultDescription": "Only those with the shared link can view this NOTE.",
-      "titleTemplate": "{title} | Private NOTE",
+      "notFoundTitle": "Private Swipe Column | D-swipe",
+      "notFoundDescription": "This is a private Swipe Column page.",
+      "defaultTitle": "Private Swipe Column",
+      "defaultDescription": "Only those with the shared link can view this Swipe Column.",
+      "titleTemplate": "{title} | Private Swipe Column",
       "siteName": "D-swipe"
     }
   },
@@ -1053,7 +1052,7 @@
   "media": {
     "page": {
       "title": "Media library",
-      "subtitle": "Upload images or videos and reuse them in your LPs and NOTES instantly.",
+      "subtitle": "Upload images or videos and reuse them in your LPs and Swipe Columns instantly.",
       "upload": {
         "heading": "Upload",
         "description": "PNG, JPG, and WEBP are supported. You can select multiple files at once.",
@@ -1285,7 +1284,7 @@
       "groups": {
         "core": "Home",
         "lp": "LPs",
-        "note": "Notes",
+        "note": "Columns",
         "salon": "Salons",
         "points": "Points",
         "line": "LINE",
@@ -1299,9 +1298,9 @@
         "lpCreate": "New LP",
         "products": "All LPs",
         "productsManage": "Manage LPs",
-        "noteCreate": "New NOTE",
-        "noteEdit": "Edit NOTE",
-        "notes": "All NOTES",
+        "noteCreate": "New Swipe Column",
+        "noteEdit": "Edit Swipe Column",
+        "notes": "Swipe Columns",
         "salons": "Salons",
         "salonsCreate": "New salon",
         "salonsAll": "All salons",

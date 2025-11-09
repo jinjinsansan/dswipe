@@ -59,9 +59,9 @@ type FeaturedKey = 'product' | 'note' | 'salon';
 
 const TABS: Array<AdminPageTab & { id: TabKey }> = [
   { id: 'users', label: 'ユーザー管理', icon: UserGroupIcon },
-  { id: 'moderation', label: 'NOTEモデレーション', icon: DocumentMagnifyingGlassIcon },
+  { id: 'moderation', label: 'Swipeコラムモデレーション', icon: DocumentMagnifyingGlassIcon },
   { id: 'salons', label: 'サロン管理', icon: AcademicCapIcon },
-  { id: 'share-management', label: 'NOTEシェア管理', icon: ShareIcon },
+  { id: 'share-management', label: 'コラムシェア管理', icon: ShareIcon },
   { id: 'marketplace', label: 'マーケット監視', icon: BuildingStorefrontIcon },
   { id: 'analytics', label: 'ポイント分析', icon: ChartBarIcon },
   { id: 'announcements', label: 'お知らせ管理', icon: MegaphoneIcon },
@@ -141,7 +141,7 @@ const MAINTENANCE_SCOPE_OPTIONS = [
   { value: 'all', label: 'すべて' },
   { value: 'global', label: '全体' },
   { value: 'lp', label: 'ランディングページ' },
-  { value: 'note', label: 'NOTE' },
+  { value: 'note', label: 'Swipeコラム' },
   { value: 'salon', label: 'サロン' },
   { value: 'points', label: 'ポイント決済' },
   { value: 'products', label: 'プロダクト' },
@@ -427,7 +427,7 @@ export default function AdminPanelPage() {
       setFeaturedNotes(rows ?? []);
       setFeaturedErrors((prev) => ({ ...prev, note: undefined }));
     } catch (error) {
-      const message = getErrorMessage(error, '人気NOTE一覧の取得に失敗しました');
+      const message = getErrorMessage(error, '人気Swipeコラム一覧の取得に失敗しました');
       console.error(error);
       setFeaturedErrors((prev) => ({ ...prev, note: message }));
     } finally {
@@ -811,7 +811,7 @@ export default function AdminPanelPage() {
   };
 
   const getNoteTitle = (noteId: string) =>
-    selectedUserDetail?.notes.find((note) => note.id === noteId)?.title ?? 'NOTE';
+    selectedUserDetail?.notes.find((note) => note.id === noteId)?.title ?? 'Swipeコラム';
 
   const handleUnpublishNote = async (noteId: string) => {
     if (!selectedUserId) return;
@@ -828,7 +828,7 @@ export default function AdminPanelPage() {
       ]);
       setUserActionError(null);
     } catch (error) {
-      const message = getErrorMessage(error, 'NOTEの非公開化に失敗しました');
+      const message = getErrorMessage(error, 'Swipeコラムの非公開化に失敗しました');
       console.error(error);
       setUserActionError(message);
     } finally {
@@ -852,7 +852,7 @@ export default function AdminPanelPage() {
       ]);
       setUserActionError(null);
     } catch (error) {
-      const message = getErrorMessage(error, 'NOTEの削除に失敗しました');
+      const message = getErrorMessage(error, 'Swipeコラムの削除に失敗しました');
       console.error(error);
       setUserActionError(message);
     } finally {
@@ -1237,7 +1237,7 @@ export default function AdminPanelPage() {
                     <span>ユーザー</span>
                     <span className="col-span-2">メール</span>
                     <span>ポイント</span>
-                    <span>NOTE</span>
+                    <span>Swipeコラム</span>
                     <span>LP</span>
                     <span>LINE</span>
                     <span>ステータス</span>
@@ -1332,7 +1332,7 @@ export default function AdminPanelPage() {
                               <div>{formatNumber(summary.point_balance)} P</div>
                                 <div>{summary.total_lp_count} LP</div>
                                 <div>
-                                  {summary.total_note_count} NOTE
+                                {summary.total_note_count} Swipeコラム
                                   <span className="text-[10px] text-gray-600"> / 公開 {summary.published_note_count}</span>
                                 </div>
                             </div>
@@ -1357,7 +1357,7 @@ export default function AdminPanelPage() {
                                 {summary.is_blocked ? 'BLOCKED' : 'ACTIVE'}
                               </span>
                               <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-600">
-                                最新NOTE: {summary.latest_note_title ? summary.latest_note_title : 'なし'}
+                                最新Swipeコラム: {summary.latest_note_title ? summary.latest_note_title : 'なし'}
                               </span>
                             </div>
                           </div>
@@ -1412,7 +1412,7 @@ export default function AdminPanelPage() {
                           <p className="mt-1 text-xl font-semibold text-gray-900">{formatPoints(selectedUserDetail.total_point_granted)}</p>
                         </div>
                         <div className="rounded-xl border border-gray-200 bg-white p-3">
-                          <p className="text-[11px] text-gray-500">NOTE作成数</p>
+                          <p className="text-[11px] text-gray-500">Swipeコラム作成数</p>
                           <p className="mt-1 text-xl font-semibold text-gray-900">{formatNumber(selectedUserDetail.total_note_count)} 件</p>
                           <p className="text-[10px] text-gray-600 mt-1">
                             公開 {formatNumber(selectedUserDetail.published_note_count)} / 最新{' '}
@@ -1530,7 +1530,7 @@ export default function AdminPanelPage() {
                       )}
 
                       <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-gray-900">NOTE 管理</h3>
+                        <h3 className="text-sm font-semibold text-gray-900">Swipeコラム管理</h3>
                         <div className="space-y-2">
                           {selectedUserDetail.notes.map((note) => {
                             const isProcessing = noteActionLoading && noteActionTarget === note.id;
@@ -1538,7 +1538,7 @@ export default function AdminPanelPage() {
                               <div key={note.id} className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-600">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
-                                    <div className="text-sm font-semibold text-gray-900">{note.title || '無題NOTE'}</div>
+                                    <div className="text-sm font-semibold text-gray-900">{note.title || '無題Swipeコラム'}</div>
                                     <div className="text-[10px] text-gray-600">slug: {note.slug}</div>
                                   </div>
                                   <div className="flex flex-col items-end gap-1 text-[10px]">
@@ -1605,7 +1605,7 @@ export default function AdminPanelPage() {
                           })}
                           {selectedUserDetail.notes.length === 0 && (
                             <div className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-xs text-gray-500">
-                              NOTEがまだ作成されていません
+                              Swipeコラムがまだ作成されていません
                             </div>
                           )}
                         </div>
@@ -1725,7 +1725,7 @@ export default function AdminPanelPage() {
                         <p className="mt-1 text-2xl font-semibold text-gray-900">{formatPoints(selectedUserDetail.total_point_granted)}</p>
                       </div>
                       <div className="rounded-xl border border-gray-200 bg-white p-4">
-                        <p className="text-xs text-gray-500">NOTE 作成数</p>
+                        <p className="text-xs text-gray-500">Swipeコラム作成数</p>
                         <p className="mt-1 text-2xl font-semibold text-gray-900">
                           {formatNumber(selectedUserDetail.total_note_count)} 件
                         </p>
@@ -1851,7 +1851,7 @@ export default function AdminPanelPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-gray-900">NOTE 管理</h3>
+                      <h3 className="text-sm font-semibold text-gray-900">Swipeコラム管理</h3>
                       <div className="border border-gray-200 rounded-xl overflow-hidden">
                         <table className="w-full text-sm text-gray-600">
                           <thead className="bg-white text-xs uppercase tracking-wide text-gray-500">
@@ -1870,7 +1870,7 @@ export default function AdminPanelPage() {
                               return (
                                 <tr key={note.id} className="align-top">
                                   <td className="px-3 py-2 text-xs text-gray-500">
-                                    <div className="font-semibold text-gray-900">{note.title || '無題NOTE'}</div>
+                                    <div className="font-semibold text-gray-900">{note.title || '無題Swipeコラム'}</div>
                                     <div className="text-[10px] text-gray-600">slug: {note.slug}</div>
                                     {Array.isArray(note.categories) && note.categories.length > 0 ? (
                                       <div className="mt-1 flex flex-wrap gap-1">
@@ -1944,7 +1944,7 @@ export default function AdminPanelPage() {
                             {selectedUserDetail.notes.length === 0 && (
                               <tr>
                                 <td colSpan={6} className="px-3 py-4 text-center text-sm text-gray-500">
-                                  NOTEがまだ作成されていません
+                                  Swipeコラムがまだ作成されていません
                                 </td>
                               </tr>
                             )}
@@ -2205,11 +2205,11 @@ export default function AdminPanelPage() {
               <div className="rounded-3xl border border-gray-200 bg-white/90 p-5 shadow-sm">
                 <div className="mb-4 flex flex-col gap-1">
                   <h3 className="text-lg font-semibold text-gray-900">人気バッジ管理</h3>
-                  <p className="text-xs text-gray-500">「人気」バッジを付与したLP / NOTE / サロンは公開ページで常に上位表示されます。</p>
+                  <p className="text-xs text-gray-500">「人気」バッジを付与したLP / Swipeコラム / サロンは公開ページで常に上位表示されます。</p>
                 </div>
                 <div className="grid gap-4 lg:grid-cols-3">
                   {renderFeaturedCard('product', 'LP / 商品', 'LPマーケットに表示される商品を固定表示します', featuredProducts, featuredLoading.product, featuredErrors.product)}
-                  {renderFeaturedCard('note', 'NOTE', 'NOTEマーケットに表示される記事を固定表示します', featuredNotes, featuredLoading.note, featuredErrors.note)}
+                  {renderFeaturedCard('note', 'Swipeコラム', 'Swipeコラムマーケットに表示される記事を固定表示します', featuredNotes, featuredLoading.note, featuredErrors.note)}
                   {renderFeaturedCard('salon', 'オンラインサロン', 'サロン一覧の掲載順を優先表示します', featuredSalons, featuredLoading.salon, featuredErrors.salon)}
                 </div>
               </div>
@@ -2356,7 +2356,7 @@ export default function AdminPanelPage() {
               <div className="rounded-2xl border border-gray-200 bg-white p-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">NOTEシェア ダッシュボード</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">Swipeコラムシェア ダッシュボード</h2>
                     <p className="text-sm text-gray-500">ユーザーのシェア行動と報酬配布の傾向を可視化し、早期異常検知に備えます。</p>
                   </div>
                   <button
@@ -2444,7 +2444,7 @@ export default function AdminPanelPage() {
                 <div className="rounded-2xl border border-gray-200 bg-white p-6">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">トップNOTE</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">トップSwipeコラム</h3>
                       <p className="text-xs text-gray-500">シェア数の多いコンテンツを確認します</p>
                     </div>
                     <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">上位 {shareTopNotes.length}</span>
@@ -2458,7 +2458,7 @@ export default function AdminPanelPage() {
                       <table className="w-full text-sm text-gray-600">
                         <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                           <tr>
-                            <th className="px-4 py-3 text-left">NOTE</th>
+                            <th className="px-4 py-3 text-left">Swipeコラム</th>
                             <th className="px-4 py-3 text-right">シェア数</th>
                             <th className="px-4 py-3 text-right">付与ポイント</th>
                           </tr>
@@ -2522,7 +2522,7 @@ export default function AdminPanelPage() {
                     <table className="w-full text-sm text-gray-600">
                       <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                         <tr>
-                          <th className="px-3 py-3 text-left">NOTE</th>
+                          <th className="px-3 py-3 text-left">Swipeコラム</th>
                           <th className="px-3 py-3 text-left">シェア元</th>
                           <th className="px-3 py-3 text-left">ツイート</th>
                           <th className="px-3 py-3 text-right">付与P</th>
@@ -2652,7 +2652,7 @@ export default function AdminPanelPage() {
                                   </div>
                                   {alert.description && <p className="mt-1 whitespace-pre-line text-xs text-gray-500">{alert.description}</p>}
                                   <div className="mt-2 space-y-1 text-[11px] text-gray-500">
-                                    {alert.note_title && <div>対象NOTE: {alert.note_title}</div>}
+                                    {alert.note_title && <div>対象Swipeコラム: {alert.note_title}</div>}
                                     {alert.username && <div>ユーザー: {alert.username}</div>}
                                     <div>検知日時: {formatDateTime(alert.created_at)}</div>
                                   </div>

@@ -9,8 +9,8 @@
     }
   },
   "notePublic": {
-    "pageTitle": "AllNOTES",
-    "pageSubtitle": "情報発信者が投稿したNOTE記事をここで発見できます",
+    "pageTitle": "Swipeコラム一覧",
+    "pageSubtitle": "情報発信者が投稿したSwipeコラムをここで発見できます",
     "filters": {
       "all": "すべて",
       "free": "無料記事",
@@ -36,7 +36,7 @@
     "loadError": "記事一覧の取得に失敗しました",
     "emptyTitle": "記事が見つかりませんでした",
     "emptyDescription": "条件を変更するか、キーワードを変えて再検索してください。無料記事と有料記事を切り替えることもできます。",
-    "emptyBadge": "新しいNOTEは順次追加予定です",
+    "emptyBadge": "新しいSwipeコラムは順次追加予定です",
     "unpublishedLabel": "未公開",
     "paidBadge": "有料",
     "freeBadge": "FREE",
@@ -44,18 +44,18 @@
   },
   "noteDetail": {
     "unpublishedLabel": "非公開",
-    "fetchError": "NOTEの取得に失敗しました",
-    "pointsNotAvailable": "このNOTEはポイント決済に対応していません",
-    "yenNotAvailable": "このNOTEは日本円決済に対応していません",
-    "confirmPointsPurchase": "以下のNOTEを購入しますか？\n\nタイトル: {title}\n価格: {pricePoints, number} ポイント\n\nポイントが消費されます。よろしいですか？",
-    "confirmYenPurchase": "以下のNOTEを日本円決済で購入しますか？\n\nタイトル: {title}\n価格: ¥{priceYen, number}\n\n決済ページ(one.lat)に遷移します。よろしいですか？",
+    "fetchError": "Swipeコラムの取得に失敗しました",
+    "pointsNotAvailable": "このSwipeコラムはポイント決済に対応していません",
+    "yenNotAvailable": "このSwipeコラムは日本円決済に対応していません",
+    "confirmPointsPurchase": "以下のSwipeコラムを購入しますか？\n\nタイトル: {title}\n価格: {pricePoints, number} ポイント\n\nポイントが消費されます。よろしいですか？",
+    "confirmYenPurchase": "以下のSwipeコラムを日本円決済で購入しますか？\n\nタイトル: {title}\n価格: ¥{priceYen, number}\n\n決済ページ(one.lat)に遷移します。よろしいですか？",
     "pointsPurchaseSuccess": "購入が完了しました。残りポイント: {remainingPoints, number} pt",
     "redirectingToCheckout": "決済ページに遷移します。完了後に再読み込みしてください。",
     "checkoutUrlError": "決済URLの取得に失敗しました",
     "genericPurchaseError": "購入に失敗しました。もう一度お試しください。",
     "initializing": "初期化中...",
     "loading": "読み込み中...",
-    "notFound": "NOTEが見つかりませんでした",
+    "notFound": "Swipeコラムが見つかりませんでした",
     "loginToPurchase": "ログインして購入",
     "publishedAtLabel": "公開日:",
     "priceLabel": "価格:",
@@ -79,8 +79,8 @@
     "shareOnX": "Xでシェア",
     "shareOnLine": "LINEでシェア",
     "accessGrantedMessage": "現在あなたは有料エリアを閲覧中です。",
-    "backToNotes": "← AllNOTESへ戻る",
-    "editNote": "NOTE編集"
+    "backToNotes": "← Swipeコラム一覧へ戻る",
+    "editNote": "Swipeコラム編集"
   },
   "noteRenderer": {
     "paidAreaLabel": "ここから先は有料エリアです",
@@ -166,7 +166,7 @@
     }
   },
   "noteCreate": {
-    "pageTitle": "新規NOTE作成",
+    "pageTitle": "新規Swipeコラム作成",
     "pageSubtitle": "noteスタイルの記事をブロック単位で作成できます",
     "labels": {
       "title": "タイトル",
@@ -237,7 +237,7 @@
       "requirePaymentMethodForPaid": "有料記事は少なくとも1つの決済方法を有効にしてください",
       "invalidPointsPrice": "ポイント決済の価格を1ポイント以上で設定してください",
       "invalidYenPrice": "日本円決済の価格を1円以上で設定してください",
-      "createFailed": "NOTEの作成に失敗しました"
+      "createFailed": "Swipeコラムの作成に失敗しました"
     },
     "messages": {
       "savedDraft": "下書きとして保存しました。編集画面に移動します。"
@@ -816,11 +816,11 @@
   },
   "noteShare": {
     "metadata": {
-      "notFoundTitle": "限定公開NOTE | D-swipe",
-      "notFoundDescription": "限定公開のNOTEページです。",
-      "defaultTitle": "限定公開NOTE",
-      "defaultDescription": "限定共有リンクを知っている人だけが閲覧できるNOTEです。",
-      "titleTemplate": "{title} | 限定公開NOTE",
+      "notFoundTitle": "限定公開Swipeコラム | D-swipe",
+      "notFoundDescription": "限定公開のSwipeコラムページです。",
+      "defaultTitle": "限定公開Swipeコラム",
+      "defaultDescription": "限定共有リンクを知っている人だけが閲覧できるSwipeコラムです。",
+      "titleTemplate": "{title} | 限定公開Swipeコラム",
       "siteName": "D-swipe"
     }
   },
@@ -840,14 +840,14 @@
     "connectHint": "アカウントを連携すると、リツイート解放が利用できます。",
     "errorTitle": "エラー",
     "requiresXLink": "X連携が必要です。設定画面で連携してください。",
-    "alreadySharedError": "既にこのNOTEをリツイート済みです。",
+    "alreadySharedError": "既にこのSwipeコラムをリツイート済みです。",
     "unavailableError": "販売者が公式ポストを設定していないため、現在リツイート解放は利用できません。",
     "genericError": "リツイート処理中にエラーが発生しました。もう一度お試しください。",
     "navigateToSettings": "設定画面でX連携する →"
   },
   "checkout": {
     "heading": "決済が完了しました！",
-    "description": "NOTE の購入が正常に完了しました。すぐに記事へ移動して内容をご確認ください。",
+    "description": "Swipeコラムの購入が正常に完了しました。すぐに記事へ移動して内容をご確認ください。",
     "statusLabel": "決済ステータス",
     "statuses": {
       "COMPLETED": "完了",
@@ -954,7 +954,7 @@
     },
     "xConnection": {
       "title": "X (Twitter) 連携",
-      "description": "有料NOTEをXでシェアして無料で読めるようにします",
+      "description": "有料SwipeコラムをXでシェアして無料で読めるようにします",
       "status": {
         "connected": "連携済み",
         "disconnected": "未連携"
@@ -969,7 +969,7 @@
         "authorizationFailed": "認証URLの取得に失敗しました",
         "disconnectFailed": "連携解除に失敗しました"
       },
-      "confirmDisconnect": "X（Twitter）連携を解除しますか？\n解除すると、シェアによるNOTE無料解放ができなくなります。",
+      "confirmDisconnect": "X（Twitter）連携を解除しますか？\n解除すると、シェアによるSwipeコラム無料解放ができなくなります。",
       "connected": {
         "heading": "連携済み",
         "accountLabel": "アカウント:",
@@ -982,7 +982,7 @@
       "benefits": {
         "heading": "連携するとできること",
         "items": [
-          "有料NOTEをXでシェアして無料で読める",
+          "有料SwipeコラムをXでシェアして無料で読める",
           "お金をかけずに気になる記事を閲覧可能",
           "シェアするだけで簡単に記事が解放される"
         ]
@@ -1053,7 +1053,7 @@
   "media": {
     "page": {
       "title": "メディアライブラリ",
-      "subtitle": "画像や動画をアップロードして、LPやNOTEですぐに利用できます",
+      "subtitle": "画像や動画をアップロードして、LPやSwipeコラムですぐに利用できます",
       "upload": {
         "heading": "アップロード",
         "description": "PNG・JPG・WEBP をサポートしています。複数ファイルを一括選択できます。",
@@ -1285,7 +1285,7 @@
       "groups": {
         "core": "ホーム",
         "lp": "LPメニュー",
-        "note": "NOTEメニュー",
+        "note": "コラムメニュー",
         "salon": "サロン",
         "points": "ポイント",
         "line": "LINE連携",
@@ -1299,9 +1299,9 @@
         "lpCreate": "新規LP作成",
         "products": "AllLP",
         "productsManage": "商品管理",
-        "noteCreate": "新規NOTE作成",
-        "noteEdit": "NOTE編集",
-        "notes": "AllNOTES",
+        "noteCreate": "新規コラム作成",
+        "noteEdit": "コラム編集",
+        "notes": "コラム一覧",
         "salons": "サロン一覧",
         "salonsCreate": "サロン新規作成",
         "salonsAll": "AllSalon",
