@@ -558,6 +558,7 @@ export default function NoteCreatePage() {
                 {isCoverUploading ? (
                   <p className="mt-2 text-xs font-semibold text-blue-600">{noteEditorT('status.uploading')}</p>
                 ) : null}
+                <p className="mt-2 text-xs text-slate-500">{t('helpers.coverImage')}</p>
                 <input
                   type="text"
                   value={coverImageUrl}

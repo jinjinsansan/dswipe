@@ -220,9 +220,12 @@
     "placeholders": {
       "title": "Example: The complete workflow behind my ¥1M/month online course",
       "excerpt": "Add a summary or lead paragraph for the Swipe Column.",
-      "coverImageUrl": "https://...",
+      "coverImageUrl": "https://example.com/cover-2100x900.jpg",
       "pointsExample": "e.g. 1200",
       "jpyExample": "e.g. 14800"
+    },
+    "helpers": {
+      "coverImage": "Recommended size: 2100×900px (21:9). Other aspect ratios will add letterboxing."
     },
     "alerts": {
       "maxCategories": "You can select up to {max} categories.",

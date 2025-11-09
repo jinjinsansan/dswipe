@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationTriangleIcon, ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -90,6 +90,7 @@ export default function NoteEditPage() {
   const noteId = params?.id;
   const router = useRouter();
   const locale = useLocale();
+  const createT = useTranslations('noteCreate');
   const { isAuthenticated, isInitialized, token } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
@@ -994,11 +995,12 @@ export default function NoteEditPage() {
                 {isCoverUploading ? (
                   <p className="mt-2 text-xs font-semibold text-blue-600">アップロード中...</p>
                 ) : null}
+                <p className="mt-2 text-xs text-slate-500">{createT('helpers.coverImage')}</p>
                 <input
                   type="text"
                   value={coverImageUrl}
                   onChange={(event) => setCoverImageUrl(event.target.value)}
-                  placeholder="https://..."
+                  placeholder={createT('placeholders.coverImageUrl')}
                   className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   disabled={saving || actionLoading}
                 />

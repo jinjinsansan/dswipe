@@ -220,9 +220,12 @@
     "placeholders": {
       "title": "例：月収100万円を達成したオンライン講座運営の全ステップ",
       "excerpt": "記事の要約やリード文を入力してください",
-      "coverImageUrl": "https://...",
+      "coverImageUrl": "https://example.com/cover-2100x900.jpg",
       "pointsExample": "例: 1200",
       "jpyExample": "例: 14800"
+    },
+    "helpers": {
+      "coverImage": "推奨サイズ: 2100×900px (21:9)。その他の比率では上下に余白が追加されます。"
     },
     "alerts": {
       "maxCategories": "カテゴリは最大{max}件まで選択できます",
