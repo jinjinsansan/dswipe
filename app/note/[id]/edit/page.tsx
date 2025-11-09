@@ -11,8 +11,17 @@ import NoteAiAssistant from '@/components/note/NoteAiAssistant';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
-import type { AiActionMetadata, AiActionRecord } from '@/types/aiAssistant';
-import type { NoteBlock, NoteDetail, NoteVisibility, OfficialShareConfig, Salon, SalonListResult } from '@/types';
+import { buildBlocksFromSuggestion, sanitizeContentForBlockType, normalizeAiText } from '@/lib/aiFormatting';
+import type { AiActionMetadata, AiActionRecord, StructureInsertPayload } from '@/types/aiAssistant';
+import type {
+  NoteBlock,
+  NoteBlockType,
+  NoteDetail,
+  NoteVisibility,
+  OfficialShareConfig,
+  Salon,
+  SalonListResult,
+} from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
@@ -394,6 +403,7 @@ export default function NoteEditPage() {
 
   const applyAiTextToBlock = useCallback(
     (blockId: string, text: string, metadata: AiActionMetadata) => {
+      const normalizedText = normalizeAiText(text);
       let historyEntry: AiActionRecord | null = null;
 
       setBlocks((prev) => {
@@ -403,14 +413,22 @@ export default function NoteEditPage() {
         }
 
         const targetBlock = prev[index];
+        const blockType = (targetBlock.type ?? 'paragraph') as NoteBlockType;
+        const sanitized = sanitizeContentForBlockType(blockType, normalizedText);
         const data = { ...(targetBlock.data ?? {}) } as Record<string, unknown>;
-        if (targetBlock.type === 'list') {
-          data.items = text
-            .split(/\r?\n/)
-            .map((item) => item.trim())
-            .filter((item) => item.length > 0);
+
+        if (blockType === 'list') {
+          const items = sanitized.items ?? [];
+          if (items.length === 0) {
+            return prev;
+          }
+          data.items = items;
         } else {
-          data.text = text;
+          const sanitizedText = (sanitized.text ?? '').trim();
+          if (!sanitizedText) {
+            return prev;
+          }
+          data.text = sanitizedText;
         }
 
         const updatedBlock = normalizeBlock({ ...targetBlock, data });
@@ -445,36 +463,11 @@ export default function NoteEditPage() {
   );
 
   const insertAiSuggestion = useCallback(
-    (afterBlockId: string | null, text: string, metadata: AiActionMetadata) => {
-      const normalizedText = text.replace(/\r?\n/g, '\n').trim();
-      if (!normalizedText) {
+    (afterBlockId: string | null, payload: StructureInsertPayload, metadata: AiActionMetadata) => {
+      const blocksToInsert = buildBlocksFromSuggestion(payload);
+      if (blocksToInsert.length === 0) {
         return;
       }
-
-      const createBlockFromSegment = (segment: string): NoteBlock => {
-        const lines = segment.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
-        const bulletPattern = /^([-*•・]|[0-9]+\.)\s+/;
-        const isList = lines.length > 1 && lines.every((line) => bulletPattern.test(line));
-
-        if (isList) {
-          const newBlock = createEmptyBlock('list');
-          newBlock.data = {
-            items: lines
-              .map((line) => line.replace(bulletPattern, '').trim())
-              .filter((item) => item.length > 0),
-          };
-          return newBlock;
-        }
-
-        const newBlock = createEmptyBlock('paragraph');
-        newBlock.data = { ...(newBlock.data ?? {}), text: segment };
-        return newBlock;
-      };
-
-      const segments = normalizedText
-        .split(/\n{2,}/)
-        .map((segment) => segment.trim())
-        .filter((segment) => segment.length > 0);
 
       let historyEntry: AiActionRecord | null = null;
       const insertedSnapshots: NoteBlock[] = [];
@@ -488,29 +481,24 @@ export default function NoteEditPage() {
           insertIndex = currentIndex >= 0 ? currentIndex + 1 : next.length;
         }
 
-        const blocksToInsert = segments.length > 0 ? segments : [normalizedText];
-
-        blocksToInsert.forEach((segment) => {
-          const block = createBlockFromSegment(segment);
+        blocksToInsert.forEach((block) => {
           const normalizedBlock = normalizeBlock(block);
           next.splice(insertIndex, 0, normalizedBlock);
           insertIndex += 1;
           insertedSnapshots.push(cloneBlock(normalizedBlock));
         });
 
-        historyEntry = insertedSnapshots.length
-          ? {
-              id: generateActionId(),
-              timestamp: Date.now(),
-              type: metadata.type,
-              label: metadata.label,
-              targetBlockIds: metadata.targetBlockIds ?? insertedSnapshots.map((block) => block.id ?? ''),
-              reasoning: metadata.reasoning,
-              lengthRatio: metadata.lengthRatio,
-              beforeBlocks: [],
-              afterBlocks: insertedSnapshots.map((block) => cloneBlock(block)),
-            }
-          : null;
+        historyEntry = {
+          id: generateActionId(),
+          timestamp: Date.now(),
+          type: metadata.type,
+          label: metadata.label,
+          targetBlockIds: metadata.targetBlockIds ?? insertedSnapshots.map((block) => block.id ?? ''),
+          reasoning: metadata.reasoning,
+          lengthRatio: metadata.lengthRatio,
+          beforeBlocks: [],
+          afterBlocks: insertedSnapshots.map((block) => cloneBlock(block)),
+        };
 
         return next;
       });

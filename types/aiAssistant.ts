@@ -1,4 +1,4 @@
-import type { NoteBlock } from './index';
+import type { NoteBlock, NoteBlockType } from './index';
 
 export type AiActionKind = 'rewrite' | 'proofread' | 'structure';
 
@@ -15,4 +15,9 @@ export interface AiActionRecord extends AiActionMetadata {
   timestamp: number;
   beforeBlocks: NoteBlock[];
   afterBlocks: NoteBlock[];
+}
+
+export interface StructureInsertPayload {
+  text: string;
+  suggestedBlockType?: NoteBlockType;
 }

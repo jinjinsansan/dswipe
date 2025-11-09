@@ -400,6 +400,7 @@ export interface NoteStructureSuggestionItem {
   action: NoteStructureAction;
   block_id?: string;
   suggested_text?: string;
+  suggested_block_type?: 'paragraph' | 'heading' | 'list' | 'quote';
 }
 
 export interface NoteStructureRequest {

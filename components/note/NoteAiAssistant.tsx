@@ -16,7 +16,7 @@ import type {
   NoteStructureSuggestionItem,
   NoteReviewResponse,
 } from '@/types/api';
-import type { AiActionMetadata, AiActionRecord } from '@/types/aiAssistant';
+import type { AiActionMetadata, AiActionRecord, StructureInsertPayload } from '@/types/aiAssistant';
 
 type NoteAiAssistantTab = 'rewrite' | 'proofread' | 'structure' | 'review';
 
@@ -39,7 +39,7 @@ interface NoteAiAssistantProps {
   initialTone?: string;
   initialAudience?: string;
   onApplyText: (blockId: string, text: string, metadata: AiActionMetadata) => void;
-  onInsertBlock?: (afterBlockId: string | null, text: string, metadata: AiActionMetadata) => void;
+  onInsertBlock?: (afterBlockId: string | null, payload: StructureInsertPayload, metadata: AiActionMetadata) => void;
   history?: AiActionRecord[];
   onUndoAction?: (entryId?: string) => AiActionRecord | null;
 }
@@ -624,21 +624,27 @@ export default function NoteAiAssistant({
   }, [contextPayload, clearActionMessage]);
 
   const handleInsertSuggestion = useCallback(
-    (afterBlockId: string | null, text: string, title?: string, description?: string) => {
-      const content = text.replace(/\r\n/g, '\n').trim();
-      if (!content) {
-        showActionMessage('提案内容が空だったため挿入できませんでした。');
-        return;
-      }
+    (afterBlockId: string | null, suggestion: NoteStructureSuggestionItem) => {
       if (!onInsertBlock) {
         showActionMessage('構成提案を挿入できる状態ではありません。');
         return;
       }
-      const label = title?.trim();
-      onInsertBlock(afterBlockId, content, {
+
+      const suggestedText = suggestion.suggested_text?.replace(/\r\n/g, '\n').trim();
+      if (!suggestedText) {
+        showActionMessage('この提案には挿入可能なテキストが含まれていません。');
+        return;
+      }
+
+      const payload: StructureInsertPayload = {
+        text: suggestedText,
+        suggestedBlockType: suggestion.suggested_block_type,
+      };
+      const label = suggestion.title?.trim();
+      onInsertBlock(afterBlockId, payload, {
         type: 'structure',
         label: label ? `構成案: ${label}` : '構成案を挿入',
-        reasoning: description ?? null,
+        reasoning: suggestion.description ?? null,
       });
       showActionMessage(label ? `「${label}」の構成提案を挿入しました。` : '構成提案を挿入しました。');
     },
@@ -1049,8 +1055,7 @@ export default function NoteAiAssistant({
                     suggestion={suggestion}
                     onInsert={
                       onInsertBlock
-                        ? (afterBlockId, text) =>
-                            handleInsertSuggestion(afterBlockId, text, suggestion.title, suggestion.description)
+                        ? (afterBlockId, _item) => handleInsertSuggestion(afterBlockId, suggestion)
                         : undefined
                     }
                     copyToClipboard={copyToClipboard}
@@ -1328,16 +1333,29 @@ export default function NoteAiAssistant({
 
 interface StructureSuggestionCardProps {
   suggestion: NoteStructureSuggestionItem;
-  onInsert?: (afterBlockId: string | null, text: string) => void;
+  onInsert?: (afterBlockId: string | null, suggestion: NoteStructureSuggestionItem) => void;
   copyToClipboard: (text: string) => void;
 }
 
 function StructureSuggestionCard({ suggestion, onInsert, copyToClipboard }: StructureSuggestionCardProps) {
+  const blockTypeLabelMap: Record<NonNullable<NoteStructureSuggestionItem['suggested_block_type']>, string> = {
+    paragraph: '本文',
+    heading: '見出し',
+    list: 'リスト',
+    quote: '引用',
+  };
+  const blockTypeLabel = suggestion.suggested_block_type ? blockTypeLabelMap[suggestion.suggested_block_type] : null;
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-semibold text-slate-800">{suggestion.title}</p>
-        <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-600">{suggestion.action.toUpperCase()}</span>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-600">{suggestion.action.toUpperCase()}</span>
+          {blockTypeLabel ? (
+            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">{blockTypeLabel}</span>
+          ) : null}
+        </div>
       </div>
       <p className="mt-2 whitespace-pre-wrap text-sm">{suggestion.description}</p>
       {suggestion.suggested_text ? (
@@ -1356,7 +1374,7 @@ function StructureSuggestionCard({ suggestion, onInsert, copyToClipboard }: Stru
                 <button
                   type="button"
                   className="text-xs font-semibold text-emerald-600 underline"
-                  onClick={() => onInsert(suggestion.block_id ?? null, suggestion.suggested_text ?? '')}
+                  onClick={() => onInsert(suggestion.block_id ?? null, suggestion)}
                 >
                   挿入
                 </button>
