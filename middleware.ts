@@ -12,49 +12,14 @@ const intlMiddleware = createMiddleware({
   pathnames,
 });
 
-const stripLocalePrefix = (pathname: string, locale: string) => {
-  const prefix = `/${locale}`;
-  if (pathname === prefix) {
-    return '/';
-  }
-  if (pathname.startsWith(`${prefix}/`)) {
-    const stripped = pathname.slice(prefix.length);
-    return stripped.length ? stripped : '/';
-  }
-  return null;
-};
-
-const stripEnglishPrefix = (pathname: string) => stripLocalePrefix(pathname, 'en') ?? pathname;
+const stripEnglishPrefix = (pathname: string) => pathname.slice(3) || '/';
 
 const isWithinSupportedEnglishNamespace = (pathname: string) =>
   SUPPORTED_EN_PREFIXES.some((prefix) => pathname === `/en${prefix}` || pathname.startsWith(`/en${prefix}/`));
 
-const normalizeDefaultLocaleRewrite = (request: NextRequest, response: NextResponse) => {
-  const rewriteHeader = response.headers.get('x-middleware-rewrite');
-  if (!rewriteHeader) {
-    return;
-  }
-
-  const rewriteUrl = new URL(rewriteHeader, request.nextUrl);
-  const stripped = stripLocalePrefix(rewriteUrl.pathname, 'ja');
-  if (!stripped) {
-    return;
-  }
-
-  rewriteUrl.pathname = stripped;
-  if (rewriteUrl.pathname === request.nextUrl.pathname && rewriteUrl.search === request.nextUrl.search) {
-    response.headers.delete('x-middleware-rewrite');
-    return;
-  }
-
-  response.headers.set('x-middleware-rewrite', `${rewriteUrl.pathname}${rewriteUrl.search}`);
-};
-
 export function middleware(request: NextRequest) {
   const response = intlMiddleware(request);
   const { pathname } = request.nextUrl;
-
-  normalizeDefaultLocaleRewrite(request, response);
 
   if (pathname.startsWith('/en/') && !isWithinSupportedEnglishNamespace(pathname)) {
     const url = request.nextUrl.clone();
