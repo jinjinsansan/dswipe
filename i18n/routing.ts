@@ -11,9 +11,6 @@ export const pathnames: Pathnames<typeof locales> = {
   '/notes/[slug]': '/notes/[slug]',
   '/notes/[slug]/purchase/success': '/notes/[slug]/purchase/success',
   '/points/purchase': '/points/purchase',
-  '/points/payment-methods': '/points/payment-methods',
-  '/points/payment-methods/success': '/points/payment-methods/success',
-  '/points/payment-methods/error': '/points/payment-methods/error',
   '/points/purchase/success': '/points/purchase/success',
   '/points/purchase/error': '/points/purchase/error',
 };

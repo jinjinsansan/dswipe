@@ -12,8 +12,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
-import { publicApi, noteApi, paymentMethodApi } from '@/lib/api';
-import type { PublicNoteDetail, PaymentMethod } from '@/types';
+import { publicApi, noteApi } from '@/lib/api';
+import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
@@ -21,7 +21,6 @@ import { redirectToLogin } from '@/lib/navigation';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
-const NEW_PAYMENT_METHOD_OPTION = '__new__';
 
 const withBasePath = (basePath: string, pathname: string) => {
   if (!basePath || basePath === '/') {
@@ -76,9 +75,6 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
   const [selectedMethod, setSelectedMethod] = useState<'points' | 'yen'>('points');
   const [hasManualMethodSelection, setHasManualMethodSelection] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>(NEW_PAYMENT_METHOD_OPTION);
 
   const formatDate = useCallback(
     (value?: string | null) => {
@@ -191,62 +187,6 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     }
   }, [shareToken, slug]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setPaymentMethods([]);
-      setSelectedPaymentMethodId(NEW_PAYMENT_METHOD_OPTION);
-      return;
-    }
-
-    let isActive = true;
-    setPaymentMethodsLoading(true);
-
-    paymentMethodApi
-      .list()
-      .then((response) => {
-        if (!isActive) return;
-        const items = Array.isArray(response.data?.items) ? response.data.items : [];
-        setPaymentMethods(items);
-        const defaultMethod = items.find((item) => item.is_default) || items[0];
-        setSelectedPaymentMethodId(defaultMethod ? defaultMethod.id : NEW_PAYMENT_METHOD_OPTION);
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setPaymentMethods([]);
-        setSelectedPaymentMethodId(NEW_PAYMENT_METHOD_OPTION);
-      })
-      .finally(() => {
-        if (isActive) {
-          setPaymentMethodsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (selectedMethod !== 'yen') {
-      return;
-    }
-
-    if (!paymentMethods.length) {
-      if (selectedPaymentMethodId !== NEW_PAYMENT_METHOD_OPTION) {
-        setSelectedPaymentMethodId(NEW_PAYMENT_METHOD_OPTION);
-      }
-      return;
-    }
-
-    const hasSelected = paymentMethods.some((method) => method.id === selectedPaymentMethodId);
-    if (hasSelected) {
-      return;
-    }
-
-    const fallback = paymentMethods.find((method) => method.is_default) || paymentMethods[0];
-    setSelectedPaymentMethodId(fallback ? fallback.id : NEW_PAYMENT_METHOD_OPTION);
-  }, [paymentMethods, selectedMethod, selectedPaymentMethodId]);
-
   const handlePurchase = async () => {
     if (!note) return;
     if (!isAuthenticated) {
@@ -254,9 +194,6 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       return;
     }
     const isPointsPurchase = selectedMethod === 'points';
-    const paymentMethodRecordId = !isPointsPurchase && selectedPaymentMethodId !== NEW_PAYMENT_METHOD_OPTION
-      ? selectedPaymentMethodId
-      : undefined;
 
     if (isPointsPurchase && !note.allow_point_purchase) {
       setPurchaseState('error');
@@ -290,10 +227,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     setPurchaseError(null);
 
     try {
-      const response = await noteApi.purchase(note.id, selectedMethod, {
-        locale,
-        paymentMethodRecordId,
-      });
+      const response = await noteApi.purchase(note.id, selectedMethod, { locale });
       const result = response.data;
 
       if (isPointsPurchase) {
@@ -355,20 +289,6 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       line: `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`,
     };
   }, [canonicalUrl, note?.title]);
-
-  const renderSavedMethodLabel = useCallback(
-    (method: PaymentMethod) => {
-      const brandLabel = method.brand_label ?? method.brand ?? t('savedPaymentMethodsUnknown');
-      if (method.last4) {
-        return t('savedPaymentMethodsLabel', {
-          brand: brandLabel,
-          last4: method.last4,
-        });
-      }
-      return brandLabel;
-    },
-    [t]
-  );
 
   if (!isInitialized) {
     return (
@@ -544,133 +464,46 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                   </div>
                 ) : null}
                 {canPurchase ? (
-                  <>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {note.allow_point_purchase && (
-                        <button
-                          type="button"
-                          onClick={() => handleMethodSelect('points')}
-                          className={`rounded-xl border px-4 py-3 text-left transition ${
-                            isPointsSelected
-                              ? 'border-blue-400 bg-white'
-                              : 'border-amber-100 bg-white/60 hover:border-blue-300'
-                          }`}
-                        >
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                            {t('pointsPaymentTitle')}
-                          </p>
-                          <p className="mt-1 text-lg font-bold text-blue-600">
-                            {format.number(note.price_points)} pt
-                          </p>
-                          <p className="mt-1 text-[11px] text-slate-500">{t('pointsPaymentNote')}</p>
-                        </button>
-                      )}
-                      {note.allow_jpy_purchase && (
-                        <button
-                          type="button"
-                          onClick={() => handleMethodSelect('yen')}
-                          className={`rounded-xl border px-4 py-3 text-left transition ${
-                            !isPointsSelected
-                              ? 'border-emerald-400 bg-white'
-                              : 'border-amber-100 bg-white/60 hover:border-emerald-300'
-                          }`}
-                        >
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                            {t('yenPaymentTitle')}
-                          </p>
-                          <p className="mt-1 text-lg font-bold text-emerald-600">
-                            ¥{format.number(note.price_jpy ?? 0)}
-                          </p>
-                          <p className="mt-1 text-[11px] text-slate-500">{t('yenPaymentNote')}</p>
-                        </button>
-                      )}
-                    </div>
-                    {selectedMethod === 'yen' ? (
-                      <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 text-left text-xs text-slate-600">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800">
-                              {t('savedPaymentMethodsTitle')}
-                            </p>
-                            <p className="mt-1 text-[11px] text-slate-500/80">
-                              {t('savedPaymentMethodsDescription')}
-                            </p>
-                          </div>
-                          <Link
-                            href="/points/payment-methods"
-                            className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                          >
-                            {t('savedPaymentMethodsManage')}
-                          </Link>
-                        </div>
-                        <div className="mt-4 space-y-2">
-                          {paymentMethodsLoading ? (
-                            <div className="flex items-center gap-2 text-slate-500">
-                              <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
-                              {t('savedPaymentMethodsLoading')}
-                            </div>
-                          ) : paymentMethods.length ? (
-                            <div className="space-y-2">
-                              {paymentMethods.map((method) => (
-                                <label
-                                  key={method.id}
-                                  className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 text-slate-700 transition ${
-                                    selectedPaymentMethodId === method.id
-                                      ? 'border-emerald-400 bg-emerald-50'
-                                      : 'border-slate-200 bg-white hover:border-emerald-300'
-                                  }`}
-                                >
-                                  <span className="flex items-center gap-3">
-                                    <input
-                                      type="radio"
-                                      name="saved-payment-method"
-                                      value={method.id}
-                                      className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                                      checked={selectedPaymentMethodId === method.id}
-                                      onChange={() => setSelectedPaymentMethodId(method.id)}
-                                    />
-                                    <span className="text-sm font-medium text-slate-800">
-                                      {renderSavedMethodLabel(method)}
-                                    </span>
-                                  </span>
-                                  {method.is_default ? (
-                                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
-                                      {t('savedPaymentMethodsDefault')}
-                                    </span>
-                                  ) : null}
-                                </label>
-                              ))}
-                              <label
-                                className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 text-slate-700 transition ${
-                                  selectedPaymentMethodId === NEW_PAYMENT_METHOD_OPTION
-                                    ? 'border-emerald-400 bg-emerald-50'
-                                    : 'border-slate-200 bg-white hover:border-emerald-300'
-                                }`}
-                              >
-                                <span className="flex items-center gap-3">
-                                  <input
-                                    type="radio"
-                                    name="saved-payment-method"
-                                    value={NEW_PAYMENT_METHOD_OPTION}
-                                    className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                                    checked={selectedPaymentMethodId === NEW_PAYMENT_METHOD_OPTION}
-                                    onChange={() => setSelectedPaymentMethodId(NEW_PAYMENT_METHOD_OPTION)}
-                                  />
-                                  <span className="text-sm font-medium text-slate-800">
-                                    {t('savedPaymentMethodsUseNew')}
-                                  </span>
-                                </span>
-                              </label>
-                            </div>
-                          ) : (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-3 text-[11px] text-slate-500">
-                              {t('savedPaymentMethodsNone')}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : null}
-                  </>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {note.allow_point_purchase && (
+                      <button
+                        type="button"
+                        onClick={() => handleMethodSelect('points')}
+                        className={`rounded-xl border px-4 py-3 text-left transition ${
+                          isPointsSelected
+                            ? 'border-blue-400 bg-white'
+                            : 'border-amber-100 bg-white/60 hover:border-blue-300'
+                        }`}
+                      >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          {t('pointsPaymentTitle')}
+                        </p>
+                        <p className="mt-1 text-lg font-bold text-blue-600">
+                          {format.number(note.price_points)} pt
+                        </p>
+                        <p className="mt-1 text-[11px] text-slate-500">{t('pointsPaymentNote')}</p>
+                      </button>
+                    )}
+                    {note.allow_jpy_purchase && (
+                      <button
+                        type="button"
+                        onClick={() => handleMethodSelect('yen')}
+                        className={`rounded-xl border px-4 py-3 text-left transition ${
+                          !isPointsSelected
+                            ? 'border-emerald-400 bg-white'
+                            : 'border-amber-100 bg-white/60 hover:border-emerald-300'
+                        }`}
+                      >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          {t('yenPaymentTitle')}
+                        </p>
+                        <p className="mt-1 text-lg font-bold text-emerald-600">
+                          ¥{format.number(note.price_jpy ?? 0)}
+                        </p>
+                        <p className="mt-1 text-[11px] text-slate-500">{t('yenPaymentNote')}</p>
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <p className="text-xs text-amber-700/80">{t('noPaymentMethods')}</p>
                 )}

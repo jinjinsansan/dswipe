@@ -2,12 +2,10 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import {useFormatter, useTranslations} from 'next-intl';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
-import { paymentMethodApi, platformSettingsApi, subscriptionApi } from '@/lib/api';
+import { platformSettingsApi, subscriptionApi } from '@/lib/api';
 import type {
   SubscriptionPlan,
   SubscriptionPlanListResponse,
@@ -15,7 +13,6 @@ import type {
   UserSubscription,
   UserSubscriptionListResponse,
 } from '@/types/api';
-import type { PaymentMethod } from '@/types';
 
 const STATUS_CLASS_MAP: Record<string, string> = {
   ACTIVE: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
@@ -26,8 +23,6 @@ const STATUS_CLASS_MAP: Record<string, string> = {
   CANCELLED: 'bg-slate-100 text-slate-500 border border-slate-200',
   REJECTED: 'bg-rose-50 text-rose-600 border border-rose-200',
 };
-
-const NEW_PAYMENT_METHOD_OPTION = '__new__';
 
 function SubscriptionPageContent() {
   const searchParams = useSearchParams();
@@ -56,10 +51,6 @@ function SubscriptionPageContent() {
   const [restrictedPlanId, setRestrictedPlanId] = useState<string | null>(null);
   const [restrictedPlanPoints, setRestrictedPlanPoints] = useState<number | null>(null);
   const [effectiveRate, setEffectiveRate] = useState<number>(145);
-  const [savedPaymentMethods, setSavedPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [savedMethodsLoading, setSavedMethodsLoading] = useState(false);
-  const [savedMethodsError, setSavedMethodsError] = useState<string | null>(null);
-  const [selectedSavedMethodId, setSelectedSavedMethodId] = useState<string>(NEW_PAYMENT_METHOD_OPTION);
   const formatter = useFormatter();
   const t = useTranslations('pointsSubscriptions');
   const selectionT = useTranslations('pointsSubscriptions.selection');
@@ -69,7 +60,6 @@ function SubscriptionPageContent() {
   const errorsT = useTranslations('pointsSubscriptions.errors');
   const confirmT = useTranslations('pointsSubscriptions.confirm');
   const placeholdersT = useTranslations('pointsSubscriptions.placeholders');
-  const paymentMethodsT = useTranslations('paymentMethods');
   const statusLabels = useMemo(
     () => ({
       ACTIVE: statusT('ACTIVE'),
@@ -179,32 +169,9 @@ function SubscriptionPageContent() {
     }
   }, [errorsT, planIdParam, planKeyParam, planPointsParam]);
 
-  const loadSavedPaymentMethods = useCallback(async () => {
-    try {
-      setSavedMethodsLoading(true);
-      setSavedMethodsError(null);
-      const response = await paymentMethodApi.list();
-      const items = Array.isArray(response.data?.items) ? response.data.items : [];
-      setSavedPaymentMethods(items);
-      const defaultMethod = items.find((item) => item.is_default) || items[0];
-      setSelectedSavedMethodId(defaultMethod ? defaultMethod.id : NEW_PAYMENT_METHOD_OPTION);
-    } catch (error) {
-      console.error('Failed to load saved payment methods', error);
-      setSavedPaymentMethods([]);
-      setSavedMethodsError(paymentMethodsT('actionError'));
-      setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION);
-    } finally {
-      setSavedMethodsLoading(false);
-    }
-  }, [paymentMethodsT]);
-
   useEffect(() => {
     fetchPlansAndSubscriptions();
   }, [fetchPlansAndSubscriptions]);
-
-  useEffect(() => {
-    void loadSavedPaymentMethods();
-  }, [loadSavedPaymentMethods]);
 
   useEffect(() => {
     const loadPlatformSettings = async () => {
@@ -234,8 +201,6 @@ function SubscriptionPageContent() {
     try {
       setErrorMessage(null);
       setPlanLoadingKey(planKey);
-      const paymentMethodRecordId =
-        selectedSavedMethodId !== NEW_PAYMENT_METHOD_OPTION ? selectedSavedMethodId : undefined;
       const response = await subscriptionApi.createCheckout({
         plan_key: planKey,
         seller_id: sellerId,
@@ -245,7 +210,6 @@ function SubscriptionPageContent() {
           billing_method: "points",
           ...(salonIdParam ? { salon_id: salonIdParam } : {}),
         },
-        payment_method_record_id: paymentMethodRecordId,
       });
       const data = response.data as SubscriptionCheckoutResponse;
       if (data.checkout_url) {
@@ -368,109 +332,6 @@ function SubscriptionPageContent() {
             </p>
           </div>
         )}
-
-        <div className="mb-10 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="text-base font-semibold text-emerald-800">
-                {paymentMethodsT('selectionTitle')}
-              </h3>
-              <p className="mt-1 text-xs text-emerald-600">
-                {paymentMethodsT('selectionDescription')}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => void loadSavedPaymentMethods()}
-                disabled={savedMethodsLoading}
-                className="inline-flex items-center gap-1 rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:border-emerald-400 hover:text-emerald-800 disabled:cursor-not-allowed disabled:border-emerald-200 disabled:text-emerald-400"
-              >
-                <ArrowPathIcon className={`h-4 w-4 ${savedMethodsLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
-                {paymentMethodsT('selectionRefresh')}
-              </button>
-              <Link
-                href="/points/payment-methods"
-                className="inline-flex items-center rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:border-emerald-400 hover:text-emerald-800"
-              >
-                {paymentMethodsT('manageLink')}
-              </Link>
-            </div>
-          </div>
-          <div className="mt-3 space-y-2">
-            {savedMethodsError ? (
-              <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-600">
-                {savedMethodsError}
-              </div>
-            ) : null}
-            {savedMethodsLoading && !savedPaymentMethods.length ? (
-              <div className="flex items-center gap-2 text-xs text-emerald-700">
-                <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
-                {paymentMethodsT('selectionLoading')}
-              </div>
-            ) : null}
-            {!savedMethodsLoading && savedPaymentMethods.length > 0 ? (
-              <div className="space-y-2">
-                {savedPaymentMethods.map((method) => (
-                  <label
-                    key={method.id}
-                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 transition ${
-                      selectedSavedMethodId === method.id
-                        ? 'border-emerald-400 bg-white shadow-sm'
-                        : 'border-emerald-200/80 bg-white/80 hover:border-emerald-400'
-                    }`}
-                  >
-                    <span className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="subscription-payment-method"
-                        value={method.id}
-                        className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                        checked={selectedSavedMethodId === method.id}
-                        onChange={() => setSelectedSavedMethodId(method.id)}
-                      />
-                      <span className="text-sm font-semibold text-emerald-800">
-                        {(method.brand_label ?? method.brand ?? paymentMethodsT('savedPaymentMethodsUnknown')) +
-                          (method.last4 ? ` ••••${method.last4}` : '')}
-                      </span>
-                    </span>
-                    {method.is_default ? (
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-600">
-                        {paymentMethodsT('defaultBadge')}
-                      </span>
-                    ) : null}
-                  </label>
-                ))}
-              </div>
-            ) : null}
-            <label
-              className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 transition ${
-                selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION
-                  ? 'border-emerald-400 bg-white shadow-sm'
-                  : 'border-emerald-200/80 bg-white/80 hover:border-emerald-400'
-              }`}
-            >
-              <span className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="subscription-payment-method"
-                  value={NEW_PAYMENT_METHOD_OPTION}
-                  className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                  checked={selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION}
-                  onChange={() => setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION)}
-                />
-                <span className="text-sm font-semibold text-emerald-800">
-                  {paymentMethodsT('selectionUseNew')}
-                </span>
-              </span>
-            </label>
-            {!savedMethodsLoading && savedPaymentMethods.length === 0 && !savedMethodsError ? (
-              <div className="rounded-xl border border-dashed border-emerald-200 bg-white/70 px-3 py-2 text-xs text-emerald-700">
-                {paymentMethodsT('selectionNone')}
-              </div>
-            ) : null}
-          </div>
-        </div>
 
         <section className="mb-10">
           <h2 className="text-lg font-semibold text-slate-900">{selectionT('heading')}</h2>

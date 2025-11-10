@@ -3,15 +3,13 @@
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { ArrowDownIcon, ArrowPathIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
-import { paymentMethodApi, publicApi, productApi, pointsApi } from '@/lib/api';
-import { LPDetail, RequiredActionsStatus, CTA, Product, PaymentMethod } from '@/types';
+import { publicApi, productApi, pointsApi } from '@/lib/api';
+import { LPDetail, RequiredActionsStatus, CTA, Product } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 import { redirectToLogin } from '@/lib/navigation';
@@ -27,12 +25,9 @@ interface LPViewerClientProps {
   initialProducts?: Product[];
 }
 
-const NEW_PAYMENT_METHOD_OPTION = '__new__';
-
 export default function LPViewerClient({ slug, initialLp = null, initialProducts = [] }: LPViewerClientProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
-  const paymentMethodsT = useTranslations('paymentMethods');
   const [lp, setLp] = useState<LPDetail | null>(initialLp);
   const [isLoading, setIsLoading] = useState(!initialLp);
   const [error, setError] = useState('');
@@ -50,10 +45,6 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchaseMethod, setPurchaseMethod] = useState<'points' | 'yen'>('points');
   const swiperRef = useRef<SwiperType | null>(null);
-  const [savedPaymentMethods, setSavedPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [savedMethodsLoading, setSavedMethodsLoading] = useState(false);
-  const [savedMethodsError, setSavedMethodsError] = useState<string | null>(null);
-  const [selectedSavedMethodId, setSelectedSavedMethodId] = useState<string>(NEW_PAYMENT_METHOD_OPTION);
 
   const selectedIsPoints = purchaseMethod === 'points';
   const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
@@ -121,47 +112,6 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     setIsLoading(!initialLp);
     setError('');
   }, [initialLp, initialProducts]);
-
-  useEffect(() => {
-    if (!isAuthenticated || !showPurchaseModal || purchaseMethod !== 'yen') {
-      setSavedPaymentMethods([]);
-      setSavedMethodsError(null);
-      setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION);
-      setSavedMethodsLoading(false);
-      return;
-    }
-
-    let isMounted = true;
-    setSavedMethodsLoading(true);
-    setSavedMethodsError(null);
-
-    paymentMethodApi
-      .list()
-      .then((response) => {
-        if (!isMounted) return;
-        const items = Array.isArray(response.data?.items) ? response.data.items : [];
-        setSavedPaymentMethods(items);
-        const defaultMethod = items.find((item) => item.is_default) || items[0];
-        setSelectedSavedMethodId(defaultMethod ? defaultMethod.id : NEW_PAYMENT_METHOD_OPTION);
-      })
-      .catch((error) => {
-        console.error('Failed to load saved payment methods', error);
-        if (isMounted) {
-          setSavedPaymentMethods([]);
-          setSavedMethodsError(paymentMethodsT('actionError'));
-          setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION);
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setSavedMethodsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isAuthenticated, showPurchaseModal, purchaseMethod, paymentMethodsT]);
 
   useEffect(() => {
     viewTrackedRef.current = false;
@@ -313,10 +263,6 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     } else {
       setPurchaseMethod('yen');
     }
-    setSavedPaymentMethods([]);
-    setSavedMethodsError(null);
-    setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION);
-    setSavedMethodsLoading(false);
     setShowPurchaseModal(true);
   };
 
@@ -373,14 +319,9 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
     setIsPurchasing(true);
     try {
-      const paymentMethodRecordId =
-        !isPointsPurchase && selectedSavedMethodId !== NEW_PAYMENT_METHOD_OPTION
-          ? selectedSavedMethodId
-          : undefined;
       const response = await productApi.purchase(selectedProduct.id, {
         quantity: purchaseQuantity,
         payment_method: purchaseMethod,
-        payment_method_record_id: paymentMethodRecordId,
       });
 
       if (isPointsPurchase) {
@@ -931,98 +872,6 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
                     </button>
                   )}
                 </div>
-
-                {showYenOption && purchaseMethod === 'yen' && (
-                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-emerald-700">
-                          {paymentMethodsT('selectionTitle')}
-                        </p>
-                        <p className="text-xs text-emerald-600">
-                          {paymentMethodsT('selectionDescription')}
-                        </p>
-                      </div>
-                      <Link
-                        href="/points/payment-methods"
-                        className="inline-flex items-center rounded-full border border-emerald-400/70 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:border-emerald-500 hover:text-emerald-800"
-                      >
-                        {paymentMethodsT('manageLink')}
-                      </Link>
-                    </div>
-                    <div className="mt-3 space-y-2">
-                      {savedMethodsError ? (
-                        <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-600">
-                          {savedMethodsError}
-                        </div>
-                      ) : null}
-                      {savedMethodsLoading ? (
-                        <div className="flex items-center gap-2 text-xs text-emerald-700">
-                          <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
-                          {paymentMethodsT('selectionLoading')}
-                        </div>
-                      ) : savedPaymentMethods.length ? (
-                        <div className="space-y-2">
-                          {savedPaymentMethods.map((method) => (
-                            <label
-                              key={method.id}
-                              className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-3 py-2 transition ${
-                                selectedSavedMethodId === method.id
-                                  ? 'border-emerald-400 bg-white shadow-sm'
-                                  : 'border-emerald-200/70 bg-white/80 hover:border-emerald-400'
-                              }`}
-                            >
-                              <span className="flex items-center gap-3">
-                                <input
-                                  type="radio"
-                                  name="saved-lp-product-method"
-                                  value={method.id}
-                                  className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                                  checked={selectedSavedMethodId === method.id}
-                                  onChange={() => setSelectedSavedMethodId(method.id)}
-                                />
-                                <span className="text-sm font-semibold text-emerald-800">
-                                  {(method.brand_label ?? method.brand ?? paymentMethodsT('savedPaymentMethodsUnknown')) +
-                                    (method.last4 ? ` ••••${method.last4}` : '')}
-                                </span>
-                              </span>
-                              {method.is_default ? (
-                                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-600">
-                                  {paymentMethodsT('defaultBadge')}
-                                </span>
-                              ) : null}
-                            </label>
-                          ))}
-                          <label
-                            className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-3 py-2 transition ${
-                              selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION
-                                ? 'border-emerald-400 bg-white shadow-sm'
-                                : 'border-emerald-200/70 bg-white/80 hover:border-emerald-400'
-                            }`}
-                          >
-                            <span className="flex items-center gap-3">
-                              <input
-                                type="radio"
-                                name="saved-lp-product-method"
-                                value={NEW_PAYMENT_METHOD_OPTION}
-                                className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
-                                checked={selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION}
-                                onChange={() => setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION)}
-                              />
-                              <span className="text-sm font-semibold text-emerald-800">
-                                {paymentMethodsT('selectionUseNew')}
-                              </span>
-                            </span>
-                          </label>
-                        </div>
-                      ) : (
-                        <div className="rounded-lg border border-dashed border-emerald-200 bg-white/60 px-3 py-2 text-xs text-emerald-700">
-                          {paymentMethodsT('selectionNone')}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 <div className="bg-gradient-to-r from-gray-50 to-white rounded-lg p-4 border border-gray-100">
                   <div className="flex items-center justify-between">

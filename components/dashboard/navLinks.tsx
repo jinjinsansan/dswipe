@@ -19,7 +19,6 @@ import {
   ShoppingBagIcon,
   UserCircleIcon,
   ShareIcon,
-  CreditCardIcon,
 } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { XLogo } from '@/components/icons/XLogo';
@@ -243,7 +242,6 @@ const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
   { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
   { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
   { href: '/points/purchase', labelKey: 'links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
-  { href: '/points/payment-methods', labelKey: 'links.paymentMethods', defaultLabel: 'お支払い方法', icon: <CreditCardIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 15 },
   { href: '/points/history', labelKey: 'links.pointsHistory', defaultLabel: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
   { href: '/purchases', labelKey: 'links.purchases', defaultLabel: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
   { href: '/line/bonus', labelKey: 'links.lineBonus', defaultLabel: 'LINE連携', icon: <GiftIcon className="h-5 w-5" aria-hidden="true" />, group: 'line', order: 10, badgeKey: 'links.lineBonusBadge', defaultBadge: '300P' },

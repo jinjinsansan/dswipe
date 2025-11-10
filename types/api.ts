@@ -33,9 +33,6 @@ export type {
   PublicNoteDetail,
   NotePurchaseResult,
   NotePurchaseStatusResponse,
-  PaymentMethod,
-  PaymentMethodListResponse,
-  InitiatePaymentMethodResponse,
   ProductOrderStatusResponse,
   NoteCreateRequest,
   NoteUpdateRequest,
@@ -553,7 +550,6 @@ export interface SubscriptionCheckoutPayload {
   error_path?: string;
   metadata?: Record<string, unknown>;
   salon_id?: string;
-  payment_method_record_id?: string;
 }
 
 export interface UserSubscription {
@@ -572,7 +568,6 @@ export interface UserSubscription {
   seller_username?: string;
   salon_id?: string;
   metadata?: Record<string, unknown>;
-  payment_method_record_id?: string;
   cancelable: boolean;
   created_at: string;
   updated_at: string;
@@ -607,7 +602,6 @@ export type ProductUpdatePayload = Partial<ProductCreatePayload> & {
 export interface ProductPurchasePayload {
   quantity?: number;
   payment_method: 'points' | 'yen';
-  payment_method_record_id?: string;
 }
 
 export interface NoteSalonAccessPayload {
