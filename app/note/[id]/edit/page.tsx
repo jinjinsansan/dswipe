@@ -8,6 +8,7 @@ import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationT
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import NoteAiAssistant from '@/components/note/NoteAiAssistant';
+import NoteRichEditor from '@/components/note/NoteRichEditor';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
@@ -21,6 +22,8 @@ import type {
   OfficialShareConfig,
   Salon,
   SalonListResult,
+  NoteEditorType,
+  NoteRichContent,
 } from '@/types';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
@@ -29,6 +32,17 @@ import { PageLoader } from '@/components/LoadingSpinner';
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;
 const MAX_AI_HISTORY = 20;
+
+const INITIAL_RICH_CONTENT: NoteRichContent = {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      attrs: { access: 'public' },
+      content: [],
+    },
+  ],
+};
 
 const generateActionId = (): string => {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -105,6 +119,8 @@ export default function NoteEditPage() {
   const [taxRate, setTaxRate] = useState('10');
   const [taxInclusive, setTaxInclusive] = useState(true);
   const [blocks, setBlocks] = useState<NoteBlock[]>(() => [createEmptyBlock('paragraph')]);
+  const [editorType, setEditorType] = useState<NoteEditorType>('classic');
+  const [richContent, setRichContent] = useState<NoteRichContent>(INITIAL_RICH_CONTENT);
   const [aiHistory, setAiHistory] = useState<AiActionRecord[]>([]);
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
@@ -241,6 +257,10 @@ export default function NoteEditPage() {
             : [createEmptyBlock('paragraph')]
           ).map((block) => normalizeBlock(block))
         );
+        setEditorType(detail.editor_type ?? 'classic');
+        setRichContent((detail.editor_type ?? 'classic') === 'note'
+          ? (detail.rich_content as NoteRichContent | null) ?? INITIAL_RICH_CONTENT
+          : INITIAL_RICH_CONTENT);
         setStatus(detail.status ?? 'draft');
         setPublishedAt(detail.published_at ?? null);
         setOfficialShareConfig({
@@ -564,7 +584,16 @@ export default function NoteEditPage() {
     [],
   );
 
-  const paidBlockExists = useMemo(() => blocks.some((block) => isPaidBlock(block)), [blocks]);
+  const paidBlockExists = useMemo(() => {
+    if (editorType === 'note') {
+      try {
+        return JSON.stringify(richContent).includes('"access":"paid"');
+      } catch {
+        return false;
+      }
+    }
+    return blocks.some((block) => isPaidBlock(block));
+  }, [blocks, editorType, richContent]);
   const effectivePaid = isPaid || paidBlockExists;
 
   const derivedOfficialTweetUrl = useMemo(() => {
@@ -582,7 +611,28 @@ export default function NoteEditPage() {
   const handlePaidToggle = (checked: boolean) => {
     setIsPaid(checked);
     if (!checked) {
-      setBlocks((prev) => prev.map((block) => normalizeBlock({ ...block, access: 'public' })));
+      if (editorType === 'classic') {
+        setBlocks((prev) => prev.map((block) => normalizeBlock({ ...block, access: 'public' })));
+      } else {
+        setRichContent((prev) => {
+          try {
+            const snapshot = JSON.parse(JSON.stringify(prev ?? INITIAL_RICH_CONTENT));
+            const visit = (node: any) => {
+              if (!node || typeof node !== 'object') return;
+              if (node.attrs && typeof node.attrs === 'object') {
+                node.attrs.access = 'public';
+              }
+              if (Array.isArray(node.content)) {
+                node.content.forEach(visit);
+              }
+            };
+            visit(snapshot);
+            return snapshot;
+          } catch {
+            return INITIAL_RICH_CONTENT;
+          }
+        });
+      }
       setPricePoints('');
       setPriceJpy('');
       setAllowPointPurchase(true);
@@ -642,26 +692,56 @@ export default function NoteEditPage() {
     }
   };
 
+  const richContentHasBody = useCallback((doc: NoteRichContent | null | undefined): boolean => {
+    if (!doc || doc.type !== 'doc' || !Array.isArray(doc.content)) {
+      return false;
+    }
+
+    const visit = (nodes: any[]): boolean => {
+      for (const node of nodes) {
+        if (!node) continue;
+        if (node.type === 'text' && typeof node.text === 'string' && node.text.trim().length > 0) {
+          return true;
+        }
+        if (node.type === 'image' && typeof node.attrs?.src === 'string' && node.attrs.src.trim().length > 0) {
+          return true;
+        }
+        if (Array.isArray(node.content) && visit(node.content)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    return visit(doc.content as any[]);
+  }, []);
+
   const validate = () => {
     if (!title || title.trim().length < MIN_TITLE_LENGTH) {
       return 'タイトルを3文字以上で入力してください';
     }
 
-    const hasContent = blocks.some((block) => {
-      if (block.type === 'paragraph' || block.type === 'heading' || block.type === 'quote') {
-        return Boolean(block.data?.text && String(block.data.text).trim().length > 0);
-      }
-      if (block.type === 'list') {
-        return Array.isArray(block.data?.items) && block.data.items.length > 0;
-      }
-      if (block.type === 'image') {
-        return Boolean(block.data?.url && String(block.data.url).trim().length > 0);
-      }
-      return true;
-    });
+    if (editorType === 'classic') {
+      const hasContent = blocks.some((block) => {
+        if (block.type === 'paragraph' || block.type === 'heading' || block.type === 'quote') {
+          return Boolean(block.data?.text && String(block.data.text).trim().length > 0);
+        }
+        if (block.type === 'list') {
+          return Array.isArray(block.data?.items) && block.data.items.length > 0;
+        }
+        if (block.type === 'image') {
+          return Boolean(block.data?.url && String(block.data.url).trim().length > 0);
+        }
+        return true;
+      });
 
-    if (!hasContent) {
-      return '本文を入力してください';
+      if (!hasContent) {
+        return '本文を入力してください';
+      }
+    } else {
+      if (!richContentHasBody(richContent)) {
+        return '本文を入力してください';
+      }
     }
 
     if (effectivePaid) {
@@ -705,7 +785,9 @@ export default function NoteEditPage() {
 
     try {
       setSaving(true);
-      const normalizedBlocks = blocks.map((block) => normalizeBlock(block));
+      const normalizedBlocks = editorType === 'classic'
+        ? blocks.map((block) => normalizeBlock(block))
+        : [];
       const parsedPoints = Number(pricePoints);
       const parsedJpy = Number(priceJpy);
       const normalizedTaxRate = taxRate.trim();
@@ -723,6 +805,8 @@ export default function NoteEditPage() {
         cover_image_url: coverImageUrl.trim() || undefined,
         excerpt: excerpt.trim() || undefined,
         content_blocks: normalizedBlocks,
+        rich_content: editorType === 'note' ? richContent : undefined,
+        editor_type: editorType,
         is_paid: effectivePaid,
         price_points: pricePointsValue,
         price_jpy: priceJpyValue,
@@ -1459,31 +1543,45 @@ export default function NoteEditPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">本文ブロック</h2>
-              <p className="mt-1 text-xs text-slate-500">段落・見出し・画像などを自由に組み合わせて記事を構成できます。</p>
+        {editorType === 'classic' ? (
+          <>
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900">本文ブロック</h2>
+                  <p className="mt-1 text-xs text-slate-500">段落・見出し・画像などを自由に組み合わせて記事を構成できます。</p>
+                </div>
+                <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
+                  {blocks.length} ブロック
+                </div>
+              </div>
+              <NoteEditor value={blocks} onChange={handleBlocksChange} disabled={saving || actionLoading} />
             </div>
-            <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
-              {blocks.length} ブロック
-            </div>
-          </div>
-          <NoteEditor value={blocks} onChange={handleBlocksChange} disabled={saving || actionLoading} />
-        </div>
 
-        <NoteAiAssistant
-          title={title}
-          excerpt={excerpt}
-          categories={categories}
-          language={locale === 'en' ? 'en' : 'ja'}
-          blocks={blocks}
-          disabled={saving || actionLoading}
-          onApplyText={applyAiTextToBlock}
-          onInsertBlock={insertAiSuggestion}
-          history={aiHistory}
-          onUndoAction={undoAiAction}
-        />
+            <NoteAiAssistant
+              title={title}
+              excerpt={excerpt}
+              categories={categories}
+              language={locale === 'en' ? 'en' : 'ja'}
+              blocks={blocks}
+              disabled={saving || actionLoading}
+              onApplyText={applyAiTextToBlock}
+              onInsertBlock={insertAiSuggestion}
+              history={aiHistory}
+              onUndoAction={undoAiAction}
+            />
+          </>
+        ) : (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">NOTEスタイルエディタ</h2>
+                <p className="mt-1 text-xs text-slate-500">段落単位で装飾や有料切り替えを行えます。</p>
+              </div>
+            </div>
+            <NoteRichEditor value={richContent} onChange={setRichContent} disabled={saving || actionLoading} />
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">

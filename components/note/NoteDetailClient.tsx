@@ -426,9 +426,11 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           </div>
         ) : null}
 
-        <NoteRenderer 
-          blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []} 
-          showPaidSeparator={note.is_paid && note.has_access}
+        <NoteRenderer
+          editorType={note.editor_type}
+          blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []}
+          richContent={note.rich_content}
+          showPaidSeparator={note.is_paid && !note.has_access}
         />
 
         {note.is_paid && !note.has_access ? (

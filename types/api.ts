@@ -23,6 +23,8 @@ export type {
   CTA,
   PublicUserProfile,
   NoteBlock,
+  NoteEditorType,
+  NoteRichContent,
   NoteSummary,
   NoteDetail,
   NoteListResult,

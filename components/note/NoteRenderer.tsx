@@ -2,17 +2,28 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
-import type { NoteBlock } from '@/types';
+import type { NoteBlock, NoteEditorType, NoteRichContent } from '@/types';
 import { getFontStack } from '@/lib/fonts';
 import { useTranslations } from 'next-intl';
 
 interface NoteRendererProps {
+  editorType: NoteEditorType;
   blocks: NoteBlock[];
+  richContent?: NoteRichContent | null;
   showPaidSeparator?: boolean;
 }
 
-export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRendererProps) {
+export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparator = false }: NoteRendererProps) {
   const t = useTranslations('noteRenderer');
+  if (editorType === 'note') {
+    return (
+      <RichContentRenderer
+        content={richContent}
+        showPaidSeparator={showPaidSeparator}
+        paidLabel={t('paidAreaLabel')}
+      />
+    );
+  }
   // 無料エリアと有料エリアを分ける
   const freeBlocks = blocks.filter(block => block.access !== 'paid');
   const paidBlocks = blocks.filter(block => block.access === 'paid');
@@ -195,3 +206,160 @@ export function NoteRenderer({ blocks, showPaidSeparator = false }: NoteRenderer
 }
 
 export default NoteRenderer;
+
+interface RichContentRendererProps {
+  content?: NoteRichContent | null;
+  showPaidSeparator: boolean;
+  paidLabel: string;
+}
+
+type RichNode = {
+  type: string;
+  attrs?: Record<string, any>;
+  content?: RichNode[];
+  marks?: Array<{ type: string; attrs?: Record<string, any> }>;
+  text?: string;
+};
+
+const isPaidAccess = (node?: { attrs?: Record<string, any> }): boolean => {
+  const access = typeof node?.attrs?.access === 'string' ? node?.attrs?.access : 'public';
+  return access === 'paid';
+};
+
+const renderMarks = (node: RichNode, key: string | number): ReactNode => {
+  const base = node.text ?? '';
+  if (!node.marks || node.marks.length === 0) {
+    return base;
+  }
+
+  return node.marks.reduce<ReactNode>((acc, mark) => {
+    switch (mark.type) {
+      case 'bold':
+        return <strong key={`${key}-bold`}>{acc}</strong>;
+      case 'italic':
+        return <em key={`${key}-italic`}>{acc}</em>;
+      case 'code':
+        return <code key={`${key}-code`} className="rounded bg-slate-100 px-1 py-0.5 text-sm">{acc}</code>;
+      default:
+        return acc;
+    }
+  }, base);
+};
+
+const renderRichChildren = (nodes: RichNode[] | undefined): ReactNode => {
+  if (!nodes || nodes.length === 0) {
+    return null;
+  }
+  return nodes.map((child, index) => renderRichNode(child, `${child.type}-${index}`));
+};
+
+const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
+  const paid = isPaidAccess(node);
+  const commonProps = {
+    key,
+    className: paid ? 'rich-paid-node' : undefined,
+  };
+
+  switch (node.type) {
+    case 'heading': {
+      const level = typeof node.attrs?.level === 'number' ? node.attrs.level : 2;
+      const HeadingTag = (`h${Math.min(Math.max(level, 2), 4)}` as 'h2' | 'h3' | 'h4');
+      return (
+        <HeadingTag {...commonProps} className={`${HeadingTag === 'h2' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'} font-semibold text-slate-900`}>
+          {renderRichChildren(node.content)}
+        </HeadingTag>
+      );
+    }
+    case 'paragraph': {
+      if (!node.content || node.content.length === 0) {
+        return <p {...commonProps} className="text-base leading-relaxed text-slate-700">&nbsp;</p>;
+      }
+      return (
+        <p {...commonProps} className="whitespace-pre-wrap text-base leading-relaxed text-slate-700">
+          {node.content.map((child, index) =>
+            child.type === 'text'
+              ? <span key={`${key}-text-${index}`}>{renderMarks(child, `${key}-text-${index}`)}</span>
+              : renderRichNode(child, `${key}-nested-${index}`)
+          )}
+        </p>
+      );
+    }
+    case 'blockquote':
+      return (
+        <blockquote {...commonProps} className="space-y-2 border-l-4 border-slate-200 pl-4">
+          {renderRichChildren(node.content)}
+        </blockquote>
+      );
+    case 'bulletList':
+      return (
+        <ul {...commonProps} className="list-disc space-y-1 pl-6 text-sm text-slate-700">
+          {renderRichChildren(node.content)}
+        </ul>
+      );
+    case 'orderedList':
+      return (
+        <ol {...commonProps} className="list-decimal space-y-1 pl-6 text-sm text-slate-700">
+          {renderRichChildren(node.content)}
+        </ol>
+      );
+    case 'listItem':
+      return (
+        <li {...commonProps}>
+          {renderRichChildren(node.content)}
+        </li>
+      );
+    case 'hardBreak':
+      return <br key={key} />;
+    case 'text':
+      return <span key={key}>{renderMarks(node, key)}</span>;
+    case 'image': {
+      const src = typeof node.attrs?.src === 'string' ? node.attrs.src : '';
+      if (!src) {
+        return null;
+      }
+      const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
+      return (
+        <figure {...commonProps} className="space-y-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt={alt} className="w-full rounded-2xl object-cover" />
+          {alt ? <figcaption className="text-center text-xs text-slate-500">{alt}</figcaption> : null}
+        </figure>
+      );
+    }
+    default:
+      return <div key={key}>{renderRichChildren(node.content)}</div>;
+  }
+};
+
+const hasPaidNodes = (node?: RichNode): boolean => {
+  if (!node) return false;
+  if (isPaidAccess(node)) return true;
+  return (node.content ?? []).some((child) => hasPaidNodes(child));
+};
+
+function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichContentRendererProps) {
+  const nodes = ((content?.content ?? []) as RichNode[]).filter(Boolean);
+  const paidExists = nodes.some((node) => hasPaidNodes(node));
+
+  return (
+    <div className="note-content flex flex-col gap-8">
+      {nodes.map((node, index) => renderRichNode(node, `${node.type}-${index}`))}
+
+      {paidExists && showPaidSeparator && (
+        <div className="flex items-center justify-center py-6">
+          <div className="relative w-full max-w-2xl">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-dashed border-amber-300" />
+            </div>
+            <div className="relative flex justify-center">
+              <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
+                <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
+                <span className="text-sm font-bold text-amber-900">{paidLabel}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

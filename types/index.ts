@@ -205,6 +205,9 @@ export type NoteStatus = 'draft' | 'published';
 export type NoteVisibility = 'public' | 'limited' | 'private';
 export type NoteAccessLevel = 'public' | 'paid';
 export type NoteBlockType = 'paragraph' | 'heading' | 'quote' | 'image' | 'divider' | 'list' | 'link' | 'spacer';
+export type NoteEditorType = 'classic' | 'note';
+
+export type NoteRichContent = Record<string, unknown>;
 
 export interface NoteBlock {
   id?: string;
@@ -220,6 +223,7 @@ export interface NoteSummary {
   slug: string;
   cover_image_url?: string | null;
   excerpt?: string | null;
+  editor_type: NoteEditorType;
   is_paid: boolean;
   price_points: number;
   price_jpy?: number | null;
@@ -246,6 +250,7 @@ export interface NoteSummary {
 
 export interface NoteDetail extends NoteSummary {
   content_blocks: NoteBlock[];
+  rich_content?: NoteRichContent | null;
   salon_access_ids: string[];
 }
 
@@ -290,6 +295,7 @@ export interface PublicNoteSummary {
   slug: string;
   cover_image_url?: string | null;
   excerpt?: string | null;
+  editor_type: NoteEditorType;
   is_paid: boolean;
   price_points: number;
   price_jpy?: number | null;
@@ -324,6 +330,7 @@ export interface PublicNoteDetail {
   author_username?: string | null;
   cover_image_url?: string | null;
   excerpt?: string | null;
+  editor_type: NoteEditorType;
   is_paid: boolean;
   price_points: number;
   price_jpy?: number | null;
@@ -334,6 +341,7 @@ export interface PublicNoteDetail {
   is_featured: boolean;
   has_access: boolean;
   content_blocks: NoteBlock[];
+  rich_content?: NoteRichContent | null;
   published_at?: string | null;
   categories: string[];
   allow_share_unlock?: boolean;
@@ -417,6 +425,8 @@ export interface NoteCreateRequest {
   cover_image_url?: string | null;
   excerpt?: string | null;
   content_blocks: NoteBlock[];
+  rich_content?: NoteRichContent | null;
+  editor_type: NoteEditorType;
   is_paid: boolean;
   price_points?: number | null;
   price_jpy?: number | null;
@@ -435,6 +445,7 @@ export interface NoteUpdateRequest {
   cover_image_url?: string | null;
   excerpt?: string | null;
   content_blocks?: NoteBlock[];
+  rich_content?: NoteRichContent | null;
   is_paid?: boolean;
   price_points?: number | null;
   price_jpy?: number | null;
