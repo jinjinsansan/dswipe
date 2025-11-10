@@ -20,6 +20,9 @@ import type {
   NoteUpdateRequest,
   NotePurchaseResult,
   NotePurchaseStatusResponse,
+  PaymentMethod,
+  PaymentMethodListResponse,
+  InitiatePaymentMethodResponse,
   PublicNoteListResult,
   PublicNoteDetail,
   ProductCreatePayload,
@@ -377,11 +380,16 @@ export const noteApi = {
   rotateShareToken: (noteId: string) =>
     api.post<NoteDetail>(`/notes/${noteId}/share-token/rotate`),
 
-  purchase: (noteId: string, paymentMethod: 'points' | 'yen' = 'points', options?: { locale?: string }) =>
+  purchase: (
+    noteId: string,
+    paymentMethod: 'points' | 'yen' = 'points',
+    options?: { locale?: string; paymentMethodRecordId?: string }
+  ) =>
     api.post<NotePurchaseResult>(`/notes/${noteId}/purchase`, null, {
       params: {
         payment_method: paymentMethod,
         locale: options?.locale,
+        payment_method_record_id: options?.paymentMethodRecordId,
       },
     }),
 
@@ -422,12 +430,31 @@ export const noteAiApi = {
 export const pointsApi = {
   purchase: (amount: number) =>
     api.post('/points/purchase', { amount }),
+
+  purchaseWithYen: (payload: { amount: number; paymentMethodRecordId?: string }) =>
+    api.post('/points/purchase/one-lat', {
+      amount: payload.amount,
+      payment_method_record_id: payload.paymentMethodRecordId,
+    }),
   
   getBalance: () =>
     api.get<PointsBalance>('/points/balance'),
   
   getTransactions: (params?: Record<string, unknown>) =>
     api.get('/points/transactions', { params }),
+};
+
+export const paymentMethodApi = {
+  list: () => api.get<PaymentMethodListResponse>('/payment-methods'),
+  initiateOneLatSetup: () => api.post<InitiatePaymentMethodResponse>('/payment-methods/one-lat/initiate'),
+  confirmOneLatSetup: (payload: { checkoutPreferenceId: string; externalId: string }) =>
+    api.post<PaymentMethod>('/payment-methods/one-lat/confirm', {
+      checkout_preference_id: payload.checkoutPreferenceId,
+      external_id: payload.externalId,
+    }),
+  delete: (recordId: string) => api.delete(`/payment-methods/${recordId}`),
+  setDefault: (recordId: string) =>
+    api.post<PaymentMethod>(`/payment-methods/${recordId}/default`, { is_default: true }),
 };
 
 export const subscriptionApi = {

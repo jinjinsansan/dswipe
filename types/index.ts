@@ -370,6 +370,29 @@ export interface NotePurchaseStatusResponse {
   };
 }
 
+export interface PaymentMethod {
+  id: string;
+  brand?: string | null;
+  brand_label?: string | null;
+  last4?: string | null;
+  exp_month?: number | null;
+  exp_year?: number | null;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+  revoked_at?: string | null;
+}
+
+export interface PaymentMethodListResponse {
+  items: PaymentMethod[];
+}
+
+export interface InitiatePaymentMethodResponse {
+  checkout_url: string;
+  checkout_preference_id: string;
+  external_id: string;
+}
+
 export interface ProductOrderStatusResponse {
   status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REJECTED' | 'EXPIRED' | 'UNKNOWN';
   external_id: string;

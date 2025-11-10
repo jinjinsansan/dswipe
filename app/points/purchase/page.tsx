@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import {useFormatter, useTranslations} from 'next-intl';
 import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
-import { pointsApi } from '@/lib/api';
+import { paymentMethodApi, pointsApi } from '@/lib/api';
+import type { PaymentMethod } from '@/types';
 import {
+  ArrowPathIcon,
   CreditCardIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
@@ -27,6 +30,8 @@ const POINT_PACKAGES = [
   { points: 30000, price: 30000, bonus: 0 },
   { points: 100000, price: 100000, bonus: 0 },
 ];
+
+const NEW_PAYMENT_METHOD_OPTION = '__new__';
 
 const PAYMENT_METHODS = [
   {
@@ -65,6 +70,10 @@ export default function PointPurchasePage() {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [savedPaymentMethods, setSavedPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [savedMethodsLoading, setSavedMethodsLoading] = useState(false);
+  const [savedMethodsError, setSavedMethodsError] = useState<string | null>(null);
+  const [selectedSavedMethodId, setSelectedSavedMethodId] = useState<string>(NEW_PAYMENT_METHOD_OPTION);
   const formatter = useFormatter();
   const t = useTranslations('pointsPurchase');
   const packagesT = useTranslations('pointsPurchase.packages');
@@ -74,6 +83,7 @@ export default function PointPurchasePage() {
   const errorsT = useTranslations('pointsPurchase.errors');
   const transactionsT = useTranslations('pointsPurchase.transactions');
   const guidelinesT = useTranslations('pointsPurchase.guidelines');
+  const paymentMethodsT = useTranslations('paymentMethods');
   const guidelineItems = useMemo(() => {
     const rawItems = guidelinesT.raw('items');
     return Array.isArray(rawItems) ? rawItems.map(String) : [];
@@ -133,6 +143,44 @@ export default function PointPurchasePage() {
     };
   }, [errorsT, isInitialized, isAuthenticated, setPointBalance]);
 
+  useEffect(() => {
+    if (!isInitialized || !isAuthenticated || selectedPaymentMethod.id !== 'one_lat') {
+      setSavedPaymentMethods([]);
+      setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION);
+      setSavedMethodsError(null);
+      return;
+    }
+
+    let isActive = true;
+    setSavedMethodsLoading(true);
+    setSavedMethodsError(null);
+
+    paymentMethodApi
+      .list()
+      .then((response) => {
+        if (!isActive) return;
+        const items = Array.isArray(response.data?.items) ? response.data.items : [];
+        setSavedPaymentMethods(items);
+        const defaultMethod = items.find((item) => item.is_default) || items[0];
+        setSelectedSavedMethodId(defaultMethod ? defaultMethod.id : NEW_PAYMENT_METHOD_OPTION);
+      })
+      .catch((error) => {
+        console.error('Failed to load saved payment methods', error);
+        if (isActive) {
+          setSavedMethodsError(paymentMethodsT('actionError'));
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setSavedMethodsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [isInitialized, isAuthenticated, selectedPaymentMethod.id, paymentMethodsT]);
+
   const handlePurchase = async () => {
     if (!isAuthenticated) {
       alert(alertsT('loginRequired'));
@@ -152,38 +200,26 @@ export default function PointPurchasePage() {
     if (selectedPaymentMethod.id === 'one_lat') {
       try {
         setIsPurchasing(true);
+        const paymentMethodRecordId =
+          selectedSavedMethodId !== NEW_PAYMENT_METHOD_OPTION ? selectedSavedMethodId : undefined;
 
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://swipelaunch-backend.onrender.com/api';
-        const token = localStorage.getItem('access_token');
-
-        if (!token) {
-          throw new Error(alertsT('missingToken'));
-        }
-
-        const response = await fetch(`${apiUrl}/points/purchase/one-lat`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            amount: selectedTotalPoints,
-          }),
+        const response = await pointsApi.purchaseWithYen({
+          amount: selectedTotalPoints,
+          paymentMethodRecordId,
         });
 
-        if (!response.ok) {
-          const errorBody = await response.text();
-          console.error('API Error Response:', errorBody);
-          throw new Error(
-            alertsT('purchaseStartFailed', {
-              status: String(response.status),
-              details: errorBody,
-            })
-          );
+        const checkoutUrl = response.data?.checkout_url;
+        if (checkoutUrl) {
+          window.location.href = checkoutUrl;
+          return;
         }
 
-        const data = await response.json();
-        window.location.href = data.checkout_url;
+        throw new Error(
+          alertsT('purchaseStartFailed', {
+            status: '200',
+            details: 'Missing checkout URL',
+          })
+        );
       } catch (error: unknown) {
         console.error('Purchase error:', error);
         if (error instanceof Error) {
@@ -303,6 +339,97 @@ export default function PointPurchasePage() {
                     );
                   })}
                 </div>
+                {selectedPaymentMethod.id === 'one_lat' ? (
+                  <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900 sm:text-base">
+                          {paymentMethodsT('selectionTitle')}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                          {paymentMethodsT('selectionDescription')}
+                        </p>
+                      </div>
+                      <Link
+                        href="/points/payment-methods"
+                        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                      >
+                        {paymentMethodsT('manageLink')}
+                      </Link>
+                    </div>
+                    <div className="mt-4 space-y-2 text-sm">
+                      {savedMethodsError ? (
+                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-xs text-red-600">
+                          {savedMethodsError}
+                        </div>
+                      ) : null}
+                      {savedMethodsLoading ? (
+                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                          <ArrowPathIcon className="h-4 w-4 animate-spin" aria-hidden="true" />
+                          {paymentMethodsT('selectionLoading')}
+                        </div>
+                      ) : savedPaymentMethods.length ? (
+                        <div className="space-y-2">
+                          {savedPaymentMethods.map((method) => (
+                            <label
+                              key={method.id}
+                              className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 transition ${
+                                selectedSavedMethodId === method.id
+                                  ? 'border-emerald-400 bg-white'
+                                  : 'border-transparent bg-white/70 hover:border-emerald-300'
+                              }`}
+                            >
+                              <span className="flex items-center gap-3">
+                                <input
+                                  type="radio"
+                                  name="saved-point-method"
+                                  value={method.id}
+                                  className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
+                                  checked={selectedSavedMethodId === method.id}
+                                  onChange={() => setSelectedSavedMethodId(method.id)}
+                                />
+                                <span className="text-sm font-medium text-slate-800">
+                                  {(method.brand_label ?? method.brand ?? 'Card')}{' '}
+                                  {method.last4 ? `•••• ${method.last4}` : ''}
+                                </span>
+                              </span>
+                              {method.is_default ? (
+                                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                                  {paymentMethodsT('defaultBadge')}
+                                </span>
+                              ) : null}
+                            </label>
+                          ))}
+                          <label
+                            className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2 transition ${
+                              selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION
+                                ? 'border-emerald-400 bg-white'
+                                : 'border-transparent bg-white/70 hover:border-emerald-300'
+                            }`}
+                          >
+                            <span className="flex items-center gap-3">
+                              <input
+                                type="radio"
+                                name="saved-point-method"
+                                value={NEW_PAYMENT_METHOD_OPTION}
+                                className="h-4 w-4 text-emerald-500 focus:ring-emerald-500"
+                                checked={selectedSavedMethodId === NEW_PAYMENT_METHOD_OPTION}
+                                onChange={() => setSelectedSavedMethodId(NEW_PAYMENT_METHOD_OPTION)}
+                              />
+                              <span className="text-sm font-medium text-slate-800">
+                                {paymentMethodsT('selectionUseNew')}
+                              </span>
+                            </span>
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 text-xs text-slate-500">
+                          {paymentMethodsT('selectionNone')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 shadow-sm">
