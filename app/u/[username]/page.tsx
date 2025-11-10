@@ -389,6 +389,11 @@ export default function UserProfilePage() {
                     >
                       {note.is_paid ? '有料' : '無料'}
                     </span>
+                    {note.requires_login ? (
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                        ログイン必須
+                      </span>
+                    ) : null}
                     <span className="text-xs text-slate-400">
                       {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
                     </span>

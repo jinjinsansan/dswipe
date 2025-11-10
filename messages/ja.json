@@ -40,6 +40,7 @@
     "unpublishedLabel": "未公開",
     "paidBadge": "有料",
     "freeBadge": "FREE",
+    "loginRequiredBadge": "ログイン必須",
     "views": "{count, number} views"
   },
   "noteDetail": {
@@ -58,6 +59,9 @@
     "loading": "読み込み中...",
     "notFound": "Swipeコラムが見つかりませんでした",
     "loginToPurchase": "ログインして購入",
+    "loginRequiredTitle": "ログインが必要です",
+    "loginRequiredDescription": "このSwipeコラムを閲覧するにはログインまたは会員登録が必要です。",
+    "loginRequiredAction": "ログイン／新規登録ページへ",
     "publishedAtLabel": "公開日:",
     "priceLabel": "価格:",
     "priceNotConfigured": "販売設定未設定",
@@ -180,6 +184,10 @@
       "categoriesSelected": "選択中:",
       "visibilityTitle": "公開範囲を選択",
       "visibilityDescription": "限定公開を選ぶと、保存後に共有URLが自動発行されます。",
+      "requiresLoginTitle": "閲覧時にログインを必須にする",
+      "requiresLoginDescription": "公開状態を維持したまま、ログイン済みユーザーだけが本文を閲覧できます。",
+      "requiresLoginToggle": "ログイン必須にする",
+      "requiresLoginBadge": "ログイン必須",
       "paidTitle": "有料記事として販売する",
       "paidDescription": "ブロック単位の有料設定を行うと自動的に有料記事扱いになります。",
       "manualPaidToggle": "有料設定を手動でオンにする",

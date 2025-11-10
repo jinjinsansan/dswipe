@@ -241,6 +241,7 @@ export interface NoteSummary {
   visibility: NoteVisibility;
   share_url?: string | null;
   share_token_rotated_at?: string | null;
+  requires_login: boolean;
 }
 
 export interface NoteDetail extends NoteSummary {
@@ -305,6 +306,7 @@ export interface PublicNoteSummary {
   official_share_tweet_url?: string | null;
   official_share_x_username?: string | null;
   total_sales?: number | null;
+  requires_login: boolean;
 }
 
 export interface PublicNoteListResult {
@@ -341,6 +343,7 @@ export interface PublicNoteDetail {
   official_share_x_user_id?: string | null;
   official_share_set_at?: string | null;
   salon_access_ids: string[];
+  requires_login: boolean;
 }
 
 export interface NotePurchaseResult {
@@ -424,6 +427,7 @@ export interface NoteCreateRequest {
   categories: string[];
   salon_ids: string[];
   visibility?: NoteVisibility;
+  requires_login?: boolean;
 }
 
 export interface NoteUpdateRequest {
@@ -441,6 +445,7 @@ export interface NoteUpdateRequest {
   categories?: string[];
   salon_ids?: string[];
   visibility?: NoteVisibility;
+  requires_login?: boolean;
 }
 
 export interface OfficialShareConfig {
@@ -1403,6 +1408,7 @@ export interface FeaturedNoteSummary {
   status?: string | null;
   is_featured: boolean;
   published_at?: string | null;
+  requires_login?: boolean;
 }
 
 export interface FeaturedNoteListResponse {

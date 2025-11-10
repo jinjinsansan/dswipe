@@ -131,6 +131,7 @@ export default function NoteEditPage() {
   const [shareActionLoading, setShareActionLoading] = useState(false);
   const [shareActionError, setShareActionError] = useState<string | null>(null);
   const [shareActionMessage, setShareActionMessage] = useState<string | null>(null);
+  const [requiresLogin, setRequiresLogin] = useState(false);
 
   useEffect(() => {
     const loadSalons = async () => {
@@ -253,6 +254,7 @@ export default function NoteEditPage() {
         setOfficialShareInput(detail.official_share_tweet_url ?? detail.official_share_tweet_id ?? '');
         setSelectedSalonIds(Array.isArray(detail.salon_access_ids) ? detail.salon_access_ids : []);
         setVisibility(detail.visibility ?? 'private');
+        setRequiresLogin(Boolean(detail.requires_login && detail.visibility === 'public'));
         setShareUrl(detail.share_url ?? null);
         setShareTokenRotatedAt(detail.share_token_rotated_at ?? null);
         setShareActionError(null);
@@ -635,6 +637,9 @@ export default function NoteEditPage() {
 
   const handleVisibilityChange = (value: NoteVisibility) => {
     setVisibility(value);
+    if (value !== 'public') {
+      setRequiresLogin(false);
+    }
   };
 
   const validate = () => {
@@ -729,6 +734,7 @@ export default function NoteEditPage() {
         allow_share_unlock: allowShareUnlock,
         salon_ids: selectedSalonIds,
         visibility,
+        requires_login: visibility === 'public' ? requiresLogin : false,
       };
 
       const response = await noteApi.update(noteId, payload);
@@ -736,6 +742,7 @@ export default function NoteEditPage() {
       setStatus(response.data?.status ?? status);
       setPublishedAt(response.data?.published_at ?? publishedAt);
       setVisibility(response.data?.visibility ?? visibility);
+      setRequiresLogin(Boolean(response.data?.requires_login && (response.data?.visibility ?? visibility) === 'public'));
       setShareUrl(response.data?.share_url ?? null);
       setShareTokenRotatedAt(response.data?.share_token_rotated_at ?? null);
     } catch (err: unknown) {
@@ -759,6 +766,7 @@ export default function NoteEditPage() {
         setStatus(detail?.status ?? 'published');
         setPublishedAt(detail?.published_at ?? new Date().toISOString());
         setVisibility(detail?.visibility ?? visibility);
+        setRequiresLogin(Boolean(detail?.requires_login && (detail?.visibility ?? visibility) === 'public'));
         setShareUrl(detail?.share_url ?? shareUrl);
         setShareTokenRotatedAt(detail?.share_token_rotated_at ?? shareTokenRotatedAt);
         setInfo('記事を公開しました');
@@ -768,6 +776,7 @@ export default function NoteEditPage() {
         setStatus(detail?.status ?? 'draft');
         setPublishedAt(detail?.published_at ?? null);
         setVisibility(detail?.visibility ?? visibility);
+        setRequiresLogin(Boolean(detail?.requires_login && (detail?.visibility ?? visibility) === 'public'));
         setShareUrl(detail?.share_url ?? shareUrl);
         setShareTokenRotatedAt(detail?.share_token_rotated_at ?? shareTokenRotatedAt);
         setInfo('記事を下書きに戻しました');
@@ -845,6 +854,7 @@ export default function NoteEditPage() {
       const detail = response.data;
       setShareUrl(detail?.share_url ?? null);
       setShareTokenRotatedAt(detail?.share_token_rotated_at ?? null);
+      setRequiresLogin(Boolean(detail?.requires_login && (detail?.visibility ?? visibility) === 'public'));
       setShareActionMessage('共有URLを再発行しました');
     } catch (err: unknown) {
       const detail = extractErrorDetail(err);
@@ -1114,6 +1124,27 @@ export default function NoteEditPage() {
                   );
                 })}
               </div>
+
+              {visibility === 'public' ? (
+                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-blue-800">{createT('labels.requiresLoginTitle')}</p>
+                      <p className="mt-1 text-xs text-blue-700/80">{createT('labels.requiresLoginDescription')}</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                        checked={requiresLogin}
+                        onChange={(event) => setRequiresLogin(event.target.checked)}
+                        disabled={saving || actionLoading}
+                      />
+                      {createT('labels.requiresLoginToggle')}
+                    </label>
+                  </div>
+                </div>
+              ) : null}
 
               {visibility === 'limited' ? (
                 <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">

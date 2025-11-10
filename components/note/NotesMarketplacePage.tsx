@@ -224,6 +224,11 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                         >
                           {priceLabel}
                         </span>
+                        {note.requires_login ? (
+                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700 md:text-[11px]">
+                            {t('loginRequiredBadge')}
+                          </span>
+                        ) : null}
                         {categoryLabel ? <span>#{categoryLabel}</span> : null}
                         <span>{dateLabel}</span>
                       </div>

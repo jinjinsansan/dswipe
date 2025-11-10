@@ -40,6 +40,7 @@
     "unpublishedLabel": "Draft",
     "paidBadge": "PAID",
     "freeBadge": "FREE",
+    "loginRequiredBadge": "Login required",
     "views": "{count, number} views"
   },
   "noteDetail": {
@@ -58,6 +59,9 @@
     "loading": "Loading...",
     "notFound": "Swipe Column not found",
     "loginToPurchase": "Sign in to purchase",
+    "loginRequiredTitle": "Sign in to continue",
+    "loginRequiredDescription": "Please sign in or create an account to view this Swipe Column.",
+    "loginRequiredAction": "Go to sign-in / register",
     "publishedAtLabel": "Published:",
     "priceLabel": "Price:",
     "priceNotConfigured": "Payment not configured",
@@ -180,6 +184,10 @@
       "categoriesSelected": "Selected:",
       "visibilityTitle": "Choose visibility",
       "visibilityDescription": "Limited visibility generates a shareable URL automatically after saving.",
+      "requiresLoginTitle": "Require sign-in to view",
+      "requiresLoginDescription": "Keep the Swipe Column public while restricting the content to signed-in users only.",
+      "requiresLoginToggle": "Require sign-in",
+      "requiresLoginBadge": "Login required",
       "paidTitle": "Sell as a paid Swipe Column",
       "paidDescription": "Marking blocks as paid automatically treats the Swipe Column as paid content.",
       "manualPaidToggle": "Manually enable paid status",

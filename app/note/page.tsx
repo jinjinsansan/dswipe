@@ -311,6 +311,11 @@ export default function NoteDashboardPage() {
                                 ? '限定公開'
                                 : '非公開'}
                           </span>
+                          {note.requires_login ? (
+                            <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
+                              ログイン必須
+                            </span>
+                          ) : null}
                           {note.is_paid ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
                               <LockClosedIcon className="h-3.5 w-3.5" aria-hidden="true" />有料

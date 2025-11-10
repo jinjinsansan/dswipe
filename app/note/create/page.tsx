@@ -60,6 +60,7 @@ export default function NoteCreatePage() {
   const [salonOptions, setSalonOptions] = useState<Salon[]>([]);
   const [selectedSalonIds, setSelectedSalonIds] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<NoteVisibility>('private');
+  const [requiresLogin, setRequiresLogin] = useState(false);
 
   const visibilityOptions = useMemo(
     () => ([
@@ -380,6 +381,9 @@ export default function NoteCreatePage() {
 
   const handleVisibilityChange = (value: NoteVisibility) => {
     setVisibility(value);
+    if (value !== 'public') {
+      setRequiresLogin(false);
+    }
   };
 
   const validate = () => {
@@ -466,6 +470,7 @@ export default function NoteCreatePage() {
         categories,
         salon_ids: selectedSalonIds,
         visibility,
+        requires_login: visibility === 'public' ? requiresLogin : false,
       };
 
       const response = await noteApi.create(payload);
@@ -651,6 +656,26 @@ export default function NoteCreatePage() {
                   );
                 })}
               </div>
+              {visibility === 'public' ? (
+                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-blue-800">{t('labels.requiresLoginTitle')}</p>
+                      <p className="mt-1 text-xs text-blue-700/80">{t('labels.requiresLoginDescription')}</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                        checked={requiresLogin}
+                        onChange={(event) => setRequiresLogin(event.target.checked)}
+                        disabled={saving}
+                      />
+                      {t('labels.requiresLoginToggle')}
+                    </label>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
