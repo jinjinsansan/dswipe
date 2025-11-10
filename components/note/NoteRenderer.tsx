@@ -215,13 +215,13 @@ interface RichContentRendererProps {
 
 type RichNode = {
   type: string;
-  attrs?: Record<string, any>;
+  attrs?: Record<string, unknown>;
   content?: RichNode[];
-  marks?: Array<{ type: string; attrs?: Record<string, any> }>;
+  marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
   text?: string;
 };
 
-const isPaidAccess = (node?: { attrs?: Record<string, any> }): boolean => {
+const isPaidAccess = (node?: { attrs?: Record<string, unknown> }): boolean => {
   const access = typeof node?.attrs?.access === 'string' ? node?.attrs?.access : 'public';
   return access === 'paid';
 };
@@ -234,6 +234,25 @@ const renderMarks = (node: RichNode, key: string | number): ReactNode => {
 
   return node.marks.reduce<ReactNode>((acc, mark) => {
     switch (mark.type) {
+      case 'link': {
+        const href = typeof mark.attrs?.href === 'string' ? mark.attrs.href : '';
+        if (!href) {
+          return acc;
+        }
+        const target = typeof mark.attrs?.target === 'string' ? mark.attrs.target : '_blank';
+        const rel = typeof mark.attrs?.rel === 'string' ? mark.attrs.rel : 'noopener noreferrer';
+        return (
+          <a
+            key={`${key}-link-${href}`}
+            href={href}
+            target={target}
+            rel={rel}
+            className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
+          >
+            {acc}
+          </a>
+        );
+      }
       case 'bold':
         return <strong key={`${key}-bold`}>{acc}</strong>;
       case 'italic':
@@ -310,6 +329,8 @@ const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
       );
     case 'hardBreak':
       return <br key={key} />;
+    case 'horizontalRule':
+      return <hr key={key} className="my-8 border-t border-slate-200" />;
     case 'text':
       return <span key={key}>{renderMarks(node, key)}</span>;
     case 'image': {
