@@ -166,6 +166,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const [showInsertButton, setShowInsertButton] = useState(false);
   const [insertButtonTop, setInsertButtonTop] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isInsertMenuOpenRef = useRef(false);
   const editor = useEditor({
     editable: !disabled,
     extensions: [
@@ -261,7 +262,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     editor.on('selectionUpdate', handleSelection);
     editor.on('transaction', handleSelection);
     editor.on('focus', updateInsertButtonPosition);
-    const handleBlur = () => setShowInsertButton(false);
+    const handleBlur = () => {
+      if (!isInsertMenuOpenRef.current) {
+        setShowInsertButton(false);
+      }
+    };
     editor.on('blur', handleBlur);
     return () => {
       editor.off('selectionUpdate', handleSelection);
@@ -280,7 +285,17 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     };
   }, [editor, updateInsertButtonPosition]);
 
-  const closeInsertMenu = useCallback(() => setIsInsertMenuOpen(false), []);
+  const openInsertMenu = useCallback(() => {
+    isInsertMenuOpenRef.current = true;
+    setIsInsertMenuOpen(true);
+    setShowInsertButton(true);
+  }, []);
+
+  const closeInsertMenu = useCallback(() => {
+    isInsertMenuOpenRef.current = false;
+    setIsInsertMenuOpen(false);
+    updateInsertButtonPosition();
+  }, [updateInsertButtonPosition]);
 
   const applyAccess = useCallback((level: AccessLevel) => {
     if (!editor) return;
@@ -493,7 +508,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           {showInsertButton && !disabled ? (
             <button
               type="button"
-              onClick={() => setIsInsertMenuOpen(true)}
+              onClick={openInsertMenu}
               className="absolute left-[-32px] flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:left-[-48px] md:h-9 md:w-9"
               style={{ top: insertButtonTop }}
             >
@@ -508,7 +523,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       </div>
 
       {/* モバイル用フッターメニュー */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center md:hidden">
+      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-40 flex justify-center md:hidden">
         <div className="pointer-events-auto flex w-[min(620px,_calc(100%-32px))] items-center gap-1 rounded-full bg-slate-900/95 px-3 py-2 text-white shadow-xl backdrop-blur">
           <ToolbarButtons
             editor={editor}
@@ -516,7 +531,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
             activeAccess={activeAccess}
             onAccessChange={applyAccess}
             onImage={() => setIsMediaOpen(true)}
-            onInsertMenu={() => setIsInsertMenuOpen(true)}
+            onInsertMenu={openInsertMenu}
           />
         </div>
       </div>
@@ -530,7 +545,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
             activeAccess={activeAccess}
             onAccessChange={applyAccess}
             onImage={() => setIsMediaOpen(true)}
-            onInsertMenu={() => setIsInsertMenuOpen(true)}
+            onInsertMenu={openInsertMenu}
           />
         </div>
       </div>
