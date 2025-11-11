@@ -3,6 +3,7 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode, ChangeEvent, DragEvent } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
+import type { ChainedCommands } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Paragraph from '@tiptap/extension-paragraph';
 import Heading from '@tiptap/extension-heading';
@@ -168,6 +169,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isInsertMenuOpenRef = useRef(false);
   const storedSelectionRef = useRef<{ from: number; to: number } | null>(null);
+  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -319,6 +321,8 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   useEffect(() => {
     if (!editor) return;
     const handleSelection = () => {
+      const { from, to } = editor.state.selection;
+      lastSelectionRef.current = { from, to };
       setActiveAccess(extractAccessFromSelection(editor));
       updateInsertButtonPosition();
     };
@@ -381,13 +385,30 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   }, []);
 
   const openInsertMenu = useCallback(() => {
-    if (editor && !storedSelectionRef.current) {
+    if (editor) {
       const { from, to } = editor.state.selection;
       storedSelectionRef.current = { from, to };
+      lastSelectionRef.current = { from, to };
     }
     isInsertMenuOpenRef.current = true;
     setIsInsertMenuOpen(true);
     setShowInsertButton(true);
+  }, [editor]);
+
+  const createChainWithSelection = useCallback((): ChainedCommands | null => {
+    if (!editor) {
+      return null;
+    }
+    const target = storedSelectionRef.current ?? lastSelectionRef.current;
+    if (target) {
+      try {
+        editor.commands.setTextSelection({ from: target.from, to: target.to });
+        lastSelectionRef.current = { ...target };
+      } catch (error) {
+        console.warn('failed to prepare selection for command', error);
+      }
+    }
+    return editor.chain().focus();
   }, [editor]);
 
   const closeInsertMenu = useCallback(() => {
@@ -399,68 +420,83 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
   const restoreSelection = useCallback(() => {
     if (!editor) return;
-    if (!storedSelectionRef.current) return;
-    const { from, to } = storedSelectionRef.current;
-    editor.commands.setTextSelection({ from, to });
+    const target = storedSelectionRef.current ?? lastSelectionRef.current;
+    if (!target) return;
+    const { from, to } = target;
+    try {
+      editor.commands.setTextSelection({ from, to });
+      lastSelectionRef.current = { from, to };
+    } catch (error) {
+      console.warn('failed to restore selection', error);
+    }
   }, [editor]);
 
   const applyAccess = useCallback((level: AccessLevel) => {
     if (!editor) return;
     restoreSelection();
-    let chain = editor.chain().focus();
+    const chain = createChainWithSelection();
+    if (!chain) {
+      return;
+    }
     SUPPORTED_ACCESS_NODES.forEach((type) => {
       if (editor.isActive(type)) {
-        chain = chain.updateAttributes(type, { access: level });
+        chain.updateAttributes(type, { access: level });
       }
     });
     chain.run();
     setActiveAccess(level);
     updatePaidMarkers();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu, updatePaidMarkers]);
+  }, [editor, restoreSelection, closeInsertMenu, updatePaidMarkers, createChainWithSelection]);
 
   const insertParagraph = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().setParagraph().run();
+    const chain = createChainWithSelection();
+    chain?.setParagraph().run();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertHeading = useCallback(
     (level: 2 | 3) => {
       if (!editor) return;
       restoreSelection();
-      editor.chain().focus().setNode('heading', { level }).run();
+      const chain = createChainWithSelection();
+      chain?.setNode('heading', { level }).run();
       closeInsertMenu();
     },
-    [editor, restoreSelection, closeInsertMenu],
+    [editor, restoreSelection, closeInsertMenu, createChainWithSelection],
   );
 
   const insertBulletList = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().toggleBulletList().run();
+    const chain = createChainWithSelection();
+    chain?.toggleBulletList().run();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertOrderedList = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().toggleOrderedList().run();
+    const chain = createChainWithSelection();
+    chain?.toggleOrderedList().run();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertQuote = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().toggleBlockquote().run();
+    const chain = createChainWithSelection();
+    chain?.toggleBlockquote().run();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertDivider = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().setHorizontalRule().run();
+    const chain = createChainWithSelection();
+    chain?.setHorizontalRule().run();
     const view = editor.view;
     window.requestAnimationFrame(() => {
       try {
@@ -503,10 +539,14 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     const hasSelection = from !== to;
     const selectedText = state.doc.textBetween(from, to, ' ');
 
-    const chain = editor.chain().focus();
+    const chain = createChainWithSelection();
+    if (!chain) {
+      closeInsertMenu();
+      return;
+    }
 
     if (hasSelection && selectedText.trim().length > 0) {
-      chain.extendMarkRange('link').setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' }).run();
+        chain.extendMarkRange('link').setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' }).run();
     } else {
       const label = window.prompt('リンクとして表示するテキストを入力してください', trimmedUrl) || trimmedUrl;
       const startPos = state.selection.from;
@@ -519,7 +559,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
 
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const handleInsertFile = useCallback(() => {
     if (isFileUploading) {
@@ -539,7 +579,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       const hasSelection = from !== to;
       const selectedText = state.doc.textBetween(from, to, ' ');
 
-      const chain = editor.chain().focus();
+      const chain = createChainWithSelection();
+      if (!chain) {
+        closeInsertMenu();
+        return;
+      }
 
       if (hasSelection && selectedText.trim().length > 0) {
         chain.extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
@@ -559,7 +603,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
       closeInsertMenu();
     },
-    [editor, restoreSelection, closeInsertMenu],
+    [editor, restoreSelection, closeInsertMenu, createChainWithSelection],
   );
 
   const handleFileSelect = useCallback(
@@ -601,9 +645,17 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       title?: string;
       access?: AccessLevel;
     };
-    editor.chain().focus().setImage(attrs).run();
+    const chain = createChainWithSelection();
+    chain?.setImage(attrs).run();
     closeInsertMenu();
   };
+
+  const handleToolbarImage = useCallback(() => {
+    if (lastSelectionRef.current) {
+      storedSelectionRef.current = { ...lastSelectionRef.current };
+    }
+    setIsMediaOpen(true);
+  }, []);
 
   const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
     if (disabled) {
@@ -645,8 +697,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     try {
       const dropPoint = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
       if (dropPoint) {
-        storedSelectionRef.current = null;
-        editor.chain().focus().setTextSelection(dropPoint.pos).run();
+        const pos = dropPoint.pos;
+        editor.commands.setTextSelection({ from: pos, to: pos });
+        editor.commands.focus();
+        storedSelectionRef.current = { from: pos, to: pos };
+        lastSelectionRef.current = { from: pos, to: pos };
       }
 
       for (const file of Array.from(files)) {
@@ -837,9 +892,10 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               disabled={disabled}
               activeAccess={activeAccess}
               onAccessChange={applyAccess}
-              onImage={() => setIsMediaOpen(true)}
+              onImage={handleToolbarImage}
               onInsertMenu={openInsertMenu}
               isUploading={isFileUploading}
+              createChain={createChainWithSelection}
             />
           </div>
         </div>
@@ -854,9 +910,10 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               disabled={disabled}
               activeAccess={activeAccess}
               onAccessChange={applyAccess}
-              onImage={() => setIsMediaOpen(true)}
+              onImage={handleToolbarImage}
               onInsertMenu={openInsertMenu}
               isUploading={isFileUploading}
+              createChain={createChainWithSelection}
             />
           </div>
         </div>
@@ -1039,9 +1096,10 @@ interface ToolbarButtonsProps {
   onImage: () => void;
   onInsertMenu: () => void;
   isUploading: boolean;
+  createChain: () => ChainedCommands | null;
 }
 
-function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu, isUploading }: ToolbarButtonsProps) {
+function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu, isUploading, createChain }: ToolbarButtonsProps) {
   if (!editor) {
     return null;
   }
@@ -1049,7 +1107,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
   return (
     <Fragment>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleBold().run();
+        }}
         active={editor.isActive('bold')}
         disabled={disabled}
         label="太字"
@@ -1057,7 +1119,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleItalic().run();
+        }}
         active={editor.isActive('italic')}
         disabled={disabled}
         label="斜体"
@@ -1065,7 +1131,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleHeading({ level: 2 }).run();
+        }}
         active={editor.isActive('heading', { level: 2 })}
         disabled={disabled}
         label="大見出し"
@@ -1073,7 +1143,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleHeading({ level: 3 }).run();
+        }}
         active={editor.isActive('heading', { level: 3 })}
         disabled={disabled}
         label="小見出し"
@@ -1081,7 +1155,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleBulletList().run();
+        }}
         active={editor.isActive('bulletList')}
         disabled={disabled}
         label="箇条書き"
@@ -1089,7 +1167,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleOrderedList().run();
+        }}
         active={editor.isActive('orderedList')}
         disabled={disabled}
         label="番号付き"
@@ -1097,7 +1179,11 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.toggleBlockquote().run();
+        }}
         active={editor.isActive('blockquote')}
         disabled={disabled}
         label="引用"
@@ -1105,13 +1191,21 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         activeClass="bg-blue-600 text-white"
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().undo().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.undo().run();
+        }}
         disabled={disabled}
         label="元に戻す"
         icon={<span className="text-xs font-semibold">↺</span>}
       />
       <ToolbarButton
-        onClick={() => editor.chain().focus().redo().run()}
+        onClick={() => {
+          const chain = createChain();
+          if (!chain) return;
+          chain.redo().run();
+        }}
         disabled={disabled}
         label="やり直す"
         icon={<span className="text-xs font-semibold">↻</span>}
