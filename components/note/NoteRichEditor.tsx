@@ -508,7 +508,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           {showInsertButton && !disabled ? (
             <button
               type="button"
-              onClick={openInsertMenu}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                editor?.commands.focus();
+                openInsertMenu();
+              }}
               className="absolute left-[-32px] flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:left-[-48px] md:h-9 md:w-9"
               style={{ top: insertButtonTop }}
             >
