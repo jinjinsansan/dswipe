@@ -460,7 +460,19 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const insertDivider = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().setHorizontalRule().scrollIntoView().run();
+    editor.chain().focus().setHorizontalRule().run();
+    const view = editor.view;
+    window.requestAnimationFrame(() => {
+      try {
+        const { to } = view.state.selection;
+        const dom = view.domAtPos(Math.min(to, view.state.doc.content.size)).node as HTMLElement | null;
+        if (dom && typeof dom.scrollIntoView === 'function') {
+          dom.scrollIntoView({ block: 'center', inline: 'nearest' });
+        }
+      } catch (error) {
+        console.warn('horizontal rule scroll adjustment failed', error);
+      }
+    });
     closeInsertMenu();
   }, [editor, restoreSelection, closeInsertMenu]);
 
@@ -965,13 +977,20 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
         .note-rich-editor .ProseMirror [data-access="paid"] {
           position: relative;
-          background: linear-gradient(90deg, rgba(253, 230, 138, 0.18), rgba(253, 230, 138, 0.05));
-          border-left: 4px solid #f59e0b;
-          border-radius: 18px;
-          padding: 1.3rem 1.4rem 1.3rem 1.55rem;
           margin-left: -1.55rem;
           margin-right: -1.55rem;
-          box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
+          padding-left: 1.55rem;
+        }
+
+        .note-rich-editor .ProseMirror [data-access="paid"]::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0.4rem;
+          bottom: 0.4rem;
+          width: 3px;
+          border-radius: 9999px;
+          background: linear-gradient(180deg, rgba(245, 158, 11, 0.9), rgba(249, 115, 22, 0.6));
         }
 
         .note-rich-editor .ProseMirror [data-access="paid"] + * {
@@ -982,7 +1001,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           .note-rich-editor .ProseMirror [data-access="paid"] {
             margin-left: -1.2rem;
             margin-right: -1.2rem;
-            padding: 1.2rem 1.2rem 1.2rem 1.4rem;
+            padding-left: 1.2rem;
+          }
+
+          .note-rich-editor .ProseMirror [data-access="paid"]::before {
+            top: 0.3rem;
+            bottom: 0.3rem;
           }
         }
 

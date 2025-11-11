@@ -398,13 +398,20 @@ function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichCont
       <style jsx global>{`
         .note-content .rich-paid-node {
           position: relative;
-          background: linear-gradient(90deg, rgba(253, 230, 138, 0.18), rgba(253, 230, 138, 0.05));
-          border-left: 4px solid #f59e0b;
-          border-radius: 18px;
-          padding: 1.3rem 1.4rem 1.3rem 1.55rem;
           margin-left: -1.55rem;
           margin-right: -1.55rem;
-          box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
+          padding-left: 1.55rem;
+        }
+
+        .note-content .rich-paid-node::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0.4rem;
+          bottom: 0.4rem;
+          width: 3px;
+          border-radius: 9999px;
+          background: linear-gradient(180deg, rgba(245, 158, 11, 0.9), rgba(249, 115, 22, 0.6));
         }
 
         .note-content .rich-paid-node + * {
@@ -415,7 +422,12 @@ function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichCont
           .note-content .rich-paid-node {
             margin-left: -1.2rem;
             margin-right: -1.2rem;
-            padding: 1.2rem 1.2rem 1.2rem 1.4rem;
+            padding-left: 1.2rem;
+          }
+
+          .note-content .rich-paid-node::before {
+            top: 0.3rem;
+            bottom: 0.3rem;
           }
         }
       `}</style>
