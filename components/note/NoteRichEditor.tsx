@@ -18,6 +18,7 @@ import {
   Bars3BottomLeftIcon,
   DocumentArrowDownIcon,
   LinkIcon,
+  LockClosedIcon,
   MinusSmallIcon,
   PhotoIcon,
   PlusIcon,
@@ -172,6 +173,8 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadNotice, setUploadNotice] = useState<string | null>(null);
   const uploadNoticeTimerRef = useRef<number | null>(null);
+  const [paidMarkerTop, setPaidMarkerTop] = useState<number | null>(null);
+  const [hasPaidArea, setHasPaidArea] = useState(false);
   const registerUploadedMedia = useCallback((url: string) => {
     if (typeof window === 'undefined') return;
     try {
@@ -270,27 +273,34 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   }, [editor, disabled]);
 
   const updatePaidMarkers = useCallback(() => {
-    if (!editor) return;
-    const root = editor.view.dom as HTMLElement;
-    const blocks = Array.from(root.children) as HTMLElement[];
-    let firstPaid: HTMLElement | null = null;
+    if (!editor) {
+      setHasPaidArea(false);
+      setPaidMarkerTop(null);
+      return;
+    }
 
-    for (const element of blocks) {
-      element.removeAttribute('data-paid-block');
-      element.removeAttribute('data-paid-start');
-
-      const isPaidBlock = element.dataset.access === 'paid' || Boolean(element.querySelector('[data-access="paid"]'));
-      if (isPaidBlock) {
-        element.setAttribute('data-paid-block', 'true');
-        if (!firstPaid) {
-          firstPaid = element;
-        }
+    window.requestAnimationFrame(() => {
+      if (!editor || !containerRef.current) {
+        setHasPaidArea(false);
+        setPaidMarkerTop(null);
+        return;
       }
-    }
 
-    if (firstPaid) {
-      firstPaid.setAttribute('data-paid-start', 'true');
-    }
+      const root = editor.view.dom as HTMLElement;
+      const paidNodes = Array.from(root.querySelectorAll<HTMLElement>('[data-access="paid"]'));
+      setHasPaidArea(paidNodes.length > 0);
+
+      if (paidNodes.length === 0) {
+        setPaidMarkerTop(null);
+        return;
+      }
+
+      const first = paidNodes[0];
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const firstRect = first.getBoundingClientRect();
+      const offset = firstRect.top - containerRect.top - 28;
+      setPaidMarkerTop(offset);
+    });
   }, [editor]);
 
   useEffect(() => {
@@ -339,6 +349,19 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     return () => {
       editor.off('update', updatePaidMarkers);
       editor.off('selectionUpdate', updatePaidMarkers);
+    };
+  }, [editor, updatePaidMarkers]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const handleReposition = () => updatePaidMarkers();
+    const scrollListener = () => updatePaidMarkers();
+    window.addEventListener('resize', handleReposition);
+    window.addEventListener('scroll', scrollListener, true);
+    handleReposition();
+    return () => {
+      window.removeEventListener('resize', handleReposition);
+      window.removeEventListener('scroll', scrollListener, true);
     };
   }, [editor, updatePaidMarkers]);
 
@@ -437,7 +460,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const insertDivider = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    editor.chain().focus().setHorizontalRule().run();
+    editor.chain().focus().setHorizontalRule().scrollIntoView().run();
     closeInsertMenu();
   }, [editor, restoreSelection, closeInsertMenu]);
 
@@ -773,6 +796,19 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               </button>
             </>
           ) : null}
+
+          {hasPaidArea && paidMarkerTop !== null ? (
+            <div
+              className="pointer-events-none absolute left-0 right-0 z-20 flex justify-center"
+              style={{ top: Math.max(paidMarkerTop, 8) }}
+            >
+              <div className="flex items-center gap-2 rounded-full bg-amber-500 px-4 py-1 text-xs font-semibold text-white shadow-lg">
+                <LockClosedIcon className="h-4 w-4" aria-hidden="true" />
+                <span>ここから有料エリア</span>
+              </div>
+            </div>
+          ) : null}
+
           <EditorContent
             editor={editor}
             className="note-rich-editor prose prose-lg prose-slate max-w-none focus:outline-none"
@@ -927,66 +963,26 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           font-style: italic;
         }
 
-        .note-rich-editor .ProseMirror [data-paid-block="true"] {
+        .note-rich-editor .ProseMirror [data-access="paid"] {
           position: relative;
-          background: linear-gradient(90deg, rgba(253, 230, 138, 0.28), rgba(255, 255, 255, 0));
-          border-left: 3px solid #f59e0b;
-          border-radius: 14px;
-          padding: 1.25rem 1.25rem 1.25rem 1.4rem;
-          margin-left: -1.4rem;
-          margin-right: -1.4rem;
-          margin-top: 1.75rem;
+          background: linear-gradient(90deg, rgba(253, 230, 138, 0.18), rgba(253, 230, 138, 0.05));
+          border-left: 4px solid #f59e0b;
+          border-radius: 18px;
+          padding: 1.3rem 1.4rem 1.3rem 1.55rem;
+          margin-left: -1.55rem;
+          margin-right: -1.55rem;
+          box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
         }
 
-        .note-rich-editor .ProseMirror [data-paid-block="true"] > * {
-          position: relative;
-          z-index: 1;
-        }
-
-        .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
-          content: 'ここから有料エリア';
-          position: absolute;
-          top: -0.8rem;
-          left: 1.4rem;
-          transform: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 0.3rem 0.75rem;
-          border-radius: 9999px;
-          background: #f59e0b;
-          color: #fff;
-          font-size: 0.68rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          box-shadow: 0 6px 18px -8px rgba(245, 158, 11, 0.8);
-        }
-
-        .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
-          content: '';
-          position: absolute;
-          top: -0.4rem;
-          left: 1.4rem;
-          width: calc(100% - 2.4rem);
-          height: 1px;
-          background: linear-gradient(90deg, rgba(245, 158, 11, 0.6), rgba(245, 158, 11, 0));
+        .note-rich-editor .ProseMirror [data-access="paid"] + * {
+          margin-top: 2rem;
         }
 
         @media (max-width: 640px) {
-          .note-rich-editor .ProseMirror [data-paid-block="true"] {
-            margin-left: -1rem;
-            margin-right: -1rem;
-            padding: 1.15rem 1.1rem 1.1rem 1.1rem;
-          }
-
-          .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
-            left: 1.1rem;
-          }
-
-          .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
-            left: 1.1rem;
-            width: calc(100% - 2.2rem);
+          .note-rich-editor .ProseMirror [data-access="paid"] {
+            margin-left: -1.2rem;
+            margin-right: -1.2rem;
+            padding: 1.2rem 1.2rem 1.2rem 1.4rem;
           }
         }
 

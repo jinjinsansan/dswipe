@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
+import { Fragment, type CSSProperties, type ReactNode } from 'react';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import type { NoteBlock, NoteEditorType, NoteRichContent } from '@/types';
 import { getFontStack } from '@/lib/fonts';
@@ -274,9 +274,12 @@ const renderRichChildren = (nodes: RichNode[] | undefined): ReactNode => {
 
 const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
   const paid = isPaidAccess(node);
-  const commonProps = {
-    key,
-    className: paid ? 'rich-paid-node' : undefined,
+  const baseClass = paid ? 'rich-paid-node' : '';
+  const mergeClassNames = (...classes: (string | undefined)[]) => {
+    return [baseClass, ...classes.filter(Boolean)]
+      .filter(Boolean)
+      .join(' ')
+      .trim() || undefined;
   };
 
   switch (node.type) {
@@ -284,17 +287,17 @@ const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
       const level = typeof node.attrs?.level === 'number' ? node.attrs.level : 2;
       const HeadingTag = (`h${Math.min(Math.max(level, 2), 4)}` as 'h2' | 'h3' | 'h4');
       return (
-        <HeadingTag {...commonProps} className={`${HeadingTag === 'h2' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'} font-semibold text-slate-900`}>
+        <HeadingTag key={key} className={mergeClassNames(`${HeadingTag === 'h2' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'} font-semibold text-slate-900`)}>
           {renderRichChildren(node.content)}
         </HeadingTag>
       );
     }
     case 'paragraph': {
       if (!node.content || node.content.length === 0) {
-        return <p {...commonProps} className="text-base leading-relaxed text-slate-700">&nbsp;</p>;
+        return <p key={key} className={mergeClassNames('text-base leading-relaxed text-slate-700')}>&nbsp;</p>;
       }
       return (
-        <p {...commonProps} className="whitespace-pre-wrap text-base leading-relaxed text-slate-700">
+        <p key={key} className={mergeClassNames('whitespace-pre-wrap text-base leading-relaxed text-slate-700')}>
           {node.content.map((child, index) =>
             child.type === 'text'
               ? <span key={`${key}-text-${index}`}>{renderMarks(child, `${key}-text-${index}`)}</span>
@@ -305,25 +308,25 @@ const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
     }
     case 'blockquote':
       return (
-        <blockquote {...commonProps} className="space-y-2 border-l-4 border-slate-200 pl-4">
+        <blockquote key={key} className={mergeClassNames('space-y-2 border-l-4 border-slate-200 pl-4')}>
           {renderRichChildren(node.content)}
         </blockquote>
       );
     case 'bulletList':
       return (
-        <ul {...commonProps} className="list-disc space-y-1 pl-6 text-sm text-slate-700">
+        <ul key={key} className={mergeClassNames('list-disc space-y-1 pl-6 text-sm text-slate-700')}>
           {renderRichChildren(node.content)}
         </ul>
       );
     case 'orderedList':
       return (
-        <ol {...commonProps} className="list-decimal space-y-1 pl-6 text-sm text-slate-700">
+        <ol key={key} className={mergeClassNames('list-decimal space-y-1 pl-6 text-sm text-slate-700')}>
           {renderRichChildren(node.content)}
         </ol>
       );
     case 'listItem':
       return (
-        <li {...commonProps}>
+        <li key={key} className={mergeClassNames(undefined)}>
           {renderRichChildren(node.content)}
         </li>
       );
@@ -340,7 +343,7 @@ const renderRichNode = (node: RichNode, key: string | number): ReactNode => {
       }
       const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
       return (
-        <figure {...commonProps} className="space-y-2">
+        <figure key={key} className={mergeClassNames('space-y-2')}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={alt} className="w-full rounded-2xl object-cover" />
           {alt ? <figcaption className="text-center text-xs text-slate-500">{alt}</figcaption> : null}
@@ -361,26 +364,61 @@ const hasPaidNodes = (node?: RichNode): boolean => {
 function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichContentRendererProps) {
   const nodes = ((content?.content ?? []) as RichNode[]).filter(Boolean);
   const paidExists = nodes.some((node) => hasPaidNodes(node));
+  const firstPaidIndex = paidExists ? nodes.findIndex((node) => hasPaidNodes(node)) : -1;
 
   return (
     <div className="note-content flex flex-col gap-8">
-      {nodes.map((node, index) => renderRichNode(node, `${node.type}-${index}`))}
+      {nodes.map((node, index) => {
+        const nodeKey = `${node.type}-${index}`;
+        const showMarker = paidExists && showPaidSeparator && index === firstPaidIndex;
 
-      {paidExists && showPaidSeparator && (
-        <div className="flex items-center justify-center py-6">
-          <div className="relative w-full max-w-2xl">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-dashed border-amber-300" />
-            </div>
-            <div className="relative flex justify-center">
-              <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
-                <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
-                <span className="text-sm font-bold text-amber-900">{paidLabel}</span>
+        return (
+          <Fragment key={nodeKey}>
+            {showMarker ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="relative w-full max-w-2xl">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t-2 border-dashed border-amber-300" />
+                  </div>
+                  <div className="relative flex justify-center">
+                    <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
+                      <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
+                      <span className="text-sm font-bold text-amber-900">{paidLabel}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            ) : null}
+
+            {renderRichNode(node, nodeKey)}
+          </Fragment>
+        );
+      })}
+
+      <style jsx global>{`
+        .note-content .rich-paid-node {
+          position: relative;
+          background: linear-gradient(90deg, rgba(253, 230, 138, 0.18), rgba(253, 230, 138, 0.05));
+          border-left: 4px solid #f59e0b;
+          border-radius: 18px;
+          padding: 1.3rem 1.4rem 1.3rem 1.55rem;
+          margin-left: -1.55rem;
+          margin-right: -1.55rem;
+          box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
+        }
+
+        .note-content .rich-paid-node + * {
+          margin-top: 2rem;
+        }
+
+        @media (max-width: 640px) {
+          .note-content .rich-paid-node {
+            margin-left: -1.2rem;
+            margin-right: -1.2rem;
+            padding: 1.2rem 1.2rem 1.2rem 1.4rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
