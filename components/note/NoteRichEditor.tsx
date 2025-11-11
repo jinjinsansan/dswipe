@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import type { ReactNode, ChangeEvent } from 'react';
+import type { ReactNode, ChangeEvent, DragEvent } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -169,6 +169,35 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const storedSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
+  const uploadNoticeTimerRef = useRef<number | null>(null);
+  const registerUploadedMedia = useCallback((url: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+      const stored = window.localStorage.getItem('uploaded_media');
+      const existing: { url: string; uploaded_at: string }[] = stored ? JSON.parse(stored) : [];
+      const filtered = existing.filter((item) => item.url !== url);
+      const next = [
+        { url, uploaded_at: new Date().toISOString() },
+        ...filtered,
+      ];
+      window.localStorage.setItem('uploaded_media', JSON.stringify(next));
+    } catch (error) {
+      console.error('メディアライブラリの更新に失敗しました', error);
+    }
+  }, []);
+
+  const showUploadNotice = useCallback((message: string) => {
+    setUploadNotice(message);
+    if (uploadNoticeTimerRef.current) {
+      window.clearTimeout(uploadNoticeTimerRef.current);
+    }
+    uploadNoticeTimerRef.current = window.setTimeout(() => {
+      setUploadNotice(null);
+      uploadNoticeTimerRef.current = null;
+    }, 4000);
+  }, []);
   const editor = useEditor({
     editable: !disabled,
     extensions: [
@@ -240,6 +269,30 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
   }, [editor, disabled]);
 
+  const updatePaidMarkers = useCallback(() => {
+    if (!editor) return;
+    const root = editor.view.dom as HTMLElement;
+    const blocks = Array.from(root.children) as HTMLElement[];
+    let firstPaid: HTMLElement | null = null;
+
+    for (const element of blocks) {
+      element.removeAttribute('data-paid-block');
+      element.removeAttribute('data-paid-start');
+
+      const isPaidBlock = element.dataset.access === 'paid' || Boolean(element.querySelector('[data-access="paid"]'));
+      if (isPaidBlock) {
+        element.setAttribute('data-paid-block', 'true');
+        if (!firstPaid) {
+          firstPaid = element;
+        }
+      }
+    }
+
+    if (firstPaid) {
+      firstPaid.setAttribute('data-paid-start', 'true');
+    }
+  }, [editor]);
+
   useEffect(() => {
     if (!editor) return;
     editor.setEditable(!disabled);
@@ -280,12 +333,29 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
   useEffect(() => {
     if (!editor) return;
+    updatePaidMarkers();
+    editor.on('update', updatePaidMarkers);
+    editor.on('selectionUpdate', updatePaidMarkers);
+    return () => {
+      editor.off('update', updatePaidMarkers);
+      editor.off('selectionUpdate', updatePaidMarkers);
+    };
+  }, [editor, updatePaidMarkers]);
+
+  useEffect(() => {
+    if (!editor) return;
     const listener = () => updateInsertButtonPosition();
     window.addEventListener('resize', listener);
     return () => {
       window.removeEventListener('resize', listener);
     };
   }, [editor, updateInsertButtonPosition]);
+
+  useEffect(() => () => {
+    if (uploadNoticeTimerRef.current) {
+      window.clearTimeout(uploadNoticeTimerRef.current);
+    }
+  }, []);
 
   const openInsertMenu = useCallback(() => {
     if (editor && !storedSelectionRef.current) {
@@ -424,7 +494,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   }, [isFileUploading]);
 
   const insertFileLink = useCallback(
-    (url: string, defaultLabel: string) => {
+    (url: string, defaultLabel: string, options?: { skipPrompt?: boolean }) => {
       if (!editor) return;
       restoreSelection();
       const { state } = editor;
@@ -437,7 +507,10 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       if (hasSelection && selectedText.trim().length > 0) {
         chain.extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
       } else {
-        const label = window.prompt('リンクとして表示するテキストを入力してください', defaultLabel) || defaultLabel;
+        const shouldPrompt = options?.skipPrompt !== true;
+        const label = shouldPrompt
+          ? window.prompt('リンクとして表示するテキストを入力してください', defaultLabel) || defaultLabel
+          : defaultLabel;
         const startPos = state.selection.from;
         chain
           .insertContent(label)
@@ -468,7 +541,9 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         if (!fileUrl) {
           throw new Error('missing file url');
         }
+        registerUploadedMedia(fileUrl);
         insertFileLink(fileUrl, fileName);
+        showUploadNotice('ファイルをアップロードして挿入しました');
       } catch (error) {
         console.error('ファイルのアップロードに失敗しました', error);
         window.alert('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
@@ -477,7 +552,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         setIsFileUploading(false);
       }
     },
-    [insertFileLink, closeInsertMenu],
+    [insertFileLink, closeInsertMenu, registerUploadedMedia, showUploadNotice],
   );
 
   const insertImage = (url: string) => {
@@ -492,6 +567,77 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     editor.chain().focus().setImage(attrs).run();
     closeInsertMenu();
   };
+
+  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    if (disabled) {
+      return;
+    }
+    const hasFiles = Array.from(event.dataTransfer?.items ?? []).some((item) => item.kind === 'file');
+    if (!hasFiles) {
+      return;
+    }
+    event.preventDefault();
+    event.dataTransfer!.dropEffect = 'copy';
+    setIsDragOver(true);
+  }, [disabled]);
+
+  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
+    if (!isDragOver) {
+      return;
+    }
+    const related = event.relatedTarget as Node | null;
+    if (related && event.currentTarget.contains(related)) {
+      return;
+    }
+    setIsDragOver(false);
+  }, [isDragOver]);
+
+  const handleDrop = useCallback(async (event: DragEvent<HTMLDivElement>) => {
+    if (!editor || disabled) {
+      setIsDragOver(false);
+      return;
+    }
+    event.preventDefault();
+    setIsDragOver(false);
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    setIsFileUploading(true);
+    try {
+      const dropPoint = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
+      if (dropPoint) {
+        storedSelectionRef.current = null;
+        editor.chain().focus().setTextSelection(dropPoint.pos).run();
+      }
+
+      for (const file of Array.from(files)) {
+        const response = await mediaApi.upload(file, { optimize: file.type.startsWith('image/') });
+        const fileUrl: string | undefined = response.data?.url;
+        const fileName: string = response.data?.name || file.name;
+        if (!fileUrl) {
+          continue;
+        }
+
+        registerUploadedMedia(fileUrl);
+
+        if (file.type.startsWith('image/')) {
+          insertImage(fileUrl);
+        } else {
+          insertFileLink(fileUrl, fileName, { skipPrompt: true });
+        }
+      }
+
+      showUploadNotice('ドラッグ＆ドロップでファイルを追加しました');
+    } catch (error) {
+      console.error('ドラッグ＆ドロップのアップロードに失敗しました', error);
+      window.alert('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
+    } finally {
+      setIsFileUploading(false);
+      event.dataTransfer?.clearData();
+    }
+  }, [editor, disabled, registerUploadedMedia, insertImage, insertFileLink, showUploadNotice]);
 
   if (!editor) {
     return null;
@@ -580,13 +726,23 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       <div className="w-full max-w-full px-0 md:px-4">
         <div
           ref={containerRef}
-          className="relative mx-auto w-full max-w-[var(--note-rich-width)] rounded-xl bg-white/90 px-4 py-10 shadow-sm ring-1 ring-slate-200"
+          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] rounded-xl bg-white/90 px-4 py-10 shadow-sm ring-1 ring-slate-200 transition-shadow ${isDragOver ? 'ring-4 ring-blue-300 shadow-xl' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          aria-label="NOTEエディタ本文"
           style={{
             // note.com は約 720px 程度の本文幅
             // tailwind でカスタム値を渡すため CSS 変数を使用
             ['--note-rich-width' as string]: `${CANVAS_MAX_WIDTH}px`,
           }}
         >
+          {isDragOver ? (
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-400 bg-blue-50/90 text-center text-sm font-semibold text-blue-600">
+              <p>ここにファイルをドロップして追加</p>
+              <p className="mt-1 text-xs font-medium text-blue-500">画像はそのまま挿入、その他のファイルはリンクとして追加されます</p>
+            </div>
+          ) : null}
           {showInsertButton && !disabled ? (
             <>
               <div
@@ -655,6 +811,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           </div>
         </div>
       </div>
+
+      {uploadNotice ? (
+        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg md:bottom-10">
+          {uploadNotice}
+        </div>
+      ) : null}
 
       {isInsertMenuOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8">
@@ -761,6 +923,68 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           padding-left: 1rem;
           color: #475569;
           font-style: italic;
+        }
+
+        .note-rich-editor .ProseMirror [data-paid-block="true"] {
+          position: relative;
+          background: linear-gradient(90deg, rgba(253, 230, 138, 0.32), rgba(255, 255, 255, 0));
+          border-left: 3px solid #f59e0b;
+          border-radius: 14px;
+          padding-left: 1.1rem;
+          margin-left: -1.1rem;
+          margin-right: -1.1rem;
+        }
+
+        .note-rich-editor .ProseMirror [data-paid-block="true"] > * {
+          position: relative;
+          z-index: 1;
+        }
+
+        .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
+          content: 'ここから有料エリア';
+          position: absolute;
+          top: -1.8rem;
+          left: 0;
+          transform: translateY(-100%);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.3rem 0.75rem;
+          border-radius: 9999px;
+          background: #f59e0b;
+          color: #fff;
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          box-shadow: 0 6px 18px -8px rgba(245, 158, 11, 0.8);
+        }
+
+        .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
+          content: '';
+          position: absolute;
+          top: -0.6rem;
+          left: 0.75rem;
+          width: calc(100% - 1.5rem);
+          height: 1px;
+          background: linear-gradient(90deg, rgba(245, 158, 11, 0.6), rgba(245, 158, 11, 0));
+        }
+
+        @media (max-width: 640px) {
+          .note-rich-editor .ProseMirror [data-paid-block="true"] {
+            margin-left: -0.75rem;
+            margin-right: -0.75rem;
+            padding-left: 0.9rem;
+          }
+
+          .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
+            left: 0.5rem;
+          }
+
+          .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
+            left: 0.9rem;
+            width: calc(100% - 1.8rem);
+          }
         }
 
         .note-rich-editor .ProseMirror hr {

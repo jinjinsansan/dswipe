@@ -789,7 +789,7 @@ export default function NoteEditPage() {
       setSaving(true);
       const normalizedBlocks = editorType === 'classic'
         ? blocks.map((block) => normalizeBlock(block))
-        : [];
+        : undefined;
       const parsedPoints = Number(pricePoints);
       const parsedJpy = Number(priceJpy);
       const normalizedTaxRate = taxRate.trim();
@@ -806,8 +806,8 @@ export default function NoteEditPage() {
         title: title.trim(),
         cover_image_url: coverImageUrl.trim() || undefined,
         excerpt: excerpt.trim() || undefined,
-        content_blocks: normalizedBlocks,
-        rich_content: editorType === 'note' ? richContent : undefined,
+        ...(editorType === 'classic' && normalizedBlocks ? { content_blocks: normalizedBlocks } : {}),
+        ...(editorType === 'note' ? { rich_content: richContent ?? INITIAL_RICH_CONTENT } : {}),
         editor_type: editorType,
         is_paid: effectivePaid,
         price_points: pricePointsValue,
