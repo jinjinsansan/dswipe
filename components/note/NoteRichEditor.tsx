@@ -1,8 +1,7 @@
 'use client';
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
+import type { ReactNode, ChangeEvent } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -27,6 +26,7 @@ import {
 import { BoldIcon, HeadingIcon, ItalicIcon, ListBulletIcon } from './icons/RichEditorIcons';
 import MediaLibraryModal from '@/components/MediaLibraryModal';
 import type { NoteRichContent } from '@/types';
+import { mediaApi } from '@/lib/api';
 
 const AccessParagraph = Paragraph.extend({
   addAttributes() {
@@ -159,7 +159,6 @@ const extractAccessFromSelection = (editor: ReturnType<typeof useEditor> | null)
 };
 
 export default function NoteRichEditor({ value, onChange, disabled = false }: NoteRichEditorProps) {
-  const t = useTranslations('noteRichEditor');
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
   const [activeAccess, setActiveAccess] = useState<AccessLevel>('public');
@@ -167,6 +166,9 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const [insertButtonTop, setInsertButtonTop] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isInsertMenuOpenRef = useRef(false);
+  const storedSelectionRef = useRef<{ from: number; to: number } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isFileUploading, setIsFileUploading] = useState(false);
   const editor = useEditor({
     editable: !disabled,
     extensions: [
@@ -286,19 +288,32 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   }, [editor, updateInsertButtonPosition]);
 
   const openInsertMenu = useCallback(() => {
+    if (editor && !storedSelectionRef.current) {
+      const { from, to } = editor.state.selection;
+      storedSelectionRef.current = { from, to };
+    }
     isInsertMenuOpenRef.current = true;
     setIsInsertMenuOpen(true);
     setShowInsertButton(true);
-  }, []);
+  }, [editor]);
 
   const closeInsertMenu = useCallback(() => {
     isInsertMenuOpenRef.current = false;
     setIsInsertMenuOpen(false);
     updateInsertButtonPosition();
+    storedSelectionRef.current = null;
   }, [updateInsertButtonPosition]);
+
+  const restoreSelection = useCallback(() => {
+    if (!editor) return;
+    if (!storedSelectionRef.current) return;
+    const { from, to } = storedSelectionRef.current;
+    editor.commands.setTextSelection({ from, to });
+  }, [editor]);
 
   const applyAccess = useCallback((level: AccessLevel) => {
     if (!editor) return;
+    restoreSelection();
     let chain = editor.chain().focus();
     SUPPORTED_ACCESS_NODES.forEach((type) => {
       if (editor.isActive(type)) {
@@ -307,105 +322,162 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     });
     chain.run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const insertParagraph = useCallback(() => {
     if (!editor) return;
+    restoreSelection();
     editor.chain().focus().setParagraph().run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const insertHeading = useCallback(
     (level: 2 | 3) => {
       if (!editor) return;
-      editor.chain().focus().toggleHeading({ level }).run();
+      restoreSelection();
+      editor.chain().focus().setNode('heading', { level }).run();
       closeInsertMenu();
     },
-    [editor, closeInsertMenu],
+    [editor, restoreSelection, closeInsertMenu],
   );
 
   const insertBulletList = useCallback(() => {
     if (!editor) return;
+    restoreSelection();
     editor.chain().focus().toggleBulletList().run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const insertOrderedList = useCallback(() => {
     if (!editor) return;
+    restoreSelection();
     editor.chain().focus().toggleOrderedList().run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const insertQuote = useCallback(() => {
     if (!editor) return;
+    restoreSelection();
     editor.chain().focus().toggleBlockquote().run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const insertDivider = useCallback(() => {
     if (!editor) return;
+    restoreSelection();
     editor.chain().focus().setHorizontalRule().run();
     closeInsertMenu();
-  }, [editor, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const togglePaidBlock = useCallback(() => {
+    restoreSelection();
     const next = activeAccess === 'paid' ? 'public' : 'paid';
     applyAccess(next);
-  }, [activeAccess, applyAccess]);
+  }, [activeAccess, applyAccess, restoreSelection]);
 
   const handleInsertLink = useCallback(() => {
     if (!editor) return;
-    const url = window.prompt(t('prompts.linkUrl', { defaultMessage: 'リンクURLを入力してください' }), '');
-    if (!url) {
+    restoreSelection();
+    const url = window.prompt('リンクURLを入力してください（例：https://example.com）', '');
+    if (!url || !url.trim()) {
       closeInsertMenu();
       return;
     }
-    const text = window.prompt(t('prompts.linkLabel', { defaultMessage: 'リンクテキストを入力してください（省略可）' }), '') || url;
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange('link')
-      .setLink({ href: url.trim(), target: '_blank', rel: 'noopener noreferrer' })
-      .insertContent(text.trim())
-      .run();
+    const trimmedUrl = url.trim();
+    const { state } = editor;
+    const { from, to } = state.selection;
+    const selectedText = state.doc.textBetween(from, to, ' ');
+
+    const chain = editor.chain().focus();
+
+    if (selectedText && selectedText.trim().length > 0) {
+      chain.extendMarkRange('link').setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' }).run();
+    } else {
+      const label = window.prompt('リンクとして表示するテキストを入力してください', trimmedUrl) || trimmedUrl;
+      const start = state.selection.from;
+      chain
+        .insertContent(label)
+        .setTextSelection({ from: start, to: start + label.length })
+        .extendMarkRange('link')
+        .setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' })
+        .run();
+    }
+
     closeInsertMenu();
-  }, [editor, t, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu]);
 
   const handleInsertFile = useCallback(() => {
-    if (!editor) return;
-    const url = window.prompt(t('prompts.fileUrl', { defaultMessage: 'ファイルのURLを入力してください' }), '');
-    if (!url) {
-      closeInsertMenu();
+    if (isFileUploading) {
       return;
     }
-    const label = window.prompt(t('prompts.fileLabel', { defaultMessage: 'ファイル名を入力してください' }), '') || url;
-    editor
-      .chain()
-      .focus()
-      .insertContent([
-        {
-          type: 'paragraph',
-          attrs: { access: activeAccess },
-          content: [
-            {
-              type: 'text',
-              text: label.trim(),
-              marks: [
-                {
-                  type: 'link',
-                  attrs: { href: url.trim(), target: '_blank', rel: 'noopener noreferrer' },
-                },
-              ],
-            },
-          ],
-        },
-      ])
-      .run();
-    closeInsertMenu();
-  }, [editor, activeAccess, t, closeInsertMenu]);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, [isFileUploading]);
+
+  const insertFileLink = useCallback(
+    (url: string, label: string) => {
+      if (!editor) return;
+      restoreSelection();
+      const safeLabel = label || 'ファイル';
+      editor
+        .chain()
+        .focus()
+        .insertContent([
+          {
+            type: 'paragraph',
+            attrs: { access: activeAccess },
+            content: [
+              {
+                type: 'text',
+                text: safeLabel,
+                marks: [
+                  {
+                    type: 'link',
+                    attrs: { href: url, target: '_blank', rel: 'noopener noreferrer' },
+                  },
+                ],
+              },
+            ],
+          },
+        ])
+        .run();
+      closeInsertMenu();
+    },
+    [editor, activeAccess, restoreSelection, closeInsertMenu],
+  );
+
+  const handleFileSelect = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) {
+        return;
+      }
+
+      setIsFileUploading(true);
+      try {
+        const response = await mediaApi.upload(file, { optimize: false });
+        const fileUrl: string | undefined = response.data?.url;
+        const fileName: string = response.data?.name || file.name;
+        if (!fileUrl) {
+          throw new Error('missing file url');
+        }
+        insertFileLink(fileUrl, fileName);
+      } catch (error) {
+        console.error('ファイルのアップロードに失敗しました', error);
+        window.alert('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
+        closeInsertMenu();
+      } finally {
+        setIsFileUploading(false);
+      }
+    },
+    [insertFileLink, closeInsertMenu],
+  );
 
   const insertImage = (url: string) => {
     if (!editor || !url) return;
+    restoreSelection();
     const attrs = { src: url, access: activeAccess } as {
       src: string;
       alt?: string;
@@ -472,9 +544,14 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     },
     {
       id: 'file',
-      label: 'ファイルリンク',
+      label: isFileUploading ? 'アップロード中…' : 'ファイルをアップロード',
+      description: 'ローカルファイルをアップロードしてリンクを挿入します',
       icon: <DocumentArrowDownIcon className="h-5 w-5" />,
-      handler: handleInsertFile,
+      handler: () => {
+        if (!isFileUploading) {
+          handleInsertFile();
+        }
+      },
     },
     {
       id: 'image',
@@ -511,7 +588,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               onMouseDown={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                editor?.commands.focus();
+                if (editor) {
+                  const { from, to } = editor.state.selection;
+                  storedSelectionRef.current = { from, to };
+                  editor.commands.focus();
+                }
                 openInsertMenu();
               }}
               className="absolute left-[-32px] flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:left-[-48px] md:h-9 md:w-9"
@@ -529,7 +610,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
       {/* モバイル用フッターメニュー */}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-40 flex justify-center md:hidden">
-        <div className="pointer-events-auto flex w-[min(620px,_calc(100%-32px))] items-center gap-1 rounded-full bg-slate-900/95 px-3 py-2 text-white shadow-xl backdrop-blur">
+        <div className="pointer-events-auto flex w-[min(620px,_calc(100%-32px))] items-center gap-2 rounded-3xl bg-slate-900/95 px-4 py-3 text-white shadow-xl backdrop-blur">
           <ToolbarButtons
             editor={editor}
             disabled={disabled}
@@ -537,13 +618,14 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
             onAccessChange={applyAccess}
             onImage={() => setIsMediaOpen(true)}
             onInsertMenu={openInsertMenu}
+            isUploading={isFileUploading}
           />
         </div>
       </div>
 
       {/* デスクトップ用フッターメニュー */}
       <div className="hidden w-full justify-center md:flex">
-        <div className="flex w-full max-w-[720px] items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <div className="flex w-full max-w-[720px] items-center gap-3 rounded-3xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
           <ToolbarButtons
             editor={editor}
             disabled={disabled}
@@ -551,6 +633,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
             onAccessChange={applyAccess}
             onImage={() => setIsMediaOpen(true)}
             onInsertMenu={openInsertMenu}
+            isUploading={isFileUploading}
           />
         </div>
       </div>
@@ -603,6 +686,13 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         }}
       />
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+
       <style jsx global>{`
         .note-rich-editor .ProseMirror {
           min-height: 420px;
@@ -619,10 +709,33 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           margin-bottom: 1.25rem;
         }
 
+        .note-rich-editor .ProseMirror h2 {
+          font-size: 1.75rem;
+          font-weight: 700;
+          line-height: 1.3;
+          color: #0f172a;
+        }
+
+        .note-rich-editor .ProseMirror h3 {
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 1.4;
+          color: #1e293b;
+        }
+
         .note-rich-editor .ProseMirror ul,
         .note-rich-editor .ProseMirror ol {
           margin-bottom: 1.5rem;
           padding-left: 1.5rem;
+          list-style-position: outside;
+        }
+
+        .note-rich-editor .ProseMirror ul {
+          list-style-type: disc;
+        }
+
+        .note-rich-editor .ProseMirror ol {
+          list-style-type: decimal;
         }
 
         .note-rich-editor .ProseMirror blockquote {
@@ -649,9 +762,10 @@ interface ToolbarButtonsProps {
   onAccessChange: (level: AccessLevel) => void;
   onImage: () => void;
   onInsertMenu: () => void;
+  isUploading: boolean;
 }
 
-function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu }: ToolbarButtonsProps) {
+function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu, isUploading }: ToolbarButtonsProps) {
   if (!editor) {
     return null;
   }
@@ -662,80 +776,97 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
         onClick={() => editor.chain().focus().toggleBold().run()}
         active={editor.isActive('bold')}
         disabled={disabled}
-      >
-        <BoldIcon className="h-4 w-4" />
-      </ToolbarButton>
+        label="太字"
+        icon={<BoldIcon className="h-4 w-4" />}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleItalic().run()}
         active={editor.isActive('italic')}
         disabled={disabled}
-      >
-        <ItalicIcon className="h-4 w-4" />
-      </ToolbarButton>
+        label="斜体"
+        icon={<ItalicIcon className="h-4 w-4" />}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         active={editor.isActive('heading', { level: 2 })}
         disabled={disabled}
-      >
-        <HeadingIcon className="h-4 w-4" label="H2" />
-      </ToolbarButton>
+        label="大見出し"
+        icon={<HeadingIcon className="h-4 w-4" label="H2" />}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         active={editor.isActive('heading', { level: 3 })}
         disabled={disabled}
-      >
-        <HeadingIcon className="h-4 w-4" label="H3" />
-      </ToolbarButton>
+        label="小見出し"
+        icon={<HeadingIcon className="h-4 w-4" label="H3" />}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         active={editor.isActive('bulletList')}
         disabled={disabled}
-      >
-        <ListBulletIcon className="h-4 w-4" />
-      </ToolbarButton>
+        label="箇条書き"
+        icon={<ListBulletIcon className="h-4 w-4" />}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         active={editor.isActive('orderedList')}
         disabled={disabled}
-      >
-        <span className="text-xs font-semibold">1.</span>
-      </ToolbarButton>
+        label="番号付き"
+        icon={<span className="text-xs font-semibold">1.</span>}
+        activeClass="bg-blue-600 text-white"
+      />
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         active={editor.isActive('blockquote')}
         disabled={disabled}
-      >
-        <Bars3BottomLeftIcon className="h-4 w-4" />
-      </ToolbarButton>
-      <ToolbarButton onClick={() => editor.chain().focus().undo().run()} disabled={disabled}>
-        <span className="text-xs font-semibold">↺</span>
-      </ToolbarButton>
-      <ToolbarButton onClick={() => editor.chain().focus().redo().run()} disabled={disabled}>
-        <span className="text-xs font-semibold">↻</span>
-      </ToolbarButton>
+        label="引用"
+        icon={<Bars3BottomLeftIcon className="h-4 w-4" />}
+        activeClass="bg-blue-600 text-white"
+      />
+      <ToolbarButton
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={disabled}
+        label="元に戻す"
+        icon={<span className="text-xs font-semibold">↺</span>}
+      />
+      <ToolbarButton
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={disabled}
+        label="やり直す"
+        icon={<span className="text-xs font-semibold">↻</span>}
+      />
       <div className="ml-auto flex items-center gap-1 md:gap-2">
         <ToolbarButton
           onClick={() => onAccessChange('public')}
           active={activeAccess === 'public'}
           disabled={disabled}
           activeClass="bg-emerald-600 text-white"
-        >
-          <span className="text-[10px] font-semibold uppercase tracking-wide">無料</span>
-        </ToolbarButton>
+          label="無料"
+        />
         <ToolbarButton
           onClick={() => onAccessChange('paid')}
           active={activeAccess === 'paid'}
           disabled={disabled}
           activeClass="bg-amber-500 text-white"
-        >
-          <span className="text-[10px] font-semibold uppercase tracking-wide">有料</span>
-        </ToolbarButton>
-        <ToolbarButton onClick={onImage} disabled={disabled}>
-          <PhotoIcon className="h-4 w-4" />
-        </ToolbarButton>
-        <ToolbarButton onClick={onInsertMenu} disabled={disabled}>
-          <PlusIcon className="h-4 w-4" />
-        </ToolbarButton>
+          label="有料"
+        />
+        <ToolbarButton
+          onClick={onImage}
+          disabled={disabled}
+          label="画像"
+          icon={<PhotoIcon className="h-4 w-4" />}
+        />
+        <ToolbarButton
+          onClick={onInsertMenu}
+          disabled={disabled || isUploading}
+          label={isUploading ? 'アップ中' : '追加'}
+          icon={<PlusIcon className="h-4 w-4" />}
+        />
       </div>
     </Fragment>
   );
@@ -746,20 +877,24 @@ interface ToolbarButtonProps {
   active?: boolean;
   disabled?: boolean;
   activeClass?: string;
-  children: ReactNode;
+  icon?: ReactNode;
+  label: string;
+  className?: string;
 }
 
-function ToolbarButton({ onClick, active = false, disabled = false, activeClass, children }: ToolbarButtonProps) {
+function ToolbarButton({ onClick, active = false, disabled = false, activeClass, icon, label, className }: ToolbarButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? activeClass || 'bg-blue-600 text-white' : 'bg-slate-100'
-      }`}
+      title={label}
+      className={`inline-flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-full bg-slate-100 px-2 text-slate-600 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40 ${
+        active ? activeClass || 'bg-blue-600 text-white' : ''
+      } ${className ?? ''}`}
     >
-      {children}
+      {icon ? <span className="text-base leading-none">{icon}</span> : null}
+      <span className={`text-[10px] font-semibold ${active ? 'text-white' : 'text-slate-600'}`}>{label}</span>
     </button>
   );
 }
