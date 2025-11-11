@@ -1003,7 +1003,10 @@ export default function NoteEditPage() {
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{info}</div>
         ) : null}
 
-        <div className="sticky top-[72px] z-30 mb-6 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur md:top-[88px]">
+        <div
+          className="sticky z-30 mb-6 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur"
+          style={{ top: 'calc(var(--dashboard-header-height, 112px) + 6px)' }}
+        >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               <Link

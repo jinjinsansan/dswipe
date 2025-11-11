@@ -346,11 +346,18 @@ export default function DashboardHeader({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMenuOpen]);
 
+  const applyHeaderHeight = (height: number) => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--dashboard-header-height', `${height}px`);
+    }
+  };
+
   useLayoutEffect(() => {
     const updateOffset = () => {
       if (!headerRef.current) return;
       const rect = headerRef.current.getBoundingClientRect();
       setMenuTopOffset(rect.height);
+      applyHeaderHeight(rect.height);
     };
 
     updateOffset();
@@ -362,7 +369,14 @@ export default function DashboardHeader({
     if (!headerRef.current) return;
     const rect = headerRef.current.getBoundingClientRect();
     setMenuTopOffset(rect.height);
+    applyHeaderHeight(rect.height);
   }, [isMenuOpen, resolvedPageTitle, subtitle]);
+
+  useEffect(() => () => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.removeProperty('--dashboard-header-height');
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
