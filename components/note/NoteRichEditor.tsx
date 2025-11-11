@@ -1,9 +1,9 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
-import { EditorContent, FloatingMenu, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Paragraph from '@tiptap/extension-paragraph';
 import Heading from '@tiptap/extension-heading';
@@ -163,6 +163,9 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
   const [activeAccess, setActiveAccess] = useState<AccessLevel>('public');
+  const [showInsertButton, setShowInsertButton] = useState(false);
+  const [insertButtonTop, setInsertButtonTop] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const editor = useEditor({
     editable: !disabled,
     extensions: [
@@ -204,26 +207,78 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     editor.commands.setContent(json, false);
   }, [editor, value]);
 
+  const updateInsertButtonPosition = useCallback(() => {
+    if (!editor || !editor.isEditable || disabled) {
+      setShowInsertButton(false);
+      return;
+    }
+
+    const view = editor.view;
+    const { state } = view;
+    const container = containerRef.current;
+    if (!container) {
+      setShowInsertButton(false);
+      return;
+    }
+
+    const selection = state.selection;
+    const from = selection.$from.pos;
+
+    try {
+      const coords = view.coordsAtPos(from);
+      const rect = container.getBoundingClientRect();
+      const top = coords.top - rect.top - 12;
+      if (Number.isFinite(top)) {
+        setInsertButtonTop(Math.max(top, 0));
+        setShowInsertButton(true);
+      }
+    } catch {
+      setShowInsertButton(false);
+    }
+  }, [editor, disabled]);
+
   useEffect(() => {
     if (!editor) return;
     editor.setEditable(!disabled);
   }, [editor, disabled]);
 
   useEffect(() => {
+    if (disabled) {
+      setShowInsertButton(false);
+    } else {
+      updateInsertButtonPosition();
+    }
+  }, [disabled, updateInsertButtonPosition]);
+
+  useEffect(() => {
     if (!editor) return;
-    const handler = () => {
+    const handleSelection = () => {
       setActiveAccess(extractAccessFromSelection(editor));
+      updateInsertButtonPosition();
     };
 
-    handler();
-    editor.on('selectionUpdate', handler);
-    editor.on('transaction', handler);
-
+    handleSelection();
+    editor.on('selectionUpdate', handleSelection);
+    editor.on('transaction', handleSelection);
+    editor.on('focus', updateInsertButtonPosition);
+    const handleBlur = () => setShowInsertButton(false);
+    editor.on('blur', handleBlur);
     return () => {
-      editor.off('selectionUpdate', handler);
-      editor.off('transaction', handler);
+      editor.off('selectionUpdate', handleSelection);
+      editor.off('transaction', handleSelection);
+      editor.off('focus', updateInsertButtonPosition);
+      editor.off('blur', handleBlur);
     };
-  }, [editor]);
+  }, [editor, updateInsertButtonPosition]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const listener = () => updateInsertButtonPosition();
+    window.addEventListener('resize', listener);
+    return () => {
+      window.removeEventListener('resize', listener);
+    };
+  }, [editor, updateInsertButtonPosition]);
 
   const closeInsertMenu = useCallback(() => setIsInsertMenuOpen(false), []);
 
@@ -353,62 +408,62 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const insertActions: InsertAction[] = [
     {
       id: 'paragraph',
-      label: t('insertParagraph', { defaultMessage: 'テキスト' }),
-      description: t('insertParagraphDescription', { defaultMessage: '通常の段落テキストを追加します' }),
+      label: 'テキスト',
+      description: '通常の段落テキストを追加します',
       icon: <span className="text-base font-semibold">T</span>,
       handler: insertParagraph,
     },
     {
       id: 'heading2',
-      label: t('insertHeadingLarge', { defaultMessage: '大見出し (H2)' }),
+      label: '大見出し (H2)',
       icon: <HeadingIcon className="h-5 w-5" label="H2" />,
       handler: () => insertHeading(2),
     },
     {
       id: 'heading3',
-      label: t('insertHeadingSmall', { defaultMessage: '小見出し (H3)' }),
+      label: '小見出し (H3)',
       icon: <HeadingIcon className="h-5 w-5" label="H3" />,
       handler: () => insertHeading(3),
     },
     {
       id: 'bullet',
-      label: t('insertBulletList', { defaultMessage: '箇条書き' }),
+      label: '箇条書き',
       icon: <ListBulletIcon className="h-5 w-5" />,
       handler: insertBulletList,
     },
     {
       id: 'ordered',
-      label: t('insertOrderedList', { defaultMessage: '番号リスト' }),
+      label: '番号付きリスト',
       icon: <span className="text-base font-semibold">1.</span>,
       handler: insertOrderedList,
     },
     {
       id: 'quote',
-      label: t('insertQuote', { defaultMessage: '引用' }),
+      label: '引用',
       icon: <Bars3BottomLeftIcon className="h-5 w-5" />,
       handler: insertQuote,
     },
     {
       id: 'divider',
-      label: t('insertDivider', { defaultMessage: '区切り線' }),
+      label: '区切り線',
       icon: <MinusSmallIcon className="h-5 w-5" />,
       handler: insertDivider,
     },
     {
       id: 'link',
-      label: t('insertLink', { defaultMessage: 'リンク' }),
+      label: 'リンク',
       icon: <LinkIcon className="h-5 w-5" />,
       handler: handleInsertLink,
     },
     {
       id: 'file',
-      label: t('insertFile', { defaultMessage: 'ファイル' }),
+      label: 'ファイルリンク',
       icon: <DocumentArrowDownIcon className="h-5 w-5" />,
       handler: handleInsertFile,
     },
     {
       id: 'image',
-      label: t('insertImage', { defaultMessage: '画像' }),
+      label: '画像',
       icon: <PhotoIcon className="h-5 w-5" />,
       handler: () => {
         setIsMediaOpen(true);
@@ -417,9 +472,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     },
     {
       id: 'paid',
-      label: activeAccess === 'paid'
-        ? t('switchToFree', { defaultMessage: '無料に戻す' })
-        : t('switchToPaid', { defaultMessage: '有料エリアにする' }),
+      label: activeAccess === 'paid' ? '無料に戻す' : '有料エリアにする',
       icon: <span className="text-sm font-semibold">￥</span>,
       handler: togglePaidBlock,
     },
@@ -429,6 +482,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6">
       <div className="w-full max-w-full px-0 md:px-4">
         <div
+          ref={containerRef}
           className="relative mx-auto w-full max-w-[var(--note-rich-width)] rounded-xl bg-white/90 px-4 py-10 shadow-sm ring-1 ring-slate-200"
           style={{
             // note.com は約 720px 程度の本文幅
@@ -436,28 +490,20 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
             ['--note-rich-width' as string]: `${CANVAS_MAX_WIDTH}px`,
           }}
         >
+          {showInsertButton && !disabled ? (
+            <button
+              type="button"
+              onClick={() => setIsInsertMenuOpen(true)}
+              className="absolute left-[-32px] flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:left-[-48px] md:h-9 md:w-9"
+              style={{ top: insertButtonTop }}
+            >
+              <PlusIcon className="h-5 w-5" />
+            </button>
+          ) : null}
           <EditorContent
             editor={editor}
             className="note-rich-editor prose prose-lg prose-slate max-w-none focus:outline-none"
           />
-
-          <FloatingMenu
-            editor={editor}
-            shouldShow={({ editor: instance }) => {
-              const { $from } = instance.state.selection;
-              if (!instance.isEditable) return false;
-              return $from.depth === 1 || $from.parent.type.name !== 'doc';
-            }}
-            tippyOptions={{ placement: 'left-start', offset: [0, 24] }}
-          >
-            <button
-              type="button"
-              onClick={() => setIsInsertMenuOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500"
-            >
-              <PlusIcon className="h-5 w-5" />
-            </button>
-          </FloatingMenu>
         </div>
       </div>
 
@@ -494,8 +540,8 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-slate-900">{t('insertMenuTitle', { defaultMessage: 'ブロックを追加' })}</p>
-                <p className="text-xs text-slate-500">{t('insertMenuDescription', { defaultMessage: '追加したいコンテンツを選択してください' })}</p>
+                <p className="text-sm font-semibold text-slate-900">ブロックを追加</p>
+                <p className="text-xs text-slate-500">追加したいコンテンツを選択してください</p>
               </div>
               <button
                 type="button"
@@ -586,8 +632,6 @@ interface ToolbarButtonsProps {
 }
 
 function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu }: ToolbarButtonsProps) {
-  const t = useTranslations('noteRichEditor');
-
   if (!editor) {
     return null;
   }
@@ -656,7 +700,7 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
           disabled={disabled}
           activeClass="bg-emerald-600 text-white"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-wide">{t('accessPublic', { defaultMessage: '無料' })}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wide">無料</span>
         </ToolbarButton>
         <ToolbarButton
           onClick={() => onAccessChange('paid')}
@@ -664,7 +708,7 @@ function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImag
           disabled={disabled}
           activeClass="bg-amber-500 text-white"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-wide">{t('accessPaid', { defaultMessage: '有料' })}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wide">有料</span>
         </ToolbarButton>
         <ToolbarButton onClick={onImage} disabled={disabled}>
           <PhotoIcon className="h-4 w-4" />
