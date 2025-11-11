@@ -576,7 +576,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   ];
 
   return (
-    <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6">
+    <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6 pb-28 md:pb-12">
       <div className="w-full max-w-full px-0 md:px-4">
         <div
           ref={containerRef}
@@ -588,23 +588,32 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           }}
         >
           {showInsertButton && !disabled ? (
-            <button
-              type="button"
-              onMouseDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                if (editor) {
-                  const { from, to } = editor.state.selection;
-                  storedSelectionRef.current = { from, to };
-                  editor.commands.focus();
-                }
-                openInsertMenu();
-              }}
-              className="absolute left-[-32px] flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:left-[-48px] md:h-9 md:w-9"
-              style={{ top: insertButtonTop }}
-            >
-              <PlusIcon className="h-5 w-5" />
-            </button>
+            <>
+              <div
+                className="absolute left-[-10px] flex h-8 w-1 items-center justify-center md:hidden"
+                style={{ top: insertButtonTop }}
+                aria-hidden="true"
+              >
+                <span className="block h-full w-full rounded-full bg-slate-300" />
+              </div>
+              <button
+                type="button"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (editor) {
+                    const { from, to } = editor.state.selection;
+                    storedSelectionRef.current = { from, to };
+                    editor.commands.focus();
+                  }
+                  openInsertMenu();
+                }}
+                className="absolute left-[-32px] hidden h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:flex md:left-[-48px] md:h-9 md:w-9"
+                style={{ top: insertButtonTop }}
+              >
+                <PlusIcon className="h-5 w-5" />
+              </button>
+            </>
           ) : null}
           <EditorContent
             editor={editor}
@@ -614,9 +623,9 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       </div>
 
       {/* モバイル用フッターメニュー */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-40 flex justify-center md:hidden">
-        <div className="pointer-events-auto w-[min(620px,_calc(100%-32px))] overflow-x-auto rounded-3xl bg-slate-900/95 px-3 py-3 text-white shadow-xl backdrop-blur">
-          <div className="flex w-max items-center gap-2 pr-2">
+      <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden">
+        <div className="w-full max-w-[620px] overflow-x-auto px-3">
+          <div className="flex w-max items-center gap-2 pb-2 pr-4">
             <ToolbarButtons
               editor={editor}
               disabled={disabled}
@@ -632,8 +641,8 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
       {/* デスクトップ用フッターメニュー */}
       <div className="hidden w-full justify-center md:flex">
-        <div className="w-full max-w-[760px] overflow-x-auto rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-          <div className="flex w-max items-center gap-2 pr-2">
+        <div className="sticky bottom-6 z-30 w-full max-w-[780px] overflow-x-auto rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-md backdrop-blur">
+          <div className="flex w-max items-center gap-2 pr-4">
             <ToolbarButtons
               editor={editor}
               disabled={disabled}
