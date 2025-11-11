@@ -391,8 +391,10 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       }
     });
     chain.run();
+    setActiveAccess(level);
+    updatePaidMarkers();
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu]);
+  }, [editor, restoreSelection, closeInsertMenu, updatePaidMarkers]);
 
   const insertParagraph = useCallback(() => {
     if (!editor) return;
@@ -927,12 +929,13 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
         .note-rich-editor .ProseMirror [data-paid-block="true"] {
           position: relative;
-          background: linear-gradient(90deg, rgba(253, 230, 138, 0.32), rgba(255, 255, 255, 0));
+          background: linear-gradient(90deg, rgba(253, 230, 138, 0.28), rgba(255, 255, 255, 0));
           border-left: 3px solid #f59e0b;
           border-radius: 14px;
-          padding-left: 1.1rem;
-          margin-left: -1.1rem;
-          margin-right: -1.1rem;
+          padding: 1.25rem 1.25rem 1.25rem 1.4rem;
+          margin-left: -1.4rem;
+          margin-right: -1.4rem;
+          margin-top: 1.75rem;
         }
 
         .note-rich-editor .ProseMirror [data-paid-block="true"] > * {
@@ -943,9 +946,9 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
           content: 'ここから有料エリア';
           position: absolute;
-          top: -1.8rem;
-          left: 0;
-          transform: translateY(-100%);
+          top: -0.8rem;
+          left: 1.4rem;
+          transform: none;
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
@@ -963,27 +966,27 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
           content: '';
           position: absolute;
-          top: -0.6rem;
-          left: 0.75rem;
-          width: calc(100% - 1.5rem);
+          top: -0.4rem;
+          left: 1.4rem;
+          width: calc(100% - 2.4rem);
           height: 1px;
           background: linear-gradient(90deg, rgba(245, 158, 11, 0.6), rgba(245, 158, 11, 0));
         }
 
         @media (max-width: 640px) {
           .note-rich-editor .ProseMirror [data-paid-block="true"] {
-            margin-left: -0.75rem;
-            margin-right: -0.75rem;
-            padding-left: 0.9rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            padding: 1.15rem 1.1rem 1.1rem 1.1rem;
           }
 
           .note-rich-editor .ProseMirror [data-paid-start="true"]::before {
-            left: 0.5rem;
+            left: 1.1rem;
           }
 
           .note-rich-editor .ProseMirror [data-paid-start="true"]::after {
-            left: 0.9rem;
-            width: calc(100% - 1.8rem);
+            left: 1.1rem;
+            width: calc(100% - 2.2rem);
           }
         }
 
