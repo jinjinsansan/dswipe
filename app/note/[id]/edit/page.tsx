@@ -123,6 +123,7 @@ export default function NoteEditPage() {
   const [richContent, setRichContent] = useState<NoteRichContent>(INITIAL_RICH_CONTENT);
   const [aiHistory, setAiHistory] = useState<AiActionRecord[]>([]);
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
+  const [slug, setSlug] = useState('');
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -262,6 +263,7 @@ export default function NoteEditPage() {
           ? (detail.rich_content as NoteRichContent | null) ?? INITIAL_RICH_CONTENT
           : INITIAL_RICH_CONTENT);
         setStatus(detail.status ?? 'draft');
+        setSlug(detail.slug ?? '');
         setPublishedAt(detail.published_at ?? null);
         setOfficialShareConfig({
           note_id: detail.id,
@@ -853,7 +855,15 @@ export default function NoteEditPage() {
         setRequiresLogin(Boolean(detail?.requires_login && (detail?.visibility ?? visibility) === 'public'));
         setShareUrl(detail?.share_url ?? shareUrl);
         setShareTokenRotatedAt(detail?.share_token_rotated_at ?? shareTokenRotatedAt);
+        const nextSlug = detail?.slug ?? slug;
+        setSlug(nextSlug);
         setInfo('記事を公開しました');
+        if (nextSlug) {
+          const prefix = locale && locale !== 'ja' ? `/${locale}` : '';
+          router.push(`${prefix}/notes/${nextSlug}`);
+        } else if (detail?.share_url) {
+          router.push(detail.share_url);
+        }
       } else {
         const response = await noteApi.unpublish(noteId);
         const detail = response.data;
