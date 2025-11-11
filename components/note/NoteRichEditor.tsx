@@ -759,6 +759,17 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           border-top: 1px solid #e2e8f0;
           margin: 2rem 0;
         }
+
+        .note-rich-editor .ProseMirror a {
+          color: #2563eb;
+          text-decoration: underline;
+          text-decoration-thickness: 1px;
+          text-underline-offset: 3px;
+        }
+
+        .note-rich-editor .ProseMirror a:hover {
+          color: #1d4ed8;
+        }
       `}</style>
     </div>
   );
