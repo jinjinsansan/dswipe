@@ -610,31 +610,35 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
       {/* モバイル用フッターメニュー */}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-40 flex justify-center md:hidden">
-        <div className="pointer-events-auto flex w-[min(620px,_calc(100%-32px))] items-center gap-2 rounded-3xl bg-slate-900/95 px-4 py-3 text-white shadow-xl backdrop-blur">
-          <ToolbarButtons
-            editor={editor}
-            disabled={disabled}
-            activeAccess={activeAccess}
-            onAccessChange={applyAccess}
-            onImage={() => setIsMediaOpen(true)}
-            onInsertMenu={openInsertMenu}
-            isUploading={isFileUploading}
-          />
+        <div className="pointer-events-auto w-[min(620px,_calc(100%-32px))] overflow-x-auto rounded-3xl bg-slate-900/95 px-3 py-3 text-white shadow-xl backdrop-blur">
+          <div className="flex w-max items-center gap-2 pr-2">
+            <ToolbarButtons
+              editor={editor}
+              disabled={disabled}
+              activeAccess={activeAccess}
+              onAccessChange={applyAccess}
+              onImage={() => setIsMediaOpen(true)}
+              onInsertMenu={openInsertMenu}
+              isUploading={isFileUploading}
+            />
+          </div>
         </div>
       </div>
 
       {/* デスクトップ用フッターメニュー */}
       <div className="hidden w-full justify-center md:flex">
-        <div className="flex w-full max-w-[720px] items-center gap-3 rounded-3xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
-          <ToolbarButtons
-            editor={editor}
-            disabled={disabled}
-            activeAccess={activeAccess}
-            onAccessChange={applyAccess}
-            onImage={() => setIsMediaOpen(true)}
-            onInsertMenu={openInsertMenu}
-            isUploading={isFileUploading}
-          />
+        <div className="w-full max-w-[760px] overflow-x-auto rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <div className="flex w-max items-center gap-2 pr-2">
+            <ToolbarButtons
+              editor={editor}
+              disabled={disabled}
+              activeAccess={activeAccess}
+              onAccessChange={applyAccess}
+              onImage={() => setIsMediaOpen(true)}
+              onInsertMenu={openInsertMenu}
+              isUploading={isFileUploading}
+            />
+          </div>
         </div>
       </div>
 
@@ -883,15 +887,14 @@ interface ToolbarButtonProps {
 }
 
 function ToolbarButton({ onClick, active = false, disabled = false, activeClass, icon, label, className }: ToolbarButtonProps) {
+  const baseColor = active ? (activeClass ?? 'bg-blue-600 text-white') : 'bg-slate-100 text-slate-600';
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       title={label}
-      className={`inline-flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-full bg-slate-100 px-2 text-slate-600 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? activeClass || 'bg-blue-600 text-white' : ''
-      } ${className ?? ''}`}
+      className={`flex h-12 min-w-[64px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-full px-3 text-xs font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40 ${baseColor} ${className ?? ''}`}
     >
       {icon ? <span className="text-base leading-none">{icon}</span> : null}
       <span className={`text-[10px] font-semibold ${active ? 'text-white' : 'text-slate-600'}`}>{label}</span>
