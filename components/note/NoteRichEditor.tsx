@@ -378,26 +378,34 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const handleInsertLink = useCallback(() => {
     if (!editor) return;
     restoreSelection();
-    const url = window.prompt('リンクURLを入力してください（例：https://example.com）', '');
-    if (!url || !url.trim()) {
+    const currentHref = editor.getAttributes('link')?.href || '';
+    const url = window.prompt('リンクURLを入力してください（例：https://example.com）', currentHref);
+    if (!url) {
       closeInsertMenu();
       return;
     }
     const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
+      closeInsertMenu();
+      return;
+    }
+
+    restoreSelection();
     const { state } = editor;
     const { from, to } = state.selection;
+    const hasSelection = from !== to;
     const selectedText = state.doc.textBetween(from, to, ' ');
 
     const chain = editor.chain().focus();
 
-    if (selectedText && selectedText.trim().length > 0) {
+    if (hasSelection && selectedText.trim().length > 0) {
       chain.extendMarkRange('link').setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' }).run();
     } else {
       const label = window.prompt('リンクとして表示するテキストを入力してください', trimmedUrl) || trimmedUrl;
-      const start = state.selection.from;
+      const startPos = state.selection.from;
       chain
         .insertContent(label)
-        .setTextSelection({ from: start, to: start + label.length })
+        .setTextSelection({ from: startPos, to: startPos + label.length })
         .extendMarkRange('link')
         .setLink({ href: trimmedUrl, target: '_blank', rel: 'noopener noreferrer' })
         .run();
@@ -416,35 +424,32 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   }, [isFileUploading]);
 
   const insertFileLink = useCallback(
-    (url: string, label: string) => {
+    (url: string, defaultLabel: string) => {
       if (!editor) return;
       restoreSelection();
-      const safeLabel = label || 'ファイル';
-      editor
-        .chain()
-        .focus()
-        .insertContent([
-          {
-            type: 'paragraph',
-            attrs: { access: activeAccess },
-            content: [
-              {
-                type: 'text',
-                text: safeLabel,
-                marks: [
-                  {
-                    type: 'link',
-                    attrs: { href: url, target: '_blank', rel: 'noopener noreferrer' },
-                  },
-                ],
-              },
-            ],
-          },
-        ])
-        .run();
+      const { state } = editor;
+      const { from, to } = state.selection;
+      const hasSelection = from !== to;
+      const selectedText = state.doc.textBetween(from, to, ' ');
+
+      const chain = editor.chain().focus();
+
+      if (hasSelection && selectedText.trim().length > 0) {
+        chain.extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
+      } else {
+        const label = window.prompt('リンクとして表示するテキストを入力してください', defaultLabel) || defaultLabel;
+        const startPos = state.selection.from;
+        chain
+          .insertContent(label)
+          .setTextSelection({ from: startPos, to: startPos + label.length })
+          .extendMarkRange('link')
+          .setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' })
+          .run();
+      }
+
       closeInsertMenu();
     },
-    [editor, activeAccess, restoreSelection, closeInsertMenu],
+    [editor, restoreSelection, closeInsertMenu],
   );
 
   const handleFileSelect = useCallback(
