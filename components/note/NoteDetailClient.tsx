@@ -534,6 +534,24 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                 <p className="text-[11px] leading-relaxed text-slate-500">
                   {t('purchaseDisclaimer')}
                 </p>
+                {note.allow_jpy_purchase && (note.price_jpy ?? 0) > 0 ? (
+                  <Link
+                    href={{
+                      pathname: '/checkout/quick',
+                      query: {
+                        type: 'note',
+                        id: note.id,
+                        slug: note.slug ?? undefined,
+                        title: note.title ?? undefined,
+                        price: note.price_jpy ?? undefined,
+                        locale,
+                      },
+                    }}
+                    className="text-xs font-semibold text-blue-600 underline underline-offset-4"
+                  >
+                    {t('quickCheckoutLink')}
+                  </Link>
+                ) : null}
                 {!isAuthenticated ? (
                   <Link
                     href="/login"

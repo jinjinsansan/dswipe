@@ -668,3 +668,28 @@ export type SalonAnnouncementUpdateRequest = SalonAnnouncementUpdatePayload;
 export type SalonRoleCreateRequest = SalonRoleCreatePayload;
 export type SalonRoleUpdateRequest = SalonRoleUpdatePayload;
 export type SalonRoleAssignRequest = SalonRoleAssignPayload;
+
+export interface BillingProfilePayload {
+  full_name: string;
+  email: string;
+  phone_number?: string | null;
+  postal_code?: string | null;
+  prefecture?: string | null;
+  city?: string | null;
+  address_line1?: string | null;
+  address_line2?: string | null;
+  company_name?: string | null;
+  country_code?: string | null;
+}
+
+export interface BillingProfileResponse {
+  user_id: string;
+  profile: (BillingProfilePayload & { country_code?: string | null }) | null;
+  updated_at?: string | null;
+}
+
+export interface QuickCheckoutResponse {
+  checkout_url: string;
+  external_id: string;
+  item_type: 'note' | 'product' | 'subscription';
+}

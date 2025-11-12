@@ -289,6 +289,25 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                       {isJoiningYen ? "リダイレクト中…" : "日本円クレジットカードで参加する"}
                     </button>
                   ) : null}
+                  {salon.allow_jpy_subscription && salon.plan?.key ? (
+                    <Link
+                      href={{
+                        pathname: "/checkout/quick",
+                        query: {
+                          type: "subscription",
+                          plan_key: salon.plan.key,
+                          title: salon.title ?? undefined,
+                          price: salon.plan.monthly_price_jpy ?? undefined,
+                          seller: salon.owner?.username ?? undefined,
+                          seller_id: salon.owner?.id ?? undefined,
+                          salon_id: salon.id,
+                        },
+                      }}
+                      className="mt-2 block text-center text-xs font-semibold text-emerald-600 underline underline-offset-4"
+                    >
+                      保存済みの情報でクイック決済
+                    </Link>
+                  ) : null}
 
                   {!salon.allow_point_subscription && !salon.allow_jpy_subscription ? (
                     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500">

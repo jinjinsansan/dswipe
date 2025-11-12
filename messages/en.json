@@ -79,6 +79,7 @@
     "purchaseButtonPoints": "Unlock for {pricePoints, number} pts",
     "purchaseButtonYen": "Purchase for ¥{priceYen, number}",
     "purchaseDisclaimer": "Digital purchases are final. Points and delivered content cannot be refunded.",
+    "quickCheckoutLink": "Use saved details for quick checkout",
     "loginPrompt": "Need an account? Sign in or register first.",
     "shareHeading": "Share on social media",
     "shareOnX": "Share on X",
@@ -1001,6 +1002,31 @@
       "connectButton": "Connect X account",
       "permissionsNote": "Connecting grants permission to post tweets on your behalf."
     },
+    "billingProfile": {
+      "heading": "Billing profile for quick checkout",
+      "description": "Save your contact details so checkout forms are prefilled. Card numbers are never stored.",
+      "updatedAtLabel": "Last updated: {value}",
+      "form": {
+        "fullName": "Full name",
+        "email": "Email",
+        "phoneNumber": "Phone number",
+        "postalCode": "Postal code",
+        "prefecture": "Prefecture / State",
+        "city": "City",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2",
+        "companyName": "Company or department (optional)"
+      },
+      "buttons": {
+        "save": "Save changes",
+        "saving": "Saving..."
+      },
+      "messages": {
+        "loadFailed": "Couldn't load your billing profile. Please try again later.",
+        "saveSuccess": "Billing profile saved.",
+        "saveFailed": "Failed to save your billing profile. Please review the inputs."
+      }
+    },
     "accountShare": {
       "sections": {
         "invite": {
@@ -1059,6 +1085,58 @@
         "emailMissing": "Email unavailable",
         "ownerUnknown": "Owner unavailable"
       }
+    }
+  },
+  "quickCheckout": {
+    "title": "Quick checkout",
+    "subtitle": "Use your saved billing details to skip straight to payment.",
+    "profile": {
+      "heading": "Billing details",
+      "description": "Review the contact and address information stored in Settings. Update it before paying if needed.",
+      "editButton": "Open settings",
+      "loading": "Loading your billing profile...",
+      "loadFailed": "We couldn't load your billing profile.",
+      "missingTitle": "No billing details saved yet",
+      "missingDescription": "Save your name and address once to auto-fill future checkouts.",
+      "goToSettings": "Set up billing details",
+      "requiredNotice": "Quick checkout requires a saved billing profile.",
+      "labels": {
+        "fullName": "Full name",
+        "email": "Email",
+        "phoneNumber": "Phone number",
+        "address": "Address",
+        "company": "Company"
+      }
+    },
+    "item": {
+      "heading": "Item",
+      "description": "Confirm what you're about to purchase and its price.",
+      "loading": "Loading item details...",
+      "untitledNote": "Untitled note",
+      "untitledProduct": "Untitled product",
+      "subscriptionDefaultTitle": "Subscription",
+      "quantityLabel": "Quantity: {count}",
+      "planKeyLabel": "Plan key: {value}",
+      "sellerLabel": "Seller: @{username}",
+      "viewOriginal": "View original page"
+    },
+    "actions": {
+      "heading": "Payment",
+      "description": "Use your saved billing details to jump to the checkout page.",
+      "editProfile": "Edit billing profile",
+      "processing": "Redirecting to checkout...",
+      "quickPurchase": "Pay now"
+    },
+    "status": {
+      "redirecting": "Redirecting to the payment page..."
+    },
+    "errors": {
+      "unsupportedType": "This item doesn't support quick checkout.",
+      "missingItem": "No purchase target was provided. Please try again.",
+      "missingPlanKey": "Subscription details are incomplete.",
+      "itemLoadFailed": "We couldn't load the item information.",
+      "missingCheckoutUrl": "We couldn't retrieve the checkout URL. Please try again later.",
+      "purchaseFailed": "Failed to start the payment."
     }
   },
   "media": {
@@ -1242,7 +1320,8 @@
       "approxZero": "Approx. ¥0 / month",
       "usdNote": "Billing is processed in USD via ONE.lat.",
       "subscribeButton": "Subscribe to this plan",
-      "redirecting": "Redirecting…"
+      "redirecting": "Redirecting…",
+      "quickCheckoutLink": "Use saved details for quick checkout"
     },
     "subscriptions": {
       "heading": "Active subscriptions",

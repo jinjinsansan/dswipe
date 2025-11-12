@@ -104,6 +104,9 @@ import type {
   NoteStructureResponse,
   NoteReviewRequest,
   NoteReviewResponse,
+  BillingProfilePayload,
+  BillingProfileResponse,
+  QuickCheckoutResponse,
 } from '@/types/api';
 import type {
   NoteModerationDetail,
@@ -396,6 +399,17 @@ export const noteApi = {
 
   getMetrics: () =>
     api.get<NoteMetrics>('/notes/metrics'),
+};
+
+export const paymentApi = {
+  getBillingProfile: () =>
+    api.get<BillingProfileResponse>('/payments/billing-profile'),
+
+  updateBillingProfile: (payload: BillingProfilePayload) =>
+    api.put<BillingProfileResponse>('/payments/billing-profile', payload),
+
+  quickCheckout: (payload: Record<string, unknown>) =>
+    api.post<QuickCheckoutResponse>('/payments/quick-checkout', payload),
 };
 
 export const noteAiApi = {

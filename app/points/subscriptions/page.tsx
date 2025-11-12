@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import {useFormatter, useTranslations} from 'next-intl';
 import { useSearchParams } from 'next/navigation';
@@ -347,6 +348,9 @@ function SubscriptionPageContent() {
           <div className={`mt-4 ${orderedPlans.length === 1 ? 'flex justify-center' : 'grid gap-4 md:grid-cols-2 xl:grid-cols-3'}`}>
             {orderedPlans.map((plan) => {
               const isProcessing = planLoadingKey === plan.plan_key;
+              const planPriceJpy = 'monthly_price_jpy' in plan
+                ? ((plan as { monthly_price_jpy?: number | null }).monthly_price_jpy ?? undefined)
+                : undefined;
 
               return (
                 <div
@@ -378,6 +382,23 @@ function SubscriptionPageContent() {
                   >
                     {isProcessing ? selectionT('redirecting') : selectionT('subscribeButton')}
                   </button>
+                  <Link
+                    href={{
+                      pathname: '/checkout/quick',
+                      query: {
+                        type: 'subscription',
+                        plan_key: plan.plan_key,
+                        title: plan.label,
+                        price: planPriceJpy,
+                        seller: sellerUsername ?? undefined,
+                        seller_id: sellerId ?? undefined,
+                        salon_id: salonIdParam ?? undefined,
+                      },
+                    }}
+                    className="mt-2 block text-xs font-semibold text-blue-500 underline underline-offset-4"
+                  >
+                    {selectionT('quickCheckoutLink')}
+                  </Link>
                 </div>
               );
             })}

@@ -367,6 +367,23 @@ export default function ProductDetailPage() {
                           ? 'ポイントで購入'
                           : '日本円で購入'}
                   </button>
+                  {product.allow_jpy_purchase && (product.price_jpy ?? 0) > 0 ? (
+                    <Link
+                      href={{
+                        pathname: '/checkout/quick',
+                        query: {
+                          type: 'product',
+                          id: product.id,
+                          title: product.title ?? undefined,
+                          price: product.price_jpy ?? undefined,
+                          quantity: String(quantity),
+                        },
+                      }}
+                      className="mt-3 inline-block text-sm font-semibold text-blue-300 underline underline-offset-4"
+                    >
+                      クイック購入（保存情報を使う）
+                    </Link>
+                  ) : null}
                 </>
               )}
             </div>
