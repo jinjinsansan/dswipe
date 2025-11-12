@@ -1445,6 +1445,7 @@
     "emailNotifications": "メールで通知を受け取る",
     "loading": "読み込み中...",
     "updateError": "フォロー状態の更新に失敗しました。時間をおいて再度お試しください。",
-    "fetchError": "フォロー状態の取得に失敗しました。"
+    "fetchError": "フォロー状態の取得に失敗しました。",
+    "selfFollowError": "自分のアカウントはフォローできません。"
   }
 }

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
+import axios from 'axios';
+
 import { creatorApi } from '@/lib/api';
 import type { CreatorFollowStatus } from '@/types';
 import { useAuthStore } from '@/store/authStore';
@@ -27,12 +29,14 @@ export default function CreatorFollowButton({
 }: CreatorFollowButtonProps) {
   const router = useRouter();
   const t = useTranslations('creatorFollow');
-  const { isAuthenticated, isInitialized } = useAuthStore();
+  const { isAuthenticated, isInitialized, user } = useAuthStore();
 
   const [status, setStatus] = useState<CreatorFollowStatus | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isSelf = user?.id === creatorId;
 
   const fetchStatus = useCallback(async () => {
     if (!creatorId) return;
@@ -61,6 +65,20 @@ export default function CreatorFollowButton({
   }, [status?.follower_count, t]);
 
   const buttonVariant: ButtonVariant = status?.following ? 'outline' : 'primary';
+
+  const extractErrorMessage = useCallback((err: unknown): string | null => {
+    if (!axios.isAxiosError(err)) {
+      return null;
+    }
+    const detail = err.response?.data?.detail;
+    if (typeof detail === 'string' && detail.trim().length > 0) {
+      if (detail === '自分自身をフォローすることはできません') {
+        return t('selfFollowError');
+      }
+      return detail;
+    }
+    return null;
+  }, [t]);
 
   const handleFollowToggle = useCallback(async () => {
     if (!creatorId) return;
@@ -94,11 +112,11 @@ export default function CreatorFollowButton({
       setStatus(response.data);
     } catch (err) {
       console.error('Failed to update follow state:', err);
-      setError(t('updateError'));
+      setError(extractErrorMessage(err) ?? t('updateError'));
     } finally {
       setPending(false);
     }
-  }, [creatorId, isAuthenticated, router, status?.following, t]);
+  }, [creatorId, extractErrorMessage, isAuthenticated, router, status?.following, t]);
 
   const handleToggleEmail = useCallback(async () => {
     if (!creatorId || !status?.following) return;
@@ -117,12 +135,12 @@ export default function CreatorFollowButton({
       setStatus(response.data);
     } catch (err) {
       console.error('Failed to update email preference:', err);
-      setError(t('updateError'));
+      setError(extractErrorMessage(err) ?? t('updateError'));
       setPending(false);
       return;
     }
     setPending(false);
-  }, [creatorId, isAuthenticated, router, status?.following, status?.notify_email, t]);
+  }, [creatorId, extractErrorMessage, isAuthenticated, router, status?.following, status?.notify_email, t]);
 
   const buttonLabel = useMemo(() => {
     if (loading) {
@@ -142,6 +160,16 @@ export default function CreatorFollowButton({
       ),
     [buttonVariant, compact]
   );
+
+  if (isSelf) {
+    return (
+      <div className={cn('flex flex-col gap-2', className)}>
+        <span className={cn('text-sm text-slate-500', compact && 'text-xs')}>
+          {followerCountLabel}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>

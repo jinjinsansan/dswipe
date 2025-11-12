@@ -1444,6 +1444,7 @@
     "emailNotifications": "Email me when new notes are published",
     "loading": "Loading...",
     "updateError": "Failed to update follow settings. Please try again.",
-    "fetchError": "Failed to load follow status."
+    "fetchError": "Failed to load follow status.",
+    "selfFollowError": "You can't follow your own account."
   }
 }
