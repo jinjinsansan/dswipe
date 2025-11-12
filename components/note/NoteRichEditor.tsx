@@ -433,29 +433,35 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
   const applyAccess = useCallback((level: AccessLevel) => {
     if (!editor) return;
-    restoreSelection();
-    const chain = createChainWithSelection();
-    if (!chain) {
+    
+    // 元の位置を保存
+    const target = storedSelectionRef.current ?? lastSelectionRef.current;
+    if (!target) {
       return;
     }
+    const savedPos = { from: target.from, to: target.to };
+    
+    // エディタにフォーカスして属性を更新
+    editor.chain().focus().setTextSelection(savedPos).run();
+    
     SUPPORTED_ACCESS_NODES.forEach((type) => {
       if (editor.isActive(type)) {
-        chain.updateAttributes(type, { access: level });
+        editor.commands.updateAttributes(type, { access: level });
       }
     });
-    chain.run();
     
-    // 属性更新後のカーソル位置を保存して即座に復元
-    const { from, to } = editor.state.selection;
-    editor.commands.setTextSelection({ from, to });
-    editor.commands.focus();
+    // 更新後のカーソル位置を保存
+    const afterUpdate = { from: editor.state.selection.from, to: editor.state.selection.to };
     
     setActiveAccess(level);
     updatePaidMarkers();
     
-    // カーソル位置を確保した後でメニューを閉じる
+    // メニューを閉じる
     closeInsertMenu();
-  }, [editor, restoreSelection, closeInsertMenu, updatePaidMarkers, createChainWithSelection]);
+    
+    // メニューを閉じた直後、即座に同期的にカーソル位置を復元
+    editor.chain().focus().setTextSelection(afterUpdate).run();
+  }, [editor, closeInsertMenu, updatePaidMarkers]);
 
   const insertParagraph = useCallback(() => {
     if (!editor) return;
@@ -552,36 +558,31 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
   const insertDivider = useCallback(() => {
     if (!editor) return;
-    restoreSelection();
-    const chain = createChainWithSelection();
-    if (!chain) {
+    
+    // 挿入前の位置を保存
+    const target = storedSelectionRef.current ?? lastSelectionRef.current;
+    if (!target) {
       closeInsertMenu();
       return;
     }
+    const savedPos = { from: target.from, to: target.to };
     
-    // 区切り線を挿入
-    chain.setHorizontalRule().run();
+    // エディタにフォーカスして区切り線を挿入
+    editor.chain()
+      .focus()
+      .setTextSelection(savedPos)
+      .setHorizontalRule()
+      .run();
     
-    // 挿入後のカーソル位置を即座に復元
-    const { from, to } = editor.state.selection;
-    editor.commands.setTextSelection({ from, to });
-    editor.commands.focus();
+    // 挿入後のカーソル位置を保存
+    const afterInsert = { from: editor.state.selection.from, to: editor.state.selection.to };
     
+    // メニューを閉じる
     closeInsertMenu();
     
-    // スクロール調整（次のフレームで実行）
-    window.requestAnimationFrame(() => {
-      try {
-        const view = editor.view;
-        const dom = view.domAtPos(Math.min(to, view.state.doc.content.size)).node as HTMLElement | null;
-        if (dom && typeof dom.scrollIntoView === 'function') {
-          dom.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
-        }
-      } catch (error) {
-        console.warn('区切り線のスクロール調整に失敗しました', error);
-      }
-    });
-  }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
+    // メニューを閉じた直後、即座に同期的にカーソル位置を復元
+    editor.chain().focus().setTextSelection(afterInsert).run();
+  }, [editor, closeInsertMenu]);
 
   const togglePaidBlock = useCallback(() => {
     restoreSelection();
