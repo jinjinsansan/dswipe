@@ -86,6 +86,8 @@ import type {
   OperatorMessageHideRequest,
   OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
+  CreatorFollowStatus,
+  CreatorFollowRequest,
   AccountShareOwnerListResponse,
   AccountShareDelegateListResponse,
   AccountShareInviteRequest,
@@ -558,6 +560,16 @@ export const operatorMessageApi = {
   unreadCount: () => api.get<OperatorMessageUnreadCountResponse>('/messages/unread-count'),
   markMessage: (messageId: string, payload: OperatorMessageReadRequest) =>
     api.post(`/messages/${messageId}/read`, payload),
+};
+
+export const creatorApi = {
+  getFollowStatus: (creatorId: string) =>
+    api.get<CreatorFollowStatus>(`/creators/${creatorId}/follow`),
+  follow: (creatorId: string, payload?: CreatorFollowRequest) =>
+    api.post<CreatorFollowStatus>(`/creators/${creatorId}/follow`, payload),
+  updateFollow: (creatorId: string, payload: CreatorFollowRequest) =>
+    api.patch<CreatorFollowStatus>(`/creators/${creatorId}/follow`, payload),
+  unfollow: (creatorId: string) => api.delete(`/creators/${creatorId}/follow`),
 };
 
 export const adminMessageApi = {

@@ -94,6 +94,8 @@ export type {
   OperatorMessageHideRequest,
   OperatorMessageArchiveRequest,
   OperatorMessageReadRequest,
+  CreatorFollowStatus,
+  CreatorFollowRequest,
   SalonMember,
   SalonMemberListResult,
   NoteSalonAccessResponse,

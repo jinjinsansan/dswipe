@@ -1247,6 +1247,19 @@ export interface OperatorMessageArchiveRequest {
   archived: boolean;
 }
 
+export interface CreatorFollowStatus {
+  creator_id: string;
+  follower_id?: string | null;
+  following: boolean;
+  notify_email: boolean;
+  follower_count: number;
+  last_notified_at?: string | null;
+}
+
+export interface CreatorFollowRequest {
+  notify_email?: boolean | null;
+}
+
 // トランザクション型
 export interface Transaction {
   id: string;
