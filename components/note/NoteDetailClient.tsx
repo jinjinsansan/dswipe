@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
-import { publicApi, noteApi } from '@/lib/api';
+import { publicApi, noteApi, paymentApi } from '@/lib/api';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
@@ -227,29 +227,42 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     setPurchaseError(null);
 
     try {
-      const response = await noteApi.purchase(note.id, selectedMethod, { locale });
-      const result = response.data;
-
       if (isPointsPurchase) {
+        const response = await noteApi.purchase(note.id, selectedMethod, { locale });
+        const result = response.data;
+
         setPurchaseState('success');
         setPurchaseMessage(
           t('pointsPurchaseSuccess', { remainingPoints: result.remaining_points })
         );
         setNote((prev) => (prev ? { ...prev, has_access: true } : prev));
-      } else {
-        const checkoutUrl = result.checkout_url;
-        if (checkoutUrl) {
-          setPurchaseState('success');
-          setPurchaseMessage(t('redirectingToCheckout'));
-          window.location.href = checkoutUrl;
-          return;
-        }
+        return;
+      }
+
+      const quickResponse = await paymentApi.quickCheckout({
+        item_type: 'note',
+        item_id: note.id,
+        locale,
+      });
+      const { checkout_url: checkoutUrl } = quickResponse.data;
+      if (!checkoutUrl) {
         throw new Error(t('checkoutUrlError'));
       }
+      setPurchaseState('success');
+      setPurchaseMessage(t('redirectingToCheckout'));
+      window.location.href = checkoutUrl;
+      return;
     } catch (err: unknown) {
-      const { detail } = extractErrorInfo(err);
+      const { status, detail } = extractErrorInfo(err);
       setPurchaseState('error');
       const detailMessage = typeof detail === 'string' ? detail : null;
+      if (status === 400 && detailMessage === '請求先情報を設定してください') {
+        alert(t('billingProfileRequired'));
+        const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
+        const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+        router.push(`/profile${search}`);
+        return;
+      }
       if (detailMessage) {
         if (detailMessage.includes('ポイントが不足')) {
           setPurchaseError(t('pointsBalanceInsufficient'));
@@ -322,7 +335,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     ? t('loginToPurchase')
     : isPointsSelected
       ? t('purchaseButtonPoints', { pricePoints: note.price_points })
-      : t('purchaseButtonYen', { priceYen: note.price_jpy ?? 0 });
+      : t('purchaseButtonQuickYen', { priceYen: note.price_jpy ?? 0 });
   const mustLoginToView = note.requires_login && !isAuthenticated;
 
   return (
@@ -534,24 +547,6 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                 <p className="text-[11px] leading-relaxed text-slate-500">
                   {t('purchaseDisclaimer')}
                 </p>
-                {note.allow_jpy_purchase && (note.price_jpy ?? 0) > 0 ? (
-                  <Link
-                    href={{
-                      pathname: '/checkout/quick',
-                      query: {
-                        type: 'note',
-                        id: note.id,
-                        slug: note.slug ?? undefined,
-                        title: note.title ?? undefined,
-                        price: note.price_jpy ?? undefined,
-                        locale,
-                      },
-                    }}
-                    className="text-xs font-semibold text-blue-600 underline underline-offset-4"
-                  >
-                    {t('quickCheckoutLink')}
-                  </Link>
-                ) : null}
                 {!isAuthenticated ? (
                   <Link
                     href="/login"

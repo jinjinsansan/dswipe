@@ -1,16 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import {useFormatter, useTranslations} from 'next-intl';
-import { useSearchParams } from 'next/navigation';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
-import { platformSettingsApi, subscriptionApi } from '@/lib/api';
+import { paymentApi, platformSettingsApi, subscriptionApi } from '@/lib/api';
 import type {
+  QuickCheckoutResponse,
   SubscriptionPlan,
   SubscriptionPlanListResponse,
-  SubscriptionCheckoutResponse,
   UserSubscription,
   UserSubscriptionListResponse,
 } from '@/types/api';
@@ -27,6 +26,7 @@ const STATUS_CLASS_MAP: Record<string, string> = {
 
 function SubscriptionPageContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const sellerUsername = searchParams.get('seller') ?? undefined;
   const sellerId =
     searchParams.get('seller_id') ?? searchParams.get('sellerId') ?? undefined;
@@ -202,30 +202,45 @@ function SubscriptionPageContent() {
     try {
       setErrorMessage(null);
       setPlanLoadingKey(planKey);
-      const response = await subscriptionApi.createCheckout({
+      const quickPayload: Record<string, unknown> = {
+        item_type: 'subscription',
         plan_key: planKey,
-        seller_id: sellerId,
-        seller_username: sellerUsername,
-        salon_id: salonIdParam,
-        metadata: {
-          billing_method: "points",
-          ...(salonIdParam ? { salon_id: salonIdParam } : {}),
-        },
-      });
-      const data = response.data as SubscriptionCheckoutResponse;
-      if (data.checkout_url) {
-        window.location.href = data.checkout_url;
-      } else {
+      };
+      if (sellerId) {
+        quickPayload.seller_id = sellerId;
+      }
+      if (sellerUsername) {
+        quickPayload.seller_username = sellerUsername;
+      }
+      if (salonIdParam) {
+        quickPayload.salon_id = salonIdParam;
+      }
+      const response = await paymentApi.quickCheckout(quickPayload);
+      const data = response.data as QuickCheckoutResponse;
+      if (!data.checkout_url) {
         throw new Error(errorsT('missingCheckoutUrl'));
       }
+      window.location.href = data.checkout_url;
     } catch (error: unknown) {
       console.error('Failed to create subscription checkout', error);
-      const detail =
-        typeof error === 'object' && error !== null && 'response' in error &&
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
         typeof (error as { response?: { data?: { detail?: string } } }).response?.data?.detail === 'string'
-          ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string)
-          : errorsT('checkout');
-      setErrorMessage(detail);
+      ) {
+        const detail = (error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string;
+        if (detail === '請求先情報を設定してください') {
+          alert(t('billingProfileRequired'));
+          const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
+          const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+          router.push(`/profile${search}`);
+        } else {
+          setErrorMessage(detail);
+        }
+      } else {
+        setErrorMessage(errorsT('checkout'));
+      }
     } finally {
       setPlanLoadingKey(null);
     }
@@ -348,9 +363,6 @@ function SubscriptionPageContent() {
           <div className={`mt-4 ${orderedPlans.length === 1 ? 'flex justify-center' : 'grid gap-4 md:grid-cols-2 xl:grid-cols-3'}`}>
             {orderedPlans.map((plan) => {
               const isProcessing = planLoadingKey === plan.plan_key;
-              const planPriceJpy = 'monthly_price_jpy' in plan
-                ? ((plan as { monthly_price_jpy?: number | null }).monthly_price_jpy ?? undefined)
-                : undefined;
 
               return (
                 <div
@@ -382,23 +394,6 @@ function SubscriptionPageContent() {
                   >
                     {isProcessing ? selectionT('redirecting') : selectionT('subscribeButton')}
                   </button>
-                  <Link
-                    href={{
-                      pathname: '/checkout/quick',
-                      query: {
-                        type: 'subscription',
-                        plan_key: plan.plan_key,
-                        title: plan.label,
-                        price: planPriceJpy,
-                        seller: sellerUsername ?? undefined,
-                        seller_id: sellerId ?? undefined,
-                        salon_id: salonIdParam ?? undefined,
-                      },
-                    }}
-                    className="mt-2 block text-xs font-semibold text-blue-500 underline underline-offset-4"
-                  >
-                    {selectionT('quickCheckoutLink')}
-                  </Link>
                 </div>
               );
             })}

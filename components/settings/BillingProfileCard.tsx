@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { paymentApi } from '@/lib/api';
@@ -49,6 +50,14 @@ const fromResponse = (response: BillingProfileResponse | undefined): FormState =
 
 export default function BillingProfileCard() {
   const t = useTranslations('settings.billingProfile');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = useMemo(() => {
+    const value = searchParams.get('redirect');
+    if (!value) return null;
+    if (!value.startsWith('/')) return null;
+    return value;
+  }, [searchParams]);
   const [form, setForm] = useState<FormState>({ ...defaultFormState });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -102,6 +111,11 @@ export default function BillingProfileCard() {
       setForm(fromResponse(response.data));
       setUpdatedAt(response.data.updated_at ?? null);
       setSuccessMessage(t('messages.saveSuccess'));
+      if (redirectTarget) {
+        setTimeout(() => {
+          router.push(redirectTarget);
+        }, 600);
+      }
     } catch (error: unknown) {
       const detail = (error as { response?: { data?: { detail?: unknown } } }).response?.data?.detail;
       if (typeof detail === 'string') {

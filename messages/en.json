@@ -54,6 +54,7 @@
     "redirectingToCheckout": "Redirecting to the checkout page. Please refresh after completing payment.",
     "checkoutUrlError": "Failed to retrieve the checkout URL.",
     "genericPurchaseError": "Purchase failed. Please try again.",
+    "billingProfileRequired": "Please add your billing details (name, email, phone) first. Redirecting to the profile settings page.",
     "pointsBalanceInsufficient": "Your point balance is too low. Please buy more points or switch to JPY checkout.",
     "initializing": "Initializing...",
     "loading": "Loading...",
@@ -77,7 +78,7 @@
     "noPaymentMethods": "No payment methods are currently available.",
     "processing": "Processing...",
     "purchaseButtonPoints": "Unlock for {pricePoints, number} pts",
-    "purchaseButtonYen": "Purchase for ¥{priceYen, number}",
+    "purchaseButtonQuickYen": "Quick checkout for ¥{priceYen, number} with saved info",
     "purchaseDisclaimer": "Digital purchases are final. Points and delivered content cannot be refunded.",
     "quickCheckoutLink": "Use saved details for quick checkout",
     "loginPrompt": "Need an account? Sign in or register first.",
@@ -1294,6 +1295,7 @@
   "pointsSubscriptions": {
     "pageTitle": "Automatic point subscriptions",
     "pageSubtitle": "Top up your points every month without lifting a finger.",
+    "billingProfileRequired": "Please add your billing details (name, email, phone) first. Redirecting to the profile settings page.",
     "placeholders": {
       "none": "---"
     },
@@ -1311,8 +1313,8 @@
       "yenLabel": "Approx. {amount} / month",
       "approxZero": "Approx. ¥0 / month",
       "usdNote": "Billing is processed in USD via ONE.lat.",
-      "subscribeButton": "Subscribe to this plan",
-      "redirecting": "Redirecting…",
+      "subscribeButton": "Quick checkout with saved details",
+      "redirecting": "Opening quick checkout...",
       "quickCheckoutLink": "Use saved details for quick checkout"
     },
     "subscriptions": {

@@ -1239,7 +1239,7 @@ export default function AdminPanelPage() {
                     <span>ポイント</span>
                     <span>Swipeコラム</span>
                     <span>LP</span>
-                    <span>LINE</span>
+                    <span>LINE / 請求先</span>
                     <span>ステータス</span>
                   </div>
                   <div className="max-h-[540px] overflow-y-auto divide-y divide-gray-200">
@@ -1275,21 +1275,26 @@ export default function AdminPanelPage() {
                               </div>
                             </div>
                             <div className="text-xs text-gray-500">{summary.total_lp_count} 件</div>
-                            <div className="text-xs">
-                              {summary.line_connected ? (
-                                <div className="flex flex-col gap-0.5">
-                                  <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-green-700 text-[10px]">
-                                    連携済み
+                            <div className="text-xs text-gray-500">
+                              <div>
+                                {summary.line_connected ? (
+                                  <div className="flex flex-col gap-0.5">
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-green-700 text-[10px]">
+                                      連携済み
+                                    </span>
+                                    {summary.line_bonus_awarded && (
+                                      <span className="text-[10px] text-green-600">🎁 300P</span>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-gray-500 text-[10px]">
+                                    未連携
                                   </span>
-                                  {summary.line_bonus_awarded && (
-                                    <span className="text-[10px] text-green-600">🎁 300P</span>
-                                  )}
-                                </div>
-                              ) : (
-                                <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-gray-500 text-[10px]">
-                                  未連携
-                                </span>
-                              )}
+                                )}
+                              </div>
+                              <div className="mt-1 text-[10px] text-gray-600 truncate">
+                                請求先: {summary.billing_full_name ? summary.billing_full_name : '未登録'}
+                              </div>
                             </div>
                             <div className="text-xs">
                               {summary.is_blocked ? (
@@ -1448,6 +1453,20 @@ export default function AdminPanelPage() {
                         ) : (
                           <p className="mt-1 text-xs text-gray-600">LINE公式アカウント未連携</p>
                         )}
+                      </div>
+
+                      <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] text-gray-500">クイック決済の請求先</p>
+                          <span className="text-[10px] text-gray-600">
+                            {selectedUserDetail.billing_updated_at ? `最終更新: ${formatDateTime(selectedUserDetail.billing_updated_at)}` : '未登録'}
+                          </span>
+                        </div>
+                        <div className="mt-2 space-y-1 text-xs text-gray-700">
+                          <p>氏名: {selectedUserDetail.billing_full_name ?? '-'}</p>
+                          <p>メール: {selectedUserDetail.billing_email ?? '-'}</p>
+                          <p>電話番号: {selectedUserDetail.billing_phone_number ?? '-'}</p>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -1733,6 +1752,29 @@ export default function AdminPanelPage() {
                           公開 {formatNumber(selectedUserDetail.published_note_count)} / 最新更新{' '}
                           {selectedUserDetail.latest_note_updated_at ? formatDateTime(selectedUserDetail.latest_note_updated_at) : 'なし'}
                         </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-blue-700">クイック決済の請求先</h3>
+                        <span className="text-[11px] text-gray-600">
+                          {selectedUserDetail.billing_updated_at ? `最終更新: ${formatDateTime(selectedUserDetail.billing_updated_at)}` : '未登録'}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid gap-2 text-sm text-gray-800 md:grid-cols-2">
+                        <div>
+                          <p className="text-xs text-gray-500">氏名</p>
+                          <p className="mt-0.5 font-semibold">{selectedUserDetail.billing_full_name ?? '-'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">メール</p>
+                          <p className="mt-0.5 font-semibold break-all">{selectedUserDetail.billing_email ?? '-'}</p>
+                        </div>
+                        <div className="md:col-span-2">
+                          <p className="text-xs text-gray-500">電話番号</p>
+                          <p className="mt-0.5 font-semibold">{selectedUserDetail.billing_phone_number ?? '-'}</p>
+                        </div>
                       </div>
                     </div>
 

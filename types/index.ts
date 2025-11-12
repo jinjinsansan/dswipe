@@ -1329,6 +1329,10 @@ export interface AdminUserSummary {
   total_point_spent: number;
   total_point_granted: number;
   latest_activity?: string | null;
+  billing_full_name?: string | null;
+  billing_email?: string | null;
+  billing_phone_number?: string | null;
+  billing_updated_at?: string | null;
 }
 
 export interface AdminPointTransaction {

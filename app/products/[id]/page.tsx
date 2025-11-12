@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArchiveBoxIcon, CubeTransparentIcon, FireIcon } from '@heroicons/react/24/outline';
-import { productApi } from '@/lib/api';
+import { productApi, paymentApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import StickySiteHeader from '@/components/layout/StickySiteHeader';
 import type { Product } from '@/types';
@@ -95,7 +95,7 @@ export default function ProductDetailPage() {
         `数量: ${quantity}個\n` +
         `合計: ${totalPoints.toLocaleString()} P\n\n` +
         `ポイントが消費されます。よろしいですか？`
-      : `以下の商品を日本円決済で購入しますか？\n\n` +
+      : `保存済みの請求先情報でクイック決済を開始します。\n\n` +
         `商品名: ${product.title}\n` +
         `単価: ${(product.price_jpy ?? 0).toLocaleString()} 円\n` +
         `数量: ${quantity}個\n` +
@@ -108,13 +108,12 @@ export default function ProductDetailPage() {
 
     try {
       setIsPurchasing(true);
-      const response = await productApi.purchase(productId, {
-        quantity,
-        payment_method: selectedMethod,
-      });
-      const result = response.data;
-
       if (isPointsPurchase) {
+        const response = await productApi.purchase(productId, {
+          quantity,
+          payment_method: selectedMethod,
+        });
+        const result = response.data;
         const successMessage = `購入完了！\n\n` +
           `商品名: ${product.title}\n` +
           `数量: ${quantity}個\n` +
@@ -122,16 +121,32 @@ export default function ProductDetailPage() {
           `ダッシュボードに移動します。`;
         alert(successMessage);
         router.push('/dashboard');
-      } else {
-        if (result.checkout_url) {
-          alert('決済ページに移動します。完了後に購入履歴をご確認ください。');
-          window.location.href = result.checkout_url;
-          return;
-        }
-        alert('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
+        return;
       }
+
+      const quickResponse = await paymentApi.quickCheckout({
+        item_type: 'product',
+        item_id: product.id,
+        quantity,
+      });
+      const { checkout_url: checkoutUrl } = quickResponse.data;
+      if (!checkoutUrl) {
+        alert('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
+        return;
+      }
+      alert('決済ページに移動します。完了後に購入履歴をご確認ください。');
+      window.location.href = checkoutUrl;
+      return;
     } catch (error: any) {
-      alert(error.response?.data?.detail || '購入に失敗しました');
+      const detail = error.response?.data?.detail;
+      if (detail === '請求先情報を設定してください') {
+        alert('先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。');
+        const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
+        const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+        router.push(`/profile${search}`);
+        return;
+      }
+      alert(detail || '購入に失敗しました');
     } finally {
       setIsPurchasing(false);
     }
@@ -365,25 +380,8 @@ export default function ProductDetailPage() {
                         ? '在庫切れ'
                         : isPointsSelected
                           ? 'ポイントで購入'
-                          : '日本円で購入'}
+                          : '保存済み情報でクイック購入'}
                   </button>
-                  {product.allow_jpy_purchase && (product.price_jpy ?? 0) > 0 ? (
-                    <Link
-                      href={{
-                        pathname: '/checkout/quick',
-                        query: {
-                          type: 'product',
-                          id: product.id,
-                          title: product.title ?? undefined,
-                          price: product.price_jpy ?? undefined,
-                          quantity: String(quantity),
-                        },
-                      }}
-                      className="mt-3 inline-block text-sm font-semibold text-blue-300 underline underline-offset-4"
-                    >
-                      クイック購入（保存情報を使う）
-                    </Link>
-                  ) : null}
                 </>
               )}
             </div>

@@ -54,6 +54,7 @@
     "redirectingToCheckout": "決済ページに遷移します。完了後に再読み込みしてください。",
     "checkoutUrlError": "決済URLの取得に失敗しました",
     "genericPurchaseError": "購入に失敗しました。もう一度お試しください。",
+    "billingProfileRequired": "先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。",
     "pointsBalanceInsufficient": "ポイント残高が不足しています。ポイントを購入するか、日本円決済を選択してください。",
     "initializing": "初期化中...",
     "loading": "読み込み中...",
@@ -77,7 +78,7 @@
     "noPaymentMethods": "現在購入できる決済方法が設定されていません。",
     "processing": "処理中...",
     "purchaseButtonPoints": "{pricePoints, number} ポイントで購入",
-    "purchaseButtonYen": "{priceYen, number} 円で購入",
+    "purchaseButtonQuickYen": "保存済み情報で {priceYen, number} 円のクイック購入",
     "purchaseDisclaimer": "デジタルコンテンツの性質上、購入完了後のポイントおよび提供済みコンテンツはキャンセルできません。",
     "quickCheckoutLink": "保存済み情報でクイック購入",
     "loginPrompt": "アカウントをお持ちでない場合はこちらからログイン/登録",
@@ -1295,6 +1296,7 @@
   "pointsSubscriptions": {
     "pageTitle": "サブスク自動チャージ",
     "pageSubtitle": "毎月自動でポイントをチャージして購入忘れをゼロに",
+    "billingProfileRequired": "先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。",
     "placeholders": {
       "none": "---"
     },
@@ -1312,8 +1314,8 @@
       "yenLabel": "約{amount} / 月",
       "approxZero": "約0円 / 月",
       "usdNote": "決済はONE.lat経由でUSD建てとなります。",
-      "subscribeButton": "このプランで申込む",
-      "redirecting": "リダイレクト中…",
+      "subscribeButton": "保存済み情報でクイック申込",
+      "redirecting": "決済ページへ移動中...",
       "quickCheckoutLink": "保存済み情報でクイック決済"
     },
     "subscriptions": {

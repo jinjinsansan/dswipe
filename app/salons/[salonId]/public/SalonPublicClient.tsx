@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { platformSettingsApi, salonPublicApi, subscriptionApi } from "@/lib/api";
+import { paymentApi, platformSettingsApi, salonPublicApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { SalonPublicDetail } from "@/types/api";
 
@@ -133,25 +133,33 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     setJoinError(null);
     setIsJoiningYen(true);
     try {
-      const response = await subscriptionApi.createCheckout({
+      const payload: Record<string, unknown> = {
+        item_type: "subscription",
         plan_key: salon.plan.key,
-        seller_id: salon.owner?.id,
-        seller_username: salon.owner?.username,
         salon_id: salon.id,
-        metadata: {
-          billing_method: "salon_yen",
-          salon_id: salon.id,
-        },
-      });
+      };
+      if (salon.owner?.id) {
+        payload.seller_id = salon.owner.id;
+      }
+      if (salon.owner?.username) {
+        payload.seller_username = salon.owner.username;
+      }
+      const response = await paymentApi.quickCheckout(payload);
       const data = response.data as { checkout_url?: string };
-      if (data.checkout_url) {
-        window.location.href = data.checkout_url;
-      } else {
+      if (!data.checkout_url) {
         throw new Error("チェックアウトURLの取得に失敗しました");
       }
+      window.location.href = data.checkout_url;
     } catch (joinErr: any) {
       console.error("Failed to start yen subscription", joinErr);
       const detail = joinErr?.response?.data?.detail;
+      if (detail === "請求先情報を設定してください") {
+        alert("先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。");
+        const redirectPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "";
+        const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : "";
+        router.push(`/profile${search}`);
+        return;
+      }
       setJoinError(typeof detail === "string" ? detail : "決済の開始に失敗しました。時間をおいて再度お試しください。");
     } finally {
       setIsJoiningYen(false);
@@ -286,27 +294,8 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                       disabled={isJoiningYen}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {isJoiningYen ? "リダイレクト中…" : "日本円クレジットカードで参加する"}
+                      {isJoiningYen ? "決済ページへ移動中..." : "保存済み情報でクイック決済"}
                     </button>
-                  ) : null}
-                  {salon.allow_jpy_subscription && salon.plan?.key ? (
-                    <Link
-                      href={{
-                        pathname: "/checkout/quick",
-                        query: {
-                          type: "subscription",
-                          plan_key: salon.plan.key,
-                          title: salon.title ?? undefined,
-                          price: salon.plan.monthly_price_jpy ?? undefined,
-                          seller: salon.owner?.username ?? undefined,
-                          seller_id: salon.owner?.id ?? undefined,
-                          salon_id: salon.id,
-                        },
-                      }}
-                      className="mt-2 block text-center text-xs font-semibold text-emerald-600 underline underline-offset-4"
-                    >
-                      保存済みの情報でクイック決済
-                    </Link>
                   ) : null}
 
                   {!salon.allow_point_subscription && !salon.allow_jpy_subscription ? (
