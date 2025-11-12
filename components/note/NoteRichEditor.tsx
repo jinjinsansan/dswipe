@@ -445,23 +445,16 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     });
     chain.run();
     
-    // 属性更新後のカーソル位置を保存
+    // 属性更新後のカーソル位置を保存して即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     setActiveAccess(level);
     updatePaidMarkers();
-    closeInsertMenu();
     
-    // カーソル位置を復元してフォーカス（メニューを閉じた後に実行）
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('有料エリア設定後のカーソル位置復元に失敗しました', error);
-      }
-    });
+    // カーソル位置を確保した後でメニューを閉じる
+    closeInsertMenu();
   }, [editor, restoreSelection, closeInsertMenu, updatePaidMarkers, createChainWithSelection]);
 
   const insertParagraph = useCallback(() => {
@@ -474,21 +467,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
     chain.setParagraph().run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('テキスト挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertHeading = useCallback(
@@ -502,21 +486,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       }
       chain.setNode('heading', { level }).run();
       
-      // 挿入後のカーソル位置を保存
+      // 挿入後のカーソル位置を即座に復元
       const { from, to } = editor.state.selection;
-      const savedPosition = { from, to };
+      editor.commands.setTextSelection({ from, to });
+      editor.commands.focus();
       
       closeInsertMenu();
-      
-      // カーソル位置を復元してフォーカス
-      window.requestAnimationFrame(() => {
-        try {
-          editor.commands.setTextSelection(savedPosition);
-          editor.commands.focus();
-        } catch (error) {
-          console.warn('見出し挿入後のカーソル位置復元に失敗しました', error);
-        }
-      });
     },
     [editor, restoreSelection, closeInsertMenu, createChainWithSelection],
   );
@@ -531,21 +506,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
     chain.toggleBulletList().run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('箇条書き挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertOrderedList = useCallback(() => {
@@ -558,21 +524,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
     chain.toggleOrderedList().run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('番号付きリスト挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertQuote = useCallback(() => {
@@ -585,21 +542,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
     chain.toggleBlockquote().run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('引用挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const insertDivider = useCallback(() => {
@@ -614,27 +562,23 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     // 区切り線を挿入
     chain.setHorizontalRule().run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
     
-    // カーソル位置を復元してフォーカス＆スクロール調整
+    // スクロール調整（次のフレームで実行）
     window.requestAnimationFrame(() => {
       try {
-        // カーソル位置を復元
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-        
-        // 挿入した区切り線が見えるようにスクロール
         const view = editor.view;
-        const dom = view.domAtPos(Math.min(savedPosition.to, view.state.doc.content.size)).node as HTMLElement | null;
+        const dom = view.domAtPos(Math.min(to, view.state.doc.content.size)).node as HTMLElement | null;
         if (dom && typeof dom.scrollIntoView === 'function') {
           dom.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
         }
       } catch (error) {
-        console.warn('区切り線挿入後のカーソル位置復元に失敗しました', error);
+        console.warn('区切り線のスクロール調整に失敗しました', error);
       }
     });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
@@ -685,20 +629,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
         .run();
     }
 
-    // 挿入後のカーソル位置を保存
-    const savedPosition = { from: editor.state.selection.from, to: editor.state.selection.to };
+    // 挿入後のカーソル位置を即座に復元
+    const { from: finalFrom, to: finalTo } = editor.state.selection;
+    editor.commands.setTextSelection({ from: finalFrom, to: finalTo });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('リンク挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   }, [editor, restoreSelection, closeInsertMenu, createChainWithSelection]);
 
   const handleInsertFile = useCallback(() => {
@@ -741,20 +677,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
           .run();
       }
 
-      // 挿入後のカーソル位置を保存
-      const savedPosition = { from: editor.state.selection.from, to: editor.state.selection.to };
+      // 挿入後のカーソル位置を即座に復元
+      const { from: finalFrom, to: finalTo } = editor.state.selection;
+      editor.commands.setTextSelection({ from: finalFrom, to: finalTo });
+      editor.commands.focus();
       
       closeInsertMenu();
-      
-      // カーソル位置を復元してフォーカス
-      window.requestAnimationFrame(() => {
-        try {
-          editor.commands.setTextSelection(savedPosition);
-          editor.commands.focus();
-        } catch (error) {
-          console.warn('ファイルリンク挿入後のカーソル位置復元に失敗しました', error);
-        }
-      });
     },
     [editor, restoreSelection, closeInsertMenu, createChainWithSelection],
   );
@@ -805,21 +733,12 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     }
     chain.setImage(attrs).run();
     
-    // 挿入後のカーソル位置を保存
+    // 挿入後のカーソル位置を即座に復元
     const { from, to } = editor.state.selection;
-    const savedPosition = { from, to };
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
     
     closeInsertMenu();
-    
-    // カーソル位置を復元してフォーカス
-    window.requestAnimationFrame(() => {
-      try {
-        editor.commands.setTextSelection(savedPosition);
-        editor.commands.focus();
-      } catch (error) {
-        console.warn('画像挿入後のカーソル位置復元に失敗しました', error);
-      }
-    });
   };
 
   const handleToolbarImage = useCallback(() => {
