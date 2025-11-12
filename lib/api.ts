@@ -408,6 +408,9 @@ export const paymentApi = {
   updateBillingProfile: (payload: BillingProfilePayload) =>
     api.put<BillingProfileResponse>('/payments/billing-profile', payload),
 
+  deleteBillingProfile: () =>
+    api.delete('/payments/billing-profile'),
+
   quickCheckout: (payload: Record<string, unknown>) =>
     api.post<QuickCheckoutResponse>('/payments/quick-checkout', payload),
 };

@@ -61,6 +61,7 @@ export default function BillingProfileCard() {
   const [form, setForm] = useState<FormState>({ ...defaultFormState });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
@@ -132,8 +133,42 @@ export default function BillingProfileCard() {
     if (!form.fullName.trim() || !form.email.trim() || !form.phoneNumber.trim()) {
       return true;
     }
-    return saving;
-  }, [form.email, form.fullName, form.phoneNumber, saving]);
+    return saving || deleting;
+  }, [deleting, form.email, form.fullName, form.phoneNumber, saving]);
+
+  const hasSavedProfile = Boolean(updatedAt);
+
+  const handleDelete = async () => {
+    if (loading || saving || deleting) {
+      return;
+    }
+    if (!hasSavedProfile) {
+      return;
+    }
+    const confirmed = window.confirm(t('messages.deleteConfirm'));
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleting(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+    try {
+      await paymentApi.deleteBillingProfile();
+      setForm({ ...defaultFormState });
+      setUpdatedAt(null);
+      setSuccessMessage(t('messages.deleteSuccess'));
+    } catch (error: unknown) {
+      const detail = (error as { response?: { data?: { detail?: unknown } } }).response?.data?.detail;
+      if (typeof detail === 'string') {
+        setErrorMessage(detail);
+      } else {
+        setErrorMessage(t('messages.deleteFailed'));
+      }
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -211,7 +246,15 @@ export default function BillingProfileCard() {
           </div>
         ) : null}
 
-        <div className="flex justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="inline-flex items-center justify-center rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:border-red-400 hover:text-red-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+            disabled={loading || deleting || saving || !hasSavedProfile}
+          >
+            {deleting ? t('buttons.deleting') : t('buttons.delete')}
+          </button>
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"

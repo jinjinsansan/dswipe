@@ -1005,7 +1005,7 @@
     },
     "billingProfile": {
       "heading": "Billing profile for quick checkout",
-      "description": "Share the contact details ONE.lat requires before card entry. Only your name, email, and phone number are stored.",
+      "description": "We store the name, email, and phone number required for credit card checkout. This site does not retain the information otherwise.",
       "updatedAtLabel": "Last updated: {value}",
       "form": {
         "fullName": "Full name",
@@ -1014,12 +1014,17 @@
       },
       "buttons": {
         "save": "Save changes",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "delete": "Delete details",
+        "deleting": "Deleting..."
       },
       "messages": {
         "loadFailed": "Couldn't load your billing profile. Please try again later.",
         "saveSuccess": "Billing profile saved.",
-        "saveFailed": "Failed to save your billing profile. Please review the inputs."
+        "saveFailed": "Failed to save your billing profile. Please review the inputs.",
+        "deleteSuccess": "Billing profile deleted. Register again when you need quick checkout.",
+        "deleteFailed": "Failed to delete your billing profile. Please try again later.",
+        "deleteConfirm": "Delete the saved billing profile? You will need to re-enter it to use quick checkout."
       }
     },
     "accountShare": {
