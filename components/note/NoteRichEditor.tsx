@@ -170,6 +170,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const isInsertMenuOpenRef = useRef(false);
   const storedSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const lastSelectionRef = useRef<{ from: number; to: number } | null>(null);
+  const lastDocJsonRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -230,18 +231,33 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
     ],
     content: value && value.type === 'doc' ? value : DEFAULT_CONTENT,
     onUpdate: ({ editor: inst }) => {
-      onChange(inst.getJSON() as NoteRichContent);
+      const json = inst.getJSON() as NoteRichContent;
+      const serialized = JSON.stringify(json);
+      if (serialized === lastDocJsonRef.current) {
+        return;
+      }
+      lastDocJsonRef.current = serialized;
+      onChange(json);
     },
   });
 
   useEffect(() => {
     if (!editor) return;
-    if (!value) {
-      editor.commands.setContent(DEFAULT_CONTENT, false);
+    if (!lastDocJsonRef.current) {
+      const initial = editor.getJSON() as NoteRichContent;
+      lastDocJsonRef.current = JSON.stringify(initial);
+    }
+  }, [editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const next = value && value.type === 'doc' ? value : DEFAULT_CONTENT;
+    const serialized = JSON.stringify(next);
+    if (serialized === lastDocJsonRef.current) {
       return;
     }
-    const json = value.type === 'doc' ? value : DEFAULT_CONTENT;
-    editor.commands.setContent(json, false);
+    lastDocJsonRef.current = serialized;
+    editor.commands.setContent(next, false);
   }, [editor, value]);
 
   const updateInsertButtonPosition = useCallback(() => {
