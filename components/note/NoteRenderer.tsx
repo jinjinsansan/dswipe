@@ -393,15 +393,12 @@ function RichContentRenderer({ content, showPaidSeparator, alwaysShowPaidBadge, 
       <style jsx global>{`
         .note-content .rich-paid-node {
           position: relative;
-          margin-left: -1.55rem;
-          margin-right: -1.55rem;
-          padding-left: 1.55rem;
         }
 
         .note-content .rich-paid-node::before {
           content: '';
           position: absolute;
-          left: 0;
+          left: -1.55rem;
           top: 0.4rem;
           bottom: 0.4rem;
           width: 3px;
@@ -415,14 +412,12 @@ function RichContentRenderer({ content, showPaidSeparator, alwaysShowPaidBadge, 
 
         @media (max-width: 640px) {
           .note-content .rich-paid-node {
-            margin-left: -1.2rem;
-            margin-right: -1.2rem;
-            padding-left: 1.2rem;
           }
 
           .note-content .rich-paid-node::before {
             top: 0.3rem;
             bottom: 0.3rem;
+            left: -1.2rem;
           }
         }
       `}</style>
