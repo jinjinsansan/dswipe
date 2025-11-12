@@ -171,6 +171,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
   const storedSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const lastSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const lastDocJsonRef = useRef<string | null>(null);
+  const paidMarkerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -316,8 +317,10 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
       const first = paidNodes[0];
       const containerRect = containerRef.current.getBoundingClientRect();
       const firstRect = first.getBoundingClientRect();
-      const offset = firstRect.top - containerRect.top - 28;
-      setPaidMarkerTop(offset);
+      const markerHeight = paidMarkerRef.current?.offsetHeight ?? 0;
+      const gap = 16;
+      const offset = firstRect.top - containerRect.top - markerHeight - gap;
+      setPaidMarkerTop(Math.max(offset, 8));
     });
   }, [editor]);
 
@@ -974,6 +977,7 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
 
           {hasPaidArea && paidMarkerTop !== null ? (
             <div
+              ref={paidMarkerRef}
               className="pointer-events-none absolute left-0 right-0 z-20 flex justify-center"
               style={{ top: Math.max(paidMarkerTop, 8) }}
             >
