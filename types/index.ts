@@ -88,7 +88,6 @@ export interface AccountShareSessionResponse {
 export interface PublicUserProfile {
   id: string;
   username: string;
-  display_name?: string | null;
   bio?: string | null;
   sns_url?: string | null;
   line_url?: string | null;
