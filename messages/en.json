@@ -1004,18 +1004,12 @@
     },
     "billingProfile": {
       "heading": "Billing profile for quick checkout",
-      "description": "Save your contact details so checkout forms are prefilled. Card numbers are never stored.",
+      "description": "Share the contact details ONE.lat requires before card entry. Only your name, email, and phone number are stored.",
       "updatedAtLabel": "Last updated: {value}",
       "form": {
         "fullName": "Full name",
         "email": "Email",
-        "phoneNumber": "Phone number",
-        "postalCode": "Postal code",
-        "prefecture": "Prefecture / State",
-        "city": "City",
-        "addressLine1": "Address line 1",
-        "addressLine2": "Address line 2",
-        "companyName": "Company or department (optional)"
+        "phoneNumber": "Phone number"
       },
       "buttons": {
         "save": "Save changes",
@@ -1092,20 +1086,18 @@
     "subtitle": "Use your saved billing details to skip straight to payment.",
     "profile": {
       "heading": "Billing details",
-      "description": "Review the contact and address information stored in Settings. Update it before paying if needed.",
-      "editButton": "Open settings",
+      "description": "Review the name, email, and phone number stored for quick checkout.",
+      "editButton": "Open profile settings",
       "loading": "Loading your billing profile...",
       "loadFailed": "We couldn't load your billing profile.",
       "missingTitle": "No billing details saved yet",
-      "missingDescription": "Save your name and address once to auto-fill future checkouts.",
-      "goToSettings": "Set up billing details",
+      "missingDescription": "Save your name, email, and phone number once to auto-fill future checkouts.",
+      "goToProfile": "Open profile page",
       "requiredNotice": "Quick checkout requires a saved billing profile.",
       "labels": {
         "fullName": "Full name",
         "email": "Email",
-        "phoneNumber": "Phone number",
-        "address": "Address",
-        "company": "Company"
+        "phoneNumber": "Phone number"
       }
     },
     "item": {

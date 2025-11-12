@@ -10,24 +10,12 @@ type FormState = {
   fullName: string;
   email: string;
   phoneNumber: string;
-  postalCode: string;
-  prefecture: string;
-  city: string;
-  addressLine1: string;
-  addressLine2: string;
-  companyName: string;
 };
 
 const defaultFormState: FormState = {
   fullName: '',
   email: '',
   phoneNumber: '',
-  postalCode: '',
-  prefecture: '',
-  city: '',
-  addressLine1: '',
-  addressLine2: '',
-  companyName: '',
 };
 
 const normalizeValue = (value: string) => value.trim();
@@ -39,25 +27,12 @@ const toPayload = (state: FormState): BillingProfilePayload => {
     country_code: 'JP',
   };
 
-  const optionalMap: Array<[keyof FormState, keyof BillingProfilePayload]> = [
-    ['phoneNumber', 'phone_number'],
-    ['postalCode', 'postal_code'],
-    ['prefecture', 'prefecture'],
-    ['city', 'city'],
-    ['addressLine1', 'address_line1'],
-    ['addressLine2', 'address_line2'],
-    ['companyName', 'company_name'],
-  ];
+  const phone = normalizeValue(state.phoneNumber);
+  if (phone) {
+    payload.phone_number = phone;
+  }
 
-  const optionalUpdates: Partial<BillingProfilePayload> = {};
-  optionalMap.forEach(([field, key]) => {
-    const value = normalizeValue(state[field]);
-    if (value) {
-      optionalUpdates[key] = value;
-    }
-  });
-
-  return { ...payload, ...optionalUpdates };
+  return payload;
 };
 
 const fromResponse = (response: BillingProfileResponse | undefined): FormState => {
@@ -69,12 +44,6 @@ const fromResponse = (response: BillingProfileResponse | undefined): FormState =
     fullName: profile.full_name ?? '',
     email: profile.email ?? '',
     phoneNumber: profile.phone_number ?? '',
-    postalCode: profile.postal_code ?? '',
-    prefecture: profile.prefecture ?? '',
-    city: profile.city ?? '',
-    addressLine1: profile.address_line1 ?? '',
-    addressLine2: profile.address_line2 ?? '',
-    companyName: profile.company_name ?? '',
   };
 };
 
@@ -146,11 +115,11 @@ export default function BillingProfileCard() {
   };
 
   const disableSubmit = useMemo(() => {
-    if (!form.fullName.trim() || !form.email.trim()) {
+    if (!form.fullName.trim() || !form.email.trim() || !form.phoneNumber.trim()) {
       return true;
     }
     return saving;
-  }, [form.email, form.fullName, saving]);
+  }, [form.email, form.fullName, form.phoneNumber, saving]);
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -169,8 +138,8 @@ export default function BillingProfileCard() {
       </div>
 
       <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <div className="grid grid-cols-1 gap-4">
+          <div>
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-full-name">
               {t('form.fullName')}
             </label>
@@ -185,7 +154,7 @@ export default function BillingProfileCard() {
               disabled={loading || saving}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div>
             <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-email">
               {t('form.email')}
             </label>
@@ -208,92 +177,9 @@ export default function BillingProfileCard() {
               id="billing-phone"
               type="tel"
               autoComplete="tel"
+              required
               value={form.phoneNumber}
               onChange={handleChange('phoneNumber')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-postal">
-              {t('form.postalCode')}
-            </label>
-            <input
-              id="billing-postal"
-              type="text"
-              autoComplete="postal-code"
-              value={form.postalCode}
-              onChange={handleChange('postalCode')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-prefecture">
-              {t('form.prefecture')}
-            </label>
-            <input
-              id="billing-prefecture"
-              type="text"
-              autoComplete="address-level1"
-              value={form.prefecture}
-              onChange={handleChange('prefecture')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-city">
-              {t('form.city')}
-            </label>
-            <input
-              id="billing-city"
-              type="text"
-              autoComplete="address-level2"
-              value={form.city}
-              onChange={handleChange('city')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-address-line1">
-              {t('form.addressLine1')}
-            </label>
-            <input
-              id="billing-address-line1"
-              type="text"
-              autoComplete="address-line1"
-              value={form.addressLine1}
-              onChange={handleChange('addressLine1')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-address-line2">
-              {t('form.addressLine2')}
-            </label>
-            <input
-              id="billing-address-line2"
-              type="text"
-              autoComplete="address-line2"
-              value={form.addressLine2}
-              onChange={handleChange('addressLine2')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              disabled={loading || saving}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="billing-company">
-              {t('form.companyName')}
-            </label>
-            <input
-              id="billing-company"
-              type="text"
-              autoComplete="organization"
-              value={form.companyName}
-              onChange={handleChange('companyName')}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
               disabled={loading || saving}
             />

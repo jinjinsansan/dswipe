@@ -144,17 +144,8 @@ export default function QuickCheckoutPage() {
     if (!fallbackUrl) {
       return null;
     }
-    return fallbackUrl.startsWith('/settings') ? t('profile.goToSettings') : t('item.viewOriginal');
+    return t('item.viewOriginal');
   }, [fallbackUrl, t]);
-
-  useEffect(() => {
-    if (profileLoading || itemLoading) {
-      return;
-    }
-    if (!profileReady && !profileError && fallbackUrl) {
-      router.replace(fallbackUrl);
-    }
-  }, [fallbackUrl, itemLoading, profileError, profileLoading, profileReady, router]);
 
   useEffect(() => {
     const loadItem = async () => {
@@ -334,10 +325,10 @@ export default function QuickCheckoutPage() {
           <p className="font-medium">{t('profile.missingTitle')}</p>
           <p className="mt-1">{t('profile.missingDescription')}</p>
           <Link
-            href="/settings"
+            href="/profile"
             className="mt-3 inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
           >
-            {t('profile.goToSettings')}
+            {t('profile.goToProfile')}
           </Link>
         </div>
       );
@@ -349,30 +340,14 @@ export default function QuickCheckoutPage() {
         <dl className="space-y-1">
           <dt className="font-medium text-slate-500">{t('profile.labels.fullName')}</dt>
           <dd>{data.full_name}</dd>
+        </dl>
+        <dl className="space-y-1">
           <dt className="font-medium text-slate-500">{t('profile.labels.email')}</dt>
           <dd>{data.email}</dd>
           {data.phone_number ? (
             <>
               <dt className="font-medium text-slate-500">{t('profile.labels.phoneNumber')}</dt>
               <dd>{data.phone_number}</dd>
-            </>
-          ) : null}
-        </dl>
-        <dl className="space-y-1">
-          {(data.postal_code || data.prefecture || data.city || data.address_line1) ? (
-            <>
-              <dt className="font-medium text-slate-500">{t('profile.labels.address')}</dt>
-              <dd className="whitespace-pre-line">
-                {[data.postal_code, data.prefecture, data.city, data.address_line1, data.address_line2]
-                  .filter(Boolean)
-                  .join('\n')}
-              </dd>
-            </>
-          ) : null}
-          {data.company_name ? (
-            <>
-              <dt className="font-medium text-slate-500">{t('profile.labels.company')}</dt>
-              <dd>{data.company_name}</dd>
             </>
           ) : null}
         </dl>
@@ -435,7 +410,7 @@ export default function QuickCheckoutPage() {
                 <p className="text-sm text-slate-500">{t('profile.description')}</p>
               </div>
               <Link
-                href="/settings"
+                href="/profile"
                 className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400"
               >
                 {t('profile.editButton')}
@@ -501,7 +476,7 @@ export default function QuickCheckoutPage() {
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <Link
-                  href="/settings"
+                  href="/profile"
                   className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400"
                 >
                   {t('actions.editProfile')}

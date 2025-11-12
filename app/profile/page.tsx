@@ -8,6 +8,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { authApi, mediaApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
+import BillingProfileCard from '@/components/settings/BillingProfileCard';
 
 const extractErrorDetail = (error: unknown, fallback: string): string => {
   if (typeof error === 'object' && error !== null) {
@@ -188,6 +189,8 @@ export default function ProfilePage() {
             {t('sections.account.description')}
           </p>
         </section>
+
+        <BillingProfileCard />
 
         <section className="space-y-6">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">

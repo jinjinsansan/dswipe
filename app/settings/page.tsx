@@ -5,7 +5,6 @@ import {useTranslations} from 'next-intl';
 
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import XConnectionCard from '@/components/settings/XConnectionCard';
-import BillingProfileCard from '@/components/settings/BillingProfileCard';
 
 export default function SettingsPage() {
   const t = useTranslations('settings.page');
@@ -18,8 +17,6 @@ export default function SettingsPage() {
             <h2 className="mb-4 text-xl font-semibold text-slate-900">{t('sections.integrations.heading')}</h2>
             <XConnectionCard />
           </section>
-
-          <BillingProfileCard />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
