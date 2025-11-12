@@ -19,6 +19,7 @@ import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import { redirectToLogin } from '@/lib/navigation';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import CreatorFollowButton from '@/components/creator/CreatorFollowButton';
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
 
@@ -358,52 +359,61 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       <header className="space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
-            <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
-            Swipeコラム
-          </span>
-          <span>
-            {t('publishedAtLabel')}{' '}
-            {formatDate(note.published_at)}
-          </span>
-          <span className="flex items-center gap-2">
-            {t('priceLabel')}
-            {note.is_paid ? (
-              <span className="flex items-center gap-2">
-                {note.allow_point_purchase && (
-                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                    {format.number(note.price_points)} pt
-                  </span>
-                )}
-                {note.allow_jpy_purchase && (
-                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
-                    ¥{format.number(note.price_jpy ?? 0)}
-                  </span>
-                )}
-                {!note.allow_point_purchase && !note.allow_jpy_purchase && (
-                  <span className="text-xs text-slate-500">{t('priceNotConfigured')}</span>
-                )}
-              </span>
-            ) : (
-              t('freeLabel')
-            )}
-          </span>
-          <span className="flex items-center gap-1">
-            {t('authorLabel')}
-            {note.author_username ? (
-              <Link
-                href={`/u/${note.author_username}`}
-                className="font-semibold text-blue-600 transition hover:text-blue-700"
-              >
-                @{note.author_username}
-              </Link>
-            ) : (
-              <span>@unknown</span>
-            )}
-          </span>
-          {isAuthor ? <span className="font-semibold text-emerald-600">{t('youAreAuthor')}</span> : null}
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
+              <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
+              Swipeコラム
+            </span>
+            <span>
+              {t('publishedAtLabel')}{' '}
+              {formatDate(note.published_at)}
+            </span>
+            <span className="flex items-center gap-2">
+              {t('priceLabel')}
+              {note.is_paid ? (
+                <span className="flex items-center gap-2">
+                  {note.allow_point_purchase && (
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                      {format.number(note.price_points)} pt
+                    </span>
+                  )}
+                  {note.allow_jpy_purchase && (
+                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                      ¥{format.number(note.price_jpy ?? 0)}
+                    </span>
+                  )}
+                  {!note.allow_point_purchase && !note.allow_jpy_purchase && (
+                    <span className="text-xs text-slate-500">{t('priceNotConfigured')}</span>
+                  )}
+                </span>
+              ) : (
+                t('freeLabel')
+              )}
+            </span>
+            <span className="flex items-center gap-1">
+              {t('authorLabel')}
+              {note.author_username ? (
+                <Link
+                  href={`/u/${note.author_username}`}
+                  className="font-semibold text-blue-600 transition hover:text-blue-700"
+                >
+                  @{note.author_username}
+                </Link>
+              ) : (
+                <span>@unknown</span>
+              )}
+            </span>
+            {isAuthor ? <span className="font-semibold text-emerald-600">{t('youAreAuthor')}</span> : null}
           </div>
-          <LanguageSwitcher />
+          <div className="flex flex-col items-stretch gap-3 sm:items-end">
+            <LanguageSwitcher />
+            {note.author_id && !isAuthor ? (
+              <CreatorFollowButton
+                creatorId={note.author_id}
+                compact
+                showEmailToggle={false}
+              />
+            ) : null}
+          </div>
         </div>
 
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{note.title}</h1>

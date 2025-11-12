@@ -9,6 +9,7 @@ import { productApi, publicApi, salonPublicApi } from '@/lib/api';
 import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import type { PublicNoteSummary, PublicUserProfile, SalonPublicListItem } from '@/types';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import CreatorFollowButton from '@/components/creator/CreatorFollowButton';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -177,6 +178,12 @@ export default function UserProfilePage() {
                   <span className="text-slate-500 ml-1">公開サロン</span>
                 </div>
               </div>
+
+              {profile?.id ? (
+                <div className="mt-6 flex justify-center sm:justify-start">
+                  <CreatorFollowButton creatorId={profile.id} />
+                </div>
+              ) : null}
 
               {(profile?.sns_url || profile?.line_url) && (
                 <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-3">

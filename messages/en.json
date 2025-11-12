@@ -1436,5 +1436,14 @@
       "pointBalanceLabel": "Point balance",
       "avatarAlt": "User avatar"
     }
+  },
+  "creatorFollow": {
+    "follow": "Follow",
+    "following": "Following",
+    "followersCount": "{count} followers",
+    "emailNotifications": "Email me when new notes are published",
+    "loading": "Loading...",
+    "updateError": "Failed to update follow settings. Please try again.",
+    "fetchError": "Failed to load follow status."
   }
 }
