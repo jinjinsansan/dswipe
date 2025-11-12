@@ -391,34 +391,8 @@ function RichContentRenderer({ content, showPaidSeparator, alwaysShowPaidBadge, 
       })}
 
       <style jsx global>{`
-        .note-content .rich-paid-node {
-          position: relative;
-        }
-
-        .note-content .rich-paid-node::before {
-          content: '';
-          position: absolute;
-          left: -1.55rem;
-          top: 0.4rem;
-          bottom: 0.4rem;
-          width: 3px;
-          border-radius: 9999px;
-          background: linear-gradient(180deg, rgba(245, 158, 11, 0.9), rgba(249, 115, 22, 0.6));
-        }
-
         .note-content .rich-paid-node + * {
           margin-top: 2rem;
-        }
-
-        @media (max-width: 640px) {
-          .note-content .rich-paid-node {
-          }
-
-          .note-content .rich-paid-node::before {
-            top: 0.3rem;
-            bottom: 0.3rem;
-            left: -1.2rem;
-          }
         }
       `}</style>
     </div>
