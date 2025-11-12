@@ -11,15 +11,17 @@ interface NoteRendererProps {
   blocks: NoteBlock[];
   richContent?: NoteRichContent | null;
   showPaidSeparator?: boolean;
+  alwaysShowPaidBadge?: boolean;
 }
 
-export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparator = false }: NoteRendererProps) {
+export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparator = false, alwaysShowPaidBadge = false }: NoteRendererProps) {
   const t = useTranslations('noteRenderer');
   if (editorType === 'note') {
     return (
       <RichContentRenderer
         content={richContent}
         showPaidSeparator={showPaidSeparator}
+        alwaysShowPaidBadge={alwaysShowPaidBadge}
         paidLabel={t('paidAreaLabel')}
       />
     );
@@ -184,20 +186,8 @@ export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparato
     <div className="note-content flex flex-col gap-8">
       {freeBlocks.map(renderBlock)}
 
-      {hasPaidContent && showPaidSeparator && (
-        <div className="flex items-center justify-center py-6">
-          <div className="relative w-full max-w-2xl">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-dashed border-amber-300"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
-                <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
-                <span className="text-sm font-bold text-amber-900">{t('paidAreaLabel')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {hasPaidContent && (showPaidSeparator || alwaysShowPaidBadge) && (
+        <PaidBadge paidLabel={t('paidAreaLabel')} />
       )}
 
       {paidBlocks.map(renderBlock)}
@@ -210,6 +200,7 @@ export default NoteRenderer;
 interface RichContentRendererProps {
   content?: NoteRichContent | null;
   showPaidSeparator: boolean;
+  alwaysShowPaidBadge: boolean;
   paidLabel: string;
 }
 
@@ -361,7 +352,25 @@ const hasPaidNodes = (node?: RichNode): boolean => {
   return (node.content ?? []).some((child) => hasPaidNodes(child));
 };
 
-function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichContentRendererProps) {
+function PaidBadge({ paidLabel }: { paidLabel: string }) {
+  return (
+    <div className="flex items-center justify-center py-6">
+      <div className="relative w-full max-w-2xl">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t-2 border-dashed border-amber-300" />
+        </div>
+        <div className="relative flex justify-center">
+          <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
+            <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
+            <span className="text-sm font-bold text-amber-900">{paidLabel}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RichContentRenderer({ content, showPaidSeparator, alwaysShowPaidBadge, paidLabel }: RichContentRendererProps) {
   const nodes = ((content?.content ?? []) as RichNode[]).filter(Boolean);
   const paidExists = nodes.some((node) => hasPaidNodes(node));
   const firstPaidIndex = paidExists ? nodes.findIndex((node) => hasPaidNodes(node)) : -1;
@@ -370,25 +379,11 @@ function RichContentRenderer({ content, showPaidSeparator, paidLabel }: RichCont
     <div className="note-content flex flex-col gap-8">
       {nodes.map((node, index) => {
         const nodeKey = `${node.type}-${index}`;
-        const showMarker = paidExists && showPaidSeparator && index === firstPaidIndex;
+        const showMarker = paidExists && (showPaidSeparator || alwaysShowPaidBadge) && index === firstPaidIndex;
 
         return (
           <Fragment key={nodeKey}>
-            {showMarker ? (
-              <div className="flex items-center justify-center py-6">
-                <div className="relative w-full max-w-2xl">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-dashed border-amber-300" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <div className="flex items-center gap-2 rounded-full border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-3 shadow-lg">
-                      <LockClosedIcon className="h-5 w-5 text-amber-600" aria-hidden="true" />
-                      <span className="text-sm font-bold text-amber-900">{paidLabel}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
+            {showMarker ? <PaidBadge paidLabel={paidLabel} /> : null}
 
             {renderRichNode(node, nodeKey)}
           </Fragment>

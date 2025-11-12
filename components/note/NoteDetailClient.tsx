@@ -431,6 +431,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           blocks={Array.isArray(note.content_blocks) ? note.content_blocks : []}
           richContent={note.rich_content}
           showPaidSeparator={note.is_paid && !note.has_access}
+          alwaysShowPaidBadge={note.is_paid}
         />
 
         {note.is_paid && !note.has_access ? (
