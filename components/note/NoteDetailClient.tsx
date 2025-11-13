@@ -304,13 +304,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     };
   }, [canonicalUrl, note?.title]);
 
-  if (!isInitialized) {
-    return (
-      <div className="flex h-80 items-center justify-center text-slate-500">{t('initializing')}</div>
-    );
-  }
-
-  if (loading === 'loading') {
+  if (!isInitialized || loading === 'loading') {
     return (
       <div className="flex h-80 items-center justify-center text-slate-500">
         <ArrowPathIcon className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
