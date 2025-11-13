@@ -283,12 +283,15 @@ function ProductsContent() {
                     : '価格未設定';
 
                 return (
-                  <Link
+                  <article
                     key={product.id}
-                    href={targetHref}
-                    className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
+                    className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md"
                   >
-                    <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
+                    <Link
+                      href={targetHref}
+                      className="flex items-center gap-3 p-3 md:flex-col md:items-stretch md:gap-0 md:p-0"
+                    >
+                      <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
                       {thumbnailUrl ? (
                         isVideoUrl(thumbnailUrl) ? (
                           <video
@@ -314,11 +317,11 @@ function ProductsContent() {
                           </div>
                         </div>
                       )}
-                    </div>
+                      </div>
 
-                    <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
+                      <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                           {product.is_featured ? (
                             <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
                               人気
@@ -352,15 +355,25 @@ function ProductsContent() {
                           {product.description || '詳細情報は商品ページをご確認ください。'}
                         </p>
                       </div>
-
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 md:text-xs">
-                        <span className="font-medium text-slate-500">@{sellerUsername || 'unknown'}</span>
-                        <span className="font-semibold text-emerald-600">
-                          {priceLabel}
-                        </span>
-                      </div>
                     </div>
-                  </Link>
+                    </Link>
+
+                    <div className="flex items-center justify-between gap-2 px-3 pb-3 text-[10px] text-slate-400 md:px-4 md:pb-4 md:text-xs">
+                      {sellerUsername ? (
+                        <Link
+                          href={`/u/${sellerUsername}`}
+                          className="font-medium text-blue-600 transition-colors hover:text-blue-500"
+                        >
+                          @{sellerUsername}
+                        </Link>
+                      ) : (
+                        <span className="font-medium text-slate-500">@unknown</span>
+                      )}
+                      <span className="font-semibold text-emerald-600">
+                        {priceLabel}
+                      </span>
+                    </div>
+                  </article>
                 );
               })}
             </div>
