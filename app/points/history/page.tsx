@@ -84,6 +84,9 @@ interface PointHistoryCacheSnapshot {
   total: number;
 }
 
+const POINT_EXPIRY_DAYS = 180;
+const MS_IN_DAY = 86_400_000;
+
 export default function PointHistoryPage() {
   const { isAuthenticated, isInitialized } = useAuthStore();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -119,6 +122,17 @@ export default function PointHistoryPage() {
 
   const formatPoints = useCallback((amount: number) => formatter.number(Math.abs(amount)), [formatter]);
 
+  const formatExpiryDate = useCallback(
+    (value: Date) =>
+      formatter.dateTime(value, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        timeZone: 'Asia/Tokyo',
+      }),
+    [formatter]
+  );
+
   const formatSignedPoints = useCallback(
     (value: number, options?: { showPlusForZero?: boolean }) => {
       const prefix = value > 0 ? '+' : value < 0 ? '-' : options?.showPlusForZero ? '+' : '';
@@ -134,6 +148,33 @@ export default function PointHistoryPage() {
         return transactionsT(`types.${key}`);
       }
       return transactionsT('types.unknown', { value: type });
+    },
+    [transactionsT]
+  );
+
+  const getExpirationInfo = useCallback(
+    (timestamp: string) => {
+      const purchaseDate = new Date(timestamp);
+      if (Number.isNaN(purchaseDate.getTime())) {
+        return null;
+      }
+      const expiryDate = new Date(purchaseDate.getTime() + POINT_EXPIRY_DAYS * MS_IN_DAY);
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const expiryStart = new Date(expiryDate.getFullYear(), expiryDate.getMonth(), expiryDate.getDate());
+      const diffDays = Math.floor((expiryStart.getTime() - todayStart.getTime()) / MS_IN_DAY);
+
+      if (diffDays < 0) {
+        return { label: transactionsT('expired'), expiryDate, status: 'expired' as const };
+      }
+      if (diffDays === 0) {
+        return { label: transactionsT('expiresToday'), expiryDate, status: 'today' as const };
+      }
+      return {
+        label: transactionsT('expiresIn', { days: diffDays }),
+        expiryDate,
+        status: 'future' as const,
+      };
     },
     [transactionsT]
   );
@@ -285,11 +326,22 @@ export default function PointHistoryPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {transactions.map((tx) => (
-                  <div
-                    key={tx.id}
-                    className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
-                  >
+                {transactions.map((tx) => {
+                  const isPointPurchase = tx.transaction_type === 'purchase' && tx.amount > 0;
+                  const expirationInfo = isPointPurchase ? getExpirationInfo(tx.created_at) : null;
+                  const expirationAccentClass = expirationInfo
+                    ? expirationInfo.status === 'expired'
+                      ? 'text-rose-600'
+                      : expirationInfo.status === 'today'
+                      ? 'text-amber-600'
+                      : 'text-emerald-600'
+                    : '';
+
+                  return (
+                    <div
+                      key={tx.id}
+                      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                    >
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-100">
                         {getTransactionIcon(tx.transaction_type)}
@@ -326,11 +378,20 @@ export default function PointHistoryPage() {
                               {transactionsT('productIdLabel', { value: `${tx.related_product_id.slice(0, 8)}...` })}
                             </span>
                           ) : null}
+                          {expirationInfo ? (
+                            <span className="flex flex-wrap items-center gap-2">
+                              <span className="text-slate-400">
+                                {transactionsT('expiresOn', { date: formatExpiryDate(expirationInfo.expiryDate) })}
+                              </span>
+                              <span className={`font-semibold ${expirationAccentClass}`}>{expirationInfo.label}</span>
+                            </span>
+                          ) : null}
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>

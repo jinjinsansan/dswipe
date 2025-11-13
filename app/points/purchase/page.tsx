@@ -74,10 +74,15 @@ export default function PointPurchasePage() {
   const errorsT = useTranslations('pointsPurchase.errors');
   const transactionsT = useTranslations('pointsPurchase.transactions');
   const guidelinesT = useTranslations('pointsPurchase.guidelines');
+  const legalNoticeT = useTranslations('pointsPurchase.legalNotice');
   const guidelineItems = useMemo(() => {
     const rawItems = guidelinesT.raw('items');
     return Array.isArray(rawItems) ? rawItems.map(String) : [];
   }, [guidelinesT]);
+  const legalNoticeItems = useMemo(() => {
+    const rawItems = legalNoticeT.raw('items');
+    return Array.isArray(rawItems) ? rawItems.map(String) : [];
+  }, [legalNoticeT]);
 
   useEffect(() => {
     setCurrentBalance(pointBalance);
@@ -401,6 +406,18 @@ export default function PointPurchasePage() {
                   {guidelineItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-amber-200/80 bg-amber-50/70 p-5 sm:p-6 shadow-sm">
+                <h3 className="mb-3 text-sm font-semibold text-amber-900 sm:text-base">{legalNoticeT('heading')}</h3>
+                <ul className="space-y-3 text-xs text-amber-900/90 sm:text-sm">
+                  {legalNoticeItems.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-1 h-2 w-2 rounded-full bg-amber-400" />
                       <span>{item}</span>
                     </li>
                   ))}

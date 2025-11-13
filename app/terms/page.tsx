@@ -8,6 +8,7 @@ type StandardSectionKey =
   | "usageRestriction"
   | "disclaimer"
   | "transactionFee"
+  | "points"
   | "forex"
   | "changes";
 
@@ -30,6 +31,7 @@ export default function TermsPage() {
     "usageRestriction",
     "disclaimer",
     "transactionFee",
+    "points",
     "forex",
     "changes",
   ];

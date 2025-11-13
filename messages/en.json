@@ -661,15 +661,23 @@
             "If the fee rate changes, we will provide prior notice within a reasonable period through our website or another method designated by the Company. The revised fee rate applies to transactions concluded on or after the effective date specified in the notice."
           ]
         },
+        "points": {
+          "title": "Article 8 (Point Usage Policy)",
+          "paragraphs": [
+            "Points purchased on this site automatically expire 180 days after the purchase date.",
+            "Once purchased, points cannot be canceled or refunded for any reason.",
+            "Purchased points may only be used within this site and cannot be spent on external services or products."
+          ]
+        },
         "forex": {
-          "title": "Article 8 (Foreign Exchange Fees and Conversion Rates)",
+          "title": "Article 9 (Foreign Exchange Fees and Conversion Rates)",
           "paragraphs": [
             "When transactions are settled in foreign currency, we apply a conversion rate consisting of the prevailing market rate plus a Company-defined spread (guideline: approximately JPY 3 per USD). Rates are updated daily or as needed and displayed in the management console specified by the Company.",
             "When rates or spreads are updated, users will be notified through reasonable means. The conversion rate in effect at the time of remittance—or another reference time designated by the Company—will apply."
           ]
         },
         "changes": {
-          "title": "Article 9 (Amendments)",
+          "title": "Article 10 (Amendments)",
           "paragraphs": [
             "We may amend these Terms without prior notice to users whenever deemed necessary. The amended Terms become effective upon publication on our website. However, if changes materially affect users—such as fee revisions—we will provide reasonable advance notice."
           ]
@@ -1234,10 +1242,18 @@
     "guidelines": {
       "heading": "Point usage guidelines",
       "items": [
-        "1 point equals ¥1. You can use points for all transactions.",
-        "Points never expire and roll over to the next fiscal year.",
-        "Point purchases are final. Cancellations and refunds are not available.",
-        "Points are applied immediately after checkout. Contact support if you notice any delay."
+        "1 point equals ¥1 and can be spent on any eligible content.",
+        "Purchased points automatically expire 180 days after the purchase date.",
+        "Point purchases are final; cancellations and refunds are unavailable.",
+        "Points are applied right after checkout. Contact support if you see any delay."
+      ]
+    },
+    "legalNotice": {
+      "heading": "Important point policies",
+      "items": [
+        "Points expire 180 days after the purchase date.",
+        "Purchased points cannot be canceled or refunded.",
+        "Points can only be used within D-swipe services."
       ]
     },
     "alerts": {
@@ -1291,7 +1307,11 @@
         "bonus": "Bonus",
         "refund": "Refund",
         "unknown": "{value}"
-      }
+      },
+      "expiresOn": "Expires on: {date}",
+      "expiresIn": "Expires in {days} day{days, plural, one{}, other{s}}",
+      "expiresToday": "Expires today",
+      "expired": "Expired"
     },
     "errors": {
       "fetch": "We couldn't load your transaction history."
