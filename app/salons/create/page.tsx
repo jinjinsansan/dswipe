@@ -184,7 +184,7 @@ export default function SalonCreatePage() {
         tax_inclusive: form.tax_inclusive,
         introductory_offer_enabled: isIntroOffer || undefined,
         introductory_offer_type: isIntroOffer ? "first_month_free_direct" : undefined,
-      };
+      } satisfies Parameters<typeof salonApi.create>[0];
 
       const response = await salonApi.create(payload);
       const created = response.data as Salon;
