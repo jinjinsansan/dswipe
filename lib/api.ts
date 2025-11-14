@@ -477,6 +477,8 @@ export const salonApi = {
     monthly_price_jpy?: number | null;
     tax_rate?: number | null;
     tax_inclusive?: boolean;
+    introductory_offer_enabled?: boolean;
+    introductory_offer_type?: 'first_month_free_direct';
   }) =>
     api.post<Salon>('/salons', data),
   get: (salonId: string) => api.get<Salon>(`/salons/${salonId}`),
@@ -490,6 +492,8 @@ export const salonApi = {
     monthly_price_jpy?: number | null;
     tax_rate?: number | null;
     tax_inclusive?: boolean;
+    introductory_offer_enabled?: boolean;
+    introductory_offer_type?: 'first_month_free_direct' | null;
   }) =>
     api.patch<Salon>(`/salons/${salonId}`, data),
   delete: (salonId: string) => api.delete(`/salons/${salonId}`),

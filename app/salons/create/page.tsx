@@ -28,6 +28,7 @@ type FormState = {
   allow_jpy_subscription: boolean;
   tax_rate: string;
   tax_inclusive: boolean;
+  introductory_offer_enabled: boolean;
 };
 
 const INITIAL_FORM: FormState = {
@@ -39,6 +40,7 @@ const INITIAL_FORM: FormState = {
   allow_jpy_subscription: false,
   tax_rate: "10",
   tax_inclusive: true,
+  introductory_offer_enabled: false,
 };
 
 export default function SalonCreatePage() {
@@ -101,7 +103,30 @@ export default function SalonCreatePage() {
   }, [plans, usedPlanIds]);
 
   const handleChange = useCallback(<K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      if (prev.introductory_offer_enabled) {
+        if (key === "allow_point_subscription" && value === true) {
+          return prev;
+        }
+        if (key === "allow_jpy_subscription" && value === false) {
+          return prev;
+        }
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
+  const handleIntroOfferChange = useCallback((enabled: boolean) => {
+    setForm((prev) => (
+      enabled
+        ? {
+            ...prev,
+            introductory_offer_enabled: true,
+            allow_point_subscription: false,
+            allow_jpy_subscription: true,
+          }
+        : { ...prev, introductory_offer_enabled: false }
+    ));
   }, []);
 
   const handleSubmit = async () => {
@@ -118,8 +143,9 @@ export default function SalonCreatePage() {
       return;
     }
 
-    const allowPoint = form.allow_point_subscription;
-    const allowJpy = form.allow_jpy_subscription;
+    const isIntroOffer = form.introductory_offer_enabled;
+    const allowPoint = isIntroOffer ? false : form.allow_point_subscription;
+    const allowJpy = isIntroOffer ? true : form.allow_jpy_subscription;
 
     if (!allowPoint && !allowJpy) {
       setError(t("errors.paymentMethodRequired"));
@@ -156,6 +182,8 @@ export default function SalonCreatePage() {
         monthly_price_jpy: allowJpy && selectedPlan ? selectedPlan.points : null,
         tax_rate: parsedTaxRate,
         tax_inclusive: form.tax_inclusive,
+        introductory_offer_enabled: isIntroOffer || undefined,
+        introductory_offer_type: isIntroOffer ? "first_month_free_direct" : undefined,
       };
 
       const response = await salonApi.create(payload);
@@ -317,6 +345,7 @@ export default function SalonCreatePage() {
                         type="checkbox"
                         checked={form.allow_point_subscription}
                         onChange={(event) => handleChange("allow_point_subscription", event.target.checked)}
+                        disabled={form.introductory_offer_enabled}
                         className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
                       />
                       {t("toggles.enable")}
@@ -336,6 +365,7 @@ export default function SalonCreatePage() {
                         type="checkbox"
                         checked={form.allow_jpy_subscription}
                         onChange={(event) => handleChange("allow_jpy_subscription", event.target.checked)}
+                        disabled={form.introductory_offer_enabled}
                         className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
                       />
                       {t("toggles.enable")}
@@ -361,6 +391,25 @@ export default function SalonCreatePage() {
                       ) : null}
                     </div>
                   </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">{t("sections.introOffer.title")}</div>
+                      <p className="text-xs text-slate-500">{t("sections.introOffer.description")}</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={form.introductory_offer_enabled}
+                        onChange={(event) => handleIntroOfferChange(event.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                      />
+                      {t("sections.introOffer.checkbox")}
+                    </label>
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500">{t("sections.introOffer.helper")}</p>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">

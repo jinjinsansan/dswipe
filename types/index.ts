@@ -489,6 +489,8 @@ export interface Salon {
   moderation_notes?: string | null;
   member_count: number;
   lp_id?: string | null;
+  introductory_offer_enabled: boolean;
+  introductory_offer_type?: 'first_month_free_direct' | null;
   created_at: string;
   updated_at: string;
 }
@@ -534,6 +536,8 @@ export interface SalonPublicDetail {
   created_at: string;
   updated_at: string;
   is_featured: boolean;
+  introductory_offer_enabled: boolean;
+  introductory_offer_type?: 'first_month_free_direct' | null;
 }
 
 export interface SalonPublicListItem {
@@ -552,6 +556,8 @@ export interface SalonPublicListItem {
   allow_jpy_subscription: boolean;
   created_at: string;
   is_featured: boolean;
+  introductory_offer_enabled: boolean;
+  introductory_offer_type?: 'first_month_free_direct' | null;
 }
 
 export interface SalonPublicListResult {

@@ -326,6 +326,12 @@
             "selectPlanWarning": "Select a subscription plan first."
           }
         },
+        "introOffer": {
+          "title": "Introductory offer",
+          "description": "Let members register their card now and enjoy the first month for free.",
+          "checkbox": "Enable first-month-free (direct billing only)",
+          "helper": "Point subscriptions are disabled automatically. Unless the member cancels, normal billing resumes from the second month."
+        },
         "tax": {
           "title": "Tax display",
           "description": "Configure the tax rate applied to JPY billing."

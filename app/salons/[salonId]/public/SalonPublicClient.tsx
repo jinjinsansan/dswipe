@@ -101,6 +101,10 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
     return null;
   }, [salon, effectiveRate]);
 
+  const isIntroOffer = Boolean(
+    salon?.introductory_offer_enabled && salon.introductory_offer_type === "first_month_free_direct"
+  );
+
   const handleJoinWithPoints = () => {
     if (!salon) return;
     if (typeof window === "undefined") return;
@@ -247,6 +251,9 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
               {priceLabelYen ? (
                 <p className="text-sm text-slate-500">{priceLabelYen}（クレジットカード決済）</p>
               ) : null}
+              {isIntroOffer ? (
+                <p className="text-xs font-semibold text-emerald-600">初月無料（カード登録のみで完了します）</p>
+              ) : null}
               <p className="text-xs text-slate-500">※ 決済はサロン運営のメンバーシップとして行われます</p>
             </div>
 
@@ -277,7 +284,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                 </button>
               ) : (
                 <>
-                  {salon.allow_point_subscription ? (
+                  {salon.allow_point_subscription && !isIntroOffer ? (
                     <button
                       type="button"
                       onClick={handleJoinWithPoints}
@@ -294,7 +301,11 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                       disabled={isJoiningYen}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {isJoiningYen ? "決済ページへ移動中..." : "保存済み情報でクイック決済"}
+                      {isJoiningYen
+                        ? "決済ページへ移動中..."
+                        : isIntroOffer
+                        ? "初月無料でクイック決済"
+                        : "保存済み情報でクイック決済"}
                     </button>
                   ) : null}
 
@@ -304,9 +315,12 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                     </div>
                   ) : null}
 
-                  <p className="text-[11px] leading-relaxed text-slate-500 text-center">
-                    デジタルコンテンツの性質上、決済完了後のポイントおよび提供済みコンテンツはキャンセルできません。
-                  </p>
+                  <div className="space-y-1 text-[11px] leading-relaxed text-slate-500 text-center">
+                    {isIntroOffer ? (
+                      <p>初月は無料です。解約しない限り、翌月以降は通常料金が自動で請求されます。</p>
+                    ) : null}
+                    <p>デジタルコンテンツの性質上、決済完了後のポイントおよび提供済みコンテンツはキャンセルできません。</p>
+                  </div>
                 </>
               )}
             </div>
