@@ -214,7 +214,10 @@ export interface NoteBlock {
   id?: string;
   type: NoteBlockType;
   access: NoteAccessLevel;
-  data: Record<string, unknown>;
+  data: Record<string, unknown> & {
+    thumbnailUrl?: string;
+    ogp?: Record<string, unknown>;
+  };
 }
 
 export interface NoteSummary {

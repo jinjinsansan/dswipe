@@ -43,6 +43,8 @@ type NoteEditorProps = {
   disabled?: boolean;
 };
 
+type MediaTargetField = 'image' | 'link-thumbnail';
+
 const getListTextareaValue = (block: NoteBlock): string => {
   if (block.type !== 'list') return '';
   const items = Array.isArray(block.data?.items) ? block.data.items : [];
@@ -64,10 +66,12 @@ const SPACER_SIZE_OPTIONS = [
 export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
   const t = useTranslations('noteEditor');
   const blocks = useMemo(() => value.map((block) => normalizeBlock(block)), [value]);
-  const [mediaTargetIndex, setMediaTargetIndex] = useState<number | null>(null);
+  const [mediaTarget, setMediaTarget] = useState<{ index: number; field: MediaTargetField } | null>(null);
   const [isMediaLibraryOpen, setIsMediaLibraryOpen] = useState(false);
   const [uploadingBlockId, setUploadingBlockId] = useState<string | null>(null);
+  const [thumbnailUploadingBlockId, setThumbnailUploadingBlockId] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const linkThumbnailInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const emitChange = (next: NoteBlock[]) => {
     const normalized = next.map((block) => normalizeBlock(block));
@@ -131,7 +135,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
     emitChange(next);
   };
 
-  const openFilePicker = (index: number) => {
+  const openImageFilePicker = (index: number) => {
     if (disabled) return;
     const block = blocks[index];
     const key = (block.id ?? `block-${index}`).toString();
@@ -142,7 +146,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
     }
   };
 
-  const handleBlockFileUpload = async (index: number, event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageBlockUpload = async (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || disabled) return;
     const block = blocks[index];
@@ -165,24 +169,61 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
     }
   };
 
-  const openMediaLibrary = (index: number) => {
+  const openLinkThumbnailPicker = (index: number) => {
     if (disabled) return;
-    setMediaTargetIndex(index);
+    const block = blocks[index];
+    const key = `${block.id ?? `block-${index}`}-thumbnail`;
+    const input = linkThumbnailInputRefs.current[key];
+    if (input) {
+      input.value = '';
+      input.click();
+    }
+  };
+
+  const handleLinkThumbnailUpload = async (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || disabled) return;
+    const block = blocks[index];
+    const key = `${block.id ?? `block-${index}`}-thumbnail`;
+    setThumbnailUploadingBlockId(key);
+    try {
+      const response = await mediaApi.upload(file, { optimize: true, max_width: 1920, max_height: 1080 });
+      const imageUrl: string | undefined = response.data?.url;
+      if (!imageUrl) {
+        throw new Error(t('errors.uploadMissingUrl'));
+      }
+      handleDataChange(index, { thumbnailUrl: imageUrl });
+    } catch (error) {
+      console.error(t('errors.imageUploadFailed'), error);
+      alert(t('alerts.imageUploadFailed'));
+    } finally {
+      setThumbnailUploadingBlockId(null);
+      event.target.value = '';
+    }
+  };
+
+  const openMediaLibrary = (index: number, field: MediaTargetField) => {
+    if (disabled) return;
+    setMediaTarget({ index, field });
     setIsMediaLibraryOpen(true);
   };
 
   const handleMediaSelect = (url: string) => {
-    if (mediaTargetIndex === null) return;
-    const block = blocks[mediaTargetIndex];
-    const caption = typeof block.data?.caption === 'string' ? block.data.caption : '';
-    handleDataChange(mediaTargetIndex, { url, caption });
+    if (mediaTarget === null) return;
+    const block = blocks[mediaTarget.index];
+    if (mediaTarget.field === 'image') {
+      const caption = typeof block.data?.caption === 'string' ? block.data.caption : '';
+      handleDataChange(mediaTarget.index, { url, caption });
+    } else {
+      handleDataChange(mediaTarget.index, { thumbnailUrl: url });
+    }
     setIsMediaLibraryOpen(false);
-    setMediaTargetIndex(null);
+    setMediaTarget(null);
   };
 
   const closeMediaLibrary = () => {
     setIsMediaLibraryOpen(false);
-    setMediaTargetIndex(null);
+    setMediaTarget(null);
   };
 
   const renderTextStyleControls = (block: NoteBlock, index: number) => {
@@ -249,6 +290,9 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
       {blocks.map((block, index) => {
         const blockKey = (block.id ?? `block-${index}`).toString();
         const isPaid = isPaidBlock(block);
+        const thumbnailKey = `${blockKey}-thumbnail`;
+        const currentThumbnailUrl = typeof block.data?.thumbnailUrl === 'string' ? block.data.thumbnailUrl : '';
+        const isThumbnailUploading = thumbnailUploadingBlockId === thumbnailKey;
         return (
           <div
             key={blockKey}
@@ -396,7 +440,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => openFilePicker(index)}
+                      onClick={() => openImageFilePicker(index)}
                       disabled={disabled}
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -405,7 +449,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => openMediaLibrary(index)}
+                      onClick={() => openMediaLibrary(index, 'image')}
                       disabled={disabled}
                       className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -417,7 +461,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       ref={(element) => {
                         fileInputRefs.current[blockKey] = element;
                       }}
-                      onChange={(event) => handleBlockFileUpload(index, event)}
+                      onChange={(event) => handleImageBlockUpload(index, event)}
                       className="hidden"
                     />
                   </div>
@@ -495,6 +539,61 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     onChange={(event) => handleDataChange(index, { description: event.target.value })}
                     disabled={disabled}
                   />
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                      {t('fields.linkThumbnail')}
+                    </label>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openLinkThumbnailPicker(index)}
+                        disabled={disabled}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                        {t('buttons.uploadImage')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openMediaLibrary(index, 'link-thumbnail')}
+                        disabled={disabled}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {t('buttons.chooseFromMedia')}
+                      </button>
+                      {currentThumbnailUrl ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDataChange(index, { thumbnailUrl: '' })}
+                          disabled={disabled}
+                          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {t('buttons.clearImage')}
+                        </button>
+                      ) : null}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={(element) => {
+                          linkThumbnailInputRefs.current[thumbnailKey] = element;
+                        }}
+                        onChange={(event) => handleLinkThumbnailUpload(index, event)}
+                        className="hidden"
+                      />
+                    </div>
+                    {isThumbnailUploading ? (
+                      <p className="text-xs font-semibold text-blue-600">{t('status.uploading')}</p>
+                    ) : null}
+                    {currentThumbnailUrl ? (
+                      <div className="overflow-hidden rounded-xl border border-slate-200">
+                        <img
+                          src={currentThumbnailUrl}
+                          alt={typeof block.data?.title === 'string' && block.data.title ? block.data.title : 'link-thumbnail'}
+                          className="h-40 w-full object-cover"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               )}
 

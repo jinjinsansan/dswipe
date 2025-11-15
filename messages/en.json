@@ -98,7 +98,8 @@
       "font": "Font",
       "textColor": "Text color",
       "headingSize": "Size:",
-      "spacerHeight": "Height"
+      "spacerHeight": "Height",
+      "linkThumbnail": "Link thumbnail"
     },
     "fonts": {
       "system": "Standard (Smart match)",
@@ -110,7 +111,8 @@
     "buttons": {
       "reset": "Reset",
       "uploadImage": "Upload image",
-      "chooseFromMedia": "Choose from media"
+      "chooseFromMedia": "Choose from media",
+      "clearImage": "Remove image"
     },
     "textColors": {
       "dark": "Dark (Default)",

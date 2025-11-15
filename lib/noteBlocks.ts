@@ -52,7 +52,7 @@ export const createEmptyBlock = (type: NoteBlockType): NoteBlock => {
       base.data = { items: [] };
       break;
     case 'link':
-      base.data = { title: '', url: '', description: '' };
+      base.data = { title: '', url: '', description: '', thumbnailUrl: '' };
       break;
     case 'spacer':
       base.data = { size: 'md' };
@@ -126,10 +126,14 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
       const title = typeof data.title === 'string' ? data.title : '';
       const url = typeof data.url === 'string' ? data.url : '';
       const description = typeof data.description === 'string' ? data.description : '';
+      const thumbnailUrl = typeof data.thumbnailUrl === 'string' ? data.thumbnailUrl : '';
+      const ogp = typeof data.ogp === 'object' && data.ogp !== null ? data.ogp : undefined;
       normalized.data = {
         title,
         url,
         description,
+        thumbnailUrl,
+        ...(ogp ? { ogp } : {}),
       };
       break;
     }

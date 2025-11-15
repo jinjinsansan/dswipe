@@ -98,7 +98,8 @@
       "font": "フォント",
       "textColor": "文字色",
       "headingSize": "サイズ:",
-      "spacerHeight": "高さ"
+      "spacerHeight": "高さ",
+      "linkThumbnail": "リンクサムネイル"
     },
     "fonts": {
       "system": "標準 (スマートマッチ)",
@@ -110,7 +111,8 @@
     "buttons": {
       "reset": "リセット",
       "uploadImage": "画像をアップロード",
-      "chooseFromMedia": "メディアから選択"
+      "chooseFromMedia": "メディアから選択",
+      "clearImage": "画像を削除"
     },
     "textColors": {
       "dark": "ダーク (標準)",

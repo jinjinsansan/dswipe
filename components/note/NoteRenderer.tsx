@@ -107,15 +107,17 @@ export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparato
         const ogTitle = typeof ogp.title === 'string' && ogp.title ? ogp.title : title;
         const ogDescription = typeof ogp.description === 'string' ? ogp.description : description;
         const ogImage = typeof ogp.image === 'string' && ogp.image ? ogp.image : undefined;
+        const thumbnailUrl = typeof data.thumbnailUrl === 'string' && data.thumbnailUrl ? data.thumbnailUrl : undefined;
+        const previewImage = thumbnailUrl ?? ogImage;
         const ogSite = typeof ogp.site_name === 'string' ? ogp.site_name : undefined;
         const href = url || undefined;
 
         const card = (
           <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:bg-blue-50/30">
-            {ogImage ? (
+            {previewImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={ogImage}
+                src={previewImage}
                 alt={ogTitle || url}
                 className="h-40 w-full object-cover"
                 loading="lazy"
