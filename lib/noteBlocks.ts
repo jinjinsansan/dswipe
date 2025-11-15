@@ -127,7 +127,7 @@ export const normalizeBlock = (block: NoteBlock): NoteBlock => {
       const url = typeof data.url === 'string' ? data.url : '';
       const description = typeof data.description === 'string' ? data.description : '';
       const thumbnailUrl = typeof data.thumbnailUrl === 'string' ? data.thumbnailUrl : '';
-      const ogp = typeof data.ogp === 'object' && data.ogp !== null ? data.ogp : undefined;
+      const ogp = typeof data.ogp === 'object' && data.ogp !== null ? { ...data.ogp } as Record<string, unknown> : undefined;
       normalized.data = {
         title,
         url,
