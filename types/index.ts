@@ -1177,6 +1177,10 @@ export interface OperatorMessage {
   email_from_name?: string | null;
   email_from_address?: string | null;
   email_reply_to?: string | null;
+  automated?: boolean;
+  related_note_id?: string | null;
+  related_creator_id?: string | null;
+  metadata?: Record<string, unknown>;
 }
 
 export interface OperatorMessageListResponse {

@@ -195,6 +195,7 @@ export default function AdminMessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState<OperatorMessage | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>("active");
+  const [showAutomatedMessages, setShowAutomatedMessages] = useState(false);
   const [createForm, setCreateForm] = useState(INITIAL_CREATE_FORM);
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -232,7 +233,7 @@ export default function AdminMessagesPage() {
   const fetchList = useCallback(async () => {
     setListLoading(true);
     try {
-      const response = await adminMessageApi.list({ limit: 100, offset: 0, visibility: visibilityFilter });
+      const response = await adminMessageApi.list({ limit: 100, offset: 0, visibility: visibilityFilter, include_automated: showAutomatedMessages });
       const payload = response.data as OperatorMessageListResponse;
       const rows = Array.isArray(payload.data) ? payload.data : [];
       setMessages(rows);
@@ -257,7 +258,7 @@ export default function AdminMessagesPage() {
     } finally {
       setListLoading(false);
     }
-  }, [visibilityFilter]);
+  }, [showAutomatedMessages, visibilityFilter]);
 
   const fetchDetail = useCallback(async (messageId: string) => {
     setDetailLoading(true);
@@ -515,6 +516,15 @@ export default function AdminMessagesPage() {
                   {processLoading ? "処理中…" : "予約配信を処理"}
                 </button>
                 <div className="flex items-center gap-2">
+                  <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600">
+                    <input
+                      type="checkbox"
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      checked={showAutomatedMessages}
+                      onChange={(event) => setShowAutomatedMessages(event.target.checked)}
+                    />
+                    自動通知も表示
+                  </label>
                   <select
                     value={visibilityFilter}
                     onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
@@ -574,6 +584,9 @@ export default function AdminMessagesPage() {
                             ) : null}
                             {isArchived ? (
                               <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-700">アーカイブ</span>
+                            ) : null}
+                            {message.automated ? (
+                              <span className="rounded-full bg-purple-100 px-2 py-0.5 font-semibold text-purple-700">自動通知</span>
                             ) : null}
                           </div>
                         </button>

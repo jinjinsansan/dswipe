@@ -577,7 +577,7 @@ export const creatorApi = {
 };
 
 export const adminMessageApi = {
-  list: (params?: { limit?: number; offset?: number; visibility?: 'active' | 'hidden' | 'archived' | 'all' }) =>
+  list: (params?: { limit?: number; offset?: number; visibility?: 'active' | 'hidden' | 'archived' | 'all'; include_automated?: boolean }) =>
     api.get<OperatorMessageListResponse>('/admin/messages', { params }),
   get: (messageId: string) => api.get<OperatorMessage>(`/admin/messages/${messageId}`),
   create: (payload: OperatorMessageCreatePayload) =>
