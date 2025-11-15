@@ -729,6 +729,9 @@ export const adminApi = {
   listUsers: (params?: { search?: string; user_type?: string; limit?: number; offset?: number }) =>
     api.get('/admin/users', { params }),
 
+  getUserStats: () =>
+    api.get('/admin/users/stats'),
+
   getUserDetail: (userId: string) =>
     api.get(`/admin/users/${userId}`),
 

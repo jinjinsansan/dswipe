@@ -28,6 +28,7 @@ import type {
   AdminUserDetail,
   AdminUserSummary,
   AdminAnnouncement,
+  AdminUserStats,
   ModerationEvent,
   MaintenanceMode,
   MaintenanceOverview,
@@ -69,6 +70,13 @@ const TABS: Array<AdminPageTab & { id: TabKey }> = [
 ];
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ja-JP').format(value);
+
+const formatPercentage = (value: number, total: number) => {
+  if (!Number.isFinite(value) || !Number.isFinite(total) || total === 0) {
+    return '0%';
+  }
+  return `${((value / total) * 100).toFixed(1)}%`;
+};
 
 const formatDateTime = (value?: string | null) => {
   if (!value) return '-';
@@ -189,6 +197,9 @@ export default function AdminPanelPage() {
 
   const [userSummaries, setUserSummaries] = useState<AdminUserSummary[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const [userStats, setUserStats] = useState<AdminUserStats | null>(null);
+  const [userStatsLoading, setUserStatsLoading] = useState(false);
+  const [userStatsError, setUserStatsError] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUserDetail, setSelectedUserDetail] = useState<AdminUserDetail | null>(null);
@@ -303,6 +314,7 @@ export default function AdminPanelPage() {
     const load = async () => {
       try {
         await Promise.all([
+          fetchUserStats(),
           fetchUsers(),
           fetchMarketplace(),
           fetchAnalytics(),
@@ -364,6 +376,21 @@ export default function AdminPanelPage() {
       setUsersError(message);
     } finally {
       setUsersLoading(false);
+    }
+  };
+
+  const fetchUserStats = async () => {
+    setUserStatsLoading(true);
+    try {
+      const response = await adminApi.getUserStats();
+      setUserStats(response.data as AdminUserStats);
+      setUserStatsError(null);
+    } catch (error) {
+      const message = getErrorMessage(error, 'ユーザー統計の取得に失敗しました');
+      console.error(error);
+      setUserStatsError(message);
+    } finally {
+      setUserStatsLoading(false);
     }
   };
 
@@ -1127,10 +1154,56 @@ export default function AdminPanelPage() {
 
   const latestStatusCheck = useMemo(() => (statusChecks.length > 0 ? statusChecks[0] : null), [statusChecks]);
 
+  const userStatsCards = [
+    {
+      key: 'total',
+      label: '総ユーザー数',
+      value: userStats?.total_users,
+      hint:
+        userStats && typeof userStats.seller_count === 'number' && typeof userStats.buyer_count === 'number'
+          ? `${formatNumber(userStats.seller_count)} クリエイター / ${formatNumber(userStats.buyer_count)} バイヤー`
+          : 'クリエイター / バイヤー内訳',
+    },
+    {
+      key: 'new30d',
+      label: '直近30日登録',
+      value: userStats?.new_users_30d,
+      hint:
+        userStats && userStats.total_users > 0
+          ? `全体比 ${formatPercentage(userStats.new_users_30d, userStats.total_users)}`
+          : '直近30日で登録',
+    },
+    {
+      key: 'active15m',
+      label: 'オンライン（15分以内）',
+      value: userStats?.active_users_15m,
+      hint: 'last_login_at ベース',
+    },
+    {
+      key: 'line',
+      label: 'LINE連携済み',
+      value: userStats?.line_linked_users,
+      hint: '公式LINEと連携完了',
+    },
+    {
+      key: 'blocked',
+      label: 'ブロック中ユーザー',
+      value: userStats?.blocked_users,
+      hint: '強制停止中',
+    },
+    {
+      key: 'highValue',
+      label: '1万P以上保持',
+      value: userStats?.high_value_users,
+      hint: '残高1万P超のハイバリュー',
+    },
+  ];
+
   const handleRefreshAll = async () => {
     setPageLoading(true);
     try {
       await Promise.all([
+        fetchUserStats(),
         fetchUsers(userSearch),
         fetchMarketplace(marketSearch),
         fetchAnalytics(),
@@ -1178,6 +1251,43 @@ export default function AdminPanelPage() {
           {activeSection === 'users' && (
             <div className="grid xl:grid-cols-[1.4fr_1fr] gap-6 xl:gap-8">
               <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-lg shadow-gray-200/60">
+                <div className="mb-6 space-y-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">ユーザー分布サマリー</h3>
+                      <p className="text-xs text-gray-500">総数・新規・オンライン・LINE連携などの主要KPIを即時に把握できます。</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={fetchUserStats}
+                      disabled={userStatsLoading}
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-400 disabled:opacity-60"
+                    >
+                      <ArrowPathIcon className={`h-4 w-4 ${userStatsLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
+                      集計を更新
+                    </button>
+                  </div>
+                  {userStatsError && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+                      {userStatsError}
+                    </div>
+                  )}
+                  <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+                    {userStatsCards.map((card) => (
+                      <div key={card.key} className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{card.label}</p>
+                        <p className="mt-1 text-2xl font-extrabold text-gray-900">
+                          {typeof card.value === 'number'
+                            ? formatNumber(card.value)
+                            : userStatsLoading
+                              ? '…'
+                              : '—'}
+                        </p>
+                        <p className="text-[11px] text-gray-500">{card.hint}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-900">ユーザー一覧</h2>

@@ -1329,6 +1329,17 @@ export interface RequiredActionsStatus {
   all_completed: boolean;
 }
 
+export interface AdminUserStats {
+  total_users: number;
+  new_users_30d: number;
+  active_users_15m: number;
+  line_linked_users: number;
+  seller_count: number;
+  buyer_count: number;
+  blocked_users: number;
+  high_value_users: number;
+}
+
 export interface AdminUserSummary {
   id: string;
   username: string;
