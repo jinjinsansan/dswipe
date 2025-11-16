@@ -1,6 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
@@ -30,14 +29,8 @@ import { redirectToLogin } from '@/lib/navigation';
 import type { Swiper as SwiperType } from 'swiper';
 import type { SwiperModule } from 'swiper/types';
 
-const Swiper = dynamic(() => import('swiper/react').then((mod) => mod.Swiper), {
-  ssr: false,
-  loading: () => <PageLoader />,
-});
-
-const SwiperSlide = dynamic(() => import('swiper/react').then((mod) => mod.SwiperSlide), {
-  ssr: false,
-});
+type SwiperComponentType = typeof import('swiper/react').Swiper;
+type SwiperSlideComponentType = typeof import('swiper/react').SwiperSlide;
 
 interface LPViewerClientProps {
   slug?: string;
@@ -76,6 +69,10 @@ export default function LPViewerClient({
   const [purchaseMethod, setPurchaseMethod] = useState<'points' | 'yen'>('points');
   const swiperRef = useRef<SwiperType | null>(null);
   const [swiperModules, setSwiperModules] = useState<SwiperModule[] | null>(null);
+  const [swiperComponents, setSwiperComponents] = useState<{
+    Swiper: SwiperComponentType;
+    SwiperSlide: SwiperSlideComponentType;
+  } | null>(null);
 
   const selectedIsPoints = purchaseMethod === 'points';
   const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
@@ -139,17 +136,26 @@ export default function LPViewerClient({
 
   useEffect(() => {
     let mounted = true;
-    const loadSwiperModules = async () => {
-      const { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } = await import('swiper/modules');
 
-      if (!mounted) {
-        return;
+    const loadSwiperCore = async () => {
+      try {
+        const [{ Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative }, components] = await Promise.all([
+          import('swiper/modules'),
+          import('swiper/react'),
+        ]);
+
+        if (!mounted) {
+          return;
+        }
+
+        setSwiperModules([Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]);
+        setSwiperComponents({ Swiper: components.Swiper, SwiperSlide: components.SwiperSlide });
+      } catch (err) {
+        console.error('Failed to load Swiper core modules:', err);
       }
-
-      setSwiperModules([Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]);
     };
 
-    loadSwiperModules();
+    loadSwiperCore();
 
     return () => {
       mounted = false;
@@ -170,6 +176,21 @@ export default function LPViewerClient({
 
     shareTokenRef.current = shareToken ?? null;
   }, [initialLp, initialProducts, initialSlug, shareToken]);
+
+  useEffect(() => {
+    if (!lp?.steps?.length) {
+      return;
+    }
+    if (!swiperRef.current) {
+      return;
+    }
+    try {
+      swiperRef.current.updateSlides();
+      swiperRef.current.update();
+    } catch (err) {
+      console.error('Failed to update swiper slides:', err);
+    }
+  }, [lp?.steps, swiperModules, swiperComponents]);
 
   useEffect(() => {
     viewTrackedRef.current = false;
@@ -708,9 +729,10 @@ export default function LPViewerClient({
     return <PageLoader />;
   }
 
-  if (!swiperModules) {
+  if (!swiperModules || !swiperComponents) {
     return <PageLoader />;
   }
+  const { Swiper, SwiperSlide } = swiperComponents;
 
   if (error || !lp) {
     return (
@@ -801,9 +823,18 @@ export default function LPViewerClient({
             dynamicBullets: true,
             dynamicMainBullets: 3,
           }}
+          observer
+          observeParents
+          observeSlideChildren
           modules={swiperModules}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
+            try {
+              swiper.updateSlides();
+              swiper.update();
+            } catch (err) {
+              console.error('Swiper update failed on mount:', err);
+            }
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
