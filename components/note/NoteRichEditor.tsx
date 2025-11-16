@@ -940,10 +940,10 @@ export default function NoteRichEditor({
 
   return (
     <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6 pb-4">
-      <div className="w-full max-w-full px-0 md:px-4">
+      <div className="w-full max-w-full px-0">
         <div
           ref={containerRef}
-          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] rounded-xl bg-white/90 px-4 py-10 shadow-sm ring-1 ring-slate-200 transition-shadow ${isDragOver ? 'ring-4 ring-blue-300 shadow-xl' : ''}`}
+          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] bg-white px-3 py-10 transition-shadow md:rounded-xl md:bg-white/90 md:px-6 md:shadow-sm md:ring-1 md:ring-slate-200 ${isDragOver ? 'ring-4 ring-blue-300 shadow-xl md:rounded-xl' : ''}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -955,7 +955,7 @@ export default function NoteRichEditor({
           }}
         >
           {isDragOver ? (
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-400 bg-blue-50/90 text-center text-sm font-semibold text-blue-600">
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 bg-blue-50/90 text-center text-sm font-semibold text-blue-600 md:rounded-xl">
               <p>ここにファイルをドロップして追加</p>
               <p className="mt-1 text-xs font-medium text-blue-500">画像はそのまま挿入、その他のファイルはリンクとして追加されます</p>
             </div>
