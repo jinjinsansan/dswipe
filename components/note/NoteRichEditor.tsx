@@ -136,6 +136,11 @@ interface NoteRichEditorProps {
   value: NoteRichContent | null;
   onChange: (next: NoteRichContent) => void;
   disabled?: boolean;
+  onSaveDraft?: () => void;
+  isSavingDraft?: boolean;
+  draftSaveDisabled?: boolean;
+  draftSaveLabel?: string;
+  draftSavingLabel?: string;
 }
 
 const DEFAULT_CONTENT: NoteRichContent = {
@@ -160,7 +165,16 @@ const extractAccessFromSelection = (editor: ReturnType<typeof useEditor> | null)
   return access === 'paid' ? 'paid' : 'public';
 };
 
-export default function NoteRichEditor({ value, onChange, disabled = false }: NoteRichEditorProps) {
+export default function NoteRichEditor({
+  value,
+  onChange,
+  disabled = false,
+  onSaveDraft,
+  isSavingDraft = false,
+  draftSaveDisabled = false,
+  draftSaveLabel = '下書きを保存',
+  draftSavingLabel = '保存中…',
+}: NoteRichEditorProps) {
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
   const [activeAccess, setActiveAccess] = useState<AccessLevel>('public');
@@ -1008,6 +1022,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               onInsertMenu={openInsertMenu}
               isUploading={isFileUploading}
               createChain={createChainWithSelection}
+              onSaveDraft={onSaveDraft}
+              isSavingDraft={isSavingDraft}
+              draftSaveDisabled={draftSaveDisabled}
+              draftSaveLabel={draftSaveLabel}
+              draftSavingLabel={draftSavingLabel}
             />
           </div>
         </div>
@@ -1026,6 +1045,11 @@ export default function NoteRichEditor({ value, onChange, disabled = false }: No
               onInsertMenu={openInsertMenu}
               isUploading={isFileUploading}
               createChain={createChainWithSelection}
+              onSaveDraft={onSaveDraft}
+              isSavingDraft={isSavingDraft}
+              draftSaveDisabled={draftSaveDisabled}
+              draftSaveLabel={draftSaveLabel}
+              draftSavingLabel={draftSavingLabel}
             />
           </div>
         </div>
@@ -1209,15 +1233,44 @@ interface ToolbarButtonsProps {
   onInsertMenu: () => void;
   isUploading: boolean;
   createChain: () => ChainedCommands | null;
+  onSaveDraft?: () => void;
+  isSavingDraft?: boolean;
+  draftSaveDisabled?: boolean;
+  draftSaveLabel?: string;
+  draftSavingLabel?: string;
 }
 
-function ToolbarButtons({ editor, disabled, activeAccess, onAccessChange, onImage, onInsertMenu, isUploading, createChain }: ToolbarButtonsProps) {
+function ToolbarButtons({
+  editor,
+  disabled,
+  activeAccess,
+  onAccessChange,
+  onImage,
+  onInsertMenu,
+  isUploading,
+  createChain,
+  onSaveDraft,
+  isSavingDraft = false,
+  draftSaveDisabled = false,
+  draftSaveLabel = '下書きを保存',
+  draftSavingLabel = '保存中…',
+}: ToolbarButtonsProps) {
   if (!editor) {
     return null;
   }
 
   return (
     <Fragment>
+      {onSaveDraft ? (
+        <button
+          type="button"
+          onClick={onSaveDraft}
+          disabled={disabled || draftSaveDisabled || isSavingDraft}
+          className="inline-flex h-9 min-w-[120px] flex-shrink-0 items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isSavingDraft ? draftSavingLabel : draftSaveLabel}
+        </button>
+      ) : null}
       <ToolbarButton
         onClick={() => {
           const chain = createChain();

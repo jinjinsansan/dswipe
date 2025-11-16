@@ -1018,14 +1018,16 @@ export default function NoteEditPage() {
               >
                 ノート一覧へ戻る
               </Link>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving || actionLoading}
-                className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {saving ? '保存中...' : '下書きを保存'}
-              </button>
+              {!isNoteEditor && (
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving || actionLoading}
+                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saving ? '保存中...' : '下書きを保存'}
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <button
@@ -1641,7 +1643,16 @@ export default function NoteEditPage() {
                 <p className="mt-1 text-xs text-slate-500">段落単位で装飾や有料切り替えを行えます。</p>
               </div>
             </div>
-            <NoteRichEditor value={richContent} onChange={setRichContent} disabled={saving || actionLoading} />
+            <NoteRichEditor
+              value={richContent}
+              onChange={setRichContent}
+              disabled={saving || actionLoading}
+              onSaveDraft={handleSave}
+              isSavingDraft={saving}
+              draftSaveDisabled={actionLoading}
+              draftSaveLabel="下書きを保存"
+              draftSavingLabel="保存中..."
+            />
           </div>
         )}
 

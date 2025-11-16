@@ -1573,7 +1573,15 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
               <p className="mt-1 text-xs text-slate-500">段落・見出し・装飾を使ってリッチな記事を作成できます。</p>
             </div>
           </div>
-          <NoteRichEditor value={richContent} onChange={setRichContent} disabled={saving} />
+          <NoteRichEditor
+            value={richContent}
+            onChange={setRichContent}
+            disabled={saving}
+            onSaveDraft={handleSave}
+            isSavingDraft={saving}
+            draftSaveLabel={t('buttons.saveDraft')}
+            draftSavingLabel={t('buttons.saving')}
+          />
         </div>
 
       </div>
