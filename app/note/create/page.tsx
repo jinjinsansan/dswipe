@@ -1214,15 +1214,38 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
       pageTitle={t('pageTitle')}
       pageSubtitle={t('pageSubtitle')}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 sm:px-6 sm:py-6">
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
-          >
-            エディタ種別を選び直す
-          </button>
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 pb-28 sm:px-6 sm:py-6 sm:pb-8">
+        <div
+          className="sticky z-30 mb-6 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur"
+          style={{ top: 'calc(var(--dashboard-header-height, 112px) + 6px)' }}
+        >
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={onBack}
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                エディタ種別を選び直す
+              </button>
+              <Link
+                href="/note"
+                className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-400"
+              >
+                {t('buttons.cancel')}
+              </Link>
+            </div>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? t('buttons.saving') : t('buttons.saveDraft')}
+              </button>
+            </div>
+          </div>
         </div>
         {error ? (
           <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
@@ -1553,22 +1576,6 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
           <NoteRichEditor value={richContent} onChange={setRichContent} disabled={saving} />
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/note"
-            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-400"
-          >
-            {t('buttons.cancel')}
-          </Link>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {saving ? t('buttons.saving') : t('buttons.saveDraft')}
-          </button>
-        </div>
       </div>
 
       <MediaLibraryModal
