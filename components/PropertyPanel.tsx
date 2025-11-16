@@ -158,6 +158,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'top-guarantee-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-countdown-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-inline-cta-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
+    'top-flex-1': ['backgroundColor', 'textColor', 'accentColor'],
     'top-media-spotlight-1': ['backgroundColor', 'textColor', 'accentColor', 'buttonColor'],
     'top-newsletter-1': ['backgroundColor', 'textColor', 'buttonColor'],
     'top-contact-1': ['backgroundColor', 'textColor', 'buttonColor'],
@@ -318,6 +319,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     'buttonText',
     'secondaryButtonText',
     'subText',
+    'topHeading',
+    'body',
+    'bottomHeading',
     'caption',
     'urgencyText',
     'stats',
@@ -442,6 +446,54 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               onFocus={() => handleFocusChange(resolveFieldId('subtitle'))}
               className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="サブタイトルを入力"
+            />
+          </div>
+        )}
+
+        {('topHeading' in content) && (
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('topHeading')))}`}>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              上部見出し
+            </label>
+            <input
+              type="text"
+              value={(content as any).topHeading ?? ''}
+              onChange={(e) => onUpdateContent('topHeading', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('topHeading'))}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="見出し（空欄で非表示）"
+            />
+          </div>
+        )}
+
+        {('body' in content) && (
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('body')))}`}>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              説明文
+            </label>
+            <textarea
+              value={(content as any).body ?? ''}
+              onChange={(e) => onUpdateContent('body', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('body'))}
+              rows={4}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm resize-none"
+              placeholder="説明文（空欄で非表示）"
+            />
+          </div>
+        )}
+
+        {('bottomHeading' in content) && (
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('bottomHeading')))}`}>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              下部見出し
+            </label>
+            <input
+              type="text"
+              value={(content as any).bottomHeading ?? ''}
+              onChange={(e) => onUpdateContent('bottomHeading', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('bottomHeading'))}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="見出し（空欄で非表示）"
             />
           </div>
         )}

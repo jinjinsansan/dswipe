@@ -56,6 +56,10 @@ const TopInlineCTABlock = dynamic(() => import('./TopInlineCTABlock'), {
   ssr: false,
   loading: () => null,
 });
+const TopFlexibleBlock = dynamic(() => import('./TopFlexibleBlock'), {
+  ssr: false,
+  loading: () => null,
+});
 const TopMediaSpotlightBlock = dynamic(() => import('./TopMediaSpotlightBlock'), {
   ssr: false,
   loading: () => null,
@@ -262,6 +266,9 @@ export default function BlockRenderer({
           onFieldFocus={onRequestFieldFocus}
         />
       );
+      break;
+    case 'top-flex-1':
+      element = <TopFlexibleBlock content={content} isEditing={isEditing} onEdit={onEdit} />;
       break;
     case 'top-media-spotlight-1':
       element = (

@@ -17,6 +17,7 @@ export type BlockType =
   | 'top-guarantee-1'
   | 'top-countdown-1'
   | 'top-inline-cta-1'
+  | 'top-flex-1'
   | 'top-media-spotlight-1'
   | 'top-contact-1'
   | 'top-tokusho-1'
@@ -204,6 +205,13 @@ export interface InlineCTABlockContent extends BaseBlockContent {
   useLinkedProduct?: boolean;
 }
 
+export interface FlexibleBlockContent extends BaseBlockContent {
+  topHeading?: string;
+  body?: string;
+  bottomHeading?: string;
+  layout?: 'left' | 'center';
+}
+
 // メディアスポットライト
 export interface MediaSpotlightBlockContent extends BaseBlockContent {
   tagline?: string;
@@ -269,6 +277,7 @@ export type BlockContent =
   | GuaranteeBlockContent
   | CountdownBlockContent
   | InlineCTABlockContent
+  | FlexibleBlockContent
   | MediaSpotlightBlockContent
   | ContactBlockContent
   | TokushoBlockContent
