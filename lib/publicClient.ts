@@ -147,6 +147,18 @@ export const fetchLandingPage = async (
   });
 };
 
+export const fetchLandingPageByShareToken = async (
+  token: string,
+  options?: { trackView?: boolean; sessionId?: string }
+): Promise<any> => {
+  return request(`/public/share/${encodeURIComponent(token)}`, {
+    params: {
+      track_view: options?.trackView ? 'true' : undefined,
+      session_id: options?.sessionId,
+    },
+  });
+};
+
 export const fetchRequiredActions = async (slug: string, sessionId?: string): Promise<any> => {
   return request(`/public/${encodeURIComponent(slug)}/required-actions`, {
     params: sessionId ? { session_id: sessionId } : undefined,

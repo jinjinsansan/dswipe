@@ -8,12 +8,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, productApi, authApi, announcementApi, noteApi } from '@/lib/api';
-import { loadTemplateBundle } from '@/lib/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { redirectToLogin } from '@/lib/navigation';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
-import type { TemplateBlock } from '@/types/templates';
 import { loadCache, saveCache } from '@/lib/cache';
 import {
   ArrowPathIcon,
@@ -38,6 +36,9 @@ interface LpApiRecord {
   title: string;
   status?: string | null;
   slug?: string | null;
+  visibility?: 'public' | 'limited' | 'private' | null;
+  share_url?: string | null;
+  share_token_rotated_at?: string | null;
   custom_theme_hex?: string | null;
   product_id?: string | null;
   salon_id?: string | null;
@@ -57,6 +58,7 @@ interface DashboardLp extends LpApiRecord {
   hasPrimaryLink: boolean;
   statusLabel: string;
   statusVariant: LpStatusVariant;
+  visibilityLabel: string;
 }
 
 interface LpStep extends Record<string, unknown> {
@@ -271,8 +273,8 @@ export default function DashboardPage() {
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
   const [activeAnnouncement, setActiveAnnouncement] = useState<DashboardAnnouncement | null>(null);
-  const [templateLibrary, setTemplateLibrary] = useState<TemplateBlock[]>([]);
   const didHydrateFromCacheRef = useRef(false);
+  const heroMediaCacheRef = useRef<Map<string, HeroMedia>>(new Map());
 
   const hydrateFromCache = useCallback(() => {
     if (didHydrateFromCacheRef.current) return;
@@ -321,27 +323,6 @@ export default function DashboardPage() {
     }
   }, []);
 
-  useEffect(() => {
-    let mounted = true;
-    loadTemplateBundle().then((bundle) => {
-      if (!mounted) {
-        return;
-      }
-      setTemplateLibrary([
-        ...bundle.templateLibrary,
-        ...bundle.infoProductBlocks,
-        ...bundle.contactBlocks,
-        ...bundle.tokushoBlocks,
-        ...bundle.newsletterBlocks,
-        ...bundle.handwrittenBlocks,
-      ]);
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const noteSummary = noteMetrics ?? FALLBACK_NOTE_METRICS;
   const latestNotePublishedLabel = noteSummary.latest_published_at
     ? formatAccountDate(noteSummary.latest_published_at, true)
@@ -379,78 +360,7 @@ export default function DashboardPage() {
         return [];
       })();
 
-      const heroMediaMap = new Map<string, HeroMedia>();
-
-      const normalizeContent = (raw: unknown): Record<string, unknown> => {
-        if (!raw) return {};
-        let parsed: unknown = raw;
-        if (typeof parsed === 'string') {
-          try {
-            parsed = JSON.parse(parsed);
-          } catch (error) {
-            console.warn('Failed to parse content_data JSON for hero preview:', error);
-            return {};
-          }
-        }
-        if (isRecord(parsed) && parsed.content && isRecord(parsed.content)) {
-          return parsed.content;
-        }
-        return isRecord(parsed) ? parsed : {};
-      };
-
-      const pickFirstString = (candidates: unknown[]): string | null => {
-        for (const candidate of candidates) {
-          if (typeof candidate === 'string' && candidate.trim().length > 0) {
-            return candidate;
-          }
-        }
-        return null;
-      };
-
-      const extractMediaFromContent = (content: Record<string, unknown>, step?: LpStep | null): HeroMedia | null => {
-        const imageUrl = pickFirstString([
-          content['imageUrl'],
-          content['image_url'],
-          content['heroImage'],
-          content['hero_image'],
-          content['primaryImageUrl'],
-          content['primary_image_url'],
-          content['backgroundImageUrl'],
-          content['background_image_url'],
-          content['backgroundImage'],
-          safeGet(safeGet(content, 'media'), 'imageUrl'),
-          safeGet(safeGet(content, 'media'), 'image_url'),
-          safeGet(safeGet(content, 'visual'), 'imageUrl'),
-          safeGet(safeGet(content, 'visual'), 'image_url'),
-          step?.image_url,
-          safeGet(step, 'imageUrl'),
-        ]);
-
-        if (imageUrl) {
-          return { type: 'image', url: imageUrl };
-        }
-
-        const videoUrl = pickFirstString([
-          content['backgroundVideoUrl'],
-          content['background_video_url'],
-          content['videoUrl'],
-          content['video_url'],
-          safeGet(safeGet(content, 'media'), 'videoUrl'),
-          safeGet(safeGet(content, 'media'), 'video_url'),
-          safeGet(safeGet(content, 'visual'), 'videoUrl'),
-          safeGet(safeGet(content, 'visual'), 'video_url'),
-          safeGet(step, 'backgroundVideoUrl'),
-          step?.background_video_url,
-          safeGet(step, 'videoUrl'),
-          step?.video_url,
-        ]);
-
-        if (videoUrl) {
-          return { type: 'video', url: videoUrl };
-        }
-
-        return null;
-      };
+      const heroMediaMap = new Map<string, HeroMedia>(heroMediaCacheRef.current);
 
       const createPlaceholderThumbnail = (title: string, accentHex?: string | null): HeroMedia => {
         const safeTitle = (title || '').trim() || 'Launch Page';
@@ -514,27 +424,6 @@ export default function DashboardPage() {
           return { type: 'image', url: step.image_url };
         }
 
-        // Check 5: Fallback to template default media by ID
-        let blockType: string | undefined;
-        if (typeof step.block_type === 'string') {
-          blockType = step.block_type;
-        } else if (isRecord(step.content_data)) {
-          const candidate = safeGet(step.content_data, 'block_type');
-          if (typeof candidate === 'string') {
-            blockType = candidate;
-          }
-        }
-        if (blockType) {
-          const template = templateLibrary.find((item) => item.id === blockType || item.templateId === blockType);
-          if (template?.defaultContent) {
-            const defaultContent = normalizeContent(template.defaultContent);
-            const fallbackMedia = extractMediaFromContent(defaultContent);
-            if (fallbackMedia) {
-              return fallbackMedia;
-            }
-          }
-        }
-
         // Last resort: placeholder
         return createPlaceholderThumbnail(title, accent);
       };
@@ -555,28 +444,6 @@ export default function DashboardPage() {
         return null;
       };
 
-      await Promise.all(
-        lpsData.map(async (lpItem) => {
-          try {
-            const detailResponse = await lpApi.get(lpItem.id);
-            const steps = parseLpSteps(detailResponse.data?.steps);
-            const heroStep =
-              steps.find((step) => {
-                const blockType = resolveBlockType(step);
-                return typeof blockType === 'string' && blockType.includes('hero');
-              }) ??
-              steps.find((step) => resolveBlockType(step) === 'image-aurora-1') ??
-              steps[0];
-
-            const media = extractMediaFromStep(heroStep, lpItem.title, lpItem.custom_theme_hex);
-            heroMediaMap.set(lpItem.id, media);
-          } catch (detailError) {
-            console.error('Failed to fetch LP detail for hero image:', detailError);
-            heroMediaMap.set(lpItem.id, createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex));
-          }
-        })
-      );
-
       const productsPayload = productsResponse?.data as { data?: unknown } | unknown;
       const productsData = (() => {
         if (isRecord(productsPayload) && Array.isArray(productsPayload.data)) {
@@ -594,24 +461,41 @@ export default function DashboardPage() {
           .filter((lpId): lpId is string => typeof lpId === 'string' && lpId.trim().length > 0)
       );
 
-      const enrichedLps: DashboardLp[] = lpsData.map((lpItem) => {
-        const heroMedia = heroMediaMap.get(lpItem.id) ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
+      const placeholderLps: DashboardLp[] = lpsData.map((lpItem) => {
+        const cachedMedia = heroMediaMap.get(lpItem.id);
+        const heroMedia = cachedMedia ?? createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex);
         const normalizedStatus = typeof lpItem.status === 'string' ? lpItem.status.toLowerCase() : '';
         const isPublished = normalizedStatus === 'published';
+        const rawVisibility = (lpItem.visibility as string | null) ?? null;
+        const visibility = rawVisibility === 'public' || rawVisibility === 'limited' || rawVisibility === 'private'
+          ? rawVisibility
+          : 'private';
         const hasProductDirect = typeof lpItem.product_id === 'string' && lpItem.product_id.trim().length > 0;
         const hasProductViaCatalog = productLinkedLpIds.has(lpItem.id);
         const hasSalonLink = typeof lpItem.salon_id === 'string' && lpItem.salon_id.trim().length > 0;
         const hasPrimaryLink = hasProductDirect || hasProductViaCatalog || hasSalonLink;
-        const statusLabel = normalizedStatus === 'published'
-          ? '公開中'
-          : normalizedStatus === 'archived'
-          ? 'アーカイブ'
-          : '下書き';
+        const statusLabel = (() => {
+          if (normalizedStatus === 'published') {
+            if (visibility === 'limited') {
+              return '限定公開';
+            }
+            return '公開中';
+          }
+          if (normalizedStatus === 'archived') {
+            return 'アーカイブ';
+          }
+          return '下書き';
+        })();
         const statusVariant: LpStatusVariant = normalizedStatus === 'published'
           ? 'published'
           : normalizedStatus === 'archived'
           ? 'archived'
           : 'draft';
+        const visibilityLabel = visibility === 'public'
+          ? '公開'
+          : visibility === 'limited'
+          ? '限定公開'
+          : '非公開';
         return {
           ...lpItem,
           heroMedia,
@@ -621,10 +505,11 @@ export default function DashboardPage() {
           hasPrimaryLink,
           statusLabel,
           statusVariant,
+          visibilityLabel,
+          visibility,
         };
       });
-
-      setLps(enrichedLps);
+      setLps(placeholderLps);
       let metrics: NoteMetrics | null = null;
       try {
         const metricsResponse = await noteApi.getMetrics();
@@ -669,11 +554,77 @@ export default function DashboardPage() {
 
       const announcementRows = await announcementPromise;
 
+      const announcementList = Array.isArray(announcementRows) ? announcementRows : [];
+
       saveCache(DASHBOARD_CACHE_KEY, {
-        lps: enrichedLps,
+        lps: placeholderLps,
         noteMetrics: metrics,
-        announcements: announcementRows ?? [],
+        announcements: announcementList,
       });
+
+      const pendingHeroTargets = lpsData.filter((lpItem) => !heroMediaCacheRef.current.has(lpItem.id));
+      if (pendingHeroTargets.length > 0) {
+        void (async () => {
+          const heroUpdates = await Promise.all(
+            pendingHeroTargets.map(async (lpItem) => {
+              try {
+                const detailResponse = await lpApi.get(lpItem.id);
+                const steps = parseLpSteps(detailResponse.data?.steps);
+                const heroStep =
+                  steps.find((step) => {
+                    const blockType = resolveBlockType(step);
+                    return typeof blockType === 'string' && blockType.includes('hero');
+                  }) ??
+                  steps.find((step) => resolveBlockType(step) === 'image-aurora-1') ??
+                  steps[0];
+
+                const media = extractMediaFromStep(heroStep, lpItem.title, lpItem.custom_theme_hex);
+                return { id: lpItem.id, media };
+              } catch (detailError) {
+                console.error('Failed to fetch LP detail for hero image:', detailError);
+                return {
+                  id: lpItem.id,
+                  media: createPlaceholderThumbnail(lpItem.title, lpItem.custom_theme_hex),
+                };
+              }
+            })
+          );
+
+          const updateMap = new Map<string, HeroMedia>();
+          for (const update of heroUpdates) {
+            if (!update) continue;
+            heroMediaCacheRef.current.set(update.id, update.media);
+            updateMap.set(update.id, update.media);
+          }
+
+          if (updateMap.size === 0) {
+            return;
+          }
+
+          setLps((current) => {
+            const next = current.map((lpItem) => {
+              const media = updateMap.get(lpItem.id);
+              if (!media) {
+                return lpItem;
+              }
+              return {
+                ...lpItem,
+                heroMedia: media,
+                heroImage: media.type === 'image' ? media.url : lpItem.heroImage,
+                heroVideo: media.type === 'video' ? media.url : null,
+              };
+            });
+
+            saveCache(DASHBOARD_CACHE_KEY, {
+              lps: next,
+              noteMetrics: metrics,
+              announcements: announcementList,
+            });
+
+            return next;
+          });
+        })();
+      }
       didHydrateFromCacheRef.current = true;
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -681,7 +632,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [loadAnnouncements, templateLibrary]);
+  }, [loadAnnouncements]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -766,7 +717,9 @@ export default function DashboardPage() {
                 {lps.map((lp) => {
                   const heroMedia = lp.heroMedia;
                   const statusBadgeClass = lp.statusVariant === 'published'
-                    ? 'bg-green-500 text-white'
+                    ? lp.visibility === 'limited'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-green-500 text-white'
                     : lp.statusVariant === 'archived'
                     ? 'bg-slate-500 text-white'
                     : 'bg-slate-400 text-white';
@@ -851,25 +804,52 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Public URL */}
-                      {lp.isPublished && lp.slug && (
-                        <div className="border-t border-slate-200 pt-1.5">
-                          <div className="flex gap-1">
-                            <input
-                              type="text"
-                              value={`${window.location.origin}/view/${lp.slug}`}
-                              readOnly
-                              className="flex-1 px-1 py-0.5 bg-white border border-slate-300 rounded text-slate-500 text-[8px] sm:text-[10px] min-w-0"
-                            />
-                            <button
-                              onClick={() => {
-                                navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
-                                alert('URLをコピーしました');
-                              }}
-                              className="px-1.5 py-0.5 bg-blue-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-semibold"
-                            >
-                              コピー
-                            </button>
-                          </div>
+                      {lp.isPublished && (
+                        <div className="border-t border-slate-200 pt-1.5 space-y-1">
+                          {lp.visibility === 'limited' ? (
+                            lp.share_url ? (
+                              <div className="flex gap-1">
+                                <input
+                                  type="text"
+                                  value={lp.share_url}
+                                  readOnly
+                                  className="flex-1 px-1 py-0.5 bg-white border border-amber-200 rounded text-amber-700 text-[8px] sm:text-[10px] min-w-0"
+                                />
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(lp.share_url || '');
+                                    alert('限定URLをコピーしました');
+                                  }}
+                                  className="px-1.5 py-0.5 bg-amber-500 text-white rounded text-[8px] sm:text-[10px] hover:bg-amber-600 transition-colors whitespace-nowrap font-semibold"
+                                >
+                                  限定URL
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="text-[10px] sm:text-xs text-amber-600 font-medium">限定URLは保存後に生成されます。</p>
+                            )
+                          ) : (
+                            lp.slug ? (
+                              <div className="flex gap-1">
+                                <input
+                                  type="text"
+                                  value={`${typeof window !== 'undefined' ? window.location.origin : ''}/view/${lp.slug}`}
+                                  readOnly
+                                  className="flex-1 px-1 py-0.5 bg-white border border-slate-300 rounded text-slate-500 text-[8px] sm:text-[10px] min-w-0"
+                                />
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
+                                    alert('URLをコピーしました');
+                                  }}
+                                  className="px-1.5 py-0.5 bg-blue-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-semibold"
+                                >
+                                  コピー
+                                </button>
+                              </div>
+                            ) : null
+                          )}
+                          <p className="text-[8px] sm:text-[10px] text-slate-500 font-medium">{lp.visibilityLabel}</p>
                         </div>
                       )}
                     </div>

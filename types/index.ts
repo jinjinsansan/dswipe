@@ -109,6 +109,7 @@ export interface LandingPage {
   title: string;
   slug: string;
   status: 'draft' | 'published' | 'archived';
+  visibility: 'public' | 'limited' | 'private';
   swipe_direction: 'vertical' | 'horizontal';
   is_fullscreen: boolean;
   show_swipe_hint: boolean;
@@ -131,6 +132,8 @@ export interface LandingPage {
   user?: { username?: string; email?: string } | null;
   seller_username?: string | null;
   username?: string | null;
+  share_url?: string | null;
+  share_token_rotated_at?: string | null;
 }
 
 export interface LinkedSalonSummary {
@@ -178,6 +181,8 @@ export interface LPDetail extends LandingPage {
   public_url: string;
   linked_salon?: LinkedSalonSummary | null;
 }
+
+export type LP = LandingPage;
 
 // 商品型
 export interface Product {

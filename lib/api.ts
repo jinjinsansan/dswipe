@@ -259,6 +259,9 @@ export const lpApi = {
 
   unpublish: (id: string, data?: Record<string, unknown>) =>
     api.post(`/lp/${id}/unpublish`, data ?? {}, { withCredentials: true }),
+
+  rotateShareToken: (id: string) =>
+    api.post<LP>(`/lp/${id}/share-token/rotate`),
   
   // ステップ管理
   addStep: (lpId: string, data: { step_order: number; image_url: string; block_type?: string; content_data?: Record<string, unknown> }) =>

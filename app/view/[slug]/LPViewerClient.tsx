@@ -12,6 +12,7 @@ import 'swiper/css/free-mode';
 import 'swiper/css/effect-creative';
 import {
   fetchLandingPage,
+  fetchLandingPageByShareToken,
   fetchRequiredActions,
   fetchPointsBalance,
   fetchPublicProducts,
@@ -39,14 +40,24 @@ const SwiperSlide = dynamic(() => import('swiper/react').then((mod) => mod.Swipe
 });
 
 interface LPViewerClientProps {
-  slug: string;
+  slug?: string;
+  shareToken?: string | null;
   initialLp?: LPDetail | null;
   initialProducts?: Product[];
 }
 
-export default function LPViewerClient({ slug, initialLp = null, initialProducts = [] }: LPViewerClientProps) {
+export default function LPViewerClient({
+  slug: initialSlug = '',
+  shareToken = null,
+  initialLp = null,
+  initialProducts = [],
+}: LPViewerClientProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
+  const initialResolvedSlug = initialSlug || initialLp?.slug || '';
+  const [slug, setSlug] = useState(initialResolvedSlug);
+  const slugRef = useRef(initialResolvedSlug);
+  const shareTokenRef = useRef<string | null>(shareToken ?? null);
   const [lp, setLp] = useState<LPDetail | null>(initialLp);
   const [isLoading, setIsLoading] = useState(!initialLp);
   const [error, setError] = useState('');
@@ -150,15 +161,34 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     setProducts(initialProducts ?? []);
     setIsLoading(!initialLp);
     setError('');
-  }, [initialLp, initialProducts]);
+
+    const nextSlug = initialSlug || initialLp?.slug || '';
+    if (nextSlug) {
+      slugRef.current = nextSlug;
+      setSlug((prev) => (prev === nextSlug ? prev : nextSlug));
+    }
+
+    shareTokenRef.current = shareToken ?? null;
+  }, [initialLp, initialProducts, initialSlug, shareToken]);
 
   useEffect(() => {
     viewTrackedRef.current = false;
     viewedStepsRef.current = new Set();
 
     fetchLP();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialSlug, shareToken]);
+
+  useEffect(() => {
+    if (!slug || !slugRef.current) {
+      return;
+    }
     checkRequiredActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
+  useEffect(() => {
+    slugRef.current = slug;
   }, [slug]);
 
   useEffect(() => {
@@ -170,7 +200,17 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const fetchLP = async () => {
     try {
-      const lpData = await fetchLandingPage(slug, {
+      const token = shareTokenRef.current;
+      const identifier = token ?? slugRef.current;
+      if (!identifier) {
+        setError('LPが見つかりませんでした');
+        setIsLoading(false);
+        return;
+      }
+
+      const fetcher = token ? fetchLandingPageByShareToken : fetchLandingPage;
+
+      const lpData = await fetcher(identifier, {
         trackView: !viewTrackedRef.current,
         sessionId,
       });
@@ -192,6 +232,12 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
         ...lpData,
         steps: validSteps,
       };
+
+      const nextSlug = typeof lpData?.slug === 'string' ? lpData.slug : slugRef.current;
+      if (nextSlug) {
+        slugRef.current = nextSlug;
+        setSlug((prev) => (prev === nextSlug ? prev : nextSlug));
+      }
 
       if (validSteps[0]) {
         recordStepViewOnce(validSteps[0].id);
@@ -434,7 +480,11 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const checkRequiredActions = async () => {
     try {
-      const response = await fetchRequiredActions(slug, sessionId);
+      const currentSlug = slugRef.current;
+      if (!currentSlug) {
+        return;
+      }
+      const response = await fetchRequiredActions(currentSlug, sessionId);
       setRequiredActions(response);
 
       if (!response?.all_completed) {
@@ -475,7 +525,9 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     viewedStepsRef.current.add(stepId);
     enqueueAnalyticsTask(
       async () => {
-        await recordStepView(slug, {
+        const currentSlug = slugRef.current;
+        if (!currentSlug) return;
+        await recordStepView(currentSlug, {
           stepId,
           sessionId,
         });
@@ -488,7 +540,9 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     if (!stepId) return;
     enqueueAnalyticsTask(
       async () => {
-        await recordCtaClick(slug, {
+        const currentSlug = slugRef.current;
+        if (!currentSlug) return;
+        await recordCtaClick(currentSlug, {
           stepId,
           ctaId,
           sessionId,
@@ -519,7 +573,9 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       if (previousStep) {
         enqueueAnalyticsTask(
           async () => {
-            await recordStepExit(slug, {
+            const currentSlug = slugRef.current;
+            if (!currentSlug) return;
+            await recordStepExit(currentSlug, {
               stepId: previousStep.id,
               sessionId,
             });
@@ -598,7 +654,11 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     e.preventDefault();
     
     try {
-      await submitEmailCapture(slug, {
+      const currentSlug = slugRef.current;
+      if (!currentSlug) {
+        throw new Error('LP slug is not available');
+      }
+      await submitEmailCapture(currentSlug, {
         email,
         sessionId,
       });

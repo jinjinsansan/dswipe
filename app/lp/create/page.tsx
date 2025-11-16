@@ -67,6 +67,7 @@ export default function CreateLPPage() {
     show_swipe_hint: false,
     fullscreen_media: false,
     floating_cta: false,
+    visibility: 'private' as 'public' | 'limited' | 'private',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -261,6 +262,51 @@ export default function CreateLPPage() {
               />
               <p className="mt-1 text-sm text-slate-500">
                 公開URL: https://swipelaunch.com/lp/<span className="text-blue-500">{formData.slug || 'your-slug'}</span>
+              </p>
+            </div>
+
+            {/* 公開範囲 */}
+            <div>
+              <p className="block text-sm font-medium text-slate-700 mb-2">公開範囲</p>
+              <div className="space-y-2">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="public"
+                    checked={formData.visibility === 'public'}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">公開（誰でもアクセス可能）</span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="limited"
+                    checked={formData.visibility === 'limited'}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">
+                    限定公開（URLを知っている人だけ閲覧可能）
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="private"
+                    checked={formData.visibility === 'private'}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">非公開（ダッシュボードのみ表示）</span>
+                </label>
+              </div>
+              <p className="mt-1 text-sm text-slate-500">
+                限定公開を選択すると、保存後に限定URLが自動発行されます。
               </p>
             </div>
 

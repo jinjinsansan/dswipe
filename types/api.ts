@@ -485,6 +485,7 @@ export interface CreateLPRequest {
   description?: string;
   swipe_direction: 'vertical' | 'horizontal';
   is_fullscreen: boolean;
+  visibility?: 'public' | 'limited' | 'private';
   show_swipe_hint?: boolean;
   fullscreen_media?: boolean;
   floating_cta?: boolean;
@@ -500,6 +501,7 @@ export interface UpdateLPRequest {
   title?: string;
   description?: string;
   status?: 'draft' | 'published';
+  visibility?: 'public' | 'limited' | 'private';
   swipe_direction?: 'vertical' | 'horizontal';
   is_fullscreen?: boolean;
   show_swipe_hint?: boolean;
