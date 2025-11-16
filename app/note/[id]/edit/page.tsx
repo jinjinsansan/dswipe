@@ -149,6 +149,7 @@ export default function NoteEditPage() {
   const [shareActionError, setShareActionError] = useState<string | null>(null);
   const [shareActionMessage, setShareActionMessage] = useState<string | null>(null);
   const [requiresLogin, setRequiresLogin] = useState(false);
+  const isNoteEditor = editorType === 'note';
 
   useEffect(() => {
     const loadSalons = async () => {
@@ -971,7 +972,9 @@ export default function NoteEditPage() {
 
   return (
     <DashboardLayout pageTitle="Swipeコラム編集" pageSubtitle={subtitle}>
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 sm:px-6 sm:py-6">
+      <div className={`mx-auto flex w-full max-w-5xl flex-col gap-6 px-3 py-4 sm:px-6 sm:py-6 ${
+        isNoteEditor ? 'pb-28 md:pb-6' : ''
+      }`}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <span
@@ -1015,14 +1018,16 @@ export default function NoteEditPage() {
               >
                 ノート一覧へ戻る
               </Link>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving || actionLoading}
-                className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {saving ? '保存中...' : '下書きを保存'}
-              </button>
+              {!isNoteEditor && (
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving || actionLoading}
+                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saving ? '保存中...' : '下書きを保存'}
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <button
@@ -1632,10 +1637,20 @@ export default function NoteEditPage() {
           </>
         ) : (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-slate-900">NOTEスタイルエディタ</h2>
                 <p className="mt-1 text-xs text-slate-500">段落単位で装飾や有料切り替えを行えます。</p>
+              </div>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving || actionLoading}
+                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saving ? '保存中...' : '下書きを保存'}
+                </button>
               </div>
             </div>
             <NoteRichEditor value={richContent} onChange={setRichContent} disabled={saving || actionLoading} />
