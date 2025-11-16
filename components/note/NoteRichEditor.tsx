@@ -193,7 +193,6 @@ export default function NoteRichEditor({
   const uploadNoticeTimerRef = useRef<number | null>(null);
   const [paidMarkerTop, setPaidMarkerTop] = useState<number | null>(null);
   const [hasPaidArea, setHasPaidArea] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const registerUploadedMedia = useCallback((url: string) => {
     if (typeof window === 'undefined') return;
     try {
@@ -416,58 +415,6 @@ export default function NoteRichEditor({
     if (uploadNoticeTimerRef.current) {
       window.clearTimeout(uploadNoticeTimerRef.current);
     }
-  }, []);
-
-  // iOS Safari keyboard detection using Visual Viewport API
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.visualViewport) {
-      return;
-    }
-
-    const viewport = window.visualViewport;
-    let timeoutId: NodeJS.Timeout | null = null;
-    const initialWindowHeight = window.innerHeight;
-
-    const updateKeyboardHeight = () => {
-      if (!viewport) return;
-
-      // Calculate keyboard height from viewport changes
-      const viewportHeight = viewport.height;
-      
-      // Compare with initial window height (more stable than current innerHeight)
-      const heightDiff = initialWindowHeight - viewportHeight;
-      
-      // Only consider it a keyboard if difference is significant (> 150px)
-      // This avoids false positives from address bar and other UI changes
-      const newKeyboardHeight = heightDiff > 150 ? heightDiff : 0;
-      
-      setKeyboardHeight(newKeyboardHeight);
-    };
-
-    const handleViewportResize = () => {
-      // Debounce to avoid rapid updates
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      
-      // Small delay to ensure stable reading
-      timeoutId = setTimeout(() => {
-        updateKeyboardHeight();
-      }, 50);
-    };
-
-    // Initial check
-    updateKeyboardHeight();
-
-    // Listen only to resize events (not scroll)
-    viewport.addEventListener('resize', handleViewportResize);
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      viewport.removeEventListener('resize', handleViewportResize);
-    };
   }, []);
 
   const openInsertMenu = useCallback(() => {
@@ -992,7 +939,7 @@ export default function NoteRichEditor({
   ];
 
   return (
-    <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6 pb-28 md:pb-12">
+    <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6 pb-4">
       <div className="w-full max-w-full px-0 md:px-4">
         <div
           ref={containerRef}
@@ -1063,13 +1010,8 @@ export default function NoteRichEditor({
       </div>
 
       {/* モバイル用フッターメニュー */}
-      <div 
-        className="fixed inset-x-0 z-40 flex justify-center border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden"
-        style={{
-          bottom: keyboardHeight > 0 ? `${keyboardHeight}px` : '0px',
-        }}
-      >
-        <div className="w-full max-w-[620px] overflow-x-auto px-3">
+      <div className="w-full border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden">
+        <div className="mx-auto w-full max-w-[620px] overflow-x-auto px-3">
           <div className="flex w-max items-center gap-2 pb-2 pr-4">
             <ToolbarButtons
               editor={editor}
@@ -1114,12 +1056,7 @@ export default function NoteRichEditor({
       </div>
 
       {uploadNotice ? (
-        <div 
-          className="pointer-events-none fixed left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg"
-          style={{
-            bottom: keyboardHeight > 0 ? `${keyboardHeight + 80}px` : '96px',
-          }}
-        >
+        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg md:bottom-10">
           {uploadNotice}
         </div>
       ) : null}
