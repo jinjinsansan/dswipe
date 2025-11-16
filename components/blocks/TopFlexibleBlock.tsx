@@ -77,47 +77,18 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
               />
             </div>
 
-            <div className="space-y-1">
-              <span className="block text-xs font-medium text-slate-600">レイアウト</span>
-              <div className="inline-flex overflow-hidden rounded-lg border border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => onEdit?.('layout', 'left')}
-                  className={`px-3 py-1.5 text-xs font-semibold transition-colors ${layout === 'left' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-                >
-                  左寄せ
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onEdit?.('layout', 'center')}
-                  className={`px-3 py-1.5 text-xs font-semibold transition-colors ${layout === 'center' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-                >
-                  中央揃え
-                </button>
-              </div>
-              <p className="text-[11px] text-slate-500">すべてのテキストは空欄にすると非表示になります。</p>
-            </div>
+            <p className="text-[11px] text-slate-500">すべてのテキストは空欄にすると非表示になります。</p>
           </div>
         ) : null}
 
         <div className={`flex flex-col gap-6 ${alignmentClasses}`}>
           {displayTopHeading ? (
-            <>
-              <h2
-                className="typo-headline text-pretty font-bold tracking-tight"
-                style={{ color: withAlpha(textColor, 0.94, textColor) }}
-              >
-                {displayTopHeading}
-              </h2>
-              <div
-                className="h-1 rounded-full"
-                style={{
-                  backgroundColor: accentColor,
-                  width: layout === 'left' ? '3rem' : '4rem',
-                  alignSelf: layout === 'left' ? 'flex-start' : 'center',
-                }}
-              />
-            </>
+            <h2
+              className="typo-headline text-pretty font-bold tracking-tight"
+              style={{ color: withAlpha(textColor, 0.94, textColor) }}
+            >
+              {displayTopHeading}
+            </h2>
           ) : null}
 
           {paragraphs.length > 0 ? (
@@ -136,7 +107,7 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
           {displayBottomHeading ? (
             <h3
               className="typo-subheadline text-pretty font-semibold"
-              style={{ color: withAlpha(textColor, 0.88, textColor) }}
+              style={{ color: accentColor }}
             >
               {displayBottomHeading}
             </h3>

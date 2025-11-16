@@ -1841,31 +1841,45 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
               レイアウト
             </label>
-            <select
-              value={(content as any).layout || 'card'}
-              onChange={(e) => onUpdateContent('layout', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
-            >
-              {block.blockType.includes('testimonial') && (
-                <>
-                  <option value="card">カード</option>
-                  <option value="slider">スライダー</option>
-                  <option value="grid">グリッド</option>
-                </>
-              )}
-              {block.blockType.includes('faq') && (
-                <>
-                  <option value="accordion">アコーディオン</option>
-                  <option value="grid">グリッド</option>
-                </>
-              )}
-              {block.blockType.includes('gallery') && (
-                <>
-                  <option value="grid">グリッド</option>
-                  <option value="masonry">マソンリー</option>
-                </>
-              )}
-            </select>
+            {(() => {
+              const rawLayout = (content as any).layout;
+              const defaultLayout = block.blockType === 'top-flex-1' ? 'center' : 'card';
+              const layoutValue = rawLayout || defaultLayout;
+
+              return (
+                <select
+                  value={layoutValue}
+                  onChange={(e) => onUpdateContent('layout', e.target.value)}
+                  className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                >
+                  {block.blockType === 'top-flex-1' && (
+                    <>
+                      <option value="center">中央揃え</option>
+                      <option value="left">左寄せ</option>
+                    </>
+                  )}
+                  {block.blockType.includes('testimonial') && (
+                    <>
+                      <option value="card">カード</option>
+                      <option value="slider">スライダー</option>
+                      <option value="grid">グリッド</option>
+                    </>
+                  )}
+                  {block.blockType.includes('faq') && (
+                    <>
+                      <option value="accordion">アコーディオン</option>
+                      <option value="grid">グリッド</option>
+                    </>
+                  )}
+                  {block.blockType.includes('gallery') && (
+                    <>
+                      <option value="grid">グリッド</option>
+                      <option value="masonry">マソンリー</option>
+                    </>
+                  )}
+                </select>
+              );
+            })()}
           </div>
         )}
       </div>
