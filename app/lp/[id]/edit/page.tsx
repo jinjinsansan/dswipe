@@ -19,6 +19,7 @@ import {
   ArrowDownTrayIcon,
   CheckCircleIcon,
   Cog6ToothIcon,
+  ExclamationTriangleIcon,
   LinkIcon,
   RocketLaunchIcon,
   Squares2X2Icon,
@@ -299,6 +300,7 @@ export default function EditLPNewPage() {
   const [shareTokenRotatedAt, setShareTokenRotatedAt] = useState<string | null>(null);
   const [isRotatingShareToken, setIsRotatingShareToken] = useState(false);
   const [shareCopyStatus, setShareCopyStatus] = useState<'idle' | 'copied'>('idle');
+  const [limitedDraftNotice, setLimitedDraftNotice] = useState(false);
   const shareTokenRotatedLabel = useMemo(() => {
     if (!shareTokenRotatedAt) return null;
     try {
@@ -308,11 +310,32 @@ export default function EditLPNewPage() {
     }
   }, [shareTokenRotatedAt]);
 
+  const savedVisibility = (lp?.visibility as 'public' | 'limited' | 'private') ?? 'private';
+  const isPublished = lp?.status === 'published';
+  const limitedVisibilitySelected = lpSettings.visibility === 'limited';
+  const hasLimitedVisibility = limitedVisibilitySelected || savedVisibility === 'limited';
+  const showLimitedDraftWarning = Boolean(lp && hasLimitedVisibility && !isPublished);
+  const limitedShareDisabled = showLimitedDraftWarning;
+  const limitedShareUnavailableMessage = '公開すると限定公開URLが有効になります';
+
   useEffect(() => {
     if (lpSettings.visibility !== 'limited') {
       setShareCopyStatus('idle');
     }
   }, [lpSettings.visibility]);
+  useEffect(() => {
+    if (!limitedDraftNotice) {
+      return;
+    }
+    const timer = setTimeout(() => setLimitedDraftNotice(false), 5000);
+    return () => clearTimeout(timer);
+  }, [limitedDraftNotice]);
+
+  useEffect(() => {
+    if (isPublished) {
+      setLimitedDraftNotice(false);
+    }
+  }, [isPublished]);
   const [mobileTab, setMobileTab] = useState<TabType>('preview');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showColorGenerator, setShowColorGenerator] = useState(false);
@@ -1061,6 +1084,13 @@ export default function EditLPNewPage() {
 
         setBlocks(normalizedBlocks);
         if (showFeedback) {
+          const nextStatus = lpUpdateResponse.data?.status ?? lp?.status ?? 'draft';
+          const nextVisibility = (lpUpdateResponse.data?.visibility as 'public' | 'limited' | 'private' | undefined) ?? lpSettings.visibility;
+          if (nextVisibility === 'limited' && nextStatus !== 'published') {
+            setLimitedDraftNotice(true);
+          } else {
+            setLimitedDraftNotice(false);
+          }
           setSaveSuccess(true);
           setTimeout(() => setSaveSuccess(false), 3000);
         }
@@ -1152,6 +1182,10 @@ export default function EditLPNewPage() {
 
   const handleRotateShareUrl = async () => {
     if (!lp) {
+      return;
+    }
+    if (lp.status !== 'published') {
+      alert('限定公開URLを再発行するには先にLPを公開してください。');
       return;
     }
     if (lp.visibility !== 'limited') {
@@ -1263,6 +1297,12 @@ export default function EditLPNewPage() {
           </div>
         </div>
       )}
+      {limitedDraftNotice && (
+        <div className="fixed top-24 right-4 z-50 bg-amber-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
+          <ExclamationTriangleIcon className="h-5 w-5" aria-hidden="true" />
+          <span className="text-sm font-semibold">限定公開URLを有効にするには公開してください。</span>
+        </div>
+      )}
       {error && (
         <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -1312,7 +1352,7 @@ export default function EditLPNewPage() {
               const canPreviewLimited = Boolean(isPublished && savedVisibility === 'limited' && shareLink);
               const canPreviewPublic = Boolean(isPublished && savedVisibility === 'public' && lp?.slug);
               const showLimitedCopy = Boolean(savedVisibility === 'limited' && shareLink);
-              const showRotateLimited = Boolean(isPublished && savedVisibility === 'limited' && shareLink);
+              const showRotateLimited = Boolean(savedVisibility === 'limited' && shareLink);
 
               return (
                 <>
@@ -1358,7 +1398,9 @@ export default function EditLPNewPage() {
                     <button
                       type="button"
                       onClick={handleCopyShareUrl}
-                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded transition-colors"
+                      disabled={limitedShareDisabled}
+                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                     >
                       {shareCopyStatus === 'copied' ? 'コピー済み' : '限定URLコピー'}
                     </button>
@@ -1368,8 +1410,9 @@ export default function EditLPNewPage() {
                     <button
                       type="button"
                       onClick={handleRotateShareUrl}
-                      disabled={isRotatingShareToken}
+                      disabled={limitedShareDisabled || isRotatingShareToken}
                       className="px-3 py-1.5 text-xs font-semibold bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                     >
                       {isRotatingShareToken ? '再発行中…' : '限定URL再発行'}
                     </button>
@@ -1475,6 +1518,12 @@ export default function EditLPNewPage() {
           </div>
         </div>
       </header>
+      {showLimitedDraftWarning && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-700 px-3 sm:px-4 lg:px-6 py-2 text-xs sm:text-sm flex items-center gap-2">
+          <ExclamationTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" aria-hidden="true" />
+          <span>限定公開URLは公開後にアクセス可能になります。「公開」ボタンを押してステータスを公開にしてください。</span>
+        </div>
+      )}
 
       {/* Mobile Menu - Full Screen Modal */}
       {showMobileMenu && (
@@ -1728,28 +1777,38 @@ export default function EditLPNewPage() {
                 {lpSettings.visibility === 'limited' ? (
                   <div className="space-y-2 rounded border border-amber-200 bg-amber-50/60 p-2">
                     {shareUrl ? (
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={shareUrl}
-                          readOnly
-                          className="flex-1 px-2 py-1 bg-white border border-amber-200 rounded text-slate-700 text-xs"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleCopyShareUrl}
-                          className="px-2 py-1 bg-amber-500 text-white rounded text-xs font-semibold hover:bg-amber-600 transition-colors"
-                        >
-                          {shareCopyStatus === 'copied' ? 'コピー済み' : 'コピー'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleRotateShareUrl}
-                          disabled={isRotatingShareToken}
-                          className="px-2 py-1 bg-slate-200 text-slate-700 rounded text-xs font-semibold hover:bg-slate-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                          {isRotatingShareToken ? '再発行中…' : '再発行'}
-                        </button>
+                      <div className="space-y-2">
+                        {limitedShareDisabled && (
+                          <p className="text-[11px] text-amber-700">
+                            限定公開URLは公開後に有効になります。先に「公開」を実行してください。
+                          </p>
+                        )}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={shareUrl}
+                            readOnly
+                            className="flex-1 px-2 py-1 bg-white border border-amber-200 rounded text-slate-700 text-xs"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleCopyShareUrl}
+                            disabled={limitedShareDisabled}
+                            className="px-2 py-1 bg-amber-500 text-white rounded text-xs font-semibold hover:bg-amber-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
+                          >
+                            {shareCopyStatus === 'copied' ? 'コピー済み' : 'コピー'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleRotateShareUrl}
+                            disabled={limitedShareDisabled || isRotatingShareToken}
+                            className="px-2 py-1 bg-slate-200 text-slate-700 rounded text-xs font-semibold hover:bg-slate-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
+                          >
+                            {isRotatingShareToken ? '再発行中…' : '再発行'}
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <p className="text-xs text-amber-700">
@@ -2146,6 +2205,11 @@ export default function EditLPNewPage() {
                   <div className="space-y-2 rounded border border-amber-200 bg-amber-50/60 p-2">
                     {shareUrl ? (
                       <div className="flex flex-col gap-2">
+                        {limitedShareDisabled && (
+                          <p className="text-[11px] text-amber-700">
+                            限定公開URLは公開後に有効になります。先に「公開」を実行してください。
+                          </p>
+                        )}
                         <input
                           type="text"
                           value={shareUrl}
@@ -2156,15 +2220,18 @@ export default function EditLPNewPage() {
                           <button
                             type="button"
                             onClick={handleCopyShareUrl}
-                            className="flex-1 px-2 py-1 bg-amber-500 text-white rounded text-xs font-semibold hover:bg-amber-600 transition-colors"
+                            disabled={limitedShareDisabled}
+                            className="flex-1 px-2 py-1 bg-amber-500 text-white rounded text-xs font-semibold hover:bg-amber-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                           >
                             {shareCopyStatus === 'copied' ? 'コピー済み' : 'コピー'}
                           </button>
                           <button
                             type="button"
                             onClick={handleRotateShareUrl}
-                            disabled={isRotatingShareToken}
+                            disabled={limitedShareDisabled || isRotatingShareToken}
                             className="flex-1 px-2 py-1 bg-slate-200 text-slate-700 rounded text-xs font-semibold hover:bg-slate-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                           >
                             {isRotatingShareToken ? '再発行中…' : '再発行'}
                           </button>
