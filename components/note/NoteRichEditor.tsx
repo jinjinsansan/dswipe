@@ -193,6 +193,7 @@ export default function NoteRichEditor({
   const uploadNoticeTimerRef = useRef<number | null>(null);
   const [paidMarkerTop, setPaidMarkerTop] = useState<number | null>(null);
   const [hasPaidArea, setHasPaidArea] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const registerUploadedMedia = useCallback((url: string) => {
     if (typeof window === 'undefined') return;
     try {
@@ -415,6 +416,59 @@ export default function NoteRichEditor({
     if (uploadNoticeTimerRef.current) {
       window.clearTimeout(uploadNoticeTimerRef.current);
     }
+  }, []);
+
+  // iOS Safari keyboard detection using Visual Viewport API
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) {
+      return;
+    }
+
+    const viewport = window.visualViewport;
+    let animationFrameId: number | null = null;
+    let lastHeight = viewport.height;
+
+    const updateKeyboardHeight = () => {
+      if (!viewport) return;
+
+      // Calculate keyboard height from viewport changes
+      const currentHeight = viewport.height;
+      const windowHeight = window.innerHeight;
+      
+      // Detect keyboard by comparing viewport height to window height
+      const heightDiff = windowHeight - currentHeight;
+      
+      // Only consider it a keyboard if difference is significant (> 100px)
+      // This avoids false positives from address bar hiding/showing
+      const newKeyboardHeight = heightDiff > 100 ? heightDiff : 0;
+      
+      setKeyboardHeight(newKeyboardHeight);
+      lastHeight = currentHeight;
+    };
+
+    const handleViewportChange = () => {
+      // Use RAF to throttle updates and ensure smooth performance
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      animationFrameId = requestAnimationFrame(updateKeyboardHeight);
+    };
+
+    // Initial check
+    updateKeyboardHeight();
+
+    // Listen to viewport changes
+    viewport.addEventListener('resize', handleViewportChange);
+    viewport.addEventListener('scroll', handleViewportChange);
+
+    return () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      viewport.removeEventListener('resize', handleViewportChange);
+      viewport.removeEventListener('scroll', handleViewportChange);
+    };
   }, []);
 
   const openInsertMenu = useCallback(() => {
@@ -1010,7 +1064,13 @@ export default function NoteRichEditor({
       </div>
 
       {/* モバイル用フッターメニュー */}
-      <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden">
+      <div 
+        className="fixed inset-x-0 z-40 flex justify-center border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden"
+        style={{
+          bottom: keyboardHeight > 0 ? `${keyboardHeight}px` : '0px',
+          transition: 'bottom 0.2s ease-out',
+        }}
+      >
         <div className="w-full max-w-[620px] overflow-x-auto px-3">
           <div className="flex w-max items-center gap-2 pb-2 pr-4">
             <ToolbarButtons
@@ -1056,7 +1116,13 @@ export default function NoteRichEditor({
       </div>
 
       {uploadNotice ? (
-        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg md:bottom-10">
+        <div 
+          className="pointer-events-none fixed left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg"
+          style={{
+            bottom: keyboardHeight > 0 ? `${keyboardHeight + 80}px` : '96px',
+            transition: 'bottom 0.2s ease-out',
+          }}
+        >
           {uploadNotice}
         </div>
       ) : null}
