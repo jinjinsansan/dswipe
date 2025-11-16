@@ -8,7 +8,7 @@ import { useFormatter, useTranslations, useLocale } from 'next-intl';
 
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { publicApi } from '@/lib/api';
+import { fetchPublicNotes } from '@/lib/publicClient';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import type { PublicNoteSummary } from '@/types';
 const PAGE_SIZE = 60;
@@ -54,13 +54,21 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
       setLoading('loading');
       setError(null);
       try {
-        const response = await publicApi.listNotes({
+        const response = await fetchPublicNotes({
           limit: PAGE_SIZE,
           search: debouncedSearch || undefined,
           categories: categoryFilter !== 'all' ? [categoryFilter] : undefined,
           locale,
         });
-        setNotes(response.data?.data ?? []);
+        const payload = response?.data ?? response;
+        const items = Array.isArray(payload?.data)
+          ? payload.data
+          : Array.isArray(payload?.results)
+          ? payload.results
+          : Array.isArray(payload)
+          ? payload
+          : [];
+        setNotes(items as PublicNoteSummary[]);
         setLoading('idle');
       } catch (err: unknown) {
         setError(t('loadError'));

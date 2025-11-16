@@ -8,7 +8,8 @@ import { useFormatter, useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
-import { paymentApi, productApi, publicApi } from '@/lib/api';
+import { paymentApi } from '@/lib/api';
+import { fetchProductDetail, fetchPublicNote } from '@/lib/publicClient';
 import type { BillingProfileResponse } from '@/types/api';
 import type { PublicNoteDetail, Product } from '@/types';
 import { redirectToLogin } from '@/lib/navigation';
@@ -169,10 +170,9 @@ export default function QuickCheckoutPage() {
       try {
         if (itemType === 'note') {
           if (slugParam) {
-            const response = await publicApi.getNote(slugParam, {
+            const data = (await fetchPublicNote(slugParam, {
               accessToken: localStorage.getItem('access_token') ?? undefined,
-            });
-            const data = response.data as PublicNoteDetail;
+            })) as PublicNoteDetail;
             setItem({
               id: itemId ?? data.id,
               type: 'note',
@@ -194,8 +194,7 @@ export default function QuickCheckoutPage() {
             });
           }
         } else if (itemType === 'product') {
-          const response = await productApi.get(itemId!);
-          const data = response.data as Product;
+          const data = (await fetchProductDetail(itemId!)) as Product;
           setItem({
             id: data.id,
             type: 'product',

@@ -1,23 +1,42 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { PageLoader } from '@/components/LoadingSpinner';
 
 import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Swiper as SwiperType } from 'swiper';
-import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
-import { publicApi, productApi, pointsApi } from '@/lib/api';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/free-mode';
+import 'swiper/css/effect-creative';
+import {
+  fetchLandingPage,
+  fetchRequiredActions,
+  fetchPointsBalance,
+  fetchPublicProducts,
+  purchaseProduct,
+  recordCtaClick,
+  recordStepExit,
+  recordStepView,
+  submitEmailCapture,
+} from '@/lib/publicClient';
 import { LPDetail, RequiredActionsStatus, CTA, Product } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 import { redirectToLogin } from '@/lib/navigation';
 
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/free-mode';
-import 'swiper/css/effect-creative';
+import type { Swiper as SwiperType } from 'swiper';
+import type { SwiperModule } from 'swiper/types';
+
+const Swiper = dynamic(() => import('swiper/react').then((mod) => mod.Swiper), {
+  ssr: false,
+  loading: () => <PageLoader />,
+});
+
+const SwiperSlide = dynamic(() => import('swiper/react').then((mod) => mod.SwiperSlide), {
+  ssr: false,
+});
 
 interface LPViewerClientProps {
   slug: string;
@@ -45,6 +64,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchaseMethod, setPurchaseMethod] = useState<'points' | 'yen'>('points');
   const swiperRef = useRef<SwiperType | null>(null);
+  const [swiperModules, setSwiperModules] = useState<SwiperModule[] | null>(null);
 
   const selectedIsPoints = purchaseMethod === 'points';
   const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
@@ -107,6 +127,25 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
   };
 
   useEffect(() => {
+    let mounted = true;
+    const loadSwiperModules = async () => {
+      const { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } = await import('swiper/modules');
+
+      if (!mounted) {
+        return;
+      }
+
+      setSwiperModules([Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]);
+    };
+
+    loadSwiperModules();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     setLp(initialLp ?? null);
     setProducts(initialProducts ?? []);
     setIsLoading(!initialLp);
@@ -131,11 +170,11 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const fetchLP = async () => {
     try {
-      const response = await publicApi.getLP(slug, {
+      const lpData = await fetchLandingPage(slug, {
         trackView: !viewTrackedRef.current,
         sessionId,
       });
-      const steps = Array.isArray(response.data.steps) ? response.data.steps : [];
+      const steps = Array.isArray(lpData?.steps) ? lpData.steps : [];
       const sortedSteps = [...steps].sort((a, b) => a.step_order - b.step_order);
 
       // 第1層フィルタ：有効なコンテンツを持つステップのみ
@@ -150,7 +189,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       }
 
       const newLp = {
-        ...response.data,
+        ...lpData,
         steps: validSteps,
       };
 
@@ -161,10 +200,10 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       setLp(newLp);
       setIsLoading(false);
 
-      if (response.data.linked_salon) {
+      if (lpData?.linked_salon) {
         setProducts([]);
-      } else if (response.data.id) {
-        fetchProducts(response.data.id);
+      } else if (lpData?.id) {
+        fetchProducts(lpData.id);
       }
     } catch (err: any) {
       console.error('❌ Failed to fetch LP:', err);
@@ -176,9 +215,14 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const fetchProducts = async (lpId: string) => {
     try {
-      const response = await productApi.getPublic({ lp_id: lpId, limit: 20 });
-      const productsData = Array.isArray(response.data?.data)
-        ? (response.data.data as Array<Record<string, any>>)
+      const response = await fetchPublicProducts({ lp_id: lpId, limit: 20 });
+      const payload = response?.data ?? response;
+      const productsData = Array.isArray(payload?.data)
+        ? (payload.data as Array<Record<string, any>>)
+        : Array.isArray(payload?.products)
+        ? (payload.products as Array<Record<string, any>>)
+        : Array.isArray(payload)
+        ? (payload as Array<Record<string, any>>)
         : [];
 
       const mappedProducts: Product[] = productsData
@@ -225,8 +269,8 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const fetchPointBalance = async () => {
     try {
-      const response = await pointsApi.getBalance();
-      const balance = response.data.point_balance || 0;
+      const response = await fetchPointsBalance();
+      const balance = response?.point_balance || 0;
       setPointBalance(balance);
     } catch (error) {
       console.error('❌ Failed to fetch point balance:', error);
@@ -319,7 +363,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
     setIsPurchasing(true);
     try {
-      const response = await productApi.purchase(selectedProduct.id, {
+      const response = await purchaseProduct(selectedProduct.id, {
         quantity: purchaseQuantity,
         payment_method: purchaseMethod,
       });
@@ -327,8 +371,8 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       if (isPointsPurchase) {
         setShowPurchaseModal(false);
 
-        const payload = response.data || {};
-        const nested = payload.data || {};
+        const payload = response || {};
+        const nested = (payload as Record<string, any>)?.data || {};
 
         const redirectTarget =
           payload.redirect_url ||
@@ -367,7 +411,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
           await fetchProducts(lp.id);
         }
       } else {
-        const checkoutUrl = response.data?.checkout_url;
+        const checkoutUrl = (response as Record<string, any>)?.checkout_url;
         if (checkoutUrl) {
           alert('決済ページに移動します。完了後にブラウザに戻ってください。');
           window.location.href = checkoutUrl;
@@ -377,15 +421,12 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       }
     } catch (error: any) {
       console.error('❌ Purchase error:', error);
-      console.error('Error details:', {
-        response: error.response?.data,
-        status: error.response?.status,
-        message: error.message,
-      });
 
-      const errorMessage =
-        error.response?.data?.detail || error.message || '購入に失敗しました。もう一度お試しください。';
-      alert(errorMessage);
+      const errorDetail =
+        (error?.payload && typeof error.payload === 'object'
+          ? (error.payload as Record<string, any>).detail
+          : undefined) ?? error?.message ?? '購入に失敗しました。もう一度お試しください。';
+      alert(errorDetail);
     } finally {
       setIsPurchasing(false);
     }
@@ -393,13 +434,18 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
 
   const checkRequiredActions = async () => {
     try {
-      const response = await publicApi.getRequiredActions(slug, sessionId);
-      setRequiredActions(response.data);
-      
-      if (!response.data.all_completed) {
-        const emailAction = response.data.required_actions.find(
-          (a: any) => a.action_type === 'email' && !response.data.completed_actions.includes(a.id)
-        );
+      const response = await fetchRequiredActions(slug, sessionId);
+      setRequiredActions(response);
+
+      if (!response?.all_completed) {
+        const emailAction = Array.isArray(response?.required_actions)
+          ? response.required_actions.find(
+              (a: any) =>
+                a?.action_type === 'email' &&
+                Array.isArray(response?.completed_actions) &&
+                !response.completed_actions.includes(a.id)
+            )
+          : undefined;
         if (emailAction) {
           setShowEmailGate(true);
         }
@@ -429,23 +475,23 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     viewedStepsRef.current.add(stepId);
     enqueueAnalyticsTask(
       async () => {
-        await publicApi.recordStepView(slug, {
-          step_id: stepId,
-          session_id: sessionId,
+        await recordStepView(slug, {
+          stepId,
+          sessionId,
         });
       },
       'Failed to record step view:'
     );
   };
 
-  const recordCtaClick = (stepId: string | undefined, ctaId?: string) => {
+  const handleRecordCtaClick = (stepId: string | undefined, ctaId?: string) => {
     if (!stepId) return;
     enqueueAnalyticsTask(
       async () => {
-        await publicApi.recordCtaClick(slug, {
-          step_id: stepId,
-          cta_id: ctaId,
-          session_id: sessionId,
+        await recordCtaClick(slug, {
+          stepId,
+          ctaId,
+          sessionId,
         });
       },
       'Failed to record CTA click:'
@@ -473,9 +519,9 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
       if (previousStep) {
         enqueueAnalyticsTask(
           async () => {
-            await publicApi.recordStepExit(slug, {
-              step_id: previousStep.id,
-              session_id: sessionId,
+            await recordStepExit(slug, {
+              stepId: previousStep.id,
+              sessionId,
             });
           },
           'Failed to record step exit:'
@@ -552,16 +598,20 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
     e.preventDefault();
     
     try {
-      await publicApi.submitEmail(slug, {
+      await submitEmailCapture(slug, {
         email,
-        session_id: sessionId,
+        sessionId,
       });
       
       setShowEmailGate(false);
       await checkRequiredActions();
       alert('メールアドレスが登録されました！');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'メールアドレスの登録に失敗しました');
+      const detail =
+        (err?.payload && typeof err.payload === 'object'
+          ? (err.payload as Record<string, any>).detail
+          : undefined) ?? err?.message ?? 'メールアドレスの登録に失敗しました';
+      alert(detail);
     }
   };
 
@@ -595,6 +645,10 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
   };
 
   if (isLoading) {
+    return <PageLoader />;
+  }
+
+  if (!swiperModules) {
     return <PageLoader />;
   }
 
@@ -687,7 +741,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
             dynamicBullets: true,
             dynamicMainBullets: 3,
           }}
-          modules={[Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative]}
+          modules={swiperModules}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
@@ -725,7 +779,7 @@ export default function LPViewerClient({ slug, initialLp = null, initialProducts
                           productId={primaryTargetId}
                           onProductClick={handleProductButtonClick}
                           ctaIds={(ctasByStep[step.id] ?? []).map((cta) => cta.id)}
-                          onCtaClick={(ctaId) => recordCtaClick(step.id, ctaId)}
+                          onCtaClick={(ctaId) => handleRecordCtaClick(step.id, ctaId)}
                         />
                       ) : step.image_url ? (
                         <div

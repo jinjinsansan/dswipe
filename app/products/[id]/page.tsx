@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArchiveBoxIcon, CubeTransparentIcon, FireIcon } from '@heroicons/react/24/outline';
-import { productApi, paymentApi } from '@/lib/api';
+import { paymentApi } from '@/lib/api';
+import { fetchProductDetail, purchaseProduct } from '@/lib/publicClient';
 import { useAuthStore } from '@/store/authStore';
 import StickySiteHeader from '@/components/layout/StickySiteHeader';
 import type { Product } from '@/types';
@@ -38,8 +39,7 @@ export default function ProductDetailPage() {
   const fetchProduct = async () => {
     try {
       setIsLoading(true);
-      const response = await productApi.get(productId);
-      const productData = response.data as ProductDetail;
+      const productData = (await fetchProductDetail(productId)) as ProductDetail;
       setProduct(productData);
       if (productData.allow_point_purchase) {
         setSelectedMethod('points');
@@ -109,11 +109,10 @@ export default function ProductDetailPage() {
     try {
       setIsPurchasing(true);
       if (isPointsPurchase) {
-        const response = await productApi.purchase(productId, {
+        const result = await purchaseProduct(productId, {
           quantity,
           payment_method: selectedMethod,
         });
-        const result = response.data;
         const successMessage = `購入完了！\n\n` +
           `商品名: ${product.title}\n` +
           `数量: ${quantity}個\n` +
@@ -138,7 +137,10 @@ export default function ProductDetailPage() {
       window.location.href = checkoutUrl;
       return;
     } catch (error: any) {
-      const detail = error.response?.data?.detail;
+      const detail =
+        (error?.payload && typeof error.payload === 'object'
+          ? (error.payload as Record<string, any>).detail
+          : undefined) ?? error?.response?.data?.detail;
       if (detail === '請求先情報を設定してください') {
         alert('先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。');
         const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';

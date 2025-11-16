@@ -1,6 +1,8 @@
-import { lpApi, publicApi } from '@/lib/api';
-import { TEMPLATE_LIBRARY } from '@/lib/templates';
+import { lpApi } from '@/lib/api';
+import { fetchLandingPage } from '@/lib/publicClient';
+import { loadTemplateBundle } from '@/lib/templates';
 import type { LandingPage, LPStep } from '@/types';
+import type { TemplateBlock } from '@/types/templates';
 
 export type HeroMedia = { type: 'image' | 'video'; url: string };
 
@@ -134,7 +136,12 @@ const createPlaceholderThumbnail = (title: string, accentHex?: string | null): H
   };
 };
 
-const extractMediaFromStep = (step: StepLike | null | undefined, title: string, accent?: string | null): HeroMedia => {
+const extractMediaFromStep = (
+  step: StepLike | null | undefined,
+  title: string,
+  accent: string | null | undefined,
+  templateSource: TemplateBlock[]
+): HeroMedia => {
   if (!step) {
     return createPlaceholderThumbnail(title, accent);
   }
@@ -187,7 +194,7 @@ const extractMediaFromStep = (step: StepLike | null | undefined, title: string, 
 
   const blockType = resolveBlockType(step);
   if (blockType) {
-    const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
+    const template = templateSource.find((item) => item.id === blockType || item.templateId === blockType);
     if (template?.defaultContent) {
       const defaultContent = normalizeContent(template.defaultContent);
       const templateImage = pickFirstString([
@@ -268,6 +275,16 @@ type EnrichedLandingPage = LandingPageLike & {
 export const enrichLpsWithHeroMedia = async (
   lps: LandingPageLike[]
 ): Promise<EnrichedLandingPage[]> => {
+  const bundle = await loadTemplateBundle();
+  const templateSource: TemplateBlock[] = [
+    ...bundle.templateLibrary,
+    ...bundle.infoProductBlocks,
+    ...bundle.contactBlocks,
+    ...bundle.tokushoBlocks,
+    ...bundle.newsletterBlocks,
+    ...bundle.handwrittenBlocks,
+  ];
+
   const results = await Promise.all(
     lps.map(async (lp) => {
       try {
@@ -276,10 +293,9 @@ export const enrichLpsWithHeroMedia = async (
 
         if (lp.slug) {
           try {
-            const publicResponse = await publicApi.getLP(lp.slug, { trackView: false });
-            const publicData = publicResponse.data as LandingPageLike;
+            const publicData = (await fetchLandingPage(lp.slug, { trackView: false })) as LandingPageLike;
             detailData = publicData;
-            steps = asStepArray(publicData.steps);
+            steps = asStepArray(publicData?.steps);
           } catch (publicError) {
             console.warn('Failed to fetch public LP data for preview:', publicError);
           }
@@ -292,7 +308,12 @@ export const enrichLpsWithHeroMedia = async (
         }
 
         const heroStep = selectHeroStep(steps);
-        const media = extractMediaFromStep(heroStep, lp.title, lp.custom_theme_hex ?? null);
+        const media = extractMediaFromStep(
+          heroStep,
+          lp.title,
+          lp.custom_theme_hex ?? null,
+          templateSource
+        );
         const sellerUsername = resolveSellerUsername(detailData) ?? resolveSellerUsername(lp);
         const fallbackImage = asString(lp.heroImage) ?? asString(lp.image_url);
         const sellerSlug = sellerUsername ?? asString(lp.seller_username) ?? undefined;

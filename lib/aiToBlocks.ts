@@ -5,12 +5,12 @@ import { getTemplateById, getTemplateByUniqueId, ColorThemeKey } from './templat
 /**
  * AIウィザードの結果をブロック構造に変換
  */
-export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): Array<{
+export async function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): Promise<Array<{
   id: string;
   blockType: BlockType;
   content: BlockContent;
   order: number;
-}> {
+}>> {
   console.log('AI Result:', aiResult);
   
   const blocks: Array<{
@@ -29,14 +29,15 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
 
   const palette = aiResult.palette;
 
-  aiResult.blocks.forEach((aiBlock, index) => {
+  for (let index = 0; index < aiResult.blocks.length; index += 1) {
+    const aiBlock = aiResult.blocks[index];
     const blockType = aiBlock.blockType as BlockType;
     const templateVariantId = typeof (aiBlock as any).templateId === 'string' ? (aiBlock as any).templateId : undefined;
     console.log(`Processing block ${index}:`, blockType, aiBlock);
 
-    let template = templateVariantId ? getTemplateByUniqueId(templateVariantId) : undefined;
+    let template = templateVariantId ? await getTemplateByUniqueId(templateVariantId) : undefined;
     if (!template) {
-      template = getTemplateById(blockType);
+      template = await getTemplateById(blockType);
     }
 
     if (!template) {
@@ -57,7 +58,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
         'top-inline-cta-1',
         'top-media-spotlight-1',
       ]);
-      return; // スキップして次のブロックへ
+      continue; // スキップして次のブロックへ
     }
     
     console.log(`Found template for ${blockType}:`, template.name, templateVariantId ? `(variant: ${templateVariantId})` : '');
@@ -100,7 +101,7 @@ export function convertAIResultToBlocks(aiResult: AIGenerationResponse | null): 
     
     console.log(`Created block ${index}:`, newBlock);
     blocks.push(newBlock);
-  });
+  }
 
   console.log(`Total blocks created: ${blocks.length}`, blocks);
   return blocks;

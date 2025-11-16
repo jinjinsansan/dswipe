@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import type { NoteBlock, NoteBlockType } from '@/types';
 import {
@@ -20,9 +21,13 @@ import {
   DocumentDuplicateIcon,
   PhotoIcon,
 } from '@heroicons/react/24/outline';
-import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi } from '@/lib/api';
-import { DEFAULT_FONT_KEY, FONT_OPTIONS, getFontStack } from '@/lib/fonts';
+import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
+
+const MediaLibraryModal = dynamic(() => import('@/components/MediaLibraryModal'), {
+  loading: () => null,
+  ssr: false,
+});
 
 const TEXT_COLOR_OPTIONS: Array<{ value: string; key: string }> = [
   { value: '#0f172a', key: 'dark' },

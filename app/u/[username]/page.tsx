@@ -5,7 +5,8 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { productApi, publicApi, salonPublicApi } from '@/lib/api';
+import { salonPublicApi } from '@/lib/api';
+import { fetchPublicNotes, fetchPublicProducts, fetchUserProfile } from '@/lib/publicClient';
 import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import type { PublicNoteSummary, PublicUserProfile, SalonPublicListItem } from '@/types';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -63,23 +64,38 @@ export default function UserProfilePage() {
       setError('');
 
       const [productsResponse, profileResponse, notesResponse, salonsResponse] = await Promise.all([
-        productApi.getPublic({
+        fetchPublicProducts({
           seller_username: username,
           sort: 'latest',
           limit: 50,
         }),
-        publicApi.getUserProfile(username),
-        publicApi.listNotes({ limit: 100, author_username: username }),
+        fetchUserProfile(username),
+        fetchPublicNotes({ limit: 100, author_username: username }),
         salonPublicApi.list({ limit: 50, seller_username: username }),
       ]);
 
-      const userProducts = productsResponse.data?.data || [];
-      const userNotes = (notesResponse.data?.data || []).filter((note: PublicNoteSummary) => note.author_username === username);
+      const productsPayload = productsResponse?.data ?? productsResponse;
+      const userProducts = Array.isArray(productsPayload?.data)
+        ? productsPayload.data
+        : Array.isArray(productsPayload?.products)
+        ? productsPayload.products
+        : Array.isArray(productsPayload)
+        ? productsPayload
+        : [];
+      const notesPayload = notesResponse?.data ?? notesResponse;
+      const rawNotes = Array.isArray(notesPayload?.data)
+        ? notesPayload.data
+        : Array.isArray(notesPayload?.results)
+        ? notesPayload.results
+        : Array.isArray(notesPayload)
+        ? notesPayload
+        : [];
+      const userNotes = (rawNotes as PublicNoteSummary[]).filter((note) => note.author_username === username);
       const userSalons = Array.isArray(salonsResponse.data?.data) ? (salonsResponse.data.data as SalonPublicListItem[]) : [];
 
       setProducts(userProducts);
       setNotes(userNotes);
-      setSalons(userSalons);
+      setProfile((profileResponse?.data ?? profileResponse) as PublicUserProfile);
       setStats({
         totalProducts: userProducts.length,
         totalSales: userProducts.reduce((sum: number, p: any) => sum + (p.total_sales || 0), 0),

@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -8,8 +9,6 @@ import { ChartBarIcon, ShareIcon, CurrencyYenIcon, CheckCircleIcon, ExclamationT
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import NoteEditor from '@/components/note/NoteEditor';
 import NoteAiAssistant from '@/components/note/NoteAiAssistant';
-import NoteRichEditor from '@/components/note/NoteRichEditor';
-import MediaLibraryModal from '@/components/MediaLibraryModal';
 import { mediaApi, noteApi, salonApi } from '@/lib/api';
 import { createEmptyBlock, normalizeBlock, isPaidBlock } from '@/lib/noteBlocks';
 import { buildBlocksFromSuggestion, sanitizeContentForBlockType, normalizeAiText } from '@/lib/aiFormatting';
@@ -28,6 +27,16 @@ import type {
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
+
+const NoteRichEditor = dynamic(() => import('@/components/note/NoteRichEditor'), {
+  loading: () => <PageLoader />,
+  ssr: false,
+});
+
+const MediaLibraryModal = dynamic(() => import('@/components/MediaLibraryModal'), {
+  loading: () => null,
+  ssr: false,
+});
 
 const MIN_TITLE_LENGTH = 3;
 const MAX_CATEGORIES = 5;

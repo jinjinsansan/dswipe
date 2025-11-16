@@ -1,14 +1,19 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, PaintBrushIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
-import MediaLibraryModal from './MediaLibraryModal';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
+
+const MediaLibraryModal = dynamic(() => import('./MediaLibraryModal'), {
+  loading: () => null,
+  ssr: false,
+});
 
 const THEME_ENTRIES = Object.entries(COLOR_THEMES) as Array<[
   ColorThemeKey,

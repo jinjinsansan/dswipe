@@ -1,32 +1,117 @@
+"use client";
+
+import dynamic from 'next/dynamic';
 import React from 'react';
-import TopHeroBlock from './TopHeroBlock';
-import TopHeroImageBlock from './TopHeroImageBlock';
-import TopHighlightsBlock from './TopHighlightsBlock';
-import TopCTASection from './TopCTASection';
-import TopTestimonialsBlock from './TopTestimonialsBlock';
-import TopFAQBlock from './TopFAQBlock';
-import TopPricingBlock from './TopPricingBlock';
-import TopBeforeAfterBlock from './TopBeforeAfterBlock';
-import TopProblemBlock from './TopProblemBlock';
-import TopBonusBlock from './TopBonusBlock';
-import TopGuaranteeBlock from './TopGuaranteeBlock';
-import TopCountdownBlock from './TopCountdownBlock';
-import TopInlineCTABlock from './TopInlineCTABlock';
-import TopMediaSpotlightBlock from './TopMediaSpotlightBlock';
-import ContactBlock from './ContactBlock';
-import TokushoBlock from './TokushoBlock';
-import NewsletterBlock from './NewsletterBlock';
-import HandwrittenHeroBlock from './HandwrittenHeroBlock';
-import HandwrittenFeaturesBlock from './HandwrittenFeaturesBlock';
-import HandwrittenFAQBlock from './HandwrittenFAQBlock';
-import HandwrittenCTABlock from './HandwrittenCTABlock';
-import HandwrittenTestimonialsBlock from './HandwrittenTestimonialsBlock';
-import HandwrittenPricingBlock from './HandwrittenPricingBlock';
-import HandwrittenProblemBlock from './HandwrittenProblemBlock';
-import HandwrittenBonusBlock from './HandwrittenBonusBlock';
-import HandwrittenGuaranteeBlock from './HandwrittenGuaranteeBlock';
-import HandwrittenContactBlock from './HandwrittenContactBlock';
 import { getFontStack } from '@/lib/fonts';
+
+const TopHeroBlock = dynamic(() => import('./TopHeroBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopHeroImageBlock = dynamic(() => import('./TopHeroImageBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopHighlightsBlock = dynamic(() => import('./TopHighlightsBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopCTASection = dynamic(() => import('./TopCTASection'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopTestimonialsBlock = dynamic(() => import('./TopTestimonialsBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopFAQBlock = dynamic(() => import('./TopFAQBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopPricingBlock = dynamic(() => import('./TopPricingBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopBeforeAfterBlock = dynamic(() => import('./TopBeforeAfterBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopProblemBlock = dynamic(() => import('./TopProblemBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopBonusBlock = dynamic(() => import('./TopBonusBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopGuaranteeBlock = dynamic(() => import('./TopGuaranteeBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopCountdownBlock = dynamic(() => import('./TopCountdownBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopInlineCTABlock = dynamic(() => import('./TopInlineCTABlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TopMediaSpotlightBlock = dynamic(() => import('./TopMediaSpotlightBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const ContactBlock = dynamic(() => import('./ContactBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const TokushoBlock = dynamic(() => import('./TokushoBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const NewsletterBlock = dynamic(() => import('./NewsletterBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenHeroBlock = dynamic(() => import('./HandwrittenHeroBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenFeaturesBlock = dynamic(() => import('./HandwrittenFeaturesBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenFAQBlock = dynamic(() => import('./HandwrittenFAQBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenCTABlock = dynamic(() => import('./HandwrittenCTABlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenTestimonialsBlock = dynamic(() => import('./HandwrittenTestimonialsBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenPricingBlock = dynamic(() => import('./HandwrittenPricingBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenProblemBlock = dynamic(() => import('./HandwrittenProblemBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenBonusBlock = dynamic(() => import('./HandwrittenBonusBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenGuaranteeBlock = dynamic(() => import('./HandwrittenGuaranteeBlock'), {
+  ssr: false,
+  loading: () => null,
+});
+const HandwrittenContactBlock = dynamic(() => import('./HandwrittenContactBlock'), {
+  ssr: false,
+  loading: () => null,
+});
 
 interface BlockRendererProps {
   blockType: string;

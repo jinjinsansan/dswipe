@@ -4,30 +4,59 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
-import { getTemplateById } from '@/lib/templates';
+import { loadTemplateBundle, type TemplateDataBundle } from '@/lib/templates';
+import type { TemplateBlock } from '@/types/templates';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
 import AIWizard from '@/components/AIWizard';
 import type { AIGenerationResponse } from '@/types/api';
-import {
-  ArrowLeftIcon,
-  DocumentIcon,
-  SparklesIcon,
-  LightBulbIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, DocumentIcon, SparklesIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 
 export default function CreateLPPage() {
   const router = useRouter();
   const { isAuthenticated, isInitialized } = useAuthStore();
+  const [templateData, setTemplateData] = useState<TemplateDataBundle | null>(null);
   const [showWizard, setShowWizard] = useState(true);
   const [aiSuggestion, setAiSuggestion] = useState<AIGenerationResponse | null>(null);
+  const templateMetaSource = useMemo(() => {
+    if (!templateData) {
+      return [] as TemplateBlock[];
+    }
+    return [
+      ...templateData.templateLibrary,
+      ...templateData.infoProductBlocks,
+      ...templateData.contactBlocks,
+      ...templateData.tokushoBlocks,
+      ...templateData.newsletterBlocks,
+      ...templateData.handwrittenBlocks,
+    ];
+  }, [templateData]);
+
+  useEffect(() => {
+    let mounted = true;
+    loadTemplateBundle().then((bundle) => {
+      if (!mounted) {
+        return;
+      }
+      setTemplateData(bundle);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const outlinePreview = useMemo(() => {
     if (!aiSuggestion) return [] as string[];
     if (aiSuggestion.outline?.length) {
       return aiSuggestion.outline;
     }
-    return aiSuggestion.blocks.map((block) => getTemplateById(block.blockType)?.name ?? block.blockType);
-  }, [aiSuggestion]);
+    return aiSuggestion.blocks.map((block) => {
+      const template =
+        templateMetaSource.find((item) => item.templateId === block.blockType) ??
+        templateMetaSource.find((item) => item.id === block.blockType);
+      return template?.name ?? block.blockType;
+    });
+  }, [aiSuggestion, templateMetaSource]);
   const [products, setProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',

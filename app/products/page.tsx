@@ -5,7 +5,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { productApi } from '@/lib/api';
+import { fetchPublicProducts } from '@/lib/publicClient';
 import {
   ArrowLeftIcon,
   BuildingStorefrontIcon,
@@ -58,18 +58,26 @@ function ProductsContent() {
     console.log('/products ページ - 公開商品取得開始');
     try {
       setIsLoading(true);
-      console.log('API呼び出し: productApi.getPublic');
-      const response = await productApi.getPublic({ sort: 'latest', limit: 50 });
+      console.log('API呼び出し: fetchPublicProducts');
+      const response = await fetchPublicProducts({ sort: 'latest', limit: 50 });
       console.log('API レスポンス取得成功');
-      console.log('response.data:', response.data);
+      const payload = response?.data ?? response;
+      console.log('payload:', payload);
 
-      const publicProducts = response.data?.data || [];
+      const publicProducts = Array.isArray(payload?.data)
+        ? payload.data
+        : Array.isArray(payload?.products)
+        ? payload.products
+        : Array.isArray(payload)
+        ? payload
+        : [];
       console.log('取得商品数:', publicProducts.length);
 
       setProducts(publicProducts);
     } catch (error: any) {
       console.error('商品の取得に失敗:', error);
-      console.error('エラー詳細:', error.response?.data || error.message);
+      const payload = (error?.payload as Record<string, unknown> | undefined)?.detail ?? error?.message;
+      console.error('エラー詳細:', payload);
       console.error('エラースタック:', error.stack);
     } finally {
       setIsLoading(false);

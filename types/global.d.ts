@@ -50,4 +50,29 @@ interface Viewport {
   interactiveWidget?: 'resizes-visual' | 'resizes-content' | 'overlays-content';
 }
 
+declare module 'swiper/css' {
+  const content: string;
+  export default content;
+}
+
+declare module 'swiper/css/pagination' {
+  const content: string;
+  export default content;
+}
+
+declare module 'swiper/css/free-mode' {
+  const content: string;
+  export default content;
+}
+
+declare module 'swiper/css/effect-creative' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.css' {
+  const content: string;
+  export default content;
+}
+
 export {};

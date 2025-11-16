@@ -8,11 +8,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { lpApi, productApi, authApi, announcementApi, noteApi } from '@/lib/api';
-import { TEMPLATE_LIBRARY } from '@/lib/templates';
+import { loadTemplateBundle } from '@/lib/templates';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { redirectToLogin } from '@/lib/navigation';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
+import type { TemplateBlock } from '@/types/templates';
 import { loadCache, saveCache } from '@/lib/cache';
 import {
   ArrowPathIcon,
@@ -270,6 +271,7 @@ export default function DashboardPage() {
   const [announcementsLoading, setAnnouncementsLoading] = useState<boolean>(true);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
   const [activeAnnouncement, setActiveAnnouncement] = useState<DashboardAnnouncement | null>(null);
+  const [templateLibrary, setTemplateLibrary] = useState<TemplateBlock[]>([]);
   const didHydrateFromCacheRef = useRef(false);
 
   const hydrateFromCache = useCallback(() => {
@@ -317,6 +319,27 @@ export default function DashboardPage() {
     } finally {
       setAnnouncementsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    loadTemplateBundle().then((bundle) => {
+      if (!mounted) {
+        return;
+      }
+      setTemplateLibrary([
+        ...bundle.templateLibrary,
+        ...bundle.infoProductBlocks,
+        ...bundle.contactBlocks,
+        ...bundle.tokushoBlocks,
+        ...bundle.newsletterBlocks,
+        ...bundle.handwrittenBlocks,
+      ]);
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const noteSummary = noteMetrics ?? FALLBACK_NOTE_METRICS;
@@ -502,7 +525,7 @@ export default function DashboardPage() {
           }
         }
         if (blockType) {
-          const template = TEMPLATE_LIBRARY.find((item) => item.id === blockType || item.templateId === blockType);
+          const template = templateLibrary.find((item) => item.id === blockType || item.templateId === blockType);
           if (template?.defaultContent) {
             const defaultContent = normalizeContent(template.defaultContent);
             const fallbackMedia = extractMediaFromContent(defaultContent);
@@ -658,7 +681,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [loadAnnouncements]);
+  }, [loadAnnouncements, templateLibrary]);
 
   useEffect(() => {
     if (!isInitialized) return;

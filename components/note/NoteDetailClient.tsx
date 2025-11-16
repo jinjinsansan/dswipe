@@ -12,7 +12,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
-import { publicApi, noteApi, paymentApi } from '@/lib/api';
+import { noteApi, paymentApi } from '@/lib/api';
+import { fetchPublicNote, fetchPublicNoteByShareToken } from '@/lib/publicClient';
 import type { PublicNoteDetail } from '@/types';
 import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
@@ -45,15 +46,33 @@ type PurchaseState = 'idle' | 'processing' | 'success' | 'error';
 
 const extractErrorInfo = (error: unknown) => {
   if (typeof error === 'object' && error) {
-    const response = (error as {
+    const maybeResponse = (error as {
       response?: {
         status?: number;
         data?: { detail?: unknown };
       };
+      status?: number;
+      payload?: unknown;
+      message?: string;
     }).response;
+
+    if (maybeResponse) {
+      return {
+        status: maybeResponse.status,
+        detail: maybeResponse.data?.detail,
+      };
+    }
+
+    const status = (error as { status?: number }).status;
+    const payload = (error as { payload?: unknown }).payload;
+    const detail =
+      typeof payload === 'object' && payload && 'detail' in payload
+        ? (payload as { detail?: unknown }).detail
+        : undefined;
+
     return {
-      status: response?.status,
-      detail: response?.data?.detail,
+      status,
+      detail,
     };
   }
   return { status: undefined, detail: undefined };
@@ -100,16 +119,15 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
     setLoading('loading');
     setError(null);
     try {
-      const response = shareToken
-        ? await publicApi.getNoteByShareToken(shareToken, {
+      const data = shareToken
+        ? await fetchPublicNoteByShareToken(shareToken, {
             accessToken: token ?? undefined,
             locale,
           })
-        : await publicApi.getNote(slug!, {
+        : await fetchPublicNote(slug!, {
             accessToken: token ?? undefined,
             locale,
           });
-      const data = response.data;
       setNote(data);
       setHasManualMethodSelection(false);
       if (data.allow_point_purchase) {
@@ -124,10 +142,9 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       const { status, detail } = extractErrorInfo(err);
       if (status === 401 || status === 403) {
         try {
-          const fallback = shareToken
-            ? await publicApi.getNoteByShareToken(shareToken, { locale })
-            : await publicApi.getNote(slug!, { locale });
-          const fallbackData = fallback.data;
+          const fallbackData = shareToken
+            ? await fetchPublicNoteByShareToken(shareToken, { locale })
+            : await fetchPublicNote(slug!, { locale });
           setNote(fallbackData);
           setHasManualMethodSelection(false);
           if (fallbackData.allow_point_purchase) {

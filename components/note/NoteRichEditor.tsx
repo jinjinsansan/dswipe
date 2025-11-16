@@ -26,9 +26,14 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { BoldIcon, HeadingIcon, ItalicIcon, ListBulletIcon } from './icons/RichEditorIcons';
-import MediaLibraryModal from '@/components/MediaLibraryModal';
+import dynamic from 'next/dynamic';
 import type { NoteRichContent } from '@/types';
 import { mediaApi } from '@/lib/api';
+
+const MediaLibraryModal = dynamic(() => import('@/components/MediaLibraryModal'), {
+  loading: () => null,
+  ssr: false,
+});
 
 const AccessParagraph = Paragraph.extend({
   addAttributes() {

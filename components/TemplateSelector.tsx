@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DocumentTextIcon, FolderOpenIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { getAllTemplates, TEMPLATE_CATEGORIES } from '@/lib/templates';
 import { resolveViewerPalette } from '@/components/viewer/theme';
@@ -91,7 +91,21 @@ const deriveDisplayName = (template: TemplateBlock) => {
 };
 
 export default function TemplateSelector({ onSelectTemplate, onClose }: TemplateSelectorProps) {
-  const templates = useMemo(() => getAllTemplates(), []);
+  const [templates, setTemplates] = useState<TemplateBlock[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    getAllTemplates().then((data) => {
+      if (!mounted) {
+        return;
+      }
+      setTemplates(data);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const templateGroups = useMemo<TemplateGroup[]>(() => {
     const groups = new Map<BlockType, TemplateGroup>();

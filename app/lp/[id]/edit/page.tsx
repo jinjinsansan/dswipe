@@ -1,29 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { LPDetail } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
-import TemplateSelector from '@/components/TemplateSelector';
-import DraggableBlockEditor from '@/components/DraggableBlockEditor';
-import PropertyPanel from '@/components/PropertyPanel';
-import AITextGenerator from '@/components/AITextGenerator';
-import ColorThemeGenerator from '@/components/ColorThemeGenerator';
-import { PageLoader, EditorSkeleton } from '@/components/LoadingSpinner';
+import { PageLoader } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
-import {
-  TEMPLATE_LIBRARY,
-  INFO_PRODUCT_BLOCKS,
-  CONTACT_BLOCKS,
-  TOKUSHO_BLOCKS,
-  NEWSLETTER_BLOCKS,
-  HANDWRITTEN_BLOCKS,
-} from '@/lib/templates';
+import { loadTemplateBundle, type TemplateDataBundle } from '@/lib/templates';
 import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
@@ -38,22 +27,35 @@ import {
 import type { AIGenerationResponse } from '@/types/api';
 import type { ColorShades } from '@/lib/colorGenerator';
 
+const TemplateSelector = dynamic(() => import('@/components/TemplateSelector'), {
+  loading: () => <PageLoader />,
+  ssr: false,
+});
+
+const DraggableBlockEditor = dynamic(() => import('@/components/DraggableBlockEditor'), {
+  loading: () => <PageLoader />,
+  ssr: false,
+});
+
+const PropertyPanel = dynamic(() => import('@/components/PropertyPanel'), {
+  loading: () => null,
+  ssr: false,
+});
+
+const AITextGenerator = dynamic(() => import('@/components/AITextGenerator'), {
+  loading: () => null,
+  ssr: false,
+});
+
+const ColorThemeGenerator = dynamic(() => import('@/components/ColorThemeGenerator'), {
+  loading: () => null,
+  ssr: false,
+});
+
 type BlockContentWithMeta = BlockContent & {
   __templateId?: string;
   __templateName?: string;
 };
-
-const TEMPLATE_META_SOURCE = [
-  ...TEMPLATE_LIBRARY,
-  ...INFO_PRODUCT_BLOCKS,
-  ...CONTACT_BLOCKS,
-  ...TOKUSHO_BLOCKS,
-  ...NEWSLETTER_BLOCKS,
-  ...HANDWRITTEN_BLOCKS,
-];
-const KNOWN_BLOCK_TYPES = Array.from(
-  new Set(TEMPLATE_META_SOURCE.map((template) => template.templateId))
-) as BlockType[];
 
 const PRODUCT_CTA_URL_KEYS = new Set(['buttonUrl', 'secondaryButtonUrl', 'button_url']);
 
@@ -78,12 +80,9 @@ const LEGACY_PRODUCT_CTA_URLS = new Set([
   'https://example.com/vip-newsletter',
 ]);
 
-function isKnownBlockType(value: string | null | undefined): value is BlockType {
-  if (!value) return false;
-  return KNOWN_BLOCK_TYPES.includes(value as BlockType);
-}
-
 function resolveTemplateMetadata(
+  templateSource: TemplateBlock[],
+  knownBlockTypes: Set<BlockType>,
   rawBlockType: string | null | undefined,
   content?: Partial<BlockContentWithMeta> | Record<string, any>
 ) {
@@ -105,25 +104,27 @@ function resolveTemplateMetadata(
 
   const variant =
     candidateVariantKeys
-      .map((key) => TEMPLATE_META_SOURCE.find((template) => template.id === key))
+      .map((key) => templateSource.find((template) => template.id === key))
       .find((match) => Boolean(match)) ?? undefined;
 
   const template =
     variant ??
     (normalizedRaw
-      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === normalizedRaw)
+      ? templateSource.find((tpl) => tpl.templateId === normalizedRaw)
       : undefined) ??
     (contentBlockType
-      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === contentBlockType)
+      ? templateSource.find((tpl) => tpl.templateId === contentBlockType)
       : undefined) ??
     (contentBlockField
-      ? TEMPLATE_META_SOURCE.find((tpl) => tpl.templateId === contentBlockField)
+      ? templateSource.find((tpl) => tpl.templateId === contentBlockField)
       : undefined);
 
   const canonicalBlockType: BlockType =
     (variant?.templateId as BlockType | undefined) ??
     (template?.templateId as BlockType | undefined) ??
-    (isKnownBlockType(normalizedRaw) ? (normalizedRaw as BlockType) : 'top-hero-1');
+    (normalizedRaw && knownBlockTypes.has(normalizedRaw as BlockType)
+      ? (normalizedRaw as BlockType)
+      : 'top-hero-1');
 
   const templateId = variant?.id ?? contentTemplateId ?? template?.id;
   const templateName =
@@ -222,19 +223,22 @@ const sanitizeExistingProductCtaContent = (blockType: BlockType, content: BlockC
   transformProductCtaContent(blockType, content, 'legacy-only');
 
 // ブロックタイプから日本語名を取得するヘルパー関数
-function getBlockDisplayName(block: { blockType: BlockType; content: BlockContentWithMeta }): string {
+function getBlockDisplayName(
+  templateSource: TemplateBlock[],
+  block: { blockType: BlockType; content: BlockContentWithMeta }
+): string {
   const metaName = (block.content as any)?.__templateName as string | undefined;
   if (metaName) return metaName;
 
   const metaId = (block.content as any)?.__templateId as string | undefined;
   if (metaId) {
-    const variant = TEMPLATE_META_SOURCE.find((template) => template.id === metaId);
+    const variant = templateSource.find((template) => template.id === metaId);
     if (variant?.name) {
       return variant.name;
     }
   }
 
-  const template = TEMPLATE_META_SOURCE.find((t) => t.templateId === block.blockType);
+  const template = templateSource.find((t) => t.templateId === block.blockType);
   return template?.name || block.blockType;
 }
 
@@ -266,6 +270,7 @@ export default function EditLPNewPage() {
   const lpId = params.id as string;
   const { isAuthenticated, isInitialized } = useAuthStore();
   
+  const [templateData, setTemplateData] = useState<TemplateDataBundle | null>(null);
   const [lp, setLp] = useState<LPDetail | null>(null);
   const [blocks, setBlocks] = useState<LPBlock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -349,6 +354,40 @@ export default function EditLPNewPage() {
       behavior: 'smooth',
     });
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    loadTemplateBundle().then((bundle) => {
+      if (!mounted) {
+        return;
+      }
+      setTemplateData(bundle);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const templateMetaSource = useMemo(() => {
+    if (!templateData) {
+      return [] as TemplateBlock[];
+    }
+    return [
+      ...templateData.templateLibrary,
+      ...templateData.infoProductBlocks,
+      ...templateData.contactBlocks,
+      ...templateData.tokushoBlocks,
+      ...templateData.newsletterBlocks,
+      ...templateData.handwrittenBlocks,
+    ];
+  }, [templateData]);
+
+  const knownBlockTypes = useMemo(() => {
+    return new Set<BlockType>(
+      templateMetaSource.map((template) => template.templateId as BlockType)
+    );
+  }, [templateMetaSource]);
 
   useEffect(() => {
     // 初期化が完了するまで待つ
@@ -446,6 +485,24 @@ export default function EditLPNewPage() {
   }, [isAuthenticated, fetchProductOptions]);
 
   const fetchLP = async () => {
+    const bundle = templateData ?? (await loadTemplateBundle());
+    if (!templateData) {
+      setTemplateData(bundle);
+    }
+
+    const localTemplateSource: TemplateBlock[] = [
+      ...bundle.templateLibrary,
+      ...bundle.infoProductBlocks,
+      ...bundle.contactBlocks,
+      ...bundle.tokushoBlocks,
+      ...bundle.newsletterBlocks,
+      ...bundle.handwrittenBlocks,
+    ];
+
+    const localKnownBlockTypes = new Set<BlockType>(
+      localTemplateSource.map((template) => template.templateId as BlockType)
+    );
+
     try {
       const response = await lpApi.get(lpId);
       setLp(response.data);
@@ -492,8 +549,8 @@ export default function EditLPNewPage() {
           // 使用後は削除
           sessionStorage.removeItem('aiSuggestion');
           
-        console.log('AI提案を適用中...');
-          const aiBlocks = convertAIResultToBlocks(aiResult);
+          console.log('AI提案を適用中...');
+          const aiBlocks = await convertAIResultToBlocks(aiResult);
         console.log('Converted to blocks:', aiBlocks);
           
           if (aiBlocks.length === 0) {
@@ -558,6 +615,8 @@ export default function EditLPNewPage() {
         }
 
         const { canonicalBlockType, templateId, templateName } = resolveTemplateMetadata(
+          localTemplateSource,
+          localKnownBlockTypes,
           step.block_type,
           content
         );
@@ -944,6 +1003,8 @@ export default function EditLPNewPage() {
         const normalizedBlocks: LPBlock[] = updatedSteps.map((step: any) => {
           const contentData = (step.content_data || {}) as BlockContentWithMeta;
           const { canonicalBlockType, templateId, templateName } = resolveTemplateMetadata(
+            templateMetaSource,
+            knownBlockTypes,
             step.block_type,
             contentData
           );
@@ -978,7 +1039,17 @@ export default function EditLPNewPage() {
         setIsSaving(false);
       }
     },
-    [blocks, customThemeHex, customThemeShades, lpId, lpSettings, lpTitle, metaSettings]
+    [
+      blocks,
+      customThemeHex,
+      customThemeShades,
+      knownBlockTypes,
+      lpId,
+      lpSettings,
+      lpTitle,
+      metaSettings,
+      templateMetaSource,
+    ]
   );
 
   const handleSave = () => {
@@ -1080,6 +1151,10 @@ export default function EditLPNewPage() {
       document.body.style.userSelect = '';
     };
   }, [isResizing]);
+
+  if (!templateData) {
+    return <PageLoader />;
+  }
 
   if (isLoading) {
     return <PageLoader />;
@@ -1679,7 +1754,7 @@ export default function EditLPNewPage() {
                             削除
                           </button>
                         </div>
-                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(block)}</div>
+                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(templateMetaSource, block)}</div>
                       </div>
                     </div>
                   ))}
