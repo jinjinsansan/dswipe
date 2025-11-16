@@ -446,6 +446,22 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
+        {('totalValue' in content) && (
+          <div className={`-m-1 p-1 rounded-lg ${focusRingClass(isFocusedField(resolveFieldId('totalValue')))}`}>
+            <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
+              合計価値バッジ
+            </label>
+            <input
+              type="text"
+              value={(content as any).totalValue || ''}
+              onChange={(e) => onUpdateContent('totalValue', e.target.value)}
+              onFocus={() => handleFocusChange(resolveFieldId('totalValue'))}
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              placeholder="例：合計109,800円相当"
+            />
+          </div>
+        )}
+
         {('text' in content) && (
           <div>
             <label className="block text-sm lg:text-sm font-medium text-slate-700 mb-2">
