@@ -1154,6 +1154,10 @@ export default function EditLPNewPage() {
     if (!lp) {
       return;
     }
+    if (lp.visibility !== 'limited') {
+      alert('公開範囲を限定公開に変更し保存した後に再発行できます。');
+      return;
+    }
     if (!confirm('限定公開URLを再発行しますか？既存のURLは使えなくなります。')) {
       return;
     }
@@ -1287,21 +1291,28 @@ export default function EditLPNewPage() {
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {(() => {
               const isPublished = lp.status === 'published';
-              const currentVisibility = lpSettings.visibility;
+              const savedVisibility = lp.visibility ?? 'private';
+              const plannedVisibility = lpSettings.visibility;
+              const hasPendingVisibilityChange = savedVisibility !== plannedVisibility;
               const badgeClass = isPublished
-                ? currentVisibility === 'limited'
+                ? savedVisibility === 'limited'
                   ? 'bg-amber-100 text-amber-700'
                   : 'bg-green-50 text-green-700'
                 : 'bg-slate-100 text-slate-600';
-              const badgeLabel = isPublished
-                ? currentVisibility === 'limited'
-                  ? '限定公開'
-                  : '公開中'
-                : '下書き';
+              let badgeLabel = '下書き';
+              if (isPublished) {
+                if (savedVisibility === 'limited') {
+                  badgeLabel = hasPendingVisibilityChange ? '限定公開(未保存)' : '限定公開';
+                } else {
+                  badgeLabel = hasPendingVisibilityChange ? '公開中(変更未保存)' : '公開中';
+                }
+              }
               const shareLink = shareUrl || lp?.share_url || null;
               const slugUrl = lp?.slug ? `${typeof window !== 'undefined' ? window.location.origin : ''}/view/${lp.slug}` : '';
-              const canPreviewLimited = Boolean(isPublished && currentVisibility === 'limited' && shareLink);
-              const canPreviewPublic = Boolean(isPublished && currentVisibility === 'public' && lp?.slug);
+              const canPreviewLimited = Boolean(isPublished && savedVisibility === 'limited' && shareLink);
+              const canPreviewPublic = Boolean(isPublished && savedVisibility === 'public' && lp?.slug);
+              const showLimitedCopy = Boolean(savedVisibility === 'limited' && shareLink);
+              const showRotateLimited = Boolean(isPublished && savedVisibility === 'limited' && shareLink);
 
               return (
                 <>
@@ -1343,7 +1354,7 @@ export default function EditLPNewPage() {
                     </button>
                   )}
 
-                  {currentVisibility === 'limited' && shareLink && (
+                  {showLimitedCopy && (
                     <button
                       type="button"
                       onClick={handleCopyShareUrl}
@@ -1353,7 +1364,7 @@ export default function EditLPNewPage() {
                     </button>
                   )}
 
-                  {currentVisibility === 'limited' && isPublished && (
+                  {showRotateLimited && (
                     <button
                       type="button"
                       onClick={handleRotateShareUrl}
