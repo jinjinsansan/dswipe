@@ -1005,7 +1005,7 @@ export default function NoteEditPage() {
         ) : null}
 
         <div
-          className="mb-6 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur"
+          className="mb-6 bg-white/95 px-2 py-3 backdrop-blur md:rounded-3xl md:border md:border-slate-200 md:px-4 md:shadow-sm"
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-2">
@@ -1056,7 +1056,7 @@ export default function NoteEditPage() {
 
         {/* シェア統計セクション */}
         {shareStats && shareStats.total_shares > 0 ? (
-          <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 md:rounded-3xl md:border md:border-blue-200 md:p-6 md:shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <ChartBarIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />
               <h3 className="text-base font-semibold text-blue-900">シェア統計</h3>
@@ -1094,7 +1094,7 @@ export default function NoteEditPage() {
           </div>
         ) : null}
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="bg-white p-4 sm:p-6 md:rounded-3xl md:border md:border-slate-200 md:shadow-sm md:p-8">
           <div className="space-y-4">
             <div>
               <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
@@ -1185,7 +1185,7 @@ export default function NoteEditPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+            <div className="bg-white px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-800">カテゴリーを選択</p>
@@ -1227,7 +1227,7 @@ export default function NoteEditPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+            <div className="bg-white px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-800">公開範囲を選択</p>
@@ -1336,7 +1336,7 @@ export default function NoteEditPage() {
               ) : null}
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+            <div className="bg-slate-50 px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-800">有料記事として販売する</p>
@@ -1354,7 +1354,7 @@ export default function NoteEditPage() {
                 </label>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                <div className="bg-white px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-slate-800">ポイント決済</p>
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
@@ -1379,7 +1379,7 @@ export default function NoteEditPage() {
                   />
                   <p className="mt-2 text-xs text-slate-500">購入者のポイント残高から差し引かれます。</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                <div className="bg-white px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-slate-800">日本円決済</p>
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
@@ -1451,7 +1451,7 @@ export default function NoteEditPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+            <div className="bg-white px-0 py-4 md:rounded-2xl md:border md:border-slate-200 md:px-4">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-800">サロン会員は無料閲覧</p>
@@ -1606,7 +1606,7 @@ export default function NoteEditPage() {
 
         {editorType === 'classic' ? (
           <>
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="bg-white p-4 sm:p-6 md:rounded-3xl md:border md:border-slate-200 md:shadow-sm md:p-8">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900">本文ブロック</h2>
@@ -1633,7 +1633,7 @@ export default function NoteEditPage() {
             />
           </>
         ) : (
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="bg-white p-4 sm:p-6 md:rounded-3xl md:border md:border-slate-200 md:shadow-sm md:p-8">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-slate-900">NOTEスタイルエディタ</h2>
