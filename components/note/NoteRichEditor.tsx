@@ -996,7 +996,7 @@ export default function NoteRichEditor({
               style={{ top: Math.max(paidMarkerTop, 8) }}
             >
               <div className="flex items-center gap-2 rounded-full bg-amber-500 px-4 py-1 text-xs font-semibold text-white shadow-lg">
-                <LockClosedIcon className="h-4 w-4" aria-hidden="true" />
+                <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
                 <span>ここから有料エリア</span>
               </div>
             </div>
@@ -1266,7 +1266,7 @@ function ToolbarButtons({
           type="button"
           onClick={onSaveDraft}
           disabled={disabled || draftSaveDisabled || isSavingDraft}
-          className="inline-flex h-9 min-w-[120px] flex-shrink-0 items-center justify-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-9 min-w-[100px] flex-shrink-0 items-center justify-center rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSavingDraft ? draftSavingLabel : draftSaveLabel}
         </button>
@@ -1280,8 +1280,8 @@ function ToolbarButtons({
         active={editor.isActive('bold')}
         disabled={disabled}
         label="太字"
-        icon={<BoldIcon className="h-4 w-4" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<BoldIcon className="h-5 w-5" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1292,8 +1292,8 @@ function ToolbarButtons({
         active={editor.isActive('italic')}
         disabled={disabled}
         label="斜体"
-        icon={<ItalicIcon className="h-4 w-4" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<ItalicIcon className="h-5 w-5" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1304,8 +1304,8 @@ function ToolbarButtons({
         active={editor.isActive('heading', { level: 2 })}
         disabled={disabled}
         label="大見出し"
-        icon={<HeadingIcon className="h-4 w-4" label="H2" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<HeadingIcon className="h-5 w-5" label="H2" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1316,8 +1316,8 @@ function ToolbarButtons({
         active={editor.isActive('heading', { level: 3 })}
         disabled={disabled}
         label="小見出し"
-        icon={<HeadingIcon className="h-4 w-4" label="H3" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<HeadingIcon className="h-5 w-5" label="H3" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1328,8 +1328,8 @@ function ToolbarButtons({
         active={editor.isActive('bulletList')}
         disabled={disabled}
         label="箇条書き"
-        icon={<ListBulletIcon className="h-4 w-4" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<ListBulletIcon className="h-5 w-5" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1340,8 +1340,8 @@ function ToolbarButtons({
         active={editor.isActive('orderedList')}
         disabled={disabled}
         label="番号付き"
-        icon={<span className="text-xs font-semibold">1.</span>}
-        activeClass="bg-blue-600 text-white"
+        icon={<span className="text-sm font-semibold">1.</span>}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1352,8 +1352,8 @@ function ToolbarButtons({
         active={editor.isActive('blockquote')}
         disabled={disabled}
         label="引用"
-        icon={<Bars3BottomLeftIcon className="h-4 w-4" />}
-        activeClass="bg-blue-600 text-white"
+        icon={<Bars3BottomLeftIcon className="h-5 w-5" />}
+        activeClass="bg-slate-700 text-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1363,7 +1363,7 @@ function ToolbarButtons({
         }}
         disabled={disabled}
         label="元に戻す"
-        icon={<span className="text-xs font-semibold">↺</span>}
+        icon={<span className="text-base font-semibold">↺</span>}
       />
       <ToolbarButton
         onClick={() => {
@@ -1373,9 +1373,9 @@ function ToolbarButtons({
         }}
         disabled={disabled}
         label="やり直す"
-        icon={<span className="text-xs font-semibold">↻</span>}
+        icon={<span className="text-base font-semibold">↻</span>}
       />
-      <div className="ml-auto flex items-center gap-1 md:gap-2">
+      <div className="ml-auto flex items-center gap-1">
         <ToolbarButton
           onClick={() => onAccessChange('public')}
           active={activeAccess === 'public'}
@@ -1394,13 +1394,13 @@ function ToolbarButtons({
           onClick={onImage}
           disabled={disabled}
           label="画像"
-          icon={<PhotoIcon className="h-4 w-4" />}
+          icon={<PhotoIcon className="h-5 w-5" />}
         />
         <ToolbarButton
           onClick={onInsertMenu}
           disabled={disabled || isUploading}
           label={isUploading ? 'アップ中' : '追加'}
-          icon={<PlusIcon className="h-4 w-4" />}
+          icon={<PlusIcon className="h-5 w-5" />}
         />
       </div>
     </Fragment>
@@ -1418,17 +1418,23 @@ interface ToolbarButtonProps {
 }
 
 function ToolbarButton({ onClick, active = false, disabled = false, activeClass, icon, label, className }: ToolbarButtonProps) {
-  const baseColor = active ? (activeClass ?? 'bg-blue-600 text-white') : 'bg-slate-100 text-slate-600';
+  const baseColor = active ? (activeClass ?? 'bg-slate-700 text-white') : 'bg-white text-slate-700 border border-slate-200';
+  
+  // If there's an icon, show icon only (note.com style)
+  // If no icon, show label text
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       title={label}
-      className={`flex h-12 min-w-[64px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-full px-3 text-xs font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40 ${baseColor} ${className ?? ''}`}
+      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-medium transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 ${baseColor} ${className ?? ''}`}
     >
-      {icon ? <span className="text-base leading-none">{icon}</span> : null}
-      <span className={`text-[10px] font-semibold ${active ? 'text-white' : 'text-slate-600'}`}>{label}</span>
+      {icon ? (
+        <span className="leading-none">{icon}</span>
+      ) : (
+        <span className={`text-xs font-semibold ${active ? 'text-white' : 'text-slate-700'}`}>{label}</span>
+      )}
     </button>
   );
 }
