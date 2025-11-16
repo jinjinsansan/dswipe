@@ -393,7 +393,7 @@ export default function NoteDashboardPage() {
                           <PencilSquareIcon className="h-4 w-4" aria-hidden="true" />
                           編集
                         </Link>
-                        {isPublished ? (
+                        {isPublished && note.visibility !== 'limited' ? (
                           <Link
                             href={`/notes/${note.slug}`}
                             className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
