@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
 import { PricingBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { resolveButtonUrl } from '@/lib/url';
 
 interface TopPricingBlockProps {
@@ -67,6 +68,9 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
   const buttonColor = content?.buttonColor ?? accentColor;
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
   const rawUseLinkedProduct = content?.useLinkedProduct;
   const defaultUseLinkedProduct = Boolean(primaryLinkLock || productId);
   const useLinkedProduct = typeof rawUseLinkedProduct === 'boolean' ? rawUseLinkedProduct : defaultUseLinkedProduct;
@@ -89,8 +93,14 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   };
 
   return (
-    <section className="relative w-full py-section-sm sm:py-section" style={{ backgroundColor, color: textColor }}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
+    <section className="relative w-full py-section-sm sm:py-section" style={{
+      ...backgroundStyle,
+      color: textColor,
+    }}>
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white p-4 text-sm text-slate-700 shadow-sm">
             <input

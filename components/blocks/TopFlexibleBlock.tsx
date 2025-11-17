@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { FlexibleBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopFlexibleBlockProps {
   content: FlexibleBlockContent;
@@ -17,6 +18,9 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   const displayTopHeading = topHeading?.trim() ?? '';
   const displayBody = body ?? '';
@@ -39,9 +43,15 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col gap-8 px-6">
         {isEditing ? (
           <div className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur text-sm text-slate-700 space-y-3">
             <div className="space-y-2">

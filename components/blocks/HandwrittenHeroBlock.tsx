@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { HeroBlockContent } from '@/types/templates';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface HandwrittenHeroBlockProps {
   content: HeroBlockContent;
@@ -31,11 +32,19 @@ export default function HandwrittenHeroBlock({
     }
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
       className="relative flex min-h-screen items-center justify-center overflow-hidden py-section-sm sm:py-section"
-      style={{ backgroundColor: '#FFFFFF' }}
+      style={backgroundStyle}
     >
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
       {/* ワイヤーフレーム風ブラウザフレーム */}
       <div className="relative md:absolute md:top-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-2 md:px-0">
         <div className="border-2 md:border-4 border-black rounded-lg md:rounded-3xl bg-white p-2 md:p-8" style={{ fontFamily: "'Architects Daughter', 'Indie Flower', cursive" }}>

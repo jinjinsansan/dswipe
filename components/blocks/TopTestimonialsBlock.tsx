@@ -1,5 +1,6 @@
 import { TestimonialsBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { useMemo } from 'react';
 
 interface TopTestimonialsBlockProps {
@@ -45,6 +46,9 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   const updateTestimonial = (index: number, field: 'quote' | 'name' | 'role') =>
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -57,8 +61,14 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
     };
 
   return (
-    <section className="relative w-full py-section-sm sm:py-section" style={{ backgroundColor, color: textColor }}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
+    <section className="relative w-full py-section-sm sm:py-section" style={{
+      ...backgroundStyle,
+      color: textColor,
+    }}>
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
             <input

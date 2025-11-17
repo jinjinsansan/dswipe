@@ -1,5 +1,6 @@
 import { GuaranteeBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopGuaranteeBlockProps {
   content: GuaranteeBlockContent;
@@ -30,6 +31,9 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
   const backgroundColor = content?.backgroundColor ?? '#020617';
   const textColor = content?.textColor ?? '#F8FAFC';
   const accentColor = content?.accentColor ?? '#34D399';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   const focusField = <T extends HTMLElement>(field: string) => (event: React.MouseEvent<T>) => {
     if (!onFieldFocus) return;
@@ -41,9 +45,15 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-slate-100">
             <input

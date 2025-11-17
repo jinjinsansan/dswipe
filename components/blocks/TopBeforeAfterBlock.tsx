@@ -1,5 +1,6 @@
 import { BeforeAfterBlockContent } from '@/types/templates';
 import { withAlpha, mixWith } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopBeforeAfterBlockProps {
   content: BeforeAfterBlockContent;
@@ -23,17 +24,24 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
   const accentColor = content?.accentColor ?? '#38BDF8';
   const beforeAccent = mixWith(accentColor, '#F87171', 0.35);
   const afterAccent = accentColor;
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+  const gradientLayer = `radial-gradient(circle at 20% 20%, ${withAlpha(accentColor, 0.18, accentColor)}, transparent 55%), radial-gradient(circle at 80% 30%, ${withAlpha(accentColor, 0.12, accentColor)}, transparent 60%)`;
 
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
       style={{
-        backgroundColor,
+        ...backgroundStyle,
         color: textColor,
-        backgroundImage: `radial-gradient(circle at 20% 20%, ${withAlpha(accentColor, 0.18, accentColor)}, transparent 55%), radial-gradient(circle at 80% 30%, ${withAlpha(accentColor, 0.12, accentColor)}, transparent 60%)`,
       }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: gradientLayer }} />
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-slate-100">
             <input

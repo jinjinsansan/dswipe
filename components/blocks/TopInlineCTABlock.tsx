@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { InlineCTABlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { resolveButtonUrl } from '@/lib/url';
 
 interface TopInlineCTABlockProps {
@@ -59,13 +60,24 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
     cursor: isLocked ? 'not-allowed' : undefined,
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
       className="relative w-full py-12"
-      style={{ backgroundColor: content?.backgroundColor ?? '#FFFFFF', color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
       <div
-        className="responsive-panel mx-auto w-full max-w-4xl rounded-card border text-center shadow-sm"
+        className="responsive-panel relative z-10 mx-auto w-full max-w-4xl rounded-card border text-center shadow-sm"
         style={{
           borderColor: withAlpha(accentColor, 0.25, accentColor),
           backgroundColor: withAlpha(accentColor, 0.06, accentColor),

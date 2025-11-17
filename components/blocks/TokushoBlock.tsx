@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TokushoBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import {
   BuildingOfficeIcon,
   UserIcon,
@@ -65,11 +66,21 @@ export default function TokushoBlock({ content, isEditing, onEdit }: TokushoBloc
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {/* ヘッダー */}
         <div className="responsive-stack items-center text-center">

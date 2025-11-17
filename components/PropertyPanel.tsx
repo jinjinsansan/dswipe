@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, PaintBrushIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, NoSymbolIcon, PaintBrushIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
@@ -334,6 +334,214 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const linkedTargetKind = isSalonLinked ? 'オンラインサロン' : '商品';
   const hasEditableText = textFieldCandidates.some((key) => key in content);
   const currentFontKey = (content as any).fontFamily || DEFAULT_FONT_KEY;
+  const backgroundImageInputId = `${block.id}-background-image-input`;
+
+  const resolveBackgroundMode = (): 'color' | 'image' | 'none' => {
+    const styleValue = (content as any).backgroundStyle;
+    if (styleValue === 'color' || styleValue === 'image' || styleValue === 'none') {
+      return styleValue;
+    }
+    if ((content as any).backgroundImageUrl) {
+      return 'image';
+    }
+    if ((content as any).backgroundColor) {
+      return 'color';
+    }
+    return 'color';
+  };
+
+  const renderBackgroundSection = () => {
+    const mode = resolveBackgroundMode();
+    const imageUrl = (content as any).backgroundImageUrl || '';
+    const backgroundImageMode = (content as any).backgroundImageMode ?? 'cover';
+    const backgroundImagePosition = (content as any).backgroundImagePosition ?? 'center';
+    const overlayRaw = typeof (content as any).backgroundImageOverlayOpacity === 'number'
+      ? (content as any).backgroundImageOverlayOpacity
+      : 0;
+    const overlayOpacity = Math.min(Math.max(overlayRaw, 0), 1);
+    const overlayPercent = Math.round(overlayOpacity * 100);
+    const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
+
+    const backgroundOptions: Array<{ value: 'color' | 'image' | 'none'; label: string; icon: IconComponent }> = [
+      { value: 'color', label: '単色', icon: PaintBrushIcon },
+      { value: 'image', label: '画像', icon: PhotoIcon },
+      { value: 'none', label: 'なし', icon: NoSymbolIcon },
+    ];
+
+    const handleModeChange = (nextMode: 'color' | 'image' | 'none') => {
+      onUpdateContent('backgroundStyle', nextMode);
+      if (nextMode === 'none') {
+        onUpdateContent('backgroundImageUrl', null);
+      }
+    };
+
+    const openMediaLibraryForBackground = () => {
+      setActiveImageField('backgroundImageUrl');
+      setShowMediaLibrary(true);
+    };
+
+    return (
+      <div className="space-y-4 pb-4 border-b border-slate-200">
+        <SectionHeader icon={PhotoIcon} label="背景設定" />
+        <div className="flex flex-wrap gap-2">
+          {backgroundOptions.map(({ value, label, icon: Icon }) => {
+            const isActive = mode === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => handleModeChange(value)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${isActive ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                <span>{label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {mode === 'image' ? (
+          <div className="space-y-4">
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt="背景画像"
+                  className="h-40 w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-40 w-full items-center justify-center text-sm text-slate-500">
+                  背景画像が設定されていません
+                </div>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <label
+                htmlFor={backgroundImageInputId}
+                className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900"
+              >
+                {isUploading ? (
+                  <>
+                    <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                    アップロード中...
+                  </>
+                ) : (
+                  <>
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    画像を選択
+                  </>
+                )}
+                <input
+                  id={backgroundImageInputId}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload('backgroundImageUrl')}
+                  disabled={isUploading}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={openMediaLibraryForBackground}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                ライブラリ
+              </button>
+              {imageUrl ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onUpdateContent('backgroundImageUrl', null);
+                    onUpdateContent('backgroundStyle', 'color');
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                  画像を削除
+                </button>
+              ) : null}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  表示モード
+                </label>
+                <select
+                  value={backgroundImageMode}
+                  onChange={(e) => onUpdateContent('backgroundImageMode', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="cover">カバー (全体を埋める)</option>
+                  <option value="contain">全体表示 (トリミングなし)</option>
+                  <option value="repeat">タイル表示</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  配置
+                </label>
+                <select
+                  value={backgroundImagePosition}
+                  onChange={(e) => onUpdateContent('backgroundImagePosition', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="center">中央</option>
+                  <option value="top">上寄せ</option>
+                  <option value="bottom">下寄せ</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="flex items-center justify-between text-sm font-medium text-slate-700 mb-2">
+                  <span>オーバーレイ濃度</span>
+                  <span className="text-xs text-slate-500">{overlayPercent}%</span>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={80}
+                  step={5}
+                  value={overlayPercent}
+                  onChange={(e) => {
+                    const next = Number(e.target.value) / 100;
+                    onUpdateContent('backgroundImageOverlayOpacity', next);
+                  }}
+                  className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  オーバーレイカラー
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={overlayColor}
+                    onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
+                    className="h-10 w-10 cursor-pointer rounded border border-slate-300"
+                  />
+                  <input
+                    type="text"
+                    value={overlayColor}
+                    onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
+                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-500">
+              背景画像が読み込めない場合は背景色が表示されます。画像に合わせてテキスト色も調整してください。
+            </p>
+          </div>
+        ) : null}
+      </div>
+    );
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -771,6 +979,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             </div>
           </div>
         )}
+
+        {renderBackgroundSection()}
 
         {renderColorSection()}
 
@@ -1739,10 +1949,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 画像アップロード */}
-        {('imageUrl' in content || 'backgroundImageUrl' in content) && (() => {
-          const imageField = 'backgroundImageUrl' in content ? 'backgroundImageUrl' : 'imageUrl';
+        {('imageUrl' in content) && (() => {
+          const imageField = 'imageUrl';
           const currentImage = ((content as any)[imageField] as string) || '';
-          const label = imageField === 'backgroundImageUrl' ? '背景画像' : '画像';
+          const label = '画像';
 
           const openMediaLibrary = () => {
             setActiveImageField(imageField);

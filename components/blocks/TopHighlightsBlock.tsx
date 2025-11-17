@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { FeaturesBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import {
   AcademicCapIcon,
   ArrowTrendingUpIcon,
@@ -113,6 +114,9 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
   const accentColor = content?.accentColor ?? '#2563EB';
   const backgroundColor = content?.backgroundColor ?? '#F1F5F9';
   const textColor = content?.textColor ?? '#0F172A';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
   const isListLayout = content?.layout === 'list';
   const features = useMemo(() => (
     Array.isArray(content?.features) && content.features.length > 0
@@ -167,12 +171,15 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
     <section
       className="relative flex w-full py-section-sm sm:py-section"
       style={{
-        backgroundColor,
+        ...backgroundStyle,
         color: textColor,
         minHeight: '100%',
       }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 sm:px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 sm:px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/70 p-4 text-sm text-slate-700">
             <input

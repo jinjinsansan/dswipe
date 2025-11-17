@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { MediaSpotlightBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
 import { resolveButtonUrl } from '@/lib/url';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopMediaSpotlightBlockProps {
   content: MediaSpotlightBlockContent;
@@ -59,6 +60,10 @@ export default function TopMediaSpotlightBlock({
   const handleCaptionBlur = (event: React.FocusEvent<HTMLDivElement>) => {
     onEdit?.('caption', event.currentTarget.textContent ?? '');
   };
+
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   const renderButton = () => {
     if (!buttonText) return null;
@@ -125,9 +130,15 @@ export default function TopMediaSpotlightBlock({
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         {/* ヘッダー */}
         <div className="responsive-stack items-center text-center">
           <span

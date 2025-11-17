@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { PricingBlockContent } from '@/types/templates';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface HandwrittenPricingBlockProps {
   content: PricingBlockContent;
@@ -31,12 +32,20 @@ export default function HandwrittenPricingBlock({
     }
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
-      className="py-12 md:py-20 px-4 md:px-6"
-      style={{ backgroundColor: '#FFFFFF' }}
+      className="relative py-12 md:py-20 px-4 md:px-6"
+      style={backgroundStyle}
     >
-      <div className="container mx-auto max-w-6xl">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="container relative z-10 mx-auto max-w-6xl">
         <div className="border-2 md:border-4 border-black rounded-lg md:rounded-2xl bg-white p-1.5 md:p-8">
           {/* ブラウザトップバー */}
           <div className="flex items-center gap-1 md:gap-3 mb-2 md:mb-8 pb-1.5 md:pb-4 border-b-2 md:border-b-3 border-black">

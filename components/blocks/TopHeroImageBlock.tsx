@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
 import { resolveButtonUrl } from '@/lib/url';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopHeroImageBlockProps {
   content: HeroBlockContent;
@@ -38,9 +39,11 @@ export default function TopHeroImageBlock({
   const subtitle = content?.subtitle ?? 'テンプレートとAI支援で、最短5分のスピードローンチ。デザインと実装のストレスから解放されます。';
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? '';
+  const shouldUseFallbackImage = (!content?.backgroundImageUrl || content.backgroundImageUrl.trim() === '')
+    && content?.backgroundStyle !== 'none';
   const backgroundImageUrl = content?.backgroundImageUrl && content.backgroundImageUrl.trim() !== ''
     ? content.backgroundImageUrl
-    : FALLBACK_IMAGE;
+    : (shouldUseFallbackImage ? FALLBACK_IMAGE : '');
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? accentColor;
@@ -75,6 +78,10 @@ export default function TopHeroImageBlock({
     border: `1px solid ${withAlpha(secondaryStrokeColor, 0.6, secondaryStrokeColor)}`,
   };
 
+  const blockBackgroundStyle = getBlockBackgroundStyle(content, overlayBase);
+  const showBackgroundOverlay = shouldRenderBackgroundOverlay(content);
+  const backgroundOverlayStyle = showBackgroundOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   const handleEdit = (field: keyof HeroBlockContent) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onEdit?.(field as string, e.target.value);
   };
@@ -82,7 +89,10 @@ export default function TopHeroImageBlock({
   return (
     <section
       className="relative flex h-full w-full items-center justify-center overflow-hidden"
-      style={{ color: textColor, backgroundColor: overlayBase }}
+      style={{
+        ...blockBackgroundStyle,
+        color: textColor,
+      }}
     >
       {backgroundImageUrl ? (
         <div className="absolute inset-0">
@@ -93,6 +103,9 @@ export default function TopHeroImageBlock({
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
+      ) : null}
+      {showBackgroundOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={backgroundOverlayStyle} />
       ) : null}
       <div className="absolute inset-0" style={overlayStyle} />
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-24 text-center sm:py-32">

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { CTABlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { resolveButtonUrl } from '@/lib/url';
 
 interface TopCTASectionProps {
@@ -41,8 +42,13 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
   const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
+  const fallbackBackgroundColor = content?.backgroundColor ?? '#07182F';
+  const blockBackgroundStyle = getBlockBackgroundStyle(content, fallbackBackgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   const backgroundStyle: CSSProperties = {
-    backgroundColor: content?.backgroundColor ?? '#07182F',
+    ...blockBackgroundStyle,
     color: textColor,
   };
 
@@ -137,6 +143,9 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
 
   return (
     <section className="relative w-full overflow-hidden py-section-sm sm:py-section" style={backgroundStyle}>
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
       <div
         className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full opacity-40"
         style={{

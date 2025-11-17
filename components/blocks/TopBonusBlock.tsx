@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { BonusListBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopBonusBlockProps {
   content: BonusListBlockContent;
@@ -56,13 +57,22 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
   const backgroundColor = content?.backgroundColor ?? '#EEF2FF';
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/70 p-4 text-sm text-slate-700">
             <input

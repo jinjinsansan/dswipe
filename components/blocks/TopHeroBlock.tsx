@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
 import { resolveButtonUrl } from '@/lib/url';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 const FALLBACK_VIDEO = 'https://storage.googleapis.com/d-swipe-assets/videos/launch-loop.mp4';
 
@@ -79,6 +80,10 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
     border: `1px solid ${withAlpha(secondaryStrokeColor, 0.6, secondaryStrokeColor)}`,
   };
 
+  const blockBackgroundStyle = getBlockBackgroundStyle(content, overlayBase);
+  const showBackgroundOverlay = shouldRenderBackgroundOverlay(content);
+  const backgroundOverlayStyle = showBackgroundOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   const handleEdit = (field: keyof HeroBlockContent) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onEdit?.(field as string, e.target.value);
   };
@@ -86,7 +91,10 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   return (
     <section
       className="relative flex h-full w-full items-center justify-center overflow-hidden"
-      style={{ color: textColor, backgroundColor: overlayBase }}
+      style={{
+        ...blockBackgroundStyle,
+        color: textColor,
+      }}
     >
       <div className="absolute inset-0">
         {videoUrl ? (
@@ -96,6 +104,9 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
           />
         ) : null}
       </div>
+      {showBackgroundOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={backgroundOverlayStyle} />
+      ) : null}
       <div className="absolute inset-0 pointer-events-none" style={overlayStyle} />
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-20 text-center">
         {isEditing ? (

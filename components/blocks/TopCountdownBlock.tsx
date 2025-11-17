@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CountdownBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopCountdownBlockProps {
   content: CountdownBlockContent;
@@ -50,17 +51,24 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
   const backgroundColor = content?.backgroundColor ?? '#B91C1C';
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#F97316';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+  const gradientLayer = `linear-gradient(120deg, ${withAlpha(accentColor, 0.35, accentColor)}, transparent)`;
 
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
       style={{
-        backgroundColor,
+        ...backgroundStyle,
         color: textColor,
-        backgroundImage: `linear-gradient(120deg, ${withAlpha(accentColor, 0.35, accentColor)}, transparent)`
       }}
     >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 text-center">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: gradientLayer }} />
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 text-center">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-white">
             <input

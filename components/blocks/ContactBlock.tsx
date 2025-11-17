@@ -2,6 +2,7 @@ import React from 'react';
 import { ContactBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 import { getContrastColor } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface ContactBlockProps {
   content: ContactBlockContent;
@@ -22,12 +23,22 @@ export default function ContactBlock({ content }: ContactBlockProps) {
 
   const buttonTextFinal = getContrastColor(buttonColor, '#FFFFFF', '#0F172A');
 
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-10 px-6">
         <div className="responsive-stack items-center text-center">
           {subtitle && (
             <span

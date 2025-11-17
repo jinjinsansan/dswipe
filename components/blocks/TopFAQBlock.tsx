@@ -1,5 +1,6 @@
 import { FAQBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopFAQBlockProps {
   content: FAQBlockContent;
@@ -26,6 +27,9 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
   const backgroundColor = content?.backgroundColor ?? '#0F172A';
   const textColor = content?.textColor ?? '#F8FAFC';
   const accentColor = content?.accentColor ?? '#38BDF8';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   const focusField = <T extends HTMLElement>(field: string) => (event: React.MouseEvent<T>) => {
     if (!onFieldFocus) return;
@@ -49,9 +53,15 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-slate-200">
             <input

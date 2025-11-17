@@ -1,5 +1,6 @@
 import { ProblemBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopProblemBlockProps {
   content: ProblemBlockContent;
@@ -26,13 +27,22 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
   const textColor = content?.textColor ?? '#0F172A';
   const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
 
   return (
     <section
       className="relative w-full py-section-sm sm:py-section"
-      style={{ backgroundColor, color: textColor }}
+      style={{
+        ...backgroundStyle,
+        color: textColor,
+      }}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
           <div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
             <input

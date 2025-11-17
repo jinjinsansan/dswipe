@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { CTABlockContent } from '@/types/templates';
+import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface HandwrittenCTABlockProps {
   content: CTABlockContent;
@@ -31,12 +32,20 @@ export default function HandwrittenCTABlock({
     }
   };
 
+  const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
+  const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
+  const showOverlay = shouldRenderBackgroundOverlay(content);
+  const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
+
   return (
     <section
-      className="px-4 py-section-sm sm:py-section md:px-6"
-      style={{ backgroundColor: '#FFFFFF' }}
+      className="relative px-4 py-section-sm sm:py-section md:px-6"
+      style={backgroundStyle}
     >
-      <div className="container mx-auto max-w-4xl">
+      {showOverlay ? (
+        <div className="pointer-events-none absolute inset-0" style={overlayStyle} />
+      ) : null}
+      <div className="container relative z-10 mx-auto max-w-4xl">
         <div className="border-3 md:border-4 border-black rounded-xl md:rounded-2xl bg-white p-6 md:p-8 lg:p-12">
           {/* ブラウザトップバー */}
           <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8 pb-3 md:pb-4 border-b-2 md:border-b-3 border-black">

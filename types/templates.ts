@@ -57,6 +57,12 @@ export interface BaseBlockContent {
   margin?: string;
   accentColor?: string;
   themeKey?: TemplateThemeKey;
+  backgroundStyle?: 'auto' | 'none' | 'color' | 'image';
+  backgroundImageUrl?: string | null;
+  backgroundImageMode?: 'cover' | 'contain' | 'repeat';
+  backgroundImagePosition?: 'center' | 'top' | 'bottom';
+  backgroundImageOverlayColor?: string;
+  backgroundImageOverlayOpacity?: number;
 }
 
 // ヒーローブロック
