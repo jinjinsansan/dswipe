@@ -90,6 +90,7 @@ type FooterCtaState = {
   textColor: string;
   buttonBackgroundColor: string;
   buttonTextColor: string;
+  showOnHero: boolean;
 };
 
 type LpSettingsState = {
@@ -111,6 +112,7 @@ const DEFAULT_FOOTER_CTA_STATE: FooterCtaState = {
   textColor: '#FFFFFF',
   buttonBackgroundColor: '#2563EB',
   buttonTextColor: '#FFFFFF',
+  showOnHero: false,
 };
 
 const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState => {
@@ -137,6 +139,7 @@ const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState =>
       typeof config.buttonTextColor === 'string'
         ? config.buttonTextColor
         : DEFAULT_FOOTER_CTA_STATE.buttonTextColor,
+    showOnHero: Boolean(config.showOnHero),
   };
 };
 
@@ -162,6 +165,8 @@ const buildFooterCtaPayload = (state: FooterCtaState): FooterCTAConfig | null =>
   if (textColor) payload.textColor = textColor;
   if (buttonBackgroundColor) payload.buttonBackgroundColor = buttonBackgroundColor;
   if (buttonTextColor) payload.buttonTextColor = buttonTextColor;
+
+  payload.showOnHero = Boolean(state.showOnHero);
 
   return Object.keys(payload).length > 0 ? payload : null;
 };
@@ -2058,6 +2063,24 @@ export default function EditLPNewPage() {
                 </div>
                 {lpSettings.floatingCta ? (
                   <div className="space-y-4">
+                    <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        checked={lpSettings.footerCta.showOnHero}
+                        onChange={(e) =>
+                          setLpSettings((prev) => ({
+                            ...prev,
+                            footerCta: { ...prev.footerCta, showOnHero: e.target.checked },
+                          }))
+                        }
+                        disabled={!lpSettings.floatingCta}
+                      />
+                      <div>
+                        <p className="text-sm lg:text-xs text-slate-900 font-semibold">ヒーローセクションでも表示</p>
+                        <p className="text-xs lg:text-[11px] text-slate-500">1枚目表示中は半透明の帯でCTAを表示します。</p>
+                      </div>
+                    </label>
                     <div className="grid gap-3 lg:grid-cols-2">
                       <div>
                         <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">見出し</label>
@@ -2721,6 +2744,24 @@ export default function EditLPNewPage() {
                         />
                       </div>
                     </div>
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        checked={lpSettings.footerCta.showOnHero}
+                        onChange={(e) =>
+                          setLpSettings((prev) => ({
+                            ...prev,
+                            footerCta: { ...prev.footerCta, showOnHero: e.target.checked },
+                          }))
+                        }
+                        disabled={!lpSettings.floatingCta}
+                      />
+                      <div>
+                        <p className="text-sm text-slate-900 font-semibold">ヒーローセクションでも表示</p>
+                        <p className="text-xs text-slate-500">1枚目表示中は半透明の帯でCTAを表示します。</p>
+                      </div>
+                    </label>
                     <div className="space-y-3">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">ボタン文言</label>

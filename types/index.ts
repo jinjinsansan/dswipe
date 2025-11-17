@@ -192,6 +192,7 @@ export interface FooterCTAConfig {
   textColor?: string;
   buttonBackgroundColor?: string;
   buttonTextColor?: string;
+  showOnHero?: boolean;
 }
 
 export type LP = LandingPage;
