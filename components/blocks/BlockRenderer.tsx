@@ -12,6 +12,10 @@ const TopHeroImageBlock = dynamic(() => import('./TopHeroImageBlock'), {
   ssr: false,
   loading: () => null,
 });
+const ImageOnlyBlock = dynamic(() => import('./ImageOnlyBlock'), {
+  ssr: false,
+  loading: () => null,
+});
 const TopHighlightsBlock = dynamic(() => import('./TopHighlightsBlock'), {
   ssr: false,
   loading: () => null,
@@ -179,6 +183,15 @@ export default function BlockRenderer({
           onCtaClick={onCtaClick}
           withinEditor={withinEditor}
           primaryLinkLock={primaryLinkLock}
+        />
+      );
+      break;
+    case 'top-image-plain-1':
+      element = (
+        <ImageOnlyBlock
+          content={content}
+          isEditing={isEditing}
+          onEdit={onEdit}
         />
       );
       break;

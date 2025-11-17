@@ -14,6 +14,7 @@ import {
   InlineCTABlockContent,
   FlexibleBlockContent,
   MediaSpotlightBlockContent,
+  ImageDisplayBlockContent,
   ContactBlockContent,
   TokushoBlockContent,
   NewsletterBlockContent,
@@ -645,6 +646,19 @@ export const TEMPLATE_LIBRARY: TemplateBlock[] = [
       buttonColor: '#38BDF8',
       secondaryButtonColor: '#CBD5F5',
     } as HeroBlockContent,
+  },
+  {
+    id: 'top-image-plain-minimal',
+    templateId: 'top-image-plain-1',
+    name: 'フル幅画像（装飾なし）',
+    category: 'content',
+    description: '余計な要素を排した、アップロード画像のみを表示するシンプルなブロックです。',
+    defaultContent: {
+      imageUrl: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?auto=format&fit=crop&w=1400&q=80',
+      imageOverlayColor: '#0F172A',
+      imageOverlayOpacity: 0,
+      backgroundColor: '#FFFFFF',
+    } as ImageDisplayBlockContent,
   },
   {
     id: 'top-highlights-grid',

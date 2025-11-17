@@ -345,6 +345,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     ? rawHeroMediaType
     : 'auto';
   const effectiveHeroMediaType = heroMediaType === 'auto' ? heroDefaultMediaType : heroMediaType;
+  const isImageOnlyBlock = blockType === 'top-image-plain-1';
 
   const resolveBackgroundMode = (): 'color' | 'image' | 'none' => {
     const styleValue = (content as any).backgroundStyle;
@@ -742,6 +743,120 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <p className="text-xs text-slate-500">画像は自動的にカバー表示されます。明るさが気になる場合はオーバーレイ色で調整してください。</p>
           </div>
         )}
+      </div>
+    );
+  };
+
+  const renderImageOnlySection = () => {
+    if (!isImageOnlyBlock) return null;
+
+    const imageUrl = (content as any).imageUrl ?? '';
+    const overlayRaw = typeof (content as any).imageOverlayOpacity === 'number'
+      ? (content as any).imageOverlayOpacity
+      : 0;
+    const overlayOpacity = Math.min(Math.max(overlayRaw, 0), 1);
+    const overlayPercent = Math.round(overlayOpacity * 100);
+    const overlayColor = (content as any).imageOverlayColor ?? '#0F172A';
+
+    return (
+      <div className="space-y-4 pb-4 border-b border-slate-200">
+        <SectionHeader icon={PhotoIcon} label="画像設定" />
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+          {imageUrl ? (
+            <img src={imageUrl} alt="表示画像" className="h-60 w-full object-contain bg-white" />
+          ) : (
+            <div className="flex h-60 w-full items-center justify-center text-sm text-slate-500">
+              画像が設定されていません
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <label
+            htmlFor={`${backgroundImageInputId}-image-only`}
+            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+          >
+            {isUploading ? (
+              <>
+                <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                アップロード中...
+              </>
+            ) : (
+              <>
+                <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                画像を選択
+              </>
+            )}
+            <input
+              id={`${backgroundImageInputId}-image-only`}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload('imageUrl')}
+              disabled={isUploading}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveImageField('imageUrl');
+              setShowMediaLibrary(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+            ライブラリ
+          </button>
+          {imageUrl ? (
+            <button
+              type="button"
+              onClick={() => onUpdateContent('imageUrl', '')}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            >
+              <TrashIcon className="h-4 w-4" aria-hidden="true" />
+              画像を削除
+            </button>
+          ) : null}
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="flex items-center justify-between text-sm font-medium text-slate-700 mb-2">
+              <span>オーバーレイ濃度</span>
+              <span className="text-xs text-slate-500">{overlayPercent}%</span>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={80}
+              step={5}
+              value={overlayPercent}
+              onChange={(e) => {
+                const next = Number(e.target.value) / 100;
+                onUpdateContent('imageOverlayOpacity', next);
+              }}
+              className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              オーバーレイカラー
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={overlayColor}
+                onChange={(e) => onUpdateContent('imageOverlayColor', e.target.value)}
+                className="h-10 w-10 cursor-pointer rounded border border-slate-300"
+              />
+              <input
+                type="text"
+                value={overlayColor}
+                onChange={(e) => onUpdateContent('imageOverlayColor', e.target.value)}
+                className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -1185,7 +1300,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
         {renderHeroMediaSection()}
 
-        {!isHeroBlock && renderBackgroundSection()}
+        {renderImageOnlySection()}
+
+        {!isHeroBlock && !isImageOnlyBlock && renderBackgroundSection()}
 
         {renderColorSection()}
 
@@ -2154,7 +2271,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         )}
 
         {/* 画像アップロード */}
-        {('imageUrl' in content) && (() => {
+        {('imageUrl' in content) && !isImageOnlyBlock && (() => {
           const imageField = 'imageUrl';
           const currentImage = ((content as any)[imageField] as string) || '';
           const label = '画像';

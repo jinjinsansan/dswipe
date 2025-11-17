@@ -6,6 +6,7 @@
 export type BlockType =
   | 'top-hero-1'
   | 'top-hero-image-1'
+  | 'top-image-plain-1'
   | 'top-highlights-1'
   | 'top-cta-1'
   | 'top-testimonials-1'
@@ -63,6 +64,13 @@ export interface BaseBlockContent {
   backgroundImagePosition?: 'center' | 'top' | 'bottom';
   backgroundImageOverlayColor?: string;
   backgroundImageOverlayOpacity?: number;
+}
+
+// シンプル画像ブロック
+export interface ImageDisplayBlockContent extends BaseBlockContent {
+  imageUrl?: string | null;
+  imageOverlayColor?: string;
+  imageOverlayOpacity?: number;
 }
 
 // ヒーローブロック
@@ -273,6 +281,7 @@ export interface NewsletterBlockContent extends BaseBlockContent {
 // ブロックコンテンツのUnion
 export type BlockContent =
   | HeroBlockContent
+  | ImageDisplayBlockContent
   | FeaturesBlockContent
   | CTABlockContent
   | TestimonialsBlockContent
