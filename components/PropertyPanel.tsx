@@ -275,6 +275,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       const response = await mediaApi.upload(file);
       const imageUrl = response.data.url;
       onUpdateContent(fieldName, imageUrl);
+      if (isHeroBlock && fieldName === 'backgroundImageUrl') {
+        onUpdateContent('backgroundMediaType', 'image');
+      }
     } catch (error) {
       console.error('画像アップロードエラー:', error);
       alert('画像のアップロードに失敗しました');
@@ -648,7 +651,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               {imageUrl ? (
                 <button
                   type="button"
-                  onClick={() => onUpdateContent('backgroundImageUrl', null)}
+                  onClick={() => {
+                    onUpdateContent('backgroundImageUrl', null);
+                    onUpdateContent('backgroundMediaType', 'auto');
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                 >
                   <TrashIcon className="h-4 w-4" aria-hidden="true" />
@@ -2234,6 +2240,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         onSelect={(url) => {
           if (activeImageField) {
             onUpdateContent(activeImageField, url);
+            if (isHeroBlock && activeImageField === 'backgroundImageUrl') {
+              onUpdateContent('backgroundMediaType', 'image');
+            }
           }
           setShowMediaLibrary(false);
           setActiveImageField(null);
