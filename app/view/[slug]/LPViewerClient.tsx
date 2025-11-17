@@ -960,13 +960,34 @@ export default function LPViewerClient({
     }
 
     const content = step.content_data as Record<string, any>;
-    if (typeof content.backgroundMediaType === 'string' && content.backgroundMediaType.toLowerCase() === 'video') {
-      return undefined;
-    }
-    if (content.backgroundVideoUrl && !content.backgroundMediaType) {
-      return undefined;
-    }
     const backgroundStyle = typeof content.backgroundStyle === 'string' ? content.backgroundStyle.toLowerCase() : undefined;
+    const normalizedMediaType = typeof content.backgroundMediaType === 'string'
+      ? content.backgroundMediaType.toLowerCase()
+      : undefined;
+    const hasBackgroundVideo = normalizedMediaType === 'video'
+      || (!normalizedMediaType && typeof content.backgroundVideoUrl === 'string' && content.backgroundVideoUrl.trim().length > 0);
+
+    const isHeroBlock = blockType === 'top-hero-1' || blockType === 'top-hero-image-1';
+    if (isHeroBlock && hasBackgroundVideo) {
+      const heroBackgroundCandidates = [
+        backgroundStyle !== 'none' && typeof content.backgroundColor === 'string' ? content.backgroundColor : undefined,
+        backgroundStyle !== 'none' && typeof content.overlayColor === 'string' ? content.overlayColor : undefined,
+        '#000000',
+      ];
+
+      const heroBackground = heroBackgroundCandidates.find(
+        (value): value is string => typeof value === 'string' && value.trim().length > 0,
+      );
+
+      return heroBackground;
+    }
+
+    if (normalizedMediaType === 'video') {
+      return undefined;
+    }
+    if (hasBackgroundVideo) {
+      return undefined;
+    }
     if (backgroundStyle === 'none') {
       return undefined;
     }
