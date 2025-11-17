@@ -31,7 +31,10 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   const subtitle = content?.subtitle ?? 'スワイプ型LP作成プラットフォームで、今すぐデジタルコンテンツを販売';
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? 'ログイン';
+  const backgroundMediaType = content?.backgroundMediaType;
+  const resolvedMediaType = backgroundMediaType === 'image' ? 'image' : backgroundMediaType === 'video' ? 'video' : 'video';
   const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
+  const heroImageUrl = content?.backgroundImageUrl ?? '';
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? '#38BDF8';
@@ -96,14 +99,16 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
         color: textColor,
       }}
     >
-      <div className="absolute inset-0">
-        {videoUrl ? (
-          <AutoPlayVideo
-            className="absolute inset-0 h-full w-full object-cover"
-            src={videoUrl}
-          />
-        ) : null}
-      </div>
+      {resolvedMediaType === 'video' ? (
+        <div className="absolute inset-0">
+          {videoUrl ? (
+            <AutoPlayVideo
+              className="absolute inset-0 h-full w-full object-cover"
+              src={videoUrl}
+            />
+          ) : null}
+        </div>
+      ) : null}
       {showBackgroundOverlay ? (
         <div className="pointer-events-none absolute inset-0" style={backgroundOverlayStyle} />
       ) : null}
@@ -161,12 +166,21 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
               onChange={handleEdit('secondaryButtonUrl')}
               placeholder="https://"
             />
-            <input
-              className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
-              value={videoUrl}
-              onChange={handleEdit('backgroundVideoUrl')}
-              placeholder="背景動画URL"
-            />
+            {resolvedMediaType === 'video' ? (
+              <input
+                className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
+                value={content?.backgroundVideoUrl ?? ''}
+                onChange={handleEdit('backgroundVideoUrl')}
+                placeholder="背景動画URL"
+              />
+            ) : (
+              <input
+                className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm"
+                value={heroImageUrl}
+                onChange={handleEdit('backgroundImageUrl')}
+                placeholder="背景画像URL"
+              />
+            )}
           </div>
         ) : null}
 

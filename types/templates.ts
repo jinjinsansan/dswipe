@@ -75,6 +75,7 @@ export interface HeroBlockContent extends BaseBlockContent {
   buttonUrl?: string;
   secondaryButtonText?: string;
   secondaryButtonUrl?: string;
+  backgroundMediaType?: 'auto' | 'video' | 'image';
   backgroundVideoUrl?: string;
   backgroundImageUrl?: string;
   alignment?: 'left' | 'center';

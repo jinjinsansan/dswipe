@@ -1,3 +1,4 @@
+import AutoPlayVideo from '@/components/AutoPlayVideo';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
@@ -39,11 +40,14 @@ export default function TopHeroImageBlock({
   const subtitle = content?.subtitle ?? 'テンプレートとAI支援で、最短5分のスピードローンチ。デザインと実装のストレスから解放されます。';
   const primaryText = content?.buttonText ?? '無料で始める';
   const secondaryText = content?.secondaryButtonText ?? '';
-  const shouldUseFallbackImage = (!content?.backgroundImageUrl || content.backgroundImageUrl.trim() === '')
-    && content?.backgroundStyle !== 'none';
-  const backgroundImageUrl = content?.backgroundImageUrl && content.backgroundImageUrl.trim() !== ''
-    ? content.backgroundImageUrl
-    : (shouldUseFallbackImage ? FALLBACK_IMAGE : '');
+  const backgroundMediaType = content?.backgroundMediaType;
+  const resolvedMediaType = backgroundMediaType === 'video' ? 'video' : backgroundMediaType === 'image' ? 'image' : 'image';
+  const rawImageUrl = content?.backgroundImageUrl?.trim() ?? '';
+  const shouldUseFallbackImage = resolvedMediaType === 'image' && rawImageUrl === '' && content?.backgroundStyle !== 'none';
+  const backgroundImageUrl = resolvedMediaType === 'image'
+    ? (rawImageUrl !== '' ? rawImageUrl : (shouldUseFallbackImage ? FALLBACK_IMAGE : ''))
+    : '';
+  const videoUrl = content?.backgroundVideoUrl ?? '';
   const textColor = content?.textColor ?? '#FFFFFF';
   const accentColor = content?.accentColor ?? '#38BDF8';
   const buttonColor = content?.buttonColor ?? accentColor;
@@ -94,7 +98,15 @@ export default function TopHeroImageBlock({
         color: textColor,
       }}
     >
-      {backgroundImageUrl ? (
+      {resolvedMediaType === 'video' && videoUrl ? (
+        <div className="absolute inset-0">
+          <AutoPlayVideo
+            className="absolute inset-0 h-full w-full object-cover"
+            src={videoUrl}
+          />
+        </div>
+      ) : null}
+      {resolvedMediaType === 'image' && backgroundImageUrl ? (
         <div className="absolute inset-0">
           <img
             key={backgroundImageUrl}
@@ -161,12 +173,21 @@ export default function TopHeroImageBlock({
               onChange={handleEdit('secondaryButtonUrl')}
               placeholder="https://"
             />
-            <input
-              className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
-              value={content?.backgroundImageUrl ?? ''}
-              onChange={handleEdit('backgroundImageUrl')}
-              placeholder="背景画像URL"
-            />
+            {resolvedMediaType === 'video' ? (
+              <input
+                className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
+                value={content?.backgroundVideoUrl ?? ''}
+                onChange={handleEdit('backgroundVideoUrl')}
+                placeholder="背景動画URL"
+              />
+            ) : (
+              <input
+                className="w-full rounded-md border border-white/30 bg-white/50 px-3 py-2"
+                value={content?.backgroundImageUrl ?? ''}
+                onChange={handleEdit('backgroundImageUrl')}
+                placeholder="背景画像URL"
+              />
+            )}
           </div>
         ) : null}
 

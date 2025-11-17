@@ -335,6 +335,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const hasEditableText = textFieldCandidates.some((key) => key in content);
   const currentFontKey = (content as any).fontFamily || DEFAULT_FONT_KEY;
   const backgroundImageInputId = `${block.id}-background-image-input`;
+  const isHeroBlock = blockType === 'top-hero-1' || blockType === 'top-hero-image-1';
+  const heroDefaultMediaType = blockType === 'top-hero-1' ? 'video' : 'image';
+  const rawHeroMediaType = (content as any).backgroundMediaType;
+  const heroMediaType = rawHeroMediaType === 'video' || rawHeroMediaType === 'image' || rawHeroMediaType === 'auto'
+    ? rawHeroMediaType
+    : 'auto';
+  const effectiveHeroMediaType = heroMediaType === 'auto' ? heroDefaultMediaType : heroMediaType;
 
   const resolveBackgroundMode = (): 'color' | 'image' | 'none' => {
     const styleValue = (content as any).backgroundStyle;
@@ -542,6 +549,116 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             </p>
           </div>
         ) : null}
+      </div>
+    );
+  };
+
+  const renderHeroMediaSection = () => {
+    if (!isHeroBlock) return null;
+
+    const videoUrl = (content as any).backgroundVideoUrl ?? '';
+    const imageUrl = (content as any).backgroundImageUrl ?? '';
+    const openHeroMediaLibrary = () => {
+      setActiveImageField('backgroundImageUrl');
+      setShowMediaLibrary(true);
+    };
+
+    const heroOptions: Array<{ value: 'auto' | 'video' | 'image'; label: string; description: string }> = [
+      { value: 'auto', label: '自動', description: blockType === 'top-hero-1' ? '既定で動画を使用します' : '既定で画像を使用します' },
+      { value: 'video', label: '動画', description: 'mp4 などのループ動画を背景に表示' },
+      { value: 'image', label: '画像', description: '静止画を背景に表示' },
+    ];
+
+    return (
+      <div className="space-y-4 pb-4 border-b border-slate-200">
+        <SectionHeader icon={PhotoIcon} label="背景メディア" />
+        <div className="grid gap-2 sm:grid-cols-3">
+          {heroOptions.map((option) => {
+            const isActive = heroMediaType === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => onUpdateContent('backgroundMediaType', option.value)}
+                className={`rounded-lg border px-3 py-3 text-left transition ${isActive ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
+              >
+                <p className="text-sm font-semibold">{option.label}</p>
+                <p className="mt-1 text-xs text-slate-500">{option.description}</p>
+              </button>
+            );
+          })}
+        </div>
+
+        {effectiveHeroMediaType === 'video' ? (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-700">背景動画URL</label>
+            <input
+              type="text"
+              value={videoUrl}
+              onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              placeholder="https://example.com/hero.mp4"
+            />
+            <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。未入力の場合は背景色が表示されます。</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              {imageUrl ? (
+                <img src={imageUrl} alt="背景画像" className="h-40 w-full object-cover" />
+              ) : (
+                <div className="flex h-40 w-full items-center justify-center text-sm text-slate-500">
+                  背景画像が設定されていません
+                </div>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <label
+                htmlFor={`${backgroundImageInputId}-hero`}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+              >
+                {isUploading ? (
+                  <>
+                    <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                    アップロード中...
+                  </>
+                ) : (
+                  <>
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    画像を選択
+                  </>
+                )}
+                <input
+                  id={`${backgroundImageInputId}-hero`}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload('backgroundImageUrl')}
+                  disabled={isUploading}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={openHeroMediaLibrary}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                ライブラリ
+              </button>
+              {imageUrl ? (
+                <button
+                  type="button"
+                  onClick={() => onUpdateContent('backgroundImageUrl', null)}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                  画像を削除
+                </button>
+              ) : null}
+            </div>
+            <p className="text-xs text-slate-500">画像は自動的にカバー表示されます。明るさが気になる場合はオーバーレイ色で調整してください。</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -983,7 +1100,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           </div>
         )}
 
-        {renderBackgroundSection()}
+        {renderHeroMediaSection()}
+
+        {!isHeroBlock && renderBackgroundSection()}
 
         {renderColorSection()}
 
