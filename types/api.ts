@@ -3,6 +3,7 @@
 
 import type {
   LandingPage,
+  FooterCTAConfig,
   SalonAnnouncementCreatePayload,
   SalonAnnouncementUpdatePayload,
   SalonAssetMetadataPayload,
@@ -19,6 +20,7 @@ export type {
   AuthResponse,
   LandingPage as LP,
   LPDetail,
+  FooterCTAConfig,
   LPStep,
   CTA,
   PublicUserProfile,
@@ -498,6 +500,7 @@ export interface CreateLPRequest {
   show_swipe_hint?: boolean;
   fullscreen_media?: boolean;
   floating_cta?: boolean;
+  footer_cta_config?: FooterCTAConfig | null;
   product_id?: string | null;
   salon_id?: string | null;
   meta_title?: string | null;
@@ -516,6 +519,7 @@ export interface UpdateLPRequest {
   show_swipe_hint?: boolean;
   fullscreen_media?: boolean;
   floating_cta?: boolean;
+  footer_cta_config?: FooterCTAConfig | null;
   product_id?: string | null;
   salon_id?: string | null;
   meta_title?: string | null;

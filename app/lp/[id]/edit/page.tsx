@@ -6,7 +6,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { LPDetail } from '@/types';
+import { LPDetail, type FooterCTAConfig } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
@@ -80,6 +80,105 @@ const LEGACY_PRODUCT_CTA_URLS = new Set([
   'https://example.com/subscribe',
   'https://example.com/vip-newsletter',
 ]);
+
+type FooterCtaState = {
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+  buttonUrl: string;
+  backgroundColor: string;
+  textColor: string;
+  buttonBackgroundColor: string;
+  buttonTextColor: string;
+};
+
+type LpSettingsState = {
+  showSwipeHint: boolean;
+  floatingCta: boolean;
+  swipeDirection: 'vertical' | 'horizontal';
+  visibility: 'public' | 'limited' | 'private';
+  footerCta: FooterCtaState;
+};
+
+type SaveResult = { ok: true } | { ok: false; errorMessage: string };
+
+const DEFAULT_FOOTER_CTA_STATE: FooterCtaState = {
+  title: '今すぐお申し込み',
+  subtitle: 'フォームから60秒で完了します',
+  buttonLabel: '無料で相談する',
+  buttonUrl: '',
+  backgroundColor: '#0F172A',
+  textColor: '#FFFFFF',
+  buttonBackgroundColor: '#2563EB',
+  buttonTextColor: '#FFFFFF',
+};
+
+const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState => {
+  if (!config) {
+    return { ...DEFAULT_FOOTER_CTA_STATE };
+  }
+  return {
+    title: typeof config.title === 'string' ? config.title : DEFAULT_FOOTER_CTA_STATE.title,
+    subtitle: typeof config.subtitle === 'string' ? config.subtitle : DEFAULT_FOOTER_CTA_STATE.subtitle,
+    buttonLabel:
+      typeof config.buttonLabel === 'string' ? config.buttonLabel : DEFAULT_FOOTER_CTA_STATE.buttonLabel,
+    buttonUrl: typeof config.buttonUrl === 'string' ? config.buttonUrl : DEFAULT_FOOTER_CTA_STATE.buttonUrl,
+    backgroundColor:
+      typeof config.backgroundColor === 'string'
+        ? config.backgroundColor
+        : DEFAULT_FOOTER_CTA_STATE.backgroundColor,
+    textColor:
+      typeof config.textColor === 'string' ? config.textColor : DEFAULT_FOOTER_CTA_STATE.textColor,
+    buttonBackgroundColor:
+      typeof config.buttonBackgroundColor === 'string'
+        ? config.buttonBackgroundColor
+        : DEFAULT_FOOTER_CTA_STATE.buttonBackgroundColor,
+    buttonTextColor:
+      typeof config.buttonTextColor === 'string'
+        ? config.buttonTextColor
+        : DEFAULT_FOOTER_CTA_STATE.buttonTextColor,
+  };
+};
+
+const buildFooterCtaPayload = (state: FooterCtaState): FooterCTAConfig | null => {
+  const payload: FooterCTAConfig = {};
+
+  const trimmedTitle = state.title.trim();
+  const trimmedSubtitle = state.subtitle.trim();
+  const trimmedButtonLabel = state.buttonLabel.trim();
+  const trimmedButtonUrl = state.buttonUrl.trim();
+
+  if (trimmedTitle) payload.title = trimmedTitle;
+  if (trimmedSubtitle) payload.subtitle = trimmedSubtitle;
+  if (trimmedButtonLabel) payload.buttonLabel = trimmedButtonLabel;
+  if (trimmedButtonUrl) payload.buttonUrl = trimmedButtonUrl;
+
+  const backgroundColor = state.backgroundColor.trim();
+  const textColor = state.textColor.trim();
+  const buttonBackgroundColor = state.buttonBackgroundColor.trim();
+  const buttonTextColor = state.buttonTextColor.trim();
+
+  if (backgroundColor) payload.backgroundColor = backgroundColor;
+  if (textColor) payload.textColor = textColor;
+  if (buttonBackgroundColor) payload.buttonBackgroundColor = buttonBackgroundColor;
+  if (buttonTextColor) payload.buttonTextColor = buttonTextColor;
+
+  return Object.keys(payload).length > 0 ? payload : null;
+};
+
+const validateFooterCtaUrl = (value: string): string | null => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return null;
+    }
+    return 'URLは http または https で始める必要があります';
+  } catch (error) {
+    return '有効なURLを入力してください';
+  }
+};
 
 function resolveTemplateMetadata(
   templateSource: TemplateBlock[],
@@ -284,11 +383,12 @@ export default function EditLPNewPage() {
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [aiGeneratorConfig, setAiGeneratorConfig] = useState<any>(null);
   const [lpTitle, setLpTitle] = useState('');
-  const [lpSettings, setLpSettings] = useState({
+  const [lpSettings, setLpSettings] = useState<LpSettingsState>({
     showSwipeHint: false,
     floatingCta: false,
-    swipeDirection: 'vertical' as 'vertical' | 'horizontal',
-    visibility: 'private' as 'public' | 'limited' | 'private',
+    swipeDirection: 'vertical',
+    visibility: 'private',
+    footerCta: { ...DEFAULT_FOOTER_CTA_STATE },
   });
   const [metaSettings, setMetaSettings] = useState({
     title: '',
@@ -301,6 +401,7 @@ export default function EditLPNewPage() {
   const [isRotatingShareToken, setIsRotatingShareToken] = useState(false);
   const [shareCopyStatus, setShareCopyStatus] = useState<'idle' | 'copied'>('idle');
   const [limitedDraftNotice, setLimitedDraftNotice] = useState(false);
+  const [footerCtaUrlError, setFooterCtaUrlError] = useState<string | null>(null);
   const shareTokenRotatedLabel = useMemo(() => {
     if (!shareTokenRotatedAt) return null;
     try {
@@ -550,12 +651,19 @@ export default function EditLPNewPage() {
       setLp(response.data);
       setLinkedSalon(response.data.linked_salon ?? null);
       setLpTitle(response.data.title || '');
+      const footerConfig = (response.data.footer_cta_config ?? null) as FooterCTAConfig | null;
       setLpSettings({
         showSwipeHint: Boolean(response.data.show_swipe_hint),
-        floatingCta: Boolean(response.data.floating_cta),
-        swipeDirection: response.data.swipe_direction || 'vertical',
+        floatingCta: Boolean(
+          typeof response.data.floating_cta === 'boolean'
+            ? response.data.floating_cta
+            : footerConfig
+        ),
+        swipeDirection: (response.data.swipe_direction as 'vertical' | 'horizontal') || 'vertical',
         visibility: (response.data.visibility as 'public' | 'limited' | 'private') || 'private',
+        footerCta: buildFooterCtaState(footerConfig),
       });
+      setFooterCtaUrlError(null);
       setMetaSettings({
         title: response.data.meta_title ?? '',
         description: response.data.meta_description ?? '',
@@ -989,7 +1097,7 @@ export default function EditLPNewPage() {
   );
 
   const executeSave = useCallback(
-    async ({ showFeedback = false }: { showFeedback?: boolean } = {}) => {
+    async ({ showFeedback = false }: { showFeedback?: boolean } = {}): Promise<SaveResult> => {
       setIsSaving(true);
       setError('');
 
@@ -1006,10 +1114,42 @@ export default function EditLPNewPage() {
           return trimmed.length > 0 ? trimmed : null;
         };
 
+        let footerCtaPayload: FooterCTAConfig | null = null;
+        let footerCtaEnabled = false;
+
+        if (lpSettings.floatingCta) {
+          const buttonLabelTrimmed = lpSettings.footerCta.buttonLabel.trim();
+          if (!buttonLabelTrimmed) {
+            setError('フッターCTAのボタン文言を入力してください');
+            setIsSaving(false);
+            return { ok: false as const, errorMessage: 'フッターCTAのボタン文言を入力してください' };
+          }
+
+          const urlError = validateFooterCtaUrl(lpSettings.footerCta.buttonUrl);
+          setFooterCtaUrlError(urlError);
+          if (urlError) {
+            setError('フッターCTAのURLを修正してください');
+            setIsSaving(false);
+            return { ok: false as const, errorMessage: 'フッターCTAのURLを修正してください' };
+          }
+
+          if (!lpSettings.footerCta.buttonUrl.trim()) {
+            setError('フッターCTAのリンク先URLを入力してください');
+            setIsSaving(false);
+            return { ok: false as const, errorMessage: 'フッターCTAのリンク先URLを入力してください' };
+          }
+
+          footerCtaPayload = buildFooterCtaPayload(lpSettings.footerCta);
+          footerCtaEnabled = Boolean(footerCtaPayload);
+        } else {
+          setFooterCtaUrlError(null);
+        }
+
         const lpUpdateResponse = await lpApi.update(lpId, {
           title: lpTitle.trim() || undefined,
           show_swipe_hint: lpSettings.showSwipeHint,
-          floating_cta: false,
+          floating_cta: footerCtaEnabled,
+          footer_cta_config: footerCtaEnabled ? footerCtaPayload : null,
           swipe_direction: lpSettings.swipeDirection,
           visibility: lpSettings.visibility,
           meta_title: normalizeMetaValue(metaSettings.title),
@@ -1027,6 +1167,17 @@ export default function EditLPNewPage() {
               }
             : prev
         );
+        setLpSettings((prev) => ({
+          ...prev,
+          floatingCta: Boolean(
+            typeof lpUpdateResponse.data?.floating_cta === 'boolean'
+              ? lpUpdateResponse.data.floating_cta
+              : lpUpdateResponse.data?.footer_cta_config
+          ),
+          footerCta: buildFooterCtaState(
+            (lpUpdateResponse.data?.footer_cta_config ?? null) as FooterCTAConfig | null
+          ),
+        }));
         setShareUrl(lpUpdateResponse.data?.share_url ?? null);
         setShareTokenRotatedAt(lpUpdateResponse.data?.share_token_rotated_at ?? null);
         setShareCopyStatus('idle');
@@ -1877,6 +2028,223 @@ export default function EditLPNewPage() {
                   <p className="text-xs lg:text-[11px] text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">フッターCTA</h5>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      最終ブロックに到達した際に画面下部へ表示される固定帯です。CTAの文言や配色をここで設定できます。
+                    </p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.floatingCta}
+                      onChange={(event) => {
+                        const nextEnabled = event.target.checked;
+                        setLpSettings((prev) => ({
+                          ...prev,
+                          floatingCta: nextEnabled,
+                          footerCta: nextEnabled ? prev.footerCta : prev.footerCta,
+                        }));
+                        if (!nextEnabled) {
+                          setFooterCtaUrlError(null);
+                        }
+                      }}
+                    />
+                    <span className="text-sm lg:text-xs text-slate-700 font-semibold">表示する</span>
+                  </label>
+                </div>
+                {lpSettings.floatingCta ? (
+                  <div className="space-y-4">
+                    <div className="grid gap-3 lg:grid-cols-2">
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">見出し</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.title}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, title: e.target.value },
+                            }))
+                          }
+                          placeholder="例：今すぐお申し込み"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">補足テキスト</label>
+                        <textarea
+                          value={lpSettings.footerCta.subtitle}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, subtitle: e.target.value },
+                            }))
+                          }
+                          placeholder="例：フォーム入力は60秒で完了"
+                          rows={2}
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-3 lg:grid-cols-2">
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタン文言</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.buttonLabel}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, buttonLabel: e.target.value },
+                            }))
+                          }
+                          placeholder="例：無料で相談する"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタンURL</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.buttonUrl}
+                          onChange={(e) => {
+                            const nextValue = e.target.value;
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, buttonUrl: nextValue },
+                            }));
+                            setFooterCtaUrlError(null);
+                          }}
+                          onBlur={(e) => setFooterCtaUrlError(validateFooterCtaUrl(e.target.value))}
+                          placeholder="https://example.com/cta"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                        />
+                        {footerCtaUrlError ? (
+                          <p className="mt-1 text-xs text-red-600">{footerCtaUrlError}</p>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">背景色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.backgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.backgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">文字色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.textColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, textColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.textColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, textColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタン背景色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.buttonBackgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.buttonBackgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタン文字色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.buttonTextColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.buttonTextColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs lg:text-[11px] text-slate-500">
+                    有効化すると、閲覧者が最後のブロックに到達した際に固定CTA帯が表示されます。
+                  </p>
+                )}
+              </div>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">商品・サービス連携</h5>
@@ -2291,6 +2659,221 @@ export default function EditLPNewPage() {
                   <p className="text-xs text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">フッターCTA</h5>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      最終ブロックに到達した際に画面下部へ表示される固定帯です。
+                    </p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                      checked={lpSettings.floatingCta}
+                      onChange={(event) => {
+                        const nextEnabled = event.target.checked;
+                        setLpSettings((prev) => ({
+                          ...prev,
+                          floatingCta: nextEnabled,
+                          footerCta: nextEnabled ? prev.footerCta : prev.footerCta,
+                        }));
+                        if (!nextEnabled) {
+                          setFooterCtaUrlError(null);
+                        }
+                      }}
+                    />
+                    <span className="text-sm text-slate-700 font-semibold">表示する</span>
+                  </label>
+                </div>
+                {lpSettings.floatingCta ? (
+                  <div className="space-y-4">
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">見出し</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.title}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, title: e.target.value },
+                            }))
+                          }
+                          placeholder="例：今すぐお申し込み"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">補足テキスト</label>
+                        <textarea
+                          value={lpSettings.footerCta.subtitle}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, subtitle: e.target.value },
+                            }))
+                          }
+                          placeholder="例：フォーム入力は60秒で完了"
+                          rows={2}
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">ボタン文言</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.buttonLabel}
+                          onChange={(e) =>
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, buttonLabel: e.target.value },
+                            }))
+                          }
+                          placeholder="例：無料で相談する"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">ボタンURL</label>
+                        <input
+                          type="text"
+                          value={lpSettings.footerCta.buttonUrl}
+                          onChange={(e) => {
+                            const nextValue = e.target.value;
+                            setLpSettings((prev) => ({
+                              ...prev,
+                              footerCta: { ...prev.footerCta, buttonUrl: nextValue },
+                            }));
+                            setFooterCtaUrlError(null);
+                          }}
+                          onBlur={(e) => setFooterCtaUrlError(validateFooterCtaUrl(e.target.value))}
+                          placeholder="https://example.com/cta"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                        />
+                        {footerCtaUrlError ? (
+                          <p className="mt-1 text-xs text-red-600">{footerCtaUrlError}</p>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">背景色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.backgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.backgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">文字色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.textColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, textColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.textColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, textColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">ボタン背景色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.buttonBackgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.buttonBackgroundColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">ボタン文字色</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={lpSettings.footerCta.buttonTextColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
+                              }))
+                            }
+                            className="h-10 w-10 rounded border border-slate-300"
+                          />
+                          <input
+                            type="text"
+                            value={lpSettings.footerCta.buttonTextColor}
+                            onChange={(e) =>
+                              setLpSettings((prev) => ({
+                                ...prev,
+                                footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
+                              }))
+                            }
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500">有効化すると、最後のブロックに固定CTA帯が表示されます。</p>
+                )}
+              </div>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">商品・サービス連携</h5>

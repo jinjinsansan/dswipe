@@ -125,6 +125,7 @@ export interface LandingPage {
   meta_site_name?: string | null;
   custom_theme_hex?: string | null;
   custom_theme_shades?: Record<string, string> | null;
+  footer_cta_config?: FooterCTAConfig | null;
   created_at: string;
   updated_at: string;
   // ユーザー情報（APIレスポンスに含まれる場合）
@@ -180,6 +181,17 @@ export interface LPDetail extends LandingPage {
   ctas: CTA[];
   public_url: string;
   linked_salon?: LinkedSalonSummary | null;
+}
+
+export interface FooterCTAConfig {
+  title?: string;
+  subtitle?: string;
+  buttonLabel?: string;
+  buttonUrl?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  buttonBackgroundColor?: string;
+  buttonTextColor?: string;
 }
 
 export type LP = LandingPage;

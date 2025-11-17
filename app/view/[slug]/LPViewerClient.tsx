@@ -21,7 +21,7 @@ import {
   recordStepView,
   submitEmailCapture,
 } from '@/lib/publicClient';
-import { LPDetail, RequiredActionsStatus, CTA, Product } from '@/types';
+import { LPDetail, RequiredActionsStatus, CTA, Product, type FooterCTAConfig } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 import { redirectToLogin } from '@/lib/navigation';
@@ -73,6 +73,7 @@ export default function LPViewerClient({
     Swiper: SwiperComponentType;
     SwiperSlide: SwiperSlideComponentType;
   } | null>(null);
+  const [showFooterCta, setShowFooterCta] = useState(false);
 
   const selectedIsPoints = purchaseMethod === 'points';
   const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
@@ -113,6 +114,30 @@ export default function LPViewerClient({
     }
     return undefined;
   }, [lp?.linked_salon?.id, lp?.product_id, products]);
+
+  const footerCtaConfig = useMemo<FooterCTAConfig | null>(() => {
+    if (!lp?.footer_cta_config) {
+      return null;
+    }
+    return lp.footer_cta_config as FooterCTAConfig;
+  }, [lp?.footer_cta_config]);
+
+  const footerCtaColors = useMemo(
+    () => ({
+      background: footerCtaConfig?.backgroundColor || '#0F172A',
+      text: footerCtaConfig?.textColor || '#FFFFFF',
+      buttonBackground: footerCtaConfig?.buttonBackgroundColor || '#2563EB',
+      buttonText: footerCtaConfig?.buttonTextColor || '#FFFFFF',
+    }),
+    [footerCtaConfig]
+  );
+
+  const finalSlideIndex = useMemo(() => {
+    if (!lp?.steps || lp.steps.length === 0) {
+      return -1;
+    }
+    return lp.steps.length - 1;
+  }, [lp?.steps]);
 
   // ハプティックフィードバック（振動）
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -176,6 +201,22 @@ export default function LPViewerClient({
 
     shareTokenRef.current = shareToken ?? null;
   }, [initialLp, initialProducts, initialSlug, shareToken]);
+
+  useEffect(() => {
+    if (!footerCtaConfig) {
+      setShowFooterCta(false);
+      return;
+    }
+    const swiper = swiperRef.current;
+    if (!swiper) {
+      return;
+    }
+    if (finalSlideIndex < 0) {
+      setShowFooterCta(false);
+      return;
+    }
+    setShowFooterCta(swiper.activeIndex === finalSlideIndex);
+  }, [footerCtaConfig, finalSlideIndex]);
 
   useEffect(() => {
     if (!lp?.steps?.length) {
@@ -249,9 +290,20 @@ export default function LPViewerClient({
         viewTrackedRef.current = true;
       }
 
+      const footerConfig =
+        lpData && typeof lpData.footer_cta_config === 'object' && lpData.footer_cta_config !== null
+          ? (lpData.footer_cta_config as FooterCTAConfig)
+          : null;
+      const floatingCtaEnabled =
+        typeof lpData?.floating_cta === 'boolean'
+          ? lpData.floating_cta
+          : Boolean(footerConfig);
+
       const newLp = {
         ...lpData,
         steps: validSteps,
+        footer_cta_config: footerConfig,
+        floating_cta: floatingCtaEnabled,
       };
 
       const nextSlug = typeof lpData?.slug === 'string' ? lpData.slug : slugRef.current;
@@ -605,6 +657,14 @@ export default function LPViewerClient({
         );
       }
     }
+
+    if (!footerCtaConfig) {
+      if (showFooterCta) {
+        setShowFooterCta(false);
+      }
+    } else if (finalSlideIndex >= 0) {
+      setShowFooterCta(swiper.activeIndex === finalSlideIndex);
+    }
   };
 
   useEffect(() => {
@@ -850,6 +910,11 @@ export default function LPViewerClient({
               const slideBackground = getStepBackgroundStyle(step);
               const blockType = typeof step.block_type === 'string' ? step.block_type : '';
               const isFullBleedBlock = blockType === 'top-hero-1' || blockType === 'top-hero-image-1';
+              const isLastSlide = index === finalSlideIndex;
+              const slideInnerStyle =
+                isLastSlide && footerCtaConfig
+                  ? { paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 24px))' }
+                  : undefined;
 
               const slideClassName = `lp-slide-clean${isFullBleedBlock ? ' lp-slide-clean--full' : ''}`;
               const contentClassName = `lp-slide-clean-content${isFullBleedBlock ? ' lp-slide-clean-content--full' : ''}`;
@@ -862,7 +927,7 @@ export default function LPViewerClient({
                   style={slideBackground ? { background: slideBackground } : undefined}
                 >
                   <div className={contentClassName}>
-                    <div className={innerClassName}>
+                    <div className={innerClassName} style={slideInnerStyle}>
                       {step.block_type && step.content_data ? (
                         <ViewerBlockRenderer
                           blockType={step.block_type}
@@ -904,6 +969,50 @@ export default function LPViewerClient({
           })}
         </Swiper>
       </div>
+      {footerCtaConfig ? (
+        <div
+          className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 transition-transform duration-300 ease-out"
+          style={{ transform: showFooterCta ? 'translateY(0%)' : 'translateY(110%)' }}
+        >
+          <div className="pointer-events-auto mx-auto w-full max-w-screen-md px-4 pb-[calc(env(safe-area-inset-bottom,0px)+16px)]">
+            <div
+              className="rounded-t-2xl border border-white/10 shadow-2xl shadow-black/30 backdrop-blur-md px-5 py-4"
+              style={{ backgroundColor: footerCtaColors.background, color: footerCtaColors.text }}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  {footerCtaConfig.title ? (
+                    <h3 className="text-base font-semibold leading-tight">
+                      {footerCtaConfig.title}
+                    </h3>
+                  ) : null}
+                  {footerCtaConfig.subtitle ? (
+                    <p
+                      className="text-sm leading-snug"
+                      style={{ color: footerCtaColors.text, opacity: 0.8 }}
+                    >
+                      {footerCtaConfig.subtitle}
+                    </p>
+                  ) : null}
+                </div>
+                {footerCtaConfig.buttonLabel && footerCtaConfig.buttonUrl ? (
+                  <a
+                    href={footerCtaConfig.buttonUrl}
+                    className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold shadow-lg transition-transform hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2"
+                    style={{
+                      backgroundColor: footerCtaColors.buttonBackground,
+                      color: footerCtaColors.buttonText,
+                    }}
+                    onClick={() => triggerHapticFeedback('medium')}
+                  >
+                    {footerCtaConfig.buttonLabel}
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {showPurchaseModal && selectedProduct && (
         <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm px-4 py-6 sm:py-10 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh] flex flex-col">

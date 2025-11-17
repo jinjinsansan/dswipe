@@ -50,9 +50,18 @@ function normalizeLpPayload(payload) {
     return hasValidBlockType || hasValidImageUrl;
   });
 
+  const footerCtaConfig =
+    payload && typeof payload.footer_cta_config === 'object' && payload.footer_cta_config !== null
+      ? payload.footer_cta_config
+      : null;
+  const floatingCtaEnabled =
+    typeof payload?.floating_cta === 'boolean' ? payload.floating_cta : Boolean(footerCtaConfig);
+
   return {
     ...payload,
     steps: validSteps,
+    footer_cta_config: footerCtaConfig,
+    floating_cta: floatingCtaEnabled,
     ctas: Array.isArray(payload.ctas) ? payload.ctas : [],
   };
 }
