@@ -300,14 +300,33 @@ export const lpApi = {
 
 // メディアAPI
 export const mediaApi = {
-  upload: (file: File, options?: { optimize?: boolean; max_width?: number; max_height?: number }) => {
+  upload: (
+    file: File,
+    options?: {
+      optimize?: boolean;
+      max_width?: number;
+      max_height?: number;
+      mediaType?: 'image' | 'video';
+    },
+  ) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('media_type', 'image');
-    if (options?.optimize !== undefined) formData.append('optimize', String(options.optimize));
-    if (options?.max_width) formData.append('max_width', String(options.max_width));
-    if (options?.max_height) formData.append('max_height', String(options.max_height));
-    
+
+    const detectedMediaType = options?.mediaType
+      ?? (file.type && file.type.startsWith('video/') ? 'video' : 'image');
+
+    formData.append('media_type', detectedMediaType);
+
+    if (options?.optimize !== undefined) {
+      formData.append('optimize', String(options.optimize));
+    }
+    if (options?.max_width) {
+      formData.append('max_width', String(options.max_width));
+    }
+    if (options?.max_height) {
+      formData.append('max_height', String(options.max_height));
+    }
+
     return api.post('/media/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

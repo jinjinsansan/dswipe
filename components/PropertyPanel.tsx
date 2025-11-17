@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, NoSymbolIcon, PaintBrushIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CloudArrowUpIcon, InformationCircleIcon, NoSymbolIcon, PaintBrushIcon, PhotoIcon, PlayCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HexColorPicker } from 'react-colorful';
 import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
@@ -50,7 +50,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
-  const [activeImageField, setActiveImageField] = useState<string | null>(null);
+  const [activeMediaField, setActiveMediaField] = useState<string | null>(null);
+  const [mediaLibraryFilter, setMediaLibraryFilter] = useState<Array<'image' | 'video' | 'file'> | null>(null);
   const [copiedColorField, setCopiedColorField] = useState<string | null>(null);
   const copyResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -266,23 +267,41 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     );
   };
 
-  const handleImageUpload = (fieldName: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = (fieldName: string, mediaType: 'image' | 'video') => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
     try {
-      const response = await mediaApi.upload(file);
-      const imageUrl = response.data.url;
-      onUpdateContent(fieldName, imageUrl);
-      if (isHeroBlock && fieldName === 'backgroundImageUrl') {
-        onUpdateContent('backgroundMediaType', 'image');
+      const response = await mediaApi.upload(file, {
+        mediaType,
+        optimize: mediaType === 'image',
+      });
+      const url = response.data?.url;
+      if (!url) {
+        throw new Error('アップロードしたファイルのURLが取得できませんでした');
+      }
+      onUpdateContent(fieldName, url);
+
+      if (fieldName === 'backgroundImageUrl') {
+        onUpdateContent('backgroundStyle', 'image');
+      }
+
+      if (isHeroBlock) {
+        if (fieldName === 'backgroundImageUrl') {
+          onUpdateContent('backgroundMediaType', 'image');
+        } else if (fieldName === 'backgroundVideoUrl') {
+          onUpdateContent('backgroundMediaType', 'video');
+        }
       }
     } catch (error) {
-      console.error('画像アップロードエラー:', error);
-      alert('画像のアップロードに失敗しました');
+      console.error('メディアアップロードエラー:', error);
+      alert(mediaType === 'video' ? '動画のアップロードに失敗しました' : '画像のアップロードに失敗しました');
     } finally {
       setIsUploading(false);
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 
@@ -390,7 +409,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     };
 
     const openMediaLibraryForBackground = () => {
-      setActiveImageField('backgroundImageUrl');
+      setActiveMediaField('backgroundImageUrl');
+      setMediaLibraryFilter(['image']);
       setShowMediaLibrary(true);
     };
 
@@ -450,7 +470,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleImageUpload('backgroundImageUrl')}
+                  onChange={handleMediaUpload('backgroundImageUrl', 'image')}
                   disabled={isUploading}
                 />
               </label>
@@ -571,7 +591,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     const overlayPercent = Math.round(overlayOpacity * 100);
     const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
     const openHeroMediaLibrary = () => {
-      setActiveImageField('backgroundImageUrl');
+      setActiveMediaField('backgroundImageUrl');
+      setMediaLibraryFilter(['image']);
+      setShowMediaLibrary(true);
+    };
+    const openHeroVideoLibrary = () => {
+      setActiveMediaField('backgroundVideoUrl');
+      setMediaLibraryFilter(['video']);
       setShowMediaLibrary(true);
     };
 
@@ -591,7 +617,15 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <button
                 key={option.value}
                 type="button"
-                onClick={() => onUpdateContent('backgroundMediaType', option.value)}
+                onClick={() => {
+                  onUpdateContent('backgroundMediaType', option.value);
+                  if (option.value === 'video') {
+                    openHeroVideoLibrary();
+                  }
+                  if (option.value === 'image' && !imageUrl) {
+                    openHeroMediaLibrary();
+                  }
+                }}
                 className={`rounded-lg border px-3 py-3 text-left transition ${isActive ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
               >
                 <p className="text-sm font-semibold">{option.label}</p>
@@ -602,16 +636,85 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         </div>
 
         {effectiveHeroMediaType === 'video' ? (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700">背景動画URL</label>
-            <input
-              type="text"
-              value={videoUrl}
-              onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
-              placeholder="https://example.com/hero.mp4"
-            />
-            <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。未入力の場合は背景色が表示されます。</p>
+          <div className="space-y-3">
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              {videoUrl ? (
+                <video
+                  src={videoUrl}
+                  className="h-40 w-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls={false}
+                />
+              ) : (
+                <div className="flex h-40 w-full items-center justify-center gap-2 text-sm text-slate-500">
+                  <PlayCircleIcon className="h-5 w-5" aria-hidden="true" />
+                  背景動画が設定されていません
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <label
+                htmlFor={`${backgroundImageInputId}-hero-video`}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+              >
+                {isUploading ? (
+                  <>
+                    <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                    アップロード中...
+                  </>
+                ) : (
+                  <>
+                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                    動画を選択
+                  </>
+                )}
+                <input
+                  id={`${backgroundImageInputId}-hero-video`}
+                  type="file"
+                  accept="video/mp4,video/webm"
+                  className="hidden"
+                  onChange={handleMediaUpload('backgroundVideoUrl', 'video')}
+                  disabled={isUploading}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={openHeroVideoLibrary}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                <PlayCircleIcon className="h-4 w-4" aria-hidden="true" />
+                ライブラリ
+              </button>
+              {videoUrl ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onUpdateContent('backgroundVideoUrl', null);
+                    onUpdateContent('backgroundMediaType', 'auto');
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                  動画を削除
+                </button>
+              ) : null}
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-slate-700">背景動画URL</label>
+              <input
+                type="text"
+                value={videoUrl}
+                onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                placeholder="https://example.com/hero.mp4"
+              />
+              <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。アップロードまたはURLを設定すると自動的に動画背景に切り替わります。</p>
+            </div>
           </div>
         ) : (
           <div className="space-y-3">
@@ -645,7 +748,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleImageUpload('backgroundImageUrl')}
+                  onChange={handleMediaUpload('backgroundImageUrl', 'image')}
                   disabled={isUploading}
                 />
               </label>
@@ -791,14 +894,15 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={handleImageUpload('imageUrl')}
+              onChange={handleMediaUpload('imageUrl', 'image')}
               disabled={isUploading}
             />
           </label>
           <button
             type="button"
             onClick={() => {
-              setActiveImageField('imageUrl');
+              setActiveMediaField('imageUrl');
+              setMediaLibraryFilter(['image']);
               setShowMediaLibrary(true);
             }}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -2277,7 +2381,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           const label = '画像';
 
           const openMediaLibrary = () => {
-            setActiveImageField(imageField);
+            setActiveMediaField(imageField);
+            setMediaLibraryFilter(['image']);
             setShowMediaLibrary(true);
           };
 
@@ -2313,7 +2418,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUpload(imageField)}
+                        onChange={handleMediaUpload(imageField, 'image')}
                         disabled={isUploading}
                         className="hidden"
                       />
@@ -2349,7 +2454,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={handleImageUpload(imageField)}
+                      onChange={handleMediaUpload(imageField, 'image')}
                       disabled={isUploading}
                       className="hidden"
                     />
@@ -2429,18 +2534,35 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         isOpen={showMediaLibrary}
         onClose={() => {
           setShowMediaLibrary(false);
-          setActiveImageField(null);
+          setActiveMediaField(null);
+          setMediaLibraryFilter(null);
         }}
-        onSelect={(url) => {
-          if (activeImageField) {
-            onUpdateContent(activeImageField, url);
-            if (isHeroBlock && activeImageField === 'backgroundImageUrl') {
-              onUpdateContent('backgroundMediaType', 'image');
+        onSelect={(url, metadata) => {
+          if (activeMediaField) {
+            onUpdateContent(activeMediaField, url);
+
+            if (activeMediaField === 'backgroundImageUrl') {
+              onUpdateContent('backgroundStyle', 'image');
+            }
+
+            if (isHeroBlock) {
+              if (activeMediaField === 'backgroundImageUrl') {
+                onUpdateContent('backgroundMediaType', 'image');
+              }
+              if (activeMediaField === 'backgroundVideoUrl') {
+                onUpdateContent('backgroundMediaType', 'video');
+              }
+            }
+
+            if (metadata?.mediaType === 'video' && activeMediaField !== 'backgroundVideoUrl') {
+              console.warn('動画ファイルが選択されましたが、このフィールドは画像用です。URLのみ設定されます。');
             }
           }
           setShowMediaLibrary(false);
-          setActiveImageField(null);
+          setActiveMediaField(null);
+          setMediaLibraryFilter(null);
         }}
+        allowedMediaTypes={mediaLibraryFilter ?? undefined}
       />
     </div>
   );

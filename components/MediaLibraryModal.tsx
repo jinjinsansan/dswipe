@@ -1,28 +1,109 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
-import { PhotoIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon, ArrowUpTrayIcon, DocumentDuplicateIcon, PlayCircleIcon } from '@heroicons/react/24/outline';
 import { mediaApi } from '@/lib/api';
+
+type MediaType = 'image' | 'video' | 'file';
 
 interface MediaItem {
   url: string;
   uploaded_at: string;
+  mediaType: MediaType;
+  contentType?: string | null;
+  filename?: string | null;
+  size?: number | null;
 }
+
+const inferMediaTypeFromUrl = (url: string, contentType?: string | null): MediaType => {
+  if (contentType?.startsWith('video/')) {
+    return 'video';
+  }
+
+  const lowered = url.toLowerCase();
+  if (/(\.mp4|\.webm|\.mov|\.m4v)(\?|$)/.test(lowered)) {
+    return 'video';
+  }
+
+  if (/(\.apng|\.avif|\.gif|\.jpe?g|\.png|\.svg|\.webp)(\?|$)/.test(lowered)) {
+    return 'image';
+  }
+
+  return 'file';
+};
+
+const normalizeStoredMedia = (raw: unknown): MediaItem[] => {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  return raw
+    .map((item) => {
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const url = (item as any).url;
+      const uploadedAt = (item as any).uploaded_at;
+      if (!url || typeof url !== 'string' || !uploadedAt || typeof uploadedAt !== 'string') {
+        return null;
+      }
+
+      const storedMediaType = (item as any).mediaType as MediaType | undefined;
+      const contentType = (item as any).contentType as string | null | undefined;
+      const filename = (item as any).filename as string | null | undefined;
+      const size = (item as any).size as number | null | undefined;
+
+      return {
+        url,
+        uploaded_at: uploadedAt,
+        mediaType: storedMediaType === 'video' || storedMediaType === 'image'
+          ? storedMediaType
+          : storedMediaType === 'file'
+            ? 'file'
+            : inferMediaTypeFromUrl(url, contentType),
+        contentType: contentType ?? null,
+        filename: filename ?? null,
+        size: typeof size === 'number' ? size : null,
+      } as MediaItem;
+    })
+    .filter((item): item is MediaItem => Boolean(item));
+};
+
+const detectMediaTypeFromFile = (file: File): MediaType => {
+  if (file.type.startsWith('video/')) {
+    return 'video';
+  }
+  if (file.type.startsWith('image/')) {
+    return 'image';
+  }
+  const loweredName = file.name.toLowerCase();
+  if (/(\.mp4|\.webm|\.mov|\.m4v)$/.test(loweredName)) {
+    return 'video';
+  }
+  if (/(\.apng|\.avif|\.gif|\.jpe?g|\.png|\.svg|\.webp)$/.test(loweredName)) {
+    return 'image';
+  }
+  return 'file';
+};
 
 interface MediaLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (url: string) => void;
+  onSelect: (url: string, metadata?: { mediaType: MediaType; contentType?: string | null; filename?: string | null }) => void;
+  allowedMediaTypes?: MediaType[];
 }
 
-export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLibraryModalProps) {
+export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMediaTypes }: MediaLibraryModalProps) {
   const [media, setMedia] = useState<MediaItem[]>([]);
-  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const copyTimeoutRef = useRef<number | null>(null);
 
   const persistMedia = useCallback((items: MediaItem[]) => {
     if (typeof window === 'undefined') return;
@@ -33,11 +114,14 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
     if (typeof window === 'undefined') return;
     try {
       const storedMedia = window.localStorage.getItem('uploaded_media');
-      if (storedMedia) {
-        setMedia(JSON.parse(storedMedia));
-      } else {
+      if (!storedMedia) {
         setMedia([]);
+        return;
       }
+
+      const parsed = JSON.parse(storedMedia);
+      const normalized = normalizeStoredMedia(parsed);
+      setMedia(normalized);
     } catch (err) {
       console.error('メディアの読み込みに失敗しました', err);
       setMedia([]);
@@ -49,13 +133,82 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
       return;
     }
     setMedia((prev) => {
-      const existingUrls = new Set(items.map((item) => item.url));
-      const filteredPrev = prev.filter((item) => !existingUrls.has(item.url));
-      const combined = [...items, ...filteredPrev];
-      persistMedia(combined);
-      return combined;
+      const combined = [...items, ...prev];
+      const deduped = new Map<string, MediaItem>();
+
+      combined.forEach((item) => {
+        deduped.set(item.url, item);
+      });
+
+      const sorted = Array.from(deduped.values()).sort(
+        (a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime(),
+      );
+
+      persistMedia(sorted);
+      return sorted;
     });
   }, [persistMedia]);
+
+  const allowedTypesSet = useMemo(() => {
+    if (!allowedMediaTypes || allowedMediaTypes.length === 0) {
+      return null;
+    }
+    return new Set<MediaType>(allowedMediaTypes);
+  }, [allowedMediaTypes]);
+
+  const displayedMedia = useMemo(() => {
+    if (!allowedTypesSet) {
+      return media;
+    }
+    return media.filter((item) => allowedTypesSet.has(item.mediaType));
+  }, [allowedTypesSet, media]);
+
+  const inputAccept = useMemo(() => {
+    if (!allowedTypesSet) {
+      return 'image/*,video/mp4,video/webm,application/pdf,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    }
+
+    const accepts: string[] = [];
+    if (allowedTypesSet.has('image')) {
+      accepts.push('image/*');
+    }
+    if (allowedTypesSet.has('video')) {
+      accepts.push('video/mp4', 'video/webm');
+    }
+    if (allowedTypesSet.has('file')) {
+      accepts.push('application/pdf', 'application/zip', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    }
+    return accepts.join(',') || 'image/*,video/mp4,video/webm';
+  }, [allowedTypesSet]);
+
+  const isFilteredEmpty = useMemo(
+    () => displayedMedia.length === 0 && media.length > 0,
+    [displayedMedia.length, media.length],
+  );
+
+  const filteredEmptyMessage = useMemo(() => {
+    if (!isFilteredEmpty) {
+      return null;
+    }
+
+    if (allowedTypesSet?.size === 1) {
+      if (allowedTypesSet.has('video')) {
+        return 'アップロード済みの動画ファイルがありません。新しくアップロードしてください。';
+      }
+      if (allowedTypesSet.has('image')) {
+        return 'アップロード済みの画像ファイルがありません。新しくアップロードしてください。';
+      }
+    }
+
+    return '指定された条件に合致するファイルがありません。';
+  }, [allowedTypesSet, isFilteredEmpty]);
+
+  const FilteredEmptyIcon = useMemo(() => {
+    if (allowedTypesSet?.size === 1 && allowedTypesSet.has('video')) {
+      return PlayCircleIcon;
+    }
+    return PhotoIcon;
+  }, [allowedTypesSet]);
 
   const uploadFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) {
@@ -68,17 +221,37 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
 
     try {
       for (const file of files) {
-        const response = await mediaApi.upload(file);
-        const url: string | undefined = response.data?.url;
+        const mediaType = detectMediaTypeFromFile(file);
+        const response = await mediaApi.upload(file, {
+          mediaType: mediaType === 'file' ? 'image' : mediaType,
+          optimize: mediaType === 'image',
+        });
+
+        const { data } = response;
+        const url: string | undefined = data?.url;
         if (!url) {
           continue;
         }
-        uploaded.push({ url, uploaded_at: new Date().toISOString() });
+
+        const responseMediaType = data?.media_type === 'video'
+          ? 'video'
+          : data?.media_type === 'image'
+            ? 'image'
+            : mediaType;
+
+        uploaded.push({
+          url,
+          uploaded_at: new Date().toISOString(),
+          mediaType: responseMediaType,
+          contentType: data?.content_type ?? file.type ?? null,
+          filename: data?.filename ?? file.name ?? null,
+          size: typeof data?.size === 'number' ? data.size : file.size ?? null,
+        });
       }
 
       if (uploaded.length > 0) {
         appendMediaItems(uploaded);
-        setSelectedUrl(uploaded[0].url);
+        setSelectedItem(uploaded[0]);
       }
     } catch (err: any) {
       console.error('メディアのアップロードに失敗しました', err);
@@ -129,6 +302,23 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
     void uploadFiles(Array.from(files));
   }, [uploadFiles]);
 
+  const handleCopyUrl = useCallback(async (item: MediaItem) => {
+    try {
+      await navigator.clipboard.writeText(item.url);
+      setCopiedUrl(item.url);
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = window.setTimeout(() => {
+        setCopiedUrl(null);
+        copyTimeoutRef.current = null;
+      }, 1600);
+    } catch (err) {
+      console.error('URLのコピーに失敗しました', err);
+      alert('URLのコピーに失敗しました');
+    }
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       setError(null);
@@ -138,17 +328,44 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectedUrl(null);
+      setSelectedItem(null);
       setIsDragOver(false);
       setIsUploading(false);
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!selectedItem) {
+      return;
+    }
+    const exists = media.some((item) => item.url === selectedItem.url);
+    if (!exists) {
+      setSelectedItem(null);
+      return;
+    }
+    if (allowedTypesSet && !allowedTypesSet.has(selectedItem.mediaType)) {
+      setSelectedItem(null);
+    }
+  }, [allowedTypesSet, media, selectedItem]);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(copyTimeoutRef.current);
+        copyTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   const handleSelect = () => {
-    if (selectedUrl) {
-      onSelect(selectedUrl);
+    if (selectedItem) {
+      onSelect(selectedItem.url, {
+        mediaType: selectedItem.mediaType,
+        contentType: selectedItem.contentType ?? null,
+        filename: selectedItem.filename ?? null,
+      });
       onClose();
-      setSelectedUrl(null);
+      setSelectedItem(null);
     }
   };
 
@@ -174,13 +391,13 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-sm font-semibold text-white">アップロード</p>
-                <p className="text-xs text-gray-400">画像やPDFなどのファイルを追加して、ノートに挿入できます。</p>
+                <p className="text-xs text-gray-400">画像や動画などのファイルを追加して、コンテンツに利用できます。</p>
               </div>
               <div className="flex items-center gap-2">
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*,application/pdf,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept={inputAccept}
                   multiple
                   className="hidden"
                   onChange={handleFileSelect}
@@ -239,41 +456,84 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
             </div>
           ) : null}
 
-          {media.length > 0 ? (
+          {isFilteredEmpty && filteredEmptyMessage ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-gray-400">
+              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-gray-200">
+                <FilteredEmptyIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <p className="text-sm font-light text-gray-200">{filteredEmptyMessage}</p>
+            </div>
+          ) : null}
+
+          {displayedMedia.length > 0 ? (
             <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-5">
-              {media.map((item, index) => {
+              {displayedMedia.map((item) => {
                 const sanitizedUrl = item.url.split('?')[0] ?? item.url;
-                const isImage = /\.(apng|avif|gif|jpe?g|png|svg|webp)$/i.test(sanitizedUrl);
-                const filename = sanitizedUrl.split('/').pop() ?? 'ファイル';
+                const filename = item.filename ?? sanitizedUrl.split('/').pop() ?? 'ファイル';
+                const isImage = item.mediaType === 'image';
+                const isVideo = item.mediaType === 'video';
+                const isSelected = selectedItem?.url === item.url;
 
                 return (
-                  <button
-                    key={`${item.url}-${index}`}
-                    type="button"
-                    onClick={() => setSelectedUrl(item.url)}
-                    className={`relative overflow-hidden rounded-lg border-2 transition-all ${
-                      selectedUrl === item.url
-                        ? 'border-blue-500 ring-2 ring-blue-400/50'
-                        : 'border-gray-700 hover:border-gray-500'
+                  <div
+                    key={item.url}
+                    className={`group overflow-hidden rounded-lg border-2 transition-all ${
+                      isSelected ? 'border-blue-500 ring-2 ring-blue-400/40' : 'border-gray-700 hover:border-gray-500'
                     }`}
                   >
-                    <div className="aspect-square bg-gray-900">
-                      {isImage ? (
-                        <img src={item.url} alt={filename} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
-                          <PhotoIcon className="h-8 w-8 text-gray-500" aria-hidden="true" />
-                          <span className="px-3 text-[11px] font-semibold">{filename}</span>
-                        </div>
-                      )}
+                    <button
+                      type="button"
+                      className="relative block w-full"
+                      onClick={() => setSelectedItem(item)}
+                    >
+                      <div className="aspect-square bg-gray-900">
+                        {isImage ? (
+                          <img src={item.url} alt={filename} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
+                            {isVideo ? (
+                              <PlayCircleIcon className="h-10 w-10 text-blue-300" aria-hidden="true" />
+                            ) : (
+                              <PhotoIcon className="h-8 w-8 text-gray-500" aria-hidden="true" />
+                            )}
+                            <span className="px-3 text-[11px] font-semibold truncate" title={filename}>{filename}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between bg-gray-900/60 px-2 py-1 text-[10px] text-gray-300">
+                        <span className="truncate" title={new Date(item.uploaded_at).toLocaleString()}>
+                          {new Date(item.uploaded_at).toLocaleString()}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          {isVideo ? (
+                            <span className="rounded-full bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-blue-200">VIDEO</span>
+                          ) : isImage ? (
+                            <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-200">IMAGE</span>
+                          ) : (
+                            <span className="rounded-full bg-slate-500/30 px-1.5 py-0.5 text-[9px] font-semibold text-slate-200">FILE</span>
+                          )}
+                          {isSelected ? (
+                            <span className="rounded-full bg-blue-500 px-1.5 py-0.5 text-[9px] font-semibold text-white">選択中</span>
+                          ) : null}
+                        </span>
+                      </div>
+                    </button>
+                    <div className="flex items-center justify-between gap-2 bg-gray-900/70 px-2 py-1.5 text-[11px] text-gray-300">
+                      <span className="truncate" title={filename}>{filename}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyUrl(item)}
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 transition ${
+                          copiedUrl === item.url
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-700/80 text-gray-200 hover:bg-gray-600/80'
+                        }`}
+                      >
+                        <DocumentDuplicateIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>{copiedUrl === item.url ? 'コピーしました' : 'URLコピー'}</span>
+                      </button>
                     </div>
-                    <div className="flex items-center justify-between bg-gray-900/60 px-2 py-1 text-[10px] text-gray-300">
-                      <span className="truncate">{new Date(item.uploaded_at).toLocaleString()}</span>
-                      {selectedUrl === item.url ? (
-                        <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">選択中</span>
-                      ) : null}
-                    </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -296,7 +556,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect }: MediaLi
           </button>
           <button
             onClick={handleSelect}
-            disabled={!selectedUrl}
+            disabled={!selectedItem}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
           >
             選択
