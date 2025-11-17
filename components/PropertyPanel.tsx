@@ -914,13 +914,31 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     const overlayOpacity = Math.min(Math.max(overlayRaw, 0), 1);
     const overlayPercent = Math.round(overlayOpacity * 100);
     const overlayColor = (content as any).imageOverlayColor ?? '#0F172A';
+    const widthMode = (content as any).imageWidthMode ?? 'full';
+    const fitMode = (content as any).imageFitMode ?? 'cover';
+    const heightMode = (content as any).imageHeightMode ?? 'viewport';
+    const focalPoint = (content as any).imageFocalPoint ?? 'center';
+    const isCoverFit = fitMode === 'cover';
 
     return (
       <div className="space-y-4 pb-4 border-b border-slate-200">
         <SectionHeader icon={PhotoIcon} label="画像設定" />
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
           {imageUrl ? (
-            <img src={imageUrl} alt="表示画像" className="h-60 w-full object-contain bg-white" />
+            <div className="relative h-60 w-full bg-white">
+              <img
+                src={imageUrl}
+                alt="表示画像"
+                className={`absolute inset-0 h-full w-full ${fitMode === 'cover' ? 'object-cover' : 'object-contain'}`}
+                style={isCoverFit ? { objectPosition: focalPoint === 'top' ? 'center top' : focalPoint === 'bottom' ? 'center bottom' : 'center' } : undefined}
+              />
+              {overlayOpacity > 0 ? (
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: overlayColor, opacity: overlayOpacity }}
+                />
+              ) : null}
+            </div>
           ) : (
             <div className="flex h-60 w-full items-center justify-center text-sm text-slate-500">
               画像が設定されていません
@@ -973,6 +991,61 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <TrashIcon className="h-4 w-4" aria-hidden="true" />
               画像を削除
             </button>
+          ) : null}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">表示幅</label>
+            <select
+              value={widthMode}
+              onChange={(e) => onUpdateContent('imageWidthMode', e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="full">フル幅（端まで表示）</option>
+              <option value="boxed">中央寄せ（最大幅）</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">画像の表示方法</label>
+            <select
+              value={fitMode}
+              onChange={(e) => onUpdateContent('imageFitMode', e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="cover">トリミングして埋める</option>
+              <option value="contain">トリミングせず全体表示</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">高さの基準</label>
+            <select
+              value={heightMode}
+              onChange={(e) => onUpdateContent('imageHeightMode', e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="viewport">画面高にフィット（推奨）</option>
+              <option value="auto">元のサイズに合わせる</option>
+              <option value="ratio-16-9">16:9 の比率を固定</option>
+              <option value="ratio-4-3">4:3 の比率を固定</option>
+              <option value="ratio-3-2">3:2 の比率を固定</option>
+              <option value="ratio-1-1">1:1 の比率を固定</option>
+            </select>
+            <p className="mt-1 text-xs text-slate-500">比率指定や画面フィットでは上下がトリミングされる場合があります。</p>
+          </div>
+          {isCoverFit ? (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">クロップ位置</label>
+              <select
+                value={focalPoint}
+                onChange={(e) => onUpdateContent('imageFocalPoint', e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="center">中央</option>
+                <option value="top">上寄せ</option>
+                <option value="bottom">下寄せ</option>
+              </select>
+            </div>
           ) : null}
         </div>
 

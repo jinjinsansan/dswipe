@@ -1,6 +1,8 @@
 "use client";
 
 import React from 'react';
+import { cn } from '@/lib/utils';
+import { getBlockBackgroundStyle } from '@/lib/blockBackground';
 import type { ImageDisplayBlockContent } from '@/types/templates';
 
 interface ImageOnlyBlockProps {
@@ -9,33 +11,103 @@ interface ImageOnlyBlockProps {
   onEdit?: (field: string, value: any) => void;
 }
 
+const aspectClassMap: Record<string, string> = {
+  'ratio-16-9': 'aspect-[16/9]',
+  'ratio-4-3': 'aspect-[4/3]',
+  'ratio-3-2': 'aspect-[3/2]',
+  'ratio-1-1': 'aspect-square',
+};
+
+const focalPointMap: Record<string, string> = {
+  center: 'center',
+  top: 'center top',
+  bottom: 'center bottom',
+};
+
 export default function ImageOnlyBlock({ content, isEditing, onEdit }: ImageOnlyBlockProps) {
-  const imageUrl = content?.imageUrl ?? '';
+  const imageUrl = typeof content?.imageUrl === 'string' ? content.imageUrl.trim() : '';
   const overlayColor = content?.imageOverlayColor ?? '#0F172A';
   const overlayOpacity = Math.min(Math.max(content?.imageOverlayOpacity ?? 0, 0), 1);
   const showOverlay = overlayOpacity > 0;
+
+  const widthMode = content?.imageWidthMode ?? 'full';
+  const fitMode = content?.imageFitMode ?? 'cover';
+  const heightMode = content?.imageHeightMode ?? 'viewport';
+  const focalPoint = content?.imageFocalPoint ?? 'center';
+
+  const aspectClass = aspectClassMap[heightMode] ?? null;
+  const isAutoHeight = heightMode === 'auto';
+  const isViewport = heightMode === 'viewport';
+  const objectPosition = focalPointMap[focalPoint] ?? focalPointMap.center;
+
+  const sectionPaddingClass = widthMode === 'full' ? 'px-0' : 'px-4 md:px-6';
+  const outerBoundsClass = widthMode === 'full' ? 'w-full' : 'mx-auto w-full max-w-6xl';
+
+  const containerClasses = cn(
+    'relative w-full overflow-hidden',
+    widthMode === 'full' ? 'rounded-none' : 'rounded-3xl shadow-xl',
+    !isAutoHeight && !aspectClass && !isViewport && 'min-h-[40vh]',
+    aspectClass,
+    isViewport && 'min-h-[60vh] sm:min-h-[70vh] max-h-[95vh]',
+    fitMode === 'contain' ? 'bg-slate-950/10' : undefined,
+  );
+
+  const autoHeightImageClasses = cn(
+    'w-full transition-transform duration-500',
+    fitMode === 'cover' ? 'h-auto object-cover' : 'h-auto object-contain',
+  );
+
+  const fixedHeightImageClasses = cn(
+    'absolute inset-0 h-full w-full transition-transform duration-500',
+    fitMode === 'cover' ? 'object-cover' : 'object-contain',
+  );
 
   const handleEdit = (field: keyof ImageDisplayBlockContent) => (e: React.ChangeEvent<HTMLInputElement>) => {
     onEdit?.(field as string, e.target.value);
   };
 
   return (
-    <section className="px-4 py-section-sm sm:py-section md:px-6">
-      <div className="container mx-auto">
-        <div className="relative mx-auto w-full overflow-hidden">
+    <section
+      className={cn(sectionPaddingClass, 'py-section-sm sm:py-section')}
+      style={getBlockBackgroundStyle(content)}
+    >
+      <div className={outerBoundsClass}>
+        <div className={containerClasses}>
           {imageUrl ? (
             <>
-              <img
-                src={imageUrl}
-                alt="アップロード画像"
-                className="block h-auto w-full max-h-[90vh] object-contain"
-              />
-              {showOverlay ? (
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{ backgroundColor: overlayColor, opacity: overlayOpacity }}
-                />
-              ) : null}
+              {isAutoHeight ? (
+                <>
+                  <img
+                    src={imageUrl}
+                    alt="アップロード画像"
+                    className={autoHeightImageClasses}
+                    style={fitMode === 'cover' ? { objectPosition } : undefined}
+                    loading="lazy"
+                  />
+                  {showOverlay ? (
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{ backgroundColor: overlayColor, opacity: overlayOpacity }}
+                    />
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  <img
+                    src={imageUrl}
+                    alt="アップロード画像"
+                    className={fixedHeightImageClasses}
+                    style={fitMode === 'cover' ? { objectPosition } : undefined}
+                    loading="lazy"
+                  />
+                  {showOverlay ? (
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{ backgroundColor: overlayColor, opacity: overlayOpacity }}
+                    />
+                  ) : null}
+                </>
+              )}
             </>
           ) : (
             <div className="flex h-64 w-full items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white/40 text-slate-400">

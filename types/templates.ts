@@ -71,6 +71,10 @@ export interface ImageDisplayBlockContent extends BaseBlockContent {
   imageUrl?: string | null;
   imageOverlayColor?: string;
   imageOverlayOpacity?: number;
+  imageWidthMode?: 'boxed' | 'full';
+  imageFitMode?: 'cover' | 'contain';
+  imageHeightMode?: 'auto' | 'viewport' | 'ratio-16-9' | 'ratio-4-3' | 'ratio-3-2' | 'ratio-1-1';
+  imageFocalPoint?: 'center' | 'top' | 'bottom';
 }
 
 // ヒーローブロック
