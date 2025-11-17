@@ -442,6 +442,11 @@ export default function EditLPNewPage() {
       setLimitedDraftNotice(false);
     }
   }, [isPublished]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSiteOrigin(window.location.origin);
+    }
+  }, []);
   const [mobileTab, setMobileTab] = useState<TabType>('preview');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showColorGenerator, setShowColorGenerator] = useState(false);
@@ -452,6 +457,20 @@ export default function EditLPNewPage() {
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
   const [isProductLinkUpdating, setIsProductLinkUpdating] = useState(false);
   const [productLinkError, setProductLinkError] = useState<string | null>(null);
+  const resolveSiteOrigin = () => {
+    if (typeof window !== 'undefined' && window.location?.origin) {
+      return window.location.origin;
+    }
+    if (typeof process !== 'undefined') {
+      const envOrigin =
+        process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || '';
+      return envOrigin.replace(/\/$/, '');
+    }
+    return '';
+  };
+  const [siteOrigin, setSiteOrigin] = useState<string>(() => resolveSiteOrigin());
+  const [showCheckoutDeeplink, setShowCheckoutDeeplink] = useState(false);
+  const [checkoutCopyFeedback, setCheckoutCopyFeedback] = useState<string | null>(null);
 
   const primaryLinkLock = useMemo(() => {
     if (linkedSalon?.id) {
@@ -468,6 +487,58 @@ export default function EditLPNewPage() {
     }
     return null;
   }, [linkedProduct, linkedSalon]);
+  useEffect(() => {
+    if (!linkedProduct?.id || !lp?.slug) {
+      setShowCheckoutDeeplink(false);
+      setCheckoutCopyFeedback(null);
+    }
+  }, [linkedProduct?.id, lp?.slug]);
+  useEffect(() => {
+    if (!showCheckoutDeeplink) {
+      setCheckoutCopyFeedback(null);
+    }
+  }, [showCheckoutDeeplink]);
+  const checkoutDeepLink = useMemo(() => {
+    if (!lp?.slug || !linkedProduct?.id) {
+      return '';
+    }
+    const cleanedOrigin = siteOrigin.replace(/\/$/, '');
+    const path = `/view/${lp.slug}`;
+    if (!cleanedOrigin) {
+      return `${path}?checkout=${linkedProduct.id}`;
+    }
+    return `${cleanedOrigin}${path}?checkout=${linkedProduct.id}`;
+  }, [lp?.slug, linkedProduct?.id, siteOrigin]);
+  const handleCopyCheckoutLink = useCallback(async () => {
+    if (!checkoutDeepLink) {
+      return;
+    }
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(checkoutDeepLink);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = checkoutDeepLink;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCheckoutCopyFeedback('コピーしました');
+      setTimeout(() => {
+        setCheckoutCopyFeedback(null);
+      }, 2500);
+    } catch (error) {
+      console.error('Failed to copy checkout deeplink', error);
+      setCheckoutCopyFeedback('コピーに失敗しました');
+      setTimeout(() => {
+        setCheckoutCopyFeedback(null);
+      }, 2500);
+    }
+  }, [checkoutDeepLink]);
   
   // サイドバー可変幅の状態管理
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(288); // 初期値: 18rem = 288px
@@ -2304,6 +2375,55 @@ export default function EditLPNewPage() {
                     商品を管理
                   </Link>
                 </div>
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50/60 px-3 py-3">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      checked={showCheckoutDeeplink}
+                      onChange={(event) => setShowCheckoutDeeplink(event.target.checked)}
+                      disabled={!linkedProduct?.id || !lp?.slug}
+                    />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">このLPを決済用ディープリンクにする</p>
+                      <p className="text-xs text-slate-500">
+                        有効化すると、このリンクへアクセスした際に決済モーダルが先に表示されます。
+                      </p>
+                    </div>
+                  </label>
+                  {showCheckoutDeeplink ? (
+                    <div className="mt-3 space-y-2">
+                      {checkoutDeepLink ? (
+                        <>
+                          <div className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 break-all">
+                            {checkoutDeepLink}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={handleCopyCheckoutLink}
+                              className="inline-flex items-center justify-center rounded-md border border-blue-600 bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                            >
+                              リンクをコピー
+                            </button>
+                            {checkoutCopyFeedback ? (
+                              <span className="text-[11px] text-slate-500">{checkoutCopyFeedback}</span>
+                            ) : null}
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-[11px] text-slate-500">
+                          公開用URLと商品連携が完了するとリンクを生成できます。
+                        </p>
+                      )}
+                    </div>
+                  ) : null}
+                  {!linkedProduct?.id || !lp?.slug ? (
+                    <p className="mt-2 text-[11px] text-slate-400">
+                      商品を連携し、LPが公開可能な状態で利用してください。
+                    </p>
+                  ) : null}
+                </div>
               </div>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
@@ -2950,6 +3070,55 @@ export default function EditLPNewPage() {
                   <Link href="/products/manage" className="text-blue-600 hover:text-blue-700 font-semibold">
                     商品を管理
                   </Link>
+                </div>
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50/60 px-3 py-3">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      checked={showCheckoutDeeplink}
+                      onChange={(event) => setShowCheckoutDeeplink(event.target.checked)}
+                      disabled={!linkedProduct?.id || !lp?.slug}
+                    />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">このLPを決済用ディープリンクにする</p>
+                      <p className="text-xs text-slate-500">
+                        有効化すると、このリンクへアクセスした際に決済モーダルが先に表示されます。
+                      </p>
+                    </div>
+                  </label>
+                  {showCheckoutDeeplink ? (
+                    <div className="mt-3 space-y-2">
+                      {checkoutDeepLink ? (
+                        <>
+                          <div className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 break-all">
+                            {checkoutDeepLink}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={handleCopyCheckoutLink}
+                              className="inline-flex items-center justify-center rounded-md border border-blue-600 bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                            >
+                              リンクをコピー
+                            </button>
+                            {checkoutCopyFeedback ? (
+                              <span className="text-[11px] text-slate-500">{checkoutCopyFeedback}</span>
+                            ) : null}
+                          </div>
+                        </>
+                      ) : (
+                        <p className="text-[11px] text-slate-500">
+                          公開用URLと商品連携が完了するとリンクを生成できます。
+                        </p>
+                      )}
+                    </div>
+                  ) : null}
+                  {!linkedProduct?.id || !lp?.slug ? (
+                    <p className="mt-2 text-[11px] text-slate-400">
+                      商品を連携し、LPが公開可能な状態で利用してください。
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
