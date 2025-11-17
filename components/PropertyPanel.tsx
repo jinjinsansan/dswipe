@@ -561,6 +561,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
 
     const videoUrl = (content as any).backgroundVideoUrl ?? '';
     const imageUrl = (content as any).backgroundImageUrl ?? '';
+    const backgroundImageMode = (content as any).backgroundImageMode ?? 'cover';
+    const backgroundImagePosition = (content as any).backgroundImagePosition ?? 'center';
+    const overlayRaw = typeof (content as any).backgroundImageOverlayOpacity === 'number'
+      ? (content as any).backgroundImageOverlayOpacity
+      : 0;
+    const overlayOpacity = Math.min(Math.max(overlayRaw, 0), 1);
+    const overlayPercent = Math.round(overlayOpacity * 100);
+    const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
     const openHeroMediaLibrary = () => {
       setActiveImageField('backgroundImageUrl');
       setShowMediaLibrary(true);
@@ -661,6 +669,75 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   画像を削除
                 </button>
               ) : null}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  表示モード
+                </label>
+                <select
+                  value={backgroundImageMode}
+                  onChange={(e) => onUpdateContent('backgroundImageMode', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="cover">カバー (全体を埋める)</option>
+                  <option value="contain">全体表示 (トリミングなし)</option>
+                  <option value="repeat">タイル表示</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  配置
+                </label>
+                <select
+                  value={backgroundImagePosition}
+                  onChange={(e) => onUpdateContent('backgroundImagePosition', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="center">中央</option>
+                  <option value="top">上寄せ</option>
+                  <option value="bottom">下寄せ</option>
+                </select>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="flex items-center justify-between text-sm font-medium text-slate-700 mb-2">
+                  <span>オーバーレイ濃度</span>
+                  <span className="text-xs text-slate-500">{overlayPercent}%</span>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={80}
+                  step={5}
+                  value={overlayPercent}
+                  onChange={(e) => {
+                    const next = Number(e.target.value) / 100;
+                    onUpdateContent('backgroundImageOverlayOpacity', next);
+                  }}
+                  className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  オーバーレイカラー
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={overlayColor}
+                    onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
+                    className="h-10 w-10 cursor-pointer rounded border border-slate-300"
+                  />
+                  <input
+                    type="text"
+                    value={overlayColor}
+                    onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
+                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
             </div>
             <p className="text-xs text-slate-500">画像は自動的にカバー表示されます。明るさが気になる場合はオーバーレイ色で調整してください。</p>
           </div>

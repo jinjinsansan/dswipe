@@ -85,6 +85,7 @@ export default function TopHeroImageBlock({
   const blockBackgroundStyle = getBlockBackgroundStyle(content, overlayBase);
   const showBackgroundOverlay = shouldRenderBackgroundOverlay(content);
   const backgroundOverlayStyle = showBackgroundOverlay ? getBackgroundOverlayStyle(content) : undefined;
+  const showHeroGradientOverlay = resolvedMediaType === 'video';
 
   const handleEdit = (field: keyof HeroBlockContent) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onEdit?.(field as string, e.target.value);
@@ -119,7 +120,9 @@ export default function TopHeroImageBlock({
       {showBackgroundOverlay ? (
         <div className="pointer-events-none absolute inset-0" style={backgroundOverlayStyle} />
       ) : null}
-      <div className="absolute inset-0" style={overlayStyle} />
+      {showHeroGradientOverlay ? (
+        <div className="absolute inset-0" style={overlayStyle} />
+      ) : null}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-24 text-center sm:py-32">
         {isEditing ? (
           <div className="mb-6 grid w-full gap-3 rounded-xl bg-white/10 p-4 text-left text-sm text-slate-900">
