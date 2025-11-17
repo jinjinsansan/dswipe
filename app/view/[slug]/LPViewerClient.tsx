@@ -885,6 +885,10 @@ export default function LPViewerClient({
     }
 
     const content = step.content_data as Record<string, any>;
+    const backgroundStyle = typeof content.backgroundStyle === 'string' ? content.backgroundStyle.toLowerCase() : undefined;
+    if (backgroundStyle === 'none') {
+      return undefined;
+    }
     const candidates = [
       content.background,
       content.backgroundColor,
