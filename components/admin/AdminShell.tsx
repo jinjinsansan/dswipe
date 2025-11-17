@@ -11,6 +11,7 @@ import {
   XMarkIcon,
   BanknotesIcon,
   Cog6ToothIcon,
+  PresentationChartLineIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 import DSwipeLogo from '@/components/DSwipeLogo';
@@ -76,6 +77,12 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
     label: '支払い管理',
     icon: BanknotesIcon,
     description: '販売者へのUSDT支払いキューと送金状況',
+  },
+  {
+    href: '/admin/revenue',
+    label: '売上ダッシュボード',
+    icon: PresentationChartLineIcon,
+    description: '全体売上・入金待ち・ポイント流通量',
   },
   {
     href: '/admin/payment-settings',

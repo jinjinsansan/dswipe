@@ -1524,6 +1524,76 @@ export interface AdminPointAnalytics {
   monthly: AdminPointAnalyticsBreakdown[];
 }
 
+export interface RevenueSummary {
+  total_revenue_jpy: number;
+  total_revenue_usdt: number;
+  total_orders: number;
+  average_order_value_jpy: number;
+  last_seven_days_jpy: number;
+  last_thirty_days_jpy: number;
+  generated_at: string;
+}
+
+export interface RevenueDailySeries {
+  date: string;
+  revenue_jpy: number;
+  revenue_usdt: number;
+  orders: number;
+}
+
+export interface RevenueMonthlySeries {
+  month: string;
+  revenue_jpy: number;
+  revenue_usdt: number;
+  orders: number;
+}
+
+export interface SettlementBucket {
+  key: string;
+  label: string;
+  order_count: number;
+  amount_jpy: number;
+  amount_usdt: number;
+  average_wait_days: number;
+}
+
+export interface SettlementSummary {
+  buckets: SettlementBucket[];
+}
+
+export interface RevenuePointCategoryBreakdown {
+  category: string;
+  total_points: number;
+  transaction_count: number;
+  last_seven_days: number;
+  last_thirty_days: number;
+}
+
+export interface RevenuePointSeriesEntry {
+  date: string;
+  granted: number;
+  spent: number;
+  purchased: number;
+  bonus: number;
+  other: number;
+}
+
+export interface RevenuePointNetSummary {
+  net_points: number;
+  total_granted: number;
+  total_spent: number;
+}
+
+export interface RevenueAnalyticsResponse {
+  summary: RevenueSummary;
+  daily: RevenueDailySeries[];
+  monthly: RevenueMonthlySeries[];
+  settlements: SettlementSummary;
+  point_categories: RevenuePointCategoryBreakdown[];
+  point_series: RevenuePointSeriesEntry[];
+  point_net: RevenuePointNetSummary;
+}
+
 export interface ModerationEvent {
   id: string;
   action: string;

@@ -75,6 +75,7 @@ import type {
   AdminPayoutTxRecordPayload,
   AdminPayoutEventPayload,
   AdminRiskOrderListResponse,
+  RevenueAnalyticsResponse,
   PlatformPaymentSettings,
   PlatformPaymentSettingsUpdatePayload,
   OperatorMessage,
@@ -606,6 +607,11 @@ export const adminPayoutApi = {
     api.post<PayoutLedgerEntry>(`/admin/payouts/${payoutId}/transaction`, payload),
   addEvent: (payoutId: string, payload: AdminPayoutEventPayload) => api.post(`/admin/payouts/${payoutId}/events`, payload),
   listRiskOrders: (params?: { limit?: number }) => api.get<AdminRiskOrderListResponse>('/admin/payouts/risk', { params }),
+};
+
+export const adminRevenueApi = {
+  getSummary: (params?: { limit_days?: number }) =>
+    api.get<RevenueAnalyticsResponse>('/admin/analytics/revenue', { params }),
 };
 
 export const adminPaymentSettingsApi = {
