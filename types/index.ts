@@ -335,6 +335,7 @@ export interface PublicNoteSummary {
   official_share_x_username?: string | null;
   total_sales?: number | null;
   requires_login: boolean;
+  visibility?: NoteVisibility;
 }
 
 export interface PublicNoteListResult {

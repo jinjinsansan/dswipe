@@ -90,7 +90,13 @@ export default function UserProfilePage() {
         : Array.isArray(notesPayload)
         ? notesPayload
         : [];
-      const userNotes = (rawNotes as PublicNoteSummary[]).filter((note) => note.author_username === username);
+      const userNotes = (rawNotes as PublicNoteSummary[]).filter((note) => {
+        if (note.author_username !== username) {
+          return false;
+        }
+        const visibility = typeof note.visibility === 'string' ? note.visibility.toLowerCase() : 'public';
+        return visibility === 'public';
+      });
       const userSalons = Array.isArray(salonsResponse.data?.data) ? (salonsResponse.data.data as SalonPublicListItem[]) : [];
 
       setProducts(userProducts);
