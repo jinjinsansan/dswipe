@@ -960,6 +960,12 @@ export default function LPViewerClient({
     }
 
     const content = step.content_data as Record<string, any>;
+    if (typeof content.backgroundMediaType === 'string' && content.backgroundMediaType.toLowerCase() === 'video') {
+      return undefined;
+    }
+    if (content.backgroundVideoUrl && !content.backgroundMediaType) {
+      return undefined;
+    }
     const backgroundStyle = typeof content.backgroundStyle === 'string' ? content.backgroundStyle.toLowerCase() : undefined;
     if (backgroundStyle === 'none') {
       return undefined;
