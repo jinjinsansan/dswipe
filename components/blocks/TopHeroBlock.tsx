@@ -40,6 +40,11 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   const buttonColor = content?.buttonColor ?? '#38BDF8';
   const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
   const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+  const videoOverlayRaw = typeof content?.backgroundVideoOverlayOpacity === 'number'
+    ? content.backgroundVideoOverlayOpacity
+    : 0.85;
+  const videoOverlayOpacity = Math.min(Math.max(videoOverlayRaw, 0), 1);
+  const videoOverlayColor = content?.backgroundVideoOverlayColor ?? overlayBase;
   const primaryCtaId = ctaIds?.[0];
   const secondaryCtaId = ctaIds?.[1];
   const rawUseLinkedProduct = content?.useLinkedProduct;
@@ -62,7 +67,8 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   };
 
   const overlayStyle: CSSProperties = {
-    background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.45, accentColor)}, ${withAlpha(overlayBase, 0.88, overlayBase)})`,
+    background: `linear-gradient(135deg, ${withAlpha(accentColor, 0.45, accentColor)}, ${withAlpha(videoOverlayColor, 0.88, videoOverlayColor)})`,
+    opacity: videoOverlayOpacity,
   };
 
   const primaryButtonStyle: CSSProperties = {
@@ -83,10 +89,12 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
     border: `1px solid ${withAlpha(secondaryStrokeColor, 0.6, secondaryStrokeColor)}`,
   };
 
-  const blockBackgroundStyle = getBlockBackgroundStyle(content, overlayBase);
+  const blockBackgroundStyle = resolvedMediaType === 'video'
+    ? { backgroundColor: 'transparent' }
+    : getBlockBackgroundStyle(content, overlayBase);
   const showBackgroundOverlay = shouldRenderBackgroundOverlay(content);
   const backgroundOverlayStyle = showBackgroundOverlay ? getBackgroundOverlayStyle(content) : undefined;
-  const showHeroGradientOverlay = resolvedMediaType === 'video';
+  const showHeroGradientOverlay = resolvedMediaType === 'video' && videoOverlayOpacity > 0;
 
   const handleEdit = (field: keyof HeroBlockContent) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onEdit?.(field as string, e.target.value);

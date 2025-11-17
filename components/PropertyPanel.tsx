@@ -635,88 +635,142 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           })}
         </div>
 
-        {effectiveHeroMediaType === 'video' ? (
-          <div className="space-y-3">
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-              {videoUrl ? (
-                <video
-                  src={videoUrl}
-                  className="h-40 w-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  controls={false}
-                />
-              ) : (
-                <div className="flex h-40 w-full items-center justify-center gap-2 text-sm text-slate-500">
-                  <PlayCircleIcon className="h-5 w-5" aria-hidden="true" />
-                  背景動画が設定されていません
-                </div>
-              )}
-            </div>
+        {effectiveHeroMediaType === 'video' ? (() => {
+          const raw = typeof (content as any).backgroundVideoOverlayOpacity === 'number'
+            ? (content as any).backgroundVideoOverlayOpacity
+            : 0.85;
+          const videoOverlayOpacity = Math.min(Math.max(raw, 0), 1);
+          const videoOverlayColor = (content as any).backgroundVideoOverlayColor
+            ?? (content as any).overlayColor
+            ?? '#0B1120';
+          const videoOverlayPercent = Math.round(videoOverlayOpacity * 100);
 
-            <div className="flex flex-wrap gap-2">
-              <label
-                htmlFor={`${backgroundImageInputId}-hero-video`}
-                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
-              >
-                {isUploading ? (
-                  <>
-                    <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
-                    アップロード中...
-                  </>
+          return (
+            <div className="space-y-3">
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                {videoUrl ? (
+                  <video
+                    src={videoUrl}
+                    className="h-40 w-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                  />
                 ) : (
-                  <>
-                    <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
-                    動画を選択
-                  </>
+                  <div className="flex h-40 w-full items-center justify-center gap-2 text-sm text-slate-500">
+                    <PlayCircleIcon className="h-5 w-5" aria-hidden="true" />
+                    背景動画が設定されていません
+                  </div>
                 )}
-                <input
-                  id={`${backgroundImageInputId}-hero-video`}
-                  type="file"
-                  accept="video/mp4,video/webm"
-                  className="hidden"
-                  onChange={handleMediaUpload('backgroundVideoUrl', 'video')}
-                  disabled={isUploading}
-                />
-              </label>
-              <button
-                type="button"
-                onClick={openHeroVideoLibrary}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                <PlayCircleIcon className="h-4 w-4" aria-hidden="true" />
-                ライブラリ
-              </button>
-              {videoUrl ? (
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <label
+                  htmlFor={`${backgroundImageInputId}-hero-video`}
+                  className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+                >
+                  {isUploading ? (
+                    <>
+                      <CloudArrowUpIcon className="h-4 w-4" aria-hidden="true" />
+                      アップロード中...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
+                      動画を選択
+                    </>
+                  )}
+                  <input
+                    id={`${backgroundImageInputId}-hero-video`}
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    className="hidden"
+                    onChange={handleMediaUpload('backgroundVideoUrl', 'video')}
+                    disabled={isUploading}
+                  />
+                </label>
                 <button
                   type="button"
-                  onClick={() => {
-                    onUpdateContent('backgroundVideoUrl', null);
-                    onUpdateContent('backgroundMediaType', 'auto');
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  onClick={openHeroVideoLibrary}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                 >
-                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
-                  動画を削除
+                  <PlayCircleIcon className="h-4 w-4" aria-hidden="true" />
+                  ライブラリ
                 </button>
-              ) : null}
-            </div>
+                {videoUrl ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onUpdateContent('backgroundVideoUrl', null);
+                      onUpdateContent('backgroundMediaType', 'auto');
+                    }}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                    動画を削除
+                  </button>
+                ) : null}
+              </div>
 
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-700">背景動画URL</label>
-              <input
-                type="text"
-                value={videoUrl}
-                onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
-                placeholder="https://example.com/hero.mp4"
-              />
-              <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。アップロードまたはURLを設定すると自動的に動画背景に切り替わります。</p>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-slate-700">背景動画URL</label>
+                <input
+                  type="text"
+                  value={videoUrl}
+                  onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  placeholder="https://example.com/hero.mp4"
+                />
+                <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。アップロードまたはURLを設定すると自動的に動画背景に切り替わります。</p>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="flex items-center justify-between text-sm font-medium text-slate-700 mb-2">
+                    <span>オーバーレイ濃度</span>
+                    <span className="text-xs text-slate-500">{videoOverlayPercent}%</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={videoOverlayPercent}
+                    onChange={(e) => {
+                      const next = Number(e.target.value) / 100;
+                      onUpdateContent('backgroundVideoOverlayOpacity', next);
+                    }}
+                    className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">オーバーレイカラー</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={videoOverlayColor}
+                      onChange={(e) => onUpdateContent('backgroundVideoOverlayColor', e.target.value)}
+                      className="h-10 w-10 cursor-pointer rounded border border-slate-300"
+                    />
+                    <input
+                      type="text"
+                      value={videoOverlayColor}
+                      onChange={(e) => onUpdateContent('backgroundVideoOverlayColor', e.target.value)}
+                      className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-500">
+                  オーバーレイ濃度を 0% にすると動画の元の色味がそのまま表示されます。
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
+          );
+        })() : (
           <div className="space-y-3">
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               {imageUrl ? (
