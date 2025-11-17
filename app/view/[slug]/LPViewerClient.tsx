@@ -913,7 +913,7 @@ export default function LPViewerClient({
               const isLastSlide = index === finalSlideIndex;
               const slideInnerStyle =
                 isLastSlide && footerCtaConfig
-                  ? { paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 24px))' }
+                  ? { paddingBottom: 'calc(112px + env(safe-area-inset-bottom, 24px))' }
                   : undefined;
 
               const slideClassName = `lp-slide-clean${isFullBleedBlock ? ' lp-slide-clean--full' : ''}`;
@@ -971,44 +971,44 @@ export default function LPViewerClient({
       </div>
       {footerCtaConfig ? (
         <div
-          className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 transition-transform duration-300 ease-out"
-          style={{ transform: showFooterCta ? 'translateY(0%)' : 'translateY(110%)' }}
+          className="pointer-events-none fixed inset-x-0 bottom-0 z-40 transition-transform duration-300 ease-out"
+          style={{ transform: showFooterCta ? 'translateY(0%)' : 'translateY(105%)' }}
         >
-          <div className="pointer-events-auto mx-auto w-full max-w-screen-md px-4 pb-[calc(env(safe-area-inset-bottom,0px)+16px)]">
-            <div
-              className="rounded-t-2xl border border-white/10 shadow-2xl shadow-black/30 backdrop-blur-md px-5 py-4"
-              style={{ backgroundColor: footerCtaColors.background, color: footerCtaColors.text }}
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-1">
-                  {footerCtaConfig.title ? (
-                    <h3 className="text-base font-semibold leading-tight">
-                      {footerCtaConfig.title}
-                    </h3>
-                  ) : null}
-                  {footerCtaConfig.subtitle ? (
-                    <p
-                      className="text-sm leading-snug"
-                      style={{ color: footerCtaColors.text, opacity: 0.8 }}
-                    >
-                      {footerCtaConfig.subtitle}
-                    </p>
-                  ) : null}
-                </div>
-                {footerCtaConfig.buttonLabel && footerCtaConfig.buttonUrl ? (
-                  <a
-                    href={footerCtaConfig.buttonUrl}
-                    className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold shadow-lg transition-transform hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2"
-                    style={{
-                      backgroundColor: footerCtaColors.buttonBackground,
-                      color: footerCtaColors.buttonText,
-                    }}
-                    onClick={() => triggerHapticFeedback('medium')}
-                  >
-                    {footerCtaConfig.buttonLabel}
-                  </a>
+          <div
+            className="pointer-events-auto w-full"
+            style={{
+              backgroundColor: footerCtaColors.background,
+              color: footerCtaColors.text,
+              paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+            }}
+          >
+            <div className="mx-auto flex w-full max-w-screen-xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8">
+              <div className="flex-1 space-y-1">
+                {footerCtaConfig.title ? (
+                  <h3 className="text-base font-semibold leading-tight sm:text-lg">
+                    {footerCtaConfig.title}
+                  </h3>
+                ) : null}
+                {footerCtaConfig.subtitle ? (
+                  <p className="text-sm leading-snug" style={{ opacity: 0.78 }}>
+                    {footerCtaConfig.subtitle}
+                  </p>
                 ) : null}
               </div>
+              {footerCtaConfig.buttonLabel && footerCtaConfig.buttonUrl ? (
+                <a
+                  href={footerCtaConfig.buttonUrl}
+                  className="inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-semibold transition-transform hover:scale-[1.015] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto"
+                  style={{
+                    backgroundColor: footerCtaColors.buttonBackground,
+                    color: footerCtaColors.buttonText,
+                    boxShadow: '0 10px 30px -12px rgba(15, 23, 42, 0.45)',
+                  }}
+                  onClick={() => triggerHapticFeedback('medium')}
+                >
+                  {footerCtaConfig.buttonLabel}
+                </a>
+              ) : null}
             </div>
           </div>
         </div>
