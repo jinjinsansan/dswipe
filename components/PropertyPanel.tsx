@@ -361,6 +361,9 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     const overlayOpacity = Math.min(Math.max(overlayRaw, 0), 1);
     const overlayPercent = Math.round(overlayOpacity * 100);
     const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
+    const uploadButtonClasses = isUploading
+      ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800'
+      : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm';
 
     const backgroundOptions: Array<{ value: 'color' | 'image' | 'none'; label: string; icon: IconComponent }> = [
       { value: 'color', label: '単色', icon: PaintBrushIcon },
@@ -418,7 +421,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <div className="flex flex-wrap gap-2">
               <label
                 htmlFor={backgroundImageInputId}
-                className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900"
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${uploadButtonClasses}`}
               >
                 {isUploading ? (
                   <>
