@@ -2,9 +2,9 @@
 
 import { PageLoader } from '@/components/LoadingSpinner';
 
-import { useEffect, useState, useRef, useMemo, FormEvent } from 'react';
+import { useEffect, useState, useRef, useMemo, FormEvent, useCallback } from 'react';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/free-mode';
@@ -79,6 +79,7 @@ export default function LPViewerClient({
   initialProducts = [],
 }: LPViewerClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated } = useAuthStore();
   const initialResolvedSlug = initialSlug || initialLp?.slug || '';
   const [slug, setSlug] = useState(initialResolvedSlug);
@@ -108,6 +109,8 @@ export default function LPViewerClient({
   } | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [showFooterCta, setShowFooterCta] = useState(false);
+  const [pendingCheckoutProductId, setPendingCheckoutProductId] = useState<string | null>(null);
+  const [checkoutParamConsumed, setCheckoutParamConsumed] = useState(false);
 
   const selectedIsPoints = purchaseMethod === 'points';
   const selectedProductPricePoints = selectedProduct?.price_in_points ?? 0;
@@ -368,6 +371,16 @@ export default function LPViewerClient({
   }, [slug]);
 
   useEffect(() => {
+    if (checkoutParamConsumed) {
+      return;
+    }
+    const param = searchParams?.get('checkout');
+    if (param && !pendingCheckoutProductId) {
+      setPendingCheckoutProductId(param);
+    }
+  }, [searchParams, pendingCheckoutProductId, checkoutParamConsumed]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchPointBalance();
     }
@@ -512,8 +525,7 @@ export default function LPViewerClient({
     }
   };
 
-  const handleOpenPurchaseModal = (product: Product) => {
-    
+  const handleOpenPurchaseModal = useCallback((product: Product) => {
     if (!isAuthenticated) {
       if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
         redirectToLogin(router);
@@ -543,7 +555,7 @@ export default function LPViewerClient({
       setPurchaseMethod('yen');
     }
     setShowPurchaseModal(true);
-  };
+  }, [isAuthenticated, router]);
 
   const handleProductButtonClick = (productId?: string) => {
     if (lp?.linked_salon?.public_path) {
@@ -572,6 +584,69 @@ export default function LPViewerClient({
 
     router.push(`/points/purchase?product_id=${resolvedProductId}`);
   };
+
+  const clearCheckoutQuery = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('checkout')) {
+      return;
+    }
+    params.delete('checkout');
+    const query = params.toString();
+    const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+    router.replace(nextUrl, { scroll: false });
+  }, [router]);
+
+  useEffect(() => {
+    if (!pendingCheckoutProductId) {
+      return;
+    }
+    if (!lp) {
+      return;
+    }
+
+    const finalize = () => {
+      clearCheckoutQuery();
+      setPendingCheckoutProductId(null);
+      setCheckoutParamConsumed(true);
+    };
+
+    if (lp.linked_salon?.public_path) {
+      finalize();
+      router.push(lp.linked_salon.public_path);
+      return;
+    }
+
+    if (!products || products.length === 0) {
+      return;
+    }
+
+    const matchedProduct = products.find(
+      (product) => String(product.id) === String(pendingCheckoutProductId)
+    );
+
+    if (matchedProduct) {
+      handleOpenPurchaseModal(matchedProduct);
+      finalize();
+      return;
+    }
+
+    console.warn('Checkout deeplink product not found. Redirecting to points purchase page.', {
+      productId: pendingCheckoutProductId,
+      availableProducts: products.map((p) => p.id),
+    });
+    finalize();
+    router.push(`/points/purchase?product_id=${pendingCheckoutProductId}`);
+  }, [
+    pendingCheckoutProductId,
+    lp,
+    products,
+    clearCheckoutQuery,
+    handleOpenPurchaseModal,
+    router,
+  ]);
 
   const handlePurchase = async () => {
     if (!selectedProduct) return;
