@@ -65,7 +65,7 @@ type FeaturedKey = 'product' | 'note' | 'salon';
 
 type SecretMemoPreviewState = {
   file: AdminSecretMemoFileDetail;
-  mode: 'image' | 'text' | 'download';
+  mode: 'image' | 'text' | 'pdf' | 'download';
   content?: string;
   dataUrl?: string;
 };
@@ -454,6 +454,8 @@ export default function AdminPanelPage() {
         mode = 'text';
         content = decodeBase64ToText(detail.data_base64);
         dataUrl = undefined;
+      } else if (mime === 'application/pdf' || mime.endsWith('/pdf')) {
+        mode = 'pdf';
       }
       setSecretMemoPreview({ file: detail, mode, content, dataUrl });
     } catch (error) {
@@ -3873,6 +3875,13 @@ export default function AdminPanelPage() {
                       src={secretMemoPreview.dataUrl}
                       alt={secretMemoPreview.file.filename}
                       className="max-h-[65vh] w-full rounded-2xl object-contain"
+                    />
+                  )}
+                  {secretMemoPreview.mode === 'pdf' && secretMemoPreview.dataUrl && (
+                    <iframe
+                      title={secretMemoPreview.file.filename}
+                      src={secretMemoPreview.dataUrl}
+                      className="h-[65vh] w-full rounded-2xl border border-gray-200"
                     />
                   )}
                   {secretMemoPreview.mode === 'text' && (
