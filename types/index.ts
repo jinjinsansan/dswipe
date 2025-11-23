@@ -1635,6 +1635,12 @@ export interface AdminAnnouncement {
   created_by_username?: string | null;
 }
 
+export interface AdminSecretMemo {
+  content: string;
+  updated_at?: string | null;
+  updated_by?: string | null;
+}
+
 export interface DashboardAnnouncement {
   id: string;
   title: string;

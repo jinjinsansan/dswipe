@@ -15,6 +15,7 @@ import {
   UserGroupIcon,
   AcademicCapIcon,
   ShareIcon,
+  LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import AdminShell, { AdminPageTab } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
@@ -42,6 +43,7 @@ import type {
   FeaturedProductSummary,
   FeaturedNoteSummary,
   FeaturedSalonSummary,
+  AdminSecretMemo,
 } from '@/types';
 import NoteModerationCenter from '@/components/admin/note-moderation/NoteModerationCenter';
 import SalonManagementCenter from '@/components/admin/salon-management/SalonManagementCenter';
@@ -54,7 +56,8 @@ type TabKey =
   | 'marketplace'
   | 'analytics'
   | 'announcements'
-  | 'logs';
+  | 'logs'
+  | 'secret';
 
 type FeaturedKey = 'product' | 'note' | 'salon';
 
@@ -67,6 +70,7 @@ const TABS: Array<AdminPageTab & { id: TabKey }> = [
   { id: 'analytics', label: 'ポイント分析', icon: ChartBarIcon },
   { id: 'announcements', label: 'お知らせ管理', icon: MegaphoneIcon },
   { id: 'logs', label: 'モデレーションログ', icon: DocumentTextIcon },
+  { id: 'secret', label: '極秘メモ', icon: LockClosedIcon },
 ];
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ja-JP').format(value);
@@ -274,6 +278,15 @@ export default function AdminPanelPage() {
   const [shareFilters, setShareFilters] = useState({ suspiciousOnly: false });
   const suspiciousOnly = shareFilters.suspiciousOnly;
   const [shareRewardInput, setShareRewardInput] = useState('');
+  const [secretMemoPasswordInput, setSecretMemoPasswordInput] = useState('');
+  const [secretMemoPassword, setSecretMemoPassword] = useState('');
+  const [secretMemoUnlocked, setSecretMemoUnlocked] = useState(false);
+  const [secretMemoEntry, setSecretMemoEntry] = useState<AdminSecretMemo | null>(null);
+  const [secretMemoContent, setSecretMemoContent] = useState('');
+  const [secretMemoLoading, setSecretMemoLoading] = useState(false);
+  const [secretMemoSaving, setSecretMemoSaving] = useState(false);
+  const [secretMemoError, setSecretMemoError] = useState<string | null>(null);
+  const [secretMemoSuccess, setSecretMemoSuccess] = useState<string | null>(null);
   const [announcementSaving, setAnnouncementSaving] = useState(false);
   const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
   const [announcementTitle, setAnnouncementTitle] = useState('');
@@ -295,6 +308,51 @@ export default function AdminPanelPage() {
     setAnnouncementPublished(true);
     setAnnouncementHighlight(false);
     setAnnouncementsError(null);
+  };
+
+  const unlockSecretMemo = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const password = secretMemoPasswordInput.trim();
+    if (!password) return;
+    setSecretMemoLoading(true);
+    setSecretMemoError(null);
+    setSecretMemoSuccess(null);
+    try {
+      const response = await adminApi.accessSecretMemo({ password });
+      const memo = response.data as AdminSecretMemo;
+      setSecretMemoEntry(memo);
+      setSecretMemoContent(memo.content ?? '');
+      setSecretMemoPassword(password);
+      setSecretMemoUnlocked(true);
+    } catch (error) {
+      const message = getErrorMessage(error, 'パスワードが正しくありません');
+      setSecretMemoError(message);
+      setSecretMemoUnlocked(false);
+    } finally {
+      setSecretMemoLoading(false);
+    }
+  };
+
+  const handleSecretMemoSave = async () => {
+    if (!secretMemoPassword || secretMemoSaving) return;
+    setSecretMemoSaving(true);
+    setSecretMemoError(null);
+    setSecretMemoSuccess(null);
+    try {
+      const response = await adminApi.updateSecretMemo({
+        password: secretMemoPassword,
+        content: secretMemoContent,
+      });
+      const memo = response.data as AdminSecretMemo;
+      setSecretMemoEntry(memo);
+      setSecretMemoContent(memo.content ?? '');
+      setSecretMemoSuccess('極秘情報を保存しました');
+    } catch (error) {
+      const message = getErrorMessage(error, '極秘情報の保存に失敗しました');
+      setSecretMemoError(message);
+    } finally {
+      setSecretMemoSaving(false);
+    }
   };
 
 
@@ -354,6 +412,20 @@ export default function AdminPanelPage() {
       fetchShareAlerts();
     }
   }, [activeSection, suspiciousOnly]);
+
+  useEffect(() => {
+    if (activeSection !== 'secret') {
+      setSecretMemoUnlocked(false);
+      setSecretMemoPassword('');
+      setSecretMemoPasswordInput('');
+      setSecretMemoContent('');
+      setSecretMemoEntry(null);
+      setSecretMemoError(null);
+      setSecretMemoSuccess(null);
+      setSecretMemoLoading(false);
+      setSecretMemoSaving(false);
+    }
+  }, [activeSection]);
 
   const fetchUsers = async (search?: string) => {
     setUsersLoading(true);
@@ -3498,6 +3570,101 @@ export default function AdminPanelPage() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeSection === 'secret' && (
+            <div className="mx-auto max-w-3xl space-y-6">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                    <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">極秘情報メモ</h2>
+                    <p className="text-sm text-gray-500">指定された管理者2名のみアクセスでき、追加パスワード「kusano」で保護されています。</p>
+                  </div>
+                </div>
+
+                {!secretMemoUnlocked && (
+                  <form className="mt-6 space-y-4" onSubmit={unlockSecretMemo}>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">解除パスワード</label>
+                      <input
+                        type="password"
+                        value={secretMemoPasswordInput}
+                        onChange={(event) => setSecretMemoPasswordInput(event.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        placeholder="パスワードを入力"
+                        autoComplete="off"
+                        disabled={secretMemoLoading}
+                      />
+                    </div>
+                    {secretMemoError && <p className="text-sm text-red-600">{secretMemoError}</p>}
+                    <button
+                      type="submit"
+                      disabled={secretMemoLoading || !secretMemoPasswordInput.trim()}
+                      className="inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    >
+                      {secretMemoLoading ? '検証中...' : 'ロック解除'}
+                    </button>
+                  </form>
+                )}
+
+                {secretMemoUnlocked && (
+                  <div className="mt-6 space-y-4">
+                    {secretMemoError && (
+                      <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{secretMemoError}</div>
+                    )}
+                    {secretMemoSuccess && (
+                      <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{secretMemoSuccess}</div>
+                    )}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">極秘メモ内容</label>
+                      <textarea
+                        value={secretMemoContent}
+                        onChange={(event) => setSecretMemoContent(event.target.value)}
+                        rows={12}
+                        maxLength={10000}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={handleSecretMemoSave}
+                        disabled={secretMemoSaving}
+                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+                      >
+                        {secretMemoSaving ? '保存中...' : '極秘メモを保存'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSecretMemoUnlocked(false);
+                          setSecretMemoPassword('');
+                          setSecretMemoPasswordInput('');
+                          setSecretMemoEntry(null);
+                          setSecretMemoContent('');
+                        }}
+                        className="inline-flex flex-1 items-center justify-center rounded-2xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
+                      >
+                        再ロックする
+                      </button>
+                    </div>
+                    <dl className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                      <div className="flex items-center justify-between">
+                        <dt>最終更新</dt>
+                        <dd className="font-semibold text-gray-800">{formatDateTime(secretMemoEntry?.updated_at)}</dd>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <dt>更新者ID</dt>
+                        <dd className="font-mono text-xs text-gray-700">{secretMemoEntry?.updated_by ?? '-'}</dd>
+                      </div>
+                    </dl>
                   </div>
                 )}
               </div>

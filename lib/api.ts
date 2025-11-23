@@ -133,6 +133,7 @@ import type {
   ShareFraudAlert,
   ShareRewardSettings,
   ShareRewardSettingsUpdateRequest,
+  AdminSecretMemo,
 } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -889,6 +890,12 @@ export const adminApi = {
 
   deleteAnnouncement: (announcementId: string) =>
     api.delete(`/admin/announcements/${announcementId}`),
+
+  accessSecretMemo: (payload: { password: string }) =>
+    api.post<AdminSecretMemo>('/admin/secret-memo/view', payload),
+
+  updateSecretMemo: (payload: { password: string; content: string }) =>
+    api.put<AdminSecretMemo>('/admin/secret-memo', payload),
 };
 
 export const announcementApi = {
