@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
 import {
@@ -44,6 +44,8 @@ import type {
   FeaturedNoteSummary,
   FeaturedSalonSummary,
   AdminSecretMemo,
+  AdminSecretMemoFile,
+  AdminSecretMemoFileDetail,
 } from '@/types';
 import NoteModerationCenter from '@/components/admin/note-moderation/NoteModerationCenter';
 import SalonManagementCenter from '@/components/admin/salon-management/SalonManagementCenter';
@@ -61,6 +63,13 @@ type TabKey =
 
 type FeaturedKey = 'product' | 'note' | 'salon';
 
+type SecretMemoPreviewState = {
+  file: AdminSecretMemoFileDetail;
+  mode: 'image' | 'text' | 'download';
+  content?: string;
+  dataUrl?: string;
+};
+
 const TABS: Array<AdminPageTab & { id: TabKey }> = [
   { id: 'users', label: 'ユーザー管理', icon: UserGroupIcon },
   { id: 'moderation', label: 'Swipeコラムモデレーション', icon: DocumentMagnifyingGlassIcon },
@@ -74,6 +83,15 @@ const TABS: Array<AdminPageTab & { id: TabKey }> = [
 ];
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ja-JP').format(value);
+
+const formatBytes = (value: number) => {
+  if (!Number.isFinite(value)) return '0 B';
+  if (value === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  const idx = Math.min(Math.floor(Math.log(value) / Math.log(1024)), units.length - 1);
+  const formatted = value / 1024 ** idx;
+  return `${formatted.toFixed(idx === 0 ? 0 : 1)} ${units[idx]}`;
+};
 
 const formatPercentage = (value: number, total: number) => {
   if (!Number.isFinite(value) || !Number.isFinite(total) || total === 0) {
@@ -107,6 +125,22 @@ const formatDate = (value?: string | null) => {
 };
 
 const formatPoints = (value: number) => `${formatNumber(value)} P`;
+
+const decodeBase64ToText = (data: string) => {
+  try {
+    const binary = atob(data);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
+  } catch (error) {
+    console.error('Failed to decode base64 text', error);
+    return '[このファイルはテキストとして表示できません]';
+  }
+};
+
+const buildDataUrl = (mimeType: string, base64: string) => `data:${mimeType};base64,${base64}`;
 
 type ApiErrorResponse = {
   detail?: string;
@@ -287,6 +321,11 @@ export default function AdminPanelPage() {
   const [secretMemoSaving, setSecretMemoSaving] = useState(false);
   const [secretMemoError, setSecretMemoError] = useState<string | null>(null);
   const [secretMemoSuccess, setSecretMemoSuccess] = useState<string | null>(null);
+  const [secretMemoFiles, setSecretMemoFiles] = useState<AdminSecretMemoFile[]>([]);
+  const [secretMemoUploading, setSecretMemoUploading] = useState(false);
+  const [secretMemoPreview, setSecretMemoPreview] = useState<SecretMemoPreviewState | null>(null);
+  const [secretMemoViewerError, setSecretMemoViewerError] = useState<string | null>(null);
+  const secretMemoFileInputRef = useRef<HTMLInputElement | null>(null);
   const [announcementSaving, setAnnouncementSaving] = useState(false);
   const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
   const [announcementTitle, setAnnouncementTitle] = useState('');
@@ -322,6 +361,7 @@ export default function AdminPanelPage() {
       const memo = response.data as AdminSecretMemo;
       setSecretMemoEntry(memo);
       setSecretMemoContent(memo.content ?? '');
+      setSecretMemoFiles(Array.isArray(memo.files) ? memo.files : []);
       setSecretMemoPassword(password);
       setSecretMemoUnlocked(true);
     } catch (error) {
@@ -346,12 +386,79 @@ export default function AdminPanelPage() {
       const memo = response.data as AdminSecretMemo;
       setSecretMemoEntry(memo);
       setSecretMemoContent(memo.content ?? '');
+      setSecretMemoFiles(Array.isArray(memo.files) ? memo.files : []);
       setSecretMemoSuccess('メモを保存しました');
     } catch (error) {
       const message = getErrorMessage(error, 'メモの保存に失敗しました');
       setSecretMemoError(message);
     } finally {
       setSecretMemoSaving(false);
+    }
+  };
+
+  const convertFileToBase64 = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== 'string') {
+        reject(new Error('ファイルの読み込みに失敗しました'));
+        return;
+      }
+      const commaIndex = result.indexOf(',');
+      resolve(commaIndex >= 0 ? result.slice(commaIndex + 1) : result);
+    };
+    reader.onerror = () => reject(reader.error ?? new Error('ファイルの読み込みに失敗しました'));
+    reader.readAsDataURL(file);
+  });
+
+  const handleSecretMemoFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (!secretMemoPassword) return;
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setSecretMemoUploading(true);
+    setSecretMemoError(null);
+    try {
+      const base64 = await convertFileToBase64(file);
+      const response = await adminApi.uploadSecretMemoFile({
+        password: secretMemoPassword,
+        filename: file.name,
+        mime_type: file.type || 'application/octet-stream',
+        data_base64: base64,
+      });
+      const metadata = response.data as AdminSecretMemoFile;
+      setSecretMemoFiles((prev) => [...prev, metadata]);
+      setSecretMemoEntry((prev) => (prev ? { ...prev, files: [...prev.files, metadata] } : prev));
+      setSecretMemoSuccess('ファイルを保存しました');
+    } catch (error) {
+      const message = getErrorMessage(error, 'ファイルのアップロードに失敗しました');
+      setSecretMemoError(message);
+    } finally {
+      setSecretMemoUploading(false);
+      if (secretMemoFileInputRef.current) secretMemoFileInputRef.current.value = '';
+    }
+  };
+
+  const handleSecretMemoFilePreview = async (fileId: string) => {
+    if (!secretMemoPassword) return;
+    setSecretMemoViewerError(null);
+    try {
+      const response = await adminApi.getSecretMemoFile(fileId, { password: secretMemoPassword });
+      const detail = response.data as AdminSecretMemoFileDetail;
+      let mode: SecretMemoPreviewState['mode'] = 'download';
+      let content: string | undefined;
+      let dataUrl: string | undefined = buildDataUrl(detail.mime_type, detail.data_base64);
+      const mime = detail.mime_type.toLowerCase();
+      if (mime.startsWith('image/')) {
+        mode = 'image';
+      } else if (mime.startsWith('text/') || mime.includes('json') || mime.includes('xml')) {
+        mode = 'text';
+        content = decodeBase64ToText(detail.data_base64);
+        dataUrl = undefined;
+      }
+      setSecretMemoPreview({ file: detail, mode, content, dataUrl });
+    } catch (error) {
+      const message = getErrorMessage(error, 'ファイルの取得に失敗しました');
+      setSecretMemoViewerError(message);
     }
   };
 
@@ -424,6 +531,11 @@ export default function AdminPanelPage() {
       setSecretMemoSuccess(null);
       setSecretMemoLoading(false);
       setSecretMemoSaving(false);
+      setSecretMemoFiles([]);
+      setSecretMemoPreview(null);
+      setSecretMemoViewerError(null);
+      setSecretMemoUploading(false);
+      if (secretMemoFileInputRef.current) secretMemoFileInputRef.current.value = '';
     }
   }, [activeSection]);
 
@@ -3655,6 +3767,72 @@ export default function AdminPanelPage() {
                         再ロックする
                       </button>
                     </div>
+                    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">ファイルアップロード</p>
+                          <p className="text-xs text-gray-500">最大5MB / 50ファイルまで保存できます。</p>
+                        </div>
+                        <label className={`inline-flex cursor-pointer items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold ${secretMemoUploading ? 'bg-gray-200 text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-500'}`}>
+                          <input
+                            ref={secretMemoFileInputRef}
+                            type="file"
+                            className="hidden"
+                            onChange={handleSecretMemoFileSelect}
+                            disabled={secretMemoUploading}
+                          />
+                          {secretMemoUploading ? 'アップロード中…' : 'ファイルを選択'}
+                        </label>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">保存済みファイル</p>
+                          <p className="text-xs text-gray-500">メモと一緒に残しておきたい資料をここに保管できます。</p>
+                        </div>
+                        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">{secretMemoFiles.length} 件</span>
+                      </div>
+                      {secretMemoViewerError && (
+                        <div className="mt-3 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-600">{secretMemoViewerError}</div>
+                      )}
+                      {secretMemoFiles.length === 0 ? (
+                        <p className="mt-4 text-sm text-gray-500">まだファイルは登録されていません。</p>
+                      ) : (
+                        <div className="mt-4 overflow-x-auto">
+                          <table className="w-full text-sm text-gray-600">
+                            <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                              <tr>
+                                <th className="px-3 py-2 text-left">ファイル名</th>
+                                <th className="px-3 py-2 text-left">種類</th>
+                                <th className="px-3 py-2 text-right">サイズ</th>
+                                <th className="px-3 py-2 text-left">登録日時</th>
+                                <th className="px-3 py-2 text-right">操作</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                              {secretMemoFiles.map((file) => (
+                                <tr key={file.id}>
+                                  <td className="px-3 py-2 text-sm font-semibold text-gray-900">{file.filename}</td>
+                                  <td className="px-3 py-2 text-xs text-gray-500">{file.mime_type}</td>
+                                  <td className="px-3 py-2 text-right text-sm text-gray-700">{formatBytes(file.size)}</td>
+                                  <td className="px-3 py-2 text-xs text-gray-500">{formatDateTime(file.uploaded_at)}</td>
+                                  <td className="px-3 py-2 text-right">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSecretMemoFilePreview(file.id)}
+                                      className="rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+                                    >
+                                      表示
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
                     <dl className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                       <div className="flex items-center justify-between">
                         <dt>最終更新</dt>
@@ -3667,6 +3845,54 @@ export default function AdminPanelPage() {
                     </dl>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {secretMemoPreview && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 px-4 py-6">
+              <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl">
+                <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-6 py-4">
+                  <div>
+                    <p className="text-base font-semibold text-gray-900">{secretMemoPreview.file.filename}</p>
+                    <p className="text-xs text-gray-500">
+                      {secretMemoPreview.file.mime_type} ・ {formatBytes(secretMemoPreview.file.size)} ・ {formatDateTime(secretMemoPreview.file.uploaded_at)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSecretMemoPreview(null)}
+                    className="rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50"
+                  >
+                    閉じる
+                  </button>
+                </div>
+                <div className="max-h-[70vh] overflow-y-auto px-6 py-5">
+                  {secretMemoPreview.mode === 'image' && secretMemoPreview.dataUrl && (
+                    <img
+                      src={secretMemoPreview.dataUrl}
+                      alt={secretMemoPreview.file.filename}
+                      className="max-h-[65vh] w-full rounded-2xl object-contain"
+                    />
+                  )}
+                  {secretMemoPreview.mode === 'text' && (
+                    <pre className="max-h-[65vh] overflow-y-auto whitespace-pre-wrap rounded-2xl bg-gray-900/90 p-4 text-sm text-gray-100">
+                      {secretMemoPreview.content}
+                    </pre>
+                  )}
+                  {secretMemoPreview.mode === 'download' && secretMemoPreview.dataUrl && (
+                    <div className="flex flex-col items-center justify-center gap-4 text-sm text-gray-600">
+                      <p>このファイル形式はプレビューに対応していません。ダウンロードして内容をご確認ください。</p>
+                      <a
+                        href={secretMemoPreview.dataUrl}
+                        download={secretMemoPreview.file.filename}
+                        className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+                      >
+                        ダウンロード
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

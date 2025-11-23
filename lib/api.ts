@@ -134,6 +134,8 @@ import type {
   ShareRewardSettings,
   ShareRewardSettingsUpdateRequest,
   AdminSecretMemo,
+  AdminSecretMemoFile,
+  AdminSecretMemoFileDetail,
 } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -896,6 +898,12 @@ export const adminApi = {
 
   updateSecretMemo: (payload: { password: string; content: string }) =>
     api.put<AdminSecretMemo>('/admin/secret-memo', payload),
+
+  uploadSecretMemoFile: (payload: { password: string; filename: string; mime_type: string; data_base64: string }) =>
+    api.post<AdminSecretMemoFile>('/admin/secret-memo/files', payload),
+
+  getSecretMemoFile: (fileId: string, payload: { password: string }) =>
+    api.post<AdminSecretMemoFileDetail>(`/admin/secret-memo/files/${fileId}`, payload),
 };
 
 export const announcementApi = {

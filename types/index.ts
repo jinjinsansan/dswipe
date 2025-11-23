@@ -1639,6 +1639,19 @@ export interface AdminSecretMemo {
   content: string;
   updated_at?: string | null;
   updated_by?: string | null;
+  files: AdminSecretMemoFile[];
+}
+
+export interface AdminSecretMemoFile {
+  id: string;
+  filename: string;
+  mime_type: string;
+  size: number;
+  uploaded_at: string;
+}
+
+export interface AdminSecretMemoFileDetail extends AdminSecretMemoFile {
+  data_base64: string;
 }
 
 export interface DashboardAnnouncement {
