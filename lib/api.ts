@@ -904,6 +904,9 @@ export const adminApi = {
 
   getSecretMemoFile: (fileId: string, payload: { password: string }) =>
     api.post<AdminSecretMemoFileDetail>(`/admin/secret-memo/files/${fileId}`, payload),
+
+  deleteSecretMemoFile: (fileId: string, payload: { password: string }) =>
+    api.post<AdminSecretMemo>(`/admin/secret-memo/files/${fileId}/delete`, payload),
 };
 
 export const announcementApi = {

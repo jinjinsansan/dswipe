@@ -326,6 +326,7 @@ export default function AdminPanelPage() {
   const [secretMemoPreview, setSecretMemoPreview] = useState<SecretMemoPreviewState | null>(null);
   const [secretMemoViewerError, setSecretMemoViewerError] = useState<string | null>(null);
   const secretMemoFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [secretMemoDeletingId, setSecretMemoDeletingId] = useState<string | null>(null);
   const [announcementSaving, setAnnouncementSaving] = useState(false);
   const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
   const [announcementTitle, setAnnouncementTitle] = useState('');
@@ -464,6 +465,26 @@ export default function AdminPanelPage() {
     }
   };
 
+  const handleSecretMemoFileDelete = async (fileId: string) => {
+    if (!secretMemoPassword) return;
+    if (!window.confirm('このファイルを削除しますか？')) return;
+    setSecretMemoDeletingId(fileId);
+    setSecretMemoError(null);
+    try {
+      const response = await adminApi.deleteSecretMemoFile(fileId, { password: secretMemoPassword });
+      const memo = response.data as AdminSecretMemo;
+      setSecretMemoEntry(memo);
+      setSecretMemoContent(memo.content ?? '');
+      setSecretMemoFiles(Array.isArray(memo.files) ? memo.files : []);
+      setSecretMemoSuccess('ファイルを削除しました');
+    } catch (error) {
+      const message = getErrorMessage(error, 'ファイルの削除に失敗しました');
+      setSecretMemoError(message);
+    } finally {
+      setSecretMemoDeletingId(null);
+    }
+  };
+
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -537,6 +558,7 @@ export default function AdminPanelPage() {
       setSecretMemoPreview(null);
       setSecretMemoViewerError(null);
       setSecretMemoUploading(false);
+      setSecretMemoDeletingId(null);
       if (secretMemoFileInputRef.current) secretMemoFileInputRef.current.value = '';
     }
   }, [activeSection]);
@@ -3819,14 +3841,24 @@ export default function AdminPanelPage() {
                                   <td className="px-3 py-2 text-xs text-gray-500">{file.mime_type}</td>
                                   <td className="px-3 py-2 text-right text-sm text-gray-700">{formatBytes(file.size)}</td>
                                   <td className="px-3 py-2 text-xs text-gray-500">{formatDateTime(file.uploaded_at)}</td>
-                                  <td className="px-3 py-2 text-right">
-                                    <button
-                                      type="button"
-                                      onClick={() => handleSecretMemoFilePreview(file.id)}
-                                      className="rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50"
-                                    >
-                                      表示
-                                    </button>
+                                  <td className="px-3 py-2">
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleSecretMemoFilePreview(file.id)}
+                                        className="rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+                                      >
+                                        表示
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleSecretMemoFileDelete(file.id)}
+                                        disabled={secretMemoDeletingId === file.id}
+                                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${secretMemoDeletingId === file.id ? 'border-gray-200 bg-gray-100 text-gray-400' : 'border-red-200 text-red-600 hover:bg-red-50'}`}
+                                      >
+                                        {secretMemoDeletingId === file.id ? '削除中…' : '削除'}
+                                      </button>
+                                    </div>
                                   </td>
                                 </tr>
                               ))}
