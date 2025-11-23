@@ -70,7 +70,7 @@ const TABS: Array<AdminPageTab & { id: TabKey }> = [
   { id: 'analytics', label: 'ポイント分析', icon: ChartBarIcon },
   { id: 'announcements', label: 'お知らせ管理', icon: MegaphoneIcon },
   { id: 'logs', label: 'モデレーションログ', icon: DocumentTextIcon },
-  { id: 'secret', label: '極秘メモ', icon: LockClosedIcon },
+  { id: 'secret', label: 'メモ', icon: LockClosedIcon },
 ];
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ja-JP').format(value);
@@ -346,9 +346,9 @@ export default function AdminPanelPage() {
       const memo = response.data as AdminSecretMemo;
       setSecretMemoEntry(memo);
       setSecretMemoContent(memo.content ?? '');
-      setSecretMemoSuccess('極秘情報を保存しました');
+      setSecretMemoSuccess('メモを保存しました');
     } catch (error) {
-      const message = getErrorMessage(error, '極秘情報の保存に失敗しました');
+      const message = getErrorMessage(error, 'メモの保存に失敗しました');
       setSecretMemoError(message);
     } finally {
       setSecretMemoSaving(false);
@@ -3584,8 +3584,8 @@ export default function AdminPanelPage() {
                     <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">極秘情報メモ</h2>
-                    <p className="text-sm text-gray-500">指定された管理者2名のみアクセスでき、追加パスワード「kusano」で保護されています。</p>
+                    <h2 className="text-lg font-semibold text-gray-900">管理者メモ</h2>
+                    <p className="text-sm text-gray-500">指定された管理者2名のみアクセスできる専用メモスペースです。</p>
                   </div>
                 </div>
 
@@ -3623,7 +3623,7 @@ export default function AdminPanelPage() {
                       <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{secretMemoSuccess}</div>
                     )}
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700">極秘メモ内容</label>
+                      <label className="block text-sm font-semibold text-gray-700">メモ内容</label>
                       <textarea
                         value={secretMemoContent}
                         onChange={(event) => setSecretMemoContent(event.target.value)}
@@ -3639,7 +3639,7 @@ export default function AdminPanelPage() {
                         disabled={secretMemoSaving}
                         className="inline-flex flex-1 items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300"
                       >
-                        {secretMemoSaving ? '保存中...' : '極秘メモを保存'}
+                        {secretMemoSaving ? '保存中...' : 'メモを保存'}
                       </button>
                       <button
                         type="button"
