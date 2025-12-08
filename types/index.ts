@@ -601,6 +601,7 @@ export interface SalonMember {
   last_charged_at?: string | null;
   next_charge_at?: string | null;
   canceled_at?: string | null;
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface SalonMemberListResult {
@@ -608,6 +609,13 @@ export interface SalonMemberListResult {
   total: number;
   limit: number;
   offset: number;
+}
+
+export interface SalonManualMemberPayload {
+  email?: string | null;
+  username?: string | null;
+  memo?: string | null;
+  status?: 'ACTIVE' | 'PENDING' | 'CANCELED';
 }
 
 export interface NoteSalonAccessResponse {

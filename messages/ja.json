@@ -605,6 +605,28 @@
         "prev": "前へ",
         "next": "次へ",
         "pageOf": "{current} / {total}"
+      },
+      "manualInvite": {
+        "title": "手動会員の追加",
+        "description": "銀行振込や友人招待など、ONE.latを経由しない会員を登録します。",
+        "identifierTypeLabel": "識別方法",
+        "identifierTypeEmail": "メールアドレス",
+        "identifierTypeUsername": "ユーザー名",
+        "identifierLabel": "ユーザー情報",
+        "identifierPlaceholderEmail": "例: user@example.com",
+        "identifierPlaceholderUsername": "例: username123",
+        "statusLabel": "ステータス",
+        "memoLabel": "メモ（任意）",
+        "reset": "入力をクリア",
+        "submit": "手動で会員追加",
+        "submitting": "追加中...",
+        "successEmail": "{email} を手動会員として登録しました",
+        "successUsername": "{username} を手動会員として登録しました",
+        "badge": "手動",
+        "errors": {
+          "missingIdentifier": "メールアドレスまたはユーザー名を入力してください",
+          "generic": "手動招待に失敗しました。しばらくしてから再度お試しください。"
+        }
       }
     }
   },

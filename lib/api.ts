@@ -35,6 +35,7 @@ import type {
   PurchaseHistoryResponse,
   SalesHistoryResponse,
   SalonMemberListResult,
+  SalonManualMemberPayload,
   NoteSalonAccessPayload,
   NoteSalonAccessResponse,
   SalonPost,
@@ -525,6 +526,8 @@ export const salonApi = {
   delete: (salonId: string) => api.delete(`/salons/${salonId}`),
   getMembers: (salonId: string, params?: { status_filter?: string; limit?: number; offset?: number }) =>
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
+  manualAddMember: (salonId: string, data: SalonManualMemberPayload) =>
+    api.post(`/salons/${salonId}/members/manual`, data),
   setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>
     api.post<NoteSalonAccessResponse>(`/salons/${salonId}/notes/${noteId}/access`, data),
 };

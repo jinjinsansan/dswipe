@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
@@ -19,6 +19,8 @@ const PAGE_SIZE = 20;
 
 const STATUS_KEYS = ["ACTIVE", "PENDING", "UNPAID", "CANCELED", "CANCELLED"] as const;
 type StatusKey = (typeof STATUS_KEYS)[number];
+type ManualIdentifierType = "email" | "username";
+type ManualStatus = "ACTIVE" | "PENDING" | "CANCELED";
 
 const STATUS_STYLES: Record<StatusKey, string> = {
   ACTIVE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
@@ -43,6 +45,13 @@ export default function SalonMembersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [manualIdentifierType, setManualIdentifierType] = useState<ManualIdentifierType>("email");
+  const [manualIdentifier, setManualIdentifier] = useState("");
+  const [manualStatus, setManualStatus] = useState<ManualStatus>("ACTIVE");
+  const [manualMemo, setManualMemo] = useState("");
+  const [manualError, setManualError] = useState<string | null>(null);
+  const [manualSuccess, setManualSuccess] = useState<string | null>(null);
+  const [isSubmittingManual, setIsSubmittingManual] = useState(false);
 
   const statusOptions = useMemo(
     () => [
@@ -63,6 +72,15 @@ export default function SalonMembersPage() {
       CANCELED: { label: t("status.cancelled"), className: STATUS_STYLES.CANCELED },
       CANCELLED: { label: t("status.cancelled"), className: STATUS_STYLES.CANCELLED },
     }),
+    [t],
+  );
+
+  const manualStatusOptions = useMemo(
+    () => [
+      { value: "ACTIVE", label: t("status.active") },
+      { value: "PENDING", label: t("status.pending") },
+      { value: "CANCELED", label: t("status.cancelled") },
+    ],
     [t],
   );
 
@@ -130,6 +148,59 @@ export default function SalonMembersPage() {
     setPage(1);
   };
 
+  const identifierPlaceholder = manualIdentifierType === "email"
+    ? t("manualInvite.identifierPlaceholderEmail")
+    : t("manualInvite.identifierPlaceholderUsername");
+
+  const handleManualSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!salonId) return;
+    const trimmedIdentifier = manualIdentifier.trim();
+    if (!trimmedIdentifier) {
+      setManualError(t("manualInvite.errors.missingIdentifier"));
+      setManualSuccess(null);
+      return;
+    }
+    setManualError(null);
+    setManualSuccess(null);
+    setIsSubmittingManual(true);
+    try {
+      const payload: { email?: string; username?: string; status: ManualStatus; memo?: string } = {
+        status: manualStatus,
+      };
+      if (manualIdentifierType === "email") {
+        payload.email = trimmedIdentifier;
+      } else {
+        payload.username = trimmedIdentifier;
+      }
+      if (manualMemo.trim()) {
+        payload.memo = manualMemo.trim();
+      }
+      await salonApi.manualAddMember(salonId, payload);
+      setManualSuccess(
+        manualIdentifierType === "email"
+          ? t("manualInvite.successEmail", { email: trimmedIdentifier })
+          : t("manualInvite.successUsername", { username: trimmedIdentifier }),
+      );
+      setManualIdentifier("");
+      setManualMemo("");
+      fetchMembers();
+    } catch (submitError: any) {
+      const detail = submitError?.response?.data?.detail;
+      setManualError(typeof detail === "string" ? detail : t("manualInvite.errors.generic"));
+    } finally {
+      setIsSubmittingManual(false);
+    }
+  };
+
+  const handleManualReset = () => {
+    setManualIdentifier("");
+    setManualMemo("");
+    setManualStatus("ACTIVE");
+    setManualError(null);
+    setManualSuccess(null);
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -152,6 +223,102 @@ export default function SalonMembersPage() {
           <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
           {t("nav.backToDetail")}
         </Link>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-base font-semibold text-slate-900">{t("manualInvite.title")}</p>
+              <p className="mt-1 text-sm text-slate-500">{t("manualInvite.description")}</p>
+            </div>
+          </div>
+          <form className="mt-4 space-y-4" onSubmit={handleManualSubmit}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="sm:w-48">
+                <label htmlFor="manualIdentifierType" className="text-sm font-medium text-slate-600">
+                  {t("manualInvite.identifierTypeLabel")}
+                </label>
+                <select
+                  id="manualIdentifierType"
+                  value={manualIdentifierType}
+                  onChange={(event) => setManualIdentifierType(event.target.value as ManualIdentifierType)}
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                >
+                  <option value="email">{t("manualInvite.identifierTypeEmail")}</option>
+                  <option value="username">{t("manualInvite.identifierTypeUsername")}</option>
+                </select>
+              </div>
+              <div className="flex-1">
+                <label htmlFor="manualIdentifier" className="text-sm font-medium text-slate-600">
+                  {t("manualInvite.identifierLabel")}
+                </label>
+                <input
+                  id="manualIdentifier"
+                  value={manualIdentifier}
+                  onChange={(event) => setManualIdentifier(event.target.value)}
+                  placeholder={identifierPlaceholder}
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-3 lg:flex-row">
+              <div className="lg:w-60">
+                <label htmlFor="manualStatus" className="text-sm font-medium text-slate-600">
+                  {t("manualInvite.statusLabel")}
+                </label>
+                <select
+                  id="manualStatus"
+                  value={manualStatus}
+                  onChange={(event) => setManualStatus(event.target.value as ManualStatus)}
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                >
+                  {manualStatusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1">
+                <label htmlFor="manualMemo" className="text-sm font-medium text-slate-600">
+                  {t("manualInvite.memoLabel")}
+                </label>
+                <textarea
+                  id="manualMemo"
+                  value={manualMemo}
+                  onChange={(event) => setManualMemo(event.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                />
+              </div>
+            </div>
+            {manualError ? (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-600">
+                {manualError}
+              </div>
+            ) : null}
+            {manualSuccess ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+                {manualSuccess}
+              </div>
+            ) : null}
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={handleManualReset}
+                className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+              >
+                {t("manualInvite.reset")}
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmittingManual}
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmittingManual ? t("manualInvite.submitting") : t("manualInvite.submit")}
+              </button>
+            </div>
+          </form>
+        </div>
 
         {error ? (
           <div className="flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
@@ -208,6 +375,8 @@ export default function SalonMembersPage() {
                     const rawStatus = (member.status ?? "").toUpperCase();
                     const statusKey = STATUS_KEYS.includes(rawStatus as StatusKey) ? (rawStatus as StatusKey) : undefined;
                     const status = statusKey ? statusMeta[statusKey] : undefined;
+                    const metadataSource = (member.metadata as { source?: unknown })?.source;
+                    const isManualMember = typeof metadataSource === "string" && metadataSource === "manual_invite";
                     return (
                       <tr key={member.id} className="bg-white">
                         <td className="px-4 py-3 font-mono text-xs text-slate-500">{member.user_id}</td>
@@ -219,6 +388,11 @@ export default function SalonMembersPage() {
                           >
                             {status?.label ?? member.status}
                           </span>
+                          {isManualMember ? (
+                            <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">
+                              {t("manualInvite.badge")}
+                            </span>
+                          ) : null}
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-600">
                           {formatDateTime(member.joined_at)}

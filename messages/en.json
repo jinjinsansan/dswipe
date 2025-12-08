@@ -604,6 +604,28 @@
         "prev": "Previous",
         "next": "Next",
         "pageOf": "{current} / {total}"
+      },
+      "manualInvite": {
+        "title": "Manually add a member",
+        "description": "Register members who paid via bank transfer or invitations outside ONE.lat.",
+        "identifierTypeLabel": "Identifier",
+        "identifierTypeEmail": "Email address",
+        "identifierTypeUsername": "Username",
+        "identifierLabel": "Member info",
+        "identifierPlaceholderEmail": "e.g. user@example.com",
+        "identifierPlaceholderUsername": "e.g. username123",
+        "statusLabel": "Status",
+        "memoLabel": "Memo (optional)",
+        "reset": "Clear form",
+        "submit": "Add member manually",
+        "submitting": "Adding...",
+        "successEmail": "Added {email} as a manual member",
+        "successUsername": "Added {username} as a manual member",
+        "badge": "Manual",
+        "errors": {
+          "missingIdentifier": "Please enter an email or username",
+          "generic": "Couldn't add the member manually. Please try again."
+        }
       }
     }
   },
