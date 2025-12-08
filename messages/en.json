@@ -306,7 +306,7 @@
         "noPlans": "No subscription plans found. Please configure plans in ONE.lat first."
       },
       "plan": {
-        "summary": "{points}pt / ${usd}",
+        "summary": "{points}pt / ${usd} (approx. ¥{yen})",
         "inUse": "This plan is already in use"
       },
       "sections": {
@@ -382,7 +382,7 @@
         "loadList": "Failed to load salon information"
       },
       "card": {
-        "planSummary": "{points}pt / ${usd}",
+        "planSummary": "{points}pt / ${usd} (approx. ¥{yen})",
         "actions": {
           "manage": "View & edit",
           "members": "Manage members"
@@ -518,7 +518,7 @@
         },
         "memberCountValue": "{count} members",
         "planUnassigned": "Not set",
-        "planSummary": "{points}pt / ${usd}"
+        "planSummary": "{points}pt / ${usd} (approx. ¥{yen})"
       },
       "shortcuts": {
         "members": "Go to member management",

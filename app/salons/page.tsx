@@ -151,6 +151,7 @@ export default function SalonListPage() {
               const badge = getStatusBadge(Boolean(salon.is_active));
               const plan = planLabelMap.get(salon.subscription_plan_id ?? "");
               const memberCount = salon.member_count ?? 0;
+              const planPointLabel = plan ? formatter.number(Number(plan.points ?? 0)) : null;
 
               return (
                 <div key={salon.id} className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -179,8 +180,9 @@ export default function SalonListPage() {
                       </dd>
                       {plan ? (
                         <p className="text-xs text-slate-500">{t("card.planSummary", {
-                          points: formatter.number(Number(plan.points ?? 0)),
+                          points: planPointLabel ?? formatter.number(0),
                           usd: plan.usd_amount.toFixed(2),
+                          yen: planPointLabel ?? formatter.number(0),
                         })}</p>
                       ) : null}
                     </div>

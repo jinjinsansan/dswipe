@@ -291,6 +291,7 @@ export default function SalonCreatePage() {
                     const planId = plan.subscription_plan_id ?? plan.plan_key;
                     const isDisabled = plan.disabled;
                     const isSelected = form.subscription_plan_id === planId;
+                    const formattedPoints = formatter.number(plan.points ?? 0);
                     return (
                       <button
                         key={planId}
@@ -306,8 +307,9 @@ export default function SalonCreatePage() {
                         <span className="text-sm font-semibold text-slate-900">{plan.label}</span>
                         <span className="text-xs text-slate-500">
                           {t("plan.summary", {
-                            points: formatter.number(plan.points ?? 0),
+                            points: formattedPoints,
                             usd: plan.usd_amount.toFixed(2),
+                            yen: formattedPoints,
                           })}
                         </span>
                         {isDisabled ? (

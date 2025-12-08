@@ -127,6 +127,11 @@ export default function SalonDetailPage() {
     return plans.find((plan) => plan.subscription_plan_id === salon.subscription_plan_id);
   }, [plans, salon]);
 
+const planPointLabel = useMemo(() => {
+  if (!planDetail) return null;
+  return formatter.number(Number(planDetail.points ?? 0));
+}, [formatter, planDetail]);
+
   const formatSchedule = useCallback(
     (startAt?: string | null, endAt?: string | null) => {
       const format = (value?: string | null) =>
@@ -538,8 +543,9 @@ export default function SalonDetailPage() {
                   {planDetail ? (
                     <p className="text-xs text-slate-500">
                       {t("infoPanel.planSummary", {
-                        points: formatter.number(Number(planDetail.points ?? 0)),
+                        points: planPointLabel ?? formatter.number(0),
                         usd: planDetail.usd_amount.toFixed(2),
+                        yen: planPointLabel ?? formatter.number(0),
                       })}
                     </p>
                   ) : null}

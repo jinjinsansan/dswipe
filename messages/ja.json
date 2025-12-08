@@ -307,7 +307,7 @@
         "noPlans": "サブスクプランが見つかりません。事前にONE.lat側でプランを設定してください。"
       },
       "plan": {
-        "summary": "{points}pt / ${usd}",
+        "summary": "{points}pt / ${usd}（参考: ¥{yen}）",
         "inUse": "このプランは既に利用中です"
       },
       "sections": {
@@ -383,7 +383,7 @@
         "loadList": "サロン情報の取得に失敗しました"
       },
       "card": {
-        "planSummary": "{points}pt / ${usd}",
+        "planSummary": "{points}pt / ${usd}（参考: ¥{yen}）",
         "actions": {
           "manage": "詳細・編集",
           "members": "会員管理"
@@ -519,7 +519,7 @@
         },
         "memberCountValue": "{count}名",
         "planUnassigned": "未設定",
-        "planSummary": "{points}pt / ${usd}"
+        "planSummary": "{points}pt / ${usd}（参考: ¥{yen}）"
       },
       "shortcuts": {
         "members": "会員管理ページへ",
