@@ -239,6 +239,7 @@ const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
   { href: '/note', labelKey: 'links.noteEdit', defaultLabel: 'コラム編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
   { href: '/notes', labelKey: 'links.notes', defaultLabel: 'AllColums', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
   { href: '/salons', labelKey: 'links.salons', defaultLabel: 'サロン編集', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
+  { href: '/salons/joined', labelKey: 'links.salonsJoined', defaultLabel: '加入中のサロン', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 15 },
   { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
   { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
   { href: '/points/purchase', labelKey: 'links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },

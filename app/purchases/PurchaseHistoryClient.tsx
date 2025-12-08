@@ -308,7 +308,9 @@ export default function PurchaseHistoryClient() {
 
           {history && history.active_salons.length > 0 ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {history.active_salons.map((item) => (
+              {history.active_salons.map((item) => {
+                const isActive = (item.status || "").toUpperCase() === "ACTIVE";
+                return (
                 <div
                   key={item.membership_id}
                   className="flex h-full flex-col gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-5 py-5"
@@ -348,16 +350,34 @@ export default function PurchaseHistoryClient() {
                       {item.plan_label ?? "プラン情報未設定"}
                       {item.plan_points ? ` / ${formatPoints(item.plan_points)}` : ""}
                     </span>
-                    <Link
-                      href={getSalonLink(item)}
-                      className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
-                    >
-                      公開ページ
-                      <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/salons/${item.salon_id}/feed`}
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold shadow transition ${
+                          isActive ? "bg-sky-600 text-white hover:bg-sky-500" : "bg-slate-200 text-slate-500 cursor-not-allowed"
+                        }`}
+                        aria-disabled={!isActive}
+                        onClick={(event) => {
+                          if (!isActive) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        コミュニティフィード
+                        <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                      </Link>
+                      <Link
+                        href={getSalonLink(item)}
+                        className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
+                      >
+                        公開ページ
+                        <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           ) : (
             <div className="mt-6 rounded-2xl border border-dashed border-emerald-200 bg-emerald-50 px-6 py-10 text-center text-sm text-emerald-600">

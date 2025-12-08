@@ -572,6 +572,23 @@
         }
       }
     },
+    "joined": {
+      "pageTitle": "加入中のサロン",
+      "pageSubtitle": "参加中のオンラインサロンを一覧表示します",
+      "empty": {
+        "title": "現在加入中のサロンはありません",
+        "description": "公開サロン一覧から気になるコミュニティを探してみましょう。"
+      },
+      "actions": {
+        "feed": "コミュニティフィードへ",
+        "public": "公開ページ",
+        "explore": "サロンを探す",
+        "refresh": "再取得"
+      },
+      "notes": {
+        "feedOnlyActive": "コミュニティフィードはACTIVEステータスの会員のみ利用できます。"
+      }
+    },
     "members": {
       "pageTitle": "サロン会員管理",
       "pageSubtitle": "サロン会員状況を確認できます",
@@ -602,11 +619,12 @@
         "pagination": "{count}名の会員 / {pages}ページ"
       },
       "columns": {
-        "userId": "ユーザーID",
+        "member": "会員情報",
         "status": "ステータス",
         "joinedAt": "初回参加",
         "nextCharge": "次回課金予定",
-        "lastCharge": "最終決済"
+        "lastCharge": "最終決済",
+        "expiresAt": "有効期限"
       },
       "table": {
         "loading": "読み込み中です...",
@@ -627,6 +645,8 @@
         "identifierPlaceholderEmail": "例: user@example.com",
         "identifierPlaceholderUsername": "例: username123",
         "statusLabel": "ステータス",
+        "expiresLabel": "有効期限（任意）",
+        "expiresHelper": "空欄の場合は無期限として登録されます",
         "memoLabel": "メモ（任意）",
         "reset": "入力をクリア",
         "submit": "手動で会員追加",
@@ -637,6 +657,21 @@
         "errors": {
           "missingIdentifier": "メールアドレスまたはユーザー名を入力してください",
           "generic": "手動招待に失敗しました。しばらくしてから再度お試しください。"
+        }
+      },
+      "manualEditor": {
+        "title": "手動会員のステータス更新",
+        "open": "編集",
+        "statusLabel": "ステータス",
+        "memoLabel": "メモ",
+        "expiresLabel": "有効期限",
+        "expiresHelper": "空欄にすると無期限になります",
+        "save": "変更を保存",
+        "saving": "保存中...",
+        "cancel": "キャンセル",
+        "success": "会員情報を更新しました",
+        "errors": {
+          "generic": "更新に失敗しました。時間を置いて再度お試しください。"
         }
       }
     }
@@ -1454,6 +1489,7 @@
         "noteEdit": "コラム編集",
         "notes": "AllColums",
         "salons": "サロン編集",
+        "salonsJoined": "加入中のサロン",
         "salonsCreate": "サロン新規作成",
         "salonsAll": "AllSalon",
         "pointsPurchase": "ポイント購入",

@@ -34,8 +34,10 @@ import type {
   SalonPublicListResult,
   PurchaseHistoryResponse,
   SalesHistoryResponse,
+  SalonMember,
   SalonMemberListResult,
   SalonManualMemberPayload,
+  SalonMemberUpdatePayload,
   NoteSalonAccessPayload,
   NoteSalonAccessResponse,
   SalonPost,
@@ -530,6 +532,8 @@ export const salonApi = {
     api.get<SalonMemberListResult>(`/salons/${salonId}/members`, { params }),
   manualAddMember: (salonId: string, data: SalonManualMemberPayload) =>
     api.post(`/salons/${salonId}/members/manual`, data),
+  updateMember: (salonId: string, memberId: string, data: SalonMemberUpdatePayload) =>
+    api.patch<SalonMember>(`/salons/${salonId}/members/${memberId}`, data),
   setNoteAccess: (salonId: string, noteId: string, data: NoteSalonAccessPayload) =>
     api.post<NoteSalonAccessResponse>(`/salons/${salonId}/notes/${noteId}/access`, data),
 };

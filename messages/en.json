@@ -571,6 +571,23 @@
         }
       }
     },
+    "joined": {
+      "pageTitle": "Joined salons",
+      "pageSubtitle": "See the salons you're currently a member of",
+      "empty": {
+        "title": "You're not a member of any salons yet",
+        "description": "Browse the public salon list to discover new communities."
+      },
+      "actions": {
+        "feed": "Open community feed",
+        "public": "Public page",
+        "explore": "Find salons",
+        "refresh": "Refresh"
+      },
+      "notes": {
+        "feedOnlyActive": "Only ACTIVE memberships can access the community feed."
+      }
+    },
     "members": {
       "pageTitle": "Salon members",
       "pageSubtitle": "Review current membership status",
@@ -601,11 +618,12 @@
         "pagination": "{count} members / {pages} pages"
       },
       "columns": {
-        "userId": "User ID",
+        "member": "Member",
         "status": "Status",
         "joinedAt": "Joined",
         "nextCharge": "Next charge",
-        "lastCharge": "Last payment"
+        "lastCharge": "Last payment",
+        "expiresAt": "Expiration"
       },
       "table": {
         "loading": "Loading...",
@@ -626,6 +644,8 @@
         "identifierPlaceholderEmail": "e.g. user@example.com",
         "identifierPlaceholderUsername": "e.g. username123",
         "statusLabel": "Status",
+        "expiresLabel": "Expiration (optional)",
+        "expiresHelper": "Leave blank for no automatic expiry",
         "memoLabel": "Memo (optional)",
         "reset": "Clear form",
         "submit": "Add member manually",
@@ -636,6 +656,21 @@
         "errors": {
           "missingIdentifier": "Please enter an email or username",
           "generic": "Couldn't add the member manually. Please try again."
+        }
+      },
+      "manualEditor": {
+        "title": "Manual member update",
+        "open": "Edit",
+        "statusLabel": "Status",
+        "memoLabel": "Memo",
+        "expiresLabel": "Expiration",
+        "expiresHelper": "Empty means the membership never expires",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "success": "Member updated",
+        "errors": {
+          "generic": "Failed to update the member. Please try again."
         }
       }
     }
@@ -1453,6 +1488,7 @@
         "noteEdit": "Edit Swipe Column",
         "notes": "Swipe Columns",
         "salons": "Salons",
+        "salonsJoined": "Joined salons",
         "salonsCreate": "New salon",
         "salonsAll": "All salons",
         "pointsPurchase": "Buy points",

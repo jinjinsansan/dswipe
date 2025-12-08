@@ -9,6 +9,7 @@ import {
   AdjustmentsHorizontalIcon,
   UsersIcon,
   ExclamationCircleIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
@@ -49,9 +50,21 @@ export default function SalonMembersPage() {
   const [manualIdentifier, setManualIdentifier] = useState("");
   const [manualStatus, setManualStatus] = useState<ManualStatus>("ACTIVE");
   const [manualMemo, setManualMemo] = useState("");
+  const [manualExpiresAt, setManualExpiresAt] = useState("");
   const [manualError, setManualError] = useState<string | null>(null);
   const [manualSuccess, setManualSuccess] = useState<string | null>(null);
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
+  const [manualEditor, setManualEditor] = useState<{
+    memberId: string;
+    status: ManualStatus;
+    memo: string;
+    expiresAt: string;
+    originalExpiresAt: string | null;
+    userLabel: string;
+  } | null>(null);
+  const [manualEditorError, setManualEditorError] = useState<string | null>(null);
+  const [manualEditorSuccess, setManualEditorSuccess] = useState<string | null>(null);
+  const [isSavingManualEdit, setIsSavingManualEdit] = useState(false);
 
   const statusOptions = useMemo(
     () => [
@@ -143,6 +156,29 @@ export default function SalonMembersPage() {
     [commonT, formatter],
   );
 
+  const formatInputDateTime = useCallback((value?: string | null) => {
+    if (!value) {
+      return "";
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+  }, []);
+
+  const toIsoFromInput = (value: string) => {
+    if (!value) {
+      return null;
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+    return date.toISOString();
+  };
+
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
     setPage(1);
@@ -165,7 +201,7 @@ export default function SalonMembersPage() {
     setManualSuccess(null);
     setIsSubmittingManual(true);
     try {
-      const payload: { email?: string; username?: string; status: ManualStatus; memo?: string } = {
+      const payload: { email?: string; username?: string; status: ManualStatus; memo?: string; expires_at?: string } = {
         status: manualStatus,
       };
       if (manualIdentifierType === "email") {
@@ -176,6 +212,10 @@ export default function SalonMembersPage() {
       if (manualMemo.trim()) {
         payload.memo = manualMemo.trim();
       }
+      const expiresIso = toIsoFromInput(manualExpiresAt);
+      if (expiresIso) {
+        payload.expires_at = expiresIso;
+      }
       await salonApi.manualAddMember(salonId, payload);
       setManualSuccess(
         manualIdentifierType === "email"
@@ -184,6 +224,7 @@ export default function SalonMembersPage() {
       );
       setManualIdentifier("");
       setManualMemo("");
+      setManualExpiresAt("");
       fetchMembers();
     } catch (submitError: any) {
       const detail = submitError?.response?.data?.detail;
@@ -197,8 +238,65 @@ export default function SalonMembersPage() {
     setManualIdentifier("");
     setManualMemo("");
     setManualStatus("ACTIVE");
+    setManualExpiresAt("");
     setManualError(null);
     setManualSuccess(null);
+  };
+
+  const handleManualEditorStart = (member: SalonMember) => {
+    const manualMeta = (member.metadata as { manual_invite?: { memo?: unknown } })?.manual_invite;
+    const memoValue = typeof manualMeta?.memo === "string" ? manualMeta.memo : "";
+    setManualEditor({
+      memberId: member.id,
+      status: (member.status as ManualStatus) ?? "ACTIVE",
+      memo: memoValue,
+      expiresAt: formatInputDateTime(member.manual_expires_at),
+      originalExpiresAt: member.manual_expires_at ?? null,
+      userLabel: member.user_email ?? member.user_username ?? member.user_id,
+    });
+    setManualEditorError(null);
+    setManualEditorSuccess(null);
+  };
+
+  const handleManualEditorCancel = () => {
+    setManualEditor(null);
+    setManualEditorError(null);
+    setManualEditorSuccess(null);
+  };
+
+  const handleManualEditorSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!salonId || !manualEditor) {
+      return;
+    }
+    setIsSavingManualEdit(true);
+    setManualEditorError(null);
+    setManualEditorSuccess(null);
+    try {
+      const expiresIso = toIsoFromInput(manualEditor.expiresAt);
+      const memoValue = manualEditor.memo.trim();
+      await salonApi.updateMember(salonId, manualEditor.memberId, {
+        status: manualEditor.status,
+        memo: memoValue,
+        expires_at: expiresIso ?? undefined,
+        clear_expires_at: !manualEditor.expiresAt && Boolean(manualEditor.originalExpiresAt),
+      });
+      setManualEditorSuccess(t("manualEditor.success"));
+      setManualEditor((prev) =>
+        prev
+          ? {
+              ...prev,
+              originalExpiresAt: expiresIso ?? null,
+            }
+          : prev,
+      );
+      fetchMembers();
+    } catch (submitError: any) {
+      const detail = submitError?.response?.data?.detail;
+      setManualEditorError(typeof detail === "string" ? detail : t("manualEditor.errors.generic"));
+    } finally {
+      setIsSavingManualEdit(false);
+    }
   };
 
   if (isLoading) {
@@ -279,6 +377,19 @@ export default function SalonMembersPage() {
                 </select>
               </div>
               <div className="flex-1">
+                <label htmlFor="manualExpiresAt" className="text-sm font-medium text-slate-600">
+                  {t("manualInvite.expiresLabel")}
+                </label>
+                <input
+                  id="manualExpiresAt"
+                  type="datetime-local"
+                  value={manualExpiresAt}
+                  onChange={(event) => setManualExpiresAt(event.target.value)}
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                />
+                <p className="mt-1 text-xs text-slate-500">{t("manualInvite.expiresHelper")}</p>
+              </div>
+              <div className="flex-1">
                 <label htmlFor="manualMemo" className="text-sm font-medium text-slate-600">
                   {t("manualInvite.memoLabel")}
                 </label>
@@ -356,17 +467,18 @@ export default function SalonMembersPage() {
             <table className="min-w-full divide-y divide-slate-100">
               <thead className="bg-slate-50">
                 <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  <th scope="col" className="px-4 py-3">{t("columns.userId")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.member")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.status")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.joinedAt")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.nextCharge")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.lastCharge")}</th>
+                  <th scope="col" className="px-4 py-3">{t("columns.expiresAt")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
                 {members.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-sm text-slate-500">
+                    <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
                       {isFetching ? t("table.loading") : t("table.empty")}
                     </td>
                   </tr>
@@ -375,12 +487,35 @@ export default function SalonMembersPage() {
                     const rawStatus = (member.status ?? "").toUpperCase();
                     const statusKey = STATUS_KEYS.includes(rawStatus as StatusKey) ? (rawStatus as StatusKey) : undefined;
                     const status = statusKey ? statusMeta[statusKey] : undefined;
-                    const metadataSource = (member.metadata as { source?: unknown })?.source;
-                    const isManualMember = typeof metadataSource === "string" && metadataSource === "manual_invite";
+                    const metadata = (member.metadata ?? {}) as {
+                      source?: string;
+                      manual_invite?: { memo?: unknown };
+                    };
+                    const manualInfo = metadata.manual_invite;
+                    const isManualMember = metadata.source === "manual_invite";
+                    const displayName = member.user_display_name || member.user_username || commonT("placeholders.empty");
+                    const contactValue = member.user_email || member.user_username || commonT("placeholders.empty");
+                    const manualMemoValue = typeof manualInfo?.memo === "string" ? manualInfo.memo : "";
                     return (
                       <tr key={member.id} className="bg-white">
-                        <td className="px-4 py-3 font-mono text-xs text-slate-500">{member.user_id}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 align-top">
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                              <span>{displayName}</span>
+                              {isManualMember ? (
+                                <span className="inline-flex items-center rounded-full bg-slate-900/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-900">
+                                  {t("manualInvite.badge")}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="text-xs text-slate-500">{contactValue}</p>
+                            <p className="font-mono text-[11px] text-slate-400">{member.user_id}</p>
+                            {manualMemoValue ? (
+                              <p className="mt-1 text-xs text-slate-500">{manualMemoValue}</p>
+                            ) : null}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 align-top">
                           <span
                             className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
                               status?.className ?? STATUS_STYLES.CANCELED
@@ -389,20 +524,20 @@ export default function SalonMembersPage() {
                             {status?.label ?? member.status}
                           </span>
                           {isManualMember ? (
-                            <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">
-                              {t("manualInvite.badge")}
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleManualEditorStart(member)}
+                              className="mt-2 inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
+                            >
+                              <PencilSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                              {t("manualEditor.open")}
+                            </button>
                           ) : null}
                         </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">
-                          {formatDateTime(member.joined_at)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">
-                          {formatDateTime(member.next_charge_at)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">
-                          {formatDateTime(member.last_charged_at)}
-                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{formatDateTime(member.joined_at)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{formatDateTime(member.next_charge_at)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{formatDateTime(member.last_charged_at)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{formatDateTime(member.manual_expires_at)}</td>
                       </tr>
                     );
                   })
@@ -410,6 +545,107 @@ export default function SalonMembersPage() {
               </tbody>
             </table>
           </div>
+
+          {manualEditor ? (
+            <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">{t("manualEditor.title")}</p>
+                  <p className="text-sm text-slate-500">{manualEditor.userLabel}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleManualEditorCancel}
+                    className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-white"
+                  >
+                    {t("manualEditor.cancel")}
+                  </button>
+                </div>
+              </div>
+
+              {manualEditorError ? (
+                <div className="mt-4 flex items-start gap-2 rounded-2xl border border-rose-200 bg-white px-4 py-2 text-sm text-rose-600">
+                  <ExclamationCircleIcon className="h-4 w-4" aria-hidden="true" />
+                  <span>{manualEditorError}</span>
+                </div>
+              ) : null}
+              {manualEditorSuccess ? (
+                <div className="mt-4 rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-sm text-emerald-600">
+                  {manualEditorSuccess}
+                </div>
+              ) : null}
+
+              <form className="mt-5 space-y-4" onSubmit={handleManualEditorSubmit}>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-slate-600" htmlFor="manualEditorStatus">
+                      {t("manualEditor.statusLabel")}
+                    </label>
+                    <select
+                      id="manualEditorStatus"
+                      value={manualEditor.status}
+                      onChange={(event) =>
+                        setManualEditor((prev) => (prev ? { ...prev, status: event.target.value as ManualStatus } : prev))
+                      }
+                      className="mt-1 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                    >
+                      {manualStatusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-slate-600" htmlFor="manualEditorExpires">
+                      {t("manualEditor.expiresLabel")}
+                    </label>
+                    <input
+                      id="manualEditorExpires"
+                      type="datetime-local"
+                      value={manualEditor.expiresAt}
+                      onChange={(event) =>
+                        setManualEditor((prev) => (prev ? { ...prev, expiresAt: event.target.value } : prev))
+                      }
+                      className="mt-1 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                    />
+                    <p className="mt-1 text-xs text-slate-500">{t("manualEditor.expiresHelper")}</p>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-slate-600" htmlFor="manualEditorMemo">
+                      {t("manualEditor.memoLabel")}
+                    </label>
+                    <textarea
+                      id="manualEditorMemo"
+                      value={manualEditor.memo}
+                      onChange={(event) =>
+                        setManualEditor((prev) => (prev ? { ...prev, memo: event.target.value } : prev))
+                      }
+                      rows={3}
+                      className="mt-1 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-100"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={handleManualEditorCancel}
+                    className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-white"
+                  >
+                    {t("manualEditor.cancel")}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSavingManualEdit}
+                    className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSavingManualEdit ? t("manualEditor.saving") : t("manualEditor.save")}
+                  </button>
+                </div>
+              </form>
+            </div>
+          ) : null}
 
           <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2 text-xs text-slate-500">

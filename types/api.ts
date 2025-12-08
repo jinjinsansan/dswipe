@@ -12,6 +12,7 @@ import type {
   SalonRoleCreatePayload,
   SalonRoleUpdatePayload,
   SalonManualMemberPayload,
+  SalonMemberUpdatePayload,
 } from './index';
 
 export type { LinkedSalonSummary } from './index';
@@ -112,6 +113,7 @@ export type {
   SalonMemberListResult,
   NoteSalonAccessResponse,
   SalonManualMemberPayload,
+  SalonMemberUpdatePayload,
   SalonPost,
   SalonPostListResult,
   SalonComment,
