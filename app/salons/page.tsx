@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
+import { SalonFeatureGate } from "@/components/SalonFeatureGate";
 import { salonApi, subscriptionApi } from "@/lib/api";
 import type {
   Salon,
@@ -87,12 +88,12 @@ export default function SalonListPage() {
     return map;
   }, [plans]);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
   return (
-    <DashboardLayout
+    <SalonFeatureGate pageTitle="サロン" pageSubtitle="コミュニティ管理">
+      {isLoading ? (
+        <PageLoader />
+      ) : (
+        <DashboardLayout
       requireAuth
       pageTitle={t("pageTitle")}
       pageSubtitle={t("pageSubtitle")}
@@ -209,5 +210,7 @@ export default function SalonListPage() {
         )}
       </div>
     </DashboardLayout>
+      )}
+    </SalonFeatureGate>
   );
 }

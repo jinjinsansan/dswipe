@@ -5,6 +5,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
+import { SalonFeatureGate } from '@/components/SalonFeatureGate';
 import { paymentApi, platformSettingsApi, subscriptionApi } from '@/lib/api';
 import type {
   QuickCheckoutResponse,
@@ -495,8 +496,10 @@ function SubscriptionPageContent() {
 
 export default function SubscriptionPage() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <SubscriptionPageContent />
-    </Suspense>
+    <SalonFeatureGate pageTitle="ポイントサブスクリプション" pageSubtitle="定期的にポイントを獲得">
+      <Suspense fallback={<PageLoader />}>
+        <SubscriptionPageContent />
+      </Suspense>
+    </SalonFeatureGate>
   );
 }

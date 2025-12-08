@@ -229,6 +229,8 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
   },
 };
 
+const SALON_ENABLED = process.env.NEXT_PUBLIC_SALON_FEATURE_ENABLED === 'true';
+
 const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
   { href: '/dashboard', labelKey: 'links.dashboard', defaultLabel: 'ダッシュボード', icon: <ChartBarIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 0 },
   { href: '/messages', labelKey: 'links.messages', defaultLabel: '運営からのお知らせ', icon: <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />, group: 'core', order: 15 },
@@ -238,10 +240,12 @@ const BASE_NAV_LINK_DEFINITIONS: DashboardNavLinkDefinition[] = [
   { href: '/note/create', labelKey: 'links.noteCreate', defaultLabel: '新規コラム作成', icon: <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 10 },
   { href: '/note', labelKey: 'links.noteEdit', defaultLabel: 'コラム編集', icon: <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 20 },
   { href: '/notes', labelKey: 'links.notes', defaultLabel: 'AllColums', icon: <BookOpenIcon className="h-5 w-5" aria-hidden="true" />, group: 'note', order: 30 },
-  { href: '/salons', labelKey: 'links.salons', defaultLabel: 'サロン編集', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 },
-  { href: '/salons/joined', labelKey: 'links.salonsJoined', defaultLabel: '加入中のサロン', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 15 },
-  { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 },
-  { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 },
+  ...(SALON_ENABLED ? [
+    { href: '/salons', labelKey: 'links.salons', defaultLabel: 'サロン編集', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 10 } as DashboardNavLinkDefinition,
+    { href: '/salons/joined', labelKey: 'links.salonsJoined', defaultLabel: '加入中のサロン', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 15 } as DashboardNavLinkDefinition,
+    { href: '/salons/create', labelKey: 'links.salonsCreate', defaultLabel: 'サロン新規作成', icon: <UserGroupIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 20 } as DashboardNavLinkDefinition,
+    { href: '/salons/all', labelKey: 'links.salonsAll', defaultLabel: 'AllSalon', icon: <BuildingStorefrontIcon className="h-5 w-5" aria-hidden="true" />, group: 'salon', order: 30 } as DashboardNavLinkDefinition,
+  ] : []),
   { href: '/points/purchase', labelKey: 'links.pointsPurchase', defaultLabel: 'ポイント購入', icon: <CurrencyYenIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 10 },
   { href: '/points/history', labelKey: 'links.pointsHistory', defaultLabel: 'ポイント履歴', icon: <ClipboardDocumentListIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 20 },
   { href: '/purchases', labelKey: 'links.purchases', defaultLabel: '購入履歴', icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />, group: 'points', order: 25 },
