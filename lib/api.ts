@@ -506,6 +506,7 @@ export const salonApi = {
     tax_inclusive?: boolean;
     introductory_offer_enabled?: boolean;
     introductory_offer_type?: 'first_month_free_direct';
+    show_member_count_public?: boolean;
   }) =>
     api.post<Salon>('/salons', data),
   get: (salonId: string) => api.get<Salon>(`/salons/${salonId}`),
@@ -521,6 +522,7 @@ export const salonApi = {
     tax_inclusive?: boolean;
     introductory_offer_enabled?: boolean;
     introductory_offer_type?: 'first_month_free_direct' | null;
+    show_member_count_public?: boolean;
   }) =>
     api.patch<Salon>(`/salons/${salonId}`, data),
   delete: (salonId: string) => api.delete(`/salons/${salonId}`),

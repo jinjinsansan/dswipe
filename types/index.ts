@@ -115,7 +115,7 @@ export interface LandingPage {
   show_swipe_hint: boolean;
   fullscreen_media: boolean;
   floating_cta: boolean;
-  total_views: number;
+  total_views: number | null;
   total_cta_clicks: number;
   product_id?: string;
   salon_id?: string | null;
@@ -135,6 +135,7 @@ export interface LandingPage {
   username?: string | null;
   share_url?: string | null;
   share_token_rotated_at?: string | null;
+  show_total_views_public: boolean;
 }
 
 export interface LinkedSalonSummary {
@@ -510,6 +511,7 @@ export interface Salon {
   status?: string;
   moderation_notes?: string | null;
   member_count: number;
+  show_member_count_public: boolean;
   lp_id?: string | null;
   introductory_offer_enabled: boolean;
   introductory_offer_type?: 'first_month_free_direct' | null;
@@ -550,7 +552,8 @@ export interface SalonPublicDetail {
   is_active: boolean;
   owner: SalonPublicOwner;
   plan: SalonPublicPlan;
-  member_count: number;
+  member_count: number | null;
+  member_count_visible: boolean;
   is_member: boolean;
   membership_status?: string | null;
   allow_point_subscription: boolean;

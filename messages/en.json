@@ -507,6 +507,15 @@
           "title": "Visibility",
           "description": "If disabled, new subscribers cannot join.",
           "toggle": "Set to public"
+        },
+        "publicMetrics": {
+          "title": "Public metrics",
+          "description": "Choose which stats appear on the public page.",
+          "memberCount": {
+            "label": "Show member count on public page",
+            "helperVisible": "Visitors will see the live member count.",
+            "helperHidden": "When disabled, the public page will show that the member count is hidden."
+          }
         }
       },
       "infoPanel": {
@@ -517,6 +526,8 @@
           "salonId": "Salon ID"
         },
         "memberCountValue": "{count} members",
+        "memberCountVisible": "Visible on public page",
+        "memberCountHidden": "Hidden on public page",
         "planUnassigned": "Not set",
         "planSummary": "{points}pt / ${usd} (approx. ¥{yen})"
       },

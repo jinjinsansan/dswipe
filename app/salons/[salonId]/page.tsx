@@ -34,6 +34,7 @@ type FormState = {
   thumbnail_url: string;
   is_active: boolean;
   lp_id: string;
+  show_member_count_public: boolean;
 };
 
 const INITIAL_FORM: FormState = {
@@ -42,6 +43,7 @@ const INITIAL_FORM: FormState = {
   thumbnail_url: "",
   is_active: true,
   lp_id: "",
+  show_member_count_public: true,
 };
 
 export default function SalonDetailPage() {
@@ -96,6 +98,7 @@ export default function SalonDetailPage() {
           thumbnail_url: salonData.thumbnail_url ?? "",
           is_active: Boolean(salonData.is_active),
           lp_id: (salonData as any).lp_id ?? "",
+          show_member_count_public: salonData.show_member_count_public ?? true,
         });
 
         const planData = (planRes.data as SubscriptionPlanListResponse)?.data ?? [];
@@ -265,6 +268,7 @@ const planPointLabel = useMemo(() => {
         description: form.description.trim() || undefined,
         thumbnail_url: form.thumbnail_url.trim() || undefined,
         is_active: form.is_active,
+        show_member_count_public: form.show_member_count_public,
       };
       if (form.lp_id) {
         payload.lp_id = form.lp_id;
@@ -511,6 +515,27 @@ const planPointLabel = useMemo(() => {
                 </label>
               </div>
 
+              <div className="space-y-2 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">{t("form.publicMetrics.title")}</p>
+                  <p className="text-xs text-slate-500">{t("form.publicMetrics.description")}</p>
+                </div>
+                <label className="mt-1 flex items-center justify-between gap-3">
+                  <span className="text-sm text-slate-600">{t("form.publicMetrics.memberCount.label")}</span>
+                  <input
+                    type="checkbox"
+                    checked={form.show_member_count_public}
+                    onChange={(event) => handleChange("show_member_count_public", event.target.checked)}
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+                  />
+                </label>
+                <p className="text-xs text-slate-500">
+                  {form.show_member_count_public
+                    ? t("form.publicMetrics.memberCount.helperVisible")
+                    : t("form.publicMetrics.memberCount.helperHidden")}
+                </p>
+              </div>
+
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -534,6 +559,11 @@ const planPointLabel = useMemo(() => {
                     <UsersIcon className="h-4 w-4" aria-hidden="true" />
                     {t("infoPanel.memberCountValue", { count: formatter.number(salon.member_count ?? 0) })}
                   </dd>
+                  <p className="mt-1 text-[11px] text-slate-400">
+                    {salon.show_member_count_public
+                      ? t("infoPanel.memberCountVisible")
+                      : t("infoPanel.memberCountHidden")}
+                  </p>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t("infoPanel.fields.plan")}</dt>

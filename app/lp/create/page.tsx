@@ -68,6 +68,7 @@ export default function CreateLPPage() {
     fullscreen_media: false,
     floating_cta: false,
     visibility: 'private' as 'public' | 'limited' | 'private',
+    show_total_views_public: true,
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -307,6 +308,30 @@ export default function CreateLPPage() {
               </div>
               <p className="mt-1 text-sm text-slate-500">
                 限定公開を選択すると、保存後に限定URLが自動発行されます。
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">閲覧数の公開</p>
+                  <p className="text-xs text-slate-500">公開ページの訪問者に総閲覧数を表示するか選択します。</p>
+                </div>
+                <label className="inline-flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="show_total_views_public"
+                    checked={formData.show_total_views_public}
+                    onChange={handleChange}
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">閲覧数を表示</span>
+                </label>
+              </div>
+              <p className="mt-1 text-xs text-slate-500">
+                {formData.show_total_views_public
+                  ? '総閲覧数を公開ページのヒーロー付近に表示します。'
+                  : 'オフにすると公開ページでは閲覧数が表示されません。'}
               </p>
             </div>
 

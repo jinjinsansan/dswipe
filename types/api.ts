@@ -509,6 +509,7 @@ export interface CreateLPRequest {
   meta_description?: string | null;
   meta_image_url?: string | null;
   meta_site_name?: string | null;
+  show_total_views_public?: boolean;
 }
 
 export interface UpdateLPRequest {
@@ -530,6 +531,7 @@ export interface UpdateLPRequest {
   meta_site_name?: string | null;
   custom_theme_hex?: string | null;
   custom_theme_shades?: Record<string, string> | null;
+  show_total_views_public?: boolean;
 }
 
 // LP一覧レスポンス

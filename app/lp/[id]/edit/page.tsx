@@ -99,6 +99,7 @@ type LpSettingsState = {
   swipeDirection: 'vertical' | 'horizontal';
   visibility: 'public' | 'limited' | 'private';
   footerCta: FooterCtaState;
+  showViewCountPublic: boolean;
 };
 
 type SaveResult = { ok: true } | { ok: false; errorMessage: string };
@@ -394,6 +395,7 @@ export default function EditLPNewPage() {
     swipeDirection: 'vertical',
     visibility: 'private',
     footerCta: { ...DEFAULT_FOOTER_CTA_STATE },
+    showViewCountPublic: true,
   });
   const [metaSettings, setMetaSettings] = useState({
     title: '',
@@ -738,6 +740,7 @@ export default function EditLPNewPage() {
         swipeDirection: (response.data.swipe_direction as 'vertical' | 'horizontal') || 'vertical',
         visibility: (response.data.visibility as 'public' | 'limited' | 'private') || 'private',
         footerCta: buildFooterCtaState(footerConfig),
+        showViewCountPublic: response.data.show_total_views_public !== false,
       });
       setFooterCtaUrlError(null);
       setMetaSettings({
@@ -1234,6 +1237,7 @@ export default function EditLPNewPage() {
           meta_site_name: normalizeMetaValue(metaSettings.siteName),
           custom_theme_hex: customThemeHex,
           custom_theme_shades: customThemeShades as unknown as Record<string, string> | null,
+          show_total_views_public: lpSettings.showViewCountPublic,
         });
         setLp((prev) =>
           prev
@@ -1253,6 +1257,10 @@ export default function EditLPNewPage() {
           footerCta: buildFooterCtaState(
             (lpUpdateResponse.data?.footer_cta_config ?? null) as FooterCTAConfig | null
           ),
+          showViewCountPublic:
+            typeof lpUpdateResponse.data?.show_total_views_public === 'boolean'
+              ? lpUpdateResponse.data.show_total_views_public
+              : prev.showViewCountPublic,
         }));
         setShareUrl(lpUpdateResponse.data?.share_url ?? null);
         setShareTokenRotatedAt(lpUpdateResponse.data?.share_token_rotated_at ?? null);
@@ -2053,6 +2061,32 @@ export default function EditLPNewPage() {
                 )}
               </div>
 
+              <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3">
+                <div>
+                  <p className="text-sm lg:text-xs font-semibold text-slate-900">閲覧数の公開</p>
+                  <p className="text-xs text-slate-500">公開ページで表示する総閲覧数バッジを切り替えます。</p>
+                </div>
+                <label className="mt-2 flex items-center justify-between gap-3">
+                  <span className="text-sm lg:text-xs text-slate-700">閲覧数を表示する</span>
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 lg:h-3.5 lg:w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    checked={lpSettings.showViewCountPublic}
+                    onChange={(event) =>
+                      setLpSettings((prev) => ({
+                        ...prev,
+                        showViewCountPublic: event.target.checked,
+                      }))
+                    }
+                  />
+                </label>
+                <p className="text-xs text-slate-500">
+                  {lpSettings.showViewCountPublic
+                    ? '公開ページの訪問者に総閲覧数を表示します。'
+                    : '非公開にすると閲覧数は訪問者に表示されません。'}
+                </p>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setShowColorGenerator(true)}
@@ -2758,6 +2792,32 @@ export default function EditLPNewPage() {
                 ) : (
                   <p className="text-[11px] text-slate-500">公開範囲の変更は保存後に反映されます。</p>
                 )}
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">閲覧数の公開</p>
+                  <p className="text-xs text-slate-500">公開ページの閲覧数表示を切り替えます。</p>
+                </div>
+                <label className="mt-2 flex items-center justify-between gap-3">
+                  <span className="text-sm text-slate-700">閲覧数を表示する</span>
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    checked={lpSettings.showViewCountPublic}
+                    onChange={(event) =>
+                      setLpSettings((prev) => ({
+                        ...prev,
+                        showViewCountPublic: event.target.checked,
+                      }))
+                    }
+                  />
+                </label>
+                <p className="text-xs text-slate-500">
+                  {lpSettings.showViewCountPublic
+                    ? '訪問者に総閲覧数を表示します。'
+                    : '非公開にすると閲覧数は表示されません。'}
+                </p>
               </div>
 
               {/* スワイプ方向選択 */}

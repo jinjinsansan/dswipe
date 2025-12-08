@@ -1979,7 +1979,7 @@ export default function AdminPanelPage() {
                               <div className="text-gray-900 font-semibold">{lp.title}</div>
                               <div className="mt-1 flex items-center justify-between text-[11px] text-gray-500">
                                 <span>ステータス: {lp.status}</span>
-                                <span>ビュー: {formatNumber(lp.total_views)}</span>
+                                <span>ビュー: {formatNumber(lp.total_views ?? 0)}</span>
                               </div>
                               <div className="mt-1 text-[11px] text-gray-500">CTA: {formatNumber(lp.total_cta_clicks)}</div>
                             </div>
@@ -2330,7 +2330,7 @@ export default function AdminPanelPage() {
                               <tr key={lp.id}>
                                 <td className="px-3 py-2 text-xs text-gray-500">{lp.title}</td>
                                 <td className="px-3 py-2 text-xs">{lp.status}</td>
-                                <td className="px-3 py-2 text-right text-xs">{formatNumber(lp.total_views)}</td>
+                                <td className="px-3 py-2 text-right text-xs">{formatNumber(lp.total_views ?? 0)}</td>
                                 <td className="px-3 py-2 text-right text-xs">{formatNumber(lp.total_cta_clicks)}</td>
                               </tr>
                             ))}
@@ -2474,7 +2474,7 @@ export default function AdminPanelPage() {
                             <div className="text-gray-600">{item.seller_username}</div>
                             <div className="text-gray-600">{item.seller_email}</div>
                           </td>
-                          <td className="px-4 py-3 text-right text-xs">{formatNumber(item.total_views)}</td>
+                          <td className="px-4 py-3 text-right text-xs">{formatNumber(item.total_views ?? 0)}</td>
                           <td className="px-4 py-3 text-right text-xs">{formatNumber(item.total_cta_clicks)}</td>
                           <td className="px-4 py-3 text-xs">
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 ${
@@ -2527,7 +2527,7 @@ export default function AdminPanelPage() {
                         <span className="break-all">{item.seller_email}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>ビュー: {formatNumber(item.total_views)}</span>
+                        <span>ビュー: {formatNumber(item.total_views ?? 0)}</span>
                         <span>CTA: {formatNumber(item.total_cta_clicks)}</span>
                       </div>
                       <div className="flex items-center justify-between">

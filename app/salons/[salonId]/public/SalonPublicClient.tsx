@@ -219,7 +219,9 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                 オーナープロフィールを見る
               </Link>
               <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-500">
-                メンバー {salon.member_count.toLocaleString("ja-JP") } 名
+                {salon.member_count_visible && typeof salon.member_count === "number"
+                  ? `メンバー ${salon.member_count.toLocaleString("ja-JP")} 名`
+                  : "会員数は非公開です"}
               </div>
             </div>
           </div>

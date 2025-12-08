@@ -508,6 +508,15 @@
           "title": "公開設定",
           "description": "非公開にするとサブスク経由の新規会員は追加されません。",
           "toggle": "公開する"
+        },
+        "publicMetrics": {
+          "title": "公開メトリクス表示",
+          "description": "公開ページに表示する指標を切り替えできます。",
+          "memberCount": {
+            "label": "会員数を公開ページに表示",
+            "helperVisible": "公開ページの訪問者にリアルタイムな会員数を表示します。",
+            "helperHidden": "非公開にすると会員数は訪問者に表示されません。"
+          }
         }
       },
       "infoPanel": {
@@ -518,6 +527,8 @@
           "salonId": "サロンID"
         },
         "memberCountValue": "{count}名",
+        "memberCountVisible": "公開ページで表示中",
+        "memberCountHidden": "公開ページでは非表示",
         "planUnassigned": "未設定",
         "planSummary": "{points}pt / ${usd}（参考: ¥{yen}）"
       },
