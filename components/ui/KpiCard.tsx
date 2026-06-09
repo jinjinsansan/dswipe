@@ -9,11 +9,13 @@ export interface KpiCardProps {
   caption: string;
   value: React.ReactNode;
   delta?: { value: string; direction: 'up' | 'down' };
+  /** Neutral footer line (used when there is no up/down delta). */
+  foot?: React.ReactNode;
   className?: string;
 }
 
 /** KPI metric card for dashboards/analytics. */
-export function KpiCard({ icon, softIcon, caption, value, delta, className }: KpiCardProps) {
+export function KpiCard({ icon, softIcon, caption, value, delta, foot, className }: KpiCardProps) {
   return (
     <Card padded={false} className={cn('kpi', className)}>
       <div className="kpi-top">
@@ -21,9 +23,11 @@ export function KpiCard({ icon, softIcon, caption, value, delta, className }: Kp
         <span className="kpi-cap">{caption}</span>
       </div>
       <div className="kpi-val">{value}</div>
-      {delta && (
+      {delta ? (
         <span className={cn('kpi-delta', delta.direction)}>{delta.value}</span>
-      )}
+      ) : foot ? (
+        <span className="kpi-delta" style={{ color: 'var(--muted)' }}>{foot}</span>
+      ) : null}
     </Card>
   );
 }

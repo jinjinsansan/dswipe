@@ -150,6 +150,9 @@
   .field-hint { font-size: 12px; color: var(--muted); }
   .field-error .input { border-color: var(--danger); }
   .field-error .field-hint { color: var(--danger-ink); }
+  .input-icon { position: relative; }
+  .input-icon .input { padding-left: 42px; }
+  .input-icon > svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--faint); pointer-events: none; }
 
   /* Cards */
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2xl); box-shadow: var(--sh-sm); }
@@ -207,6 +210,10 @@
   .segmented button { font-size: 13px; font-weight: 600; color: var(--muted); border: none; background: transparent; padding: 7px 14px; border-radius: 9px; cursor: pointer; white-space: nowrap; }
   .segmented button.active { background: var(--surface); color: var(--ink); box-shadow: var(--sh-xs); }
 
+  /* Full-width segmented tabs (auth) */
+  .seg-tabs { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: 3px; }
+  .seg-tabs > * { display: flex; align-items: center; justify-content: center; text-align: center; }
+
   /* Switch */
   .switch { width: 42px; height: 24px; border-radius: 999px; background: #cbd5e1; position: relative; cursor: pointer; transition: background .18s; border: none; }
   .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: var(--sh-xs); transition: transform .18s; }
@@ -216,6 +223,12 @@
   /* Progress */
   .progress { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
   .progress > span { display: block; height: 100%; border-radius: 999px; background: var(--grad-brand); }
+
+  /* LP card action buttons */
+  .lp-act { font-size: 12px; font-weight: 600; text-align: center; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-decoration: none; transition: all .15s; display: inline-flex; align-items: center; justify-content: center; }
+  .lp-act:hover { border-color: var(--tint-border); background: var(--surface-tint); color: var(--brand); }
+  .lp-act.del { border-color: transparent; background: var(--danger-tint); color: var(--danger-ink); width: 34px; padding: 7px 0; }
+  .lp-act.del:hover { background: #fecaca; }
 
   /* Points pill */
   .points { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: var(--r-full); background: var(--surface-tint); border: 1px solid var(--tint-border); font-size: 13px; font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; white-space: nowrap; }

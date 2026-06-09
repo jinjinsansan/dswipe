@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { EnvelopeIcon, LockClosedIcon, UserIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
+import AuthLayout, { AuthTabs } from '@/components/auth/AuthLayout';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
+import { Button, Field, Select } from '@/components/ui';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,10 +25,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,14 +36,12 @@ export default function RegisterPage() {
       setError('パスワードが一致しません');
       return;
     }
-
     if (formData.password.length < 6) {
       setError('パスワードは6文字以上で入力してください');
       return;
     }
 
     setIsLoading(true);
-
     try {
       const response = await authApi.register({
         email: formData.email,
@@ -53,13 +51,12 @@ export default function RegisterPage() {
       });
 
       const { access_token, user } = response.data;
-
       setToken(access_token);
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
 
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {
       setIsLoading(false);
@@ -67,134 +64,87 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">SwipeLaunch</h1>
-          <p className="text-gray-400">新規アカウント登録</p>
-        </div>
-
-        <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-300 mb-2">
-                ユーザータイプ
-              </label>
-              <select
-                id="userType"
-                name="userType"
-                value={formData.userType}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="seller">Seller（販売者）</option>
-                <option value="buyer">Buyer（購入者）</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                メールアドレス
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                ユーザー名
-              </label>
-              <input
-                id="username"
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="username"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                パスワード
-              </label>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                パスワード（確認）
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? '登録中...' : '登録'}
-            </button>
-          </form>
-
-          <div className="my-6 flex items-center gap-3">
-            <span className="h-px flex-1 bg-gray-700" />
-            <span className="text-xs text-gray-500">または</span>
-            <span className="h-px flex-1 bg-gray-700" />
-          </div>
-
-          <GoogleSignInButton redirectPath="/dashboard" />
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              既にアカウントをお持ちの方は{' '}
-              <Link href="/login" className="text-blue-400 hover:text-blue-300 font-semibold">
-                ログイン
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-gray-500 hover:text-gray-400 text-sm">
-            ← ホームに戻る
-          </Link>
-        </div>
+    <AuthLayout>
+      <div className="mb-7">
+        <h1 className="text-[28px] font-extrabold tracking-tight" style={{ color: 'var(--ink)' }}>
+          はじめまして
+        </h1>
+        <p className="mt-2 text-sm" style={{ color: 'var(--text-2)' }}>
+          無料でアカウントを作成しましょう
+        </p>
       </div>
-    </div>
+
+      <AuthTabs active="register" />
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {error && (
+          <div
+            className="rounded-xl border px-4 py-3 text-sm"
+            style={{ background: 'var(--danger-tint)', borderColor: '#fcc', color: 'var(--danger-ink)' }}
+          >
+            {error}
+          </div>
+        )}
+
+        <Field label="ユーザータイプ" htmlFor="userType">
+          <Select id="userType" name="userType" value={formData.userType} onChange={handleChange}>
+            <option value="seller">Seller（販売者）</option>
+            <option value="buyer">Buyer（購入者）</option>
+          </Select>
+        </Field>
+
+        <Field label="メールアドレス" htmlFor="email">
+          <div className="input-icon">
+            <EnvelopeIcon />
+            <input id="email" type="email" name="email" className="input" value={formData.email} onChange={handleChange} required placeholder="your@email.com" />
+          </div>
+        </Field>
+
+        <Field label="ユーザー名" htmlFor="username">
+          <div className="input-icon">
+            <UserIcon />
+            <input id="username" type="text" name="username" className="input" value={formData.username} onChange={handleChange} required placeholder="username" />
+          </div>
+        </Field>
+
+        <Field label="パスワード" htmlFor="password">
+          <div className="input-icon">
+            <LockClosedIcon />
+            <input id="password" type="password" name="password" className="input" value={formData.password} onChange={handleChange} required placeholder="••••••••" />
+          </div>
+        </Field>
+
+        <Field label="パスワード（確認）" htmlFor="confirmPassword">
+          <div className="input-icon">
+            <LockClosedIcon />
+            <input id="confirmPassword" type="password" name="confirmPassword" className="input" value={formData.confirmPassword} onChange={handleChange} required placeholder="••••••••" />
+          </div>
+        </Field>
+
+        <Button type="submit" size="lg" block disabled={isLoading} className="mt-1">
+          {isLoading ? '登録中...' : '無料で登録する'}
+        </Button>
+      </form>
+
+      <div className="my-5 flex items-center gap-3 text-xs" style={{ color: 'var(--muted)' }}>
+        <span className="h-px flex-1" style={{ background: 'var(--line)' }} />
+        または
+        <span className="h-px flex-1" style={{ background: 'var(--line)' }} />
+      </div>
+
+      <GoogleSignInButton redirectPath="/dashboard" />
+
+      <p className="mt-6 text-center text-sm" style={{ color: 'var(--text-2)' }}>
+        すでにアカウントをお持ちの方は{' '}
+        <Link href="/login" className="font-semibold" style={{ color: 'var(--brand)' }}>
+          ログイン
+        </Link>
+      </p>
+
+      <Link href="/" className="mt-4 inline-flex items-center gap-1.5 text-sm" style={{ color: 'var(--muted)' }}>
+        <ArrowLeftIcon className="h-4 w-4" />
+        ホームに戻る
+      </Link>
+    </AuthLayout>
   );
 }
