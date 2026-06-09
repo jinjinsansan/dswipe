@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -169,6 +170,14 @@ export default function RegisterPage() {
               {isLoading ? '登録中...' : '登録'}
             </button>
           </form>
+
+          <div className="my-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-gray-700" />
+            <span className="text-xs text-gray-500">または</span>
+            <span className="h-px flex-1 bg-gray-700" />
+          </div>
+
+          <GoogleSignInButton redirectPath="/dashboard" />
 
           <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">

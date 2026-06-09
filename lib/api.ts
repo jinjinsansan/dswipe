@@ -12,6 +12,16 @@ import type {
   AIImprovementResponse,
   LPListResponse,
 } from '@/types/api';
+import type {
+  AdminUserListResponse,
+  AdminUserDetail,
+  AdminMarketplaceResponse,
+  AdminPointAnalytics,
+  ModerationLogListResponse,
+  AdminAnnouncementListResponse,
+  AnnouncementCreateRequest,
+  AnnouncementUpdateRequest,
+} from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -52,7 +62,10 @@ export const authApi = {
   
   login: (data: { email: string; password: string }) =>
     api.post('/auth/login', data),
-  
+
+  loginWithGoogle: (credential: string) =>
+    api.post<AuthResponse>('/auth/google', { credential }),
+
   logout: () =>
     api.post('/auth/logout'),
   
@@ -154,6 +167,10 @@ export const productApi = {
   
   purchase: (id: string, data: { quantity: number }) =>
     api.post(`/products/${id}/purchase`, data),
+
+  // 公開商品一覧（認証不要のマーケット表示用）
+  getPublic: (params?: { sort?: string; limit?: number; offset?: number; seller_username?: string; lp_id?: string }) =>
+    api.get('/products/public', { params }),
 };
 
 // ポイントAPI
@@ -172,9 +189,53 @@ export const pointsApi = {
 export const adminApi = {
   grantPoints: (data: { user_id: string; amount: number; description?: string }) =>
     api.post('/admin/points/grant', data),
-  
+
   searchUsers: (params?: { query?: string; user_type?: string; limit?: number; offset?: number }) =>
     api.get('/admin/users/search', { params }),
+
+  // ユーザー管理
+  listUsers: (params?: { search?: string; user_type?: string; limit?: number; offset?: number }) =>
+    api.get<AdminUserListResponse>('/admin/users', { params }),
+
+  getUserDetail: (userId: string) =>
+    api.get<AdminUserDetail>(`/admin/users/${userId}`),
+
+  blockUser: (userId: string, data: { reason?: string }) =>
+    api.post(`/admin/users/${userId}/block`, data),
+
+  unblockUser: (userId: string) =>
+    api.post(`/admin/users/${userId}/unblock`),
+
+  deleteUser: (userId: string) =>
+    api.delete(`/admin/users/${userId}`),
+
+  // マーケット監視
+  listMarketplaceLPs: (params?: { status?: string; search?: string; limit?: number; offset?: number }) =>
+    api.get<AdminMarketplaceResponse>('/admin/marketplace/lps', { params }),
+
+  updateLPStatus: (lpId: string, data: { status: string; reason?: string }) =>
+    api.post(`/admin/marketplace/lps/${lpId}/status`, data),
+
+  // ポイント分析
+  getPointAnalytics: (params?: { limit_days?: number }) =>
+    api.get<AdminPointAnalytics>('/admin/analytics/points', { params }),
+
+  // モデレーションログ
+  getModerationLogs: (params?: { limit?: number }) =>
+    api.get<ModerationLogListResponse>('/admin/moderation/logs', { params }),
+
+  // お知らせ管理
+  listAnnouncements: (params?: { include_unpublished?: boolean; limit?: number; offset?: number }) =>
+    api.get<AdminAnnouncementListResponse>('/admin/announcements', { params }),
+
+  createAnnouncement: (data: AnnouncementCreateRequest) =>
+    api.post('/admin/announcements', data),
+
+  updateAnnouncement: (announcementId: string, data: AnnouncementUpdateRequest) =>
+    api.put(`/admin/announcements/${announcementId}`, data),
+
+  deleteAnnouncement: (announcementId: string) =>
+    api.delete(`/admin/announcements/${announcementId}`),
 };
 
 // AI API

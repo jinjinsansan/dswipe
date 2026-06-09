@@ -16,8 +16,8 @@ interface GoogleSignInButtonProps {
 
 export default function GoogleSignInButton({
   redirectPath = '/dashboard',
-  title = 'Googleアカウントでログイン',
-  description = '続行するにはGoogleアカウントでサインインしてください。'
+  title,
+  description,
 }: GoogleSignInButtonProps) {
   const router = useRouter();
   const { setUser, setToken } = useAuthStore();
@@ -56,22 +56,18 @@ export default function GoogleSignInButton({
   };
 
   if (!isConfigured) {
-    return (
-      <div className="space-y-4 text-center">
-        <h2 className="text-2xl font-semibold text-slate-900">Google認証を設定してください</h2>
-        <p className="text-sm text-slate-500">
-          管理者は <code className="font-mono text-xs">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> を設定の上、ページを再読み込みしてください。
-        </p>
-      </div>
-    );
+    // Client ID 未設定時は何も表示しない（メール/パスワードのみで運用可能）
+    return null;
   }
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-semibold text-slate-900">{title}</h2>
-        <p className="text-sm text-slate-500">{description}</p>
-      </div>
+      {(title || description) && (
+        <div className="space-y-2 text-center">
+          {title && <h2 className="text-2xl font-semibold text-slate-900">{title}</h2>}
+          {description && <p className="text-sm text-slate-500">{description}</p>}
+        </div>
+      )}
 
       <div className={`flex justify-center ${isLoading ? 'pointer-events-none opacity-70' : ''}`}>
         <GoogleLogin onSuccess={handleSuccess} onError={handleError} shape="pill" theme="filled_blue" size="large" text="continue_with" width="280" />

@@ -7,9 +7,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Warning: これは開発段階でのみ使用してください
-    // 本番環境前には必ず型エラーを修正してください
-    ignoreBuildErrors: true,
+    // 型エラーはビルドを失敗させる（型崩れの早期検出）
+    ignoreBuildErrors: false,
   },
   images: {
     // 外部画像の読み込みを許可
