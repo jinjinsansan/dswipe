@@ -324,3 +324,20 @@ body {
 .lp-viewer-block > section {
   width: 100%;
 }
+
+/* ------------------------------------------------------------
+   Public LP slide — safe layout (handoff §7-1).
+   Content centers when it fits and top-aligns + scrolls when it
+   overflows, so text is never clipped behind the fixed header/CTA
+   regardless of device or content length.
+   ------------------------------------------------------------ */
+.lp-slide {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: grid;
+  align-content: safe center;
+  justify-items: stretch;
+}
+.lp-slide > * { min-width: 0; }
+

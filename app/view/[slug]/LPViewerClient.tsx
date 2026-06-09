@@ -410,14 +410,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           mousewheel={true}
           keyboard={true}
           pagination={{ clickable: true }}
-          autoHeight={true}
           modules={[Pagination, Mousewheel, Keyboard]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
             handleSlideChange(swiper);
           }}
           onSlideChange={handleSlideChange}
-          className={`flex-1 h-full ${fixedCta ? 'pb-28 sm:pb-20 md:pb-12' : 'pb-14 sm:pb-10 md:pb-8'}`}
+          autoHeight={false}
+          className="flex-1 h-full"
         >
           {lp.steps.length > 0 && (() => {
             console.log(`🎬 Swiper: ${lp.steps.length} 個の SwiperSlide をレンダリング`);
@@ -426,9 +426,12 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
           {lp.steps.map((step, index) => {
               const stepCtas = getCurrentStepCtas(index);
               const slideBackground = getStepBackgroundStyle(step);
-              const slideClass = lp.fullscreen_media
-                ? 'relative flex items-center justify-center overflow-hidden no-scrollbar'
-                : 'relative overflow-y-auto no-scrollbar';
+              // Safe layout (§7-1): always a scroll container that centers when
+              // content fits and top-aligns when it overflows. Reserve room for
+              // the fixed CTA so the last lines never hide behind it.
+              const slideClass = `lp-slide relative no-scrollbar ${
+                fixedCta ? 'pb-28 sm:pb-20 md:pb-12' : 'pb-10'
+              }`;
               
               // デバッグログ：ステップの内容を確認
               const hasBlockType = typeof step.block_type === 'string' && step.block_type.trim().length > 0;
@@ -457,7 +460,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                   const renderBlock = () => {
                     if (step.block_type && step.content_data) {
                       return (
-                        <div className="lp-viewer-block h-full w-full">
+                        <div className="lp-viewer-block w-full">
                           <BlockRenderer
                             blockType={step.block_type}
                             content={step.content_data}
@@ -478,20 +481,14 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                     }
 
                     return (
-                      <div className="min-h-full bg-gray-900 flex items-center justify-center">
+                      <div className="min-h-full bg-gray-900 flex items-center justify-center py-20">
                         <p className="text-gray-500 text-lg">コンテンツがありません</p>
                       </div>
                     );
                   };
 
-                  if (lp.fullscreen_media) {
-                    return (
-                      <div className="w-full h-full flex items-center justify-center">
-                        {renderBlock()}
-                      </div>
-                    );
-                  }
-
+                  // The `.lp-slide` grid handles centering/scroll for every
+                  // case (including fullscreen_media), so no extra wrapper.
                   return renderBlock();
                 })()}
                 
