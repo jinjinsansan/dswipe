@@ -1,601 +1,267 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
-import { productApi, lpApi } from '@/lib/api';
-import DSwipeLogo from '@/components/DSwipeLogo';
+import { FireIcon, ClockIcon, MagnifyingGlassIcon, UsersIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { productApi } from '@/lib/api';
+import PublicNav from '@/components/PublicNav';
+import { cn } from '@/lib/utils';
 
-interface Product {
+interface PublicProduct {
   id: string;
   title: string;
   description?: string;
   price_in_points: number;
-  stock_quantity?: number;
-  is_available: boolean;
-  total_sales: number;
-  lp_id?: string;
+  total_sales?: number;
+  stock_quantity?: number | null;
+  seller_username?: string;
+  created_at?: string;
 }
 
-interface LP {
-  id: string;
-  title: string;
+type SortKey = 'best' | 'new';
+
+const THUMB_GRADIENTS = [
+  'linear-gradient(150deg,#0b1f3a,#0e7490)',
+  'linear-gradient(150deg,#0284c7,#06b6d4)',
+  'linear-gradient(150deg,#7c3aed,#0284c7)',
+  'linear-gradient(150deg,#0e7490,#22d3ee)',
+  'linear-gradient(150deg,#1b3a61,#0284c7)',
+  'linear-gradient(150deg,#0b1f3a,#1b3a61)',
+];
+const AVATAR_GRADIENTS = [
+  'linear-gradient(135deg,#22d3ee,#0284c7)',
+  'linear-gradient(135deg,#16a34a,#22d3ee)',
+  'linear-gradient(135deg,#f59e0b,#ef4444)',
+  'linear-gradient(135deg,#0ea5e9,#22d3ee)',
+];
+
+function hashIndex(seed: string, len: number) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i += 1) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return h % len;
 }
 
-export default function ProductsPage() {
-  const router = useRouter();
-  const { user, isAuthenticated, isInitialized, logout } = useAuthStore();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [lps, setLps] = useState<LP[]>([]);
+export default function MarketplacePage() {
+  const [products, setProducts] = useState<PublicProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    price_in_points: 1000,
-    stock_quantity: null as number | null,
-    is_available: true,
-    lp_id: '',
-    redirect_url: '',
-    thanks_lp_id: '',
-  });
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<SortKey>('best');
 
   useEffect(() => {
-    if (!isInitialized) return;
-    
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    fetchData();
-  }, [isAuthenticated, isInitialized]);
-
-  const fetchData = async () => {
-    try {
-      const [productsRes, lpsRes] = await Promise.all([
-        productApi.list(),
-        lpApi.list(),
-      ]);
-      
-      const productsData = Array.isArray(productsRes.data?.data) 
-        ? productsRes.data.data 
-        : Array.isArray(productsRes.data) 
-        ? productsRes.data 
-        : [];
-      
-      const lpsData = Array.isArray(lpsRes.data?.data) 
-        ? lpsRes.data.data 
-        : Array.isArray(lpsRes.data) 
-        ? lpsRes.data 
-        : [];
-      
-      setProducts(productsData);
-      setLps(lpsData);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
-
-  const handleOpenCreate = () => {
-    setFormData({
-      title: '',
-      description: '',
-      price_in_points: 1000,
-      stock_quantity: null,
-      is_available: true,
-      lp_id: '',
-      redirect_url: '',
-      thanks_lp_id: '',
-    });
-    setEditingProduct(null);
-    setShowCreateModal(true);
-  };
-
-  const handleOpenEdit = (product: Product) => {
-    setFormData({
-      title: product.title,
-      description: product.description || '',
-      price_in_points: product.price_in_points,
-      stock_quantity: product.stock_quantity || null,
-      is_available: product.is_available,
-      lp_id: product.lp_id || '',
-      redirect_url: (product as any).redirect_url || '',
-      thanks_lp_id: (product as any).thanks_lp_id || '',
-    });
-    setEditingProduct(product);
-    setShowCreateModal(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const data = {
-        ...formData,
-        lp_id: formData.lp_id || undefined,
-        redirect_url: formData.redirect_url || undefined,
-        thanks_lp_id: formData.thanks_lp_id || undefined,
-      };
-
-      if (editingProduct) {
-        await productApi.update(editingProduct.id, data);
-      } else {
-        await productApi.create(data);
+    (async () => {
+      try {
+        const res = await productApi.getPublic({ sort: 'latest', limit: 50 });
+        const data = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      } finally {
+        setIsLoading(false);
       }
+    })();
+  }, []);
 
-      setShowCreateModal(false);
-      await fetchData();
-      alert(editingProduct ? '商品を更新しました' : '商品を作成しました');
-    } catch (error: any) {
-      alert(error.response?.data?.detail || '商品の保存に失敗しました');
+  const visible = useMemo(() => {
+    let rows = products.slice();
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      rows = rows.filter((p) => `${p.title}${p.seller_username ?? ''}`.toLowerCase().includes(q));
     }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('この商品を削除しますか？')) return;
-
-    try {
-      await productApi.delete(id);
-      await fetchData();
-      alert('商品を削除しました');
-    } catch (error: any) {
-      alert(error.response?.data?.detail || '商品の削除に失敗しました');
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">読み込み中...</div>
-      </div>
+    rows.sort((a, b) =>
+      sort === 'best'
+        ? (b.total_sales ?? 0) - (a.total_sales ?? 0)
+        : new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
     );
-  }
+    return rows;
+  }, [products, query, sort]);
+
+  const topCreators = useMemo(() => {
+    const map = new Map<string, number>();
+    products.forEach((p) => {
+      if (!p.seller_username) return;
+      map.set(p.seller_username, (map.get(p.seller_username) ?? 0) + (p.total_sales ?? 0));
+    });
+    return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+  }, [products]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex">
-      {/* Sidebar */}
-      <aside className="hidden sm:flex w-52 bg-gray-800/50 backdrop-blur-sm border-r border-gray-700 flex flex-col">
-        <div className="px-6 h-16 border-b border-gray-700 flex items-center">
-          <Link href="/dashboard" className="block">
-            <DSwipeLogo size="medium" showFullName={true} />
-          </Link>
-        </div>
+    <div style={{ background: 'var(--canvas)', color: 'var(--text)', minHeight: '100vh' }}>
+      <PublicNav />
 
-        <nav className="flex-1 p-3">
-          <div className="space-y-0.5">
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">📊</span>
-              <span>ダッシュボード</span>
-            </Link>
-            
-            <Link
-              href="/lp/create"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">➕</span>
-              <span>新規LP作成</span>
-            </Link>
-            
-            <Link
-              href="/products"
-              className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
-            >
-              <span className="text-base">📦</span>
-              <span>商品管理</span>
-            </Link>
-            
-            <Link
-              href="/points/purchase"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">💰</span>
-              <span>ポイント購入</span>
-            </Link>
-            
-            <Link
-              href="/media"
-              className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-            >
-              <span className="text-base">🖼️</span>
-              <span>メディア</span>
-            </Link>
+      {/* Hero */}
+      <header
+        style={{
+          color: '#fff',
+          background:
+            'radial-gradient(700px 320px at 80% -30%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52)',
+        }}
+      >
+        <div className="mx-auto max-w-[1140px] px-6 pb-7 pt-9">
+          <h1 className="text-[26px] font-extrabold tracking-tight sm:text-[32px]">マーケット</h1>
+          <p className="mt-2.5 text-[14.5px]" style={{ color: '#bcd3ee' }}>
+            クリエイターのノウハウ・テンプレート・講座を、ポイントで購入。気になる商品を探そう。
+          </p>
+          <div className="relative mt-5 max-w-[560px]">
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-[19px] w-[19px] -translate-y-1/2" style={{ color: 'var(--muted)' }} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="商品・クリエイターで検索"
+              className="w-full rounded-[14px] border-0 bg-white py-3.5 pl-12 pr-4 text-[15px] shadow-[var(--sh-md)] focus:outline-none"
+              style={{ color: 'var(--ink)' }}
+            />
           </div>
-        </nav>
+        </div>
+      </header>
 
-        <div className="p-3 border-t border-gray-700">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+      {/* Body */}
+      <div className="mx-auto grid max-w-[1140px] grid-cols-1 gap-8 px-6 pb-16 pt-7 lg:grid-cols-[1fr_304px]">
+        <main>
+          <div className="mb-[18px] flex items-center gap-1">
+            <SortButton active={sort === 'best'} onClick={() => setSort('best')} icon={<FireIcon className="h-[15px] w-[15px]" />}>
+              売れ筋
+            </SortButton>
+            <SortButton active={sort === 'new'} onClick={() => setSort('new')} icon={<ClockIcon className="h-[15px] w-[15px]" />}>
+              新着
+            </SortButton>
+            <span className="ml-auto text-[12.5px]" style={{ color: 'var(--muted)' }}>
+              <b style={{ color: 'var(--ink)' }}>{visible.length}</b> 件
+            </span>
+          </div>
+
+          {isLoading ? (
+            <div className="py-12 text-center text-sm" style={{ color: 'var(--muted)' }}>
+              読み込み中...
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-white text-sm font-light truncate">{user?.username}</div>
-              <div className="text-gray-400 text-xs">{user?.user_type}</div>
+          ) : visible.length === 0 ? (
+            <div className="py-12 text-center text-sm" style={{ color: 'var(--muted)' }}>
+              該当する商品が見つかりませんでした。
             </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
-          >
-            ログアウト
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 sm:flex-1 flex flex-col overflow-hidden">
-        {/* Top Navigation Bar */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2">
-          {/* Left: Page Title & Description (Hidden on Mobile) */}
-          <div className="hidden sm:block flex-1 min-w-0">
-            <h1 className="text-lg sm:text-xl font-light text-white mb-0.5">商品管理</h1>
-            <p className="text-gray-400 text-[10px] sm:text-xs font-light truncate">LPに紐付ける商品を管理します（ポイント決済）</p>
-          </div>
-          
-          {/* Right: Actions & User Info */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            {/* Create Button */}
-            <button
-              onClick={handleOpenCreate}
-              className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light whitespace-nowrap"
-            >
-              <span className="hidden sm:inline">+ 商品を作成</span>
-              <span className="sm:hidden">+ 作成</span>
-            </button>
-            
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="sm:hidden p-2 text-gray-300 hover:text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            
-            {/* User Avatar (Desktop) */}
-            <div className="hidden sm:flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
-              </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {visible.map((p) => (
+                <ProductCard key={p.id} product={p} showBest={sort === 'best'} />
+              ))}
             </div>
-          </div>
-        </div>
+          )}
+        </main>
 
-        {/* Mobile Menu (Mobile Only) */}
-        {showMobileMenu && (
-          <div className="sm:hidden bg-gray-800/50 border-b border-gray-700 p-3">
-            <nav className="space-y-0.5">
-              <Link
-                href="/dashboard"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">📊</span>
-                <span>ダッシュボード</span>
-              </Link>
-              <Link
-                href="/lp/create"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">➕</span>
-                <span>新規LP作成</span>
-              </Link>
-              <Link
-                href="/products"
-                className="flex items-center space-x-2 px-3 py-2 text-white bg-blue-600 rounded text-sm font-light"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <span className="text-base">📦</span>
-                <span>商品管理</span>
-              </Link>
-              <Link
-                href="/points/purchase"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">💰</span>
-                <span>ポイント購入</span>
-              </Link>
-              <Link
-                href="/media"
-                className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded transition-colors text-sm font-light"
-              >
-                <span className="text-base">🖼️</span>
-                <span>メディア</span>
-              </Link>
-              <div className="px-3 py-2 border-t border-gray-700 mt-2 pt-2">
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-3 py-1.5 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-xs font-light"
+        <aside className="hidden lg:block">
+          <div className="card mb-[18px]" style={{ padding: 18 }}>
+            <h3 className="mb-3.5 flex items-center gap-1.5 text-[13px] font-bold" style={{ color: 'var(--ink)' }}>
+              <UsersIcon className="h-4 w-4" style={{ color: 'var(--brand)' }} />
+              売れ筋クリエイター
+            </h3>
+            {topCreators.length === 0 ? (
+              <p className="text-xs" style={{ color: 'var(--muted)' }}>
+                まだデータがありません
+              </p>
+            ) : (
+              topCreators.map(([name, sales], i) => (
+                <Link
+                  key={name}
+                  href={`/u/${name}`}
+                  className="flex items-center gap-2.5 border-t py-2 first:border-t-0"
+                  style={{ borderColor: 'var(--line-2)' }}
                 >
-                  ログアウト
-                </button>
-              </div>
-            </nav>
-          </div>
-        )}
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
-
-        {/* 商品一覧 */}
-        {products.length === 0 ? (
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-8 sm:p-12 text-center">
-            <div className="text-4xl sm:text-5xl mb-3">📦</div>
-            <h2 className="text-lg sm:text-xl font-light text-white mb-2">商品がありません</h2>
-            <p className="text-gray-400 text-xs sm:text-sm font-light mb-4">
-              最初の商品を作成して、LPに紐付けましょう
-            </p>
-            <button
-              onClick={handleOpenCreate}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light"
-            >
-              商品を作成
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {products.map((product) => {
-              const linkedLP = lps.find(lp => lp.id === product.lp_id);
-              
-              return (
-                <div
-                  key={product.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-2 sm:mb-3">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm sm:text-lg font-light text-white mb-0.5 sm:mb-1 truncate">{product.title}</h3>
-                      {product.description && (
-                        <p className="text-gray-400 text-[10px] sm:text-xs font-light mb-1 sm:mb-2 line-clamp-2">
-                          {product.description}
-                        </p>
-                      )}
-                    </div>
-                    <span
-                      className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] rounded-full flex-shrink-0 ml-2 whitespace-nowrap ${
-                        product.is_available
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-red-500/20 text-red-400'
-                      }`}
-                    >
-                      {product.is_available ? '販売中' : '停止中'}
-                    </span>
-                  </div>
-
-                  <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">価格</span>
-                      <span className="text-white text-xs sm:text-sm font-light">{product.price_in_points.toLocaleString()} P</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">在庫</span>
-                      <span className="text-white text-xs sm:text-sm font-light">
-                        {product.stock_quantity === null ? '無制限' : `${product.stock_quantity}個`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-[10px] sm:text-xs font-light">販売数</span>
-                      <span className="text-white text-xs sm:text-sm font-light">{product.total_sales}件</span>
-                    </div>
-                    {linkedLP && (
-                      <div className="flex items-center justify-between pt-1 sm:pt-1.5 border-t border-gray-700">
-                        <span className="text-gray-400 text-[10px] sm:text-xs font-light">紐付けLP</span>
-                        <Link
-                          href={`/lp/${linkedLP.id}/edit`}
-                          className="text-blue-400 hover:text-blue-300 text-[10px] sm:text-xs font-light truncate"
-                        >
-                          {linkedLP.title}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-1.5 sm:gap-2">
-                    <button
-                      onClick={() => handleOpenEdit(product)}
-                      className="flex-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-[10px] sm:text-xs font-light"
-                    >
-                      編集
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="px-2 sm:px-3 py-1 sm:py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-light"
-                    >
-                      削除
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-        </div>
-      </main>
-
-      {/* 作成/編集モーダル */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-3 sm:px-4">
-          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 max-w-2xl w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg sm:text-xl font-light text-white mb-3 sm:mb-4">
-              {editingProduct ? '商品を編集' : '商品を作成'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
-              {/* 商品名 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  商品名 <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  placeholder="例: プレミアム会員プラン"
-                />
-              </div>
-
-              {/* 説明 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  説明
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
-                  placeholder="商品の説明を入力..."
-                />
-              </div>
-
-              {/* 価格 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  価格（ポイント） <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="number"
-                  value={formData.price_in_points}
-                  onChange={(e) => setFormData({ ...formData, price_in_points: parseInt(e.target.value) })}
-                  required
-                  min="0"
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                />
-                <p className="mt-1 text-xs font-light text-gray-500">
-                  1ポイント = 1円相当として設定してください
-                </p>
-              </div>
-
-              {/* 在庫 */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  在庫数
-                </label>
-                <input
-                  type="number"
-                  value={formData.stock_quantity || ''}
-                  onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value ? parseInt(e.target.value) : null })}
-                  min="0"
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  placeholder="空欄で無制限"
-                />
-              </div>
-
-              {/* LP紐付け */}
-              <div>
-                <label className="block text-xs font-light text-gray-300 mb-1">
-                  紐付けLP（オプション）
-                </label>
-                <select
-                  value={formData.lp_id}
-                  onChange={(e) => setFormData({ ...formData, lp_id: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
-                >
-                  <option value="">紐付けない</option>
-                  {lps.map((lp) => (
-                    <option key={lp.id} value={lp.id}>
-                      {lp.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 購入完了後の設定 */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
-                <h3 className="text-white text-sm font-light mb-2">購入完了後の設定</h3>
-                <p className="text-gray-400 text-xs font-light mb-3">
-                  購入完了後にユーザーをどこに誘導するか設定できます
-                </p>
-
-                {/* 外部URLリダイレクト */}
-                <div className="mb-4">
-                  <label className="block text-xs font-light text-gray-300 mb-1">
-                    外部URLにリダイレクト（オプション）
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.redirect_url}
-                    onChange={(e) => setFormData({ ...formData, redirect_url: e.target.value, thanks_lp_id: '' })}
-                    placeholder="https://example.com/thank-you"
-                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light placeholder-gray-500 focus:outline-none focus:border-blue-500"
-                  />
-                  <p className="mt-1 text-xs font-light text-gray-500">
-                    会員サイトやダウンロードページのURL
-                  </p>
-                </div>
-
-                {/* サンクスページLP選択 */}
-                <div>
-                  <label className="block text-xs font-light text-gray-300 mb-1">
-                    または、サイト内のLPをサンクスページに設定
-                  </label>
-                  <select
-                    value={formData.thanks_lp_id}
-                    onChange={(e) => setFormData({ ...formData, thanks_lp_id: e.target.value, redirect_url: '' })}
-                    className="w-full px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-white text-sm font-light focus:outline-none focus:border-blue-500"
-                    disabled={!!formData.redirect_url}
+                  <span
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-extrabold"
+                    style={{ background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length], color: '#042032' }}
                   >
-                    <option value="">設定しない</option>
-                    {lps.map((lp) => (
-                      <option key={lp.id} value={lp.id}>
-                        {lp.title}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="mt-1 text-xs font-light text-gray-500">
-                    どちらも設定しない場合は、シンプルな完了メッセージを表示
-                  </p>
-                </div>
-              </div>
-
-              {/* 販売状態 */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.is_available}
-                  onChange={(e) => setFormData({ ...formData, is_available: e.target.checked })}
-                  className="w-4 h-4 bg-gray-900 border-gray-700 rounded focus:ring-blue-500 focus:ring-2"
-                />
-                <label className="ml-2 text-xs font-light text-gray-300">
-                  販売可能にする
-                </label>
-              </div>
-
-              {/* ボタン */}
-              <div className="flex gap-2 pt-2 sm:pt-3">
-                <button
-                  type="submit"
-                  className="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs sm:text-sm font-light"
-                >
-                  {editingProduct ? '更新' : '作成'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-xs sm:text-sm font-light"
-                >
-                  キャンセル
-                </button>
-              </div>
-            </form>
+                    {name.charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="truncate text-[13px] font-bold" style={{ color: 'var(--ink)' }}>
+                      {name}
+                    </div>
+                    <div className="text-[11.5px]" style={{ color: 'var(--muted)' }}>
+                      {sales}件販売
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
-        </div>
-      )}
+
+          <div className="rounded-[16px] p-5 text-white shadow-[var(--sh-card)]" style={{ background: 'linear-gradient(160deg,#0b1f3a,#0f2c52)' }}>
+            <b className="block text-base font-extrabold">あなたも販売する</b>
+            <p className="my-2 mb-4 text-[12.5px] leading-relaxed" style={{ color: '#bcd3ee' }}>
+              作ったLPやノウハウを商品化。ポイント決済で受け取れます。
+            </p>
+            <Link href="/products/manage" className="btn btn-primary btn-block btn-sm">
+              販売者になる
+              <ArrowRightIcon className="h-4 w-4" />
+            </Link>
+          </div>
+        </aside>
+      </div>
     </div>
+  );
+}
+
+function SortButton({
+  active,
+  onClick,
+  icon,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn('inline-flex items-center gap-1.5 rounded-[10px] px-3.5 py-2 text-[13.5px] font-bold transition-colors')}
+      style={active ? { color: 'var(--brand)', background: 'var(--surface-tint)' } : { color: 'var(--muted)' }}
+    >
+      {icon}
+      {children}
+    </button>
+  );
+}
+
+function ProductCard({ product, showBest }: { product: PublicProduct; showBest: boolean }) {
+  const seller = product.seller_username ?? '';
+  const isBest = showBest && (product.total_sales ?? 0) >= 100;
+  return (
+    <article className="card card-hover flex flex-col overflow-hidden" style={{ padding: 0 }}>
+      <Link href={`/products/${product.id}`} className="relative block h-[130px]" style={{ background: THUMB_GRADIENTS[hashIndex(product.id, THUMB_GRADIENTS.length)] }}>
+        {isBest && (
+          <span className="absolute right-2.5 top-2.5 rounded-full px-2.5 py-[3px] text-[10.5px] font-extrabold text-white bg-brand-grad">
+            人気
+          </span>
+        )}
+      </Link>
+      <div className="flex flex-1 flex-col gap-2 px-[15px] pb-[15px] pt-3.5">
+        <Link href={`/products/${product.id}`} className="text-[14.5px] font-bold leading-[1.4] transition-colors hover:text-[color:var(--brand)]" style={{ color: 'var(--ink)' }}>
+          {product.title}
+        </Link>
+        {seller && (
+          <Link href={`/u/${seller}`} className="flex items-center gap-1.5">
+            <span
+              className="flex h-[22px] w-[22px] flex-shrink-0 items-center justify-center rounded-full text-[10px] font-extrabold"
+              style={{ background: AVATAR_GRADIENTS[hashIndex(seller, AVATAR_GRADIENTS.length)], color: '#042032' }}
+            >
+              {seller.charAt(0).toUpperCase()}
+            </span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text-2)' }}>
+              {seller}
+            </span>
+          </Link>
+        )}
+        <div className="mt-auto flex items-center justify-between pt-1.5">
+          <span className="text-lg font-extrabold tabular-nums" style={{ color: 'var(--brand)' }}>
+            {product.price_in_points.toLocaleString()}
+            <small className="text-xs"> P</small>
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11.5px]" style={{ color: 'var(--muted)' }}>
+            <FireIcon className="h-[13px] w-[13px]" style={{ color: '#f59e0b' }} />
+            {product.total_sales ?? 0}件
+          </span>
+        </div>
+      </div>
+    </article>
   );
 }
