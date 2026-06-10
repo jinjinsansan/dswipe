@@ -94,7 +94,15 @@ npm run dev   # http://localhost:3000
 
 1. ~~トップ `app/HomeSwiper.tsx`~~ **済（commit `1ef8490`）**: モック準拠の9枚構成＋固定ネイビーナビ＋下部登録バンドに刷新。ヒーロー動画は薄く保持。Swiper機能（縦スワイプ/キーボード/触覚）維持。※globals.css に `.text-white{color:#0f172a!important}` の旧remapが残存するため、ネイビー上の白文字は `text-pure-white` を使うこと（他ページ移植時も同様の罠に注意）。
 2. ~~ナビの多色 → 単色化~~ **済（commit `ff11785`）**: `navLinks.tsx` のグループ別配色を廃止し NAVY_DESKTOP_NAV / MOMENTUM_MOBILE_NAV の2セットに集約。`DashboardHeader.tsx` の MOBILE_GROUP_* も単色化（選択中は `bg-slate-900` がremapで白化していたバグも併せてネイビー+text-pure-whiteに修正）。※認証必須UIのため目視は未実施（ビルド型チェックのみ）。ログイン後のモバイルメニューを一度目視確認すること。
-3. **マーケット `/products`、商品詳細、ダッシュボード本体、note、salon、points、admin** 等のページ本体をモックの体裁に。
+3. ページ本体のモック準拠化:
+   - ~~マーケット `/products`~~ **済（`aa85713`）**: ネイビーヒーロー＋検索＋価格帯チップ＋ソートピル＋カード＋サイドバー。実データで目視確認済み。
+   - ~~商品詳細 `/products/[id]`~~ **済（`96e002c`）**: ダーク全廃→ライトMomentum。購入ロジック不変。※詳細APIは認証必須のため未ログインだとエラーカード表示（既存仕様）。ログイン後の目視は未実施。
+   - **注意: バックエンドCORSは `https://d-swipe.com` と `localhost:3000` のみ許可**。Vercelプレビューではデータ取得が常に失敗し空表示になる（コードの問題ではない）。データ込みの確認はローカル3000番で行う。
+   - ~~ダッシュボード本体~~ **済（`cd0866e`）**: KPIストリップ(実データ)＋カード/ボタンのMomentum化。
+   - ~~コラム一覧 /notes~~ **済（`4aab48a`）**: Note List.html準拠（ヒーロー＋横型カード＋サイドバー）。i18nキー4つ追加。
+   - ~~LP分析 /lp/[id]/analytics~~ **済（`73f5882`）**: 独自ダークシェル廃止→DashboardLayoutに統合。
+   - ~~紫/藍アクセント一掃~~ **済（`c735981`）**: 全16ファイルでpurple/indigo/pink→sky/cyan。
+   - 残り（任意・モック完全準拠まで）: points/purchase・salon各ページ・adminの**レイアウト深掘り**（現状でもライト+sky+ネイビーシェルで一貫済み）。note/create のスタイル選択カードなど細部。
 4. **DashboardHeader** トップバー（現状は白＝Momentumでも可）。アバター等の細部。
 5. アクセシビリティ/コントラスト最終チェック（過去セッションで redesign-momentum 側はサブエージェント診断で詰めた。手法は流用可）。
 
