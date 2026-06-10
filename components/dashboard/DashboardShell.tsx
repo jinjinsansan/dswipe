@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
 import { getDashboardNavLinks, isDashboardLinkActive } from '@/components/dashboard/navLinks';
 import { cn } from '@/lib/utils';
@@ -44,6 +44,15 @@ export default function DashboardShell({ title, subtitle, actions, children }: D
   const navLinks = getDashboardNavLinks({ isAdmin, userType: user?.user_type });
   const primary = navLinks.filter((l) => !SECONDARY_HREFS.has(l.href));
   const secondary = navLinks.filter((l) => SECONDARY_HREFS.has(l.href));
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   const handleLogout = () => {
     logout();
@@ -118,7 +127,20 @@ export default function DashboardShell({ title, subtitle, actions, children }: D
           'fixed left-0 top-0 z-50 h-screen transition-transform lg:hidden',
           drawerOpen ? 'translate-x-0' : '-translate-x-full',
         )}
+        role="dialog"
+        aria-modal="true"
+        aria-label="ナビゲーションメニュー"
       >
+        {drawerOpen && (
+          <button
+            onClick={() => setDrawerOpen(false)}
+            aria-label="メニューを閉じる"
+            className="absolute right-3 top-4 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full"
+            style={{ background: 'rgba(255,255,255,.1)', color: 'var(--on-navy)' }}
+          >
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        )}
         {sidebar}
       </div>
 

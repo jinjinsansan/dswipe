@@ -505,7 +505,7 @@ export default function EditLPNewPage() {
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             <span className={`px-2 py-1 text-xs rounded font-semibold ${
               lp.status === 'published'
-                ? 'bg-green-50 text-green-400'
+                ? 'bg-green-50 text-green-700'
                 : 'bg-slate-100 text-slate-500'
             }`}>
               {lp.status === 'published' ? '公開中' : '下書き'}
@@ -517,7 +517,7 @@ export default function EditLPNewPage() {
                   href={`/view/${lp.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-700 border border-slate-200 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-slate-200 rounded transition-colors"
                 >
                   プレビュー
                 </a>
@@ -559,7 +559,7 @@ export default function EditLPNewPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+              className="p-2 text-blue-600 hover:text-blue-700 transition-colors"
               title="保存"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -571,7 +571,7 @@ export default function EditLPNewPage() {
             {lp.status === 'draft' && (
               <button
                 onClick={handlePublish}
-                className="p-2 text-green-400 hover:text-green-300 transition-colors"
+                className="p-2 text-green-700 hover:text-green-700 transition-colors"
                 title="公開"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -616,8 +616,8 @@ export default function EditLPNewPage() {
                 <span className="text-slate-700 text-sm">ステータス</span>
                 <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
                   lp.status === 'published'
-                    ? 'bg-green-50 text-green-400'
-                    : 'bg-yellow-50 text-yellow-400'
+                    ? 'bg-green-50 text-green-700'
+                    : 'bg-yellow-50 text-yellow-700'
                 }`}>
                   {lp.status === 'published' ? '公開中' : '下書き'}
                 </span>
@@ -698,7 +698,7 @@ export default function EditLPNewPage() {
       {/* Main Content - 3 Column Layout (Desktop) / Tab-based Layout (Mobile) */}
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {error && (
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-500/50 text-red-600 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
@@ -797,7 +797,7 @@ export default function EditLPNewPage() {
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">SNSメタ情報</h5>
-                  <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
+                  <p className="text-[11px] text-slate-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
                 </div>
                 <div className="space-y-2">
                   <input
@@ -829,7 +829,7 @@ export default function EditLPNewPage() {
                     className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                   />
                 </div>
-                <p className="text-[11px] text-gray-500 leading-relaxed">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
                 </p>
               </div>
@@ -887,13 +887,13 @@ export default function EditLPNewPage() {
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1.5 gap-2">
-                          <span className="text-base font-bold text-blue-300 flex-shrink-0">#{index + 1}</span>
+                          <span className="text-base font-bold text-blue-600 flex-shrink-0">#{index + 1}</span>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteBlock(block.id);
                             }}
-                            className="text-xs text-gray-500 hover:text-red-400 transition-colors flex-shrink-0"
+                            className="text-xs text-slate-500 hover:text-red-600 transition-colors flex-shrink-0"
                           >
                             削除
                           </button>
@@ -983,7 +983,7 @@ export default function EditLPNewPage() {
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
                   <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">SNSメタ情報</h5>
-                  <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
+                  <p className="text-[11px] text-slate-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
                 </div>
                 <div className="space-y-2">
                   <input
@@ -1015,7 +1015,7 @@ export default function EditLPNewPage() {
                     className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                 </div>
-                <p className="text-[11px] text-gray-500 leading-relaxed">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   未入力の場合はD-swipeのデフォルト情報が使用されます。空欄にして保存するとリセットできます。
                 </p>
               </div>

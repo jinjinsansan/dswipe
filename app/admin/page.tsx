@@ -503,12 +503,12 @@ export default function AdminPanelPage() {
 
   return (
     <DashboardShell title="管理者パネル" subtitle={user?.email}>
-      <div className="segmented w-full overflow-x-auto">
+      <div className="segmented overflow-x-auto" style={{ display: 'flex', width: '100%' }}>
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`inline-flex items-center gap-1.5 whitespace-nowrap ${activeTab === tab.id ? 'active' : ''}`}
+            className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === tab.id ? 'active' : ''}`}
           >
             <tab.icon className="h-4 w-4" aria-hidden="true" />
             <span>{tab.label}</span>
@@ -581,7 +581,7 @@ export default function AdminPanelPage() {
                     <span>LP</span>
                     <span>ステータス</span>
                   </div>
-                  <div className="max-h-[540px] overflow-y-auto divide-y divide-slate-800/60">
+                  <div className="max-h-[540px] overflow-y-auto divide-y divide-slate-200">
                     {usersLoading ? (
                       <div className="flex items-center justify-center py-16 text-slate-500 text-sm">
                         読み込み中...
@@ -739,14 +739,14 @@ export default function AdminPanelPage() {
                           <button
                             onClick={handleUnblockUser}
                             disabled={userActionLoading}
-                            className="flex-1 rounded-xl bg-emerald-600/80 text-white text-sm font-semibold px-4 py-2 hover:bg-emerald-600 disabled:opacity-60"
+                            className="flex-1 rounded-xl bg-emerald-600 text-white text-sm font-semibold px-4 py-2 hover:bg-emerald-600 disabled:opacity-60"
                           >
                             ブロック解除
                           </button>
                           <button
                             onClick={handleDeleteUser}
                             disabled={userActionLoading}
-                            className="flex-1 rounded-xl border border-red-900/60 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-900/30 disabled:opacity-60"
+                            className="flex-1 rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60"
                           >
                             ユーザー削除
                           </button>
@@ -795,7 +795,7 @@ export default function AdminPanelPage() {
                             <div key={tx.id} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
                               <div className="flex items-center justify-between">
                                 <span className="font-semibold text-slate-900">{tx.transaction_type}</span>
-                                <span className={tx.amount >= 0 ? 'text-emerald-700 font-semibold' : 'text-red-300 font-semibold'}>
+                                <span className={tx.amount >= 0 ? 'text-emerald-700 font-semibold' : 'text-red-600 font-semibold'}>
                                   {formatPoints(tx.amount)}
                                 </span>
                               </div>
@@ -840,7 +840,7 @@ export default function AdminPanelPage() {
                               <div className="text-slate-900 font-semibold">{purchase.product_title || '-'}</div>
                               <div className="mt-1 text-[11px] text-slate-500 break-all">{purchase.description || '-'}</div>
                               <div className="mt-1 flex items-center justify-between text-[11px]">
-                                <span className="text-red-300 font-semibold">{formatPoints(purchase.amount)}</span>
+                                <span className="text-red-600 font-semibold">{formatPoints(purchase.amount)}</span>
                                 <span className="text-slate-500">{formatDateTime(purchase.created_at)}</span>
                               </div>
                             </div>
@@ -933,14 +933,14 @@ export default function AdminPanelPage() {
                         <button
                           onClick={handleUnblockUser}
                           disabled={userActionLoading}
-                          className="px-4 py-2 rounded-xl bg-emerald-600/80 text-white text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60"
+                          className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60"
                         >
                           ブロック解除
                         </button>
                         <button
                           onClick={handleDeleteUser}
                           disabled={userActionLoading}
-                          className="px-4 py-2 rounded-xl bg-white text-red-700 text-sm font-semibold border border-red-900/60 hover:bg-red-900/30 disabled:opacity-60"
+                          className="px-4 py-2 rounded-xl bg-white text-red-700 text-sm font-semibold border border-red-200 hover:bg-red-50 disabled:opacity-60"
                         >
                           ユーザー削除
                         </button>
@@ -994,12 +994,12 @@ export default function AdminPanelPage() {
                               <th className="px-3 py-2 text-left">メモ</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-800/70">
+                          <tbody className="divide-y divide-slate-200">
                             {selectedUserDetail.transactions.slice(0, 8).map((tx) => (
                               <tr key={tx.id}>
                                 <td className="px-3 py-2 text-xs text-slate-500">{formatDateTime(tx.created_at)}</td>
                                 <td className="px-3 py-2 text-xs">{tx.transaction_type}</td>
-                                <td className={`px-3 py-2 text-right text-sm font-semibold ${tx.amount >= 0 ? 'text-emerald-700' : 'text-red-300'}`}>
+                                <td className={`px-3 py-2 text-right text-sm font-semibold ${tx.amount >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
                                   {formatPoints(tx.amount)}
                                 </td>
                                 <td className="px-3 py-2 text-xs text-slate-500 truncate">{tx.description || '-'}</td>
@@ -1029,7 +1029,7 @@ export default function AdminPanelPage() {
                               <th className="px-3 py-2 text-right">CTA</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-800/70">
+                          <tbody className="divide-y divide-slate-200">
                             {selectedUserDetail.landing_pages.slice(0, 6).map((lp) => (
                               <tr key={lp.id}>
                                 <td className="px-3 py-2 text-xs text-slate-700">{lp.title}</td>
@@ -1062,12 +1062,12 @@ export default function AdminPanelPage() {
                               <th className="px-3 py-2 text-left">日時</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-800/70">
+                          <tbody className="divide-y divide-slate-200">
                             {selectedUserDetail.purchase_history.slice(0, 6).map((purchase) => (
                               <tr key={purchase.transaction_id}>
                                 <td className="px-3 py-2 text-xs text-slate-700">{purchase.product_title || '-'}</td>
                                 <td className="px-3 py-2 text-xs text-slate-500 truncate">{purchase.description || '-'}</td>
-                                <td className="px-3 py-2 text-right text-xs text-red-300">{formatPoints(purchase.amount)}</td>
+                                <td className="px-3 py-2 text-right text-xs text-red-600">{formatPoints(purchase.amount)}</td>
                                 <td className="px-3 py-2 text-xs text-slate-500">{formatDateTime(purchase.created_at)}</td>
                               </tr>
                             ))}
@@ -1156,7 +1156,7 @@ export default function AdminPanelPage() {
                       <th className="px-4 py-3 text-left">操作</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/70">
+                  <tbody className="divide-y divide-slate-200">
                     {marketLoading ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-500">読み込み中...</td>
@@ -1193,13 +1193,13 @@ export default function AdminPanelPage() {
                             <div className="flex flex-wrap gap-2">
                               <button
                                 onClick={() => handleUpdateLPStatus(item.id, 'archived')}
-                                className="px-3 py-1.5 rounded-lg bg-red-600/80 text-white hover:bg-red-700"
+                                className="px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700"
                               >
                                 非公開
                               </button>
                               <button
                                 onClick={() => handleUpdateLPStatus(item.id, 'published')}
-                                className="px-3 py-1.5 rounded-lg bg-emerald-600/80 text-white hover:bg-emerald-600"
+                                className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-600"
                               >
                                 公開
                               </button>
@@ -1247,13 +1247,13 @@ export default function AdminPanelPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleUpdateLPStatus(item.id, 'archived')}
-                            className="rounded-lg bg-red-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white"
                           >
                             非公開
                           </button>
                           <button
                             onClick={() => handleUpdateLPStatus(item.id, 'published')}
-                            className="rounded-lg bg-emerald-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white"
                           >
                             公開
                           </button>
@@ -1334,7 +1334,7 @@ export default function AdminPanelPage() {
                             <th className="px-3 py-2 text-right">ネット</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800/60">
+                        <tbody className="divide-y divide-slate-200">
                           {topDailyBreakdown.length === 0 ? (
                             <tr>
                               <td colSpan={5} className="px-3 py-6 text-center text-sm text-slate-500">
@@ -1346,9 +1346,9 @@ export default function AdminPanelPage() {
                               <tr key={row.label}>
                                 <td className="px-3 py-2 text-slate-700">{row.label}</td>
                                 <td className="px-3 py-2 text-right text-emerald-700">{formatPoints(row.purchased)}</td>
-                                <td className="px-3 py-2 text-right text-red-300">{formatPoints(row.spent)}</td>
+                                <td className="px-3 py-2 text-right text-red-600">{formatPoints(row.spent)}</td>
                                 <td className="px-3 py-2 text-right text-slate-700">{formatPoints(row.granted)}</td>
-                                <td className={`px-3 py-2 text-right ${row.net >= 0 ? 'text-emerald-700' : 'text-red-300'}`}>{formatPoints(row.net)}</td>
+                                <td className={`px-3 py-2 text-right ${row.net >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{formatPoints(row.net)}</td>
                               </tr>
                             ))
                           )}
@@ -1370,7 +1370,7 @@ export default function AdminPanelPage() {
                             <th className="px-3 py-2 text-right">ネット</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800/60">
+                        <tbody className="divide-y divide-slate-200">
                           {analytics.monthly.length === 0 ? (
                             <tr>
                               <td colSpan={5} className="px-3 py-6 text-center text-sm text-slate-500">
@@ -1382,9 +1382,9 @@ export default function AdminPanelPage() {
                               <tr key={row.label}>
                                 <td className="px-3 py-2 text-slate-700">{row.label}</td>
                                 <td className="px-3 py-2 text-right text-emerald-700">{formatPoints(row.purchased)}</td>
-                                <td className="px-3 py-2 text-right text-red-300">{formatPoints(row.spent)}</td>
+                                <td className="px-3 py-2 text-right text-red-600">{formatPoints(row.spent)}</td>
                                 <td className="px-3 py-2 text-right text-slate-700">{formatPoints(row.granted)}</td>
-                                <td className={`px-3 py-2 text-right ${row.net >= 0 ? 'text-emerald-700' : 'text-red-300'}`}>{formatPoints(row.net)}</td>
+                                <td className={`px-3 py-2 text-right ${row.net >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{formatPoints(row.net)}</td>
                               </tr>
                             ))
                           )}
@@ -1545,7 +1545,7 @@ export default function AdminPanelPage() {
                     まだお知らせは登録されていません。企業の取り組みやメンテナンス情報を発信しましょう。
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-800/60">
+                  <div className="divide-y divide-slate-200">
                     {announcements.map((announcement) => (
                       <div key={announcement.id} className="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="min-w-0 space-y-1">
@@ -1564,7 +1564,7 @@ export default function AdminPanelPage() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => handleAnnouncementEdit(announcement)}
-                            className="inline-flex items-center justify-center gap-1 rounded-full border border-blue-500/50 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                            className="inline-flex items-center justify-center gap-1 rounded-full border border-blue-500/50 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100"
                           >
                             編集
                           </button>
@@ -1612,7 +1612,7 @@ export default function AdminPanelPage() {
                       <th className="px-4 py-3 text-left">実行者</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-200">
                     {logsLoading ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-500">読み込み中...</td>

@@ -192,14 +192,14 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4">
-      <div className="bg-gray-900/95 rounded-lg p-6 max-w-2xl w-full border border-gray-700/50 shadow-2xl">
+      <div className="bg-white rounded-lg p-6 max-w-2xl w-full border border-slate-200 shadow-2xl">
         {/* ヘッダー */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-light text-white/90">AIアシスタント</h2>
+            <h2 className="text-lg font-light text-slate-900/90">AIアシスタント</h2>
             <button
               onClick={onSkip}
-              className="text-gray-500 hover:text-gray-400 transition-colors text-sm font-light"
+              className="text-slate-500 hover:text-slate-500 transition-colors text-sm font-light"
             >
               スキップ →
             </button>
@@ -209,7 +209,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <div
                 key={s}
                 className={`h-1 flex-1 rounded-full transition-all ${
-                  s <= step ? 'bg-blue-500/80' : 'bg-gray-800'
+                  s <= step ? 'bg-blue-500/80' : 'bg-slate-50'
                 }`}
               />
             ))}
@@ -219,7 +219,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
         {/* 質問 */}
         {step <= 3 ? (
           <div>
-            <h3 className="text-base font-light text-white/95 mb-5">
+            <h3 className="text-base font-light text-slate-900/95 mb-5">
               {currentQuestion.question}
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -230,40 +230,40 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   className={`p-4 rounded-lg border transition-all text-left ${
                     formData[currentQuestion.field as keyof typeof formData] === option.value
                       ? 'border-blue-500/50 bg-blue-500/5'
-                      : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
+                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <div className="text-xl mb-1.5">{option.icon}</div>
-                  <div className="text-white/90 text-sm font-light">{option.label.replace(option.icon, '').trim()}</div>
+                  <div className="text-slate-900/90 text-sm font-light">{option.label.replace(option.icon, '').trim()}</div>
                 </button>
               ))}
             </div>
           </div>
         ) : (
           <div>
-            <h3 className="text-base font-light text-white/95 mb-2">
+            <h3 className="text-base font-light text-slate-900/95 mb-2">
               商品・サービスについて教えてください
             </h3>
-            <p className="text-gray-500 text-xs font-light mb-4">
+            <p className="text-slate-500 text-xs font-light mb-4">
               簡単に説明してください。AIが魅力的な見出しや構成を提案します。
             </p>
             <input
               value={formData.productName}
               onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-              className="mb-3 w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+              className="mb-3 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
               placeholder="例：AIローンチ加速プログラム"
             />
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full h-28 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
+              className="w-full h-28 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
               placeholder="例：30代女性向けのアンチエイジング美容液。天然成分100%で肌に優しく、シワやたるみに効果的です。"
             />
-            <p className="text-xs text-gray-500 mb-3">選択テーマ: <span className="text-gray-300">{themeKey}</span></p>
+            <p className="text-xs text-slate-500 mb-3">選択テーマ: <span className="text-slate-700">{themeKey}</span></p>
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => setStep(3)}
-                className="px-4 py-2 bg-gray-800/50 text-white/90 text-sm font-light rounded-lg hover:bg-gray-800 transition-colors"
+                className="px-4 py-2 bg-slate-50 text-slate-900/90 text-sm font-light rounded-lg hover:bg-slate-50 transition-colors"
               >
                 ← 戻る
               </button>
@@ -288,10 +288,10 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 {isLoading && (
                   <div className="mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-light text-gray-500">進行状況</span>
-                      <span className="text-xs font-light text-gray-500">{Math.round(progress)}%</span>
+                      <span className="text-xs font-light text-slate-500">進行状況</span>
+                      <span className="text-xs font-light text-slate-500">{Math.round(progress)}%</span>
                     </div>
-                    <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-50 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
                         style={{ width: `${progress}%` }}
@@ -309,7 +309,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
           <div className="mt-5">
             <button
               onClick={() => setStep(step - 1)}
-              className="text-gray-500 hover:text-gray-400 transition-colors text-sm font-light"
+              className="text-slate-500 hover:text-slate-500 transition-colors text-sm font-light"
             >
               ← 前の質問に戻る
             </button>

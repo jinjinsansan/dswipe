@@ -133,7 +133,7 @@ export default function ColorThemeGenerator({
                 style={{ backgroundColor: shades[shade] }}
               />
               <span className="text-xs font-semibold text-slate-700">{shade}</span>
-              <span className="text-[10px] text-gray-500 font-mono">
+              <span className="text-[10px] text-slate-500 font-mono">
                 {copiedShade === shade ? '✓ コピー' : shades[shade]}
               </span>
             </button>

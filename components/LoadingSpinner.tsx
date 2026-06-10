@@ -16,10 +16,10 @@ export default function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | '
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-white text-lg">読み込み中...</p>
+        <p className="mt-4 text-slate-900 text-lg">読み込み中...</p>
       </div>
     </div>
   );
@@ -28,7 +28,7 @@ export function PageLoader() {
 export function BlockSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-64 bg-gray-700 rounded-xl mb-4"></div>
+      <div className="h-64 bg-slate-100 rounded-xl mb-4"></div>
     </div>
   );
 }
@@ -36,9 +36,9 @@ export function BlockSkeleton() {
 export function EditorSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      <div className="h-48 bg-gray-800 rounded-xl"></div>
-      <div className="h-48 bg-gray-800 rounded-xl"></div>
-      <div className="h-48 bg-gray-800 rounded-xl"></div>
+      <div className="h-48 bg-slate-50 rounded-xl"></div>
+      <div className="h-48 bg-slate-50 rounded-xl"></div>
+      <div className="h-48 bg-slate-50 rounded-xl"></div>
     </div>
   );
 }

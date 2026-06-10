@@ -127,7 +127,7 @@ function SortableBlock({
         }`}
       >
         {isEditing && (
-          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-slate-900 px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
+          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
             {block.blockType}
           </div>
         )}

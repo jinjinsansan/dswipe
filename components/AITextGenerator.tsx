@@ -137,11 +137,11 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="text-slate-500 text-xs mb-1">候補 {index + 1}</div>
-                      <div className="text-slate-900 group-hover:text-blue-400 transition-colors">
+                      <div className="text-slate-900 group-hover:text-blue-600 transition-colors">
                         {suggestion}
                       </div>
                     </div>
-                    <svg className="w-5 h-5 text-gray-600 group-hover:text-blue-400 transition-colors ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-colors ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -159,7 +159,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
           )}
 
           {error && (
-            <div className="mt-4 bg-red-50 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
+            <div className="mt-4 bg-red-50 border border-red-500/50 text-red-600 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}

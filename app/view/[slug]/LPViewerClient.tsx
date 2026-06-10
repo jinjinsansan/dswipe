@@ -379,10 +379,10 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
   return (
     <>
       {showEmailGate && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4">
-          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-4">続きを見るには</h2>
-            <p className="text-gray-400 mb-6">メールアドレスを登録してください</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ background: 'rgba(11,31,58,.6)' }}>
+          <div className="card card-pad w-full max-w-md">
+            <h2 className="mb-4 text-2xl font-bold" style={{ color: 'var(--ink)' }}>続きを見るには</h2>
+            <p className="mb-6" style={{ color: 'var(--muted)' }}>メールアドレスを登録してください</p>
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <input
                 type="email"
@@ -390,12 +390,9 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="input"
               />
-              <button
-                type="submit"
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50"
-              >
+              <button type="submit" className="btn btn-primary btn-block btn-lg">
                 登録して続きを見る
               </button>
             </form>
@@ -403,7 +400,7 @@ export default function LPViewerClient({ slug }: LPViewerClientProps) {
         </div>
       )}
 
-      <div className="h-screen w-full flex flex-col overflow-hidden">
+      <div className="h-screen w-full flex flex-col overflow-hidden bg-[#0b1220]">
         <Swiper
           direction={lp.swipe_direction === 'vertical' ? 'vertical' : 'horizontal'}
           slidesPerView={1}

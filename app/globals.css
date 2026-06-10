@@ -266,9 +266,19 @@
 }
 
 body {
-  background: var(--color-surface-base);
-  color: var(--color-foreground);
+  background: var(--canvas);
+  color: var(--text);
   font-family: var(--font-body);
+}
+
+/* Global keyboard focus ring for interactive elements (accessibility) */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.35);
+  border-radius: 8px;
 }
 
 .font-display {

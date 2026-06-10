@@ -182,11 +182,11 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       <div className="flex items-center justify-between p-3 lg:p-4 border-b border-slate-200 flex-shrink-0">
         <div>
           <h3 className="text-slate-900 text-sm lg:text-sm font-light">プロパティ</h3>
-          <p className="text-gray-500 text-xs mt-0.5">{block.blockType}</p>
+          <p className="text-slate-500 text-xs mt-0.5">{block.blockType}</p>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-slate-900 transition-colors text-xl lg:text-sm"
+          className="text-slate-500 hover:text-slate-900 transition-colors text-xl lg:text-sm"
         >
           ×
         </button>
@@ -300,7 +300,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   </option>
                 ))}
               </select>
-              <p className="text-xs lg:text-[11px] text-gray-500">
+              <p className="text-xs lg:text-[11px] text-slate-500">
                 ブロック内の全テキストに適用されます。選択後は他のブロックにもコピーして貼り付け可能です。
               </p>
             </div>
@@ -408,12 +408,12 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {/* AI生成セクション */}
         {onGenerateAI && (
           <div className="bg-blue-50 border border-blue-500/30 rounded-lg p-3">
-            <h4 className="text-blue-400 font-semibold text-sm mb-2">🤖 AI生成</h4>
+            <h4 className="text-blue-600 font-semibold text-sm mb-2">🤖 AI生成</h4>
             <div className="space-y-2">
               {('title' in content) && (
                 <button
                   onClick={() => onGenerateAI('headline', 'title')}
-                  className="w-full px-3 py-2 bg-blue-50 text-blue-400 rounded hover:bg-blue-50 transition-colors text-sm font-medium"
+                  className="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
                 >
                   ✨ タイトルを生成
                 </button>
@@ -421,7 +421,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               {('subtitle' in content) && (
                 <button
                   onClick={() => onGenerateAI('subtitle', 'subtitle')}
-                  className="w-full px-3 py-2 bg-blue-50 text-blue-400 rounded hover:bg-blue-50 transition-colors text-sm font-medium"
+                  className="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
                 >
                   ✨ サブタイトルを生成
                 </button>
@@ -429,7 +429,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               {('text' in content) && (
                 <button
                   onClick={() => onGenerateAI('description', 'text')}
-                  className="w-full px-3 py-2 bg-blue-50 text-blue-400 rounded hover:bg-blue-50 transition-colors text-sm font-medium"
+                  className="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
                 >
                   ✨ 説明文を生成
                 </button>
@@ -437,7 +437,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               {('buttonText' in content) && (
                 <button
                   onClick={() => onGenerateAI('cta', 'buttonText')}
-                  className="w-full px-3 py-2 bg-blue-50 text-blue-400 rounded hover:bg-blue-50 transition-colors text-sm font-medium"
+                  className="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
                 >
                   ✨ ボタン文言を生成
                 </button>
@@ -473,14 +473,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   stats.push({ value: '', label: '' });
                   onUpdateContent('stats', stats);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + 追加
               </button>
             </div>
             {((content as any).stats as Array<{ value: string; label: string }>).map((stat, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>項目 {index + 1}</span>
                   <button
                     type="button"
@@ -489,7 +489,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                         .filter((_, idx) => idx !== index);
                       onUpdateContent('stats', stats);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -524,14 +524,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   features.push({ icon: '', title: '', description: '' });
                   onUpdateContent('features', features);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + 追加
               </button>
             </div>
             {((content as any).features as Array<{ icon?: string; title: string; description: string }>).map((feature, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>カード {index + 1}</span>
                   <button
                     type="button"
@@ -540,7 +540,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                         .filter((_, idx) => idx !== index);
                       onUpdateContent('features', features);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -582,14 +582,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   plans.push({ name: '', price: '', period: '', description: '', features: [] });
                   onUpdateContent('plans', plans);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + プラン追加
               </button>
             </div>
             {((content as any).plans as Array<Record<string, any>>).map((plan, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>プラン {index + 1}</span>
                   <button
                     type="button"
@@ -597,7 +597,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       const plans = [...((content as any).plans as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
                       onUpdateContent('plans', plans);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -680,14 +680,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   faqs.push({ question: '', answer: '' });
                   onUpdateContent('faqs', faqs);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + 追加
               </button>
             </div>
             {((content as any).faqs as Array<Record<string, any>>).map((faq, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>FAQ {index + 1}</span>
                   <button
                     type="button"
@@ -695,7 +695,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       const faqs = [...((content as any).faqs as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
                       onUpdateContent('faqs', faqs);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -730,14 +730,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   testimonials.push({ name: '', text: '', role: '', rating: 5, company: '' });
                   onUpdateContent('testimonials', testimonials);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + 追加
               </button>
             </div>
             {((content as any).testimonials as Array<Record<string, any>>).map((testimonial, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>事例 {index + 1}</span>
                   <button
                     type="button"
@@ -745,7 +745,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       const testimonials = [...((content as any).testimonials as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
                       onUpdateContent('testimonials', testimonials);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -812,14 +812,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   bonuses.push({ title: '', description: '', value: '', icon: '' });
                   onUpdateContent('bonuses', bonuses);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
               >
                 + 追加
               </button>
             </div>
             {((content as any).bonuses as Array<Record<string, any>>).map((bonus, index) => (
               <div key={index} className="rounded-lg border border-slate-200 bg-white p-3 space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>特典 {index + 1}</span>
                   <button
                     type="button"
@@ -827,7 +827,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       const bonuses = [...((content as any).bonuses as Array<Record<string, any>>)].filter((_, idx) => idx !== index);
                       onUpdateContent('bonuses', bonuses);
                     }}
-                    className="text-red-400 hover:text-red-300"
+                    className="text-red-600 hover:text-red-700"
                   >
                     削除
                   </button>
@@ -954,7 +954,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           <label className="flex items-center justify-between gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
             <div>
               <p className="text-sm text-slate-800">シャドウを表示</p>
-              <p className="text-xs text-gray-500">画像の立体感を強調します</p>
+              <p className="text-xs text-slate-500">画像の立体感を強調します</p>
             </div>
             <input
               type="checkbox"
@@ -1188,7 +1188,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   <div className="text-slate-500 text-sm mb-1">
                     {isUploading ? 'アップロード中...' : 'クリックして画像をアップロード'}
                   </div>
-                  <div className="text-gray-500 text-xs">
+                  <div className="text-slate-500 text-xs">
                     PNG, JPG, GIF (最大5MB)
                   </div>
                   <input
