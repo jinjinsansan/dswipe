@@ -193,7 +193,7 @@ export default function MessagesClient() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
               <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />
             </span>
             <div>
@@ -224,7 +224,7 @@ export default function MessagesClient() {
                   setCurrentPage(0);
                 }}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  isActive ? "bg-blue-600 text-white shadow-sm shadow-blue-200" : "bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700"
+                  isActive ? "bg-sky-600 text-white shadow-sm shadow-sky-200" : "bg-slate-100 text-slate-600 hover:bg-sky-50 hover:text-sky-700"
                 }`}
               >
                 {option.value === "unread" ? (
@@ -267,17 +267,17 @@ export default function MessagesClient() {
                             type="button"
                             onClick={() => setSelectedMessage(message)}
                             className={`flex w-full flex-col items-start gap-1 px-4 py-4 text-left transition-colors ${
-                              isActive ? "bg-blue-50/70" : "hover:bg-slate-50"
+                              isActive ? "bg-sky-50/70" : "hover:bg-slate-50"
                             }`}
                           >
                             <div className="flex w-full items-center justify-between gap-3">
                               <div className="flex items-center gap-2">
                                 <span
                                   className={`inline-flex h-2.5 w-2.5 rounded-full ${
-                                    isUnread ? "bg-blue-500" : "bg-slate-300"
+                                    isUnread ? "bg-sky-500" : "bg-slate-300"
                                   }`}
                                 />
-                                <span className={`text-sm font-semibold ${isActive ? "text-blue-700" : "text-slate-900"}`}>
+                                <span className={`text-sm font-semibold ${isActive ? "text-sky-700" : "text-slate-900"}`}>
                                   {message.title}
                                 </span>
                               </div>
@@ -287,7 +287,7 @@ export default function MessagesClient() {
                               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] uppercase tracking-wide">
                                 {message.category}
                               </span>
-                              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-wide text-blue-600">
+                              <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] uppercase tracking-wide text-sky-600">
                                 {message.priority}
                               </span>
                               {message.archived ? (
@@ -342,7 +342,7 @@ export default function MessagesClient() {
                         <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] uppercase tracking-wide">
                           {selectedMessage.category}
                         </span>
-                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-wide text-blue-600">
+                        <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] uppercase tracking-wide text-sky-600">
                           {selectedMessage.priority}
                         </span>
                         <span>{formatDateTime(selectedMessage.send_at ?? selectedMessage.created_at)}</span>
@@ -356,7 +356,7 @@ export default function MessagesClient() {
                             既読: {formatDateTime(selectedMessage.read_at)}
                           </span>
                         ) : (
-                          <span className="text-blue-600">未読</span>
+                          <span className="text-sky-600">未読</span>
                         )}
                       </div>
                     </div>
@@ -367,7 +367,7 @@ export default function MessagesClient() {
                       type="button"
                       onClick={() => handleMark(selectedMessage, { read: true, archive: selectedMessage.archived })}
                       disabled={actionLoading || !!selectedMessage.read_at}
-                      className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                      className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
                     >
                       <EnvelopeOpenIcon className="h-4 w-4" aria-hidden="true" />
                       既読にする
@@ -376,7 +376,7 @@ export default function MessagesClient() {
                       type="button"
                       onClick={() => handleMark(selectedMessage, { read: false, archive: selectedMessage.archived })}
                       disabled={actionLoading || !selectedMessage.read_at}
-                      className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <EnvelopeIcon className="h-4 w-4" aria-hidden="true" />
                       未読に戻す
@@ -394,8 +394,8 @@ export default function MessagesClient() {
                       disabled={actionLoading}
                       className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
                         selectedMessage.archived
-                          ? "border border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100"
-                          : "border border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700"
+                          ? "border border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300 hover:bg-sky-100"
+                          : "border border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-700"
                       }`}
                     >
                       <ArchiveBoxIcon className="h-4 w-4" aria-hidden="true" />
@@ -410,7 +410,7 @@ export default function MessagesClient() {
                   </div>
 
                   <article
-                    className="prose prose-sm max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-blue-600"
+                    className="prose prose-sm max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-sky-600"
                     dangerouslySetInnerHTML={{ __html: messageBodyHtml }}
                   />
                 </div>

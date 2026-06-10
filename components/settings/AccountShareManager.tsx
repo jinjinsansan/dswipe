@@ -142,7 +142,7 @@ export default function AccountShareManager() {
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 disabled={inviteStatus === 'loading'}
               >
                 {inviteStatus === 'loading' ? t('buttons.sendingInvite') : t('buttons.sendInvite')}

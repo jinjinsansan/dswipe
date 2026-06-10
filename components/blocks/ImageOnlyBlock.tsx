@@ -124,7 +124,7 @@ export default function ImageOnlyBlock({ content, isEditing, onEdit }: ImageOnly
                 type="text"
                 value={imageUrl}
                 onChange={handleEdit('imageUrl')}
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                 placeholder="https://example.com/image.jpg"
               />
             </div>

@@ -199,7 +199,7 @@ export default function BillingProfileCard() {
               required
               value={form.fullName}
               onChange={handleChange('fullName')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               disabled={loading || saving}
             />
           </div>
@@ -214,7 +214,7 @@ export default function BillingProfileCard() {
               required
               value={form.email}
               onChange={handleChange('email')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               disabled={loading || saving}
             />
           </div>
@@ -229,7 +229,7 @@ export default function BillingProfileCard() {
               required
               value={form.phoneNumber}
               onChange={handleChange('phoneNumber')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               disabled={loading || saving}
             />
           </div>
@@ -257,7 +257,7 @@ export default function BillingProfileCard() {
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
             disabled={loading || disableSubmit}
           >
             {saving ? t('buttons.saving') : t('buttons.save')}

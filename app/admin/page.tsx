@@ -223,7 +223,7 @@ const getMaintenanceScopeLabel = (scope: string) => {
 const FRAUD_SEVERITY_BADGE: Record<string, string> = {
   high: 'bg-red-100 text-red-700',
   medium: 'bg-amber-100 text-amber-700',
-  low: 'bg-blue-100 text-blue-700',
+  low: 'bg-sky-100 text-sky-700',
 };
 
 export default function AdminPanelPage() {
@@ -1272,11 +1272,11 @@ export default function AdminPanelPage() {
               setFeaturedSearch((prev) => ({ ...prev, [searchKey]: event.target.value } as typeof prev))
             }
             placeholder="キーワード検索"
-            className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+            className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 placeholder:text-slate-400 focus:border-sky-500 focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+            className="rounded-xl bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700"
           >
             検索
           </button>
@@ -1448,7 +1448,7 @@ export default function AdminPanelPage() {
         <button
           type="button"
           onClick={handleRefreshAll}
-          className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+          className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 hover:bg-sky-100"
         >
           <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
           最新情報に更新
@@ -1469,7 +1469,7 @@ export default function AdminPanelPage() {
                       type="button"
                       onClick={fetchUserStats}
                       disabled={userStatsLoading}
-                      className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-400 disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-sky-400 disabled:opacity-60"
                     >
                       <ArrowPathIcon className={`h-4 w-4 ${userStatsLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
                       集計を更新
@@ -1522,12 +1522,12 @@ export default function AdminPanelPage() {
                     value={userSearch}
                     onChange={(event) => setUserSearch(event.target.value)}
                     placeholder="ユーザー名・メールアドレスで検索"
-                    className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                   />
                   <div className="flex gap-2">
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                      className="px-4 py-2 rounded-xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700"
                     >
                       検索
                     </button>
@@ -1577,7 +1577,7 @@ export default function AdminPanelPage() {
                             key={summary.id}
                             onClick={() => handleSelectUser(summary.id)}
                             className={`grid grid-cols-8 gap-3 px-4 py-3 text-left transition-colors ${
-                              isSelected ? 'bg-blue-50 text-blue-700' : 'hover:bg-blue-50 text-gray-700'
+                              isSelected ? 'bg-sky-50 text-sky-700' : 'hover:bg-sky-50 text-gray-700'
                             }`}
                           >
                             <div className="truncate text-sm font-semibold">{summary.username}</div>
@@ -1642,8 +1642,8 @@ export default function AdminPanelPage() {
                           onClick={() => handleSelectUser(summary.id)}
                           className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
                             isSelected
-                              ? 'border-blue-500 bg-blue-50 text-blue-700'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50'
+                              ? 'border-sky-500 bg-sky-50 text-sky-700'
+                              : 'border-gray-200 bg-white text-gray-700 hover:border-sky-400 hover:bg-sky-50'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
@@ -1773,7 +1773,7 @@ export default function AdminPanelPage() {
                         )}
                       </div>
 
-                      <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
+                      <div className="rounded-xl border border-sky-200 bg-sky-50 p-3">
                         <div className="flex items-center justify-between">
                           <p className="text-[11px] text-gray-500">クイック決済の請求先</p>
                           <span className="text-[10px] text-gray-600">
@@ -1803,7 +1803,7 @@ export default function AdminPanelPage() {
                           value={blockReason}
                           onChange={(event) => setBlockReason(event.target.value)}
                           placeholder="ブロック理由 (任意)"
-                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                           rows={3}
                         />
                         <div className="flex flex-col sm:flex-row gap-2">
@@ -1841,19 +1841,19 @@ export default function AdminPanelPage() {
                             type="number"
                             value={grantAmount}
                             onChange={(event) => setGrantAmount(Number(event.target.value))}
-                            className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                            className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                           />
                           <input
                             type="text"
                             value={grantDescription}
                             onChange={(event) => setGrantDescription(event.target.value)}
                             placeholder="付与・減算理由"
-                            className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                            className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                           />
                           <button
                             type="submit"
                             disabled={userActionLoading}
-                            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                            className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 disabled:opacity-60"
                           >
                             実行
                           </button>
@@ -1918,7 +1918,7 @@ export default function AdminPanelPage() {
                                       onClick={() => handleUnpublishNote(note.id)}
                                       disabled={isProcessing}
                                       className={`inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-600 ${
-                                        isProcessing ? 'opacity-60' : 'hover:border-blue-400'
+                                        isProcessing ? 'opacity-60' : 'hover:border-sky-400'
                                       }`}
                                     >
                                       <EyeSlashIcon className={`h-3.5 w-3.5 ${isProcessing ? 'animate-spin' : ''}`} aria-hidden="true" />
@@ -2073,9 +2073,9 @@ export default function AdminPanelPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                    <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold text-blue-700">クイック決済の請求先</h3>
+                        <h3 className="text-sm font-semibold text-sky-700">クイック決済の請求先</h3>
                         <span className="text-[11px] text-gray-600">
                           {selectedUserDetail.billing_updated_at ? `最終更新: ${formatDateTime(selectedUserDetail.billing_updated_at)}` : '未登録'}
                         </span>
@@ -2112,7 +2112,7 @@ export default function AdminPanelPage() {
                         value={blockReason}
                         onChange={(event) => setBlockReason(event.target.value)}
                         placeholder="ブロック理由 (任意)"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                         rows={3}
                       />
                       <div className="flex flex-wrap gap-2">
@@ -2150,19 +2150,19 @@ export default function AdminPanelPage() {
                           type="number"
                           value={grantAmount}
                           onChange={(event) => setGrantAmount(Number(event.target.value))}
-                          className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                          className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                         />
                         <input
                           type="text"
                           value={grantDescription}
                           onChange={(event) => setGrantDescription(event.target.value)}
                           placeholder="メモ (任意)"
-                          className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                          className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                         />
                         <button
                           type="submit"
                           disabled={userActionLoading}
-                          className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-60"
+                          className="px-4 py-2 rounded-xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 disabled:opacity-60"
                         >
                           実行
                         </button>
@@ -2277,7 +2277,7 @@ export default function AdminPanelPage() {
                                           type="button"
                                           onClick={() => handleUnpublishNote(note.id)}
                                           disabled={isProcessing}
-                                          className={`inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-600 hover:border-blue-400 ${
+                                          className={`inline-flex items-center gap-1 rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-600 hover:border-sky-400 ${
                                             isProcessing ? 'opacity-60' : ''
                                           }`}
                                         >
@@ -2414,12 +2414,12 @@ export default function AdminPanelPage() {
                   value={marketSearch}
                   onChange={(event) => setMarketSearch(event.target.value)}
                   placeholder="LPタイトル・スラッグで検索"
-                  className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                  className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                    className="px-4 py-2 rounded-xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700"
                   >
                     検索
                   </button>
@@ -2607,9 +2607,9 @@ export default function AdminPanelPage() {
               ) : (
                 <>
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                    <div className="rounded-2xl border border-gray-200 bg-blue-50 p-4">
-                      <p className="text-xs font-semibold text-blue-600">総ポイント購入</p>
-                      <p className="mt-2 text-2xl font-semibold text-blue-700">{formatPoints(totals?.purchased || 0)}</p>
+                    <div className="rounded-2xl border border-gray-200 bg-sky-50 p-4">
+                      <p className="text-xs font-semibold text-sky-600">総ポイント購入</p>
+                      <p className="mt-2 text-2xl font-semibold text-sky-700">{formatPoints(totals?.purchased || 0)}</p>
                     </div>
                     <div className="rounded-2xl border border-gray-200 bg-red-50 p-4">
                       <p className="text-xs font-semibold text-red-600">マーケット消費</p>
@@ -2722,7 +2722,7 @@ export default function AdminPanelPage() {
                   <button
                     type="button"
                     onClick={() => fetchShareDashboard()}
-                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                   >
                     <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                     統計を更新
@@ -2737,9 +2737,9 @@ export default function AdminPanelPage() {
                   </div>
                 ) : (
                   <div className="mt-6 grid gap-4 md:grid-cols-3 xl:grid-cols-5">
-                    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                      <p className="text-xs font-semibold text-blue-600">累計シェア数</p>
-                      <p className="mt-2 text-2xl font-semibold text-blue-700">{formatNumber(shareOverview.total_shares)}</p>
+                    <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
+                      <p className="text-xs font-semibold text-sky-600">累計シェア数</p>
+                      <p className="mt-2 text-2xl font-semibold text-sky-700">{formatNumber(shareOverview.total_shares)}</p>
                     </div>
                     <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
                       <p className="text-xs font-semibold text-emerald-600">累計付与ポイント</p>
@@ -2853,7 +2853,7 @@ export default function AdminPanelPage() {
                         type="button"
                         onClick={() => setShareFilters({ suspiciousOnly: false })}
                         className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
-                          !shareFilters.suspiciousOnly ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          !shareFilters.suspiciousOnly ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         全件
@@ -2870,7 +2870,7 @@ export default function AdminPanelPage() {
                       <button
                         type="button"
                         onClick={() => fetchShareLogs(shareFilters.suspiciousOnly)}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-400"
+                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-sky-400"
                       >
                         <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                         更新
@@ -2917,7 +2917,7 @@ export default function AdminPanelPage() {
                                     href={log.tweet_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-xs font-semibold text-blue-600 hover:underline break-all"
+                                    className="text-xs font-semibold text-sky-600 hover:underline break-all"
                                   >
                                     {log.tweet_id}
                                   </a>
@@ -2957,7 +2957,7 @@ export default function AdminPanelPage() {
                           value={shareRewardInput}
                           onChange={(event) => setShareRewardInput(event.target.value)}
                           placeholder="例: 100"
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                         />
                       </div>
                       {shareRewardSettings && (
@@ -2984,7 +2984,7 @@ export default function AdminPanelPage() {
                       <button
                         type="button"
                         onClick={() => fetchShareAlerts()}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-400"
+                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-sky-400"
                       >
                         <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                         更新
@@ -3133,7 +3133,7 @@ export default function AdminPanelPage() {
                     <button
                       type="button"
                       onClick={() => fetchMaintenanceData(maintenanceScopeFilter)}
-                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                     >
                       <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                       最新に更新
@@ -3141,7 +3141,7 @@ export default function AdminPanelPage() {
                     <button
                       type="button"
                       onClick={handleRefreshAll}
-                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                     >
                       全体再取得
                     </button>
@@ -3156,7 +3156,7 @@ export default function AdminPanelPage() {
                       onClick={() => setMaintenanceScopeFilter(option.value)}
                       className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                         maintenanceScopeFilter === option.value
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-sky-600 text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
@@ -3222,7 +3222,7 @@ export default function AdminPanelPage() {
                                       type="button"
                                       onClick={() => handleMaintenanceStatusChange(mode, 'active')}
                                       disabled={maintenanceStatusUpdating === mode.id}
-                                      className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                      className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                       開始
                                     </button>
@@ -3282,7 +3282,7 @@ export default function AdminPanelPage() {
                                 type="button"
                                 onClick={() => handleMaintenanceStatusChange(mode, 'active')}
                                 disabled={maintenanceStatusUpdating === mode.id}
-                                className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 開始
                               </button>
@@ -3321,7 +3321,7 @@ export default function AdminPanelPage() {
                       <select
                         value={maintenanceForm.scope}
                         onChange={(event) => setMaintenanceForm((prev) => ({ ...prev, scope: event.target.value }))}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       >
                         {MAINTENANCE_SCOPE_OPTIONS.filter((option) => option.value !== 'all').map((option) => (
                           <option key={option.value} value={option.value}>
@@ -3339,7 +3339,7 @@ export default function AdminPanelPage() {
                         maxLength={120}
                         required
                         placeholder="例：決済システム臨時メンテナンス"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2 lg:col-span-2">
@@ -3350,7 +3350,7 @@ export default function AdminPanelPage() {
                         rows={3}
                         maxLength={2000}
                         placeholder="ユーザー向けの影響範囲や代替手段などを記載してください。"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -3359,7 +3359,7 @@ export default function AdminPanelPage() {
                         type="datetime-local"
                         value={maintenanceForm.planned_start}
                         onChange={(event) => setMaintenanceForm((prev) => ({ ...prev, planned_start: event.target.value }))}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -3368,14 +3368,14 @@ export default function AdminPanelPage() {
                         type="datetime-local"
                         value={maintenanceForm.planned_end}
                         onChange={(event) => setMaintenanceForm((prev) => ({ ...prev, planned_end: event.target.value }))}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="lg:col-span-2">
                       <button
                         type="submit"
                         disabled={maintenanceLoading}
-                        className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-2 text-sm font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         メンテナンスを登録
                       </button>
@@ -3393,7 +3393,7 @@ export default function AdminPanelPage() {
                   <button
                     type="button"
                     onClick={() => fetchStatusCheckData()}
-                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                   >
                     <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                     最新に更新
@@ -3478,7 +3478,7 @@ export default function AdminPanelPage() {
                         maxLength={80}
                         required
                         placeholder="例：Supabase, Stripe"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -3486,7 +3486,7 @@ export default function AdminPanelPage() {
                       <select
                         value={statusCheckForm.status}
                         onChange={(event) => setStatusCheckForm((prev) => ({ ...prev, status: event.target.value }))}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       >
                         <option value="healthy">正常</option>
                         <option value="degraded">注意</option>
@@ -3500,7 +3500,7 @@ export default function AdminPanelPage() {
                         min="0"
                         value={statusCheckForm.response_time_ms}
                         onChange={(event) => setStatusCheckForm((prev) => ({ ...prev, response_time_ms: event.target.value }))}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2 lg:col-span-2">
@@ -3511,7 +3511,7 @@ export default function AdminPanelPage() {
                         rows={3}
                         maxLength={2000}
                         placeholder="障害内容や一次対応の状況を記録してください"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="lg:col-span-2">
@@ -3538,7 +3538,7 @@ export default function AdminPanelPage() {
                   <button
                     type="button"
                     onClick={resetAnnouncementForm}
-                    className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                   >
                     {editingAnnouncementId ? '新規作成モードに戻る' : '入力内容をクリア'}
                   </button>
@@ -3555,7 +3555,7 @@ export default function AdminPanelPage() {
                         required
                         maxLength={200}
                         placeholder="例：年末年始サポート体制のご案内"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div>
@@ -3564,7 +3564,7 @@ export default function AdminPanelPage() {
                         type="datetime-local"
                         value={announcementPublishedAt}
                         onChange={(event) => setAnnouncementPublishedAt(event.target.value)}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                         required
                       />
                       <p className="mt-1 text-xs text-gray-600">配信日時を指定できます。未設定の場合は現在時刻で公開されます。</p>
@@ -3580,7 +3580,7 @@ export default function AdminPanelPage() {
                       required
                       maxLength={255}
                       placeholder="例：【重要】 新料金プラン提供のお知らせ"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                     />
                     <p className="mt-1 text-xs text-gray-600">ダッシュボードでは投稿日とサマリーのみ表示され、クリックで本文をモーダル表示します。</p>
                   </div>
@@ -3592,7 +3592,7 @@ export default function AdminPanelPage() {
                       onChange={(event) => setAnnouncementBody(event.target.value)}
                       required
                       rows={8}
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none"
                       placeholder="本文を入力してください。改行で段落を構成できます。"
                     />
                   </div>
@@ -3603,7 +3603,7 @@ export default function AdminPanelPage() {
                         type="checkbox"
                         checked={announcementPublished}
                         onChange={(event) => setAnnouncementPublished(event.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 bg-white text-blue-500 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-gray-300 bg-white text-sky-500 focus:ring-sky-500"
                       />
                       公開中として表示
                     </label>
@@ -3632,7 +3632,7 @@ export default function AdminPanelPage() {
                     <button
                       type="submit"
                       disabled={announcementSaving}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/40 transition-colors hover:bg-blue-700 disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-900/40 transition-colors hover:bg-sky-700 disabled:opacity-60"
                     >
                       {editingAnnouncementId ? 'お知らせを更新する' : 'お知らせを公開する'}
                     </button>
@@ -3640,7 +3640,7 @@ export default function AdminPanelPage() {
                       <button
                         type="button"
                         onClick={resetAnnouncementForm}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-600 hover:border-sky-400"
                       >
                         新規作成に戻る
                       </button>
@@ -3659,7 +3659,7 @@ export default function AdminPanelPage() {
                   <button
                     type="button"
                     onClick={fetchAnnouncements}
-                    className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-blue-400"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:border-sky-400"
                   >
                     <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                     最新情報を取得
@@ -3683,7 +3683,7 @@ export default function AdminPanelPage() {
                               <span className="inline-flex items-center rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-200">Draft</span>
                             )}
                             {announcement.highlight && announcement.is_published && (
-                              <span className="inline-flex items-center rounded-full border border-blue-500/50 bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-200">Highlight</span>
+                              <span className="inline-flex items-center rounded-full border border-sky-500/50 bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-200">Highlight</span>
                             )}
                           </div>
                           <p className="text-sm font-semibold text-gray-900 truncate">{announcement.title}</p>
@@ -3692,7 +3692,7 @@ export default function AdminPanelPage() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => handleAnnouncementEdit(announcement)}
-                            className="inline-flex items-center justify-center gap-1 rounded-full border border-blue-500/50 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-100 hover:bg-blue-500/20"
+                            className="inline-flex items-center justify-center gap-1 rounded-full border border-sky-500/50 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-100 hover:bg-sky-500/20"
                           >
                             編集
                           </button>
@@ -3716,7 +3716,7 @@ export default function AdminPanelPage() {
             <div className="mx-auto max-w-3xl space-y-6">
               <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-600">
                     <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                   <div>
@@ -3733,7 +3733,7 @@ export default function AdminPanelPage() {
                         type="password"
                         value={secretMemoPasswordInput}
                         onChange={(event) => setSecretMemoPasswordInput(event.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                         placeholder="パスワードを入力"
                         autoComplete="off"
                         disabled={secretMemoLoading}
@@ -3743,7 +3743,7 @@ export default function AdminPanelPage() {
                     <button
                       type="submit"
                       disabled={secretMemoLoading || !secretMemoPasswordInput.trim()}
-                      className="inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+                      className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-gray-300"
                     >
                       {secretMemoLoading ? '検証中...' : 'ロック解除'}
                     </button>
@@ -3765,7 +3765,7 @@ export default function AdminPanelPage() {
                         onChange={(event) => setSecretMemoContent(event.target.value)}
                         rows={12}
                         maxLength={10000}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
@@ -3773,7 +3773,7 @@ export default function AdminPanelPage() {
                         type="button"
                         onClick={handleSecretMemoSave}
                         disabled={secretMemoSaving}
-                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-gray-300"
                       >
                         {secretMemoSaving ? '保存中...' : 'メモを保存'}
                       </button>
@@ -3797,7 +3797,7 @@ export default function AdminPanelPage() {
                           <p className="text-sm font-semibold text-gray-900">ファイルアップロード</p>
                           <p className="text-xs text-gray-500">最大5MB / 50ファイルまで保存できます。</p>
                         </div>
-                        <label className={`inline-flex cursor-pointer items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold ${secretMemoUploading ? 'bg-gray-200 text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-500'}`}>
+                        <label className={`inline-flex cursor-pointer items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold ${secretMemoUploading ? 'bg-gray-200 text-gray-500' : 'bg-sky-600 text-white hover:bg-sky-500'}`}>
                           <input
                             ref={secretMemoFileInputRef}
                             type="file"
@@ -3846,7 +3846,7 @@ export default function AdminPanelPage() {
                                       <button
                                         type="button"
                                         onClick={() => handleSecretMemoFilePreview(file.id)}
-                                        className="rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+                                        className="rounded-full border border-sky-200 px-3 py-1 text-xs font-semibold text-sky-600 hover:bg-sky-50"
                                       >
                                         表示
                                       </button>
@@ -3927,7 +3927,7 @@ export default function AdminPanelPage() {
                       <a
                         href={secretMemoPreview.dataUrl}
                         download={secretMemoPreview.file.filename}
-                        className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+                        className="rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500"
                       >
                         ダウンロード
                       </a>

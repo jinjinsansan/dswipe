@@ -163,7 +163,7 @@ ${SHADE_KEYS
       <div className="flex gap-2 pt-4 border-t border-gray-700">
         <button
           onClick={handleApply}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          className="flex-1 px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors"
         >
           このテーマを適用
         </button>

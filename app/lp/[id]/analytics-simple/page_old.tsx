@@ -55,7 +55,7 @@ export default function SimpleAnalyticsPage() {
           <pre className="bg-slate-900 p-4 rounded text-red-300 font-mono text-sm">{error}</pre>
           <Link 
             href="/dashboard"
-            className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="mt-4 inline-block px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700"
           >
             ダッシュボードに戻る
           </Link>
@@ -92,7 +92,7 @@ export default function SimpleAnalyticsPage() {
             </Link>
             <Link
               href="/dashboard"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+              className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 text-sm"
             >
               ダッシュボード
             </Link>
@@ -103,9 +103,9 @@ export default function SimpleAnalyticsPage() {
       <main className="p-6 max-w-7xl mx-auto">
         {/* KPI Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="group relative bg-gradient-to-br from-blue-600/20 to-blue-800/20 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105">
-            <div className="absolute top-4 right-4 text-blue-400/30 text-5xl font-bold">👁️</div>
-            <div className="text-sm text-blue-300 font-medium mb-2 uppercase tracking-wider">総閲覧数</div>
+          <div className="group relative bg-gradient-to-br from-sky-600/20 to-sky-800/20 backdrop-blur-sm border border-sky-500/30 rounded-2xl p-6 hover:shadow-xl hover:shadow-sky-500/20 transition-all duration-300 hover:scale-105">
+            <div className="absolute top-4 right-4 text-sky-400/30 text-5xl font-bold">👁️</div>
+            <div className="text-sm text-sky-300 font-medium mb-2 uppercase tracking-wider">総閲覧数</div>
             <div className="text-4xl font-bold text-white mb-1">{Number(data.total_views || 0).toLocaleString()}</div>
             <div className="text-xs text-slate-400">Total Views</div>
           </div>
@@ -149,20 +149,20 @@ export default function SimpleAnalyticsPage() {
                   <div key={step.step_id || index} className="space-y-3 p-4 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-all duration-200">
                     <div className="flex items-center justify-between text-sm text-slate-300">
                       <div className="flex items-center gap-3">
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white text-sm font-bold shadow-lg">
+                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-sky-500 to-sky-700 text-white text-sm font-bold shadow-lg">
                           {step.step_order + 1}
                         </span>
                         <span className="font-semibold text-white">ステップ {step.step_order + 1}</span>
                       </div>
                       <div className="flex items-center gap-6 text-xs">
-                        <span className="text-slate-400">閲覧: <span className="text-blue-400 font-bold">{step.step_views}</span></span>
+                        <span className="text-slate-400">閲覧: <span className="text-sky-400 font-bold">{step.step_views}</span></span>
                         <span className="text-slate-400">離脱: <span className="text-orange-400 font-bold">{step.step_exits}</span></span>
                         <span className="text-emerald-400 font-bold text-sm">🎯 {convRate.toFixed(1)}%</span>
                       </div>
                     </div>
                     <div className="relative h-10 bg-slate-950 border border-slate-700 rounded-xl overflow-hidden shadow-inner">
                       <div
-                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 flex items-center justify-end px-4 shadow-lg transition-all duration-500"
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-600 via-sky-500 to-sky-400 flex items-center justify-end px-4 shadow-lg transition-all duration-500"
                         style={{ width: `${width}%` }}
                       >
                         {width > 15 && (
@@ -219,7 +219,7 @@ export default function SimpleAnalyticsPage() {
         </section>
 
         {/* Public URL */}
-        <section className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/50 rounded-2xl p-8 shadow-2xl">
+        <section className="bg-gradient-to-br from-sky-900/30 to-sky-800/30 border border-sky-500/50 rounded-2xl p-8 shadow-2xl">
           <div className="flex items-center gap-3 mb-6">
             <div className="text-3xl">🔗</div>
             <h3 className="text-2xl font-bold text-white">公開URL</h3>
@@ -236,7 +236,7 @@ export default function SimpleAnalyticsPage() {
                 navigator.clipboard.writeText(publicUrl);
                 alert('URLをコピーしました');
               }}
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
+              className="px-6 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 text-sm font-medium"
             >
               コピー
             </button>

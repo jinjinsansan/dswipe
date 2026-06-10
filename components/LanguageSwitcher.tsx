@@ -97,7 +97,7 @@ export default function LanguageSwitcher() {
       <select
         value={locale}
         onChange={handleChange}
-        className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
         disabled={isPending}
       >
         <option value="ja">{t('localeName.ja')}</option>

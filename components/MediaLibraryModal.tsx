@@ -406,7 +406,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
-                  className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
                   {isUploading ? 'アップロード中…' : 'ファイルを選択'}
@@ -438,9 +438,9 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
           onDrop={handleDrop}
         >
           {isDragOver ? (
-            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-400 bg-blue-500/10 text-center text-sm font-semibold text-blue-200">
+            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-sky-500/10 text-center text-sm font-semibold text-sky-200">
               <p>ここにファイルをドロップして追加</p>
-              <p className="mt-1 text-xs text-blue-100">アップロード後にすぐノートへ挿入できます</p>
+              <p className="mt-1 text-xs text-sky-100">アップロード後にすぐノートへ挿入できます</p>
             </div>
           ) : null}
 
@@ -478,7 +478,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                   <div
                     key={item.url}
                     className={`group overflow-hidden rounded-lg border-2 transition-all ${
-                      isSelected ? 'border-blue-500 ring-2 ring-blue-400/40' : 'border-gray-700 hover:border-gray-500'
+                      isSelected ? 'border-sky-500 ring-2 ring-sky-400/40' : 'border-gray-700 hover:border-gray-500'
                     }`}
                   >
                     <button
@@ -492,7 +492,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                         ) : (
                           <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
                             {isVideo ? (
-                              <PlayCircleIcon className="h-10 w-10 text-blue-300" aria-hidden="true" />
+                              <PlayCircleIcon className="h-10 w-10 text-sky-300" aria-hidden="true" />
                             ) : (
                               <PhotoIcon className="h-8 w-8 text-gray-500" aria-hidden="true" />
                             )}
@@ -506,14 +506,14 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                         </span>
                         <span className="inline-flex items-center gap-1">
                           {isVideo ? (
-                            <span className="rounded-full bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-blue-200">VIDEO</span>
+                            <span className="rounded-full bg-sky-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-sky-200">VIDEO</span>
                           ) : isImage ? (
                             <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-200">IMAGE</span>
                           ) : (
                             <span className="rounded-full bg-slate-500/30 px-1.5 py-0.5 text-[9px] font-semibold text-slate-200">FILE</span>
                           )}
                           {isSelected ? (
-                            <span className="rounded-full bg-blue-500 px-1.5 py-0.5 text-[9px] font-semibold text-white">選択中</span>
+                            <span className="rounded-full bg-sky-500 px-1.5 py-0.5 text-[9px] font-semibold text-white">選択中</span>
                           ) : null}
                         </span>
                       </div>
@@ -525,7 +525,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                         onClick={() => handleCopyUrl(item)}
                         className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 transition ${
                           copiedUrl === item.url
-                            ? 'bg-blue-500 text-white'
+                            ? 'bg-sky-500 text-white'
                             : 'bg-gray-700/80 text-gray-200 hover:bg-gray-600/80'
                         }`}
                       >
@@ -541,7 +541,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
           {isUploading ? (
             <div className="absolute inset-x-0 bottom-4 flex justify-center">
-              <div className="rounded-full bg-blue-500/20 px-4 py-1 text-xs font-semibold text-blue-200">アップロード中...</div>
+              <div className="rounded-full bg-sky-500/20 px-4 py-1 text-xs font-semibold text-sky-200">アップロード中...</div>
             </div>
           ) : null}
         </div>
@@ -557,7 +557,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
           <button
             onClick={handleSelect}
             disabled={!selectedItem}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
           >
             選択
           </button>

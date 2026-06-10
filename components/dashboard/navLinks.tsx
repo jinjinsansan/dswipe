@@ -109,18 +109,18 @@ const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfi
   lp: {
     labelKey: 'groups.lp',
     defaultLabel: 'LPメニュー',
-    headingClass: 'text-blue-500',
+    headingClass: 'text-sky-500',
     desktop: {
-      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100',
-      active: 'bg-blue-600 text-white border border-blue-600 shadow-sm',
-      icon: 'text-blue-500',
+      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100',
+      active: 'bg-sky-600 text-white border border-sky-600 shadow-sm',
+      icon: 'text-sky-500',
       iconActive: 'text-white',
-      badge: 'bg-blue-100 text-blue-700 border border-blue-200',
+      badge: 'bg-sky-100 text-sky-700 border border-sky-200',
     },
     mobile: {
-      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
-      active: 'bg-blue-600 text-white shadow-sm',
-      badge: 'bg-white/80 text-blue-600',
+      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100',
+      active: 'bg-sky-600 text-white shadow-sm',
+      badge: 'bg-white/80 text-sky-600',
     },
   },
   note: {

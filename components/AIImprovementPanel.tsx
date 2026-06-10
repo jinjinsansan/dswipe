@@ -65,7 +65,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
       case 'medium':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
       case 'low':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
+        return 'bg-sky-500/20 text-sky-400 border-sky-500/50';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
     }
@@ -120,7 +120,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
       )}
 
       {overallScore !== null && (
-        <div className="mb-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-lg p-4">
+        <div className="mb-6 bg-gradient-to-r from-purple-500/10 to-sky-500/10 border border-purple-500/30 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 text-white">
@@ -166,7 +166,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
               {onApplySuggestion && (
                 <button
                   onClick={() => onApplySuggestion(suggestion)}
-                  className="w-full px-4 py-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm font-medium"
+                  className="w-full px-4 py-2 bg-sky-600/20 text-sky-400 rounded hover:bg-sky-600/30 transition-colors text-sm font-medium"
                 >
                   この提案を適用
                 </button>

@@ -55,13 +55,13 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
         {/* Header */}
         <div className="relative flex items-center justify-between px-3 sm:px-5 sm:px-6 py-3 sm:py-4 sm:py-5 border-b border-slate-200 flex-shrink-0">
           <div className="min-w-0 flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.32em] text-blue-600/80 mb-1">AI Assistant</p>
+              <p className="text-[10px] uppercase tracking-[0.32em] text-sky-600/80 mb-1">AI Assistant</p>
               <h2 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">AI文章生成</h2>
               <p className="text-xs text-slate-500 mt-1">{typeLabels[type]}を生成します</p>
             </div>
@@ -110,8 +110,8 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
         <div className="relative flex-1 overflow-y-auto min-h-0 px-3 sm:px-5 sm:px-6 py-4 sm:py-5 sm:py-6">
           {suggestions.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 mb-4 sm:mb-6">
-                <svg className="w-12 h-12 sm:w-14 sm:h-14 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-sky-500/20 to-purple-500/20 mb-4 sm:mb-6">
+                <svg className="w-12 h-12 sm:w-14 sm:h-14 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
               </div>
@@ -121,7 +121,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl transition-all font-semibold text-sm sm:text-base shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white rounded-xl transition-all font-semibold text-sm sm:text-base shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 {isGenerating ? (
                   <>
@@ -151,18 +151,18 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
                     onSelect(suggestion);
                     onClose();
                   }}
-                  className="group relative w-full text-left p-3 sm:p-4 overflow-hidden rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 transition-all hover:shadow-lg"
+                  className="group relative w-full text-left p-3 sm:p-4 overflow-hidden rounded-xl border border-slate-200 bg-white hover:border-sky-400 hover:bg-sky-50 transition-all hover:shadow-lg"
                 >
 
                   
                   <div className="relative flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="text-slate-500 text-[10px] sm:text-xs mb-1 uppercase tracking-wider">候補 {index + 1}</div>
-                      <div className="text-slate-900 group-hover:text-blue-900 transition-colors text-sm sm:text-base break-words">
+                      <div className="text-slate-900 group-hover:text-sky-900 transition-colors text-sm sm:text-base break-words">
                         {suggestion}
                       </div>
                     </div>
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-blue-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-sky-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </div>

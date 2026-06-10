@@ -200,7 +200,7 @@ export default function LineSettingsPage() {
                   onChange={(e) => setFormData({ ...formData, bonus_points: parseInt(e.target.value) || 0 })}
                   min="0"
                   max="10000"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 focus:outline-none"
                   placeholder="300"
                 />
                 <p className="mt-2 text-xs text-gray-500">
@@ -218,7 +218,7 @@ export default function LineSettingsPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
                   maxLength={500}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 focus:outline-none resize-none"
                   placeholder="LINE公式アカウントを追加して300ポイントGET！"
                 />
                 <p className="mt-2 text-xs text-gray-500">
@@ -235,7 +235,7 @@ export default function LineSettingsPage() {
                   type="url"
                   value={formData.line_add_url}
                   onChange={(e) => setFormData({ ...formData, line_add_url: e.target.value })}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 focus:outline-none"
                   placeholder="https://lin.ee/JFvc4dE"
                 />
                 <p className="mt-2 text-xs text-gray-500">
@@ -255,7 +255,7 @@ export default function LineSettingsPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="px-6 py-3 rounded-xl bg-sky-600 text-white font-semibold hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {isSaving ? '保存中...' : '設定を保存'}
               </button>

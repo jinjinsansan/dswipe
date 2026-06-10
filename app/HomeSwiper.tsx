@@ -108,7 +108,7 @@ export default function HomeSwiper() {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
                     href="/register"
-                    className="group relative px-8 py-4 sm:px-10 sm:py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-lg shadow-2xl border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all hover:scale-105"
+                    className="group relative px-8 py-4 sm:px-10 sm:py-5 bg-gradient-to-r from-sky-600 to-sky-700 text-white rounded-lg font-semibold text-lg shadow-2xl border-2 border-white hover:from-sky-700 hover:to-sky-800 transition-all hover:scale-105"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       <SparklesIcon className="w-5 h-5" />
@@ -143,11 +143,11 @@ export default function HomeSwiper() {
                 </h2>
                 
                 <div className="relative max-w-2xl mx-auto">
-                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-blue-600">
+                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-sky-600">
                     <p className="text-slate-700 text-lg sm:text-2xl md:text-3xl font-semibold mb-2 sm:mb-3">
                       コンバージョン率は
                     </p>
-                    <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-blue-600">
+                    <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-sky-600">
                       縦長LPの３倍増
                     </div>
                   </div>
@@ -179,11 +179,11 @@ export default function HomeSwiper() {
                     <p className="text-xs sm:text-sm text-slate-500 font-light">月額50000円以上〜</p>
                   </div>
 
-                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-blue-600">
+                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-sky-600">
                     <p className="text-slate-700 text-lg sm:text-2xl md:text-3xl font-semibold mb-2 sm:mb-3">
                       D-swipe
                     </p>
-                    <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-blue-600 mb-2">
+                    <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-sky-600 mb-2">
                       ¥0
                     </div>
                     <p className="text-base sm:text-lg md:text-xl text-slate-700 font-medium">何個作成しても無料</p>
@@ -227,25 +227,25 @@ export default function HomeSwiper() {
                     </div>
                   </div>
 
-                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-blue-600">
+                  <div className="relative bg-white rounded-2xl p-6 sm:p-10 md:p-12 shadow-2xl border-4 border-sky-600">
                     <p className="text-slate-700 text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                       D-swipe
                     </p>
                     <div className="space-y-3 sm:space-y-4 text-left">
                       <div className="flex items-start gap-3">
-                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
+                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-sky-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
                         <p className="text-base sm:text-lg md:text-xl text-slate-700 font-semibold">画像も対応</p>
                       </div>
                       <div className="flex items-start gap-3">
-                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
+                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-sky-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
                         <p className="text-base sm:text-lg md:text-xl text-slate-700 font-semibold">AIアシスタントが５分で基礎を作成</p>
                       </div>
                       <div className="flex items-start gap-3">
-                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
+                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-sky-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
                         <p className="text-base sm:text-lg md:text-xl text-slate-700 font-semibold">Webサイト感がそのままスワイプ型へ</p>
                       </div>
                       <div className="flex items-start gap-3">
-                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
+                        <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-sky-600 flex-shrink-0 mt-0.5 stroke-[2.5]" />
                         <p className="text-base sm:text-lg md:text-xl text-slate-700 font-semibold">スワイプ時の感触も◎</p>
                       </div>
                     </div>
@@ -258,15 +258,15 @@ export default function HomeSwiper() {
 
         {/* スライド5: 販売者メリット1 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-blue-50 to-purple-50 overflow-hidden px-4 py-8">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-sky-50 to-purple-50 overflow-hidden px-4 py-8">
             <div className="w-full max-w-3xl mx-auto text-center">
               <div>
-                <p className="text-xs sm:text-sm text-blue-600 font-bold mb-2 sm:mb-3 uppercase tracking-wider">SELLER BENEFITS</p>
+                <p className="text-xs sm:text-sm text-sky-600 font-bold mb-2 sm:mb-3 uppercase tracking-wider">SELLER BENEFITS</p>
                 <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-slate-900">
                   販売者側メリット
                 </h2>
 
-                <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-blue-600">
+                <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-sky-600">
                   <div className="space-y-4 sm:space-y-5 text-left">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
@@ -279,7 +279,7 @@ export default function HomeSwiper() {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                         <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.5]" />
                       </div>
                       <div>
@@ -326,7 +326,7 @@ export default function HomeSwiper() {
 
         {/* スライド6: 販売者メリット2 */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-cyan-50 to-blue-50 overflow-hidden px-4 py-8">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-cyan-50 to-sky-50 overflow-hidden px-4 py-8">
             <div className="w-full max-w-4xl mx-auto text-center">
               <div>
                 <p className="text-xs sm:text-sm text-cyan-600 font-bold mb-2 sm:mb-3 uppercase tracking-wider">SELLER BENEFITS 2</p>
@@ -337,7 +337,7 @@ export default function HomeSwiper() {
                 <div className="space-y-4 max-w-2xl mx-auto">
                   <div className="bg-white border-2 border-slate-300 rounded-xl p-4 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold text-white shadow-md">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-600 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold text-white shadow-md">
                         1
                       </div>
                       <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900">スワイプLPかSwipeコラムを作成</h3>
@@ -355,9 +355,9 @@ export default function HomeSwiper() {
                     <p className="text-xs sm:text-sm text-slate-600 font-medium text-left pl-13 sm:pl-15">マーケットエリアからもお客様が流入</p>
                   </div>
 
-                  <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-blue-600">
+                  <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-sky-600">
                     <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
-                      <ShieldCheckIcon className="w-10 h-10 sm:w-12 sm:h-12 text-blue-600 stroke-[2.5]" />
+                      <ShieldCheckIcon className="w-10 h-10 sm:w-12 sm:h-12 text-sky-600 stroke-[2.5]" />
                       <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">審査なし・即宣伝可能</h3>
                     </div>
                     <p className="text-base sm:text-lg md:text-xl text-slate-700 font-semibold">デジタルコンテンツに煩わしい審査なし</p>
@@ -378,10 +378,10 @@ export default function HomeSwiper() {
                   購入者側メリット
                 </h2>
 
-                <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-blue-600">
+                <div className="relative bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border-4 border-sky-600">
                   <div className="space-y-4 sm:space-y-5 text-left">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                         <BoltIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.5]" />
                       </div>
                       <div>
@@ -563,11 +563,11 @@ export default function HomeSwiper() {
 
         {/* スライド11: 最終CTA */}
         <SwiperSlide>
-          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-slate-50 to-blue-50 overflow-hidden px-6 py-12">
+          <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-white via-slate-50 to-sky-50 overflow-hidden px-6 py-12">
             <div className="w-full max-w-4xl mx-auto text-center">
               <div
               >
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-sky-900 to-slate-900">
                   たった5分で
                   <br />
                   あなたのLPが完成
@@ -575,7 +575,7 @@ export default function HomeSwiper() {
 
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transition-all border border-blue-800"
+                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-sky-600 to-sky-700 text-white rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl hover:from-sky-700 hover:to-sky-800 transition-all border border-sky-800"
                 >
                   <RocketLaunchIcon className="w-5 h-5" />
                   D-swipeを始める

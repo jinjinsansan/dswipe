@@ -158,7 +158,7 @@ export default function NotePurchaseSuccessClient({ basePath = '' }: NotePurchas
                 </div>
               ) : null}
               {checking ? (
-                <p className="mt-2 text-xs text-blue-600">{t('checkingStatus')}</p>
+                <p className="mt-2 text-xs text-sky-600">{t('checkingStatus')}</p>
               ) : null}
               {notificationSent ? (
                 <p className="mt-2 text-xs text-emerald-600">{t('notificationSent')}</p>
@@ -176,7 +176,7 @@ export default function NotePurchaseSuccessClient({ basePath = '' }: NotePurchas
               {resolvedSlug ? (
                 <Link
                   href={withBasePath(basePath, `/notes/${resolvedSlug}`)}
-                  className="block w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="block w-full rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
                 >
                   {t('goToArticle')}
                 </Link>

@@ -61,7 +61,7 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
                 value={topHeading}
                 onChange={(event) => onEdit?.('topHeading', event.target.value)}
                 placeholder="見出し（空欄で非表示）"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-sky-500 focus:outline-none"
               />
             </div>
 
@@ -72,7 +72,7 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
                 onChange={(event) => onEdit?.('body', event.target.value)}
                 placeholder="説明文（空欄で非表示）"
                 rows={4}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none resize-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-sky-500 focus:outline-none resize-none"
               />
             </div>
 
@@ -83,7 +83,7 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
                 value={bottomHeading}
                 onChange={(event) => onEdit?.('bottomHeading', event.target.value)}
                 placeholder="見出し（空欄で非表示）"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-sky-500 focus:outline-none"
               />
             </div>
 

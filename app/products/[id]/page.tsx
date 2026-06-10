@@ -165,7 +165,7 @@ export default function ProductDetailPage() {
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-16">
           <div className="text-center">
             <p className="mb-4 text-lg text-red-400">商品が見つかりませんでした</p>
-            <Link href="/products" className="text-blue-400 transition-colors hover:text-blue-300">
+            <Link href="/products" className="text-sky-400 transition-colors hover:text-sky-300">
               商品一覧に戻る
             </Link>
           </div>
@@ -224,10 +224,10 @@ export default function ProductDetailPage() {
               href={`/u/${product.seller_username}`}
               className="inline-flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity"
             >
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+              <div className="w-8 h-8 bg-sky-600 rounded-full flex items-center justify-center text-white text-sm">
                 {product.seller_username?.charAt(0).toUpperCase() || 'S'}
               </div>
-              <span className="text-blue-400 hover:text-blue-300 text-sm">
+              <span className="text-sky-400 hover:text-sky-300 text-sm">
                 {product.seller_username}
               </span>
             </Link>
@@ -268,12 +268,12 @@ export default function ProductDetailPage() {
                       onClick={() => setSelectedMethod('points')}
                       className={`rounded-lg border px-4 py-3 text-left transition-colors ${
                         isPointsSelected
-                          ? 'border-blue-500 bg-blue-500/10'
-                          : 'border-gray-700 bg-gray-900/70 hover:border-blue-500/60'
+                          ? 'border-sky-500 bg-sky-500/10'
+                          : 'border-gray-700 bg-gray-900/70 hover:border-sky-500/60'
                       }`}
                     >
                       <div className="text-xs uppercase tracking-wide text-gray-400">ポイント決済</div>
-                      <div className="mt-1 text-2xl font-semibold text-blue-300">
+                      <div className="mt-1 text-2xl font-semibold text-sky-300">
                         {product.price_in_points.toLocaleString()} <span className="text-base text-gray-400">PT</span>
                       </div>
                       <div className="mt-1 text-xs text-gray-500">保有ポイントから差し引かれます</div>
@@ -333,7 +333,7 @@ export default function ProductDetailPage() {
                             setQuantity(nextValue);
                           }
                         }}
-                        className="w-20 px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-center focus:outline-none focus:border-blue-500"
+                        className="w-20 px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-center focus:outline-none focus:border-sky-500"
                         min={1}
                         max={stockQuantity !== null && stockQuantity > 0 ? stockQuantity : undefined}
                       />
@@ -374,7 +374,7 @@ export default function ProductDetailPage() {
                       !methodAvailable ||
                       (stockQuantity !== null && stockQuantity === 0)
                     }
-                    className="w-full px-6 py-4 bg-blue-600 text-white rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-6 py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isPurchasing
                       ? '手続き中...'

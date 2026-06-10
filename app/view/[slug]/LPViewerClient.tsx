@@ -1039,11 +1039,11 @@ export default function LPViewerClient({
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
               <button
                 type="submit"
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg shadow-blue-500/50"
+                className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold shadow-lg shadow-sky-500/50"
               >
                 登録して続きを見る
               </button>
@@ -1198,7 +1198,7 @@ export default function LPViewerClient({
         <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm px-4 py-6 sm:py-10 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh] flex flex-col">
             {/* Header with gradient */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 relative overflow-hidden">
+            <div className="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))]" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-2">
@@ -1221,7 +1221,7 @@ export default function LPViewerClient({
                   </button>
                 </div>
                 <div
-                  className={`flex items-center gap-2 ${selectedIsPoints ? 'text-blue-100' : 'text-emerald-100'}`}
+                  className={`flex items-center gap-2 ${selectedIsPoints ? 'text-sky-100' : 'text-emerald-100'}`}
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
@@ -1238,7 +1238,7 @@ export default function LPViewerClient({
             <div className="p-6 sm:flex-1 sm:overflow-y-auto">
               <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
@@ -1263,16 +1263,16 @@ export default function LPViewerClient({
                       onClick={() => setPurchaseMethod('points')}
                       className={`rounded-lg border px-4 py-3 text-left transition ${
                         selectedIsPoints
-                          ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_0_1px_rgba(59,130,246,0.3)]'
-                          : 'border-gray-200 bg-white hover:border-blue-400/80'
+                          ? 'border-sky-500 bg-sky-500/10 shadow-[0_0_0_1px_rgba(59,130,246,0.3)]'
+                          : 'border-gray-200 bg-white hover:border-sky-400/80'
                       }`}
                     >
                       <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gray-500">
                         ポイント決済
                       </div>
-                      <div className="mt-2 text-2xl font-bold text-blue-600">
+                      <div className="mt-2 text-2xl font-bold text-sky-600">
                         {selectedProductPricePoints.toLocaleString()}{' '}
-                        <span className="text-base text-blue-400">PT</span>
+                        <span className="text-base text-sky-400">PT</span>
                       </div>
                       <div className="mt-1 text-xs text-gray-500">保有ポイントから差し引かれます</div>
                     </button>
@@ -1351,7 +1351,7 @@ export default function LPViewerClient({
                           const limitedValue = stockLimit !== null ? Math.min(Math.max(1, stockLimit), nextValue) : nextValue;
                           setPurchaseQuantity(limitedValue);
                         }}
-                        className="w-16 px-3 py-2 border-2 border-gray-200 rounded-lg text-center font-bold text-gray-900 focus:border-blue-500 focus:outline-none"
+                        className="w-16 px-3 py-2 border-2 border-gray-200 rounded-lg text-center font-bold text-gray-900 focus:border-sky-500 focus:outline-none"
                       />
                       <button
                         onClick={() => {
@@ -1373,18 +1373,18 @@ export default function LPViewerClient({
                 <div
                   className={`rounded-lg p-4 border-2 ${
                     selectedIsPoints
-                      ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
+                      ? 'bg-gradient-to-r from-sky-50 to-indigo-50 border-sky-200'
                       : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className={`flex items-center gap-2 ${selectedIsPoints ? 'text-blue-900' : 'text-emerald-900'}`}>
+                    <div className={`flex items-center gap-2 ${selectedIsPoints ? 'text-sky-900' : 'text-emerald-900'}`}>
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                       <span className="font-bold text-lg">合計金額</span>
                     </div>
-                    <span className={`text-2xl font-bold ${selectedIsPoints ? 'text-blue-600' : 'text-emerald-600'}`}>
+                    <span className={`text-2xl font-bold ${selectedIsPoints ? 'text-sky-600' : 'text-emerald-600'}`}>
                       {selectedIsPoints
                         ? `${totalPointsCost.toLocaleString()} P`
                         : canUseYen
@@ -1477,7 +1477,7 @@ export default function LPViewerClient({
                   }
                   className={`flex-1 px-6 py-4 text-white rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 ${
                     selectedIsPoints
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40'
+                      ? 'bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40'
                       : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40'
                   }`}
                 >

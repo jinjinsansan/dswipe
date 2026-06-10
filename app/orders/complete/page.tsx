@@ -188,7 +188,7 @@ function ProductOrderCompleteContent(): JSX.Element {
                 <div className="truncate text-xs text-slate-500">トランザクションID: {externalId}</div>
               ) : null}
               {checking ? (
-                <p className="mt-2 text-xs text-blue-600">決済状況を確認しています…</p>
+                <p className="mt-2 text-xs text-sky-600">決済状況を確認しています…</p>
               ) : null}
               {notificationSent ? (
                 <p className="mt-2 text-xs text-emerald-600">運営からのお知らせにメッセージを送信しました。</p>
@@ -215,7 +215,7 @@ function ProductOrderCompleteContent(): JSX.Element {
                       onClick={() => {
                         window.location.href = redirectUrl;
                       }}
-                      className="block w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                      className="block w-full rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
                     >
                       サンクスページを開く
                     </button>

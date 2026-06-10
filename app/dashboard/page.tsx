@@ -692,7 +692,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold text-slate-900">最近編集したLP</h2>
               <Link
                 href="/lp/create"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold self-start sm:self-auto"
+                className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-semibold self-start sm:self-auto"
               >
                 + 新規LP作成
               </Link>
@@ -707,7 +707,7 @@ export default function DashboardPage() {
                 <p className="text-slate-500 text-sm font-medium mb-3 sm:mb-4">最初のLPを作成しましょう</p>
                 <Link
                   href="/lp/create"
-                  className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold"
+                  className="inline-block px-5 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-semibold"
                 >
                   新規LP作成
                 </Link>
@@ -727,10 +727,10 @@ export default function DashboardPage() {
                   return (
                   <div
                     key={lp.id}
-                    className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-blue-200 transition-all flex flex-col shadow-sm"
+                    className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-sky-200 transition-all flex flex-col shadow-sm"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-sky-200 to-purple-300 flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {heroMedia?.type === 'image' ? (
                         <Image
                           src={heroMedia.url}
@@ -842,7 +842,7 @@ export default function DashboardPage() {
                                     navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
                                     alert('URLをコピーしました');
                                   }}
-                                  className="px-1.5 py-0.5 bg-blue-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-semibold"
+                                  className="px-1.5 py-0.5 bg-sky-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-sky-700 transition-colors whitespace-nowrap font-semibold"
                                 >
                                   コピー
                                 </button>
@@ -967,7 +967,7 @@ export default function DashboardPage() {
                     topNote.slug ? (
                       <Link
                         href={`/notes/${topNote.slug}`}
-                        className="text-slate-900 text-xs sm:text-sm font-semibold truncate text-blue-600 hover:text-blue-700"
+                        className="text-slate-900 text-xs sm:text-sm font-semibold truncate text-sky-600 hover:text-sky-700"
                       >
                         {topNote.title}
                       </Link>
@@ -1046,12 +1046,12 @@ export default function DashboardPage() {
                       key={announcement.id}
                       type="button"
                       onClick={() => setActiveAnnouncement(announcement)}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left transition-colors hover:border-blue-300 hover:bg-blue-50"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left transition-colors hover:border-sky-300 hover:bg-sky-50"
                     >
                       <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span className="font-semibold tracking-wide text-slate-700">{formatAnnouncementDate(announcement.published_at)}</span>
                         {announcement.highlight && (
-                          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-600">
+                          <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-600">
                             重点トピック
                           </span>
                         )}

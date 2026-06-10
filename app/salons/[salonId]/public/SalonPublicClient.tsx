@@ -290,7 +290,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                     <button
                       type="button"
                       onClick={handleJoinWithPoints}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-blue-500"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
                     >
                       ポイント自動チャージで参加する
                     </button>

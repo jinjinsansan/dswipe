@@ -76,7 +76,7 @@ export default function BlockEditor({
           )}
 
           {/* ブロック本体 */}
-          <div className={`relative ${isEditing ? 'border-2 border-dashed border-blue-500/50 rounded-lg overflow-hidden' : ''}`}>
+          <div className={`relative ${isEditing ? 'border-2 border-dashed border-sky-500/50 rounded-lg overflow-hidden' : ''}`}>
             {isEditing && (
               <div className="absolute top-2 right-2 bg-black/70 text-white px-3 py-1 rounded text-sm z-10">
                 {block.blockType}

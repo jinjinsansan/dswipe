@@ -240,10 +240,10 @@ export default function PointPurchasePage() {
                       <button
                         key={pkg.points}
                         onClick={() => setSelectedPackage(pkg)}
-                        className={`rounded-2xl border p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:p-6 ${
+                        className={`rounded-2xl border p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 sm:p-6 ${
                           isSelected
-                            ? 'border-blue-500/70 bg-blue-50 shadow-[0_15px_40px_-25px_rgba(37,99,235,0.4)]'
-                            : 'border-slate-200 bg-white hover:border-blue-200'
+                            ? 'border-sky-500/70 bg-sky-50 shadow-[0_15px_40px_-25px_rgba(37,99,235,0.4)]'
+                            : 'border-slate-200 bg-white hover:border-sky-200'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -257,7 +257,7 @@ export default function PointPurchasePage() {
                               </span>
                             )}
                           </div>
-                          {isSelected && <span className="text-sm font-semibold text-blue-600">{packagesT('selectedLabel')}</span>}
+                          {isSelected && <span className="text-sm font-semibold text-sky-600">{packagesT('selectedLabel')}</span>}
                         </div>
                         <p className="mt-4 text-sm text-slate-500">
                           {packagesT('priceLabel', {
@@ -283,8 +283,8 @@ export default function PointPurchasePage() {
                         disabled={isComingSoon}
                         className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition-all sm:px-5 sm:py-4 ${
                           isSelected
-                            ? 'border-blue-500/70 bg-blue-50'
-                            : 'border-slate-200 bg-white hover:border-blue-200'
+                            ? 'border-sky-500/70 bg-sky-50'
+                            : 'border-slate-200 bg-white hover:border-sky-200'
                         } ${isComingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
                       >
                         <div className="flex min-w-0 items-center gap-3">
@@ -300,7 +300,7 @@ export default function PointPurchasePage() {
                             {paymentsT('statusBadge.comingSoon')}
                           </span>
                         ) : isSelected ? (
-                          <span className="text-sm font-semibold text-blue-600">{paymentsT('statusBadge.selected')}</span>
+                          <span className="text-sm font-semibold text-sky-600">{paymentsT('statusBadge.selected')}</span>
                         ) : (
                           <span className="text-sm text-slate-500">{paymentsT('statusBadge.select')}</span>
                         )}
@@ -333,7 +333,7 @@ export default function PointPurchasePage() {
                 <button
                   onClick={handlePurchase}
                   disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
-                  className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
+                  className="w-full rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
                 >
                   {isPurchasing ? summaryT('processing') : summaryT('proceedButton')}
                 </button>
@@ -357,10 +357,10 @@ export default function PointPurchasePage() {
 
             <div className="space-y-6">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-[0.25em] text-blue-500/70 sm:text-sm">{t('balance.sectionLabel')}</p>
+                <p className="text-xs uppercase tracking-[0.25em] text-sky-500/70 sm:text-sm">{t('balance.sectionLabel')}</p>
                 <p className="mt-3 text-2xl font-semibold text-slate-900 sm:text-4xl">
                   {formatter.number(currentBalance)}{' '}
-                  <span className="text-base font-normal text-blue-500/80 sm:text-xl">{t('balance.pointsSuffix')}</span>
+                  <span className="text-base font-normal text-sky-500/80 sm:text-xl">{t('balance.pointsSuffix')}</span>
                 </p>
                 <p className="mt-2 text-xs text-slate-500 sm:text-sm">
                   {t('balance.projected', {
@@ -405,7 +405,7 @@ export default function PointPurchasePage() {
                 <ul className="space-y-3 text-xs text-slate-600 sm:text-sm">
                   {guidelineItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
+                      <span className="mt-1 h-2 w-2 rounded-full bg-sky-300" />
                       <span>{item}</span>
                     </li>
                   ))}

@@ -28,7 +28,7 @@ export default function RegisterPage() {
       helper={
         <span>
           既にアカウントをお持ちの方は{' '}
-          <Link href={loginHref} className="font-bold text-blue-600 hover:text-cyan-500 underline">
+          <Link href={loginHref} className="font-bold text-sky-600 hover:text-cyan-500 underline">
             ログイン
           </Link>
         </span>

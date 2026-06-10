@@ -140,11 +140,11 @@ function SortableBlock({
           isEditing
             ? `border-2 rounded-lg overflow-hidden ${
                 isSelected
-                  ? 'border-blue-500 ring-4 ring-blue-500/20'
-                  : 'border-dashed border-gray-600 hover:border-blue-400'
+                  ? 'border-sky-500 ring-4 ring-sky-500/20'
+                  : 'border-dashed border-gray-600 hover:border-sky-400'
               }`
             : isSelected
-              ? 'ring-4 ring-blue-400/30 rounded-xl'
+              ? 'ring-4 ring-sky-400/30 rounded-xl'
               : ''
         }`}
       >
@@ -194,7 +194,7 @@ function PreviewBlock({
       <div
         onClick={() => onSelect?.()}
         className={`relative ${
-          isSelected ? 'ring-4 ring-blue-400/30 rounded-xl' : ''
+          isSelected ? 'ring-4 ring-sky-400/30 rounded-xl' : ''
         }`}
       >
         <BlockRenderer

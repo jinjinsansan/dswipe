@@ -94,7 +94,7 @@ export default function AuthShell({
                   </span>
                 ) : null}
                 <div className="space-y-4">
-                  <h1 className="text-4xl font-black leading-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300 drop-shadow-2xl lg:text-5xl">
+                  <h1 className="text-4xl font-black leading-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-purple-300 drop-shadow-2xl lg:text-5xl">
                     {hero.title}
                   </h1>
                   <p className="text-base text-white font-semibold lg:text-lg">
@@ -106,7 +106,7 @@ export default function AuthShell({
               {hero.highlights?.length ? (
                 <ul className="space-y-3">
                   {hero.highlights.map((item) => (
-                    <li key={item.title} className="flex items-start gap-3 rounded-xl border-2 border-blue-200 bg-white p-4 shadow-xl">
+                    <li key={item.title} className="flex items-start gap-3 rounded-xl border-2 border-sky-200 bg-white p-4 shadow-xl">
                       <span className="mt-0.5 inline-flex h-2 w-2 shrink-0 rounded-full bg-cyan-500" aria-hidden="true" />
                       <div>
                         <p className="text-sm font-bold text-slate-900">{item.title}</p>
@@ -136,10 +136,10 @@ export default function AuthShell({
             <section className="relative">
               <div className="absolute -top-40 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-cyan-500/20 blur-[120px]" />
               <div className="relative overflow-hidden rounded-2xl border-2 border-white/20 bg-white shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-purple-50" />
                 <div className="relative space-y-8 px-8 py-10 sm:px-10">
                   <div className="space-y-3 text-center">
-                    <div className="mx-auto h-14 w-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 shadow-xl flex items-center justify-center">
+                    <div className="mx-auto h-14 w-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-sky-500 to-purple-600 shadow-xl flex items-center justify-center">
                       <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>

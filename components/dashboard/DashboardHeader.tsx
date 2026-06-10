@@ -431,7 +431,7 @@ export default function DashboardHeader({
                   {renderBalanceValue()}
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-9 h-9 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm shadow-sm">
+                  <div className="w-9 h-9 rounded-full overflow-hidden bg-sky-600 flex items-center justify-center text-white text-sm shadow-sm">
                     {user?.profile_image_url ? (
                       <img src={user.profile_image_url} alt={headerT('avatarAlt')} className="w-full h-full object-cover" />
                     ) : (
@@ -450,7 +450,7 @@ export default function DashboardHeader({
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-semibold hover:bg-sky-700 transition-colors"
                 >
                   {layoutT('guest.register')}
                 </Link>
@@ -472,7 +472,7 @@ export default function DashboardHeader({
                     <div className="text-slate-900 text-xs font-semibold">{formattedPointBalance}</div>
                   )}
                 </div>
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs flex-shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-sky-600 flex items-center justify-center text-white text-xs flex-shrink-0 shadow-sm">
                   {user?.profile_image_url ? (
                     <img src={user.profile_image_url} alt={headerT('avatarAlt')} className="w-full h-full object-cover" />
                   ) : (
@@ -483,7 +483,7 @@ export default function DashboardHeader({
             ) : (
               <Link
                 href="/login"
-                className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
+                className="px-3 py-1.5 bg-sky-600 text-white rounded-lg text-xs font-semibold hover:bg-sky-700 transition-colors"
               >
                 {layoutT('guest.login')}
               </Link>

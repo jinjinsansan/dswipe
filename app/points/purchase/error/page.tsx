@@ -53,7 +53,7 @@ export default function PurchaseErrorPage() {
           <div className="space-y-3">
             <Link
               href="/points/purchase"
-              className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+              className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-sky-600 text-white font-semibold hover:bg-sky-700 transition-colors"
             >
               <ArrowPathIcon className="w-5 h-5" />
               再度購入する

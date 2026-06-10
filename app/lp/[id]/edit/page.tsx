@@ -1598,7 +1598,7 @@ export default function EditLPNewPage() {
                       href={`/view/${lp.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-slate-200 rounded transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700 border border-slate-200 rounded transition-colors"
                     >
                       プレビュー
                     </a>
@@ -1609,7 +1609,7 @@ export default function EditLPNewPage() {
                       href={shareLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-slate-200 rounded transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700 border border-slate-200 rounded transition-colors"
                     >
                       限定URLを開く
                     </a>
@@ -1680,7 +1680,7 @@ export default function EditLPNewPage() {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              className="px-3 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
             >
               {isSaving && (
                 <svg className="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1706,7 +1706,7 @@ export default function EditLPNewPage() {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="保存"
             >
               {isSaving ? (
@@ -1800,7 +1800,7 @@ export default function EditLPNewPage() {
                     setShowMobileMenu(false);
                   }}
                   disabled={isSaving}
-                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] flex items-center justify-center gap-2"
                 >
                   {isSaving ? (
                     <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1897,7 +1897,7 @@ export default function EditLPNewPage() {
               onClick={() => setMobileTab('blocks')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'blocks'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-sky-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1911,7 +1911,7 @@ export default function EditLPNewPage() {
               onClick={() => setMobileTab('edit')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'edit'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-sky-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1925,7 +1925,7 @@ export default function EditLPNewPage() {
               onClick={() => setMobileTab('preview')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'preview'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-sky-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1936,7 +1936,7 @@ export default function EditLPNewPage() {
               onClick={() => setMobileTab('settings')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'settings'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-sky-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1962,7 +1962,7 @@ export default function EditLPNewPage() {
             <button
               type="button"
               onClick={() => setShowTemplateSelector(true)}
-              className="w-full px-3 py-2.5 lg:py-2 bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 py-2.5 lg:py-2 bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 transition-colors min-h-[44px] lg:min-h-auto"
             >
               + ブロック追加
             </button>
@@ -1980,7 +1980,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lp-visibility"
-                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'public'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'public' }))}
                     />
@@ -1990,7 +1990,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lp-visibility"
-                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'limited'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'limited' }))}
                     />
@@ -2002,7 +2002,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lp-visibility"
-                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 lg:h-3.5 lg:w-3.5 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'private'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'private' }))}
                     />
@@ -2070,7 +2070,7 @@ export default function EditLPNewPage() {
                   <span className="text-sm lg:text-xs text-slate-700">閲覧数を表示する</span>
                   <input
                     type="checkbox"
-                    className="h-4 w-4 lg:h-3.5 lg:w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 lg:h-3.5 lg:w-3.5 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     checked={lpSettings.showViewCountPublic}
                     onChange={(event) =>
                       setLpSettings((prev) => ({
@@ -2104,7 +2104,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="swipeDirection"
-                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.swipeDirection === 'vertical'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'vertical' }))}
                     />
@@ -2114,7 +2114,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="swipeDirection"
-                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 lg:h-3.5 lg:w-3.5 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.swipeDirection === 'horizontal'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'horizontal' }))}
                     />
@@ -2127,7 +2127,7 @@ export default function EditLPNewPage() {
               <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
                   checked={lpSettings.showSwipeHint}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
@@ -2149,7 +2149,7 @@ export default function EditLPNewPage() {
                   <label className="inline-flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
-                      className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                      className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.floatingCta}
                       onChange={(event) => {
                         const nextEnabled = event.target.checked;
@@ -2171,7 +2171,7 @@ export default function EditLPNewPage() {
                     <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                       <input
                         type="checkbox"
-                        className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
                         checked={lpSettings.footerCta.showOnHero}
                         onChange={(e) =>
                           setLpSettings((prev) => ({
@@ -2199,7 +2199,7 @@ export default function EditLPNewPage() {
                             }))
                           }
                           placeholder="例：今すぐお申し込み"
-                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                         />
                       </div>
                       <div>
@@ -2214,7 +2214,7 @@ export default function EditLPNewPage() {
                           }
                           placeholder="例：フォーム入力は60秒で完了"
                           rows={2}
-                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                         />
                       </div>
                     </div>
@@ -2231,7 +2231,7 @@ export default function EditLPNewPage() {
                             }))
                           }
                           placeholder="例：無料で相談する"
-                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                         />
                       </div>
                       <div>
@@ -2249,7 +2249,7 @@ export default function EditLPNewPage() {
                           }}
                           onBlur={(e) => setFooterCtaUrlError(validateFooterCtaUrl(e.target.value))}
                           placeholder="https://example.com/cta"
-                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                          className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                         />
                         {footerCtaUrlError ? (
                           <p className="mt-1 text-xs text-red-600">{footerCtaUrlError}</p>
@@ -2280,7 +2280,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -2307,7 +2307,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, textColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -2334,7 +2334,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -2361,7 +2361,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -2384,7 +2384,7 @@ export default function EditLPNewPage() {
                   value={linkedProduct?.id ?? 'none'}
                   onChange={(event) => handleChangeLinkedProduct(event.target.value)}
                   disabled={isProductLinkUpdating}
-                  className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                 >
                   <option value="none">連携しない</option>
                   {productOptions.map((option) => {
@@ -2405,7 +2405,7 @@ export default function EditLPNewPage() {
                 ) : null}
                 <div className="flex items-center justify-between text-[11px] text-slate-500">
                   <span>{linkedProduct?.title ? `現在: ${linkedProduct.title}` : '現在未連携'}</span>
-                  <Link href="/products/manage" className="text-blue-600 hover:text-blue-700 font-semibold">
+                  <Link href="/products/manage" className="text-sky-600 hover:text-sky-700 font-semibold">
                     商品を管理
                   </Link>
                 </div>
@@ -2413,7 +2413,7 @@ export default function EditLPNewPage() {
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       checked={showCheckoutDeeplink}
                       onChange={(event) => setShowCheckoutDeeplink(event.target.checked)}
                       disabled={!linkedProduct?.id || !lp?.slug}
@@ -2436,7 +2436,7 @@ export default function EditLPNewPage() {
                             <button
                               type="button"
                               onClick={handleCopyCheckoutLink}
-                              className="inline-flex items-center justify-center rounded-md border border-blue-600 bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                              className="inline-flex items-center justify-center rounded-md border border-sky-600 bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-700"
                             >
                               リンクをコピー
                             </button>
@@ -2469,7 +2469,7 @@ export default function EditLPNewPage() {
                   value={lpTitle}
                   onChange={(e) => setLpTitle(e.target.value)}
                   placeholder="LP名（例：春の新商品キャンペーン）"
-                  className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                  className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                 />
               </div>
 
@@ -2484,28 +2484,28 @@ export default function EditLPNewPage() {
                     value={metaSettings.title}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                   />
                   <textarea
                     value={metaSettings.description}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="OGPディスクリプション（120文字程度の紹介文）"
                     rows={3}
-                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   />
                   <input
                     type="text"
                     value={metaSettings.imageUrl}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="OGP画像URL（1200x630推奨）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                   />
                   <input
                     type="text"
                     value={metaSettings.siteName}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                     placeholder="サイト名（例：ABC情報局）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px] lg:min-h-auto"
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 leading-relaxed">
@@ -2554,13 +2554,13 @@ export default function EditLPNewPage() {
                       }}
                       className={`w-full p-3 lg:p-3.5 cursor-pointer lg:cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center rounded-lg border ${
                         selectedBlockId === block.id
-                          ? 'bg-blue-50 border-blue-400 shadow-sm'
+                          ? 'bg-sky-50 border-sky-400 shadow-sm'
                           : 'bg-white border-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1.5 gap-2">
-                          <span className="text-base font-bold text-blue-600 flex-shrink-0">#{index + 1}</span>
+                          <span className="text-base font-bold text-sky-600 flex-shrink-0">#{index + 1}</span>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -2582,7 +2582,7 @@ export default function EditLPNewPage() {
           
           {/* リサイズハンドル */}
           <div
-            className="hidden lg:block absolute top-0 right-0 w-1 h-full bg-slate-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+            className="hidden lg:block absolute top-0 right-0 w-1 h-full bg-slate-300 hover:bg-sky-500 cursor-col-resize transition-colors"
             onMouseDown={handleMouseDownResize('left')}
           />
           
@@ -2669,7 +2669,7 @@ export default function EditLPNewPage() {
           >
             {/* リサイズハンドル */}
             <div
-              className="absolute top-0 left-0 w-1 h-full bg-slate-300 hover:bg-blue-500 cursor-col-resize transition-colors z-10"
+              className="absolute top-0 left-0 w-1 h-full bg-slate-300 hover:bg-sky-500 cursor-col-resize transition-colors z-10"
               onMouseDown={handleMouseDownResize('right')}
             />
             
@@ -2719,7 +2719,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lpVisibilityMobile"
-                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'public'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'public' }))}
                     />
@@ -2729,7 +2729,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lpVisibilityMobile"
-                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'limited'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'limited' }))}
                     />
@@ -2739,7 +2739,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="lpVisibilityMobile"
-                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.visibility === 'private'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, visibility: 'private' }))}
                     />
@@ -2803,7 +2803,7 @@ export default function EditLPNewPage() {
                   <span className="text-sm text-slate-700">閲覧数を表示する</span>
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     checked={lpSettings.showViewCountPublic}
                     onChange={(event) =>
                       setLpSettings((prev) => ({
@@ -2828,7 +2828,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="swipeDirectionMobile"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.swipeDirection === 'vertical'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'vertical' }))}
                     />
@@ -2838,7 +2838,7 @@ export default function EditLPNewPage() {
                     <input
                       type="radio"
                       name="swipeDirectionMobile"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.swipeDirection === 'horizontal'}
                       onChange={() => setLpSettings((prev) => ({ ...prev, swipeDirection: 'horizontal' }))}
                     />
@@ -2851,7 +2851,7 @@ export default function EditLPNewPage() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
                   checked={lpSettings.showSwipeHint}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
@@ -2873,7 +2873,7 @@ export default function EditLPNewPage() {
                   <label className="inline-flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
-                      className="h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                      className="h-5 w-5 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                       checked={lpSettings.floatingCta}
                       onChange={(event) => {
                         const nextEnabled = event.target.checked;
@@ -2905,7 +2905,7 @@ export default function EditLPNewPage() {
                             }))
                           }
                           placeholder="例：今すぐお申し込み"
-                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                         />
                       </div>
                       <div>
@@ -2920,14 +2920,14 @@ export default function EditLPNewPage() {
                           }
                           placeholder="例：フォーム入力は60秒で完了"
                           rows={2}
-                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                         />
                       </div>
                     </div>
                     <label className="flex items-start gap-3 cursor-pointer">
                       <input
                         type="checkbox"
-                        className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
                         checked={lpSettings.footerCta.showOnHero}
                         onChange={(e) =>
                           setLpSettings((prev) => ({
@@ -2955,7 +2955,7 @@ export default function EditLPNewPage() {
                             }))
                           }
                           placeholder="例：無料で相談する"
-                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                         />
                       </div>
                       <div>
@@ -2973,7 +2973,7 @@ export default function EditLPNewPage() {
                           }}
                           onBlur={(e) => setFooterCtaUrlError(validateFooterCtaUrl(e.target.value))}
                           placeholder="https://example.com/cta"
-                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                         />
                         {footerCtaUrlError ? (
                           <p className="mt-1 text-xs text-red-600">{footerCtaUrlError}</p>
@@ -3004,7 +3004,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, backgroundColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -3031,7 +3031,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, textColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -3058,7 +3058,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, buttonBackgroundColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -3085,7 +3085,7 @@ export default function EditLPNewPage() {
                                 footerCta: { ...prev.footerCta, buttonTextColor: e.target.value },
                               }))
                             }
-                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                           />
                         </div>
                       </div>
@@ -3106,7 +3106,7 @@ export default function EditLPNewPage() {
                   value={linkedProduct?.id ?? 'none'}
                   onChange={(event) => handleChangeLinkedProduct(event.target.value)}
                   disabled={isProductLinkUpdating}
-                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px]"
                 >
                   <option value="none">連携しない</option>
                   {productOptions.map((option) => {
@@ -3127,7 +3127,7 @@ export default function EditLPNewPage() {
                 ) : null}
                 <div className="flex items-center justify-between text-[11px] text-slate-500">
                   <span>{linkedProduct?.title ? `現在: ${linkedProduct.title}` : '現在未連携'}</span>
-                  <Link href="/products/manage" className="text-blue-600 hover:text-blue-700 font-semibold">
+                  <Link href="/products/manage" className="text-sky-600 hover:text-sky-700 font-semibold">
                     商品を管理
                   </Link>
                 </div>
@@ -3135,7 +3135,7 @@ export default function EditLPNewPage() {
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       checked={showCheckoutDeeplink}
                       onChange={(event) => setShowCheckoutDeeplink(event.target.checked)}
                       disabled={!linkedProduct?.id || !lp?.slug}
@@ -3158,7 +3158,7 @@ export default function EditLPNewPage() {
                             <button
                               type="button"
                               onClick={handleCopyCheckoutLink}
-                              className="inline-flex items-center justify-center rounded-md border border-blue-600 bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                              className="inline-flex items-center justify-center rounded-md border border-sky-600 bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-700"
                             >
                               リンクをコピー
                             </button>
@@ -3191,7 +3191,7 @@ export default function EditLPNewPage() {
                   value={lpTitle}
                   onChange={(e) => setLpTitle(e.target.value)}
                   placeholder="LP名（例：春の新商品キャンペーン）"
-                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px]"
                 />
               </div>
 
@@ -3206,28 +3206,28 @@ export default function EditLPNewPage() {
                     value={metaSettings.title}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px]"
                   />
                   <textarea
                     value={metaSettings.description}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="OGPディスクリプション（120文字程度の紹介文）"
                     rows={3}
-                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   />
                   <input
                     type="text"
                     value={metaSettings.imageUrl}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="OGP画像URL（1200x630推奨）"
-                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px]"
                   />
                   <input
                     type="text"
                     value={metaSettings.siteName}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                     placeholder="サイト名（例：ABC情報局）"
-                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 min-h-[44px]"
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 leading-relaxed">

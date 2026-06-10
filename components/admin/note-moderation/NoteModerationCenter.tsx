@@ -201,7 +201,7 @@ export default function NoteModerationCenter() {
             <button
               type="button"
               onClick={handleRefresh}
-              className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100"
+              className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
             >
               <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
               最新情報に更新
@@ -222,7 +222,7 @@ export default function NoteModerationCenter() {
           </div>
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-700"
           >
             検索
           </button>
@@ -238,8 +238,8 @@ export default function NoteModerationCenter() {
                 className={cn(
                   'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
                   statusFilter === option.value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600',
+                    ? 'border-sky-500 bg-sky-50 text-sky-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-sky-300 hover:text-sky-600',
                 )}
               >
                 {option.label}
@@ -266,7 +266,7 @@ export default function NoteModerationCenter() {
               type="checkbox"
               checked={onlySuspicious}
               onChange={(event) => setOnlySuspicious(event.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
             />
             疑わしいシェアのみ
           </label>
@@ -318,7 +318,7 @@ export default function NoteModerationCenter() {
                     return (
                       <tr
                         key={note.id}
-                        className={cn('cursor-pointer transition-colors hover:bg-blue-50', isSelected && 'bg-blue-50')}
+                        className={cn('cursor-pointer transition-colors hover:bg-sky-50', isSelected && 'bg-sky-50')}
                         onClick={() => handleSelectNote(note)}
                       >
                         <td className="px-4 py-3">
@@ -326,7 +326,7 @@ export default function NoteModerationCenter() {
                           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                             <span className="rounded-full bg-gray-100 px-2 py-0.5">{note.status}</span>
                             {note.categories.slice(0, 3).map((category) => (
-                              <span key={category} className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700">
+                              <span key={category} className="rounded-full bg-sky-50 px-2 py-0.5 text-sky-700">
                                 #{category}
                               </span>
                             ))}
@@ -385,7 +385,7 @@ export default function NoteModerationCenter() {
                     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                       <span className="rounded-full bg-gray-100 px-2 py-0.5">{noteDetail.status}</span>
                       {noteDetail.categories.map((category) => (
-                        <span key={category} className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700">
+                        <span key={category} className="rounded-full bg-sky-50 px-2 py-0.5 text-sky-700">
                           #{category}
                         </span>
                       ))}
@@ -424,7 +424,7 @@ export default function NoteModerationCenter() {
                     <div>販売者: {noteDetail.author_username ?? '-'} ({noteDetail.author_email ?? '-'})</div>
                     {noteDetail.official_share_tweet_url && (
                       <div className="truncate">
-                        公式ポスト: <a className="text-blue-600 underline" href={noteDetail.official_share_tweet_url} target="_blank" rel="noreferrer">{noteDetail.official_share_tweet_url}</a>
+                        公式ポスト: <a className="text-sky-600 underline" href={noteDetail.official_share_tweet_url} target="_blank" rel="noreferrer">{noteDetail.official_share_tweet_url}</a>
                       </div>
                     )}
                   </div>
@@ -459,14 +459,14 @@ export default function NoteModerationCenter() {
                   </div>
 
                   {actionMessage && (
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
+                    <div className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-700">
                       {actionMessage}
                     </div>
                   )}
 
                   <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                     <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <ShieldCheckIcon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                      <ShieldCheckIcon className="h-5 w-5 text-sky-600" aria-hidden="true" />
                       リスク指標
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs text-gray-600">

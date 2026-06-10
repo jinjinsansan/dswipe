@@ -140,7 +140,7 @@ export default function AdminPaymentSettingsPage() {
     >
       <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-6">
         {loading ? (
-          <div className="rounded-2xl border border-dashed border-blue-200 bg-white p-10 text-center text-sm text-blue-600">
+          <div className="rounded-2xl border border-dashed border-sky-200 bg-white p-10 text-center text-sm text-sky-600">
             読み込み中です...
           </div>
         ) : (
@@ -161,7 +161,7 @@ export default function AdminPaymentSettingsPage() {
                     min="1"
                     value={formState.exchange_rate_usd_jpy}
                     onChange={handleInputChange("exchange_rate_usd_jpy")}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                     required
                   />
                   <span className="text-xs text-slate-500">例: 152.35</span>
@@ -174,7 +174,7 @@ export default function AdminPaymentSettingsPage() {
                     min="0"
                     value={formState.spread_jpy}
                     onChange={handleInputChange("spread_jpy")}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                     required
                   />
                   <span className="text-xs text-slate-500">例: 3.5。実効レート = 実勢 + スプレッド</span>
@@ -204,7 +204,7 @@ export default function AdminPaymentSettingsPage() {
                     min="0"
                     value={formState.platform_fee_percent}
                     onChange={handleInputChange("platform_fee_percent")}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                     required
                   />
                   <span className="text-xs text-slate-500">例: 10.0</span>
@@ -251,7 +251,7 @@ export default function AdminPaymentSettingsPage() {
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-sky-300"
                 disabled={saving}
               >
                 {saving ? "保存中..." : "設定を保存"}

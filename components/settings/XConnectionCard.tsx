@@ -191,9 +191,9 @@ export default function XConnectionCard() {
         </div>
       ) : (
         <div className="mt-6 space-y-4">
-          <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-            <h4 className="font-semibold text-blue-900">{t('benefits.heading')}</h4>
-            <ul className="mt-2 space-y-2 text-sm text-blue-800">
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+            <h4 className="font-semibold text-sky-900">{t('benefits.heading')}</h4>
+            <ul className="mt-2 space-y-2 text-sm text-sky-800">
               {benefitItems.map((item, index) => (
                 <li key={`benefit-${index}`} className="flex items-start gap-2">
                   <span className="mt-0.5">•</span>
@@ -205,7 +205,7 @@ export default function XConnectionCard() {
 
           <button
             onClick={handleConnect}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="w-full rounded-lg bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700"
           >
             {t('connectButton')}
           </button>

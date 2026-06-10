@@ -370,7 +370,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       <header className="space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 font-semibold text-sky-700">
               <ShieldCheckIcon className="h-4 w-4" aria-hidden="true" />
               Swipeコラム
             </span>
@@ -383,7 +383,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
               {note.is_paid ? (
                 <span className="flex items-center gap-2">
                   {note.allow_point_purchase && (
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                    <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700">
                       {format.number(note.price_points)} pt
                     </span>
                   )}
@@ -405,7 +405,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
               {note.author_username ? (
                 <Link
                   href={`/u/${note.author_username}`}
-                  className="font-semibold text-blue-600 transition hover:text-blue-700"
+                  className="font-semibold text-sky-600 transition hover:text-sky-700"
                 >
                   @{note.author_username}
                 </Link>
@@ -447,13 +447,13 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
 
       <section className="flex flex-col gap-8">
         {mustLoginToView ? (
-          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-6 text-sm text-blue-900">
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 px-5 py-6 text-sm text-sky-900">
             <p className="font-semibold">{t('loginRequiredTitle')}</p>
-            <p className="mt-2 text-xs text-blue-700/80">{t('loginRequiredDescription')}</p>
+            <p className="mt-2 text-xs text-sky-700/80">{t('loginRequiredDescription')}</p>
             <button
               type="button"
               onClick={() => redirectToLogin(router)}
-              className="mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-blue-400 bg-white px-5 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-sky-400 bg-white px-5 py-2 text-xs font-semibold text-sky-700 transition hover:bg-sky-100"
             >
               {t('loginRequiredAction')}
             </button>
@@ -508,14 +508,14 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                         onClick={() => handleMethodSelect('points')}
                         className={`rounded-xl border px-4 py-3 text-left transition ${
                           isPointsSelected
-                            ? 'border-blue-400 bg-white'
-                            : 'border-amber-100 bg-white/60 hover:border-blue-300'
+                            ? 'border-sky-400 bg-white'
+                            : 'border-amber-100 bg-white/60 hover:border-sky-300'
                         }`}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                           {t('pointsPaymentTitle')}
                         </p>
-                        <p className="mt-1 text-lg font-bold text-blue-600">
+                        <p className="mt-1 text-lg font-bold text-sky-600">
                           {format.number(note.price_points)} pt
                         </p>
                         <p className="mt-1 text-[11px] text-slate-500">{t('pointsPaymentNote')}</p>
@@ -548,7 +548,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                   type="button"
                   onClick={handlePurchase}
                   disabled={purchaseState === 'processing' || !methodAvailable || !canPurchase}
-                  className={`inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70 ${
+                  className={`inline-flex items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-70 ${
                     purchaseState === 'processing' ? 'opacity-70' : ''
                   }`}
                 >
@@ -571,7 +571,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                 {!isAuthenticated ? (
                   <Link
                     href="/login"
-                    className="text-xs font-semibold text-blue-600 underline underline-offset-4"
+                    className="text-xs font-semibold text-sky-600 underline underline-offset-4"
                   >
                     {t('loginPrompt')}
                   </Link>

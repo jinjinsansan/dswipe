@@ -35,7 +35,7 @@ interface TransactionListResponse {
 const getTransactionIcon = (type: string) => {
   switch (type) {
     case 'purchase':
-      return <BanknotesIcon className="h-5 w-5 text-blue-500" />;
+      return <BanknotesIcon className="h-5 w-5 text-sky-500" />;
     case 'product_purchase':
       return <ShoppingBagIcon className="h-5 w-5 text-purple-500" />;
     case 'bonus':
@@ -50,7 +50,7 @@ const getTransactionIcon = (type: string) => {
 const getTransactionBadgeClass = (type: string) => {
   switch (type) {
     case 'purchase':
-      return 'text-blue-600 bg-blue-50 border-blue-200';
+      return 'text-sky-600 bg-sky-50 border-sky-200';
     case 'product_purchase':
       return 'text-purple-600 bg-purple-50 border-purple-200';
     case 'bonus':
@@ -271,7 +271,7 @@ export default function PointHistoryPage() {
                     onClick={() => setFilterType(filter.value)}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                       filterType === filter.value
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-sky-600 text-white shadow-sm'
                         : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                     }`}
                   >
@@ -307,7 +307,7 @@ export default function PointHistoryPage() {
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('bonuses.title')}</p>
-                <p className="mt-3 text-2xl font-semibold text-blue-600">
+                <p className="mt-3 text-2xl font-semibold text-sky-600">
                   {formatSignedPoints(summary.bonuses, { showPlusForZero: true })}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">{summaryT('bonuses.description')}</p>

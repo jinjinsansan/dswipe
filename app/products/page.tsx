@@ -193,7 +193,7 @@ function ProductsContent() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="商品名・説明で検索"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
             </div>
 
@@ -206,7 +206,7 @@ function ProductsContent() {
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value as any)}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               >
                 <option value="all">すべて</option>
                 <option value="low">〜10,000 P</option>
@@ -224,7 +224,7 @@ function ProductsContent() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               >
                 <option value="latest">新着順</option>
                 <option value="popular">人気順</option>
@@ -244,12 +244,12 @@ function ProductsContent() {
                 value={sellerFilter}
                 onChange={(e) => setSellerFilter(e.target.value)}
                 placeholder="販売者名で絞り込み"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
               {sellerFilter && (
                 <button
                   onClick={() => setSellerFilter('')}
-                  className="text-blue-600 hover:text-blue-500 text-xs mt-1"
+                  className="text-sky-600 hover:text-sky-500 text-xs mt-1"
                 >
                   クリア
                 </button>
@@ -271,7 +271,7 @@ function ProductsContent() {
                 setPriceRange('all');
                 setSellerFilter('');
               }}
-              className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="mt-6 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
             >
               フィルターをリセット
             </button>
@@ -293,13 +293,13 @@ function ProductsContent() {
                 return (
                   <article
                     key={product.id}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md"
+                    className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-sky-300 hover:shadow-md"
                   >
                     <Link
                       href={targetHref}
                       className="flex items-center gap-3 p-3 md:flex-col md:items-stretch md:gap-0 md:p-0"
                     >
-                      <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
+                      <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-sky-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
                       {thumbnailUrl ? (
                         isVideoUrl(thumbnailUrl) ? (
                           <video
@@ -370,7 +370,7 @@ function ProductsContent() {
                       {sellerUsername ? (
                         <Link
                           href={`/u/${sellerUsername}`}
-                          className="font-medium text-blue-600 transition-colors hover:text-blue-500"
+                          className="font-medium text-sky-600 transition-colors hover:text-sky-500"
                         >
                           @{sellerUsername}
                         </Link>
@@ -416,8 +416,8 @@ function ProductsContent() {
                         onClick={() => handlePageChange(pageNum)}
                         className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
                           currentPage === pageNum
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-blue-200 hover:text-blue-600'
+                            ? 'bg-sky-600 text-white'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:border-sky-200 hover:text-sky-600'
                         }`}
                       >
                         {pageNum}

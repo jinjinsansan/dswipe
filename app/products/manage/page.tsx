@@ -392,7 +392,7 @@ export default function ProductManagementPage() {
               </div>
               <button
                 onClick={openCreateModal}
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-blue-700"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-sky-700"
               >
                 + 新しい商品を追加
               </button>
@@ -413,7 +413,7 @@ export default function ProductManagementPage() {
                     </p>
                     <button
                       onClick={openCreateModal}
-                      className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-blue-700"
+                      className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-sky-700"
                     >
                       商品を作成する
                     </button>
@@ -431,10 +431,10 @@ export default function ProductManagementPage() {
                         <p className="mt-2 text-2xl font-semibold text-emerald-700">{productStats.totalSales.toLocaleString()} 件</p>
                         <p className="mt-1 text-xs text-emerald-600/70">CTA決済の累計成約数</p>
                       </div>
-                      <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
-                        <p className="text-[11px] font-medium uppercase tracking-wide text-blue-600">リンク済みLP</p>
-                        <p className="mt-2 text-2xl font-semibold text-blue-700">{lpOptions.length}</p>
-                        <p className="mt-1 text-xs text-blue-600/70">このページで紐づけ可能なLP</p>
+                      <div className="rounded-xl border border-sky-100 bg-sky-50 p-4">
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-sky-600">リンク済みLP</p>
+                        <p className="mt-2 text-2xl font-semibold text-sky-700">{lpOptions.length}</p>
+                        <p className="mt-1 text-xs text-sky-600/70">このページで紐づけ可能なLP</p>
                       </div>
                       <div className="rounded-xl border border-amber-100 bg-amber-50 p-4">
                         <p className="text-[11px] font-medium uppercase tracking-wide text-amber-600">要補充</p>
@@ -455,7 +455,7 @@ export default function ProductManagementPage() {
                         return (
                           <div
                             key={product.id}
-                            className="group relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-[0_20px_50px_-40px_rgba(59,130,246,0.35)]"
+                            className="group relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-sky-200 hover:shadow-[0_20px_50px_-40px_rgba(59,130,246,0.35)]"
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
@@ -509,7 +509,7 @@ export default function ProductManagementPage() {
 
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                                 <span className="text-xs text-slate-500">累計成約</span>
-                                <span className="font-semibold text-blue-600">{product.total_sales.toLocaleString()} 件</span>
+                                <span className="font-semibold text-sky-600">{product.total_sales.toLocaleString()} 件</span>
                               </div>
 
                               <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
@@ -536,7 +536,7 @@ export default function ProductManagementPage() {
                               </button>
                               <button
                                 onClick={() => openEditModal(product)}
-                                className="inline-flex flex-1 items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+                                className="inline-flex flex-1 items-center justify-center rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-sky-700"
                               >
                                 編集
                               </button>
@@ -591,7 +591,7 @@ export default function ProductManagementPage() {
                   name="title"
                   value={form.title}
                   onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                   placeholder="例: 有料メルマガ会員権"
                   required
                 />
@@ -603,7 +603,7 @@ export default function ProductManagementPage() {
                   name="description"
                   value={form.description}
                   onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                   rows={4}
                   placeholder="LP CTAから遷移して購入される商品の概要を記載しましょう"
                 />
@@ -631,7 +631,7 @@ export default function ProductManagementPage() {
                             name="allowPointPurchase"
                             checked={form.allowPointPurchase}
                             onChange={handleInputChange}
-                            className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                            className="h-4 w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                           />
                           有効化
                         </label>
@@ -644,7 +644,7 @@ export default function ProductManagementPage() {
                           type="number"
                           min="0"
                           disabled={!form.allowPointPurchase}
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 disabled:cursor-not-allowed disabled:bg-slate-100"
                           placeholder="1000"
                         />
                         <p className="text-xs text-slate-500">ポイント販売価格。未入力の場合は購入できません。</p>
@@ -697,7 +697,7 @@ export default function ProductManagementPage() {
                       onChange={handleInputChange}
                       type="number"
                       min="0"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                       placeholder="空欄で無制限"
                     />
                   </div>
@@ -742,7 +742,7 @@ export default function ProductManagementPage() {
                   name="lpId"
                   value={form.lpId}
                   onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                 >
                   <option value="">選択しない</option>
                   {lpOptions.map((lp) => (
@@ -760,7 +760,7 @@ export default function ProductManagementPage() {
                     name="redirectUrl"
                     value={form.redirectUrl}
                     onChange={handleInputChange}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                     placeholder="https://example.com/thanks"
                   />
                 </div>
@@ -770,7 +770,7 @@ export default function ProductManagementPage() {
                     name="thanksLpId"
                     value={form.thanksLpId}
                     onChange={handleInputChange}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40"
                   >
                     <option value="">選択しない</option>
                     {lpOptions.map((lp) => (
@@ -793,7 +793,7 @@ export default function ProductManagementPage() {
                     name="isAvailable"
                     checked={form.isAvailable}
                     onChange={handleInputChange}
-                    className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                   />
                   {form.isAvailable ? '販売中' : '非公開'}
                 </label>
@@ -814,7 +814,7 @@ export default function ProductManagementPage() {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
+                  className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:opacity-60"
                   disabled={saving}
                 >
                   {saving ? '保存中...' : editingProduct ? '更新する' : '作成する'}

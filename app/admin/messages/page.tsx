@@ -497,7 +497,7 @@ export default function AdminMessagesPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
                   <MegaphoneIcon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <div>
@@ -519,7 +519,7 @@ export default function AdminMessagesPage() {
                   <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600">
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       checked={showAutomatedMessages}
                       onChange={(event) => setShowAutomatedMessages(event.target.checked)}
                     />
@@ -528,7 +528,7 @@ export default function AdminMessagesPage() {
                   <select
                     value={visibilityFilter}
                     onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
-                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 focus:border-blue-400 focus:outline-none"
+                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-300 focus:border-sky-400 focus:outline-none"
                   >
                     <option value="active">表示中のみ</option>
                     <option value="archived">アーカイブ</option>
@@ -538,7 +538,7 @@ export default function AdminMessagesPage() {
                   <button
                     type="button"
                     onClick={fetchList}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700"
                   >
                     <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                     更新
@@ -565,8 +565,8 @@ export default function AdminMessagesPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedId(message.id)}
-                          className={`flex w-full flex-col gap-2 rounded-2xl border px-4 py-3 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-50 ${
-                            isActive ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-white"
+                          className={`flex w-full flex-col gap-2 rounded-2xl border px-4 py-3 text-left shadow-sm transition hover:border-sky-400 hover:bg-sky-50 ${
+                            isActive ? "border-sky-500 bg-sky-50" : "border-slate-200 bg-white"
                           }`}
                         >
                           <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
@@ -600,7 +600,7 @@ export default function AdminMessagesPage() {
 
           <form onSubmit={handleCreateSubmit} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <PlusCircleIcon className="h-5 w-5 text-blue-500" aria-hidden="true" />
+              <PlusCircleIcon className="h-5 w-5 text-sky-500" aria-hidden="true" />
               新規メッセージ作成
             </div>
 
@@ -610,7 +610,7 @@ export default function AdminMessagesPage() {
                 <input
                   value={createForm.title}
                   onChange={(event) => setCreateForm((prev) => ({ ...prev, title: event.target.value }))}
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                   placeholder="販売者へ通知する見出し"
                   required
                 />
@@ -622,7 +622,7 @@ export default function AdminMessagesPage() {
                   <input
                     value={createForm.category}
                     onChange={(event) => setCreateForm((prev) => ({ ...prev, category: event.target.value }))}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                     placeholder="例: general"
                   />
                 </label>
@@ -631,7 +631,7 @@ export default function AdminMessagesPage() {
                   <input
                     value={createForm.priority}
                     onChange={(event) => setCreateForm((prev) => ({ ...prev, priority: event.target.value }))}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                     placeholder="例: normal"
                   />
                 </label>
@@ -642,7 +642,7 @@ export default function AdminMessagesPage() {
                   type="checkbox"
                   checked={createForm.send_now}
                   onChange={(event) => setCreateForm((prev) => ({ ...prev, send_now: event.target.checked }))}
-                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 即時配信する
               </label>
@@ -653,7 +653,7 @@ export default function AdminMessagesPage() {
                     type="datetime-local"
                     value={createForm.send_at}
                     onChange={(event) => setCreateForm((prev) => ({ ...prev, send_at: event.target.value }))}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                     required={!createForm.send_now}
                   />
                 </label>
@@ -665,7 +665,7 @@ export default function AdminMessagesPage() {
                   value={createForm.body_text}
                   onChange={(event) => setCreateForm((prev) => ({ ...prev, body_text: event.target.value }))}
                   rows={4}
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                   placeholder="テキスト本文"
                 />
               </label>
@@ -676,7 +676,7 @@ export default function AdminMessagesPage() {
                   value={createForm.body_html}
                   onChange={(event) => setCreateForm((prev) => ({ ...prev, body_html: event.target.value }))}
                   rows={4}
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                   placeholder="HTMLで整形された本文（任意）"
                 />
               </label>
@@ -690,7 +690,7 @@ export default function AdminMessagesPage() {
                       const nextType = event.target.value as TargetType;
                       setCreateForm((prev) => ({ ...prev, targetType: nextType }));
                     }}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-400 focus:outline-none"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-400 focus:outline-none"
                   >
                     <option value="all_sellers">全販売者</option>
                     <option value="all_users">全ユーザー</option>
@@ -704,7 +704,7 @@ export default function AdminMessagesPage() {
                     <input
                       value={createForm.targetUserIds}
                       onChange={(event) => setCreateForm((prev) => ({ ...prev, targetUserIds: event.target.value }))}
-                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                       placeholder="id1,id2,id3"
                       required
                     />
@@ -717,7 +717,7 @@ export default function AdminMessagesPage() {
                       value={createForm.targetEmails}
                       onChange={(event) => setCreateForm((prev) => ({ ...prev, targetEmails: event.target.value }))}
                       rows={3}
-                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                       placeholder="user1@example.com, user2@example.com"
                       required
                     />
@@ -732,7 +732,7 @@ export default function AdminMessagesPage() {
                     type="checkbox"
                     checked={createForm.sendEmail}
                     onChange={(event) => setCreateForm((prev) => ({ ...prev, sendEmail: event.target.checked }))}
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                   />
                   メールでも配信する（Mailgun）
                 </label>
@@ -746,7 +746,7 @@ export default function AdminMessagesPage() {
                       <input
                         value={createForm.emailSubject}
                         onChange={(event) => setCreateForm((prev) => ({ ...prev, emailSubject: event.target.value }))}
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                         placeholder="例: 【重要】メンテナンスのお知らせ"
                       />
                     </label>
@@ -756,7 +756,7 @@ export default function AdminMessagesPage() {
                         <input
                           value={createForm.emailFromName}
                           onChange={(event) => setCreateForm((prev) => ({ ...prev, emailFromName: event.target.value }))}
-                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                           placeholder="例: D-swipe運営事務局"
                         />
                       </label>
@@ -765,7 +765,7 @@ export default function AdminMessagesPage() {
                         <input
                           value={createForm.emailFromAddress}
                           onChange={(event) => setCreateForm((prev) => ({ ...prev, emailFromAddress: event.target.value }))}
-                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                           placeholder="例: no-reply@mg.example.com"
                         />
                       </label>
@@ -775,7 +775,7 @@ export default function AdminMessagesPage() {
                       <input
                         value={createForm.emailReplyTo}
                         onChange={(event) => setCreateForm((prev) => ({ ...prev, emailReplyTo: event.target.value }))}
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                         placeholder="例: support@example.com"
                       />
                     </label>
@@ -788,7 +788,7 @@ export default function AdminMessagesPage() {
               <button
                 type="submit"
                 disabled={createLoading || !isCreateValid}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
               >
                 <PaperAirplaneIcon className="h-4 w-4" aria-hidden="true" />
                 {createLoading ? "作成中…" : "メッセージを作成"}
@@ -836,7 +836,7 @@ export default function AdminMessagesPage() {
                       type="button"
                       onClick={handleDispatch}
                       disabled={dispatchLoading || selectedMessage.status === "sent"}
-                      className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-sky-300 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 transition hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <PaperAirplaneIcon className="h-4 w-4" aria-hidden="true" />
                       {dispatchLoading ? "配信中…" : "今すぐ配信"}
@@ -887,7 +887,7 @@ export default function AdminMessagesPage() {
                     value={detailForm.title}
                     onChange={(event) => setDetailForm((prev) => ({ ...prev, title: event.target.value }))}
                     disabled={!canUpdate}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                   />
                 </label>
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -897,7 +897,7 @@ export default function AdminMessagesPage() {
                       value={detailForm.category}
                       onChange={(event) => setDetailForm((prev) => ({ ...prev, category: event.target.value }))}
                       disabled={!canUpdate}
-                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                     />
                   </label>
                   <label className="flex flex-col gap-1 text-sm">
@@ -906,7 +906,7 @@ export default function AdminMessagesPage() {
                       value={detailForm.priority}
                       onChange={(event) => setDetailForm((prev) => ({ ...prev, priority: event.target.value }))}
                       disabled={!canUpdate}
-                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                     />
                   </label>
                 </div>
@@ -918,7 +918,7 @@ export default function AdminMessagesPage() {
                     onChange={(event) => setDetailForm((prev) => ({ ...prev, body_text: event.target.value }))}
                     rows={4}
                     disabled={!canUpdate}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                   />
                 </label>
 
@@ -929,7 +929,7 @@ export default function AdminMessagesPage() {
                     onChange={(event) => setDetailForm((prev) => ({ ...prev, body_html: event.target.value }))}
                     rows={4}
                     disabled={!canUpdate}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                   />
                 </label>
 
@@ -940,7 +940,7 @@ export default function AdminMessagesPage() {
                     value={detailForm.send_at}
                     onChange={(event) => setDetailForm((prev) => ({ ...prev, send_at: event.target.value }))}
                     disabled={!canUpdate}
-                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                    className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                   />
                 </label>
 
@@ -954,7 +954,7 @@ export default function AdminMessagesPage() {
                         setDetailForm((prev) => ({ ...prev, targetType: nextType }));
                       }}
                       disabled={!canUpdate}
-                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                     >
                       <option value="all_sellers">全販売者</option>
                       <option value="all_users">全ユーザー</option>
@@ -969,7 +969,7 @@ export default function AdminMessagesPage() {
                         value={detailForm.targetUserIds}
                         onChange={(event) => setDetailForm((prev) => ({ ...prev, targetUserIds: event.target.value }))}
                         disabled={!canUpdate}
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                       />
                     </label>
                   )}
@@ -981,7 +981,7 @@ export default function AdminMessagesPage() {
                         onChange={(event) => setDetailForm((prev) => ({ ...prev, targetEmails: event.target.value }))}
                         disabled={!canUpdate}
                         rows={3}
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                       />
                       <span className="text-xs text-slate-500">※指定したメールアドレスに一致するユーザーのみが対象になります。</span>
                     </label>
@@ -995,7 +995,7 @@ export default function AdminMessagesPage() {
                       checked={detailForm.sendEmail}
                       onChange={(event) => setDetailForm((prev) => ({ ...prev, sendEmail: event.target.checked }))}
                       disabled={!canUpdate}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 disabled:opacity-60"
                     />
                     メールでも配信する（Mailgun）
                   </label>
@@ -1010,7 +1010,7 @@ export default function AdminMessagesPage() {
                           value={detailForm.emailSubject}
                           onChange={(event) => setDetailForm((prev) => ({ ...prev, emailSubject: event.target.value }))}
                           disabled={!canUpdate}
-                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                           placeholder="未入力時はタイトルを使用"
                         />
                       </label>
@@ -1021,7 +1021,7 @@ export default function AdminMessagesPage() {
                             value={detailForm.emailFromName}
                             onChange={(event) => setDetailForm((prev) => ({ ...prev, emailFromName: event.target.value }))}
                             disabled={!canUpdate}
-                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                             placeholder="例: D-swipe運営事務局"
                           />
                         </label>
@@ -1031,7 +1031,7 @@ export default function AdminMessagesPage() {
                             value={detailForm.emailFromAddress}
                             onChange={(event) => setDetailForm((prev) => ({ ...prev, emailFromAddress: event.target.value }))}
                             disabled={!canUpdate}
-                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                             placeholder="例: no-reply@mg.example.com"
                           />
                         </label>
@@ -1042,7 +1042,7 @@ export default function AdminMessagesPage() {
                           value={detailForm.emailReplyTo}
                           onChange={(event) => setDetailForm((prev) => ({ ...prev, emailReplyTo: event.target.value }))}
                           disabled={!canUpdate}
-                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none disabled:bg-slate-100"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none disabled:bg-slate-100"
                           placeholder="例: support@example.com"
                         />
                       </label>
@@ -1062,7 +1062,7 @@ export default function AdminMessagesPage() {
                   type="button"
                   onClick={handleUpdate}
                   disabled={!canUpdate || updateLoading}
-                  className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                  className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
                 >
                   <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
                   {updateLoading ? "更新中…" : "下書きを更新"}

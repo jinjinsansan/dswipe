@@ -258,7 +258,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                   <div className="basis-full">
                     <div className="hidden w-full sm:block">
                       <input
-                        className="mt-4 w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
+                        className="mt-4 w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-sky-500 focus:outline-none"
                         value={feature.icon ?? ''}
                         onChange={handleIconChange(index)}
                         placeholder="icon"
@@ -266,7 +266,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                     </div>
                     <div className="mt-3 w-full sm:hidden">
                       <input
-                        className="w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 focus:border-sky-500 focus:outline-none"
                         value={feature.icon ?? ''}
                         onChange={handleIconChange(index)}
                         placeholder="icon"

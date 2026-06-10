@@ -53,7 +53,7 @@ function AccountShareAcceptContent() {
           <div className="mt-8 flex flex-col gap-3">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700"
             >
               ダッシュボードに移動
             </Link>

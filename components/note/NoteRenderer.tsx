@@ -113,7 +113,7 @@ export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparato
         const href = url || undefined;
 
         const card = (
-          <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:bg-blue-50/30">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-sky-200 hover:bg-sky-50/30">
             {previewImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -129,7 +129,7 @@ export function NoteRenderer({ editorType, blocks, richContent, showPaidSeparato
                 <span className="text-xs text-slate-600 line-clamp-2">{ogDescription}</span>
               ) : null}
               {ogSite || href ? (
-                <span className="text-[11px] font-medium text-blue-600 line-clamp-1">
+                <span className="text-[11px] font-medium text-sky-600 line-clamp-1">
                   {ogSite ?? href}
                 </span>
               ) : null}
@@ -240,7 +240,7 @@ const renderMarks = (node: RichNode, key: string | number): ReactNode => {
             href={href}
             target={target}
             rel={rel}
-            className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
+            className="text-sky-600 underline underline-offset-2 hover:text-sky-700"
           >
             {acc}
           </a>

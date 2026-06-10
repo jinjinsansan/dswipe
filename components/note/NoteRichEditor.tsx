@@ -948,7 +948,7 @@ export default function NoteRichEditor({
       <div className="w-full max-w-full px-0">
         <div
           ref={containerRef}
-          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] bg-white px-3 py-10 transition-shadow md:rounded-xl md:bg-white/90 md:px-6 md:shadow-sm md:ring-1 md:ring-slate-200 ${isDragOver ? 'ring-4 ring-blue-300 shadow-xl md:rounded-xl' : ''}`}
+          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] bg-white px-3 py-10 transition-shadow md:rounded-xl md:bg-white/90 md:px-6 md:shadow-sm md:ring-1 md:ring-slate-200 ${isDragOver ? 'ring-4 ring-sky-300 shadow-xl md:rounded-xl' : ''}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -960,9 +960,9 @@ export default function NoteRichEditor({
           }}
         >
           {isDragOver ? (
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center border-2 border-dashed border-blue-400 bg-blue-50/90 text-center text-sm font-semibold text-blue-600 md:rounded-xl">
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center border-2 border-dashed border-sky-400 bg-sky-50/90 text-center text-sm font-semibold text-sky-600 md:rounded-xl">
               <p>ここにファイルをドロップして追加</p>
-              <p className="mt-1 text-xs font-medium text-blue-500">画像はそのまま挿入、その他のファイルはリンクとして追加されます</p>
+              <p className="mt-1 text-xs font-medium text-sky-500">画像はそのまま挿入、その他のファイルはリンクとして追加されます</p>
             </div>
           ) : null}
           {showInsertButton && !disabled ? (
@@ -986,7 +986,7 @@ export default function NoteRichEditor({
                   }
                   openInsertMenu();
                 }}
-                className="absolute left-[-32px] hidden h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-500 md:flex md:left-[-48px] md:h-9 md:w-9"
+                className="absolute left-[-32px] hidden h-8 w-8 items-center justify-center rounded-full bg-sky-600 text-white shadow-md transition hover:bg-sky-500 md:flex md:left-[-48px] md:h-9 md:w-9"
                 style={{ top: insertButtonTop }}
               >
                 <PlusIcon className="h-5 w-5" />
@@ -1089,7 +1089,7 @@ export default function NoteRichEditor({
                   key={action.id}
                   type="button"
                   onClick={action.handler}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left text-sm transition hover:border-blue-200 hover:bg-blue-50"
+                  className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left text-sm transition hover:border-sky-200 hover:bg-sky-50"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600">{action.icon}</span>
                   <span className="flex-1 text-slate-700">
@@ -1271,7 +1271,7 @@ function ToolbarButtons({
           type="button"
           onClick={onSaveDraft}
           disabled={disabled || draftSaveDisabled || isSavingDraft}
-          className="inline-flex h-9 min-w-[100px] flex-shrink-0 items-center justify-center rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-9 min-w-[100px] flex-shrink-0 items-center justify-center rounded-lg bg-sky-600 px-3 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSavingDraft ? draftSavingLabel : draftSaveLabel}
         </button>

@@ -183,13 +183,13 @@ export default function LPAnalyticsPage() {
 
           <Link
             href={`/lp/${lpId}/analytics`}
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-white bg-blue-600/90 transition-colors text-sm font-semibold"
+            className="flex items-center justify-between rounded-lg px-3 py-2 text-white bg-sky-600/90 transition-colors text-sm font-semibold"
           >
             <span className="flex items-center gap-2">
               <PresentationChartLineIcon className="h-4 w-4" aria-hidden="true" />
               LP分析
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-blue-100">REPORT</span>
+            <span className="text-[10px] uppercase tracking-widest text-sky-100">REPORT</span>
           </Link>
 
           <Link
@@ -206,7 +206,7 @@ export default function LPAnalyticsPage() {
 
         <div className="p-4 border-t border-slate-800">
           <div className="flex items-center gap-2 mb-3">
-            <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+            <div className="h-9 w-9 rounded-full bg-sky-600 flex items-center justify-center text-white text-sm font-semibold">
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="min-w-0">
@@ -273,14 +273,14 @@ export default function LPAnalyticsPage() {
             </Link>
             <Link
               href={`/lp/${lpId}/analytics`}
-              className="flex items-center justify-between rounded-lg px-3 py-2 text-white bg-blue-600/90 text-sm"
+              className="flex items-center justify-between rounded-lg px-3 py-2 text-white bg-sky-600/90 text-sm"
               onClick={() => setShowMobileMenu(false)}
             >
               <span className="flex items-center gap-2">
                 <PresentationChartLineIcon className="h-4 w-4" aria-hidden="true" />
                 LP分析
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-blue-100">REPORT</span>
+              <span className="text-[10px] uppercase tracking-widest text-sky-100">REPORT</span>
             </Link>
             <Link
               href="/media"
@@ -369,7 +369,7 @@ export default function LPAnalyticsPage() {
                         </div>
                         <div className="relative h-8 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
                           <div
-                            className="absolute inset-y-0 left-0 flex items-center justify-end rounded-r-xl bg-gradient-to-r from-blue-600/80 to-blue-400/80 px-3 text-sm font-semibold text-white"
+                            className="absolute inset-y-0 left-0 flex items-center justify-end rounded-r-xl bg-gradient-to-r from-sky-600/80 to-sky-400/80 px-3 text-sm font-semibold text-white"
                             style={{ width: `${width}%` }}
                           >
                             {width > 12 && <span>{Math.round(width)}%</span>}
@@ -435,14 +435,14 @@ export default function LPAnalyticsPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-5 sm:p-6">
+            <section className="rounded-2xl border border-sky-500/40 bg-sky-500/10 p-5 sm:p-6">
               <h3 className="text-sm font-semibold text-white mb-3">公開URL</h3>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   readOnly
                   value={publicUrl}
-                  className="flex-1 rounded-xl border border-blue-500/40 bg-slate-950/80 px-4 py-2 text-sm text-blue-100 focus:outline-none"
+                  className="flex-1 rounded-xl border border-sky-500/40 bg-slate-950/80 px-4 py-2 text-sm text-sky-100 focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <button
@@ -450,7 +450,7 @@ export default function LPAnalyticsPage() {
                       navigator.clipboard.writeText(publicUrl);
                       alert('URLをコピーしました');
                     }}
-                    className="rounded-xl border border-blue-400/60 bg-blue-500/20 px-4 py-2 text-sm font-semibold text-blue-100 hover:bg-blue-500/30"
+                    className="rounded-xl border border-sky-400/60 bg-sky-500/20 px-4 py-2 text-sm font-semibold text-sky-100 hover:bg-sky-500/30"
                   >
                     コピー
                   </button>

@@ -270,7 +270,7 @@ export default function MediaPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
                 {isUploading ? t("upload.buttonUploading") : t("upload.button")}
@@ -326,7 +326,7 @@ export default function MediaPage() {
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-slate-600">
                         {isVideo ? (
-                          <PlayCircleIcon className="h-14 w-14 text-blue-500" aria-hidden="true" />
+                          <PlayCircleIcon className="h-14 w-14 text-sky-500" aria-hidden="true" />
                         ) : (
                           <PhotoIcon className="h-12 w-12 text-slate-400" aria-hidden="true" />
                         )}

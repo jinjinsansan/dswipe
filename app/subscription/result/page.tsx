@@ -212,7 +212,7 @@ function SubscriptionResultContent(): JSX.Element {
                   <p className="mt-1 text-xs text-slate-500">販売者: {sellerUsername}</p>
                 ) : null}
                 {polling ? (
-                  <p className="mt-2 text-xs text-blue-600">決済状況を確認しています…</p>
+                  <p className="mt-2 text-xs text-sky-600">決済状況を確認しています…</p>
                 ) : null}
                 {notificationSent ? (
                   <p className="mt-2 text-xs text-emerald-600">運営からのお知らせにメッセージを送信しました。</p>

@@ -110,7 +110,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                   onClick={() => setFilter(option.value)}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                     filter === option.value
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? 'bg-sky-600 text-white shadow-sm'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -120,7 +120,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
               ))}
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-              <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 sm:w-72">
+              <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20 sm:w-72">
                 <MagnifyingGlassIcon className="h-4 w-4" aria-hidden="true" />
                 <input
                   value={search}
@@ -153,7 +153,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                   onClick={() => setCategoryFilter(option.value)}
                   className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
                     categoryFilter === option.value
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? 'bg-sky-600 text-white shadow-sm'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -176,7 +176,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
           <section className="border border-dashed border-slate-300 bg-white/70 p-8 text-center shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">{t('emptyTitle')}</h2>
             <p className="mt-3 text-sm text-slate-600">{t('emptyDescription')}</p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm">
               <SparklesIcon className="h-4 w-4" aria-hidden="true" />
               {t('emptyBadge')}
             </div>
@@ -201,7 +201,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                 <Link
                   key={note.id}
                   href={withBasePath(basePath, `/notes/${note.slug}`)}
-                  className="group flex items-center gap-3 border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
+                  className="group flex items-center gap-3 border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-sky-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
                 >
                   <div className="relative h-20 w-24 flex-none overflow-hidden bg-slate-100 md:h-auto md:w-full md:aspect-[3/2]">
                     {note.cover_image_url ? (
@@ -233,7 +233,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                           {priceLabel}
                         </span>
                         {note.requires_login ? (
-                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700 md:text-[11px]">
+                          <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700 md:text-[11px]">
                             {t('loginRequiredBadge')}
                           </span>
                         ) : null}

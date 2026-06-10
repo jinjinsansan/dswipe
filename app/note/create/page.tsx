@@ -534,7 +534,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
+            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-600"
           >
             エディタ種別を選び直す
           </button>
@@ -555,7 +555,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder={t('placeholders.title')}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                 disabled={saving}
               />
             </div>
@@ -568,7 +568,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                   value={excerpt}
                   onChange={(event) => setExcerpt(event.target.value)}
                   placeholder={t('placeholders.excerpt')}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                   disabled={saving}
                 />
               </div>
@@ -579,7 +579,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     type="button"
                     onClick={openCoverFilePicker}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {noteEditorT('buttons.uploadImage')}
                   </button>
@@ -587,7 +587,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     type="button"
                     onClick={() => setIsCoverMediaOpen(true)}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {noteEditorT('buttons.chooseFromMedia')}
                   </button>
@@ -600,7 +600,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                   />
                 </div>
                 {isCoverUploading ? (
-                  <p className="mt-2 text-xs font-semibold text-blue-600">{noteEditorT('status.uploading')}</p>
+                  <p className="mt-2 text-xs font-semibold text-sky-600">{noteEditorT('status.uploading')}</p>
                 ) : null}
                 <p className="mt-2 text-xs text-slate-500">{t('helpers.coverImage')}</p>
                 <input
@@ -608,7 +608,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                   value={coverImageUrl}
                   onChange={(event) => setCoverImageUrl(event.target.value)}
                   placeholder={t('placeholders.coverImageUrl')}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                   disabled={saving}
                 />
                 {coverImageUrl.trim() ? (
@@ -635,7 +635,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     {categories.map((category) => (
                       <span
                         key={category}
-                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 font-semibold text-blue-600"
+                        className="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 font-semibold text-sky-600"
                       >
                         #{categoryT(category)}
                       </span>
@@ -653,7 +653,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                       onClick={() => toggleCategory(option.value)}
                       disabled={saving}
                       className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                        isActive ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        isActive ? 'bg-sky-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
                       {categoryT(option.value)}
@@ -674,8 +674,8 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                       key={option.value}
                       className={`flex cursor-pointer flex-col gap-1 rounded-2xl border px-3 py-3 text-sm transition ${
                         isChecked
-                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
-                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-sky-200 hover:bg-sky-50'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -686,7 +686,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                           checked={isChecked}
                           onChange={() => handleVisibilityChange(option.value)}
                           disabled={saving}
-                          className="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"
+                          className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
                         />
                         <span className="font-semibold">{option.label}</span>
                       </div>
@@ -696,16 +696,16 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                 })}
               </div>
               {visibility === 'public' ? (
-                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-4">
+                <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-blue-800">{t('labels.requiresLoginTitle')}</p>
-                      <p className="mt-1 text-xs text-blue-700/80">{t('labels.requiresLoginDescription')}</p>
+                      <p className="text-sm font-semibold text-sky-800">{t('labels.requiresLoginTitle')}</p>
+                      <p className="mt-1 text-xs text-sky-700/80">{t('labels.requiresLoginDescription')}</p>
                     </div>
-                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-sky-700">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-sky-300 text-sky-600 focus:ring-sky-500"
                         checked={requiresLogin}
                         onChange={(event) => setRequiresLogin(event.target.checked)}
                         disabled={saving}
@@ -726,7 +726,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                 <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     checked={isPaid}
                     onChange={(event) => handlePaidToggle(event.target.checked)}
                     disabled={saving}
@@ -741,7 +741,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                         checked={allowPointPurchase}
                         onChange={(event) => handleAllowPointPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
@@ -755,7 +755,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     value={pricePoints}
                     onChange={(event) => handlePriceChange(event.target.value)}
                     placeholder={t('placeholders.pointsExample')}
-                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || !allowPointPurchase}
                   />
                   <p className="mt-2 text-xs text-slate-500">{t('labels.pointsDescription')}</p>
@@ -766,7 +766,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                         checked={allowJpyPurchase}
                         onChange={(event) => handleAllowJpyPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
@@ -794,7 +794,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                     inputMode="decimal"
                     value={taxRate}
                     onChange={(event) => handleTaxRateChange(event.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
                   />
                 </div>
@@ -802,7 +802,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                   <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       checked={taxInclusive}
                       onChange={(event) => setTaxInclusive(event.target.checked)}
                       disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
@@ -895,7 +895,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-full bg-sky-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? t('buttons.saving') : t('buttons.saveDraft')}
           </button>
@@ -1228,7 +1228,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
+            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-600"
           >
             エディタ種別を選び直す
           </button>
@@ -1249,7 +1249,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder={t('placeholders.title')}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                 disabled={saving}
               />
             </div>
@@ -1262,7 +1262,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                   value={excerpt}
                   onChange={(event) => setExcerpt(event.target.value)}
                   placeholder={t('placeholders.excerpt')}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                   disabled={saving}
                 />
               </div>
@@ -1273,7 +1273,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     type="button"
                     onClick={openCoverFilePicker}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {noteEditorT('buttons.uploadImage')}
                   </button>
@@ -1281,7 +1281,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     type="button"
                     onClick={() => setIsCoverMediaOpen(true)}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {noteEditorT('buttons.chooseFromMedia')}
                   </button>
@@ -1294,7 +1294,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                   />
                 </div>
                 {isCoverUploading ? (
-                  <p className="mt-2 text-xs font-semibold text-blue-600">{noteEditorT('status.uploading')}</p>
+                  <p className="mt-2 text-xs font-semibold text-sky-600">{noteEditorT('status.uploading')}</p>
                 ) : null}
                 <p className="mt-2 text-xs text-slate-500">{t('helpers.coverImage')}</p>
                 <input
@@ -1302,7 +1302,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                   value={coverImageUrl}
                   onChange={(event) => setCoverImageUrl(event.target.value)}
                   placeholder={t('placeholders.coverImageUrl')}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                   disabled={saving}
                 />
                 {coverImageUrl.trim() ? (
@@ -1329,7 +1329,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     {categories.map((category) => (
                       <span
                         key={category}
-                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 font-semibold text-blue-600"
+                        className="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 font-semibold text-sky-600"
                       >
                         #{categoryT(category)}
                       </span>
@@ -1347,7 +1347,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                       onClick={() => toggleCategory(option.value)}
                       disabled={saving}
                       className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                        isActive ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        isActive ? 'bg-sky-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
                       {categoryT(option.value)}
@@ -1368,8 +1368,8 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                       key={option.value}
                       className={`flex cursor-pointer flex-col gap-1 rounded-2xl border px-3 py-3 text-sm transition ${
                         isChecked
-                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
-                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-sky-200 hover:bg-sky-50'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -1380,7 +1380,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                           checked={isChecked}
                           onChange={() => handleVisibilityChange(option.value)}
                           disabled={saving}
-                          className="h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"
+                          className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
                         />
                         <span className="font-semibold">{option.label}</span>
                       </div>
@@ -1390,16 +1390,16 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                 })}
               </div>
               {visibility === 'public' ? (
-                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-4">
+                <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-blue-800">{t('labels.requiresLoginTitle')}</p>
-                      <p className="mt-1 text-xs text-blue-700/80">{t('labels.requiresLoginDescription')}</p>
+                      <p className="text-sm font-semibold text-sky-800">{t('labels.requiresLoginTitle')}</p>
+                      <p className="mt-1 text-xs text-sky-700/80">{t('labels.requiresLoginDescription')}</p>
                     </div>
-                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-sky-700">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-sky-300 text-sky-600 focus:ring-sky-500"
                         checked={requiresLogin}
                         onChange={(event) => setRequiresLogin(event.target.checked)}
                         disabled={saving}
@@ -1420,7 +1420,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                 <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     checked={isPaid}
                     onChange={(event) => handlePaidToggle(event.target.checked)}
                     disabled={saving}
@@ -1435,7 +1435,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                         checked={allowPointPurchase}
                         onChange={(event) => handleAllowPointPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
@@ -1449,7 +1449,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     value={pricePoints}
                     onChange={(event) => handlePriceChange(event.target.value)}
                     placeholder={t('placeholders.pointsExample')}
-                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+                    className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || !allowPointPurchase}
                   />
                   <p className="mt-2 text-xs text-slate-500">{t('labels.pointsDescription')}</p>
@@ -1460,7 +1460,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                         checked={allowJpyPurchase}
                         onChange={(event) => handleAllowJpyPurchaseChange(event.target.checked)}
                         disabled={!effectivePaid}
@@ -1488,7 +1488,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                     inputMode="decimal"
                     value={taxRate}
                     onChange={(event) => handleTaxRateChange(event.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-60"
                     disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
                   />
                 </div>
@@ -1496,7 +1496,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                   <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       checked={taxInclusive}
                       onChange={(event) => setTaxInclusive(event.target.checked)}
                       disabled={saving || !effectivePaid || (!allowPointPurchase && !allowJpyPurchase)}
@@ -1602,7 +1602,7 @@ export default function NoteCreatePage() {
             <button
               type="button"
               onClick={() => setSelection('classic')}
-              className="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-blue-300 hover:bg-blue-50"
+              className="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:border-sky-300 hover:bg-sky-50"
             >
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Classic</span>
               <h3 className="text-lg font-semibold text-slate-900">クラシックブロックエディタ</h3>
