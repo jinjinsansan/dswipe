@@ -58,7 +58,7 @@ export default function TokushoPage() {
           const isEmail = value.includes("@");
           if (isEmail) {
             return (
-              <a key={index} href={`mailto:${value}`} className="text-sky-300 hover:text-sky-200">
+              <a key={index} href={`mailto:${value}`} className="text-sky-600 hover:text-sky-500">
                 {value}
               </a>
             );

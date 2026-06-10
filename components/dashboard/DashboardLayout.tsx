@@ -184,7 +184,7 @@ export default function DashboardLayout({
       <aside className="hidden sm:flex w-52 bg-[var(--navy-900)] flex-col flex-shrink-0 border-r border-[var(--navy-800)]">
         <div className="px-4 h-20 border-b border-[var(--navy-800)] flex items-center">
           <Link href={isAuthenticated ? "/dashboard" : "/"} className="block">
-            <DSwipeLogo size="large" showFullName={true} textColor="text-white" />
+            <DSwipeLogo size="large" showFullName={true} textColor="text-pure-white" />
           </Link>
         </div>
 

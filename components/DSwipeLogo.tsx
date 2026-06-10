@@ -28,7 +28,7 @@ export default function DSwipeLogo({
         style={{
           width: `${dim.circle}px`,
           height: `${dim.circle}px`,
-          backgroundColor: '#3B82F6', // Blue
+          backgroundColor: '#0284c7', // Momentum sky-600
           color: '#FFFFFF', // White
           fontSize: dim.circle * 0.6 + 'px',
           lineHeight: '1',

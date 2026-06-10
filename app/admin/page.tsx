@@ -3683,7 +3683,7 @@ export default function AdminPanelPage() {
                               <span className="inline-flex items-center rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-200">Draft</span>
                             )}
                             {announcement.highlight && announcement.is_published && (
-                              <span className="inline-flex items-center rounded-full border border-sky-500/50 bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-200">Highlight</span>
+                              <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">Highlight</span>
                             )}
                           </div>
                           <p className="text-sm font-semibold text-gray-900 truncate">{announcement.title}</p>
@@ -3692,7 +3692,7 @@ export default function AdminPanelPage() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => handleAnnouncementEdit(announcement)}
-                            className="inline-flex items-center justify-center gap-1 rounded-full border border-sky-500/50 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-100 hover:bg-sky-500/20"
+                            className="inline-flex items-center justify-center gap-1 rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-100"
                           >
                             編集
                           </button>

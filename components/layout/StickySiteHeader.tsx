@@ -63,7 +63,7 @@ export default function StickySiteHeader({
 
   const backgroundClass = dark ? 'bg-slate-950/85' : 'bg-white/90';
   const borderClass = dark ? 'border-b border-white/10' : 'border-b border-slate-200/80';
-  const textColor = dark ? 'text-white' : 'text-slate-900';
+  const textColor = dark ? 'text-pure-white' : 'text-slate-900';
   const headerClassName = ['sticky top-0 z-50 backdrop-blur-lg', backgroundClass, borderClass, className]
     .filter(Boolean)
     .join(' ');
@@ -162,8 +162,8 @@ export default function StickySiteHeader({
   const menuButtonClassName = [
     'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors',
     dark
-      ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20'
-      : 'border border-slate-900 bg-slate-900 text-white hover:bg-slate-800',
+      ? 'border border-white/30 bg-white/10 text-pure-white hover:bg-white/20'
+      : 'border border-[#0b1f3a] bg-[#0b1f3a] text-pure-white hover:bg-[#122c4d]',
   ].join(' ');
 
   const defaultRightSlot = (
