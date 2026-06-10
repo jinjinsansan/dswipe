@@ -63,12 +63,14 @@
 
 ---
 
-## 5. Vercel プレビューの問題（未解決・コード外）
+## 5. Vercel プレビューの問題（解決済 2026-06-10）
 
-- 症状: ユーザーがプレビューURL（`https://dswipe-git-momentum-main-goldbenchan-9860s-projects.vercel.app/`）を見ても**旧デザインのまま**。劇的に変えたログインすら変わらない。
-- 切り分け: コードはGitHubにあり・ローカルビルド成功 → **Vercelが `momentum-main` をデプロイできていない/反映していない**のが原因（Vercel側設定 or デプロイ失敗 or 見ているURL違い）。
-- **次にやること**: Vercel Deployments で `momentum-main` の最新デプロイを確認（コミット `2d8ac99` / status Ready・Building・Error）。Error ならログを確認して修正。デプロイ自体が無ければプレビュー設定を確認。
-- **確実な確認手段**: ローカル `npm run dev`（下記）。Vercelに依存しない。
+- 原因は2つだった:
+  1. 旧 `redesign-momentum` ブランチのデプロイが「Vulnerable version of Next.js detected」で**Vercelにブロック**されErrorを連発していた（momentum-main とは無関係のノイズ）。
+  2. プレビューURL全体に **SSO保護**（Deployment Protection: `all_except_custom_domains`）がかかっており、未ログインだと401。
+- 現状: `momentum-main@82a559a` のデプロイは **Ready** で `https://dswipe-git-momentum-main-goldbenchan-9860s-projects.vercel.app` にエイリアス済み。curl検証で `/login` が HTTP 200＋Momentumマーカー（`#0b1f3a` 等）を返すことを確認済み。
+- 閲覧方法: **Protection Bypass for Automation** のシークレットを発行済み（`.vercel/bypass-secret.txt`、gitignore済・コミット禁止）。URL末尾に `?x-vercel-protection-bypass=<secret>&x-vercel-set-bypass-cookie=true` を付けて開くと以後Cookieで閲覧可。もしくはVercelにログインした状態でプレビューURLを開く。
+- シークレットの無効化: Vercel Dashboard → Project Settings → Deployment Protection → Protection Bypass for Automation で revoke 可能。本番（d-swipe.com = main）は無変更。
 
 ---
 
