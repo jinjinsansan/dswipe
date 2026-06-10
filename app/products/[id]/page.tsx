@@ -5,7 +5,15 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArchiveBoxIcon, CubeTransparentIcon, FireIcon } from '@heroicons/react/24/outline';
+import {
+  ArchiveBoxIcon,
+  ArrowRightIcon,
+  ChevronRightIcon,
+  CubeTransparentIcon,
+  FireIcon,
+  ShieldCheckIcon,
+  Square2StackIcon,
+} from '@heroicons/react/24/outline';
 import { paymentApi } from '@/lib/api';
 import { fetchProductDetail, purchaseProduct } from '@/lib/publicClient';
 import { useAuthStore } from '@/store/authStore';
@@ -13,11 +21,19 @@ import StickySiteHeader from '@/components/layout/StickySiteHeader';
 import type { Product } from '@/types';
 import { redirectToLogin } from '@/lib/navigation';
 
+/* Momentum product detail — mock: design_handoff_dswipe/D-Swipe Product Detail.html */
+
 type ProductDetail = Product & {
   seller_username?: string | null;
   image_url?: string | null;
   additional_info?: string | null;
+  lp_slug?: string | null;
 };
+
+const MEDIA_FALLBACK_BG =
+  'radial-gradient(420px 320px at 75% 10%, rgba(34,211,238,.35), transparent 60%), linear-gradient(160deg, #0b1f3a, #0e7490)';
+const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
+const NAVY_CARD_BG = 'linear-gradient(160deg, #0b1f3a, #0f2c52)';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -160,13 +176,16 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gray-950 text-slate-200">
-        <StickySiteHeader dark showDashboardLink />
+      <div className="min-h-screen bg-[#f4f8fd] text-slate-700">
+        <StickySiteHeader showDashboardLink />
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-16">
-          <div className="text-center">
-            <p className="mb-4 text-lg text-red-400">商品が見つかりませんでした</p>
-            <Link href="/products" className="text-sky-400 transition-colors hover:text-sky-300">
-              商品一覧に戻る
+          <div className="text-center bg-white border border-[#e2ebf6] rounded-2xl shadow-sm px-10 py-12">
+            <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">
+              <ArchiveBoxIcon className="h-8 w-8" aria-hidden="true" />
+            </div>
+            <p className="mb-4 text-lg font-semibold text-[#0b1f3a]">商品が見つかりませんでした</p>
+            <Link href="/products" className="text-sky-600 font-semibold transition-colors hover:text-sky-500">
+              マーケットに戻る
             </Link>
           </div>
         </div>
@@ -182,28 +201,27 @@ export default function ProductDetailPage() {
   const methodAvailable = isPointsSelected
     ? Boolean(product?.allow_point_purchase)
     : Boolean(product?.allow_jpy_purchase && (product?.price_jpy ?? 0) > 0);
+  const sellerInitial = product.seller_username?.charAt(0).toUpperCase() || 'S';
+  const lpSlug = typeof product.lp_slug === 'string' && product.lp_slug ? product.lp_slug : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-slate-100">
-      <StickySiteHeader dark showDashboardLink />
-      {/* Header */}
-      <header className="sticky top-16 z-40 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">
-              ← 商品一覧に戻る
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#f4f8fd] text-slate-700">
+      <StickySiteHeader showDashboardLink />
 
-      {/* Product Detail */}
-      <div className="max-w-7xl mx-auto px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: Image */}
-          <div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-[7px] pt-[18px] pb-1.5 text-[13px] text-slate-500">
+          <Link href="/products" className="hover:text-sky-600 transition-colors">マーケット</Link>
+          <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
+          <span className="text-slate-700 font-medium line-clamp-1">{product.title}</span>
+        </div>
+
+        {/* Product Detail */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start pt-3 pb-16">
+          {/* Left: Media */}
+          <div className="lg:sticky lg:top-[84px]">
             {product.image_url ? (
-              <div className="aspect-square bg-gray-900 rounded-lg overflow-hidden">
+              <div className="aspect-square rounded-[20px] overflow-hidden shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] bg-white">
                 <img
                   src={product.image_url}
                   alt={product.title}
@@ -211,8 +229,19 @@ export default function ProductDetailPage() {
                 />
               </div>
             ) : (
-              <div className="aspect-square bg-gray-900 rounded-lg flex items-center justify-center">
-                <ArchiveBoxIcon className="h-16 w-16 text-gray-600" aria-hidden="true" />
+              <div
+                className="aspect-square rounded-[20px] overflow-hidden shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] relative flex items-end p-[26px]"
+                style={{ background: MEDIA_FALLBACK_BG }}
+              >
+                <span className="absolute top-4 left-4 text-[11px] font-bold text-pure-white bg-[rgba(11,31,58,.5)] backdrop-blur-[4px] px-[11px] py-1 rounded-full">
+                  {product.is_available !== false ? '販売中' : '停止中'}
+                </span>
+                <div>
+                  <span className="text-xs font-bold tracking-[.14em] uppercase text-pure-white opacity-85">D-Swipe Market</span>
+                  <h3 className="text-2xl sm:text-[30px] font-extrabold tracking-tight leading-tight text-pure-white mt-2 [text-shadow:0_2px_14px_rgba(0,0,0,.35)]">
+                    {product.title}
+                  </h3>
+                </div>
               </div>
             )}
           </div>
@@ -220,63 +249,67 @@ export default function ProductDetailPage() {
           {/* Right: Info */}
           <div>
             {/* Seller */}
-            <Link
-              href={`/u/${product.seller_username}`}
-              className="inline-flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 bg-sky-600 rounded-full flex items-center justify-center text-white text-sm">
-                {product.seller_username?.charAt(0).toUpperCase() || 'S'}
-              </div>
-              <span className="text-sky-400 hover:text-sky-300 text-sm">
-                {product.seller_username}
-              </span>
-            </Link>
+            {product.seller_username ? (
+              <Link
+                href={`/u/${product.seller_username}`}
+                className="inline-flex items-center gap-[9px] py-1.5 pl-1.5 pr-3 border border-[#e2ebf6] rounded-full bg-white hover:border-[#bfe6fb] transition-colors"
+              >
+                <span
+                  className="w-[30px] h-[30px] rounded-full flex items-center justify-center font-extrabold text-[13px] text-[#042032]"
+                  style={{ background: 'linear-gradient(135deg,#22d3ee,#0284c7)' }}
+                >
+                  {sellerInitial}
+                </span>
+                <span className="text-[13px] font-bold text-[#0b1f3a] leading-tight">
+                  @{product.seller_username}
+                  <small className="block font-medium text-slate-500 text-[11px]">クリエイター</small>
+                </span>
+              </Link>
+            ) : null}
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h1 className="text-2xl sm:text-[30px] font-extrabold tracking-tight text-[#0b1f3a] leading-tight mt-4">
               {product.title}
             </h1>
 
-            <p className="text-gray-300 text-lg mb-6 leading-relaxed">
-              {product.description}
-            </p>
+            {product.description ? (
+              <p className="text-[15px] leading-[1.8] text-slate-700 mt-3.5">
+                {product.description}
+              </p>
+            ) : null}
 
             {/* Stats */}
-            <div className="flex items-center gap-6 mb-6 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <FireIcon className="h-5 w-5 text-orange-400" aria-hidden="true" />
-                <span>
-                  <span className="font-semibold text-white">{product.total_sales || 0}</span> 件販売
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CubeTransparentIcon className="h-5 w-5" aria-hidden="true" />
-                <span>
-                  在庫: <span className="font-semibold text-white">{stockQuantity ?? '無制限'}</span>
-                </span>
-              </div>
+            <div className="flex items-center gap-[22px] mt-5 text-[13.5px] text-slate-600">
+              <span className="inline-flex items-center gap-2">
+                <FireIcon className="w-[18px] h-[18px] text-amber-500" aria-hidden="true" />
+                <span><b className="text-[#0b1f3a] tabular-nums">{product.total_sales || 0}</b> 件販売</span>
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <CubeTransparentIcon className="w-[18px] h-[18px]" aria-hidden="true" />
+                <span>在庫: <b className="text-[#0b1f3a] tabular-nums">{stockQuantity ?? '無制限'}</b></span>
+              </span>
             </div>
 
-            {/* Price */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-6 mb-6">
-              <div className="text-gray-400 text-sm mb-3">決済方法</div>
+            {/* Buy box */}
+            <div className="bg-white border border-[#e2ebf6] rounded-[20px] shadow-[0_2px_5px_rgba(11,31,58,.05),0_12px_24px_-14px_rgba(11,31,58,.22)] p-[22px] mt-[22px]">
+              <div className="text-[12.5px] font-semibold text-slate-500 mb-3">決済方法</div>
 
               {canPurchase ? (
-                <div className="grid gap-3 sm:grid-cols-2 mb-6">
+                <div className="grid gap-3 sm:grid-cols-2 mb-5">
                   {product.allow_point_purchase && (
                     <button
                       type="button"
                       onClick={() => setSelectedMethod('points')}
-                      className={`rounded-lg border px-4 py-3 text-left transition-colors ${
+                      className={`rounded-xl border px-4 py-3 text-left transition-colors ${
                         isPointsSelected
-                          ? 'border-sky-500 bg-sky-500/10'
-                          : 'border-gray-700 bg-gray-900/70 hover:border-sky-500/60'
+                          ? 'border-sky-600 bg-[#e9f6fe]'
+                          : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
                       }`}
                     >
-                      <div className="text-xs uppercase tracking-wide text-gray-400">ポイント決済</div>
-                      <div className="mt-1 text-2xl font-semibold text-sky-300">
-                        {product.price_in_points.toLocaleString()} <span className="text-base text-gray-400">PT</span>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">ポイント決済</div>
+                      <div className="mt-1 text-2xl font-extrabold text-sky-600 tabular-nums">
+                        {product.price_in_points.toLocaleString()} <span className="text-base text-slate-500">P</span>
                       </div>
-                      <div className="mt-1 text-xs text-gray-500">保有ポイントから差し引かれます</div>
+                      <div className="mt-1 text-xs text-slate-500">保有ポイントから差し引かれます</div>
                     </button>
                   )}
 
@@ -284,39 +317,39 @@ export default function ProductDetailPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedMethod('yen')}
-                      className={`rounded-lg border px-4 py-3 text-left transition-colors ${
+                      className={`rounded-xl border px-4 py-3 text-left transition-colors ${
                         !isPointsSelected
-                          ? 'border-emerald-500 bg-emerald-500/10'
-                          : 'border-gray-700 bg-gray-900/70 hover:border-emerald-500/60'
+                          ? 'border-emerald-500 bg-emerald-50'
+                          : 'border-[#e2ebf6] bg-white hover:border-emerald-200'
                       }`}
                     >
-                      <div className="text-xs uppercase tracking-wide text-gray-400">日本円決済</div>
-                      <div className="mt-1 text-2xl font-semibold text-emerald-300">
-                        {(product.price_jpy ?? 0).toLocaleString()} <span className="text-base text-gray-400">円</span>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">日本円決済</div>
+                      <div className="mt-1 text-2xl font-extrabold text-emerald-600 tabular-nums">
+                        {(product.price_jpy ?? 0).toLocaleString()} <span className="text-base text-slate-500">円</span>
                       </div>
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-slate-500">
                         one.latの決済画面に遷移します{product.tax_inclusive ? '（税込）' : ''}
                       </div>
                     </button>
                   )}
                 </div>
               ) : (
-                <p className="mb-6 text-sm text-gray-500">
+                <p className="mb-5 text-sm text-slate-500">
                   現在、この商品は購入できません。
                 </p>
               )}
 
               {canPurchase && (
                 <>
-                  <div className="mb-4">
-                    <label className="block text-gray-400 text-sm mb-2">数量</label>
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13.5px] text-slate-600">数量</span>
+                    <div className="inline-flex items-center border border-[#e2ebf6] rounded-[11px] overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-10 h-10 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                        className="w-[38px] h-[38px] bg-[#f8fafc] text-[#0b1f3a] text-lg hover:bg-[#e9f6fe] hover:text-sky-600 transition-colors"
                       >
-                        -
+                        −
                       </button>
                       <input
                         type="number"
@@ -333,7 +366,7 @@ export default function ProductDetailPage() {
                             setQuantity(nextValue);
                           }
                         }}
-                        className="w-20 px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-center focus:outline-none focus:border-sky-500"
+                        className="w-12 text-center border-0 text-[15px] font-bold text-[#0b1f3a] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         min={1}
                         max={stockQuantity !== null && stockQuantity > 0 ? stockQuantity : undefined}
                       />
@@ -349,22 +382,20 @@ export default function ProductDetailPage() {
                             setQuantity(quantity + 1);
                           }
                         }}
-                        className="w-10 h-10 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                        className="w-[38px] h-[38px] bg-[#f8fafc] text-[#0b1f3a] text-lg hover:bg-[#e9f6fe] hover:text-sky-600 transition-colors"
                       >
-                        +
+                        ＋
                       </button>
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-700 pt-4 mb-4">
-                    <div className="flex items-center justify-between text-lg">
-                      <span className="text-gray-400">合計</span>
-                      <span className="text-2xl font-bold text-white">
-                        {isPointsSelected
-                          ? `${pointsTotal.toLocaleString()} P`
-                          : `${yenTotal.toLocaleString()} 円`}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between border-t border-[#e2ebf6] mt-4 pt-4">
+                    <span className="text-sm font-semibold text-[#0b1f3a]">合計</span>
+                    <span className="text-2xl font-extrabold text-[#0b1f3a] tabular-nums">
+                      {isPointsSelected
+                        ? `${pointsTotal.toLocaleString()} P`
+                        : `${yenTotal.toLocaleString()} 円`}
+                    </span>
                   </div>
 
                   <button
@@ -374,7 +405,8 @@ export default function ProductDetailPage() {
                       !methodAvailable ||
                       (stockQuantity !== null && stockQuantity === 0)
                     }
-                    className="w-full px-6 py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full mt-4 px-6 py-3.5 text-pure-white rounded-xl font-bold text-base shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    style={{ background: GRAD_BRAND }}
                   >
                     {isPurchasing
                       ? '手続き中...'
@@ -384,18 +416,43 @@ export default function ProductDetailPage() {
                           ? 'ポイントで購入'
                           : '保存済み情報でクイック購入'}
                   </button>
+
+                  <div className="flex items-center justify-center gap-[7px] text-xs text-slate-500 mt-3.5">
+                    <ShieldCheckIcon className="w-[15px] h-[15px] text-green-600" aria-hidden="true" />
+                    プラットフォーム内決済で安全に取引できます
+                  </div>
                 </>
               )}
             </div>
 
             {/* Additional Info */}
             {product.additional_info && (
-              <div className="bg-gray-800/30 rounded-lg p-4">
-                <h3 className="text-white font-semibold mb-2">商品詳細</h3>
-                <p className="text-gray-400 text-sm whitespace-pre-wrap">
-                  {product.additional_info}
-                </p>
+              <div className="mt-6">
+                <h3 className="text-lg font-bold text-[#0b1f3a] mb-3">商品詳細</h3>
+                <div className="bg-white border border-[#e2ebf6] rounded-2xl p-5 shadow-sm">
+                  <p className="text-sm leading-[1.85] text-slate-700 whitespace-pre-wrap">
+                    {product.additional_info}
+                  </p>
+                </div>
               </div>
+            )}
+
+            {/* LP link */}
+            {lpSlug && (
+              <Link
+                href={`/view/${lpSlug}`}
+                className="flex items-center gap-3.5 rounded-2xl px-5 py-[18px] mt-6 text-pure-white shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] hover:opacity-95 transition-opacity"
+                style={{ background: NAVY_CARD_BG }}
+              >
+                <span className="w-[42px] h-[42px] rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <Square2StackIcon className="w-[22px] h-[22px]" aria-hidden="true" />
+                </span>
+                <span>
+                  <b className="block text-[14.5px]">この商品のLPを見る</b>
+                  <span className="block text-[12.5px] text-[#bcd3ee] mt-0.5">スワイプLPで商品の詳細を確認できます</span>
+                </span>
+                <ArrowRightIcon className="w-5 h-5 ml-auto flex-shrink-0" aria-hidden="true" />
+              </Link>
             )}
           </div>
         </div>
