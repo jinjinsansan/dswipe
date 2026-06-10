@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import AutoPlayVideo from '@/components/AutoPlayVideo';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -40,7 +40,7 @@ const NAVY_DEEP =
   'radial-gradient(800px 520px at 50% -10%, #0e7490 0%, transparent 58%), linear-gradient(160deg, #081428, #0b1f3a 70%, #081428)';
 const NAVY_FINAL =
   'radial-gradient(900px 460px at 50% 0%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52)';
-const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
+import { GRAD_BRAND } from '@/lib/momentum';
 
 /* §7 safe layout: center when content fits, top-align + scroll when it
    overflows — padding reserves room for the fixed nav and signup band. */
@@ -173,15 +173,62 @@ function GoogleGlyph() {
   );
 }
 
-export default function HomeSwiper() {
-  const [swiper, setSwiper] = useState<SwiperType | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+/* 自動でスワイプし続けるスマホモック。インターバルによる再レンダリングを
+   このコンポーネント内に閉じ込める（ページ全体を2.6秒毎に再描画しない）。 */
+const PhoneDemo = memo(function PhoneDemo() {
   const [phoneIndex, setPhoneIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => setPhoneIndex((i) => (i + 1) % PHONE_SLIDES.length), 2600);
     return () => clearInterval(timer);
   }, []);
+
+  return (
+    <div className="hidden sm:flex justify-center relative">
+      <div className="absolute inset-[12%_16%] blur-[38px]" style={{ background: 'radial-gradient(circle, rgba(6,182,212,.4), transparent 70%)' }} />
+      <div className="relative z-[1] w-[200px] h-[408px] lg:w-[240px] lg:h-[490px] bg-[#0b1220] rounded-[38px] p-[9px] shadow-[0_40px_90px_-30px_rgba(0,0,0,.7),0_0_0_1px_rgba(255,255,255,.06)]">
+        <div className="relative w-full h-full rounded-[30px] overflow-hidden bg-white">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[22px] bg-[#0b1220] rounded-b-[13px] z-[12]" />
+          <div
+            className="absolute inset-0 transition-transform duration-[550ms] [transition-timing-function:cubic-bezier(.5,.05,.2,1)]"
+            style={{ transform: `translateY(${-phoneIndex * 100}%)` }}
+          >
+            {PHONE_SLIDES.map((p, i) => (
+              <div
+                key={i}
+                className="absolute left-0 right-0 h-full flex flex-col justify-end px-[18px] pt-6 pb-7 text-pure-white"
+                style={{ top: `${i * 100}%`, background: p.bg }}
+              >
+                <span className="text-[10px] font-bold tracking-[.14em] uppercase opacity-85">{p.tag}</span>
+                <h3 className="text-[22px] font-extrabold tracking-tight leading-tight mt-2">
+                  {p.title[0]}
+                  <br />
+                  {p.title[1]}
+                </h3>
+                {p.body && <p className="text-xs leading-relaxed mt-2 opacity-90">{p.body}</p>}
+                {p.price && (
+                  <div className="text-[32px] font-extrabold tracking-tight mt-3">
+                    <s className="text-sm font-semibold opacity-60 mr-2">¥29,800</s>¥9,800
+                  </div>
+                )}
+                {p.cta && <div className="mt-3.5 text-center bg-white text-[#0b1f3a] font-extrabold text-[13px] py-[11px] rounded-xl">申し込む →</div>}
+              </div>
+            ))}
+          </div>
+          <div className="absolute right-[9px] top-1/2 -translate-y-1/2 flex flex-col gap-[5px] z-[12]">
+            {PHONE_SLIDES.map((_, i) => (
+              <i key={i} className={`w-[5px] rounded-full ${i === phoneIndex ? 'h-4 bg-white' : 'h-[5px] bg-white/45'}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default function HomeSwiper() {
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const triggerHapticFeedback = (style: 'light' | 'medium' | 'heavy' = 'light') => {
     if ('vibrate' in navigator) {
@@ -308,45 +355,7 @@ export default function HomeSwiper() {
                     </button>
                   </div>
                 </div>
-                <div className="hidden sm:flex justify-center relative">
-                  <div className="absolute inset-[12%_16%] blur-[38px]" style={{ background: 'radial-gradient(circle, rgba(6,182,212,.4), transparent 70%)' }} />
-                  <div className="relative z-[1] w-[200px] h-[408px] lg:w-[240px] lg:h-[490px] bg-[#0b1220] rounded-[38px] p-[9px] shadow-[0_40px_90px_-30px_rgba(0,0,0,.7),0_0_0_1px_rgba(255,255,255,.06)]">
-                    <div className="relative w-full h-full rounded-[30px] overflow-hidden bg-white">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[22px] bg-[#0b1220] rounded-b-[13px] z-[12]" />
-                      <div
-                        className="absolute inset-0 transition-transform duration-[550ms] [transition-timing-function:cubic-bezier(.5,.05,.2,1)]"
-                        style={{ transform: `translateY(${-phoneIndex * 100}%)` }}
-                      >
-                        {PHONE_SLIDES.map((p, i) => (
-                          <div
-                            key={i}
-                            className="absolute left-0 right-0 h-full flex flex-col justify-end px-[18px] pt-6 pb-7 text-pure-white"
-                            style={{ top: `${i * 100}%`, background: p.bg }}
-                          >
-                            <span className="text-[10px] font-bold tracking-[.14em] uppercase opacity-85">{p.tag}</span>
-                            <h3 className="text-[22px] font-extrabold tracking-tight leading-tight mt-2">
-                              {p.title[0]}
-                              <br />
-                              {p.title[1]}
-                            </h3>
-                            {p.body && <p className="text-xs leading-relaxed mt-2 opacity-90">{p.body}</p>}
-                            {p.price && (
-                              <div className="text-[32px] font-extrabold tracking-tight mt-3">
-                                <s className="text-sm font-semibold opacity-60 mr-2">¥29,800</s>¥9,800
-                              </div>
-                            )}
-                            {p.cta && <div className="mt-3.5 text-center bg-white text-[#0b1f3a] font-extrabold text-[13px] py-[11px] rounded-xl">申し込む →</div>}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="absolute right-[9px] top-1/2 -translate-y-1/2 flex flex-col gap-[5px] z-[12]">
-                        {PHONE_SLIDES.map((_, i) => (
-                          <i key={i} className={`w-[5px] rounded-full ${i === phoneIndex ? 'h-4 bg-white' : 'h-[5px] bg-white/45'}`} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <PhoneDemo />
               </div>
             </div>
           </div>

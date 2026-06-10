@@ -80,7 +80,7 @@ export type DashboardNavGroupMeta = {
   mobile: DashboardNavStyleSet;
 };
 
-const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
+export const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
 
 const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfig> = {
   core: { labelKey: 'groups.core', defaultLabel: 'ホーム' },

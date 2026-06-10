@@ -6,6 +6,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
+import { GRAD_BRAND, NAVY_CARD_BG } from '@/lib/momentum';
 import {
   CreditCardIcon,
   BanknotesIcon,
@@ -334,7 +335,7 @@ export default function PointPurchasePage() {
                   onClick={handlePurchase}
                   disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
                   className="w-full rounded-xl px-5 py-3 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:px-6 sm:py-4 sm:text-base"
-                  style={{ background: 'linear-gradient(135deg,#0ea5e9,#06b6d4)' }}
+                  style={{ background: GRAD_BRAND }}
                 >
                   {isPurchasing ? summaryT('processing') : summaryT('proceedButton')}
                 </button>
@@ -359,7 +360,7 @@ export default function PointPurchasePage() {
             <div className="space-y-6">
               <div
                 className="relative overflow-hidden rounded-2xl p-5 sm:p-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
-                style={{ background: 'linear-gradient(160deg,#0b1f3a,#0f2c52)' }}
+                style={{ background: NAVY_CARD_BG }}
               >
                 <div
                   className="absolute -right-16 -top-16 h-44 w-44 rounded-full"

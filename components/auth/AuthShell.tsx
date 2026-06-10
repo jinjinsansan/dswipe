@@ -53,13 +53,13 @@ export default function AuthShell({
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]" style={{ background: 'var(--color-surface-base)' }}>
       {/* LEFT — navy brand panel */}
       <div
-        className="relative flex flex-col overflow-hidden px-8 py-10 text-white sm:px-14 sm:py-14"
+        className="relative flex flex-col overflow-hidden px-8 py-10 text-pure-white sm:px-14 sm:py-14"
         style={{
           background:
             'radial-gradient(700px 460px at 25% 10%, rgba(34,211,238,.22), transparent 60%), linear-gradient(160deg, #0b1f3a 0%, #0f2c52 60%, #0b2742 100%)',
         }}
       >
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.4em] text-white">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.4em] text-pure-white">
           <span className="h-2 w-2 rounded-full bg-cyan-400" aria-hidden="true" />
           Ｄ－swipe
         </Link>
@@ -88,7 +88,7 @@ export default function AuthShell({
                     </svg>
                   </span>
                   <div>
-                    <p className="font-semibold text-white">{item.title}</p>
+                    <p className="font-semibold text-pure-white">{item.title}</p>
                     {item.description ? (
                       <p className="mt-0.5 text-xs" style={{ color: '#9fb4d0' }}>
                         {item.description}

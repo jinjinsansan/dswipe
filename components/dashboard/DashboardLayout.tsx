@@ -194,7 +194,7 @@ export default function DashboardLayout({
               <p className="text-xs text-[var(--on-navy-muted)] mb-2">{layoutT('guest.prompt')}</p>
               <Link
                 href="/login"
-                className="w-full px-4 py-2.5 bg-[var(--color-brand-primary)] text-white rounded-lg text-sm font-semibold text-center hover:bg-[#0369a1] transition-colors"
+                className="w-full px-4 py-2.5 bg-sky-600 text-pure-white rounded-lg text-sm font-semibold text-center hover:bg-sky-700 transition-colors"
               >
                 {layoutT('guest.login')}
               </Link>
@@ -293,7 +293,7 @@ export default function DashboardLayout({
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white text-sm font-semibold truncate">{user?.username}</div>
+              <div className="text-pure-white text-sm font-semibold truncate">{user?.username}</div>
             </div>
           </div>
           <button

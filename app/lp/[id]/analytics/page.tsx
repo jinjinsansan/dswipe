@@ -18,7 +18,7 @@ import { redirectToLogin } from '@/lib/navigation';
 
 /* Momentum LP analytics — mock: design_handoff_dswipe/D-Swipe Analytics.html */
 
-const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
+import { GRAD_BRAND } from '@/lib/momentum';
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {

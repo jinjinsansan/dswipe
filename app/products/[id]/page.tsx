@@ -30,10 +30,10 @@ type ProductDetail = Product & {
   lp_slug?: string | null;
 };
 
+import { GRAD_BRAND, NAVY_CARD_BG } from '@/lib/momentum';
+
 const MEDIA_FALLBACK_BG =
   'radial-gradient(420px 320px at 75% 10%, rgba(34,211,238,.35), transparent 60%), linear-gradient(160deg, #0b1f3a, #0e7490)';
-const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
-const NAVY_CARD_BG = 'linear-gradient(160deg, #0b1f3a, #0f2c52)';
 
 export default function ProductDetailPage() {
   const params = useParams();

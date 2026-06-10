@@ -19,6 +19,7 @@ import {
 import DSwipeLogo from '@/components/DSwipeLogo';
 import {
   type DashboardNavGroupKey,
+  GROUP_ORDER,
   getDashboardNavLinks,
   isDashboardLinkActive,
 } from '@/components/dashboard/navLinks';
@@ -72,10 +73,8 @@ const getCompactLabel = (fallback: string) => {
 };
 
 // Momentum: 全グループ単色（白カード＋スカイのアクセント、選択中はネイビー）
-const GROUP_KEYS: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
-
 const uniformGroupClasses = (value: string): Record<DashboardNavGroupKey, string> =>
-  Object.fromEntries(GROUP_KEYS.map((key) => [key, value])) as Record<DashboardNavGroupKey, string>;
+  Object.fromEntries(GROUP_ORDER.map((key) => [key, value])) as Record<DashboardNavGroupKey, string>;
 
 const MOBILE_GROUP_PILL_CLASSES = uniformGroupClasses('bg-[#e9f6fe] text-sky-700 border border-transparent');
 

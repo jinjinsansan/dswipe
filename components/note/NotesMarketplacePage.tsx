@@ -11,6 +11,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { fetchPublicNotes } from '@/lib/publicClient';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import type { PublicNoteSummary } from '@/types';
+import { GRAD_BRAND, HEAD_BG, NAVY_CARD_BG, pickAvatarGradient, pickThumbFallback } from '@/lib/momentum';
 
 /* Momentum note list — mock: design_handoff_dswipe/D-Swipe Note List.html */
 
@@ -22,35 +23,6 @@ type LoadingState = 'idle' | 'loading' | 'error';
 export interface NotesMarketplacePageProps {
   basePath?: string;
 }
-
-const HEAD_BG =
-  'radial-gradient(680px 320px at 80% -20%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52)';
-const CTA_BG = 'linear-gradient(160deg, #0b1f3a, #0f2c52)';
-const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
-
-const THUMB_FALLBACKS = [
-  'linear-gradient(150deg,#0b1f3a,#0e7490)',
-  'linear-gradient(150deg,#0284c7,#06b6d4)',
-  'linear-gradient(150deg,#0e7490,#22d3ee)',
-  'linear-gradient(150deg,#7c3aed,#0284c7)',
-  'linear-gradient(150deg,#1b3a61,#0284c7)',
-];
-
-const AVATAR_GRADIENTS = [
-  'linear-gradient(135deg,#22d3ee,#0284c7)',
-  'linear-gradient(135deg,#16a34a,#22d3ee)',
-  'linear-gradient(135deg,#f59e0b,#ef4444)',
-  'linear-gradient(135deg,#0ea5e9,#22d3ee)',
-  'linear-gradient(135deg,#7c3aed,#0284c7)',
-];
-
-const hashIndex = (value: string, mod: number) => {
-  let h = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    h = (h * 31 + value.charCodeAt(i)) >>> 0;
-  }
-  return h % mod;
-};
 
 const withBasePath = (basePath: string, pathname: string) => {
   if (!basePath || basePath === '/') {
@@ -157,7 +129,9 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
               <h1 className="text-[26px] sm:text-[30px] font-extrabold tracking-tight text-pure-white mt-2">{t('pageTitle')}</h1>
               <p className="text-sm text-[#bcd3ee] mt-2">{t('pageSubtitle')}</p>
             </div>
-            <LanguageSwitcher />
+            <span className="rounded-full bg-white/95 px-3 py-1.5 shadow-sm">
+              <LanguageSwitcher />
+            </span>
           </div>
           <div className="relative max-w-[560px] mt-5">
             <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-[19px] h-[19px] text-slate-500" aria-hidden="true" />
@@ -250,8 +224,8 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                     ? format.dateTime(new Date(note.published_at), { month: 'short', day: 'numeric' })
                     : t('unpublishedLabel');
                   const author = note.author_username ?? 'unknown';
-                  const fallbackBg = THUMB_FALLBACKS[hashIndex(String(note.id ?? note.title ?? ''), THUMB_FALLBACKS.length)];
-                  const avatarBg = AVATAR_GRADIENTS[hashIndex(author, AVATAR_GRADIENTS.length)];
+                  const fallbackBg = pickThumbFallback(String(note.id ?? note.title ?? ""));
+                  const avatarBg = pickAvatarGradient(author);
 
                   return (
                     <Link
@@ -338,7 +312,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
               </div>
             )}
 
-            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: CTA_BG }}>
+            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: NAVY_CARD_BG }}>
               <b className="block text-[15px] font-extrabold text-pure-white">{t('ctaTitle')}</b>
               <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">{t('ctaBody')}</p>
               <Link

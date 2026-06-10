@@ -395,7 +395,7 @@ export default function ProfilePage() {
                 disabled={isSavingProfileInfo}
                 className={`w-full px-6 py-3 rounded-lg font-semibold transition-colors ${
                   isSavingProfileInfo
-                    ? 'bg-sky-300 text-white cursor-not-allowed'
+                    ? 'bg-sky-600 opacity-60 text-pure-white cursor-not-allowed'
                     : 'bg-sky-600 hover:bg-sky-700 text-white'
                 }`}
               >

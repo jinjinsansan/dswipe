@@ -23,35 +23,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 /* Momentum marketplace — mock: design_handoff_dswipe/D-Swipe Marketplace.html */
 
-const HEAD_BG =
-  'radial-gradient(700px 320px at 80% -30%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52)';
-const CTA_BG = 'linear-gradient(160deg, #0b1f3a, #0f2c52)';
-const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
-
-const THUMB_FALLBACKS = [
-  'linear-gradient(150deg,#0b1f3a,#0e7490)',
-  'linear-gradient(150deg,#0284c7,#06b6d4)',
-  'linear-gradient(150deg,#0e7490,#22d3ee)',
-  'linear-gradient(150deg,#1b3a61,#0284c7)',
-  'linear-gradient(150deg,#0f2c52,#0e7490)',
-  'linear-gradient(150deg,#0b1f3a,#1b3a61)',
-];
-
-const AVATAR_GRADIENTS = [
-  'linear-gradient(135deg,#22d3ee,#0284c7)',
-  'linear-gradient(135deg,#16a34a,#22d3ee)',
-  'linear-gradient(135deg,#f59e0b,#ef4444)',
-  'linear-gradient(135deg,#0ea5e9,#22d3ee)',
-  'linear-gradient(135deg,#7c3aed,#0284c7)',
-];
-
-const hashIndex = (value: string, mod: number) => {
-  let h = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    h = (h * 31 + value.charCodeAt(i)) >>> 0;
-  }
-  return h % mod;
-};
+import { GRAD_BRAND, HEAD_BG, NAVY_CARD_BG, pickAvatarGradient, pickThumbFallback } from '@/lib/momentum';
 
 const PRICE_RANGES = [
   { key: 'all', label: 'すべて' },
@@ -167,9 +139,10 @@ function ProductsContent() {
       });
     }
 
-    // 価格帯フィルター
+    // 価格帯フィルター（ポイント建ての商品のみ対象。円建て/未設定は「すべて」でのみ表示）
     if (priceRange !== 'all') {
       filtered = filtered.filter((p) => {
+        if (!p.allow_point_purchase) return false;
         const price = Number(p.price_in_points) || 0;
         if (priceRange === 'low') return price < 10000;
         if (priceRange === 'mid') return price >= 10000 && price < 50000;
@@ -199,10 +172,11 @@ function ProductsContent() {
     setCurrentPage(1); // フィルター変更時は1ページ目に戻る
   };
 
-  // 価格帯ごとの件数（サイドバー用）
+  // 価格帯ごとの件数（サイドバー用・ポイント建ての商品のみ）
   const priceRangeCounts = useMemo(() => {
     const counts = { all: products.length, low: 0, mid: 0, high: 0 };
     products.forEach((p) => {
+      if (!p.allow_point_purchase) return;
       const price = Number(p.price_in_points) || 0;
       if (price < 10000) counts.low += 1;
       else if (price < 50000) counts.mid += 1;
@@ -349,8 +323,8 @@ function ProductsContent() {
                         : null;
                     const priceUnit = product.allow_point_purchase ? ' P' : product.allow_jpy_purchase ? ' 円' : '';
                     const idSeed = String(product.id ?? product.title ?? '');
-                    const fallbackBg = THUMB_FALLBACKS[hashIndex(idSeed, THUMB_FALLBACKS.length)];
-                    const avatarBg = AVATAR_GRADIENTS[hashIndex(sellerUsername || idSeed, AVATAR_GRADIENTS.length)];
+                    const fallbackBg = pickThumbFallback(idSeed);
+                    const avatarBg = pickAvatarGradient(sellerUsername || idSeed);
 
                     return (
                       <article
@@ -531,7 +505,7 @@ function ProductsContent() {
                   >
                     <span
                       className="w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-sm text-[#042032] flex-shrink-0"
-                      style={{ background: AVATAR_GRADIENTS[hashIndex(seller.name, AVATAR_GRADIENTS.length)] }}
+                      style={{ background: pickAvatarGradient(seller.name) }}
                     >
                       {seller.name.charAt(0).toUpperCase()}
                     </span>
@@ -544,7 +518,7 @@ function ProductsContent() {
               </div>
             )}
 
-            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: CTA_BG }}>
+            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: NAVY_CARD_BG }}>
               <b className="block text-base font-extrabold text-pure-white">あなたも販売する</b>
               <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">
                 作ったLPやノウハウを商品化。ポイント決済で受け取れます。

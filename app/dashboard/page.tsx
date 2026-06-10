@@ -702,7 +702,7 @@ export default function DashboardPage() {
                 soft: false,
                 caption: '総閲覧数',
                 value: totalViews.toLocaleString(),
-                sub: '公開中のLP全体',
+                sub: '全LP合計',
               },
               {
                 icon: CursorArrowRaysIcon,
