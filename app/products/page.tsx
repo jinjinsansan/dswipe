@@ -2,38 +2,84 @@
 
 import { PageLoader } from '@/components/LoadingSpinner';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useMemo, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { fetchPublicProducts } from '@/lib/publicClient';
 import {
-  ArrowLeftIcon,
-  BuildingStorefrontIcon,
   MagnifyingGlassIcon,
-  CurrencyYenIcon,
-  AdjustmentsHorizontalIcon,
-  UserCircleIcon,
+  ClockIcon,
+  FireIcon,
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon,
   DocumentIcon,
   ShoppingBagIcon,
+  TagIcon,
+  UsersIcon,
+  ArrowRightIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+
+/* Momentum marketplace — mock: design_handoff_dswipe/D-Swipe Marketplace.html */
+
+const HEAD_BG =
+  'radial-gradient(700px 320px at 80% -30%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52)';
+const CTA_BG = 'linear-gradient(160deg, #0b1f3a, #0f2c52)';
+const GRAD_BRAND = 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)';
+
+const THUMB_FALLBACKS = [
+  'linear-gradient(150deg,#0b1f3a,#0e7490)',
+  'linear-gradient(150deg,#0284c7,#06b6d4)',
+  'linear-gradient(150deg,#0e7490,#22d3ee)',
+  'linear-gradient(150deg,#1b3a61,#0284c7)',
+  'linear-gradient(150deg,#0f2c52,#0e7490)',
+  'linear-gradient(150deg,#0b1f3a,#1b3a61)',
+];
+
+const AVATAR_GRADIENTS = [
+  'linear-gradient(135deg,#22d3ee,#0284c7)',
+  'linear-gradient(135deg,#16a34a,#22d3ee)',
+  'linear-gradient(135deg,#f59e0b,#ef4444)',
+  'linear-gradient(135deg,#0ea5e9,#22d3ee)',
+  'linear-gradient(135deg,#7c3aed,#0284c7)',
+];
+
+const hashIndex = (value: string, mod: number) => {
+  let h = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    h = (h * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return h % mod;
+};
+
+const PRICE_RANGES = [
+  { key: 'all', label: 'すべて' },
+  { key: 'low', label: '〜10,000 P' },
+  { key: 'mid', label: '10,000〜50,000 P' },
+  { key: 'high', label: '50,000 P〜' },
+] as const;
+
+const SORTS = [
+  { key: 'latest', label: '新着', icon: ClockIcon },
+  { key: 'popular', label: '売れ筋', icon: FireIcon },
+  { key: 'price_low', label: '価格が安い順', icon: ArrowTrendingDownIcon },
+  { key: 'price_high', label: '価格が高い順', icon: ArrowTrendingUpIcon },
+] as const;
 
 function ProductsContent() {
   const searchParams = useSearchParams();
 
-  console.log('ProductsContent レンダリング');
-  console.log('API_URL:', process.env.NEXT_PUBLIC_API_URL);
-
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // フィルター状態
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<'all' | 'low' | 'mid' | 'high'>('all');
   const [sortBy, setSortBy] = useState<'latest' | 'popular' | 'price_low' | 'price_high'>('latest');
   const [sellerFilter, setSellerFilter] = useState('');
-  
+
   // ページネーション
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
@@ -55,14 +101,10 @@ function ProductsContent() {
   }, [products, searchQuery, priceRange, sortBy, sellerFilter]);
 
   const fetchProducts = async () => {
-    console.log('/products ページ - 公開商品取得開始');
     try {
       setIsLoading(true);
-      console.log('API呼び出し: fetchPublicProducts');
       const response = await fetchPublicProducts({ sort: 'latest', limit: 50 });
-      console.log('API レスポンス取得成功');
       const payload = response?.data ?? response;
-      console.log('payload:', payload);
 
       const publicProducts = Array.isArray(payload?.data)
         ? payload.data
@@ -71,17 +113,12 @@ function ProductsContent() {
         : Array.isArray(payload)
         ? payload
         : [];
-      console.log('取得商品数:', publicProducts.length);
 
       setProducts(publicProducts);
     } catch (error: any) {
       console.error('商品の取得に失敗:', error);
-      const payload = (error?.payload as Record<string, unknown> | undefined)?.detail ?? error?.message;
-      console.error('エラー詳細:', payload);
-      console.error('エラースタック:', error.stack);
     } finally {
       setIsLoading(false);
-      console.log('商品取得完了');
     }
   };
 
@@ -116,7 +153,8 @@ function ProductsContent() {
       filtered = filtered.filter(
         (p) =>
           (typeof p.title === 'string' && p.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (typeof p.description === 'string' && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+          (typeof p.description === 'string' && p.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (typeof p.seller_username === 'string' && p.seller_username.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
@@ -161,6 +199,32 @@ function ProductsContent() {
     setCurrentPage(1); // フィルター変更時は1ページ目に戻る
   };
 
+  // 価格帯ごとの件数（サイドバー用）
+  const priceRangeCounts = useMemo(() => {
+    const counts = { all: products.length, low: 0, mid: 0, high: 0 };
+    products.forEach((p) => {
+      const price = Number(p.price_in_points) || 0;
+      if (price < 10000) counts.low += 1;
+      else if (price < 50000) counts.mid += 1;
+      else counts.high += 1;
+    });
+    return counts;
+  }, [products]);
+
+  // 売れ筋クリエイター（販売数合計の上位3名）
+  const topSellers = useMemo(() => {
+    const map = new Map<string, number>();
+    products.forEach((p) => {
+      const name = typeof p.seller_username === 'string' && p.seller_username ? p.seller_username : '';
+      if (!name) return;
+      map.set(name, (map.get(name) ?? 0) + (Number(p.total_sales) || 0));
+    });
+    return [...map.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([name, sales]) => ({ name, sales }));
+  }, [products]);
+
   // ページネーション計算
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
@@ -177,271 +241,325 @@ function ProductsContent() {
   }
 
   return (
-    <DashboardLayout pageTitle="AllLP" pageSubtitle={`${filteredProducts.length} 件のLPを表示`} requireAuth={false}>
+    <DashboardLayout pageTitle="マーケット" pageSubtitle={`${filteredProducts.length} 件のLPを表示`} requireAuth={false}>
       <div className="max-w-7xl mx-auto px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-        {/* Filters */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
-                <MagnifyingGlassIcon className="h-4 w-4" aria-hidden="true" />
-                検索
-              </label>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="商品名・説明で検索"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-              />
-            </div>
-
-            {/* Price Range */}
-            <div>
-              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
-                <CurrencyYenIcon className="h-4 w-4" aria-hidden="true" />
-                価格帯
-              </label>
-              <select
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value as any)}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-              >
-                <option value="all">すべて</option>
-                <option value="low">〜10,000 P</option>
-                <option value="mid">10,000〜50,000 P</option>
-                <option value="high">50,000 P〜</option>
-              </select>
-            </div>
-
-            {/* Sort */}
-            <div>
-              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
-                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
-                並び替え
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-              >
-                <option value="latest">新着順</option>
-                <option value="popular">人気順</option>
-                <option value="price_low">価格が安い順</option>
-                <option value="price_high">価格が高い順</option>
-              </select>
-            </div>
-
-            {/* Seller Filter */}
-            <div>
-              <label className="block text-slate-600 text-sm font-semibold mb-2 flex items-center gap-2">
-                <UserCircleIcon className="h-4 w-4" aria-hidden="true" />
-                販売者
-              </label>
-              <input
-                type="text"
-                value={sellerFilter}
-                onChange={(e) => setSellerFilter(e.target.value)}
-                placeholder="販売者名で絞り込み"
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-              />
-              {sellerFilter && (
+        {/* Navy hero head */}
+        <div className="rounded-3xl px-6 py-7 sm:px-9 sm:py-9 mb-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: HEAD_BG }}>
+          <h1 className="text-[26px] sm:text-[32px] font-extrabold tracking-tight text-pure-white">マーケット</h1>
+          <p className="text-[14.5px] text-[#bcd3ee] mt-2.5">
+            クリエイターのノウハウ・テンプレート・講座を、ポイントで購入。気になる商品を探そう。
+          </p>
+          <div className="relative max-w-[560px] mt-5">
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-[19px] h-[19px] text-slate-500" aria-hidden="true" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="商品名・説明・販売者で検索"
+              className="w-full text-[15px] text-slate-900 placeholder-slate-400 bg-white border-0 rounded-[14px] py-3.5 pl-[46px] pr-4 shadow-lg focus:outline-none focus:ring-[3px] focus:ring-cyan-400/40"
+            />
+          </div>
+          <div className="flex gap-2 mt-[18px] flex-wrap">
+            {PRICE_RANGES.map((range) => {
+              const active = priceRange === range.key;
+              return (
                 <button
-                  onClick={() => setSellerFilter('')}
-                  className="text-sky-600 hover:text-sky-500 text-xs mt-1"
+                  key={range.key}
+                  type="button"
+                  onClick={() => setPriceRange(range.key)}
+                  className={`text-[13px] font-semibold rounded-full px-3.5 py-[7px] border transition-colors whitespace-nowrap ${
+                    active
+                      ? 'bg-white text-[#0b1f3a] border-white'
+                      : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
+                  }`}
                 >
-                  クリア
+                  {range.label}
                 </button>
-              )}
-            </div>
+              );
+            })}
+            {sellerFilter && (
+              <button
+                type="button"
+                onClick={() => setSellerFilter('')}
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold rounded-full px-3.5 py-[7px] bg-cyan-400/15 text-cyan-300 border border-cyan-400/30 hover:bg-cyan-400/25 transition-colors"
+              >
+                @{sellerFilter}
+                <XMarkIcon className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Products Grid */}
-        {currentProducts.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl shadow-sm">
-            <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-              <DocumentIcon className="h-8 w-8" aria-hidden="true" />
-            </div>
-            <p className="text-slate-600 text-lg">該当するLPが見つかりませんでした</p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setPriceRange('all');
-                setSellerFilter('');
-              }}
-              className="mt-6 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
-            >
-              フィルターをリセット
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 mb-8">
-              {currentProducts.map((product) => {
-                const sellerUsername = typeof product.seller_username === 'string' ? product.seller_username : '';
-                const thumbnailUrl = getThumbnailUrl(product);
-                const lpSlug = typeof product.lp_slug === 'string' ? product.lp_slug : undefined;
-                const targetHref = lpSlug ? `/view/${lpSlug}` : `/products/${product.id}`;
-                const priceLabel = product.allow_point_purchase
-                  ? `${(Number(product.price_in_points) || 0).toLocaleString()} pt`
-                  : product.allow_jpy_purchase
-                    ? `${(Number(product.price_jpy) || 0).toLocaleString()} 円`
-                    : '価格未設定';
-
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_304px] gap-8 items-start">
+          <main>
+            {/* Sort pills */}
+            <div className="flex gap-1 mb-[18px] items-center flex-wrap">
+              {SORTS.map((sort) => {
+                const active = sortBy === sort.key;
                 return (
-                  <article
-                    key={product.id}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0 hover:border-sky-300 hover:shadow-md"
+                  <button
+                    key={sort.key}
+                    type="button"
+                    onClick={() => setSortBy(sort.key)}
+                    className={`inline-flex items-center gap-1.5 text-[13.5px] font-bold rounded-[10px] px-3.5 py-2 transition-colors ${
+                      active ? 'text-sky-600 bg-[#e9f6fe]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                    }`}
                   >
-                    <Link
-                      href={targetHref}
-                      className="flex items-center gap-3 p-3 md:flex-col md:items-stretch md:gap-0 md:p-0"
-                    >
-                      <div className="relative h-20 w-24 flex-none overflow-hidden rounded-lg bg-gradient-to-br from-sky-100 to-purple-100 md:h-auto md:w-full md:rounded-none md:rounded-t-xl md:aspect-[3/2]">
-                      {thumbnailUrl ? (
-                        isVideoUrl(thumbnailUrl) ? (
-                          <video
-                            src={thumbnailUrl}
-                            className="absolute inset-0 h-full w-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          />
-                        ) : (
-                          <img
-                            src={thumbnailUrl}
-                            alt={product.title}
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        )
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-center p-4 text-slate-600">
-                            <DocumentIcon className="h-10 w-10 mx-auto mb-2" aria-hidden="true" />
-                            <div className="text-xs font-semibold line-clamp-2 md:text-sm">{product.title}</div>
-                          </div>
-                        </div>
-                      )}
-                      </div>
+                    <sort.icon className="w-[15px] h-[15px]" aria-hidden="true" />
+                    {sort.label}
+                  </button>
+                );
+              })}
+              <span className="ml-auto text-[12.5px] text-slate-500">
+                <b className="text-[#0b1f3a]">{filteredProducts.length}</b> 件
+              </span>
+            </div>
 
-                      <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
-                        <div className="flex flex-col gap-2">
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
-                          {product.is_featured ? (
-                            <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
-                              人気
-                            </span>
-                          ) : null}
+            {/* Products Grid */}
+            {currentProducts.length === 0 ? (
+              <div className="text-center py-16 bg-white border border-[#e2ebf6] rounded-2xl shadow-sm">
+                <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#e9f6fe] text-sky-600">
+                  <DocumentIcon className="h-8 w-8" aria-hidden="true" />
+                </div>
+                <p className="text-slate-600 text-lg">該当するLPが見つかりませんでした</p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setPriceRange('all');
+                    setSellerFilter('');
+                  }}
+                  className="mt-6 px-5 py-2.5 text-sm font-bold text-pure-white rounded-xl shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow"
+                  style={{ background: GRAD_BRAND }}
+                >
+                  フィルターをリセット
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 mb-8">
+                  {currentProducts.map((product) => {
+                    const sellerUsername = typeof product.seller_username === 'string' ? product.seller_username : '';
+                    const thumbnailUrl = getThumbnailUrl(product);
+                    const lpSlug = typeof product.lp_slug === 'string' ? product.lp_slug : undefined;
+                    const targetHref = lpSlug ? `/view/${lpSlug}` : `/products/${product.id}`;
+                    const priceLabel = product.allow_point_purchase
+                      ? `${(Number(product.price_in_points) || 0).toLocaleString()}`
+                      : product.allow_jpy_purchase
+                        ? `${(Number(product.price_jpy) || 0).toLocaleString()}`
+                        : null;
+                    const priceUnit = product.allow_point_purchase ? ' P' : product.allow_jpy_purchase ? ' 円' : '';
+                    const idSeed = String(product.id ?? product.title ?? '');
+                    const fallbackBg = THUMB_FALLBACKS[hashIndex(idSeed, THUMB_FALLBACKS.length)];
+                    const avatarBg = AVATAR_GRADIENTS[hashIndex(sellerUsername || idSeed, AVATAR_GRADIENTS.length)];
+
+                    return (
+                      <article
+                        key={product.id}
+                        className="group flex flex-col overflow-hidden rounded-2xl border border-[#e2ebf6] bg-white shadow-sm transition-all hover:-translate-y-[3px] hover:border-[#bfe6fb] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                      >
+                        <Link href={targetHref} className="block relative h-[130px] overflow-hidden" style={{ background: fallbackBg }}>
+                          {thumbnailUrl ? (
+                            isVideoUrl(thumbnailUrl) ? (
+                              <video
+                                src={thumbnailUrl}
+                                className="absolute inset-0 h-full w-full object-cover"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                              />
+                            ) : (
+                              <img
+                                src={thumbnailUrl}
+                                alt={product.title}
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            )
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center px-5 text-center">
+                              <span className="text-pure-white text-sm font-bold leading-snug line-clamp-2 drop-shadow">{product.title}</span>
+                            </div>
+                          )}
                           <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide md:text-[11px] ${
-                              product.is_available
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : 'bg-slate-200 text-slate-600'
+                            className={`absolute top-2.5 left-2.5 text-[10.5px] font-bold text-pure-white backdrop-blur-[4px] px-2.5 py-[3px] rounded-full ${
+                              product.is_available ? 'bg-[rgba(11,31,58,.5)]' : 'bg-[rgba(71,85,105,.65)]'
                             }`}
                           >
                             {product.is_available ? '販売中' : '停止中'}
                           </span>
-                          <span className="inline-flex items-center gap-1 text-[10px] text-slate-400 md:text-[11px]">
-                            <ShoppingBagIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                            {(product.total_sales || 0).toLocaleString()} 件
-                          </span>
-                          {product.created_at ? (
-                            <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 md:text-[11px]">
-                              {new Date(product.created_at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                          {product.is_featured ? (
+                            <span className="absolute top-2.5 right-2.5 text-[10.5px] font-extrabold text-pure-white px-2.5 py-[3px] rounded-full" style={{ background: GRAD_BRAND }}>
+                              人気
                             </span>
                           ) : null}
-                        </div>
-
-                        <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">
-                          {product.title}
-                        </h3>
-
-                        <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">
-                          {product.description || '詳細情報は商品ページをご確認ください。'}
-                        </p>
-                      </div>
-                    </div>
-                    </Link>
-
-                    <div className="flex items-center justify-between gap-2 px-3 pb-3 text-[10px] text-slate-400 md:px-4 md:pb-4 md:text-xs">
-                      {sellerUsername ? (
-                        <Link
-                          href={`/u/${sellerUsername}`}
-                          className="font-medium text-sky-600 transition-colors hover:text-sky-500"
-                        >
-                          @{sellerUsername}
                         </Link>
-                      ) : (
-                        <span className="font-medium text-slate-500">@unknown</span>
-                      )}
-                      <span className="font-semibold text-emerald-600">
-                        {priceLabel}
-                      </span>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 bg-white border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
-                >
-                  ← 前へ
-                </button>
+                        <div className="flex flex-1 flex-col gap-2 px-[15px] pt-3.5 pb-[15px]">
+                          <Link href={targetHref} className="text-[14.5px] font-bold text-[#0b1f3a] leading-snug line-clamp-2 hover:text-sky-600 transition-colors">
+                            {product.title}
+                          </Link>
 
-                <div className="flex gap-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
+                          {sellerUsername ? (
+                            <Link href={`/u/${sellerUsername}`} className="flex items-center gap-[7px] group/seller">
+                              <span
+                                className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-extrabold text-[#042032] flex-shrink-0"
+                                style={{ background: avatarBg }}
+                              >
+                                {sellerUsername.charAt(0).toUpperCase()}
+                              </span>
+                              <span className="text-xs text-slate-600 font-semibold group-hover/seller:text-sky-600 transition-colors">@{sellerUsername}</span>
+                            </Link>
+                          ) : (
+                            <span className="text-xs text-slate-400 font-semibold">@unknown</span>
+                          )}
 
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                          currentPage === pageNum
-                            ? 'bg-sky-600 text-white'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-sky-200 hover:text-sky-600'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
+                          <div className="flex items-center justify-between mt-auto pt-1.5">
+                            {priceLabel ? (
+                              <span className="text-lg font-extrabold text-sky-600 tabular-nums">
+                                {priceLabel}
+                                <small className="text-xs">{priceUnit}</small>
+                              </span>
+                            ) : (
+                              <span className="text-xs font-semibold text-slate-400">価格未設定</span>
+                            )}
+                            <span className="inline-flex items-center gap-1 text-[11.5px] text-slate-500">
+                              <ShoppingBagIcon className="w-[13px] h-[13px] text-amber-500" aria-hidden="true" />
+                              {(product.total_sales || 0).toLocaleString()}件
+                            </span>
+                          </div>
+                        </div>
+                      </article>
                     );
                   })}
                 </div>
 
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 bg-white border border-[#e2ebf6] text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                    >
+                      ← 前へ
+                    </button>
+
+                    <div className="flex gap-2">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                              currentPage === pageNum
+                                ? 'text-pure-white shadow-sm'
+                                : 'bg-white text-slate-600 border border-[#e2ebf6] hover:border-[#bfe6fb] hover:text-sky-600'
+                            }`}
+                            style={currentPage === pageNum ? { background: GRAD_BRAND } : undefined}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-2 bg-white border border-[#e2ebf6] text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                    >
+                      次へ →
+                    </button>
+                  </div>
+                )}
+
+                {/* Page Info */}
+                <div className="text-center mt-4 text-slate-500 text-sm">
+                  {filteredProducts.length} 件のLP中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
+                </div>
+              </>
+            )}
+          </main>
+
+          {/* Sidebar */}
+          <aside className="hidden lg:block">
+            <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-[18px]">
+              <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-[#0b1f3a] mb-3.5">
+                <TagIcon className="w-4 h-4 text-sky-600" aria-hidden="true" />
+                価格帯で探す
+              </h3>
+              {PRICE_RANGES.filter((r) => r.key !== 'all').map((range, i) => (
                 <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 bg-white border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                  key={range.key}
+                  type="button"
+                  onClick={() => {
+                    setPriceRange(range.key);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`flex items-center justify-between w-full py-2 text-[13.5px] text-left transition-colors hover:text-sky-600 ${
+                    i > 0 ? 'border-t border-[#eef3f9]' : ''
+                  } ${priceRange === range.key ? 'text-sky-600 font-bold' : 'text-slate-700'}`}
                 >
-                  次へ →
+                  {range.label}
+                  <span className="text-xs text-slate-500 tabular-nums">{priceRangeCounts[range.key]}</span>
                 </button>
+              ))}
+            </div>
+
+            {topSellers.length > 0 && (
+              <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-[18px]">
+                <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-[#0b1f3a] mb-3.5">
+                  <UsersIcon className="w-4 h-4 text-sky-600" aria-hidden="true" />
+                  売れ筋クリエイター
+                </h3>
+                {topSellers.map((seller, i) => (
+                  <Link
+                    key={seller.name}
+                    href={`/u/${seller.name}`}
+                    className={`flex items-center gap-[11px] py-2 group ${i > 0 ? 'border-t border-[#eef3f9]' : ''}`}
+                  >
+                    <span
+                      className="w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-sm text-[#042032] flex-shrink-0"
+                      style={{ background: AVATAR_GRADIENTS[hashIndex(seller.name, AVATAR_GRADIENTS.length)] }}
+                    >
+                      {seller.name.charAt(0).toUpperCase()}
+                    </span>
+                    <span>
+                      <span className="block text-[13px] font-bold text-[#0b1f3a] group-hover:text-sky-600 transition-colors">@{seller.name}</span>
+                      <span className="block text-[11.5px] text-slate-500">{seller.sales.toLocaleString()}件販売</span>
+                    </span>
+                  </Link>
+                ))}
               </div>
             )}
 
-            {/* Page Info */}
-            <div className="text-center mt-4 text-slate-500 text-sm">
-              {filteredProducts.length} 件のLP中 {startIndex + 1}〜{Math.min(endIndex, filteredProducts.length)} 件を表示
+            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: CTA_BG }}>
+              <b className="block text-base font-extrabold text-pure-white">あなたも販売する</b>
+              <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">
+                作ったLPやノウハウを商品化。ポイント決済で受け取れます。
+              </p>
+              <Link
+                href="/lp/create"
+                className="inline-flex items-center justify-center gap-2 w-full text-[13px] font-bold text-pure-white rounded-xl px-4 py-2.5 shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow"
+                style={{ background: GRAD_BRAND }}
+              >
+                販売者になる
+                <ArrowRightIcon className="w-4 h-4" aria-hidden="true" />
+              </Link>
             </div>
-          </>
-        )}
+          </aside>
+        </div>
       </div>
     </DashboardLayout>
   );
