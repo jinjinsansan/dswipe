@@ -302,7 +302,7 @@ export default function StickySiteHeader({
                   return (
                     <div key={group.key} className="flex flex-col gap-2">
                       <span
-                        className={`px-1 text-[10px] font-semibold uppercase tracking-[0.25em] ${meta.headingClass}`}
+                        className={`px-1 text-[10px] font-semibold uppercase tracking-[0.25em] ${dark ? meta.headingClass : 'text-slate-500'}`}
                       >
                         {meta.label}
                       </span>

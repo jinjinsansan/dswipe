@@ -71,40 +71,19 @@ const getCompactLabel = (fallback: string) => {
   return fallback.slice(0, 8);
 };
 
-const MOBILE_GROUP_PILL_CLASSES: Record<DashboardNavGroupKey, string> = {
-  core: 'bg-slate-200 text-slate-600 border border-transparent',
-  lp: 'bg-sky-100 text-sky-700 border border-transparent',
-  note: 'bg-rose-100 text-rose-700 border border-transparent',
-  salon: 'bg-amber-100 text-amber-700 border border-transparent',
-  points: 'bg-violet-100 text-violet-700 border border-transparent',
-  line: 'bg-emerald-100 text-emerald-700 border border-transparent',
-  media: 'bg-orange-100 text-orange-700 border border-transparent',
-  info: 'bg-white text-slate-500 border border-slate-200',
-};
+// Momentum: 全グループ単色（白カード＋スカイのアクセント、選択中はネイビー）
+const GROUP_KEYS: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
 
-const MOBILE_GROUP_PILL_ACTIVE_CLASS = 'bg-white/20 text-white border border-white/30';
+const uniformGroupClasses = (value: string): Record<DashboardNavGroupKey, string> =>
+  Object.fromEntries(GROUP_KEYS.map((key) => [key, value])) as Record<DashboardNavGroupKey, string>;
 
-const MOBILE_GROUP_CARD_CLASSES: Record<DashboardNavGroupKey, string> = {
-  core: 'border-slate-200 bg-slate-100 text-slate-700 hover:border-slate-300',
-  lp: 'border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300',
-  note: 'border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300',
-  salon: 'border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-300',
-  points: 'border-violet-200 bg-violet-50 text-violet-700 hover:border-violet-300',
-  line: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300',
-  media: 'border-orange-200 bg-orange-50 text-orange-700 hover:border-orange-300',
-  info: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300',
-};
+const MOBILE_GROUP_PILL_CLASSES = uniformGroupClasses('bg-[#e9f6fe] text-sky-700 border border-transparent');
 
-const MOBILE_GROUP_ICON_CLASSES: Record<DashboardNavGroupKey, string> = {
-  core: 'bg-white/70 text-slate-600',
-  lp: 'bg-white/70 text-sky-600',
-  note: 'bg-white/70 text-rose-600',
-  salon: 'bg-white/70 text-amber-600',
-  points: 'bg-white/70 text-violet-600',
-  line: 'bg-white/70 text-emerald-600',
-  media: 'bg-white/70 text-orange-600',
-  info: 'bg-white/70 text-slate-500',
-};
+const MOBILE_GROUP_PILL_ACTIVE_CLASS = 'bg-white/20 text-pure-white border border-white/30';
+
+const MOBILE_GROUP_CARD_CLASSES = uniformGroupClasses('border-[#e2ebf6] bg-white text-slate-700 hover:border-[#bfe6fb]');
+
+const MOBILE_GROUP_ICON_CLASSES = uniformGroupClasses('bg-[#e9f6fe] text-sky-600');
 
 const ADMIN_EMAILS = new Set([
   'goldbenchan@gmail.com',
@@ -578,7 +557,7 @@ export default function DashboardHeader({
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
                                   isActive
-                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                                    ? 'border-[#0b1f3a] bg-[#0b1f3a] text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
                                     : cardClass
                                 }`}
                               >
@@ -591,7 +570,7 @@ export default function DashboardHeader({
                                 </span>
                                 <span
                                   className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
-                                    isActive ? 'bg-white/15 text-white' : iconClass
+                                    isActive ? 'bg-white/15 text-pure-white' : iconClass
                                   }`}
                                 >
                                   {navLink.icon}
@@ -619,7 +598,7 @@ export default function DashboardHeader({
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
                                   isActive
-                                    ? 'border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                                    ? 'border-[#0b1f3a] bg-[#0b1f3a] text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
                                     : cardClass
                                 }`}
                               >
@@ -632,7 +611,7 @@ export default function DashboardHeader({
                                 </span>
                                 <span
                                   className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
-                                    isActive ? 'bg-white/15 text-white' : iconClass
+                                    isActive ? 'bg-white/15 text-pure-white' : iconClass
                                   }`}
                                 >
                                   {item.icon}
