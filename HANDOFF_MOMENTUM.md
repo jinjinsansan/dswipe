@@ -108,6 +108,8 @@ npm run dev   # http://localhost:3000
    - ネイビーサイドバーのDSwipeロゴ「Swipe」が不可視（remap）だった件、ロゴDスクエア #3B82F6→#0284c7、StickySiteHeaderメニューボタン、注目バッジ統一、admin/tokushoの低コントラスト修正。
    - 公開6ページ（top/login/products/notes/terms/tokusho）で自動コントラスト監査済み（実描画の問題ゼロ）。
    - 残り（完全任意）: salon/adminのモックレイアウト深掘り。現状で全画面一貫済み。
+5. **マージ前100点診断 済（`b6fa4f4`）**: 7観点マルチエージェントレビュー＋実測検証。重大修正=ログイン/登録の左パネル文字が remap で不可視だった件（実測 #0f172a→#ffffff に復旧）、サイドバーのユーザー名/ゲストログインボタン、KPI表記、価格帯フィルタの円建て混入。品質=lib/momentum.ts新設（グラデ/配色の一元化）、GROUP_ORDER共有、PhoneDemo分離（2.6s毎の全頁再描画解消）、page_old削除。
+   **残存する既知の負債（マージ阻害ではない・将来課題）**: ①globals.cssの `.text-white`→ダーク remap本体（約380箇所が依存、補償ルールで運用中。根治は text-white 全面移行後に remap削除）②Momentum色のhexリテラル直書き約140箇所（@themeトークン化が本筋）③terms/privacy/tokusho はダーク語彙のままremap頼み ④商品詳細APIに lp_slug が無くLPリンクは常に非表示（バックエンド課題）
 4. **DashboardHeader** トップバー（現状は白＝Momentumでも可）。アバター等の細部。
 5. アクセシビリティ/コントラスト最終チェック（過去セッションで redesign-momentum 側はサブエージェント診断で詰めた。手法は流用可）。
 
