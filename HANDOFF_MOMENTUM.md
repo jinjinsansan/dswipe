@@ -93,7 +93,7 @@ npm run dev   # http://localhost:3000
 `main` はページ本体が独自実装。色swap＋chromeだけでは「モックの完成形」には届かない。各ページをモックに寄せる必要がある。優先度順:
 
 1. ~~トップ `app/HomeSwiper.tsx`~~ **済（commit `1ef8490`）**: モック準拠の9枚構成＋固定ネイビーナビ＋下部登録バンドに刷新。ヒーロー動画は薄く保持。Swiper機能（縦スワイプ/キーボード/触覚）維持。※globals.css に `.text-white{color:#0f172a!important}` の旧remapが残存するため、ネイビー上の白文字は `text-pure-white` を使うこと（他ページ移植時も同様の罠に注意）。
-2. **ナビの多色 → 単色化（任意）**: `navLinks.tsx` の `GROUP_META_CONFIG`（points=violet, line=emerald, media=indigo, note=slate 等）と `DashboardHeader.tsx` の `MOBILE_GROUP_*_CLASSES`（rose/amber/orange等）が**まだ多色**。デスクトップ・サイドバーは#1で単色化済みだが、**モバイルメニューと一部は多色のまま**。Momentum単色にするならここを統一。
+2. ~~ナビの多色 → 単色化~~ **済（commit `ff11785`）**: `navLinks.tsx` のグループ別配色を廃止し NAVY_DESKTOP_NAV / MOMENTUM_MOBILE_NAV の2セットに集約。`DashboardHeader.tsx` の MOBILE_GROUP_* も単色化（選択中は `bg-slate-900` がremapで白化していたバグも併せてネイビー+text-pure-whiteに修正）。※認証必須UIのため目視は未実施（ビルド型チェックのみ）。ログイン後のモバイルメニューを一度目視確認すること。
 3. **マーケット `/products`、商品詳細、ダッシュボード本体、note、salon、points、admin** 等のページ本体をモックの体裁に。
 4. **DashboardHeader** トップバー（現状は白＝Momentumでも可）。アバター等の細部。
 5. アクセシビリティ/コントラスト最終チェック（過去セッションで redesign-momentum 側はサブエージェント診断で詰めた。手法は流用可）。
