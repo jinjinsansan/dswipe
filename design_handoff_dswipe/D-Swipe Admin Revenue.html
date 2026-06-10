@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe Admin — 売上</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<link rel="stylesheet" href="c-system/admin.css" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  .two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <!-- ADMIN SIDEBAR (shared) -->
+  <aside class="side app-side admin-side" id="sidebar">
+    <div class="side-logo">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size:16px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe<span class="adm-badge">ADMIN</span></span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-sect">管理</div>
+      <a class="side-item" href="D-Swipe Admin.html"><svg viewBox="0 0 24 24"><use href="#ad-grid"/></svg>概要</a>
+      <a class="side-item" href="D-Swipe Admin Users.html"><svg viewBox="0 0 24 24"><use href="#ad-users"/></svg>ユーザー</a>
+      <a class="side-item admin active" href="D-Swipe Admin Revenue.html"><svg viewBox="0 0 24 24"><use href="#ad-yen"/></svg>売上</a>
+      <a class="side-item" href="D-Swipe Admin Payouts.html"><svg viewBox="0 0 24 24"><use href="#ad-bank"/></svg>出金</a>
+      <a class="side-item" href="D-Swipe Admin Messages.html"><svg viewBox="0 0 24 24"><use href="#ad-msg"/></svg>メッセージ</a>
+      <a class="side-item" href="D-Swipe Admin Points.html"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg>ポイント</a>
+      <a class="side-item" href="D-Swipe Admin Settings.html"><svg viewBox="0 0 24 24"><use href="#ad-cog"/></svg>設定</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ucard"><div class="avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b)">A</div><div style="min-width:0"><div class="nm">管理者</div><div class="rl">admin</div></div></div>
+      <a class="side-logout" href="D-Swipe Dashboard.html" style="display:block;text-align:center;text-decoration:none">ユーザー画面へ</a>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button class="burger" id="burger" aria-label="メニュー"><svg viewBox="0 0 24 24"><use href="#ad-burger"/></svg></button>
+        <div class="tb-title"><h1>売上</h1><p>プラットフォーム全体の流通額と手数料収益</p></div>
+      </div>
+      <div class="tb-right"><div class="segmented hide-sm" id="period"><button>今週</button><button class="active">今月</button><button>四半期</button><button>年</button></div><button class="btn btn-secondary btn-sm">CSV出力</button></div>
+    </header>
+
+    <div class="app-content">
+      <div class="kpis">
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#ad-yen"/></svg></span><span class="kpi-cap">流通総額 (GMV)</span></div><span class="kpi-val">48.2M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#ad-up"/></svg>9.1%</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico soft"><svg viewBox="0 0 24 24"><use href="#ad-yen"/></svg></span><span class="kpi-cap">手数料収益</span></div><span class="kpi-val">4.82M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#ad-up"/></svg>9.1%</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#ad-cart"/></svg></span><span class="kpi-cap">販売件数</span></div><span class="kpi-val">8,420</span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#ad-up"/></svg>12.4%</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico soft"><svg viewBox="0 0 24 24"><use href="#ad-back2"/></svg></span><span class="kpi-cap">返金</span></div><span class="kpi-val">142K<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span><span class="kpi-delta" style="color:var(--muted)">返金率 0.3%</span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel">
+          <div class="panel-h"><h3>月次の流通額推移</h3><span class="badge badge-seller">直近12ヶ月</span></div>
+          <div class="bars">
+            <div class="col"><div class="bar" style="height:38%"></div><div class="lab">7</div></div>
+            <div class="col"><div class="bar" style="height:46%"></div><div class="lab">8</div></div>
+            <div class="col"><div class="bar" style="height:42%"></div><div class="lab">9</div></div>
+            <div class="col"><div class="bar" style="height:58%"></div><div class="lab">10</div></div>
+            <div class="col"><div class="bar" style="height:54%"></div><div class="lab">11</div></div>
+            <div class="col"><div class="bar" style="height:66%"></div><div class="lab">12</div></div>
+            <div class="col"><div class="bar" style="height:62%"></div><div class="lab">1</div></div>
+            <div class="col"><div class="bar" style="height:74%"></div><div class="lab">2</div></div>
+            <div class="col"><div class="bar" style="height:70%"></div><div class="lab">3</div></div>
+            <div class="col"><div class="bar" style="height:82%"></div><div class="lab">4</div></div>
+            <div class="col"><div class="bar" style="height:90%"></div><div class="lab">5</div></div>
+            <div class="col"><div class="bar" style="height:100%"></div><div class="lab">6</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h3>売上の内訳</h3></div>
+          <div class="src-row"><span class="nm">商品販売</span><span class="tr"><span style="width:52%"></span></span><span class="pct">52%</span></div>
+          <div class="src-row"><span class="nm">有料note</span><span class="tr"><span style="width:23%"></span></span><span class="pct">23%</span></div>
+          <div class="src-row"><span class="nm">サロン会費</span><span class="tr"><span style="width:18%"></span></span><span class="pct">18%</span></div>
+          <div class="src-row"><span class="nm">その他</span><span class="tr"><span style="width:7%"></span></span><span class="pct">7%</span></div>
+          <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)">手数料率：商品 10% / note 15% / サロン 10%</div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:22px 22px 8px">
+        <div class="panel-h"><h3>売上トップ・クリエイター</h3><a href="D-Swipe Admin Users.html" style="font-size:12.5px;font-weight:600;color:var(--brand)">全ユーザー</a></div>
+        <table class="tbl">
+          <thead><tr><th>クリエイター</th><th class="num">販売件数</th><th class="num">流通額</th><th class="num">手数料収益</th><th class="num">未出金残高</th></tr></thead>
+          <tbody>
+            <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#22d3ee,#0284c7)">山</span><span class="strong">山田 太郎</span></div></td><td class="num">1,240</td><td class="num strong">8.4M P</td><td class="num">840K P</td><td class="num">1.2M P</td></tr>
+            <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#16a34a,#22d3ee)">け</span><span class="strong">鈴木 けん</span></div></td><td class="num">980</td><td class="num strong">6.1M P</td><td class="num">760K P</td><td class="num">880K P</td></tr>
+            <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">A</span><span class="strong">佐藤 あや</span></div></td><td class="num">760</td><td class="num strong">4.8M P</td><td class="num">600K P</td><td class="num">540K P</td></tr>
+            <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#7c3aed,#0284c7)">み</span><span class="strong">田中 みう</span></div></td><td class="num">420</td><td class="num strong">2.2M P</td><td class="num">280K P</td><td class="num">310K P</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="ad-grid" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="ad-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="ad-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="ad-bank" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16M5 10l7-5 7 5M6 10v8M10 10v8M14 10v8M18 10v8M4 20h16"/></g>
+  <g id="ad-msg" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 3z"/></g>
+  <g id="ad-coin" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8m-2.5-6h3.2a1.8 1.8 0 010 3.6H9.5"/></g>
+  <g id="ad-cog" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></g>
+  <g id="ad-up" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></g>
+  <g id="ad-cart" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11h10l2-7H6"/></g>
+  <g id="ad-back2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4-4 4-4M5 10h9a5 5 0 010 10h-3"/></g>
+  <g id="ad-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+<script>
+  const sb=document.getElementById('sidebar'),sc=document.getElementById('scrim');
+  const tog=o=>{sb.classList.toggle('open',o);sc.classList.toggle('open',o);};
+  document.getElementById('burger').addEventListener('click',()=>tog(!sb.classList.contains('open')));
+  sc.addEventListener('click',()=>tog(false));
+  document.querySelectorAll('#period button').forEach((b,i,a)=>b.addEventListener('click',()=>{a.forEach(x=>x.classList.remove('active'));b.classList.add('active');}));
+</script>
+</body>
+</html>

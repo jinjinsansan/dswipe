@@ -1,0 +1,101 @@
+/* ============================================================
+   D-Swipe Design System — "Momentum" (Direction C)
+   Shared design tokens. Light base + navy chrome + cyan→aqua energy.
+   Plain-CSS custom properties used by the mock screens; the exact
+   Tailwind v4 @theme mapping is documented in the Design System page.
+   ============================================================ */
+
+:root {
+  /* ---- Brand ---- */
+  --brand: #0284c7;          /* sky-600 — solid brand / links / focus */
+  --brand-from: #0ea5e9;     /* gradient start */
+  --brand-to: #06b6d4;       /* gradient end */
+  --brand-strong: #0369a1;   /* hover / pressed */
+  --grad-brand: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  --grad-brand-soft: linear-gradient(135deg, #e9f6fe 0%, #e7fbff 100%);
+
+  /* ---- Navy chrome (sidebar / dark surfaces / footer) ---- */
+  --navy-900: #0b1f3a;
+  --navy-850: #0f2748;
+  --navy-800: #122c4d;
+  --navy-700: #1b3a61;
+  --navy-600: #2a4f7d;
+  --on-navy: #eaf2fb;        /* primary text on navy */
+  --on-navy-muted: #9fb4d0;  /* secondary text on navy */
+
+  /* ---- Accent ramp (cyan/sky) ---- */
+  --cyan-50:  #ecfdff;
+  --cyan-100: #d3f6fc;
+  --cyan-300: #67e8f9;
+  --cyan-400: #22d3ee;
+  --cyan-500: #06b6d4;
+  --sky-100:  #e0f2fe;
+  --sky-300:  #7dd3fc;
+  --sky-500:  #0ea5e9;
+  --sky-600:  #0284c7;
+  --sky-700:  #0369a1;
+
+  /* ---- Neutrals (cool slate) ---- */
+  --ink: #0b1f3a;            /* headings — navy ink, on-brand */
+  --text: #1f2c3d;           /* body */
+  --text-2: #475569;         /* secondary */
+  --muted: #64748b;          /* tertiary / captions */
+  --faint: #94a3b8;          /* disabled / placeholder */
+  --line: #e2ebf6;           /* hairline borders */
+  --line-2: #eef3f9;         /* lighter divider */
+  --canvas: #f4f8fd;         /* app background */
+  --surface: #ffffff;        /* cards */
+  --surface-2: #f8fafc;      /* inset / table stripe */
+  --surface-tint: #e9f6fe;   /* brand tint fill */
+  --tint-border: #bfe6fb;
+
+  /* ---- Semantic ---- */
+  --success: #16a34a; --success-tint: #dcfce7; --success-ink: #15803d;
+  --warning: #d97706; --warning-tint: #fef3c7; --warning-ink: #b45309;
+  --danger:  #dc2626; --danger-tint:  #fee2e2; --danger-ink:  #b91c1c;
+
+  /* ---- Radius ---- */
+  --r-sm: 8px;
+  --r-md: 12px;     /* inputs */
+  --r-lg: 13px;     /* buttons */
+  --r-xl: 16px;
+  --r-2xl: 20px;    /* cards */
+  --r-3xl: 28px;    /* hero / feature panels */
+  --r-full: 999px;
+
+  /* ---- Shadows ---- */
+  --sh-xs: 0 1px 2px rgba(11,31,58,.06);
+  --sh-sm: 0 1px 2px rgba(11,31,58,.05), 0 2px 6px -2px rgba(11,31,58,.08);
+  --sh-md: 0 2px 5px rgba(11,31,58,.05), 0 12px 24px -14px rgba(11,31,58,.22);
+  --sh-card: 0 2px 5px rgba(11,31,58,.05), 0 22px 44px -24px rgba(2,132,199,.34);
+  --sh-glow: 0 10px 26px -8px rgba(6,182,212,.55);
+  --sh-glow-lg: 0 18px 48px -12px rgba(6,182,212,.5);
+
+  /* ---- Type ---- */
+  --font: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Roboto Mono", monospace;
+
+  /* ---- Layout ---- */
+  --container: 1200px;
+  --nav-w: 248px;
+  --topbar-h: 64px;
+}
+
+* { box-sizing: border-box; }
+
+.ds-reset {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* gradient text helper */
+.grad-text {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — ポイント購入</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  .bal-card { background: radial-gradient(500px 240px at 85% -20%, #0e7490 0%, transparent 60%), linear-gradient(150deg,#0b1f3a,#0f2c52); color: #fff; border-radius: var(--r-2xl); padding: 26px 28px; box-shadow: var(--sh-card); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .bal-card .l { font-size: 12.5px; font-weight: 600; color: var(--cyan-300); letter-spacing: .04em; }
+  .bal-card .v { font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .bal-card .v small { font-size: 18px; color: #9fb4d0; }
+  .bal-card .sub { font-size: 12.5px; color: #bcd3ee; margin-top: 10px; }
+  .bal-mini { display: flex; gap: 26px; }
+  .bal-mini .bm .n { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .bal-mini .bm .c { font-size: 11.5px; color: #9fb4d0; margin-top: 2px; }
+
+  .pkgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .pkg { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2xl); padding: 22px 20px; box-shadow: var(--sh-sm); text-align: center; cursor: pointer; transition: all .18s; position: relative; }
+  .pkg:hover { border-color: var(--tint-border); box-shadow: var(--sh-card); transform: translateY(-3px); }
+  .pkg.sel { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(2,132,199,.15), var(--sh-card); }
+  .pkg.best { border-color: var(--brand); }
+  .pkg .pop { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; color: #fff; background: var(--grad-brand); padding: 4px 12px; border-radius: 999px; box-shadow: var(--sh-glow); white-space: nowrap; }
+  .pkg .pt { font-size: 30px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .pkg .pt small { font-size: 14px; color: var(--brand); }
+  .pkg .bonus { font-size: 12px; font-weight: 700; color: var(--success-ink); background: var(--success-tint); border-radius: 999px; padding: 3px 10px; display: inline-block; margin-top: 8px; }
+  .pkg .yen { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  .pkg .yen b { color: var(--ink); font-size: 18px; font-weight: 800; }
+  .pay { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .pay .opt { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 14px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; display: flex; align-items: center; gap: 9px; }
+  .pay .opt.sel { border-color: var(--brand); background: var(--surface-tint); color: var(--brand); }
+  .pay .opt .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--faint); flex-shrink: 0; }
+  .pay .opt.sel .dot { border-color: var(--brand); background: radial-gradient(circle, var(--brand) 0 4px, transparent 5px); }
+  .checkout { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .checkout .tot { font-size: 13px; color: var(--muted); }
+  .checkout .tot b { font-size: 26px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; display: block; }
+  @media (max-width: 900px) { .pkgs { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 460px) { .pkgs { grid-template-columns: 1fr; } .pay { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-chart" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></g>
+  <g id="i-plus" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></g>
+  <g id="i-store" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-4h14l1 4M4 9v10h16V9M4 9h16M9 19v-5h6v5"/></g>
+  <g id="i-tools" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.2 5.2l-6 6 2.8 2.8 6-6a4 4 0 005.2-5.2l-2.4 2.4-2.2-.6-.6-2.2z"/></g>
+  <g id="i-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="i-photo" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></g>
+  <g id="i-card" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></g>
+  <g id="i-bank" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16M5 10l7-5 7 5M6 10v8M10 10v8M14 10v8M18 10v8M4 20h16"/></g>
+  <g id="i-back" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></g>
+  <g id="i-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side app-side" id="sidebar">
+    <div class="side-logo">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size:17px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-sect">メイン</div>
+      <a class="side-item" href="D-Swipe Dashboard.html"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg>ダッシュボード</a>
+      <a class="side-item" href="D-Swipe LP Editor.html"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg>新規LP作成</a>
+      <a class="side-item" href="D-Swipe Marketplace.html"><svg viewBox="0 0 24 24"><use href="#i-store"/></svg>マーケット</a>
+      <a class="side-item" href="D-Swipe Products Manage.html"><svg viewBox="0 0 24 24"><use href="#i-tools"/></svg>商品管理</a>
+      <div class="side-sect">その他</div>
+      <a class="side-item active" href="D-Swipe Points.html"><svg viewBox="0 0 24 24"><use href="#i-yen"/></svg>ポイント購入</a>
+      <a class="side-item" href="D-Swipe Media.html"><svg viewBox="0 0 24 24"><use href="#i-photo"/></svg>メディア</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ucard"><div class="avatar">山</div><div style="min-width:0"><div class="nm">山田 太郎</div><div class="rl">seller</div></div></div>
+      <button class="side-logout">ログアウト</button>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button class="burger" id="burger" aria-label="メニュー"><svg viewBox="0 0 24 24"><use href="#i-burger"/></svg></button>
+        <div class="tb-title"><h1>ポイント購入</h1><p>AI生成・公開・販売手数料に使えます</p></div>
+      </div>
+      <div class="tb-right"><span class="points hide-sm">◆ 12,500 P</span><div class="avatar">山</div></div>
+    </header>
+
+    <div class="app-content">
+      <div class="bal-card">
+        <div>
+          <div class="l">現在のポイント残高</div>
+          <div class="v">12,500<small> P</small></div>
+          <div class="sub">1 ポイント = 1 円相当 · 有効期限なし</div>
+        </div>
+        <div class="bal-mini">
+          <div class="bm"><div class="n">38,200</div><div class="c">累計購入</div></div>
+          <div class="bm"><div class="n">25,700</div><div class="c">累計利用</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="phead" style="margin-bottom:14px"><h2>ポイントを購入</h2></div>
+        <div class="pkgs" id="pkgs">
+          <div class="pkg" data-p="1000" data-y="1000"><div class="pt">1,000<small> P</small></div><div class="yen"><b>¥1,000</b></div></div>
+          <div class="pkg" data-p="5250" data-y="5000"><div class="pt">5,000<small> P</small></div><div class="bonus">+250 ボーナス</div><div class="yen"><b>¥5,000</b></div></div>
+          <div class="pkg best sel" data-p="11000" data-y="10000"><div class="pop">いちばんお得</div><div class="pt">10,000<small> P</small></div><div class="bonus">+1,000 ボーナス</div><div class="yen"><b>¥10,000</b></div></div>
+          <div class="pkg" data-p="34500" data-y="30000"><div class="pt">30,000<small> P</small></div><div class="bonus">+4,500 ボーナス</div><div class="yen"><b>¥30,000</b></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h3>お支払い方法</h3></div>
+        <div class="pay" id="pay">
+          <div class="opt sel" data-m="card"><span class="dot"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-card"/></svg>クレジットカード</div>
+          <div class="opt" data-m="bank"><span class="dot"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-bank"/></svg>銀行振込</div>
+        </div>
+        <div class="checkout">
+          <div class="tot">受け取るポイント<b id="getP">11,000 P</b></div>
+          <button class="btn btn-primary btn-lg" id="buy">¥10,000 を支払う</button>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:22px 22px 8px">
+        <div class="panel-h"><h3>購入・利用履歴</h3></div>
+        <table class="tbl">
+          <thead><tr><th>日時</th><th>内容</th><th class="num">ポイント</th><th class="num">残高</th></tr></thead>
+          <tbody>
+            <tr><td>06/08 14:22</td><td class="strong">ポイント購入（10,000＋1,000）</td><td class="num" style="color:var(--success-ink);font-weight:700">+11,000</td><td class="num">12,500</td></tr>
+            <tr><td>06/06 09:10</td><td>AI構成アシスト 利用</td><td class="num" style="color:var(--danger-ink)">−200</td><td class="num">1,500</td></tr>
+            <tr><td>06/03 21:45</td><td>LP公開 手数料</td><td class="num" style="color:var(--danger-ink)">−500</td><td class="num">1,700</td></tr>
+            <tr><td>05/28 18:03</td><td class="strong">ポイント購入（5,000＋250）</td><td class="num" style="color:var(--success-ink);font-weight:700">+5,250</td><td class="num">2,200</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sb = document.getElementById('sidebar'), sc = document.getElementById('scrim');
+  const tog = (o) => { sb.classList.toggle('open', o); sc.classList.toggle('open', o); };
+  document.getElementById('burger').addEventListener('click', () => tog(!sb.classList.contains('open')));
+  sc.addEventListener('click', () => tog(false));
+
+  const getP = document.getElementById('getP'), buy = document.getElementById('buy');
+  let p = 11000, y = 10000;
+  function upd() { getP.textContent = p.toLocaleString() + ' P'; buy.textContent = '¥' + y.toLocaleString() + ' を支払う'; }
+  document.getElementById('pkgs').addEventListener('click', (e) => {
+    const k = e.target.closest('.pkg'); if (!k) return;
+    document.querySelectorAll('.pkg').forEach((x) => x.classList.remove('sel'));
+    k.classList.add('sel'); p = +k.dataset.p; y = +k.dataset.y; upd();
+  });
+  document.getElementById('pay').addEventListener('click', (e) => {
+    const o = e.target.closest('.opt'); if (!o) return;
+    document.querySelectorAll('.opt').forEach((x) => x.classList.remove('sel')); o.classList.add('sel');
+  });
+  buy.addEventListener('click', () => { buy.textContent = '処理中...'; setTimeout(() => { buy.textContent = '購入が完了しました ✓'; }, 800); });
+</script>
+</body>
+</html>

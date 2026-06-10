@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — note記事エディタ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<style>
+  body { margin: 0; font-family: var(--font); background: var(--canvas); color: var(--text); -webkit-font-smoothing: antialiased; }
+  .ne { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  /* top bar */
+  .ne-top { height: 58px; flex-shrink: 0; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; padding: 0 18px; }
+  .ne-top .back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); padding: 7px 10px; border-radius: 9px; text-decoration: none; }
+  .ne-top .back:hover { background: var(--surface-2); color: var(--ink); }
+  .ne-top .logo { width: 26px; height: 26px; }
+  .ne-top .status { font-size: 12.5px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .ne-top .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+  .ne-top .sp { flex: 1; }
+  .ne-top .save { font-size: 12px; color: var(--muted); }
+
+  .ne-main { flex: 1; overflow-y: auto; }
+  .canvas { max-width: 720px; margin: 0 auto; padding: 28px 24px 140px; }
+  .cover { height: 200px; border-radius: var(--r-xl); border: 1.5px dashed #c3d4e8; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--muted); font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--surface); transition: all .15s; margin-bottom: 26px; }
+  .cover:hover { border-color: var(--brand); background: var(--surface-tint); color: var(--brand); }
+  .cover svg { width: 19px; height: 19px; }
+  .cover.has { background: linear-gradient(150deg,#0b1f3a,#0e7490); border: none; color: rgba(255,255,255,.85); }
+
+  .title-in { width: 100%; border: none; outline: none; font-family: var(--font); font-size: 34px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.3; background: none; resize: none; }
+  .title-in::placeholder { color: var(--faint); }
+  .body { margin-top: 18px; }
+  .blk { position: relative; padding: 4px 0; }
+  .blk .handle { position: absolute; left: -36px; top: 4px; width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); display: none; align-items: center; justify-content: center; cursor: pointer; }
+  .blk:hover .handle { display: flex; }
+  .blk .handle svg { width: 15px; height: 15px; }
+  .p { font-size: 17px; line-height: 1.95; color: var(--text); outline: none; }
+  .p:empty::before { content: attr(data-ph); color: var(--faint); }
+  .h2b { font-size: 24px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.4; outline: none; }
+  .imgblk { border-radius: var(--r-md); height: 220px; background: linear-gradient(150deg,#0284c7,#06b6d4); display: flex; align-items: flex-end; padding: 12px; }
+  .imgblk .cap { font-size: 12px; color: rgba(255,255,255,.85); }
+  .quote { border-left: 3px solid var(--brand); padding: 4px 0 4px 16px; font-size: 17px; color: var(--text-2); font-style: italic; line-height: 1.8; }
+
+  /* paid line */
+  .paidline { margin: 30px 0; position: relative; text-align: center; }
+  .paidline::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed var(--tint-border); }
+  .paidline .lbl { position: relative; display: inline-flex; align-items: center; gap: 7px; background: var(--surface-tint); color: var(--brand); border: 1px solid var(--tint-border); border-radius: 999px; padding: 6px 16px; font-size: 12.5px; font-weight: 700; }
+  .paidline .lbl svg { width: 14px; height: 14px; }
+  .paid-zone { position: relative; }
+  .paid-zone::after { content: "ここから下は有料エリア"; position: absolute; top: 8px; right: 0; font-size: 10.5px; font-weight: 700; color: var(--brand); background: var(--surface-tint); padding: 2px 8px; border-radius: 6px; }
+  .paid-zone .p { opacity: .92; }
+
+  /* + insert button (floating under cursor block) */
+  .add-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+  .add-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .add-btn:hover { border-color: var(--brand); color: var(--brand); }
+  .add-btn svg { width: 17px; height: 17px; }
+  .add-hint { font-size: 13px; color: var(--faint); }
+
+  /* insert menu */
+  .imenu { position: fixed; z-index: 60; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--sh-card); padding: 6px; width: 240px; display: none; }
+  .imenu.show { display: block; }
+  .imenu .ih { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; }
+  .imenu button { display: flex; align-items: center; gap: 11px; width: 100%; border: none; background: none; font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--ink); padding: 9px 8px; border-radius: 8px; cursor: pointer; text-align: left; }
+  .imenu button:hover { background: var(--surface-2); }
+  .imenu button .mi { width: 30px; height: 30px; border-radius: 8px; background: var(--surface-tint); color: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .imenu button .mi svg { width: 16px; height: 16px; }
+  .imenu button small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; }
+
+  /* AI fab + sheet */
+  .ai-fab { position: fixed; right: 22px; bottom: 22px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font); font-size: 14px; font-weight: 700; color: #fff; background: var(--grad-brand); border: none; border-radius: 999px; padding: 13px 20px; cursor: pointer; box-shadow: var(--sh-glow); }
+  .ai-fab svg { width: 18px; height: 18px; }
+  .sheet-scrim { position: fixed; inset: 0; z-index: 70; background: rgba(7,15,30,.4); display: none; }
+  .sheet-scrim.show { display: block; }
+  .sheet { position: fixed; top: 0; right: 0; bottom: 0; width: 380px; max-width: 92vw; z-index: 71; background: var(--surface); box-shadow: -20px 0 60px -30px rgba(11,31,58,.5); transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; }
+  .sheet.show { transform: none; }
+  .sheet-h { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+  .sheet-h h3 { font-size: 16px; font-weight: 800; color: var(--ink); margin: 0; }
+  .sheet-x { width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--surface-2); color: var(--muted); cursor: pointer; }
+  .sheet-b { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 18px; }
+  .sheet-f { padding: 14px 20px; border-top: 1px solid var(--line); }
+
+  .pgroup { display: flex; flex-direction: column; gap: 9px; }
+  .pgroup .pl { font-size: 12px; font-weight: 700; color: var(--ink); }
+  .seg-v { display: flex; flex-direction: column; gap: 7px; }
+  .opt { display: flex; gap: 11px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: var(--r-md); padding: 11px 13px; cursor: pointer; }
+  .opt.on { border-color: var(--brand); background: var(--surface-tint); }
+  .opt .rd { width: 17px; height: 17px; border-radius: 50%; border: 2px solid var(--faint); flex-shrink: 0; margin-top: 1px; }
+  .opt.on .rd { border-color: var(--brand); background: radial-gradient(circle, var(--brand) 0 4px, transparent 5px); }
+  .opt b { font-size: 13.5px; color: var(--ink); }
+  .opt p { font-size: 11.5px; color: var(--muted); margin: 2px 0 0; line-height: 1.5; }
+  .paidcard { border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .paidcard .tog { display: flex; align-items: center; justify-content: space-between; }
+  .paidcard .tog b { font-size: 13.5px; color: var(--ink); }
+  .paidcard .body2 { display: none; flex-direction: column; gap: 12px; }
+  .paidcard.on .body2 { display: flex; }
+  .prow { display: flex; gap: 10px; }
+  .chips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .chip2 { font-size: 12px; font-weight: 600; color: var(--text-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+  .chip2.on { background: var(--surface-tint); border-color: var(--tint-border); color: var(--brand); }
+  .ai-msg { font-size: 13px; line-height: 1.7; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .ai-sug { font-family: var(--font); text-align: left; font-size: 13px; line-height: 1.6; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; cursor: pointer; width: 100%; }
+  .ai-sug:hover { border-color: var(--tint-border); background: var(--surface-tint); color: var(--ink); }
+  .ai-chipset { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  @media (max-width: 600px) { .canvas { padding: 22px 18px 120px; } .title-in { font-size: 26px; } .blk .handle { left: -30px; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-back" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></g>
+  <g id="i-plus" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></g>
+  <g id="i-img" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></g>
+  <g id="i-h2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6v12M13 6v12M5 12h8M17 9v9M17 9l3-1"/></g>
+  <g id="i-quote" fill="currentColor"><path d="M7 7H4v6h3l-1 4h2l1-4V7zm10 0h-3v6h3l-1 4h2l1-4V7z"/></g>
+  <g id="i-lock" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></g>
+  <g id="i-embed" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-5 4 5 4M15 8l5 4-5 4"/></g>
+  <g id="i-spark" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.4 4L17 8l-3.6 1L12 13l-1.4-4L7 8l3.6-1z M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8z"/></g>
+  <g id="i-x" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></g>
+  <g id="i-eye" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></g>
+</defs></svg>
+
+<div class="ne">
+  <div class="ne-top">
+    <a class="back" href="D-Swipe Note List.html"><svg viewBox="0 0 24 24"><use href="#i-back"/></svg>記事一覧</a>
+    <svg class="logo" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="nl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#0ea5e9"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#0b1f3a"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#nl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#nl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="status"><span class="dot"></span>下書き</span>
+    <span class="sp"></span>
+    <span class="save">自動保存済み · 2分前</span>
+    <a class="btn btn-secondary btn-sm" href="D-Swipe Note Article.html"><svg viewBox="0 0 24 24" style="width:15px;height:15px"><use href="#i-eye"/></svg>プレビュー</a>
+    <button class="btn btn-primary btn-sm" id="pubBtn">公開する</button>
+  </div>
+
+  <div class="ne-main">
+    <div class="canvas">
+      <div class="cover has"><span style="position:relative">カバー画像を変更</span></div>
+      <textarea class="title-in" rows="1" placeholder="タイトル">スワイプLPで集客を“仕組み化”する全手順</textarea>
+      <div class="body" id="body">
+        <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><p class="p" contenteditable="true">SNSで毎日発信しても反応が伸びない——その原因の多くは「導線」にあります。この記事では、スワイプ型LPを使って集客を“仕組み”に変える手順を、最初の一歩から具体的に解説します。</p></div>
+        <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><div class="h2b" contenteditable="true">なぜ「投稿」だけでは伸びないのか</div></div>
+        <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><p class="p" contenteditable="true">投稿は「点」の接触にすぎません。見込み客を「線」でつなぐには、興味を持った瞬間に最後まで読み切れる受け皿——スワイプLPが必要です。</p></div>
+        <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><div class="imgblk"><span class="cap">図：投稿 → LP → リスト獲得の導線</span></div></div>
+        <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><div class="quote" contenteditable="true">「3日目で初めてのリストが30件。半信半疑だった自分が、いまは毎週LPを出しています」</div></div>
+
+        <div class="paidline"><span class="lbl"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg>ここから先は有料です</span></div>
+
+        <div class="paid-zone">
+          <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><div class="h2b" contenteditable="true">7日間で公開までやり切る具体手順</div></div>
+          <div class="blk"><span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span><p class="p" contenteditable="true">ここからは、実際に私が月100リストを安定させた7日間のロードマップを、テンプレートとあわせて公開します。Day1はターゲットの言語化から——</p></div>
+        </div>
+
+        <div class="add-row"><button class="add-btn" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></button><span class="add-hint">＋ で 見出し・画像・有料ライン・引用 などを追加</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- insert menu -->
+<div class="imenu" id="imenu">
+  <div class="ih">追加するブロック</div>
+  <button data-ins="p"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6h14M5 12h14M5 18h9" stroke-linecap="round"/></svg></span><span>本文<small>段落テキスト</small></span></button>
+  <button data-ins="h2"><span class="mi"><svg viewBox="0 0 24 24"><use href="#i-h2"/></svg></span><span>見出し<small>セクションの区切り</small></span></button>
+  <button data-ins="img"><span class="mi"><svg viewBox="0 0 24 24"><use href="#i-img"/></svg></span><span>画像<small>メディアから挿入</small></span></button>
+  <button data-ins="quote"><span class="mi"><svg viewBox="0 0 24 24"><use href="#i-quote"/></svg></span><span>引用<small>声・抜粋</small></span></button>
+  <button data-ins="embed"><span class="mi"><svg viewBox="0 0 24 24"><use href="#i-embed"/></svg></span><span>埋め込み<small>動画・LP・リンク</small></span></button>
+  <button data-ins="paid"><span class="mi"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg></span><span>有料ライン<small>ここから先を有料に</small></span></button>
+</div>
+
+<!-- AI fab -->
+<button class="ai-fab" id="aiFab"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg>AIアシスト</button>
+
+<!-- sheets -->
+<div class="sheet-scrim" id="scrim"></div>
+
+<!-- publish sheet -->
+<div class="sheet" id="pubSheet">
+  <div class="sheet-h"><h3>公開設定</h3><button class="sheet-x" data-close><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+  <div class="sheet-b">
+    <div class="pgroup"><span class="pl">公開範囲</span><div class="seg-v" id="vis">
+      <div class="opt on"><span class="rd"></span><div><b>全体に公開</b><p>誰でも閲覧でき、発見フィードに掲載</p></div></div>
+      <div class="opt"><span class="rd"></span><div><b>限定公開</b><p>URLを知っている人だけ</p></div></div>
+      <div class="opt"><span class="rd"></span><div><b>非公開（自分のみ）</b><p>下書きとして保存</p></div></div>
+    </div></div>
+    <div class="pgroup"><span class="pl">価格設定</span>
+      <div class="paidcard on" id="paidcard">
+        <div class="tog"><b>有料記事にする</b><button class="switch on" id="paidsw" aria-label="有料"></button></div>
+        <div class="body2">
+          <div class="prow"><div class="field" style="flex:1"><span class="field-label">ポイント価格</span><input class="input" value="500" /></div><div class="field" style="flex:1"><span class="field-label">円価格（任意）</span><input class="input" placeholder="500" /></div></div>
+          <div class="field"><span class="field-label">決済手段</span><div class="chips"><span class="chip2 on">ポイント</span><span class="chip2 on">クレジット</span></div></div>
+          <div class="field-hint">税率10%・税込表示で販売されます。「ここから先は有料」ライン以降が課金対象です。</div>
+        </div>
+      </div>
+    </div>
+    <div class="pgroup"><span class="pl">カテゴリ <span style="color:var(--muted);font-weight:500">（最大5）</span></span><div class="chips"><span class="chip2 on">マーケティング</span><span class="chip2 on">集客</span><span class="chip2">副業</span><span class="chip2">ライティング</span><span class="chip2">SNS</span></div></div>
+    <div class="pgroup"><span class="pl">サロンに紐付け <span style="color:var(--muted);font-weight:500">（任意）</span></span><div class="chips"><span class="chip2">紐付けない</span><span class="chip2 on">山田’s 集客ラボ</span></div></div>
+    <div class="pgroup"><span class="pl">抜粋（一覧・SNS用）</span><textarea class="textarea" style="min-height:64px">スワイプLPで集客を仕組み化する全手順を公開。</textarea></div>
+  </div>
+  <div class="sheet-f"><button class="btn btn-primary btn-lg btn-block" id="doPublish">この内容で公開する</button></div>
+</div>
+
+<!-- AI sheet -->
+<div class="sheet" id="aiSheet">
+  <div class="sheet-h"><h3><svg viewBox="0 0 24 24" style="width:16px;height:16px;vertical-align:-3px;color:var(--brand)" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-spark"/></svg> AIアシスト</h3><button class="sheet-x" data-close><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+  <div class="sheet-b">
+    <div class="ai-msg">記事の続きや改善を手伝います。選んでください。</div>
+    <div class="ai-chipset"><span class="chip2 on">続きを書く</span><span class="chip2">要約を作る</span><span class="chip2">タイトル案</span><span class="chip2">校正する</span></div>
+    <span class="pl" style="font-size:12px;font-weight:700;color:var(--ink)">タイトル案</span>
+    <button class="ai-sug">スワイプLPで“集客を仕組み化”する7日間ロードマップ</button>
+    <button class="ai-sug">もう投稿で消耗しない。読まれて売れるLPの作り方</button>
+    <button class="ai-sug">凡人がリスト30件を集めた、再現性の型</button>
+  </div>
+  <div class="sheet-f"><div class="input-icon" style="position:relative"><input class="input" placeholder="AIに指示する…（例：導入をやさしく）" /></div></div>
+</div>
+
+<script>
+  const scrim = document.getElementById('scrim');
+  const pubSheet = document.getElementById('pubSheet');
+  const aiSheet = document.getElementById('aiSheet');
+  const open = (s) => { s.classList.add('show'); scrim.classList.add('show'); };
+  const closeAll = () => { pubSheet.classList.remove('show'); aiSheet.classList.remove('show'); scrim.classList.remove('show'); };
+  document.getElementById('pubBtn').addEventListener('click', () => open(pubSheet));
+  document.getElementById('aiFab').addEventListener('click', () => open(aiSheet));
+  scrim.addEventListener('click', closeAll);
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+
+  // visibility radio
+  document.getElementById('vis').addEventListener('click', e => { const o = e.target.closest('.opt'); if (!o) return; document.querySelectorAll('#vis .opt').forEach(x => x.classList.remove('on')); o.classList.add('on'); });
+  // paid toggle
+  const paidcard = document.getElementById('paidcard'), paidsw = document.getElementById('paidsw');
+  paidsw.addEventListener('click', () => { const on = paidsw.classList.toggle('on'); paidcard.classList.toggle('on', on); });
+  // chips
+  document.querySelectorAll('.chips').forEach(g => g.addEventListener('click', e => { const c = e.target.closest('.chip2'); if (c) c.classList.toggle('on'); }));
+  document.querySelectorAll('.ai-chipset .chip2').forEach((c, i, all) => c.addEventListener('click', () => { all.forEach(x => x.classList.remove('on')); c.classList.add('on'); }));
+
+  // insert menu
+  const imenu = document.getElementById('imenu');
+  let anchorBlk = null;
+  function showMenu(x, y, blk) { anchorBlk = blk; imenu.style.left = Math.min(x, window.innerWidth - 252) + 'px'; imenu.style.top = Math.min(y, window.innerHeight - 320) + 'px'; imenu.classList.add('show'); }
+  document.getElementById('body').addEventListener('click', e => {
+    const a = e.target.closest('[data-add]'); if (!a) return;
+    const r = a.getBoundingClientRect(); showMenu(r.right + 6, r.top, a.closest('.blk') || a.closest('.add-row'));
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('[data-add]') && !e.target.closest('.imenu')) imenu.classList.remove('show'); });
+  imenu.addEventListener('click', e => {
+    const b = e.target.closest('[data-ins]'); if (!b) return;
+    const kind = b.dataset.ins; const el = document.createElement('div');
+    if (kind === 'paid') { el.className = 'paidline'; el.innerHTML = '<span class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-lock"/></svg>ここから先は有料です</span>'; }
+    else { el.className = 'blk'; const inner = kind === 'h2' ? '<div class="h2b" contenteditable="true" data-ph="見出し"></div>' : kind === 'img' ? '<div class="imgblk"><span class="cap">画像を選択</span></div>' : kind === 'quote' ? '<div class="quote" contenteditable="true">引用テキスト</div>' : kind === 'embed' ? '<div class="imgblk" style="background:linear-gradient(150deg,#1b3a61,#0b1f3a)"><span class="cap">埋め込みURLを貼り付け</span></div>' : '<p class="p" contenteditable="true" data-ph="本文を入力…"></p>'; el.innerHTML = '<span class="handle" data-add><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span>' + inner; }
+    if (anchorBlk && anchorBlk.parentNode) anchorBlk.parentNode.insertBefore(el, anchorBlk.nextSibling);
+    imenu.classList.remove('show');
+    const ed = el.querySelector('[contenteditable]'); if (ed) ed.focus();
+  });
+  document.getElementById('doPublish').addEventListener('click', () => { document.getElementById('doPublish').textContent = '公開しました ✓'; setTimeout(closeAll, 700); });
+
+  // auto-grow title
+  const ti = document.querySelector('.title-in');
+  const grow = () => { ti.style.height = 'auto'; ti.style.height = ti.scrollHeight + 'px'; };
+  ti.addEventListener('input', grow); grow();
+</script>
+</body>
+</html>

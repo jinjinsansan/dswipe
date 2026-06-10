@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — 管理者パネル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  .adm-badge { font-size: 10px; font-weight: 800; letter-spacing: .1em; color: #fff; background: linear-gradient(135deg,#e11d48,#f59e0b); padding: 3px 8px; border-radius: 6px; margin-left: 8px; }
+  .side-item.admin.active { background: rgba(244,63,94,.16); color: #fda4af; box-shadow: inset 2px 0 0 #f43f5e; }
+  .two { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  .uav { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #042032; flex-shrink: 0; }
+  .urow { display: flex; align-items: center; gap: 10px; }
+  .mod-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 0; }
+  .mod-item + .mod-item { border-top: 1px solid var(--line-2); }
+  .mod-item .mi { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .mod-item .mi.warn { background: var(--warning-tint); color: var(--warning-ink); }
+  .mod-item .mi.danger { background: var(--danger-tint); color: var(--danger-ink); }
+  .mod-item .mi svg { width: 18px; height: 18px; }
+  .mod-item .mt { flex: 1; min-width: 0; }
+  .mod-item .mt b { font-size: 13.5px; color: var(--ink); }
+  .mod-item .mt p { font-size: 12px; color: var(--muted); margin: 2px 0 0; line-height: 1.5; }
+  .mod-item .ma { display: flex; gap: 6px; flex-shrink: 0; }
+  .mod-item .ma button { font-family: var(--font); font-size: 11.5px; font-weight: 700; border-radius: 8px; padding: 6px 11px; cursor: pointer; border: none; white-space: nowrap; }
+  .ma .ok { background: var(--success-tint); color: var(--success-ink); }
+  .ma .ng { background: var(--danger-tint); color: var(--danger-ink); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-grid" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="i-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="i-doc" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></g>
+  <g id="i-store" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-4h14l1 4M4 9v10h16V9M4 9h16M9 19v-5h6v5"/></g>
+  <g id="i-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="i-flag" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></g>
+  <g id="i-up" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></g>
+  <g id="i-warn" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></g>
+  <g id="i-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+  <g id="i-shield" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></g>
+</defs></svg>
+
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side app-side" id="sidebar" style="background:#0a1830">
+    <div class="side-logo">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size:16px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe<span class="adm-badge">ADMIN</span></span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-sect">管理</div>
+      <a class="side-item admin active" href="D-Swipe Admin.html"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg>概要</a>
+      <a class="side-item" href="D-Swipe Admin Users.html"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg>ユーザー</a>
+      <a class="side-item" href="D-Swipe Admin Revenue.html"><svg viewBox="0 0 24 24"><use href="#i-yen"/></svg>売上</a>
+      <a class="side-item" href="D-Swipe Admin Payouts.html"><svg viewBox="0 0 24 24"><use href="#i-doc"/></svg>出金</a>
+      <a class="side-item" href="D-Swipe Admin Messages.html"><svg viewBox="0 0 24 24"><use href="#i-flag"/></svg>メッセージ</a>
+      <a class="side-item" href="D-Swipe Admin Points.html"><svg viewBox="0 0 24 24"><use href="#i-store"/></svg>ポイント</a>
+      <a class="side-item" href="D-Swipe Admin Settings.html"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg>設定</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ucard"><div class="avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b)">A</div><div style="min-width:0"><div class="nm">管理者</div><div class="rl">admin</div></div></div>
+      <a class="side-logout" href="D-Swipe Dashboard.html" style="display:block;text-align:center;text-decoration:none">ユーザー画面へ</a>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button class="burger" id="burger" aria-label="メニュー"><svg viewBox="0 0 24 24"><use href="#i-burger"/></svg></button>
+        <div class="tb-title"><h1>管理者パネル</h1><p>プラットフォーム全体の概要</p></div>
+      </div>
+      <div class="tb-right"><span class="segmented hide-sm"><button class="active">今日</button><button>今週</button><button>今月</button></span><div class="avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b)">A</div></div>
+    </header>
+
+    <div class="app-content">
+      <div class="kpis">
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg></span><span class="kpi-cap">総ユーザー</span></div><span class="kpi-val">12,840</span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#i-up"/></svg>+184 今週</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico soft"><svg viewBox="0 0 24 24"><use href="#i-doc"/></svg></span><span class="kpi-cap">公開中LP</span></div><span class="kpi-val">3,210</span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#i-up"/></svg>+62</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#i-yen"/></svg></span><span class="kpi-cap">流通総額(GMV)</span></div><span class="kpi-val">48.2M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span><span class="kpi-delta up"><svg width="12" height="12" viewBox="0 0 24 24"><use href="#i-up"/></svg>9.1%</span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico" style="background:linear-gradient(135deg,#e11d48,#f59e0b)"><svg viewBox="0 0 24 24"><use href="#i-flag"/></svg></span><span class="kpi-cap">要対応</span></div><span class="kpi-val">5<span style="font-size:13px;font-weight:600;color:var(--muted)">件</span></span><span class="kpi-delta" style="color:var(--danger-ink)">通報・審査待ち</span></div>
+      </div>
+
+      <div class="two">
+        <!-- recent users -->
+        <div class="panel" style="padding:22px 22px 8px">
+          <div class="panel-h"><h3>新規ユーザー</h3><a href="#" style="font-size:12.5px;font-weight:600;color:var(--brand)">すべて見る</a></div>
+          <table class="tbl">
+            <thead><tr><th>ユーザー</th><th>種別</th><th class="num">LP</th><th>登録</th></tr></thead>
+            <tbody>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#22d3ee,#0284c7)">山</span><span class="strong">山田 太郎</span></div></td><td><span class="badge badge-seller">seller</span></td><td class="num">14</td><td>2分前</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">A</span><span class="strong">佐藤 あや</span></div></td><td><span class="badge badge-seller">seller</span></td><td class="num">8</td><td>1時間前</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#16a34a,#22d3ee)">け</span><span class="strong">鈴木 けん</span></div></td><td><span class="badge badge-draft">buyer</span></td><td class="num">0</td><td>3時間前</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#7c3aed,#0284c7)">み</span><span class="strong">田中 みう</span></div></td><td><span class="badge badge-seller">seller</span></td><td class="num">3</td><td>昨日</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- moderation queue -->
+        <div class="panel">
+          <div class="panel-h"><h3>通報・審査キュー</h3><span class="badge badge-danger">5 件</span></div>
+          <div class="mod-item"><span class="mi danger"><svg viewBox="0 0 24 24"><use href="#i-warn"/></svg></span><div class="mt"><b>誇大表現の疑い</b><p>LP「7日で月収100万」· 通報3件</p></div><div class="ma"><button class="ok">許可</button><button class="ng">非公開</button></div></div>
+          <div class="mod-item"><span class="mi warn"><svg viewBox="0 0 24 24"><use href="#i-flag"/></svg></span><div class="mt"><b>販売者申請</b><p>@minami さんを seller に昇格</p></div><div class="ma"><button class="ok">承認</button><button class="ng">却下</button></div></div>
+          <div class="mod-item"><span class="mi warn"><svg viewBox="0 0 24 24"><use href="#i-flag"/></svg></span><div class="mt"><b>商品審査</b><p>「個別コンサル（60分）」掲載審査</p></div><div class="ma"><button class="ok">承認</button><button class="ng">却下</button></div></div>
+          <div class="mod-item"><span class="mi danger"><svg viewBox="0 0 24 24"><use href="#i-warn"/></svg></span><div class="mt"><b>不適切なコンテンツ</b><p>プロフィール画像 · 通報1件</p></div><div class="ma"><button class="ok">許可</button><button class="ng">削除</button></div></div>
+        </div>
+      </div>
+
+      <!-- point issuance -->
+      <div class="panel">
+        <div class="panel-h"><h3>ポイント発行・流通</h3><a href="D-Swipe Points.html" style="font-size:12.5px;font-weight:600;color:var(--brand)">ポイント管理へ</a></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);padding:16px"><div style="font-size:12px;color:var(--muted);font-weight:600">発行済みポイント</div><div style="font-size:24px;font-weight:800;color:var(--ink);margin-top:4px;font-variant-numeric:tabular-nums">82.4M P</div></div>
+          <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);padding:16px"><div style="font-size:12px;color:var(--muted);font-weight:600">利用済み</div><div style="font-size:24px;font-weight:800;color:var(--ink);margin-top:4px;font-variant-numeric:tabular-nums">48.2M P</div></div>
+          <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);padding:16px"><div style="font-size:12px;color:var(--muted);font-weight:600">未使用残高</div><div style="font-size:24px;font-weight:800;color:var(--brand);margin-top:4px;font-variant-numeric:tabular-nums">34.2M P</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sb = document.getElementById('sidebar'), sc = document.getElementById('scrim');
+  const tog = (o) => { sb.classList.toggle('open', o); sc.classList.toggle('open', o); };
+  document.getElementById('burger').addEventListener('click', () => tog(!sb.classList.contains('open')));
+  sc.addEventListener('click', () => tog(false));
+  document.querySelectorAll('.segmented button').forEach((b, i, all) => b.addEventListener('click', () => { all.forEach(x => x.classList.remove('active')); b.classList.add('active'); }));
+  document.querySelectorAll('.mod-item .ma button').forEach((b) => b.addEventListener('click', () => {
+    const item = b.closest('.mod-item'); item.style.transition = 'opacity .25s'; item.style.opacity = '.4';
+    b.closest('.ma').innerHTML = '<span style="font-size:12px;font-weight:700;color:' + (b.classList.contains('ok') ? 'var(--success-ink)' : 'var(--danger-ink)') + '">' + (b.classList.contains('ok') ? '対応済み' : '対応済み') + '</span>';
+  }));
+</script>
+</body>
+</html>

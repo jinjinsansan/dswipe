@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — スワイプで、伝わる。つながる。稼ぐ。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { font-family: var(--font); background: #07142a; color: var(--text); -webkit-font-smoothing: antialiased; }
+  :root { --nav-h: 84px; --band-h: 96px; }
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; width: 100%; }
+
+  /* nav */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; height: 64px; background: rgba(11,31,58,.82); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .nav-in { max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; gap: 22px; }
+  .nav-logo { display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 800; letter-spacing: -.02em; color: #fff; white-space: nowrap; background: none; border: none; cursor: pointer; }
+  .nav-links { display: flex; gap: 2px; margin-left: 6px; }
+  .nav-links button { font-family: var(--font); font-size: 13.5px; font-weight: 500; color: var(--on-navy-muted); background: none; border: none; cursor: pointer; padding: 7px 11px; border-radius: 9px; transition: color .15s, background .15s; }
+  .nav-links button:hover, .nav-links button.on { color: #fff; background: rgba(255,255,255,.08); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .nav-login { font-size: 13.5px; font-weight: 600; color: #e7f0fb; padding: 8px 13px; border-radius: var(--r-md); }
+  .nav-login:hover { background: rgba(255,255,255,.08); }
+  .nav-burger { display: none; background: none; border: none; color: #fff; cursor: pointer; margin-left: auto; }
+
+  /* deck */
+  .deck { position: fixed; inset: 0; overflow: hidden; }
+  .deck-track { position: absolute; inset: 0; transition: transform .6s cubic-bezier(.5,.05,.2,1); }
+  .vslide { position: absolute; left: 0; right: 0; height: 100%; overflow: hidden; }
+  /* Grid + `safe center`: centers content when it fits, but TOP-ALIGNS and
+     scrolls when content is taller than the safe area — so nothing is ever
+     clipped behind the fixed nav / signup band. Padding (driven by measured
+     chrome heights) reserves the safe area on both ends. */
+  .vslide-in { height: 100%; box-sizing: border-box; display: grid; align-content: safe center; justify-items: center; padding: var(--nav-h) 0 var(--band-h); overflow-y: auto; scrollbar-width: none; }
+  .vslide-in::-webkit-scrollbar { display: none; }
+  .vslide-in > .wrap { width: 100%; }
+
+  .bg-hero { background: radial-gradient(1100px 560px at 78% 0%, #0e7490 0%, transparent 55%), linear-gradient(160deg,#0b1f3a,#0f2c52 60%,#0b2742); color: #fff; }
+  .bg-deep { background: radial-gradient(800px 520px at 50% -10%, #0e7490 0%, transparent 58%), linear-gradient(160deg,#081428,#0b1f3a 70%,#081428); color: #fff; }
+  .bg-final { background: radial-gradient(900px 460px at 50% 0%, #0e7490 0%, transparent 60%), linear-gradient(150deg,#0b1f3a,#0f2c52); color: #fff; }
+  .bg-light { background: var(--surface); color: var(--ink); }
+  .bg-canvas { background: var(--canvas); color: var(--ink); }
+
+  .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); }
+  .bg-hero .eyebrow, .bg-deep .eyebrow, .bg-final .eyebrow { color: var(--cyan-300); }
+  .kover { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--brand); background: var(--surface-tint); border: 1px solid var(--tint-border); border-radius: 999px; padding: 6px 13px; white-space: nowrap; }
+  .kover svg { width: 14px; height: 14px; }
+  .bg-deep .kover { color: var(--cyan-300); background: rgba(34,211,238,.1); border-color: rgba(34,211,238,.22); }
+  .s-h { font-size: 36px; font-weight: 800; letter-spacing: -.03em; line-height: 1.16; margin: 14px 0 0; }
+  .s-sub { font-size: 15.5px; line-height: 1.75; margin: 14px 0 0; }
+  .bg-hero .s-sub, .bg-deep .s-sub, .bg-final .s-sub { color: #bcd3ee; }
+  .bg-light .s-sub, .bg-canvas .s-sub { color: var(--text-2); }
+  .center { text-align: center; }
+  .center .s-sub { margin-left: auto; margin-right: auto; max-width: 54ch; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+
+  /* hero */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: var(--cyan-300); background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.22); border-radius: 999px; padding: 7px 14px; }
+  .hero h1 { font-size: 48px; font-weight: 800; letter-spacing: -.035em; line-height: 1.08; margin: 20px 0 0; color: #fff; }
+  .hero h1 .g { background: linear-gradient(120deg,#67e8f9,#38bdf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .phone-stage { display: flex; justify-content: center; position: relative; }
+  .phone-glow { position: absolute; inset: 12% 16%; background: radial-gradient(circle, rgba(6,182,212,.4), transparent 70%); filter: blur(38px); }
+  .phone { position: relative; z-index: 1; width: 240px; height: 490px; background: #0b1220; border-radius: 38px; padding: 9px; box-shadow: 0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06); }
+  .phone-screen { position: relative; width: 100%; height: 100%; border-radius: 30px; overflow: hidden; background: #fff; }
+  .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 96px; height: 22px; background: #0b1220; border-radius: 0 0 13px 13px; z-index: 12; }
+  .pswiper { position: absolute; inset: 0; transition: transform .55s cubic-bezier(.5,.05,.2,1); }
+  .pslide { position: absolute; left: 0; right: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px 18px 28px; color: #fff; }
+  .pslide .tg { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  .pslide h3 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; margin: 8px 0 0; }
+  .pslide p { font-size: 12px; line-height: 1.6; margin: 8px 0 0; opacity: .92; }
+  .pslide .mini { margin-top: 14px; text-align: center; background: #fff; color: #0b1f3a; font-weight: 800; font-size: 13px; padding: 11px; border-radius: 12px; }
+  .pslide .price { font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
+  .pslide .price s { font-size: 14px; font-weight: 600; opacity: .6; margin-right: 8px; }
+  .pdots { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 5px; z-index: 12; }
+  .pdots i { width: 5px; height: 5px; border-radius: 999px; background: rgba(255,255,255,.45); }
+  .pdots i.on { background: #fff; height: 16px; }
+
+  /* platform pillars */
+  .pillars { display: flex; gap: 12px; margin-top: 34px; justify-content: center; flex-wrap: wrap; align-items: stretch; }
+  .pillar { flex: 1 1 0; min-width: 158px; max-width: 200px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 20px 16px; text-align: center; }
+  .pillar .pi { width: 46px; height: 46px; border-radius: 14px; margin: 0 auto; background: var(--grad-brand); display: flex; align-items: center; justify-content: center; box-shadow: var(--sh-glow); }
+  .pillar .pi svg { width: 24px; height: 24px; color: #fff; }
+  .pillar .step { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--cyan-300); margin-top: 14px; }
+  .pillar b { display: block; font-size: 15px; color: #fff; margin-top: 6px; }
+  .pillar p { font-size: 11.5px; color: #9fb4d0; margin-top: 6px; line-height: 1.55; }
+
+  /* builder visual */
+  .build-vis { display: flex; gap: 12px; align-items: center; justify-content: center; }
+  .mini-film { display: flex; flex-direction: column; gap: 8px; }
+  .mini-film .mt { width: 46px; height: 92px; border-radius: 8px; box-shadow: var(--sh-sm); border: 1px solid var(--line); }
+  .mini-film .mt.on { outline: 2px solid var(--brand); }
+  .mini-device { width: 168px; height: 344px; background: #0b1220; border-radius: 28px; padding: 7px; box-shadow: var(--sh-card); }
+  .mini-device .ms { width: 100%; height: 100%; border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px 16px; color: #fff; }
+  .feat-bullets { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; }
+  .feat-bullets .fb { display: flex; gap: 12px; }
+  .feat-bullets .c { width: 30px; height: 30px; border-radius: 9px; background: var(--surface-tint); color: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .feat-bullets .c svg { width: 17px; height: 17px; }
+  .feat-bullets b { font-size: 15px; color: var(--ink); }
+  .feat-bullets p { font-size: 13px; color: var(--text-2); margin: 3px 0 0; line-height: 1.6; }
+
+  /* analytics panel */
+  .show-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-3xl); box-shadow: var(--sh-card); padding: 22px; }
+  .mini-kpis { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+  .mini-kpi { background: var(--canvas); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px; }
+  .mini-kpi .l { font-size: 10.5px; font-weight: 600; color: var(--muted); }
+  .mini-kpi .v { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .chart { height: 124px; display: flex; align-items: flex-end; gap: 8px; padding: 10px; background: var(--canvas); border: 1px solid var(--line); border-radius: var(--r-md); }
+  .chart .bar { flex: 1; border-radius: 5px 5px 0 0; background: var(--grad-brand); }
+
+  /* note-like discovery feed */
+  .feed { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 26px; }
+  .fcard { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: var(--sh-sm); text-align: left; }
+  .fcard .ft { height: 88px; position: relative; }
+  .fcard .ft .tag { position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; color: #fff; background: rgba(11,31,58,.5); backdrop-filter: blur(4px); padding: 3px 8px; border-radius: 999px; }
+  .fcard .fb { padding: 12px; }
+  .fcard .fttl { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .fcard .fmeta { display: flex; align-items: center; gap: 7px; margin-top: 10px; }
+  .fcard .fav { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+  .fcard .fname { font-size: 11px; color: var(--muted); }
+  .fcard .flike { margin-left: auto; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+  .fcard .flike svg { width: 13px; height: 13px; color: #f43f5e; }
+  .feed-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+  .feed-tag { font-size: 12px; font-weight: 600; color: var(--text-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; }
+  .feed-tag b { color: var(--brand); }
+
+  /* salon / membership */
+  .salon-card { background: linear-gradient(160deg,#0b1f3a,#0f2c52); border-radius: 24px; padding: 26px; color: #fff; box-shadow: var(--sh-card); position: relative; overflow: hidden; }
+  .salon-card::after { content: ""; position: absolute; right: -80px; top: -80px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,.22), transparent 65%); }
+  .salon-card .sc-top { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+  .salon-card .stier { font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--cyan-300); }
+  .salon-card .sname { font-size: 19px; font-weight: 800; margin-top: 4px; }
+  .salon-card .sprice { font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
+  .salon-card .sprice small { font-size: 13px; color: #9fb4d0; font-weight: 600; }
+  .members { display: flex; align-items: center; margin-top: 18px; position: relative; z-index: 1; }
+  .members .m { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #0b1f3a; margin-left: -9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #042032; }
+  .members .m:first-child { margin-left: 0; }
+  .members .mc { margin-left: 12px; font-size: 12.5px; color: #9fb4d0; }
+  .salon-perks { list-style: none; margin: 18px 0 22px; padding: 0; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+  .salon-perks li { display: flex; gap: 9px; font-size: 13px; align-items: flex-start; color: #dbe8f7; }
+  .salon-perks li svg { width: 16px; height: 16px; color: var(--cyan-400); flex-shrink: 0; margin-top: 1px; }
+
+  /* marketplace */
+  .mkt { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 26px; }
+  .pcard2 { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--sh-sm); overflow: hidden; text-align: left; }
+  .pcard2 .pt { height: 78px; }
+  .pcard2 .pbd { padding: 13px; }
+  .pcard2 .pn { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .pcard2 .pf { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .pcard2 .pp { font-size: 14px; font-weight: 800; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .pcard2 .pb { font-size: 11px; font-weight: 700; color: #fff; background: var(--grad-brand); border-radius: 8px; padding: 5px 10px; }
+
+  /* pricing */
+  .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 30px; }
+  .pcard { padding: 24px; display: flex; flex-direction: column; }
+  .pcard.feature { border: 1.5px solid var(--brand); box-shadow: var(--sh-card); position: relative; }
+  .pcard .pop { position: absolute; top: -11px; left: 24px; font-size: 11px; font-weight: 800; color: #fff; background: var(--grad-brand); padding: 4px 11px; border-radius: 999px; box-shadow: var(--sh-glow); }
+  .pcard .pname { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .pcard .pp { margin: 12px 0 3px; font-size: 32px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+  .pcard .pp small { font-size: 14px; font-weight: 600; color: var(--muted); }
+  .pcard .pl { font-size: 12.5px; color: var(--muted); }
+  .pcard ul { list-style: none; margin: 18px 0 20px; padding: 0; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+  .pcard li { display: flex; gap: 9px; font-size: 13px; color: var(--text); align-items: flex-start; }
+  .pcard li svg { width: 17px; height: 17px; color: var(--success); flex-shrink: 0; margin-top: 1px; }
+
+  .final-h { font-size: 44px; font-weight: 800; letter-spacing: -.035em; line-height: 1.12; color: #fff; }
+
+  /* deck dots + hint + band */
+  .deck-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 45; display: flex; flex-direction: column; gap: 10px; }
+  .deck-dots button { width: 9px; height: 9px; border-radius: 999px; border: none; padding: 0; cursor: pointer; background: rgba(255,255,255,.32); transition: all .2s; }
+  .deck-dots button.on { background: var(--cyan-400); height: 26px; }
+  .deck-dots.on-light button { background: rgba(11,31,58,.18); }
+  .deck-dots.on-light button.on { background: var(--brand); }
+  .deck-hint { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 44; display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(255,255,255,.9); pointer-events: none; transition: opacity .4s; }
+  .deck-hint .ring { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.5); display: flex; align-items: center; justify-content: center; animation: bob 1.5s ease-in-out infinite; }
+  .deck-hint .ring svg { width: 18px; height: 18px; }
+  .deck-hint span { font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+  @keyframes bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(6px);} }
+
+  .signup-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: linear-gradient(160deg,#0b1f3a,#0f2c52); border-top: 1px solid rgba(34,211,238,.28); box-shadow: 0 -12px 34px -14px rgba(0,0,0,.55); }
+  .signup-in { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 11px 24px; max-width: 1120px; margin: 0 auto; }
+  .signup-msg strong { display: block; color: #fff; font-size: 14.5px; font-weight: 700; letter-spacing: -.01em; }
+  .signup-msg span { color: #9fb4d0; font-size: 12px; margin-top: 2px; display: inline-block; }
+  .signup-msg span b { color: var(--cyan-300); }
+  .gbtn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font); font-size: 14px; font-weight: 700; color: #1f2c3d; background: #fff; border: none; border-radius: 12px; padding: 11px 20px; cursor: pointer; box-shadow: 0 10px 26px -10px rgba(0,0,0,.5); transition: transform .12s, box-shadow .18s; white-space: nowrap; }
+  .gbtn:hover { transform: translateY(-1px); }
+  .gbtn svg { width: 18px; height: 18px; }
+
+  @media (max-width: 1000px) {
+    .hero-grid, .two-col { grid-template-columns: 1fr; gap: 26px; }
+    .phone-stage { order: -1; }
+    .phone { width: 196px; height: 400px; }
+    .hero h1 { font-size: 38px; }
+    .show-panel.hide-sm { display: none; }
+    .build-vis { display: none; }
+  }
+  @media (max-width: 720px) {
+    .nav-links, .nav-login { display: none; }
+    .nav-burger { display: inline-flex; }
+    .s-h { font-size: 27px; }
+    .feed { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .feed .fcard:last-child { display: none; }
+    .mkt { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mkt .pcard2:last-child { display: none; }
+    .price-grid { grid-template-columns: 1fr; }
+    .pcard:not(.feature) { display: none; }
+    .pillars { gap: 8px; }
+    .pillar { min-width: 130px; padding: 14px 10px; }
+    .pillar p { display: none; }
+    .final-h { font-size: 30px; }
+    .signup-msg span { display: none; }
+    .deck-dots { right: 10px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-bolt" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></g>
+  <g id="i-spark" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z"/></g>
+  <g id="i-chart" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></g>
+  <g id="i-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="i-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></g>
+  <g id="i-arrow" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></g>
+  <g id="i-down" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></g>
+  <g id="i-target" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></g>
+  <g id="i-edit" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></g>
+  <g id="i-compass" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></g>
+  <g id="i-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="i-store" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-4h14l1 4M4 9v10h16V9M4 9h16M9 19v-5h6v5"/></g>
+  <g id="i-heart" fill="currentColor"><path d="M12 20s-7-4.5-9.3-8.2C1 9 2 5.8 5 5.2c1.9-.4 3.4.6 4.2 1.7.4.6 1.2.6 1.6 0C11.6 5.8 13.1 4.8 15 5.2c3 .6 4 3.8 2.3 6.6C19 15.5 12 20 12 20z"/></g>
+  <g id="i-link" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 006 0l2-2a4 4 0 00-6-6l-1 1"/><path d="M14 10a4 4 0 00-6 0l-2 2a4 4 0 006 6l1-1"/></g>
+  <g id="i-shield" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></g>
+  <g id="i-bell" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 004 0"/></g>
+  <g id="i-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+
+<nav class="nav">
+  <div class="nav-in">
+    <button class="nav-logo" data-go="0">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="nlg" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#nlg)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#nlg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      D<span style="color:var(--cyan-400)">-</span>Swipe
+    </button>
+    <div class="nav-links" id="navLinks">
+      <button data-go="1">D-Swipeとは</button>
+      <button data-go="2">作る</button>
+      <button data-go="4">届ける</button>
+      <button data-go="5">サロン</button>
+      <button data-go="7">料金</button>
+    </div>
+    <div class="nav-right">
+      <a class="nav-login" href="D-Swipe Login.html">ログイン</a>
+      <a class="btn btn-primary btn-sm" href="D-Swipe Login.html">無料で始める</a>
+    </div>
+    <button class="nav-burger" aria-label="メニュー"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#i-burger"/></svg></button>
+  </div>
+</nav>
+
+<div class="deck" id="deck">
+  <div class="deck-track" id="track">
+
+    <!-- 0 HERO -->
+    <section class="vslide bg-hero"><div class="vslide-in"><div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="hero-eyebrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-bolt"/></svg>作る・集める・届ける・つながる・稼ぐ</span>
+          <h1>スワイプで、<br><span class="g">伝わる</span>。<span class="g">つながる</span>。</h1>
+          <p class="s-sub">誰でも気軽にスワイプ型LPを作って集客。さらに公開・発見・サロンまで。情報発信のすべてが、D-Swipe ひとつで完結します。</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg" href="D-Swipe Login.html">無料で始める<svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></a>
+            <button class="btn btn-secondary btn-lg" data-go="1" style="background:rgba(255,255,255,.07);color:#fff;border-color:rgba(255,255,255,.18)">D-Swipeとは？</button>
+          </div>
+        </div>
+        <div class="phone-stage">
+          <div class="phone-glow"></div>
+          <div class="phone"><div class="phone-screen"><div class="phone-notch"></div>
+            <div class="pswiper" id="pswiper">
+              <div class="pslide" style="background:linear-gradient(170deg,#0b1f3a,#0e7490)"><span class="tg">7-DAY CHALLENGE</span><h3>7日間で<br>集客が変わる</h3><p>SNSだけで月100リスト。</p></div>
+              <div class="pslide" style="background:linear-gradient(170deg,#1b3a61,#0b1f3a)"><span class="tg">こんな悩み</span><h3>頑張っても<br>伸びない…</h3><p>投稿しても反応が薄い。</p></div>
+              <div class="pslide" style="background:linear-gradient(170deg,#0e7490,#0b1f3a)"><span class="tg">特別オファー</span><h3>いまだけ<br>特別価格</h3><div class="price" style="margin-top:12px"><s>¥29,800</s>¥9,800</div></div>
+              <div class="pslide" style="background:linear-gradient(170deg,#0284c7,#06b6d4)"><span class="tg">今すぐ申し込む</span><h3>未来を、<br>前に進めよう</h3><div class="mini">申し込む →</div></div>
+            </div>
+            <div class="pdots" id="pdots"></div>
+          </div></div>
+        </div>
+      </div>
+    </div></div></section>
+
+    <!-- 1 PLATFORM OVERVIEW -->
+    <section class="vslide bg-deep"><div class="vslide-in"><div class="wrap center">
+      <span class="eyebrow">What is D-Swipe</span>
+      <h2 class="s-h">LPを作って終わり、じゃない。</h2>
+      <p class="s-sub">D-Swipe は「作る → 集める → 届ける → つながる → 稼ぐ」をひとつにした、スワイプ型のコンテンツ・プラットフォーム。LP作成ツールでありながら、note のような公開メディアでもあり、サロンの母艦にもなります。</p>
+      <div class="pillars">
+        <div class="pillar"><span class="pi"><svg viewBox="0 0 24 24"><use href="#i-edit"/></svg></span><div class="step">STEP 01</div><b>作る</b><p>ノーコード＋AIでスワイプLP</p></div>
+        <div class="pillar"><span class="pi"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg></span><div class="step">STEP 02</div><b>集める</b><p>分析で集客を最適化</p></div>
+        <div class="pillar"><span class="pi"><svg viewBox="0 0 24 24"><use href="#i-compass"/></svg></span><div class="step">STEP 03</div><b>届ける</b><p>公開・発見フィードで拡散</p></div>
+        <div class="pillar"><span class="pi"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg></span><div class="step">STEP 04</div><b>つながる</b><p>サロン・メンバーシップ</p></div>
+        <div class="pillar"><span class="pi"><svg viewBox="0 0 24 24"><use href="#i-yen"/></svg></span><div class="step">STEP 05</div><b>稼ぐ</b><p>マーケット・ポイント決済</p></div>
+      </div>
+    </div></div></section>
+
+    <!-- 2 作る -->
+    <section class="vslide bg-light"><div class="vslide-in"><div class="wrap two-col">
+      <div>
+        <span class="kover"><svg viewBox="0 0 24 24"><use href="#i-edit"/></svg>作る · CREATE</span>
+        <h2 class="s-h">スワイプLPを、<br>ドラッグとAIで。</h2>
+        <p class="s-sub">テンプレートにブロックを並べるだけ。AIが構成と文章を提案し、初めてでも数分で“読み進めたくなる”LPが完成します。</p>
+        <div class="feat-bullets">
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg></span><div><b>AI構成アシスト</b><p>商材を入力するだけで、ヒーロー〜CTAの構成を自動生成。</p></div></div>
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-edit"/></svg></span><div><b>ドラッグ編集</b><p>ブロックを並べ替え、文言・画像を差し替え。即プレビュー。</p></div></div>
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg></span><div><b>最短3分で公開</b><p>ワンクリックで公開し、専用URLを発行。</p></div></div>
+        </div>
+      </div>
+      <div class="build-vis">
+        <div class="mini-film">
+          <div class="mt on" style="background:linear-gradient(160deg,#0b1f3a,#0e7490)"></div>
+          <div class="mt" style="background:linear-gradient(160deg,#111a2e,#0b1220)"></div>
+          <div class="mt" style="background:#e9f6fe"></div>
+          <div class="mt" style="background:linear-gradient(160deg,#0e7490,#0b1f3a)"></div>
+        </div>
+        <div class="mini-device"><div class="ms" style="background:radial-gradient(180px 130px at 70% 10%,rgba(34,211,238,.3),transparent 60%),linear-gradient(165deg,#0b1f3a,#0e7490)">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.14em;opacity:.85">7-DAY CHALLENGE</span>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin-top:8px">7日間で<br>集客が変わる</div>
+          <div style="font-size:11px;opacity:.9;margin-top:8px;line-height:1.6">SNSだけで月100リスト。</div>
+        </div></div>
+      </div>
+    </div></div></section>
+
+    <!-- 3 集める -->
+    <section class="vslide bg-canvas"><div class="vslide-in"><div class="wrap two-col">
+      <div>
+        <span class="kover"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg>集める · GROW</span>
+        <h2 class="s-h">“なんとなく”を、<br>数字で終わらせる。</h2>
+        <p class="s-sub">スライドごとの離脱・CTA到達・売上をリアルタイムで可視化。どこを直せば伸びるかが、ひと目で分かります。</p>
+        <div class="feat-bullets">
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg></span><div><b>ファネル可視化</b><p>どのスライドで離脱したかをステップ別に表示。</p></div></div>
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-target"/></svg></span><div><b>CTAクリック率</b><p>最も効くオファー位置を発見できる。</p></div></div>
+        </div>
+      </div>
+      <div class="show-panel hide-sm">
+        <div class="mini-kpis"><div class="mini-kpi"><div class="l">閲覧数</div><div class="v">24,180</div></div><div class="mini-kpi"><div class="l">CTA率</div><div class="v">7.4%</div></div><div class="mini-kpi"><div class="l">売上</div><div class="v">182K<span style="font-size:12px;color:var(--muted)">P</span></div></div></div>
+        <div class="chart"><div class="bar" style="height:46%"></div><div class="bar" style="height:62%"></div><div class="bar" style="height:54%"></div><div class="bar" style="height:78%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:92%"></div><div class="bar" style="height:84%"></div></div>
+        <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">ファネル到達率</span><span class="badge badge-live"><span class="dot"></span>公開中</span></div>
+        <div style="margin-top:9px" class="progress"><span style="width:74%"></span></div>
+      </div>
+    </div></div></section>
+
+    <!-- 4 届ける (note-like platform) -->
+    <section class="vslide bg-light"><div class="vslide-in"><div class="wrap">
+      <div class="center">
+        <span class="kover"><svg viewBox="0 0 24 24"><use href="#i-compass"/></svg>届ける · PUBLISH</span>
+        <h2 class="s-h">作ったLPが、見つかる場所。</h2>
+        <p class="s-sub">D-Swipe は note のような公開メディア。あなたのLPは発見フィードに並び、フォロー・スキで広がります。クリエイターページ <b style="color:var(--brand)">/u/yourname</b> がそのまま“作品集”に。</p>
+      </div>
+      <div class="feed">
+        <div class="fcard"><div class="ft" style="background:linear-gradient(150deg,#0b1f3a,#0e7490)"><span class="tag">マーケティング</span></div><div class="fb"><div class="fttl">7日間スワイプ集客チャレンジ</div><div class="fmeta"><span class="fav" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)"></span><span class="fname">山田 太郎</span><span class="flike"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>1.2k</span></div></div></div>
+        <div class="fcard"><div class="ft" style="background:linear-gradient(150deg,#7c3aed,#0284c7)"><span class="tag">副業</span></div><div class="fb"><div class="fttl">副業ロードマップ無料配布</div><div class="fmeta"><span class="fav" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"></span><span class="fname">佐藤 あや</span><span class="flike"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>860</span></div></div></div>
+        <div class="fcard"><div class="ft" style="background:linear-gradient(150deg,#0e7490,#22d3ee)"><span class="tag">ライティング</span></div><div class="fb"><div class="fttl">売れる文章の作り方 講座</div><div class="fmeta"><span class="fav" style="background:linear-gradient(135deg,#16a34a,#22d3ee)"></span><span class="fname">鈴木 けん</span><span class="flike"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>2.4k</span></div></div></div>
+      </div>
+      <div class="feed-tags">
+        <span class="feed-tag"><b>#</b> 発見フィード</span>
+        <span class="feed-tag"><b>♡</b> スキで応援</span>
+        <span class="feed-tag"><b>+</b> フォロー</span>
+        <span class="feed-tag"><b>@</b> クリエイターページ</span>
+      </div>
+    </div></div></section>
+
+    <!-- 5 つながる (salon) -->
+    <section class="vslide bg-canvas"><div class="vslide-in"><div class="wrap two-col">
+      <div>
+        <span class="kover"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg>つながる · COMMUNITY</span>
+        <h2 class="s-h">ファンと、<br>続く関係を。</h2>
+        <p class="s-sub">単発で売って終わりではなく、月額メンバーシップでファンと継続的につながる。限定LP・限定コンテンツ・メンバー専用フィードで、あなたの“サロン”を運営できます。</p>
+        <div class="feat-bullets">
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg></span><div><b>月額メンバーシップ</b><p>継続課金で安定した収益基盤を。</p></div></div>
+          <div class="fb"><span class="c"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg></span><div><b>メンバー限定の配信</b><p>限定LP・お知らせをメンバーだけに届ける。</p></div></div>
+        </div>
+      </div>
+      <div class="salon-card">
+        <div class="sc-top">
+          <div><div class="stier">MEMBERSHIP</div><div class="sname">あや’s 集客ラボ</div></div>
+          <div style="text-align:right"><div class="sprice">¥2,980<small>/月</small></div></div>
+        </div>
+        <div class="members">
+          <span class="m" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">A</span>
+          <span class="m" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">K</span>
+          <span class="m" style="background:linear-gradient(135deg,#16a34a,#22d3ee)">M</span>
+          <span class="m" style="background:linear-gradient(135deg,#7c3aed,#0284c7)">T</span>
+          <span class="mc">+ 248名が参加中</span>
+        </div>
+        <ul class="salon-perks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>メンバー限定LP・テンプレ配布</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>月2回のオンライン勉強会</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>質問し放題のメンバーフィード</li>
+        </ul>
+        <button class="btn btn-primary btn-block">サロンに参加する</button>
+      </div>
+    </div></div></section>
+
+    <!-- 6 稼ぐ (marketplace + points) -->
+    <section class="vslide bg-light"><div class="vslide-in"><div class="wrap">
+      <div class="center">
+        <span class="kover"><svg viewBox="0 0 24 24"><use href="#i-store"/></svg>稼ぐ · MONETIZE</span>
+        <h2 class="s-h">売る。受け取る。ぜんぶ内側で。</h2>
+        <p class="s-sub">作ったLPから商品を販売し、マーケットにも掲載。決済はポイントベースでシンプル。販売・購入・売上集計までプラットフォーム内で完結します。</p>
+      </div>
+      <div class="mkt">
+        <div class="pcard2"><div class="pt" style="background:linear-gradient(150deg,#0b1f3a,#0e7490)"></div><div class="pbd"><div class="pn">スワイプ集客マスター講座</div><div class="pf"><span class="pp">9,800 P</span><span class="pb">購入</span></div></div></div>
+        <div class="pcard2"><div class="pt" style="background:linear-gradient(150deg,#0284c7,#06b6d4)"></div><div class="pbd"><div class="pn">LPテンプレート20選</div><div class="pf"><span class="pp">3,500 P</span><span class="pb">購入</span></div></div></div>
+        <div class="pcard2"><div class="pt" style="background:linear-gradient(150deg,#7c3aed,#0284c7)"></div><div class="pbd"><div class="pn">ファネル設計シート</div><div class="pf"><span class="pp">1,200 P</span><span class="pb">購入</span></div></div></div>
+      </div>
+      <div class="feed-tags">
+        <span class="feed-tag"><b>◆</b> ポイント決済</span>
+        <span class="feed-tag"><b>🛍</b> マーケット掲載</span>
+        <span class="feed-tag"><b>📈</b> 売上ダッシュボード</span>
+      </div>
+    </div></div></section>
+
+    <!-- 7 PRICING -->
+    <section class="vslide bg-canvas"><div class="vslide-in"><div class="wrap">
+      <div class="center"><span class="eyebrow">Pricing</span><h2 class="s-h">まずは無料。伸びたら、ポイントで。</h2></div>
+      <div class="price-grid">
+        <div class="card pcard"><div class="pname">Free</div><div class="pp">¥0</div><div class="pl">まず試したい方に</div><ul><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>LP作成 無制限</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>公開・発見フィード掲載</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>基本アナリティクス</li></ul><a class="btn btn-secondary btn-block" href="D-Swipe Login.html">無料で始める</a></div>
+        <div class="card pcard feature"><span class="pop">人気</span><div class="pname">Points 1,000</div><div class="pp">¥1,000<small> /1,000P</small></div><div class="pl">公開・AI生成・販売・サロンに</div><ul><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>AI構成アシスト</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>商品販売・サロン開設</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>詳細ファネル分析</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>独自URL・SEO設定</li></ul><a class="btn btn-primary btn-block" href="D-Swipe Login.html">ポイントを購入</a></div>
+        <div class="card pcard"><div class="pname">Seller</div><div class="pp">手数料制</div><div class="pl">本格的に販売する方に</div><ul><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>商品管理ダッシュボード</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>マーケット優先掲載</li><li><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>売上・購入者の管理</li></ul><a class="btn btn-secondary btn-block" href="D-Swipe Login.html">販売者になる</a></div>
+      </div>
+    </div></div></section>
+
+    <!-- 8 FINAL -->
+    <section class="vslide bg-final"><div class="vslide-in"><div class="wrap center">
+      <span class="eyebrow">Get started</span>
+      <h2 class="final-h">あなたの発信を、<br>ひとつの場所に。</h2>
+      <p class="s-sub">作って、集めて、届けて、つながって、稼ぐ。D-Swipe で、今すぐ無料で始めましょう。</p>
+      <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary btn-lg" href="D-Swipe Login.html" style="font-size:16px;padding:15px 30px">無料で始める<svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div></div></section>
+
+  </div>
+</div>
+
+<div class="deck-dots" id="deckDots"></div>
+<div class="deck-hint" id="deckHint"><span class="ring"><svg viewBox="0 0 24 24"><use href="#i-down"/></svg></span><span>スワイプで進む</span></div>
+
+<div class="signup-bar">
+  <div class="signup-in">
+    <div class="signup-msg">
+      <strong>作る・届ける・つながる。ぜんぶ無料で始められる</strong>
+      <span><b>3分</b>で公開 · クレジットカード不要 · LP作成は無制限</span>
+    </div>
+    <a class="gbtn" href="D-Swipe Login.html">
+      <svg viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 010-3.44V4.95H.96a9 9 0 000 8.1l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59A9 9 0 00.96 4.95l3 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+      Googleで無料登録
+    </a>
+  </div>
+</div>
+
+<script>
+  const track = document.getElementById('track');
+  const slides = [...track.querySelectorAll('.vslide')];
+
+  // Measure the real fixed-chrome heights so slide padding always clears the
+  // nav (top) and signup band (bottom) — including when the band wraps on mobile.
+  function fitChrome() {
+    const nav = document.querySelector('.nav');
+    const band = document.querySelector('.signup-bar');
+    const root = document.documentElement;
+    root.style.setProperty('--nav-h', (nav.offsetHeight + 22) + 'px');
+    root.style.setProperty('--band-h', (band.offsetHeight + 22) + 'px');
+  }
+  fitChrome();
+  window.addEventListener('resize', fitChrome);
+  window.addEventListener('load', fitChrome);
+  const deckDots = document.getElementById('deckDots');
+  const hint = document.getElementById('deckHint');
+  const navBtns = [...document.querySelectorAll('[data-go]')];
+  const LIGHT = [2, 3, 4, 5, 6, 7];
+  let idx = 0, lock = false;
+
+  slides.forEach((s, i) => {
+    s.style.top = (i * 100) + '%';
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'スライド ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    deckDots.appendChild(b);
+  });
+  const dots = [...deckDots.children];
+
+  function render() {
+    track.style.transform = 'translateY(' + (-idx * 100) + '%)';
+    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+    deckDots.classList.toggle('on-light', LIGHT.includes(idx));
+    hint.style.opacity = idx === 0 ? '1' : '0';
+    navBtns.forEach((b) => b.classList && b.classList.toggle('on', +b.dataset.go === idx));
+  }
+  function go(n) { idx = Math.max(0, Math.min(slides.length - 1, n)); render(); }
+  render();
+
+  navBtns.forEach((b) => b.addEventListener('click', () => go(+b.dataset.go)));
+
+  const deck = document.getElementById('deck');
+  deck.addEventListener('wheel', (e) => {
+    const inner = slides[idx].querySelector('.vslide-in');
+    const down = e.deltaY > 0;
+    const atTop = inner.scrollTop <= 1;
+    const atBottom = inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 1;
+    if ((down && !atBottom) || (!down && !atTop)) return;
+    e.preventDefault();
+    if (lock) return; lock = true; setTimeout(() => lock = false, 650);
+    go(idx + (down ? 1 : -1));
+  }, { passive: false });
+
+  let startY = null;
+  deck.addEventListener('pointerdown', (e) => { startY = e.clientY; });
+  window.addEventListener('pointerup', (e) => {
+    if (startY === null) return;
+    const dy = e.clientY - startY;
+    if (Math.abs(dy) > 50) go(idx + (dy < 0 ? 1 : -1));
+    startY = null;
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+  });
+
+  const ps = document.getElementById('pswiper');
+  const pslides = [...ps.querySelectorAll('.pslide')];
+  const pdots = document.getElementById('pdots');
+  let pi = 0;
+  pslides.forEach((s, i) => { s.style.top = (i * 100) + '%'; pdots.appendChild(document.createElement('i')); });
+  const pis = [...pdots.children];
+  function prender() { ps.style.transform = 'translateY(' + (-pi * 100) + '%)'; pis.forEach((d, i) => d.classList.toggle('on', i === pi)); }
+  prender();
+  setInterval(() => { pi = (pi + 1) % pslides.length; prender(); }, 2600);
+</script>
+</body>
+</html>

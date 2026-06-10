@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — @yamada のクリエイターページ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<style>
+  body { margin: 0; font-family: var(--font); background: var(--canvas); color: var(--text); -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* public top bar */
+  .pubnav { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .pubnav-in { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; gap: 18px; }
+  .pubnav .logo { display: flex; align-items: center; gap: 9px; font-size: 17px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .pubnav .links { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .pubnav .links a { font-size: 13.5px; font-weight: 600; color: var(--text-2); padding: 8px 12px; border-radius: 9px; }
+  .pubnav .links a:hover { background: var(--surface-2); color: var(--ink); }
+
+  /* cover + profile */
+  .cover { height: 200px; background: radial-gradient(600px 320px at 75% -20%, #0e7490 0%, transparent 60%), linear-gradient(150deg, #0b1f3a, #0f2c52 70%, #0e7490); position: relative; }
+  .cover::after { content: ""; position: absolute; right: 8%; top: -40px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,.18), transparent 65%); }
+  .profile { margin-top: -54px; position: relative; z-index: 1; }
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2xl); box-shadow: var(--sh-md); padding: 22px 26px; }
+  .ptop { display: flex; gap: 20px; align-items: flex-start; }
+  .pavatar { width: 96px; height: 96px; border-radius: var(--r-xl); background: linear-gradient(135deg, #22d3ee, #0284c7); display: flex; align-items: center; justify-content: center; color: #042032; font-size: 42px; font-weight: 800; flex-shrink: 0; margin-top: -56px; border: 4px solid var(--surface); box-shadow: var(--sh-sm); }
+  .pinfo { flex: 1; min-width: 0; padding-top: 4px; }
+  .pname { font-size: 24px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .pname .verified { width: 20px; height: 20px; color: var(--brand); }
+  .phandle { font-size: 14px; color: var(--muted); margin-top: 2px; font-family: var(--font-mono); }
+  .pbio { font-size: 14px; line-height: 1.7; color: var(--text); margin: 12px 0 0; max-width: 60ch; }
+  .ptags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
+  .ptag { font-size: 12px; font-weight: 600; color: var(--brand); background: var(--surface-tint); border: 1px solid var(--tint-border); border-radius: 999px; padding: 4px 11px; white-space: nowrap; }
+  .pactions { display: flex; flex-direction: column; gap: 9px; flex-shrink: 0; }
+  .iconbtn { width: 42px; height: 42px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .iconbtn:hover { border-color: var(--tint-border); color: var(--brand); }
+  .iconbtn svg { width: 19px; height: 19px; }
+
+  .pstats { display: flex; gap: 28px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pstat .n { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .pstat .l { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; margin: 26px 0 20px; border-bottom: 1px solid var(--line); }
+  .tab { font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--muted); background: none; border: none; padding: 12px 16px; cursor: pointer; position: relative; display: flex; align-items: center; gap: 7px; }
+  .tab .ct { font-size: 11px; font-weight: 700; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 1px 7px; }
+  .tab.on { color: var(--ink); }
+  .tab.on::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2.5px; border-radius: 2px; background: var(--grad-brand); }
+  .tab.on .ct { background: var(--surface-tint); color: var(--brand); }
+
+  .panel { display: none; padding-bottom: 60px; }
+  .panel.on { display: block; }
+
+  /* LP grid (note-like cards) */
+  .lp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .lpcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--sh-sm); transition: box-shadow .2s, transform .2s, border-color .2s; cursor: pointer; }
+  .lpcard:hover { box-shadow: var(--sh-card); transform: translateY(-3px); border-color: var(--tint-border); }
+  .lpthumb { height: 150px; position: relative; display: flex; align-items: flex-end; padding: 14px; }
+  .lpthumb .cat { position: absolute; top: 10px; left: 10px; font-size: 10.5px; font-weight: 700; color: #fff; background: rgba(11,31,58,.5); backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 999px; }
+  .lpthumb .status { position: absolute; top: 10px; right: 10px; }
+  .lpthumb .htitle { color: #fff; font-size: 16px; font-weight: 800; letter-spacing: -.01em; line-height: 1.3; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+  .lpbody { padding: 13px 15px 15px; }
+  .lpttl { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.45; }
+  .lpmeta { display: flex; align-items: center; gap: 14px; margin-top: 11px; font-size: 12px; color: var(--muted); }
+  .lpmeta span { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+  .lpmeta svg { width: 14px; height: 14px; }
+  .lpmeta .like svg { color: #f43f5e; }
+
+  /* product grid */
+  .prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .prodcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--sh-sm); display: flex; flex-direction: column; }
+  .prodthumb { height: 130px; }
+  .prodbody { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .prodttl { font-size: 14.5px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .proddesc { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+  .prodfoot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 6px; }
+  .prodprice { font-size: 18px; font-weight: 800; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .prodprice small { font-size: 12px; }
+  .prodstock { font-size: 11.5px; color: var(--muted); }
+
+  /* salon panel */
+  .salon-wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: start; }
+  .salon-copy h3 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin: 0; }
+  .salon-copy p { font-size: 14px; line-height: 1.75; color: var(--text-2); margin: 12px 0 0; }
+  .salon-feat { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+  .salon-feat .sf { display: flex; gap: 11px; font-size: 13.5px; color: var(--text); align-items: flex-start; }
+  .salon-feat .sf svg { width: 18px; height: 18px; color: var(--success); flex-shrink: 0; margin-top: 1px; }
+  .salon-card { background: linear-gradient(160deg,#0b1f3a,#0f2c52); border-radius: var(--r-2xl); padding: 24px; color: #fff; box-shadow: var(--sh-card); position: relative; overflow: hidden; }
+  .salon-card::after { content: ""; position: absolute; right: -70px; top: -70px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,.22), transparent 65%); }
+  .salon-card .stier { font-size: 12px; font-weight: 700; color: var(--cyan-300); position: relative; z-index: 1; }
+  .salon-card .sname { font-size: 19px; font-weight: 800; margin: 4px 0 0; position: relative; z-index: 1; }
+  .salon-card .sprice { font-size: 32px; font-weight: 800; letter-spacing: -.02em; margin-top: 14px; position: relative; z-index: 1; }
+  .salon-card .sprice small { font-size: 13px; color: #9fb4d0; font-weight: 600; }
+  .members { display: flex; align-items: center; margin-top: 16px; position: relative; z-index: 1; }
+  .members .m { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #0b1f3a; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #042032; }
+  .members .m:first-child { margin-left: 0; }
+  .members .mc { margin-left: 11px; font-size: 12px; color: #9fb4d0; }
+
+  @media (max-width: 860px) {
+    .lp-grid, .prod-grid { grid-template-columns: repeat(2, 1fr); }
+    .salon-wrap { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ptop { flex-direction: column; }
+    .pactions { flex-direction: row; }
+    .pavatar { width: 80px; height: 80px; font-size: 34px; margin-top: -50px; }
+    .lp-grid, .prod-grid { grid-template-columns: 1fr; }
+    .pstats { gap: 20px; flex-wrap: wrap; }
+    .tabs { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-heart" fill="currentColor"><path d="M12 20s-7-4.5-9.3-8.2C1 9 2 5.8 5 5.2c1.9-.4 3.4.6 4.2 1.7.4.6 1.2.6 1.6 0C11.6 5.8 13.1 4.8 15 5.2c3 .6 4 3.8 2.3 6.6C19 15.5 12 20 12 20z"/></g>
+  <g id="i-eye" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></g>
+  <g id="i-doc" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></g>
+  <g id="i-store" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-4h14l1 4M4 9v10h16V9M4 9h16M9 19v-5h6v5"/></g>
+  <g id="i-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="i-share" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="17" cy="6" r="2.5"/><circle cx="17" cy="18" r="2.5"/><path d="M8.2 10.8l6.6-3.6M8.2 13.2l6.6 3.6"/></g>
+  <g id="i-bell" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 004 0"/></g>
+  <g id="i-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></g>
+  <g id="i-verified" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 1.6 2.7-.2 1 2.5 2.3 1.4-.6 2.6.6 2.6-2.3 1.4-1 2.5-2.7-.2L12 21l-2.2-1.6-2.7.2-1-2.5L3.8 15.7l.6-2.6-.6-2.6 2.3-1.4 1-2.5 2.7.2z"/><path d="M9 12l2 2 4-4"/></g>
+</defs></svg>
+
+<nav class="pubnav">
+  <div class="pubnav-in">
+    <a class="logo" href="D-Swipe Top (Swipe).html">
+      <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="pl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#0ea5e9"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#0b1f3a"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#pl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#pl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      D<span style="color:var(--brand)">-</span>Swipe
+    </a>
+    <div class="links">
+      <a href="D-Swipe Public LP View.html">発見</a>
+      <a href="D-Swipe Login.html">ログイン</a>
+    </div>
+  </div>
+</nav>
+
+<div class="cover"></div>
+
+<div class="wrap profile">
+  <div class="pcard">
+    <div class="ptop">
+      <div class="pavatar">山</div>
+      <div class="pinfo">
+        <div class="pname">山田 太郎 <svg class="verified" viewBox="0 0 24 24"><use href="#i-verified"/></svg></div>
+        <div class="phandle">@yamada</div>
+        <p class="pbio">スワイプLPで集客を“仕組み”に変える人。「7日間スワイプ集客チャレンジ」主催。元Web制作。情報発信のすべてを D-Swipe で。</p>
+        <div class="ptags"><span class="ptag">マーケティング</span><span class="ptag">集客</span><span class="ptag">ライティング</span></div>
+      </div>
+      <div class="pactions">
+        <button class="btn btn-primary" id="followBtn" style="white-space:nowrap"><svg viewBox="0 0 24 24" id="followIcon" style="width:16px;height:16px" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span id="followLabel">フォロー</span></button>
+        <div style="display:flex;gap:9px">
+          <button class="iconbtn" title="通知"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg></button>
+          <button class="iconbtn" title="シェア"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="pstats">
+      <div class="pstat"><div class="n">14</div><div class="l">公開LP</div></div>
+      <div class="pstat"><div class="n">3,280</div><div class="l">フォロワー</div></div>
+      <div class="pstat"><div class="n">12.4k</div><div class="l">累計スキ</div></div>
+      <div class="pstat"><div class="n">248</div><div class="l">サロン会員</div></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-tab="lp"><svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-doc"/></svg>LP<span class="ct">14</span></button>
+    <button class="tab" data-tab="prod"><svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-store"/></svg>商品<span class="ct">3</span></button>
+    <button class="tab" data-tab="salon"><svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"/></svg>サロン</button>
+  </div>
+
+  <!-- LP panel -->
+  <div class="panel on" data-panel="lp">
+    <div class="lp-grid">
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#0b1f3a,#0e7490)"><span class="cat">マーケティング</span><span class="status"><span class="badge badge-live badge-sm" style="background:rgba(255,255,255,.16);color:#fff"><span class="dot" style="background:#4ade80"></span>公開中</span></span><div class="htitle">7日間スワイプ<br>集客チャレンジ</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>8,420</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>1,240</span></div></div></a>
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#0284c7,#06b6d4)"><span class="cat">副業</span><span class="status"><span class="badge badge-live badge-sm" style="background:rgba(255,255,255,.16);color:#fff"><span class="dot" style="background:#4ade80"></span>公開中</span></span><div class="htitle">副業ロードマップ<br>無料配布</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>5,910</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>860</span></div></div></a>
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#0e7490,#22d3ee)"><span class="cat">ライティング</span><span class="status"><span class="badge badge-live badge-sm" style="background:rgba(255,255,255,.16);color:#fff"><span class="dot" style="background:#4ade80"></span>公開中</span></span><div class="htitle">売れる文章の<br>作り方 講座</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>12,300</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>2,410</span></div></div></a>
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#1b3a61,#0284c7)"><span class="cat">SNS</span><span class="status"><span class="badge badge-live badge-sm" style="background:rgba(255,255,255,.16);color:#fff"><span class="dot" style="background:#4ade80"></span>公開中</span></span><div class="htitle">Instagram集客<br>30日プログラム</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>4,180</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>520</span></div></div></a>
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#0f2c52,#0e7490)"><span class="cat">マインド</span><span class="status"><span class="badge badge-live badge-sm" style="background:rgba(255,255,255,.16);color:#fff"><span class="dot" style="background:#4ade80"></span>公開中</span></span><div class="htitle">続ける人の<br>習慣デザイン</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>9,640</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>1,780</span></div></div></a>
+      <a class="lpcard" href="D-Swipe Public LP View.html"><div class="lpthumb" style="background:linear-gradient(150deg,#0b1f3a,#1b3a61)"><span class="cat">無料</span><span class="status"><span class="badge badge-draft badge-sm">下書き</span></span><div class="htitle">LP添削<br>ライブ アーカイブ</div></div><div class="lpbody"><div class="lpmeta"><span><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg>0</span><span class="like"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg>0</span></div></div></a>
+    </div>
+  </div>
+
+  <!-- Products panel -->
+  <div class="panel" data-panel="prod">
+    <div class="prod-grid">
+      <div class="prodcard"><div class="prodthumb" style="background:linear-gradient(150deg,#0b1f3a,#0e7490)"></div><div class="prodbody"><div class="prodttl">スワイプ集客マスター講座</div><div class="proddesc">7日間で集客導線を仕組み化する動画＋テンプレ一式。</div><div class="prodfoot"><span class="prodprice">9,800<small> P</small></span><span class="prodstock">在庫 38</span></div><a class="btn btn-primary btn-sm btn-block" href="D-Swipe Public LP View.html">詳細を見る</a></div></div>
+      <div class="prodcard"><div class="prodthumb" style="background:linear-gradient(150deg,#0284c7,#06b6d4)"></div><div class="prodbody"><div class="prodttl">LPテンプレート20選</div><div class="proddesc">そのまま使える高CVスワイプLPテンプレ集。</div><div class="prodfoot"><span class="prodprice">3,500<small> P</small></span><span class="prodstock">在庫 ∞</span></div><a class="btn btn-primary btn-sm btn-block" href="D-Swipe Public LP View.html">詳細を見る</a></div></div>
+      <div class="prodcard"><div class="prodthumb" style="background:linear-gradient(150deg,#7c3aed,#0284c7)"></div><div class="prodbody"><div class="prodttl">ファネル設計シート</div><div class="proddesc">離脱を減らす導線設計のワークシート。</div><div class="prodfoot"><span class="prodprice">1,200<small> P</small></span><span class="prodstock">在庫 ∞</span></div><a class="btn btn-primary btn-sm btn-block" href="D-Swipe Public LP View.html">詳細を見る</a></div></div>
+    </div>
+  </div>
+
+  <!-- Salon panel -->
+  <div class="panel" data-panel="salon">
+    <div class="salon-wrap">
+      <div class="salon-copy">
+        <h3>山田’s 集客ラボ</h3>
+        <p>スワイプLPで集客を仕組み化したい人のためのメンバーシップ。限定テンプレ配布、月2回の勉強会、質問し放題のメンバーフィードで、一人で悩まず続けられます。</p>
+        <div class="salon-feat">
+          <div class="sf"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>メンバー限定LP・テンプレの配布</div>
+          <div class="sf"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>月2回のオンライン勉強会（アーカイブあり）</div>
+          <div class="sf"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>質問し放題のメンバー専用フィード</div>
+        </div>
+      </div>
+      <div class="salon-card">
+        <div class="stier">MEMBERSHIP</div>
+        <div class="sname">山田’s 集客ラボ</div>
+        <div class="sprice">¥2,980<small>/月</small></div>
+        <div class="members">
+          <span class="m" style="background:linear-gradient(135deg,#22d3ee,#0ea5e9)">A</span>
+          <span class="m" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">K</span>
+          <span class="m" style="background:linear-gradient(135deg,#16a34a,#22d3ee)">M</span>
+          <span class="m" style="background:linear-gradient(135deg,#7c3aed,#0284c7)">T</span>
+          <span class="mc">+ 248名が参加中</span>
+        </div>
+        <button class="btn btn-primary btn-block" style="margin-top:20px">サロンに参加する</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // tabs
+  const tabs = document.getElementById('tabs');
+  tabs.addEventListener('click', (e) => {
+    const b = e.target.closest('.tab'); if (!b) return;
+    [...tabs.children].forEach((t) => t.classList.toggle('on', t === b));
+    const name = b.dataset.tab;
+    document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('on', p.dataset.panel === name));
+  });
+
+  // follow toggle
+  const fb = document.getElementById('followBtn');
+  const fl = document.getElementById('followLabel');
+  const fi = document.getElementById('followIcon');
+  let following = false;
+  fb.addEventListener('click', () => {
+    following = !following;
+    fb.className = 'btn ' + (following ? 'btn-secondary' : 'btn-primary');
+    fb.style.whiteSpace = 'nowrap';
+    fl.textContent = following ? 'フォロー中' : 'フォロー';
+    fi.innerHTML = following ? '<path d="M4 12l5 5L20 6"/>' : '<path d="M12 5v14M5 12h14"/>';
+  });
+</script>
+</body>
+</html>

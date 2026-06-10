@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe Admin — 設定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<link rel="stylesheet" href="c-system/admin.css" />
+<style>body { margin: 0; -webkit-font-smoothing: antialiased; } .conn { display:flex; align-items:center; gap:10px; }</style>
+</head>
+<body>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side app-side admin-side" id="sidebar">
+    <div class="side-logo"><svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:16px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe<span class="adm-badge">ADMIN</span></span></div>
+    <nav class="side-nav">
+      <div class="side-sect">管理</div>
+      <a class="side-item" href="D-Swipe Admin.html"><svg viewBox="0 0 24 24"><use href="#ad-grid"/></svg>概要</a>
+      <a class="side-item" href="D-Swipe Admin Users.html"><svg viewBox="0 0 24 24"><use href="#ad-users"/></svg>ユーザー</a>
+      <a class="side-item" href="D-Swipe Admin Revenue.html"><svg viewBox="0 0 24 24"><use href="#ad-yen"/></svg>売上</a>
+      <a class="side-item" href="D-Swipe Admin Payouts.html"><svg viewBox="0 0 24 24"><use href="#ad-bank"/></svg>出金</a>
+      <a class="side-item" href="D-Swipe Admin Messages.html"><svg viewBox="0 0 24 24"><use href="#ad-msg"/></svg>メッセージ</a>
+      <a class="side-item" href="D-Swipe Admin Points.html"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg>ポイント</a>
+      <a class="side-item admin active" href="D-Swipe Admin Settings.html"><svg viewBox="0 0 24 24"><use href="#ad-cog"/></svg>設定</a>
+    </nav>
+    <div class="side-foot"><div class="ucard"><div class="avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b)">A</div><div style="min-width:0"><div class="nm">管理者</div><div class="rl">admin</div></div></div><a class="side-logout" href="D-Swipe Dashboard.html" style="display:block;text-align:center;text-decoration:none">ユーザー画面へ</a></div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left"><button class="burger" id="burger"><svg viewBox="0 0 24 24"><use href="#ad-burger"/></svg></button><div class="tb-title"><h1>設定</h1><p>決済・連携・手数料・シェアの管理</p></div></div>
+      <div class="tb-right"><button class="btn btn-primary btn-sm" id="save">変更を保存</button></div>
+    </header>
+    <div class="app-content">
+      <div class="set-tabs" id="tabs"><button class="set-tab on" data-t="pay">決済</button><button class="set-tab" data-t="fee">手数料</button><button class="set-tab" data-t="line">LINE連携</button><button class="set-tab" data-t="share">シェア管理</button></div>
+
+      <!-- 決済 -->
+      <div class="set-panel on" data-p="pay"><div class="panel">
+        <div class="set-row"><div class="lbl"><b>クレジットカード決済</b><p>Stripe 経由でカード決済を受け付けます。</p></div><div class="ctl conn"><span class="st-pill st-active"><span class="d"></span>接続済み</span><button class="switch on"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>ポイント決済</b><p>サイト内ポイントでの購入を有効化。</p></div><div class="ctl"><button class="switch on"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>JPYC / 銀行振込</b><p>円建ての追加決済手段。</p></div><div class="ctl conn"><span class="st-pill st-pending"><span class="d"></span>審査中</span><button class="switch"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>ポイント為替レート</b><p>1ポイントあたりの円換算（販売・出金計算に使用）。</p></div><div class="ctl" style="width:120px"><input class="input" value="1.00" /></div></div>
+      </div></div>
+
+      <!-- 手数料 -->
+      <div class="set-panel" data-p="fee"><div class="panel">
+        <div class="set-row"><div class="lbl"><b>商品販売 手数料</b><p>商品売上から控除する割合。</p></div><div class="ctl" style="width:110px"><div class="input-icon" style="position:relative"><input class="input" value="10" style="text-align:right;padding-right:30px" /><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">%</span></div></div></div>
+        <div class="set-row"><div class="lbl"><b>有料note 手数料</b><p>記事課金から控除する割合。</p></div><div class="ctl" style="width:110px"><div style="position:relative"><input class="input" value="15" style="text-align:right;padding-right:30px" /><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">%</span></div></div></div>
+        <div class="set-row"><div class="lbl"><b>サロン会費 手数料</b><p>月額課金から控除する割合。</p></div><div class="ctl" style="width:110px"><div style="position:relative"><input class="input" value="10" style="text-align:right;padding-right:30px" /><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px">%</span></div></div></div>
+        <div class="set-row"><div class="lbl"><b>最低出金額</b><p>これ未満は出金申請不可。</p></div><div class="ctl" style="width:140px"><input class="input" value="5,000 P" style="text-align:right" /></div></div>
+      </div></div>
+
+      <!-- LINE -->
+      <div class="set-panel" data-p="line"><div class="panel">
+        <div class="set-row"><div class="lbl"><b>LINE公式アカウント連携</b><p>友だち配信・ログイン連携に使用します。</p></div><div class="ctl conn"><span class="st-pill st-active"><span class="d"></span>連携済み</span></div></div>
+        <div class="set-row"><div class="lbl"><b>チャネルアクセストークン</b><p>Messaging API のトークン。</p></div><div class="ctl" style="width:200px"><input class="input" type="password" value="••••••••••••3a9f" /></div></div>
+        <div class="set-row"><div class="lbl"><b>友だち追加時の自動あいさつ</b><p>新規友だちに自動でメッセージを送ります。</p></div><div class="ctl"><button class="switch on"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>LINEログインを許可</b><p>ユーザーがLINEでログインできます。</p></div><div class="ctl"><button class="switch on"></button></div></div>
+      </div></div>
+
+      <!-- シェア -->
+      <div class="set-panel" data-p="share"><div class="panel">
+        <div class="set-row"><div class="lbl"><b>OGP 既定画像</b><p>LP・記事にOGPが未設定の場合に使用。</p></div><div class="ctl"><div style="width:120px;height:64px;border-radius:10px;background:linear-gradient(150deg,#0b1f3a,#0e7490)"></div></div></div>
+        <div class="set-row"><div class="lbl"><b>シェア時のポイント還元</b><p>SNSシェアでユーザーにポイント付与。</p></div><div class="ctl conn"><input class="input" value="50 P" style="width:90px;text-align:right" /><button class="switch on"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>紹介プログラム</b><p>招待した友だちが登録すると双方にポイント。</p></div><div class="ctl"><button class="switch on"></button></div></div>
+        <div class="set-row"><div class="lbl"><b>サイト名（OGP site_name）</b><p>共有時に表示されるサイト名。</p></div><div class="ctl" style="width:180px"><input class="input" value="D-Swipe" /></div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="ad-grid" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="ad-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="ad-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="ad-bank" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16M5 10l7-5 7 5M6 10v8M10 10v8M14 10v8M18 10v8M4 20h16"/></g>
+  <g id="ad-msg" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 3z"/></g>
+  <g id="ad-coin" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8m-2.5-6h3.2a1.8 1.8 0 010 3.6H9.5"/></g>
+  <g id="ad-cog" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></g>
+  <g id="ad-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+<script>
+  const sb=document.getElementById('sidebar'),sc=document.getElementById('scrim');
+  const tog=o=>{sb.classList.toggle('open',o);sc.classList.toggle('open',o);};
+  document.getElementById('burger').addEventListener('click',()=>tog(!sb.classList.contains('open')));sc.addEventListener('click',()=>tog(false));
+  document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('.set-tab');if(!b)return;document.querySelectorAll('.set-tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.set-panel').forEach(p=>p.classList.toggle('on',p.dataset.p===b.dataset.t));});
+  document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('on')));
+  const save=document.getElementById('save');save.addEventListener('click',()=>{const o=save.textContent;save.textContent='保存しました ✓';setTimeout(()=>save.textContent=o,1400);});
+</script>
+</body>
+</html>

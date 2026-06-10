@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — メディア</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  .drop { border: 1.5px dashed #c3d4e8; border-radius: var(--r-2xl); background: var(--surface); padding: 30px; text-align: center; transition: all .15s; cursor: pointer; }
+  .drop:hover, .drop.over { border-color: var(--brand); background: var(--surface-tint); }
+  .drop .ic { width: 52px; height: 52px; border-radius: 15px; background: var(--grad-brand); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; box-shadow: var(--sh-glow); }
+  .drop .ic svg { width: 26px; height: 26px; }
+  .drop b { font-size: 15px; color: var(--ink); }
+  .drop p { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
+  .mtabs { display: flex; gap: 4px; }
+  .mfilter { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: none; padding: 8px 13px; border-radius: 9px; cursor: pointer; }
+  .mfilter.on { color: var(--brand); background: var(--surface-tint); }
+  .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .masset { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--sh-sm); cursor: pointer; transition: all .15s; position: relative; }
+  .masset:hover { border-color: var(--tint-border); box-shadow: var(--sh-card); }
+  .masset .mth { aspect-ratio: 4/3; position: relative; display: flex; align-items: center; justify-content: center; }
+  .masset .mvid { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .masset .mvid .play { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.9); display: flex; align-items: center; justify-content: center; }
+  .masset .mvid .play svg { width: 16px; height: 16px; color: var(--navy-900); margin-left: 2px; }
+  .masset .dur { position: absolute; bottom: 6px; right: 6px; font-size: 10px; font-weight: 700; color: #fff; background: rgba(11,31,58,.7); padding: 2px 6px; border-radius: 5px; }
+  .masset .mb { padding: 9px 11px; }
+  .masset .mn { font-size: 12px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .masset .ms { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+  .masset .mck { position: absolute; top: 7px; left: 7px; width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,.85); border: 1px solid var(--line); display: none; align-items: center; justify-content: center; }
+  .masset.sel { outline: 2px solid var(--brand); }
+  .masset.sel .mck { display: flex; background: var(--brand); border-color: var(--brand); }
+  .masset.sel .mck svg { width: 12px; height: 12px; color: #fff; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-chart" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></g>
+  <g id="i-plus" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></g>
+  <g id="i-store" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-4h14l1 4M4 9v10h16V9M4 9h16M9 19v-5h6v5"/></g>
+  <g id="i-tools" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.2 5.2l-6 6 2.8 2.8 6-6a4 4 0 005.2-5.2l-2.4 2.4-2.2-.6-.6-2.2z"/></g>
+  <g id="i-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="i-photo" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></g>
+  <g id="i-up" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6M4 20h16"/></g>
+  <g id="i-play" fill="currentColor"><path d="M7 5l11 7-11 7z"/></g>
+  <g id="i-check" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></g>
+  <g id="i-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side app-side" id="sidebar">
+    <div class="side-logo">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size:17px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe</span>
+    </div>
+    <nav class="side-nav">
+      <div class="side-sect">メイン</div>
+      <a class="side-item" href="D-Swipe Dashboard.html"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg>ダッシュボード</a>
+      <a class="side-item" href="D-Swipe LP Editor.html"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg>新規LP作成</a>
+      <a class="side-item" href="D-Swipe Marketplace.html"><svg viewBox="0 0 24 24"><use href="#i-store"/></svg>マーケット</a>
+      <a class="side-item" href="D-Swipe Products Manage.html"><svg viewBox="0 0 24 24"><use href="#i-tools"/></svg>商品管理</a>
+      <div class="side-sect">その他</div>
+      <a class="side-item" href="D-Swipe Points.html"><svg viewBox="0 0 24 24"><use href="#i-yen"/></svg>ポイント購入</a>
+      <a class="side-item active" href="D-Swipe Media.html"><svg viewBox="0 0 24 24"><use href="#i-photo"/></svg>メディア</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ucard"><div class="avatar">山</div><div style="min-width:0"><div class="nm">山田 太郎</div><div class="rl">seller</div></div></div>
+      <button class="side-logout">ログアウト</button>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button class="burger" id="burger" aria-label="メニュー"><svg viewBox="0 0 24 24"><use href="#i-burger"/></svg></button>
+        <div class="tb-title"><h1>メディア</h1><p>画像・動画をアップして、LPで再利用</p></div>
+      </div>
+      <div class="tb-right"><span class="points hide-sm">使用 1.2GB / 5GB</span><button class="btn btn-primary btn-sm" id="upBtn"><svg viewBox="0 0 24 24"><use href="#i-up"/></svg>アップロード</button></div>
+    </header>
+
+    <div class="app-content">
+      <label class="drop" id="drop">
+        <input type="file" id="file" hidden multiple />
+        <div class="ic"><svg viewBox="0 0 24 24"><use href="#i-up"/></svg></div>
+        <b>ここにドラッグ＆ドロップ</b>
+        <p>または クリックして選択 · JPG / PNG / WebP / MP4 · 最大50MB</p>
+      </label>
+
+      <div class="panel-h" style="margin:4px 0 0">
+        <div class="mtabs" id="mtabs">
+          <button class="mfilter on" data-f="all">すべて<span style="opacity:.6"> · 18</span></button>
+          <button class="mfilter" data-f="img">画像</button>
+          <button class="mfilter" data-f="vid">動画</button>
+        </div>
+        <span style="font-size:12.5px;color:var(--muted)" id="selinfo">クリックで選択</span>
+      </div>
+
+      <div class="mgrid" id="grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sb = document.getElementById('sidebar'), sc = document.getElementById('scrim');
+  const tog = (o) => { sb.classList.toggle('open', o); sc.classList.toggle('open', o); };
+  document.getElementById('burger').addEventListener('click', () => tog(!sb.classList.contains('open')));
+  sc.addEventListener('click', () => tog(false));
+
+  const grads = ['#0b1f3a,#0e7490','#0284c7,#06b6d4','#0e7490,#22d3ee','#1b3a61,#0284c7','#7c3aed,#0284c7','#0f2c52,#0e7490','#0b1220,#1b3a61','#16a34a,#22d3ee'];
+  const names = ['hero-bg','offer','testimonial','lp-cover','feature-1','course-thumb','before-after','cta-banner'];
+  const ASSETS = [];
+  for (let i = 0; i < 18; i++) {
+    const vid = i % 5 === 0;
+    ASSETS.push({ type: vid ? 'vid' : 'img', g: grads[i % grads.length], n: (names[i % names.length]) + (vid ? '.mp4' : '.webp'), sz: vid ? (1.2 + (i % 4) * 0.6).toFixed(1) + 'MB' : (120 + i * 30) + 'KB', dur: vid ? ['0:18','0:42','1:05','0:33'][i % 4] : null });
+  }
+  const grid = document.getElementById('grid');
+  let filter = 'all', sel = new Set();
+
+  function render() {
+    const rows = ASSETS.filter((a) => filter === 'all' || a.type === filter);
+    grid.innerHTML = rows.map((a, i) => `
+      <div class="masset" data-i="${i}">
+        <div class="mck"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
+        <div class="mth" style="background:linear-gradient(150deg,${a.g})">
+          ${a.type === 'vid' ? '<div class="mvid"><div class="play"><svg viewBox=\'0 0 24 24\'><use href=\'#i-play\'/></svg></div></div><span class="dur">' + a.dur + '</span>' : ''}
+        </div>
+        <div class="mb"><div class="mn">${a.n}</div><div class="ms">${a.type === 'vid' ? '動画' : '画像'} · ${a.sz}</div></div>
+      </div>`).join('');
+    grid.querySelectorAll('.masset').forEach((el) => el.addEventListener('click', () => {
+      const i = el.dataset.i;
+      if (sel.has(i)) { sel.delete(i); el.classList.remove('sel'); } else { sel.add(i); el.classList.add('sel'); }
+      document.getElementById('selinfo').textContent = sel.size ? sel.size + '件 選択中' : 'クリックで選択';
+    }));
+  }
+  render();
+
+  document.getElementById('mtabs').addEventListener('click', (e) => {
+    const b = e.target.closest('.mfilter'); if (!b) return;
+    document.querySelectorAll('.mfilter').forEach((x) => x.classList.remove('on')); b.classList.add('on');
+    filter = b.dataset.f; sel.clear(); document.getElementById('selinfo').textContent = 'クリックで選択'; render();
+  });
+  const drop = document.getElementById('drop');
+  ['dragover','dragenter'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach((ev) => drop.addEventListener(ev, () => drop.classList.remove('over')));
+  document.getElementById('upBtn').addEventListener('click', () => document.getElementById('file').click());
+</script>
+</body>
+</html>

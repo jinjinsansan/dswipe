@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe — LPエディタ /lp/[id]/edit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="editor/editor.css" />
+<style>
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  /* toast */
+  .ed-toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90;
+    background: var(--navy-900); color: #fff; font-size: 13.5px; font-weight: 600; padding: 12px 20px; border-radius: 999px;
+    box-shadow: var(--sh-card); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; display: flex; align-items: center; gap: 9px; }
+  .ed-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .ed-toast .ck { width: 18px; height: 18px; color: var(--cyan-400); }
+  /* mobile bottom tab bar */
+  .ed-mobbar { display: none; }
+  @media (max-width: 900px) {
+    .ed-mobbar { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 35; background: var(--surface); border-top: 1px solid var(--line); padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); gap: 8px; }
+    .ed-mobbar button { flex: 1; font-family: var(--font); font-size: 12px; font-weight: 700; color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .ed-mobbar button.on { background: var(--surface-tint); border-color: var(--tint-border); color: var(--brand); }
+    .ed-mobbar button svg { width: 18px; height: 18px; }
+    .mob-only { display: inline-flex !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="editor/editor-blocks.jsx"></script>
+<script type="text/babel" src="editor/editor-ui.jsx"></script>
+
+<script type="text/babel">
+const { EdHeader, Filmstrip, DeviceStage, PropertyPanel, TemplateModal, ThemeModal, BLOCK_DEFS, EdIco, ED_ICONS } = window;
+const I = ED_ICONS;
+let _uid = 0;
+const uid = () => "s" + (++_uid) + "-" + Math.random().toString(36).slice(2, 6);
+
+function makeSlide(type) {
+  const def = BLOCK_DEFS.find((b) => b.type === type);
+  return { id: uid(), type, content: def.make() };
+}
+
+function useIsMobile() {
+  const [m, setM] = React.useState(typeof window !== "undefined" && window.matchMedia("(max-width:900px)").matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width:900px)");
+    const fn = () => setM(mq.matches);
+    mq.addEventListener("change", fn);
+    return () => mq.removeEventListener("change", fn);
+  }, []);
+  return m;
+}
+
+function App() {
+  const initial = React.useMemo(() => ["hero", "problem", "benefit", "testimonial", "offer"].map(makeSlide), []);
+  const [slides, setSlides] = React.useState(initial);
+  const [selId, setSelId] = React.useState(initial[0].id);
+  const [swipeDir, setSwipeDir] = React.useState("vertical");
+  const [title, setTitle] = React.useState("7日間スワイプ集客チャレンジ");
+  const [status, setStatus] = React.useState("draft");
+  const [saved, setSaved] = React.useState(true);
+  const [modal, setModal] = React.useState(null);
+  const [toast, setToast] = React.useState("");
+  const [mobView, setMobView] = React.useState("preview");
+  const isMobile = useIsMobile();
+  const toastT = React.useRef(0);
+
+  const dirty = () => setSaved(false);
+  const showToast = (msg) => { setToast(msg); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToast(""), 2200); };
+
+  const sel = slides.find((s) => s.id === selId) || null;
+
+  const updateBlock = (id, field, value) => {
+    setSlides((prev) => prev.map((s) => s.id === id ? { ...s, content: { ...s.content, [field]: value } } : s));
+    dirty();
+  };
+  const addBlock = () => setModal("tpl");
+  const pickTemplate = (def) => {
+    const ns = makeSlide(def.type);
+    setSlides((prev) => [...prev, ns]); setSelId(ns.id); setModal(null); dirty();
+    if (isMobile) setMobView("props");
+  };
+  const deleteBlock = (id) => {
+    setSlides((prev) => {
+      const i = prev.findIndex((s) => s.id === id);
+      const next = prev.filter((s) => s.id !== id);
+      if (selId === id) setSelId(next[Math.max(0, i - 1)]?.id || null);
+      return next;
+    }); dirty();
+  };
+  const dupBlock = (id) => {
+    setSlides((prev) => {
+      const i = prev.findIndex((s) => s.id === id);
+      const copy = { ...prev[i], id: uid(), content: JSON.parse(JSON.stringify(prev[i].content)) };
+      const next = [...prev]; next.splice(i + 1, 0, copy); return next;
+    }); dirty();
+  };
+  const reorder = (fromId, beforeId) => {
+    setSlides((prev) => {
+      const arr = [...prev];
+      const from = arr.findIndex((s) => s.id === fromId);
+      const [moved] = arr.splice(from, 1);
+      const to = arr.findIndex((s) => s.id === beforeId);
+      arr.splice(to, 0, moved);
+      return arr;
+    }); dirty();
+  };
+  const selectSlide = (id) => { setSelId(id); if (isMobile) setMobView("preview"); };
+  const applyTheme = (hex) => { setModal(null); dirty(); showToast("テーマを全スライドに適用しました"); };
+  const save = () => { setSaved(true); showToast("保存しました"); };
+  const publish = () => { setStatus("published"); setSaved(true); showToast("LPを公開しました 🎉"); };
+
+  const railMob = isMobile && mobView === "blocks";
+  const propsMob = isMobile && mobView === "props";
+
+  return (
+    <div className="editor">
+      <EdHeader title={title} onTitle={(v) => { setTitle(v); dirty(); }} status={status}
+        saved={saved} onSave={save} onPublish={publish} onPreview={() => showToast("プレビューを新しいタブで開きます")} onMenu={() => setMobView(mobView === "props" ? "preview" : "props")} />
+
+      <div className="ed-main">
+        {(!isMobile || railMob) && (
+          <Filmstrip slides={slides} selId={selId} onSelect={selectSlide} onAdd={addBlock}
+            onDelete={deleteBlock} onDup={dupBlock} onReorder={reorder} mob={railMob} />
+        )}
+
+        <DeviceStage slides={slides} selId={selId} onSelect={selectSlide} swipeDir={swipeDir} onSwipeDir={setSwipeDir} />
+
+        {(!isMobile || propsMob) && (
+          <PropertyPanel slide={sel} onChange={updateBlock} onClose={() => { setSelId(null); if (isMobile) setMobView("preview"); }} mob={propsMob} />
+        )}
+      </div>
+
+      {/* secondary actions: theme generator entry */}
+      <button className="btn btn-secondary btn-sm" onClick={() => setModal("theme")}
+        style={{ position: "fixed", left: 16, bottom: isMobile ? 78 : 16, zIndex: 36, boxShadow: "var(--sh-md)" }}>
+        <EdIco d={I.palette} />テーマカラー
+      </button>
+
+      {isMobile && (
+        <nav className="ed-mobbar">
+          <button className={mobView === "blocks" ? "on" : ""} onClick={() => setMobView("blocks")}><EdIco d={I.layout} />ブロック</button>
+          <button className={mobView === "preview" ? "on" : ""} onClick={() => setMobView("preview")}><EdIco d={I.target} />プレビュー</button>
+          <button className={mobView === "props" ? "on" : ""} onClick={() => setMobView("props")}><EdIco d={I.type} />編集</button>
+        </nav>
+      )}
+
+      {modal === "tpl" && <TemplateModal onPick={pickTemplate} onClose={() => setModal(null)} />}
+      {modal === "theme" && <ThemeModal current="#0284c7" onApply={applyTheme} onClose={() => setModal(null)} />}
+
+      <div className={"ed-toast" + (toast ? " show" : "")}>
+        <svg className="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12l5 5L20 6" /></svg>
+        {toast}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

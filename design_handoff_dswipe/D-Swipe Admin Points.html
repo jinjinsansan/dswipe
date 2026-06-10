@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D-Swipe Admin — ポイント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="c-system/tokens.css" />
+<link rel="stylesheet" href="c-system/components.css" />
+<link rel="stylesheet" href="c-system/app.css" />
+<link rel="stylesheet" href="c-system/admin.css" />
+<style>body { margin: 0; -webkit-font-smoothing: antialiased; } .two { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; } @media (max-width:900px){ .two { grid-template-columns: 1fr; } }</style>
+</head>
+<body>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side app-side admin-side" id="sidebar">
+    <div class="side-logo"><svg width="30" height="30" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sl" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="#fff" fill-opacity=".08" stroke="rgba(255,255,255,.2)"/><path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#sl)" stroke-width="2.6" stroke-linejoin="round"/><path d="M25 20l6-5m-6 5l6 5" stroke="url(#sl)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:16px;font-weight:800;color:#fff;margin-left:9px">D<span style="color:var(--cyan-400)">-</span>Swipe<span class="adm-badge">ADMIN</span></span></div>
+    <nav class="side-nav">
+      <div class="side-sect">管理</div>
+      <a class="side-item" href="D-Swipe Admin.html"><svg viewBox="0 0 24 24"><use href="#ad-grid"/></svg>概要</a>
+      <a class="side-item" href="D-Swipe Admin Users.html"><svg viewBox="0 0 24 24"><use href="#ad-users"/></svg>ユーザー</a>
+      <a class="side-item" href="D-Swipe Admin Revenue.html"><svg viewBox="0 0 24 24"><use href="#ad-yen"/></svg>売上</a>
+      <a class="side-item" href="D-Swipe Admin Payouts.html"><svg viewBox="0 0 24 24"><use href="#ad-bank"/></svg>出金</a>
+      <a class="side-item" href="D-Swipe Admin Messages.html"><svg viewBox="0 0 24 24"><use href="#ad-msg"/></svg>メッセージ</a>
+      <a class="side-item admin active" href="D-Swipe Admin Points.html"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg>ポイント</a>
+      <a class="side-item" href="D-Swipe Admin Settings.html"><svg viewBox="0 0 24 24"><use href="#ad-cog"/></svg>設定</a>
+    </nav>
+    <div class="side-foot"><div class="ucard"><div class="avatar" style="background:linear-gradient(135deg,#e11d48,#f59e0b)">A</div><div style="min-width:0"><div class="nm">管理者</div><div class="rl">admin</div></div></div><a class="side-logout" href="D-Swipe Dashboard.html" style="display:block;text-align:center;text-decoration:none">ユーザー画面へ</a></div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="tb-left"><button class="burger" id="burger"><svg viewBox="0 0 24 24"><use href="#ad-burger"/></svg></button><div class="tb-title"><h1>ポイント</h1><p>発行・流通・手動付与の管理</p></div></div>
+      <div class="tb-right"><button class="btn btn-primary btn-sm" id="grant">手動付与</button></div>
+    </header>
+    <div class="app-content">
+      <div class="kpis">
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg></span><span class="kpi-cap">発行済み</span></div><span class="kpi-val">82.4M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico soft"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg></span><span class="kpi-cap">利用済み</span></div><span class="kpi-val">48.2M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24"><use href="#ad-coin"/></svg></span><span class="kpi-cap">未使用残高（負債）</span></div><span class="kpi-val">34.2M<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span></div>
+        <div class="card kpi"><div class="kpi-top"><span class="kpi-ico soft"><svg viewBox="0 0 24 24"><use href="#ad-gift"/></svg></span><span class="kpi-cap">今月の付与（販促）</span></div><span class="kpi-val">420K<span style="font-size:13px;font-weight:600;color:var(--muted)">P</span></span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel" style="padding:22px 22px 8px">
+          <div class="panel-h"><h3>ポイント取引ログ</h3><div class="segmented" id="filt"><button class="active">すべて</button><button>購入</button><button>利用</button><button>付与</button><button>返金</button></div></div>
+          <table class="tbl">
+            <thead><tr><th>ユーザー</th><th>種別</th><th class="num">増減</th><th class="num">残高</th><th>日時</th></tr></thead>
+            <tbody>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#22d3ee,#0284c7)">山</span><span class="strong">山田 太郎</span></div></td><td><span class="badge badge-live">購入</span></td><td class="num" style="color:var(--success-ink);font-weight:700">+11,000</td><td class="num">23,500</td><td>06/08 14:22</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">A</span><span class="strong">佐藤 あや</span></div></td><td><span class="badge badge-seller">利用</span></td><td class="num" style="color:var(--danger-ink)">−500</td><td class="num">8,200</td><td>06/08 11:04</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#16a34a,#22d3ee)">け</span><span class="strong">鈴木 けん</span></div></td><td><span class="badge badge-warn">付与</span></td><td class="num" style="color:var(--success-ink);font-weight:700">+1,000</td><td class="num">3,400</td><td>06/07 18:30</td></tr>
+              <tr><td><div class="urow"><span class="uav" style="background:linear-gradient(135deg,#7c3aed,#0284c7)">み</span><span class="strong">田中 みう</span></div></td><td><span class="badge badge-danger">返金</span></td><td class="num" style="color:var(--success-ink);font-weight:700">+800</td><td class="num">5,600</td><td>06/06 09:50</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h3 style="font-size:13px">流通バランス</h3></div>
+          <div class="src-row"><span class="nm">利用済み</span><span class="tr"><span style="width:58%"></span></span><span class="pct">58%</span></div>
+          <div class="src-row"><span class="nm">未使用</span><span class="tr"><span style="width:42%"></span></span><span class="pct">42%</span></div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.7">1ポイント = 1円相当。未使用残高はプラットフォームの負債として計上されます。有効期限なし。</div>
+          <div style="margin-top:14px;background:var(--surface-tint);border:1px solid var(--tint-border);border-radius:12px;padding:13px"><div style="font-size:12px;font-weight:700;color:var(--brand);margin-bottom:4px">販促ポイント付与</div><div style="font-size:12px;color:var(--text-2);line-height:1.6">キャンペーンや補填でユーザーに手動付与できます。付与履歴は全て記録されます。</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- grant modal -->
+<div class="ed-overlay" id="ov" style="position:fixed;inset:0;z-index:80;background:rgba(7,15,30,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px">
+  <div style="width:100%;max-width:420px;background:var(--surface);border-radius:var(--r-2xl);box-shadow:0 40px 100px -30px rgba(0,0,0,.6);padding:26px">
+    <h2 style="font-size:19px;font-weight:800;color:var(--ink);margin:0 0 16px">ポイントを手動付与</h2>
+    <div class="field" style="margin-bottom:14px"><span class="field-label">対象ユーザー</span><input class="input" placeholder="@ID または メールで検索" /></div>
+    <div class="field" style="margin-bottom:14px"><span class="field-label">付与ポイント</span><input class="input" value="1000" /></div>
+    <div class="field" style="margin-bottom:18px"><span class="field-label">理由（履歴に記録）</span><input class="input" placeholder="例：キャンペーン補填" /></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" id="doGrant">付与する</button><button class="btn btn-secondary" id="gclose">キャンセル</button></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="ad-grid" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="ad-users" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><path d="M16 5.5a3 3 0 010 5.8M16.5 19a5.5 5.5 0 00-3-4.9"/></g>
+  <g id="ad-yen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V8m0 4l-4-5m4 5l4-5m-7 7h6m-6 3h6M12 12v6"/></g>
+  <g id="ad-bank" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16M5 10l7-5 7 5M6 10v8M10 10v8M14 10v8M18 10v8M4 20h16"/></g>
+  <g id="ad-msg" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 3z"/></g>
+  <g id="ad-coin" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8m-2.5-6h3.2a1.8 1.8 0 010 3.6H9.5"/></g>
+  <g id="ad-cog" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></g>
+  <g id="ad-gift" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M4 9h16M12 9v11M8 9C6 9 6 4 9 5c1.5.5 3 4 3 4M16 9c2 0 2-5-1-4-1.5.5-3 4-3 4"/></g>
+  <g id="ad-burger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+</defs></svg>
+<script>
+  const sb=document.getElementById('sidebar'),sc=document.getElementById('scrim');
+  const tog=o=>{sb.classList.toggle('open',o);sc.classList.toggle('open',o);};
+  document.getElementById('burger').addEventListener('click',()=>tog(!sb.classList.contains('open')));sc.addEventListener('click',()=>tog(false));
+  document.querySelectorAll('#filt button').forEach((b,i,a)=>b.addEventListener('click',()=>{a.forEach(x=>x.classList.remove('active'));b.classList.add('active');}));
+  const ov=document.getElementById('ov');
+  document.getElementById('grant').addEventListener('click',()=>ov.style.display='flex');
+  document.getElementById('gclose').addEventListener('click',()=>ov.style.display='none');
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.style.display='none';});
+  document.getElementById('doGrant').addEventListener('click',()=>ov.style.display='none');
+</script>
+</body>
+</html>

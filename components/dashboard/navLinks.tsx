@@ -408,10 +408,22 @@ export const getDashboardNavGroupMeta = (
   const config = GROUP_META_CONFIG[group];
   return {
     label: safeTranslate(translate, config.labelKey, config.defaultLabel),
-    headingClass: config.headingClass,
+    // Momentum navy sidebar: unified muted heading color (overrides per-group hue)
+    headingClass: 'text-[var(--on-navy-muted)]',
     desktop: config.desktop,
     mobile: config.mobile,
   };
+};
+
+// Momentum navy sidebar: every group's desktop nav item uses one navy/cyan style
+// (the per-group colors in GROUP_META_CONFIG remain for the light mobile menu).
+const NAVY_DESKTOP_NAV = {
+  base: 'text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-[var(--on-navy)]',
+  active: 'bg-cyan-500/15 text-[var(--brand-cyan-soft)] shadow-[inset_2px_0_0_var(--brand-cyan)]',
+  icon: 'text-[var(--on-navy-muted)]',
+  iconActive: 'text-[var(--brand-cyan)]',
+  badge: 'bg-white/10 text-[#cfe3f5] border border-white/10',
+  badgeActive: 'bg-white/15 text-white',
 };
 
 export const getDashboardNavClasses = (
@@ -421,9 +433,9 @@ export const getDashboardNavClasses = (
   const meta = GROUP_META_CONFIG[link.group];
   if (options.variant === 'desktop') {
     return {
-      container: options.active ? meta.desktop.active : meta.desktop.base,
-      icon: options.active ? meta.desktop.iconActive : meta.desktop.icon,
-      badge: options.active && meta.desktop.badgeActive ? meta.desktop.badgeActive : meta.desktop.badge,
+      container: options.active ? NAVY_DESKTOP_NAV.active : NAVY_DESKTOP_NAV.base,
+      icon: options.active ? NAVY_DESKTOP_NAV.iconActive : NAVY_DESKTOP_NAV.icon,
+      badge: options.active ? NAVY_DESKTOP_NAV.badgeActive : NAVY_DESKTOP_NAV.badge,
     };
   }
 
