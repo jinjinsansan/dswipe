@@ -134,13 +134,13 @@ export default function UserProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f4f8fd] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 text-lg mb-4">エラーが発生しました</p>
-          <p className="text-gray-400 text-sm mb-4">{error}</p>
+          <p className="text-red-600 text-lg font-semibold mb-4">エラーが発生しました</p>
+          <p className="text-slate-500 text-sm mb-4">{error}</p>
           <button
             onClick={() => fetchUserData()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             再試行
           </button>
@@ -160,7 +160,7 @@ export default function UserProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-sky-500 to-cyan-500">
               {profile?.profile_image_url ? (
                 <img
                   src={profile.profile_image_url}
@@ -214,7 +214,7 @@ export default function UserProfilePage() {
                       href={profile.sns_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700 text-sm font-semibold transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:border-sky-300 hover:text-sky-700 text-sm font-semibold transition-colors"
                     >
                       <LinkIcon className="h-4 w-4" aria-hidden="true" />
                       SNSを見る
@@ -258,9 +258,9 @@ export default function UserProfilePage() {
                 <Link
                   key={product.id}
                   href={targetHref}
-                  className="bg-white rounded-xl border border-slate-200 hover:border-blue-200 transition-all overflow-hidden group shadow-sm"
+                  className="bg-white rounded-xl border border-slate-200 hover:border-sky-200 transition-all overflow-hidden group shadow-sm"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-sky-100 to-cyan-100 overflow-hidden">
                     {thumbnailUrl ? (
                       isVideoUrl(thumbnailUrl) ? (
                         <video
@@ -304,7 +304,7 @@ export default function UserProfilePage() {
                       </span>
                     </div>
 
-                    <div className="w-full px-4 py-2 bg-blue-600 text-white text-center rounded-lg font-semibold group-hover:bg-blue-700 transition-colors text-sm">
+                    <div className="w-full px-4 py-2 bg-sky-600 text-white text-center rounded-lg font-semibold group-hover:bg-sky-700 transition-colors text-sm">
                       LPを見る
                     </div>
                   </div>
@@ -338,7 +338,7 @@ export default function UserProfilePage() {
               <Link
                 key={salon.id}
                 href={`/salons/${salon.id}/public`}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-md"
               >
                 <div className="relative h-44 w-full overflow-hidden bg-slate-100">
                   {salon.thumbnail_url ? (
@@ -394,7 +394,7 @@ export default function UserProfilePage() {
               <Link
                 key={note.id}
                 href={`/notes/${note.slug}`}
-              className="group flex h-full flex-col overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+              className="group flex h-full flex-col overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-md"
               >
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
                   {note.cover_image_url ? (
@@ -419,7 +419,7 @@ export default function UserProfilePage() {
                       {note.is_paid ? '有料' : '無料'}
                     </span>
                     {note.requires_login ? (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                      <span className="inline-flex items-center rounded-full bg-sky-100 px-2.5 py-0.5 text-[11px] font-semibold text-sky-700">
                         ログイン必須
                       </span>
                     ) : null}

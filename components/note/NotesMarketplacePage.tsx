@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FunnelIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { ArrowRightIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
 
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -11,6 +11,10 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { fetchPublicNotes } from '@/lib/publicClient';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import type { PublicNoteSummary } from '@/types';
+import { GRAD_BRAND, HEAD_BG, NAVY_CARD_BG, pickAvatarGradient, pickThumbFallback } from '@/lib/momentum';
+
+/* Momentum note list — mock: design_handoff_dswipe/D-Swipe Note List.html */
+
 const PAGE_SIZE = 60;
 
 type FilterValue = 'all' | 'free' | 'paid';
@@ -87,7 +91,28 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
     return base.filter((note) => (filter === 'paid' ? note.is_paid : !note.is_paid));
   }, [notes, filter, categoryFilter]);
 
+  const popularNotes = useMemo(
+    () =>
+      [...notes]
+        .filter((note) => Number(note.total_sales) > 0)
+        .sort((a, b) => (Number(b.total_sales) || 0) - (Number(a.total_sales) || 0))
+        .slice(0, 3),
+    [notes],
+  );
+
   const toLocaleNumber = (value: number) => format.number(value);
+
+  const renderPrice = (note: PublicNoteSummary) => {
+    if (!note.is_paid) {
+      return <span className="ml-auto text-[13px] font-extrabold text-green-700">{t('freeBadge')}</span>;
+    }
+    const label = note.allow_point_purchase
+      ? `${toLocaleNumber(note.price_points)} P`
+      : note.allow_jpy_purchase && note.price_jpy
+        ? `¥${toLocaleNumber(note.price_jpy)}`
+        : t('paidBadge');
+    return <span className="ml-auto text-[13px] font-extrabold text-sky-600 tabular-nums">{label}</span>;
+  };
 
   return (
     <DashboardLayout
@@ -95,53 +120,57 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
       pageSubtitle={t('pageSubtitle')}
       requireAuth={false}
     >
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 pb-20 pt-6 sm:px-6 sm:gap-12">
-        <section className="border border-slate-200 bg-white/80 p-5 shadow-sm sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {([
-                { value: 'all', label: t('filters.all') },
-                { value: 'free', label: t('filters.free') },
-                { value: 'paid', label: t('filters.paid') },
-              ] as Array<{ value: FilterValue; label: string }>).map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setFilter(option.value)}
-                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                    filter === option.value
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  <FunnelIcon className="h-4 w-4" aria-hidden="true" />
-                  {option.label}
-                </button>
-              ))}
+      <div className="mx-auto w-full max-w-6xl px-4 pb-20 pt-6 sm:px-6">
+        {/* Navy hero */}
+        <div className="rounded-3xl px-6 py-7 sm:px-9 sm:py-9 mb-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: HEAD_BG }}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xs font-bold tracking-[.16em] uppercase text-cyan-300">Notes</div>
+              <h1 className="text-[26px] sm:text-[30px] font-extrabold tracking-tight text-pure-white mt-2">{t('pageTitle')}</h1>
+              <p className="text-sm text-[#bcd3ee] mt-2">{t('pageSubtitle')}</p>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-              <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 sm:w-72">
-                <MagnifyingGlassIcon className="h-4 w-4" aria-hidden="true" />
-                <input
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  placeholder={t('searchPlaceholder')}
-                  className="h-8 w-full border-none bg-transparent text-sm text-slate-700 focus:outline-none"
-                />
-              </div>
+            <span className="rounded-full bg-white/95 px-3 py-1.5 shadow-sm">
               <LanguageSwitcher />
-            </div>
+            </span>
           </div>
-
-          <div className="mt-4 -mx-3">
-            <div className="flex flex-nowrap items-center gap-2 overflow-x-auto px-3 pb-2 sm:flex-wrap sm:overflow-visible">
+          <div className="relative max-w-[560px] mt-5">
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-[19px] h-[19px] text-slate-500" aria-hidden="true" />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t('searchPlaceholder')}
+              className="w-full text-[15px] text-slate-900 placeholder-slate-400 bg-white border-0 rounded-[14px] py-3.5 pl-[46px] pr-4 shadow-lg focus:outline-none focus:ring-[3px] focus:ring-cyan-400/40"
+            />
+          </div>
+          <div className="flex gap-2 mt-[18px] flex-wrap">
+            {([
+              { value: 'all', label: t('filters.all') },
+              { value: 'free', label: t('filters.free') },
+              { value: 'paid', label: t('filters.paid') },
+            ] as Array<{ value: FilterValue; label: string }>).map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setFilter(option.value)}
+                className={`text-[13px] font-semibold rounded-full px-3.5 py-[7px] border transition-colors whitespace-nowrap ${
+                  filter === option.value
+                    ? 'bg-white text-[#0b1f3a] border-white'
+                    : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          <div className="-mx-2 mt-2.5">
+            <div className="flex flex-nowrap items-center gap-2 overflow-x-auto px-2 pb-1 sm:flex-wrap sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <button
                 type="button"
                 onClick={() => setCategoryFilter('all')}
-                className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                className={`shrink-0 whitespace-nowrap text-[12px] font-semibold rounded-full px-3 py-1.5 border transition-colors ${
                   categoryFilter === 'all'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-white text-[#0b1f3a] border-white'
+                    : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                 }`}
               >
                 {t('allCategoriesLabel')}
@@ -151,10 +180,10 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                   key={option.value}
                   type="button"
                   onClick={() => setCategoryFilter(option.value)}
-                  className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
+                  className={`shrink-0 whitespace-nowrap text-[12px] font-semibold rounded-full px-3 py-1.5 border transition-colors ${
                     categoryFilter === option.value
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-white text-[#0b1f3a] border-white'
+                      : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                   }`}
                 >
                   #{t(`categories.${option.value}`)}
@@ -162,104 +191,142 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
               ))}
             </div>
           </div>
-        </section>
+        </div>
 
-        {loading === 'loading' ? (
-          <div className="flex h-60 items-center justify-center text-sm text-slate-500">
-            <SpinIndicator /> {t('loading')}
-          </div>
-        ) : loading === 'error' ? (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
-            {error ?? t('loadError')}
-          </div>
-        ) : filteredNotes.length === 0 ? (
-          <section className="border border-dashed border-slate-300 bg-white/70 p-8 text-center shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">{t('emptyTitle')}</h2>
-            <p className="mt-3 text-sm text-slate-600">{t('emptyDescription')}</p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm">
-              <SparklesIcon className="h-4 w-4" aria-hidden="true" />
-              {t('emptyBadge')}
-            </div>
-          </section>
-        ) : (
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
-            {filteredNotes.map((note) => {
-              const primaryCategory = note.categories?.[0];
-              const categoryLabel = primaryCategory ? t(`categories.${primaryCategory}`) : null;
-              const dateLabel = note.published_at
-                ? format.dateTime(new Date(note.published_at), { month: 'short', day: 'numeric' })
-                : t('unpublishedLabel');
-              const priceLabel = note.is_paid
-                ? note.allow_point_purchase
-                  ? `${toLocaleNumber(note.price_points)} pt`
-                  : note.allow_jpy_purchase && note.price_jpy
-                    ? `¥${toLocaleNumber(note.price_jpy)}`
-                    : t('paidBadge')
-                : t('freeBadge');
-
-              return (
-                <Link
-                  key={note.id}
-                  href={withBasePath(basePath, `/notes/${note.slug}`)}
-                  className="group flex items-center gap-3 border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0 hover:border-blue-300 hover:shadow-md md:flex-col md:items-stretch md:overflow-hidden md:gap-0 md:p-0"
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-8 items-start">
+          <main>
+            {loading === 'loading' ? (
+              <div className="flex h-60 items-center justify-center gap-2 text-sm text-slate-500 bg-white border border-[#e2ebf6] rounded-2xl shadow-sm">
+                <SpinIndicator /> {t('loading')}
+              </div>
+            ) : loading === 'error' ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+                {error ?? t('loadError')}
+              </div>
+            ) : filteredNotes.length === 0 ? (
+              <section className="rounded-2xl border border-dashed border-[#bfe6fb] bg-white p-8 text-center shadow-sm">
+                <h2 className="text-xl font-bold text-[#0b1f3a]">{t('emptyTitle')}</h2>
+                <p className="mt-3 text-sm text-slate-600">{t('emptyDescription')}</p>
+                <div
+                  className="mt-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
+                  style={{ background: GRAD_BRAND }}
                 >
-                  <div className="relative h-20 w-24 flex-none overflow-hidden bg-slate-100 md:h-auto md:w-full md:aspect-[3/2]">
-                    {note.cover_image_url ? (
-                      <Image
-                        src={note.cover_image_url}
-                        alt={note.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <DefaultCover />
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col justify-between gap-2 py-1 md:px-4 md:py-4">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
-                        {note.is_featured ? (
-                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
-                            {t('featuredBadge')}
-                          </span>
+                  <SparklesIcon className="h-4 w-4" aria-hidden="true" />
+                  {t('emptyBadge')}
+                </div>
+              </section>
+            ) : (
+              <section className="flex flex-col gap-4">
+                {filteredNotes.map((note) => {
+                  const primaryCategory = note.categories?.[0];
+                  const categoryLabel = primaryCategory ? t(`categories.${primaryCategory}`) : null;
+                  const dateLabel = note.published_at
+                    ? format.dateTime(new Date(note.published_at), { month: 'short', day: 'numeric' })
+                    : t('unpublishedLabel');
+                  const author = note.author_username ?? 'unknown';
+                  const fallbackBg = pickThumbFallback(String(note.id ?? note.title ?? ""));
+                  const avatarBg = pickAvatarGradient(author);
+
+                  return (
+                    <Link
+                      key={note.id}
+                      href={withBasePath(basePath, `/notes/${note.slug}`)}
+                      className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#e2ebf6] bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#bfe6fb] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                    >
+                      <div className="relative h-[150px] sm:h-auto sm:w-[168px] flex-shrink-0 overflow-hidden" style={{ background: fallbackBg }}>
+                        {note.cover_image_url ? (
+                          <Image
+                            src={note.cover_image_url}
+                            alt={note.title}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
                         ) : null}
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide md:text-[11px] ${
-                            note.is_paid
-                              ? 'bg-amber-100 text-amber-700'
-                              : 'bg-emerald-100 text-emerald-700'
-                          }`}
-                        >
-                          {priceLabel}
-                        </span>
-                        {note.requires_login ? (
-                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700 md:text-[11px]">
-                            {t('loginRequiredBadge')}
-                          </span>
-                        ) : null}
-                        {categoryLabel ? <span>#{categoryLabel}</span> : null}
-                        <span>{dateLabel}</span>
                       </div>
-                      <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">
+                      <div className="flex min-w-0 flex-1 flex-col px-4 py-4 sm:px-[18px]">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          {categoryLabel ? (
+                            <span className="text-[11px] font-bold text-sky-600 bg-[#e9f6fe] border border-[#bfe6fb] rounded-full px-2.5 py-[3px]">
+                              {categoryLabel}
+                            </span>
+                          ) : null}
+                          {note.is_featured ? (
+                            <span className="text-[10px] font-extrabold text-pure-white rounded-full px-2.5 py-[3px]" style={{ background: GRAD_BRAND }}>
+                              {t('featuredBadge')}
+                            </span>
+                          ) : null}
+                          {note.requires_login ? (
+                            <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 rounded-full px-2.5 py-[3px]">
+                              {t('loginRequiredBadge')}
+                            </span>
+                          ) : null}
+                          <span className="text-[11px] text-slate-400">{dateLabel}</span>
+                        </div>
+                        <h3 className="text-[15px] sm:text-[17px] font-extrabold tracking-tight text-[#0b1f3a] leading-snug line-clamp-2 group-hover:text-sky-600 transition-colors">
+                          {note.title}
+                        </h3>
+                        {note.excerpt ? (
+                          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600 line-clamp-2">{note.excerpt}</p>
+                        ) : null}
+                        <div className="mt-auto flex items-center gap-2.5 pt-3 text-xs text-slate-500">
+                          <span
+                            className="flex h-[22px] w-[22px] items-center justify-center rounded-full text-[10px] font-extrabold text-[#042032] flex-shrink-0"
+                            style={{ background: avatarBg }}
+                          >
+                            {author.charAt(0).toUpperCase()}
+                          </span>
+                          <span className="truncate">@{author}</span>
+                          {note.total_sales ? <span className="whitespace-nowrap">{t('views', { count: note.total_sales })}</span> : null}
+                          {renderPrice(note)}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </section>
+            )}
+          </main>
+
+          {/* Sidebar */}
+          <aside className="hidden lg:block">
+            {popularNotes.length > 0 && (
+              <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-4">
+                <h4 className="text-[13px] font-bold text-[#0b1f3a] mb-3">{t('popularTitle')}</h4>
+                {popularNotes.map((note, i) => (
+                  <Link
+                    key={note.id}
+                    href={withBasePath(basePath, `/notes/${note.slug}`)}
+                    className={`flex gap-[11px] py-2 items-start group ${i > 0 ? 'border-t border-[#eef3f9]' : ''}`}
+                  >
+                    <span className="w-[18px] flex-shrink-0 text-[15px] font-extrabold text-sky-600 tabular-nums">{i + 1}</span>
+                    <span className="min-w-0">
+                      <span className="block text-[12.5px] font-semibold text-[#0b1f3a] leading-normal line-clamp-2 group-hover:text-sky-600 transition-colors">
                         {note.title}
-                      </h3>
-                      {note.excerpt ? (
-                        <p className="line-clamp-2 text-xs text-slate-500 md:text-sm">{note.excerpt}</p>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 md:text-xs">
-                      <span>@{note.author_username ?? 'unknown'}</span>
-                      {note.total_sales ? (
-                        <span>{t('views', { count: note.total_sales })}</span>
-                      ) : null}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </section>
-        )}
-      </main>
+                      </span>
+                      <span className="block text-[11px] text-slate-500 mt-0.5">
+                        @{note.author_username ?? 'unknown'} · {toLocaleNumber(Number(note.total_sales) || 0)}
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: NAVY_CARD_BG }}>
+              <b className="block text-[15px] font-extrabold text-pure-white">{t('ctaTitle')}</b>
+              <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">{t('ctaBody')}</p>
+              <Link
+                href="/note/create"
+                className="inline-flex items-center justify-center gap-2 w-full text-[13px] font-bold text-pure-white rounded-xl px-4 py-2.5 shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow"
+                style={{ background: GRAD_BRAND }}
+              >
+                {t('ctaButton')}
+                <ArrowRightIcon className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </aside>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }
@@ -274,13 +341,5 @@ function SpinIndicator() {
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
       />
     </svg>
-  );
-}
-
-function DefaultCover() {
-  return (
-    <div className="flex h-full w-full items-center justify-center bg-slate-200 text-xs font-semibold text-slate-500">
-      Swipeコラム
-    </div>
   );
 }

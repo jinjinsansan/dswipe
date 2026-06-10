@@ -6,6 +6,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
+import { GRAD_BRAND, NAVY_CARD_BG } from '@/lib/momentum';
 import {
   CreditCardIcon,
   BanknotesIcon,
@@ -240,10 +241,10 @@ export default function PointPurchasePage() {
                       <button
                         key={pkg.points}
                         onClick={() => setSelectedPackage(pkg)}
-                        className={`rounded-2xl border p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:p-6 ${
+                        className={`rounded-2xl border p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 sm:p-6 ${
                           isSelected
-                            ? 'border-blue-500/70 bg-blue-50 shadow-[0_15px_40px_-25px_rgba(37,99,235,0.4)]'
-                            : 'border-slate-200 bg-white hover:border-blue-200'
+                            ? 'border-sky-500/70 bg-sky-50 shadow-[0_15px_40px_-25px_rgba(37,99,235,0.4)]'
+                            : 'border-slate-200 bg-white hover:border-sky-200'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -257,7 +258,7 @@ export default function PointPurchasePage() {
                               </span>
                             )}
                           </div>
-                          {isSelected && <span className="text-sm font-semibold text-blue-600">{packagesT('selectedLabel')}</span>}
+                          {isSelected && <span className="text-sm font-semibold text-sky-600">{packagesT('selectedLabel')}</span>}
                         </div>
                         <p className="mt-4 text-sm text-slate-500">
                           {packagesT('priceLabel', {
@@ -283,8 +284,8 @@ export default function PointPurchasePage() {
                         disabled={isComingSoon}
                         className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition-all sm:px-5 sm:py-4 ${
                           isSelected
-                            ? 'border-blue-500/70 bg-blue-50'
-                            : 'border-slate-200 bg-white hover:border-blue-200'
+                            ? 'border-sky-500/70 bg-sky-50'
+                            : 'border-slate-200 bg-white hover:border-sky-200'
                         } ${isComingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
                       >
                         <div className="flex min-w-0 items-center gap-3">
@@ -300,7 +301,7 @@ export default function PointPurchasePage() {
                             {paymentsT('statusBadge.comingSoon')}
                           </span>
                         ) : isSelected ? (
-                          <span className="text-sm font-semibold text-blue-600">{paymentsT('statusBadge.selected')}</span>
+                          <span className="text-sm font-semibold text-sky-600">{paymentsT('statusBadge.selected')}</span>
                         ) : (
                           <span className="text-sm text-slate-500">{paymentsT('statusBadge.select')}</span>
                         )}
@@ -333,7 +334,8 @@ export default function PointPurchasePage() {
                 <button
                   onClick={handlePurchase}
                   disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
-                  className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
+                  className="w-full rounded-xl px-5 py-3 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:px-6 sm:py-4 sm:text-base"
+                  style={{ background: GRAD_BRAND }}
                 >
                   {isPurchasing ? summaryT('processing') : summaryT('proceedButton')}
                 </button>
@@ -356,13 +358,20 @@ export default function PointPurchasePage() {
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-[0.25em] text-blue-500/70 sm:text-sm">{t('balance.sectionLabel')}</p>
-                <p className="mt-3 text-2xl font-semibold text-slate-900 sm:text-4xl">
+              <div
+                className="relative overflow-hidden rounded-2xl p-5 sm:p-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                style={{ background: NAVY_CARD_BG }}
+              >
+                <div
+                  className="absolute -right-16 -top-16 h-44 w-44 rounded-full"
+                  style={{ background: 'radial-gradient(circle, rgba(34,211,238,.22), transparent 65%)' }}
+                />
+                <p className="relative text-xs font-bold uppercase tracking-[0.25em] text-cyan-300 sm:text-sm">{t('balance.sectionLabel')}</p>
+                <p className="relative mt-3 text-2xl font-extrabold tracking-tight text-pure-white sm:text-4xl tabular-nums">
                   {formatter.number(currentBalance)}{' '}
-                  <span className="text-base font-normal text-blue-500/80 sm:text-xl">{t('balance.pointsSuffix')}</span>
+                  <span className="text-base font-semibold text-[#9fb4d0] sm:text-xl">{t('balance.pointsSuffix')}</span>
                 </p>
-                <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+                <p className="relative mt-2 text-xs text-[#bcd3ee] sm:text-sm">
                   {t('balance.projected', {
                     balance: formatter.number(projectedBalance),
                     suffix: t('balance.pointsSuffix'),
@@ -405,7 +414,7 @@ export default function PointPurchasePage() {
                 <ul className="space-y-3 text-xs text-slate-600 sm:text-sm">
                   {guidelineItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="mt-1 h-2 w-2 rounded-full bg-blue-300" />
+                      <span className="mt-1 h-2 w-2 rounded-full bg-sky-300" />
                       <span>{item}</span>
                     </li>
                   ))}

@@ -692,7 +692,7 @@ export default function NoteAiAssistant({
       key={tab}
       onClick={() => setActiveTab(tab)}
       className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-        activeTab === tab ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+        activeTab === tab ? 'bg-sky-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
       }`}
     >
       {label}
@@ -717,7 +717,7 @@ export default function NoteAiAssistant({
             <button
               type="button"
               onClick={() => handleUndoAction()}
-              className="text-xs font-semibold text-blue-600 underline"
+              className="text-xs font-semibold text-sky-600 underline"
             >
               最新を元に戻す
             </button>
@@ -761,7 +761,7 @@ export default function NoteAiAssistant({
             <select
               value={rewriteTargetId ?? ''}
               onChange={(event) => setRewriteTargetId(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               disabled={disabled}
             >
               {rewritableBlocks.map((block, index) => (
@@ -778,7 +778,7 @@ export default function NoteAiAssistant({
               value={rewriteInstructions}
               onChange={(event) => setRewriteInstructions(event.target.value)}
               rows={3}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               disabled={disabled}
             />
           </div>
@@ -789,7 +789,7 @@ export default function NoteAiAssistant({
               type="text"
               value={styleHint}
               onChange={(event) => setStyleHint(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               placeholder="例：カジュアルで親しみやすく"
               disabled={disabled}
             />
@@ -800,7 +800,7 @@ export default function NoteAiAssistant({
               type="button"
               onClick={handleRewrite}
               disabled={disabled || rewriteLoading || !selectedRewriteBlock}
-              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {rewriteLoading ? '生成中…' : 'AIでリライト'}
             </button>
@@ -812,7 +812,7 @@ export default function NoteAiAssistant({
           {rewriteResult ? (
             <div className="space-y-4">
               <div className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">元の文章</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-500">元の文章</p>
                 <p className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap leading-relaxed">{rewriteResult.original_text}</p>
               </div>
 
@@ -929,7 +929,7 @@ export default function NoteAiAssistant({
               onClick={() => setProofreadFocus(option.value)}
               className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                 proofreadFocus === option.value
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-sky-600 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
               disabled={disabled}
@@ -945,7 +945,7 @@ export default function NoteAiAssistant({
           type="button"
           onClick={handleProofread}
           disabled={disabled || proofreadLoading}
-          className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {proofreadLoading ? '校正中…' : 'AIで校正する'}
         </button>
@@ -978,7 +978,7 @@ export default function NoteAiAssistant({
                         <p className="text-xs font-semibold text-slate-500">提案</p>
                         <button
                           type="button"
-                          className="text-xs font-semibold text-blue-600 underline"
+                          className="text-xs font-semibold text-sky-600 underline"
                           onClick={() => copyToClipboard(correction.suggestion)}
                         >
                           コピー
@@ -1018,7 +1018,7 @@ export default function NoteAiAssistant({
             type="text"
             value={structureGoal}
             onChange={(event) => setStructureGoal(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
             placeholder="例：結論を早く伝え、アクションへ誘導"
             disabled={disabled}
           />
@@ -1029,7 +1029,7 @@ export default function NoteAiAssistant({
             type="button"
             onClick={handleStructure}
             disabled={disabled || structureLoading}
-            className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {structureLoading ? '提案を生成中…' : '構成提案を生成'}
           </button>
@@ -1078,7 +1078,7 @@ export default function NoteAiAssistant({
           type="button"
           onClick={handleReview}
           disabled={disabled || reviewLoading}
-          className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {reviewLoading ? 'レビュー中…' : '最終レビューを実行'}
         </button>
@@ -1088,7 +1088,7 @@ export default function NoteAiAssistant({
         <div className="space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">スコア</p>
-            <p className="mt-2 text-3xl font-bold text-blue-600">{reviewResult.score}</p>
+            <p className="mt-2 text-3xl font-bold text-sky-600">{reviewResult.score}</p>
             <p className="mt-2 text-sm text-slate-700">{reviewResult.summary}</p>
           </div>
           {reviewResult.issues.length > 0 ? (
@@ -1118,8 +1118,8 @@ export default function NoteAiAssistant({
             <p className="text-sm text-slate-500">重大な指摘はありませんでした。</p>
           )}
           {reviewResult.recommended_actions.length > 0 ? (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-slate-700">
-              <p className="text-xs font-semibold text-blue-600">次のアクション候補</p>
+            <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-slate-700">
+              <p className="text-xs font-semibold text-sky-600">次のアクション候補</p>
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 {reviewResult.recommended_actions.map((action, index) => (
                   <li key={`action-${index}`}>{action}</li>
@@ -1190,7 +1190,7 @@ export default function NoteAiAssistant({
               type="text"
               value={audience}
               onChange={(event) => setAudience(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               placeholder="例：副業で月5万円を目指す社会人"
               disabled={disabled}
             />
@@ -1201,7 +1201,7 @@ export default function NoteAiAssistant({
               type="text"
               value={tone}
               onChange={(event) => setTone(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               placeholder="例：信頼感のある丁寧な語り口"
               disabled={disabled}
             />
@@ -1246,7 +1246,7 @@ export default function NoteAiAssistant({
                     onClick={() => setFeedbackRating(option.value)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                       feedbackRating === option.value
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-sky-600 text-white shadow-sm'
                         : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
                     }`}
                     disabled={feedbackLoading}
@@ -1292,7 +1292,7 @@ export default function NoteAiAssistant({
                 value={feedbackComment}
                 onChange={handleFeedbackCommentChange}
                 rows={2}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                 placeholder="修正したポイントや気になった点があれば入力してください"
                 disabled={feedbackLoading}
               />
@@ -1313,7 +1313,7 @@ export default function NoteAiAssistant({
               onClick={handleSubmitFeedback}
               className={`rounded-full px-5 py-2 text-xs font-semibold transition ${
                 feedbackRating && !feedbackLoading
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-sky-600 text-white hover:bg-sky-700'
                   : 'bg-slate-200 text-slate-500'
               }`}
               disabled={!feedbackRating || feedbackLoading}
@@ -1357,7 +1357,7 @@ function StructureSuggestionCard({ suggestion, onInsert, copyToClipboard }: Stru
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-600">{suggestion.action.toUpperCase()}</span>
           {blockTypeLabel ? (
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">{blockTypeLabel}</span>
+            <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700">{blockTypeLabel}</span>
           ) : null}
         </div>
       </div>
@@ -1369,7 +1369,7 @@ function StructureSuggestionCard({ suggestion, onInsert, copyToClipboard }: Stru
             <div className="flex gap-2">
               <button
                 type="button"
-                className="text-xs font-semibold text-blue-600 underline"
+                className="text-xs font-semibold text-sky-600 underline"
                 onClick={() => copyToClipboard(suggestion.suggested_text ?? '')}
               >
                 コピー
@@ -1444,7 +1444,7 @@ function RewriteCandidateCard({
       : `${readingSeconds}秒程度`;
 
   const wrapperClass = `rounded-2xl border px-4 py-3 shadow-sm transition ${
-    isSelected ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-200'
+    isSelected ? 'border-sky-400 bg-sky-50' : 'border-slate-200 bg-white hover:border-sky-200'
   }`;
 
   return (
@@ -1459,7 +1459,7 @@ function RewriteCandidateCard({
               </span>
             ) : null}
             {isSelected ? (
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+              <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">
                 選択中
               </span>
             ) : null}
@@ -1487,7 +1487,7 @@ function RewriteCandidateCard({
           <button
             type="button"
             onClick={onPreview}
-            className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700"
+            className="rounded-full bg-sky-600 px-3 py-1 text-xs font-semibold text-white hover:bg-sky-700"
           >
             差分を確認
           </button>
@@ -1506,7 +1506,7 @@ function RewriteCandidateCard({
           disabled={!canApply}
           className={`rounded-xl px-3 py-2 text-xs font-semibold ${
             canApply
-              ? 'border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100'
+              ? 'border border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-100'
               : 'border border-slate-200 bg-slate-100 text-slate-400'
           }`}
         >
@@ -1622,7 +1622,7 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalM
     const baseClass = 'whitespace-pre-wrap font-mono text-xs leading-relaxed px-3 py-1.5 rounded-xl border';
     const addedClass = 'border-emerald-100 bg-emerald-50 text-emerald-700';
     const removedClass = 'border-red-100 bg-red-50 text-red-700';
-    const neutralClass = variant === 'original' ? 'border-slate-200 bg-white text-slate-700' : 'border-blue-100 bg-white text-slate-700';
+    const neutralClass = variant === 'original' ? 'border-slate-200 bg-white text-slate-700' : 'border-sky-100 bg-white text-slate-700';
 
     const className = `${baseClass} ${isAdded ? addedClass : isRemoved ? removedClass : neutralClass}`;
 
@@ -1710,7 +1710,7 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalM
               </div>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-500">提案された文章</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-500">提案された文章</p>
               <div className="mt-2 space-y-1">
                 {revisedLines.length > 0 ? revisedLines.map((line, index) => renderLine(line, index, 'revised')) : (
                   <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">提案がありません。</div>

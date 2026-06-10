@@ -206,7 +206,7 @@ export default function NoteDashboardPage() {
             </button>
             <Link
               href="/note/create"
-              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
             >
               <DocumentPlusIcon className="h-4 w-4" aria-hidden="true" />
               新規コラム作成
@@ -243,7 +243,7 @@ export default function NoteDashboardPage() {
                   onClick={() => setFilter(value)}
                   className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                     filter === value
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-sky-600 text-white'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -257,7 +257,7 @@ export default function NoteDashboardPage() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="タイトル・概要で検索"
-                className="w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:w-64"
+                className="w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 sm:w-64"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function NoteDashboardPage() {
               <p>該当するSwipeコラムがありません。</p>
               <Link
                 href="/note/create"
-                className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
               >
                 <DocumentPlusIcon className="h-4 w-4" aria-hidden="true" />
                 新規コラム作成
@@ -284,7 +284,7 @@ export default function NoteDashboardPage() {
                 return (
                   <div
                     key={note.id}
-                    className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200"
+                    className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-sky-200"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-2">
@@ -299,9 +299,9 @@ export default function NoteDashboardPage() {
                           <span
                             className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                               note.visibility === 'public'
-                                ? 'bg-blue-100 text-blue-700'
+                                ? 'bg-sky-100 text-sky-700'
                                 : note.visibility === 'limited'
-                                  ? 'bg-purple-100 text-purple-700'
+                                  ? 'bg-sky-100 text-sky-700'
                                   : 'bg-slate-100 text-slate-600'
                             }`}
                           >
@@ -312,7 +312,7 @@ export default function NoteDashboardPage() {
                                 : '非公開'}
                           </span>
                           {note.requires_login ? (
-                            <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
+                            <span className="inline-flex items-center rounded-full bg-cyan-100 px-2.5 py-1 text-[11px] font-semibold text-cyan-700">
                               ログイン必須
                             </span>
                           ) : null}
@@ -358,7 +358,7 @@ export default function NoteDashboardPage() {
                                 href={note.share_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="break-all rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] font-semibold text-blue-700 transition hover:bg-blue-100"
+                                className="break-all rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-semibold text-sky-700 transition hover:bg-sky-100"
                               >
                                 {note.share_url}
                               </a>
@@ -372,8 +372,8 @@ export default function NoteDashboardPage() {
                         
                         {/* シェア統計 */}
                         {shareStats[note.id] && shareStats[note.id].total_shares > 0 ? (
-                          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
-                            <span className="text-xs font-semibold text-blue-900">
+                          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-sky-100 bg-sky-50 px-3 py-2">
+                            <span className="text-xs font-semibold text-sky-900">
                               💰 {shareStats[note.id].total_shares}回シェア → {shareStats[note.id].total_reward_points}P獲得
                             </span>
                             {shareStats[note.id].suspicious_shares > 0 ? (
@@ -396,7 +396,7 @@ export default function NoteDashboardPage() {
                         {isPublished && note.visibility !== 'limited' ? (
                           <Link
                             href={`/notes/${note.slug}`}
-                            className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                            className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-700"
                           >
                             <EyeIcon className="h-4 w-4" aria-hidden="true" />
                             公開ページ

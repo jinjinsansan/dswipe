@@ -25,25 +25,22 @@ interface AuthShellProps {
 }
 
 const defaultHero: HeroContent = {
-  eyebrow: 'SWIPE-STYLE LP PLATFORM',
-  title: '情報の鮮度を逃がさない体験をつくる',
+  eyebrow: 'SWIPE LP PLATFORM',
+  title: 'スワイプで、伝わる。つながる。',
   description:
-    'Ｄ－swipeは高速なスワイプ体験とデータドリブンな改善機能で、デジタルコンテンツクリエイターの成長を支えます。',
+    'ノーコード × AI で、情報発信のスワイプ型LPを数分で。公開から改善まで、すべてここで。',
   highlights: [
-    {
-      title: 'AIによる構成アシスト',
-      description: 'ヒーローからFAQまで一貫したストーリーを提案。',
-    },
-    {
-      title: '高品質メディア運用',
-      description: '動画・画像の一元管理と自動最適化でスピーディに掲載。',
-    },
-    {
-      title: '分析ダッシュボード',
-      description: '閲覧データをリアルタイムに把握し次の一手を決定。',
-    },
+    { title: '最短3分でLPを公開' },
+    { title: 'AIが構成を自動提案' },
+    { title: '閲覧・CTAをデータで可視化' },
   ],
 };
+
+const STATS = [
+  { n: '2,400+', l: '公開LP' },
+  { n: '+18%', l: '平均CV改善' },
+  { n: '3分', l: '公開まで' },
+];
 
 export default function AuthShell({
   cardTitle,
@@ -53,107 +50,96 @@ export default function AuthShell({
   children,
 }: AuthShellProps) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black text-slate-50">
-      <div className="pointer-events-none absolute inset-0">
-        <video
-          className="absolute inset-0 h-full w-full object-cover object-center"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        >
-          <source src="/videos/hero-keyboard-2.mp4" type="video/mp4" />
-        </video>
+    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]" style={{ background: 'var(--color-surface-base)' }}>
+      {/* LEFT — navy brand panel */}
+      <div
+        className="relative flex flex-col overflow-hidden px-8 py-10 text-pure-white sm:px-14 sm:py-14"
+        style={{
+          background:
+            'radial-gradient(700px 460px at 25% 10%, rgba(34,211,238,.22), transparent 60%), linear-gradient(160deg, #0b1f3a 0%, #0f2c52 60%, #0b2742 100%)',
+        }}
+      >
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.4em] text-pure-white">
+          <span className="h-2 w-2 rounded-full bg-cyan-400" aria-hidden="true" />
+          Ｄ－swipe
+        </Link>
+
+        <div className="relative z-10 mt-auto">
+          {hero.eyebrow ? (
+            <span className="mb-4 inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-4 py-1 text-[11px] font-semibold tracking-[0.3em] text-cyan-200">
+              {hero.eyebrow}
+            </span>
+          ) : null}
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-[40px]">{hero.title}</h1>
+          <p className="mt-4 max-w-[42ch] text-[15px] leading-[1.8]" style={{ color: '#bcd3ee' }}>
+            {hero.description}
+          </p>
+
+          {hero.highlights?.length ? (
+            <div className="mt-7 hidden flex-col gap-3.5 sm:flex">
+              {hero.highlights.map((item) => (
+                <div key={item.title} className="flex items-start gap-3 text-sm" style={{ color: '#dbe8f7' }}>
+                  <span
+                    className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md"
+                    style={{ background: 'rgba(34,211,238,.16)', color: '#67e8f9' }}
+                  >
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <div>
+                    <p className="font-semibold text-pure-white">{item.title}</p>
+                    {item.description ? (
+                      <p className="mt-0.5 text-xs" style={{ color: '#9fb4d0' }}>
+                        {item.description}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="relative z-10 mt-10 hidden gap-7 border-t pt-6 sm:flex" style={{ borderColor: 'rgba(255,255,255,.12)' }}>
+          {STATS.map(({ n, l }) => (
+            <div key={l}>
+              <div className="text-2xl font-extrabold tracking-tight">{n}</div>
+              <div className="mt-0.5 text-xs" style={{ color: '#9fb4d0' }}>
+                {l}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-40 -right-36 h-[460px] w-[460px] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(6,182,212,.22), transparent 65%)' }}
+        />
       </div>
 
-      <div className="relative z-10 flex min-h-screen flex-col">
-        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-6 backdrop-blur-xl bg-slate-900/70 lg:px-10">
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.4em] text-white">
-            <span className="h-2 w-2 rounded-full bg-cyan-400" aria-hidden="true" />
-            Ｄ－swipe
+      {/* RIGHT — form panel */}
+      <div className="flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[400px]">
+          <div className="mb-7 text-center">
+            <h2 className="text-[28px] font-extrabold tracking-tight" style={{ color: 'var(--color-foreground)' }}>
+              {cardTitle}
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">{cardDescription}</p>
           </div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition hover:text-cyan-300 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:border-cyan-400/50"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+          <div className="space-y-6">{children}</div>
+
+          {helper ? <div className="mt-6 text-center text-sm text-slate-600">{helper}</div> : null}
+
+          <Link href="/" className="mt-5 inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             ホームに戻る
           </Link>
-        </header>
-
-        <main className="flex flex-1 items-center justify-center px-6 pb-16 lg:px-10">
-          <div className="grid w-full max-w-6xl gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,420px)]">
-            <section className="hidden flex-col justify-between rounded-2xl border-2 border-white/20 bg-slate-900/60 p-10 backdrop-blur-xl shadow-2xl lg:flex">
-              <div className="space-y-8">
-                {hero.eyebrow ? (
-                  <span className="inline-flex w-fit rounded-full border-2 border-cyan-400/50 bg-cyan-500/20 px-5 py-2 text-xs font-bold tracking-[0.3em] text-cyan-200">
-                    {hero.eyebrow}
-                  </span>
-                ) : null}
-                <div className="space-y-4">
-                  <h1 className="text-4xl font-black leading-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300 drop-shadow-2xl lg:text-5xl">
-                    {hero.title}
-                  </h1>
-                  <p className="text-base text-white font-semibold lg:text-lg">
-                    {hero.description}
-                  </p>
-                </div>
-              </div>
-
-              {hero.highlights?.length ? (
-                <ul className="space-y-3">
-                  {hero.highlights.map((item) => (
-                    <li key={item.title} className="flex items-start gap-3 rounded-xl border-2 border-blue-200 bg-white p-4 shadow-xl">
-                      <span className="mt-0.5 inline-flex h-2 w-2 shrink-0 rounded-full bg-cyan-500" aria-hidden="true" />
-                      <div>
-                        <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                        {item.description ? (
-                          <p className="mt-1 text-xs text-slate-600 leading-tight">{item.description}</p>
-                        ) : null}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-
-              {hero.footerLink ? (
-                <Link
-                  href={hero.footerLink.href}
-                  className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-200 transition hover:text-white"
-                >
-                  {hero.footerLink.label}
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-              ) : null}
-            </section>
-
-            <section className="relative">
-              <div className="absolute -top-40 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-cyan-500/20 blur-[120px]" />
-              <div className="relative overflow-hidden rounded-2xl border-2 border-white/20 bg-white shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
-                <div className="relative space-y-8 px-8 py-10 sm:px-10">
-                  <div className="space-y-3 text-center">
-                    <div className="mx-auto h-14 w-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 shadow-xl flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-3xl font-black text-slate-900">{cardTitle}</h2>
-                    <p className="text-sm text-slate-600 font-medium">{cardDescription}</p>
-                  </div>
-                  <div className="space-y-6">{children}</div>
-                  {helper ? <div className="text-center text-sm text-slate-700 font-medium">{helper}</div> : null}
-                </div>
-              </div>
-            </section>
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   );

@@ -128,7 +128,7 @@ export default function NotePurchaseSuccessClient({ basePath = '' }: NotePurchas
   }, [router, resolvedSlug, basePath]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
       <StickySiteHeader showDashboardLink />
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-2xl items-center justify-center px-4 py-10">
         <div className="w-full">
@@ -158,7 +158,7 @@ export default function NotePurchaseSuccessClient({ basePath = '' }: NotePurchas
                 </div>
               ) : null}
               {checking ? (
-                <p className="mt-2 text-xs text-blue-600">{t('checkingStatus')}</p>
+                <p className="mt-2 text-xs text-sky-600">{t('checkingStatus')}</p>
               ) : null}
               {notificationSent ? (
                 <p className="mt-2 text-xs text-emerald-600">{t('notificationSent')}</p>
@@ -176,7 +176,7 @@ export default function NotePurchaseSuccessClient({ basePath = '' }: NotePurchas
               {resolvedSlug ? (
                 <Link
                   href={withBasePath(basePath, `/notes/${resolvedSlug}`)}
-                  className="block w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="block w-full rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
                 >
                   {t('goToArticle')}
                 </Link>

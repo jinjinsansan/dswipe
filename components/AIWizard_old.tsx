@@ -226,7 +226,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <div
                 key={s}
                 className={`h-1 flex-1 rounded-full transition-all ${
-                  s <= step ? 'bg-blue-500/80' : 'bg-gray-800'
+                  s <= step ? 'bg-sky-500/80' : 'bg-gray-800'
                 }`}
               />
             ))}
@@ -248,11 +248,11 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   onClick={() => handleOptionClick(option.value)}
                   className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
                     formData[currentQuestion.field as keyof typeof formData] === option.value
-                      ? 'border-blue-500/50 bg-blue-500/5'
+                      ? 'border-sky-500/50 bg-sky-500/5'
                       : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
@@ -271,13 +271,13 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
             <input
               value={formData.productName}
               onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-              className="mb-3 w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+              className="mb-3 w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
               placeholder="例：AIローンチ加速プログラム"
             />
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full h-28 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
+              className="w-full h-28 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
               placeholder="例：30代女性向けのアンチエイジング美容液。天然成分100%で肌に優しく、シワやたるみに効果的です。"
             />
             <p className="text-xs text-gray-500 mb-3">選択テーマ: <span className="text-gray-300">{themeKey}</span></p>
@@ -292,7 +292,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   onClick={handleGenerateLP}
                   disabled={isLoading}
-                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-sky-600/90 text-white text-sm font-light rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
@@ -314,7 +314,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     </div>
                     <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
+                        className="h-full bg-sky-500/80 transition-all duration-1000 ease-linear"
                         style={{ width: `${progress}%` }}
                       />
                     </div>

@@ -234,7 +234,7 @@ export default function SalonManagementCenter() {
             <button
               type="button"
               onClick={handleRefresh}
-              className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100"
+              className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
             >
               <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
               最新情報に更新
@@ -255,7 +255,7 @@ export default function SalonManagementCenter() {
           </div>
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-700"
           >
             検索
           </button>
@@ -271,8 +271,8 @@ export default function SalonManagementCenter() {
                 className={cn(
                   'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
                   statusFilter === option.value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600',
+                    ? 'border-sky-500 bg-sky-50 text-sky-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-sky-300 hover:text-sky-600',
                 )}
               >
                 {option.label}
@@ -299,7 +299,7 @@ export default function SalonManagementCenter() {
               type="checkbox"
               checked={onlyFlagged}
               onChange={(event) => setOnlyFlagged(event.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
             />
             審査待ち/停止のみ
           </label>
@@ -351,7 +351,7 @@ export default function SalonManagementCenter() {
                     return (
                       <tr
                         key={salon.id}
-                        className={cn('cursor-pointer transition-colors hover:bg-blue-50', isSelected && 'bg-blue-50')}
+                        className={cn('cursor-pointer transition-colors hover:bg-sky-50', isSelected && 'bg-sky-50')}
                         onClick={() => handleSelectSalon(salon)}
                       >
                         <td className="px-4 py-3">
@@ -417,7 +417,7 @@ export default function SalonManagementCenter() {
                       <span className="rounded-full bg-gray-100 px-2 py-0.5">
                         {SALON_STATUS_LABELS[salonDetail.status] ?? salonDetail.status}
                       </span>
-                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700">
+                      <span className="rounded-full bg-sky-50 px-2 py-0.5 text-sky-700">
                         会員 {formatNumber(salonDetail.total_members)}
                       </span>
                     </div>
@@ -457,7 +457,7 @@ export default function SalonManagementCenter() {
 
                   <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                     <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <UserGroupIcon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                      <UserGroupIcon className="h-5 w-5 text-sky-600" aria-hidden="true" />
                       運営者情報
                     </div>
                     <div className="text-xs text-gray-500">
@@ -467,7 +467,7 @@ export default function SalonManagementCenter() {
 
                   <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
                     <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <ShieldCheckIcon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                      <ShieldCheckIcon className="h-5 w-5 text-sky-600" aria-hidden="true" />
                       ステータス更新
                     </div>
                     <div className="space-y-3">
@@ -476,7 +476,7 @@ export default function SalonManagementCenter() {
                         <select
                           value={statusFormStatus}
                           onChange={(event) => setStatusFormStatus(event.target.value as StatusFilter)}
-                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                         >
                           {(['pending', 'approved', 'suspended', 'rejected'] as StatusFilter[]).map((value) => (
                             <option key={value} value={value}>
@@ -491,7 +491,7 @@ export default function SalonManagementCenter() {
                           value={statusFormNotes}
                           onChange={(event) => setStatusFormNotes(event.target.value)}
                           rows={3}
-                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                           placeholder="審査メモや運用注意点"
                         />
                       </div>
@@ -501,7 +501,7 @@ export default function SalonManagementCenter() {
                           type="text"
                           value={statusFormReason}
                           onChange={(event) => setStatusFormReason(event.target.value)}
-                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:outline-none"
                           placeholder="審査理由や注意事項"
                         />
                       </div>
@@ -510,7 +510,7 @@ export default function SalonManagementCenter() {
                           type="button"
                           onClick={handleUpdateStatus}
                           disabled={statusUpdating}
-                          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <PencilSquareIcon className="h-4 w-4" aria-hidden="true" />
                           更新する
@@ -535,7 +535,7 @@ export default function SalonManagementCenter() {
                         'rounded-lg px-3 py-2 text-xs',
                         actionError
                           ? 'border border-red-200 bg-red-50 text-red-600'
-                          : 'border border-blue-200 bg-blue-50 text-blue-700',
+                          : 'border border-sky-200 bg-sky-50 text-sky-700',
                       )}
                     >
                       {actionError ?? actionMessage}
@@ -544,7 +544,7 @@ export default function SalonManagementCenter() {
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <UserGroupIcon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                      <UserGroupIcon className="h-5 w-5 text-sky-600" aria-hidden="true" />
                       会員一覧 ({formatNumber(salonDetail.members.length)})
                     </div>
                     <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
@@ -606,7 +606,7 @@ export default function SalonManagementCenter() {
 
                   <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                     <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <DocumentMagnifyingGlassIcon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                      <DocumentMagnifyingGlassIcon className="h-5 w-5 text-sky-600" aria-hidden="true" />
                       アクティビティ概要
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-xs text-gray-600">

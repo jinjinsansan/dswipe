@@ -18,9 +18,12 @@ import {
   ArrowTrendingUpIcon,
   ChartBarIcon,
   CurrencyYenIcon,
+  CursorArrowRaysIcon,
   DocumentIcon,
   DocumentTextIcon,
+  EyeIcon,
   SparklesIcon,
+  Square2StackIcon,
   TagIcon,
 } from '@heroicons/react/24/outline';
 
@@ -683,16 +686,71 @@ export default function DashboardPage() {
     return <PageLoader />;
   }
 
+  const totalViews = lps.reduce((sum, lp) => sum + (Number(lp.total_views) || 0), 0);
+  const totalCtaClicks = lps.reduce((sum, lp) => sum + (Number(lp.total_cta_clicks) || 0), 0);
+  const ctaRateLabel = totalViews > 0 ? `${((totalCtaClicks / totalViews) * 100).toFixed(1)}%` : '—';
+  const publishedLpCount = lps.filter((lp) => lp.isPublished).length;
+
   return (
     <DashboardLayout pageTitle="ダッシュボード">
       <div className="p-3 sm:p-6">
+          {/* KPI strip */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {[
+              {
+                icon: EyeIcon,
+                soft: false,
+                caption: '総閲覧数',
+                value: totalViews.toLocaleString(),
+                sub: '全LP合計',
+              },
+              {
+                icon: CursorArrowRaysIcon,
+                soft: true,
+                caption: 'CTAクリック',
+                value: totalCtaClicks.toLocaleString(),
+                sub: `クリック率 ${ctaRateLabel}`,
+              },
+              {
+                icon: Square2StackIcon,
+                soft: false,
+                caption: '公開中のLP',
+                value: `${publishedLpCount} / ${lps.length}本`,
+                sub: `下書き ${lps.length - publishedLpCount}本`,
+              },
+              {
+                icon: DocumentTextIcon,
+                soft: true,
+                caption: 'Swipeコラム',
+                value: `${noteSummary.total_notes}本`,
+                sub: totalNoteSalesLabel,
+              },
+            ].map((kpi) => (
+              <div key={kpi.caption} className="bg-white rounded-2xl border border-[#e2ebf6] shadow-sm p-3.5 sm:p-4">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`flex h-9 w-9 items-center justify-center rounded-[10px] flex-shrink-0 ${
+                      kpi.soft ? 'bg-[#e9f6fe] text-sky-600' : 'text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]'
+                    }`}
+                    style={kpi.soft ? undefined : { background: 'linear-gradient(135deg,#0ea5e9,#06b6d4)' }}
+                  >
+                    <kpi.icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-500">{kpi.caption}</span>
+                </div>
+                <div className="mt-2.5 text-xl sm:text-2xl font-extrabold tracking-tight text-[#0b1f3a] tabular-nums truncate">{kpi.value}</div>
+                <div className="mt-1 text-[11px] sm:text-[11.5px] text-slate-500 truncate">{kpi.sub}</div>
+              </div>
+            ))}
+          </div>
+
               {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">最近編集したLP</h2>
+              <h2 className="text-lg font-bold text-[#0b1f3a]">最近編集したLP</h2>
               <Link
                 href="/lp/create"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold self-start sm:self-auto"
+                className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-semibold self-start sm:self-auto"
               >
                 + 新規LP作成
               </Link>
@@ -707,7 +765,7 @@ export default function DashboardPage() {
                 <p className="text-slate-500 text-sm font-medium mb-3 sm:mb-4">最初のLPを作成しましょう</p>
                 <Link
                   href="/lp/create"
-                  className="inline-block px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-semibold"
+                  className="inline-block px-5 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-semibold"
                 >
                   新規LP作成
                 </Link>
@@ -727,10 +785,10 @@ export default function DashboardPage() {
                   return (
                   <div
                     key={lp.id}
-                    className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-blue-200 transition-all flex flex-col shadow-sm"
+                    className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-sky-200 transition-all flex flex-col shadow-sm"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-[#0b1f3a] to-[#0e7490] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {heroMedia?.type === 'image' ? (
                         <Image
                           src={heroMedia.url}
@@ -778,20 +836,20 @@ export default function DashboardPage() {
                       <div className="grid grid-cols-4 gap-1 mb-2">
                         <Link
                           href={`/lp/${lp.id}/edit`}
-                          className="px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded hover:bg-slate-300 transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           編集
                         </Link>
                         <Link
                           href={`/lp/${lp.id}/analytics-simple`}
-                          className="px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded hover:bg-slate-300 transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           分析
                         </Link>
                         <button
                           onClick={() => handleDuplicateLP(lp.id)}
                           disabled={duplicatingId === lp.id}
-                          className={`px-1 sm:px-2 py-1 bg-slate-200 text-slate-900 rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-slate-300'}`}
+                          className={`px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#d3f0fd]'}`}
                         >
                           {duplicatingId === lp.id ? '複製中…' : '複製'}
                         </button>
@@ -842,7 +900,7 @@ export default function DashboardPage() {
                                     navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
                                     alert('URLをコピーしました');
                                   }}
-                                  className="px-1.5 py-0.5 bg-blue-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-blue-700 transition-colors whitespace-nowrap font-semibold"
+                                  className="px-1.5 py-0.5 bg-sky-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-sky-700 transition-colors whitespace-nowrap font-semibold"
                                 >
                                   コピー
                                 </button>
@@ -967,7 +1025,7 @@ export default function DashboardPage() {
                     topNote.slug ? (
                       <Link
                         href={`/notes/${topNote.slug}`}
-                        className="text-slate-900 text-xs sm:text-sm font-semibold truncate text-blue-600 hover:text-blue-700"
+                        className="text-slate-900 text-xs sm:text-sm font-semibold truncate text-sky-600 hover:text-sky-700"
                       >
                         {topNote.title}
                       </Link>
@@ -1046,12 +1104,12 @@ export default function DashboardPage() {
                       key={announcement.id}
                       type="button"
                       onClick={() => setActiveAnnouncement(announcement)}
-                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left transition-colors hover:border-blue-300 hover:bg-blue-50"
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left transition-colors hover:border-sky-300 hover:bg-sky-50"
                     >
                       <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span className="font-semibold tracking-wide text-slate-700">{formatAnnouncementDate(announcement.published_at)}</span>
                         {announcement.highlight && (
-                          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-600">
+                          <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-600">
                             重点トピック
                           </span>
                         )}

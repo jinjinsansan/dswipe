@@ -152,10 +152,10 @@ export default function CreatorFollowButton({
   const buttonClasses = useMemo(
     () =>
       cn(
-        'inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
         buttonVariant === 'primary'
-          ? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-          : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700',
+          ? 'border-sky-600 bg-sky-600 text-white hover:bg-sky-700'
+          : 'border-slate-300 bg-white text-slate-700 hover:border-sky-300 hover:text-sky-700',
         compact && 'px-3 py-1 text-xs'
       ),
     [buttonVariant, compact]
@@ -191,7 +191,7 @@ export default function CreatorFollowButton({
         <label className={cn('inline-flex items-center gap-2 text-xs text-slate-600', compact && 'text-[11px]')}>
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
             checked={status.notify_email}
             onChange={handleToggleEmail}
             disabled={pending}

@@ -340,11 +340,11 @@ function SubscriptionPageContent() {
         )}
 
         {sellerUsername && (
-          <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-700">
+          <div className="mb-6 rounded-2xl border border-sky-100 bg-sky-50 px-5 py-4 text-sm text-sky-700">
             <p className="font-medium">
               {sellerNoticeT('title', { seller: sellerUsername })}
             </p>
-            <p className="mt-1 text-xs text-blue-600">
+            <p className="mt-1 text-xs text-sky-600">
               {sellerNoticeT('description')}
             </p>
           </div>
@@ -389,7 +389,7 @@ function SubscriptionPageContent() {
                     type="button"
                     onClick={() => handleSubscribe(plan.plan_key)}
                     disabled={isProcessing}
-                    className={`mt-6 w-full rounded-xl border border-blue-500 bg-blue-500 font-semibold text-white shadow-sm transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 ${
+                    className={`mt-6 w-full rounded-xl border border-sky-500 bg-sky-500 font-semibold text-white shadow-sm transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60 ${
                       orderedPlans.length === 1 ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
                     }`}
                   >

@@ -233,8 +233,8 @@ export default function AdminPayoutsPage() {
               <button
                 type="button"
                 onClick={() => fetchDetail(item.id)}
-                className={`flex w-full flex-col gap-2 rounded-2xl border px-4 py-3 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-50/60 ${
-                  isActive ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-white"
+                className={`flex w-full flex-col gap-2 rounded-2xl border px-4 py-3 text-left shadow-sm transition hover:border-sky-400 hover:bg-sky-50/60 ${
+                  isActive ? "border-sky-500 bg-sky-50" : "border-slate-200 bg-white"
                 }`}
               >
                 <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
@@ -327,7 +327,7 @@ export default function AdminPayoutsPage() {
     <AdminShell pageTitle="支払い管理" pageSubtitle="one.lat決済後のUSDT送金キューを管理します">
       <div className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
             <BanknotesIcon className="h-4 w-4" aria-hidden="true" />
             合計 {total.toLocaleString()} 件
           </span>
@@ -351,7 +351,7 @@ export default function AdminPayoutsPage() {
               value={filters.seller_query ?? ""}
               onChange={(event) => setFilters((prev) => ({ ...prev, seller_query: event.target.value || undefined }))}
               placeholder="販売者ID / メール / ユーザー名"
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 shadow-inner focus:border-blue-400 focus:outline-none"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 shadow-inner focus:border-sky-400 focus:outline-none"
             />
             <button
               type="button"
@@ -365,7 +365,7 @@ export default function AdminPayoutsPage() {
               type="button"
               onClick={handleGenerate}
               disabled={generateLoading}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+              className="inline-flex items-center gap-2 rounded-xl bg-sky-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
             >
               <ClipboardDocumentCheckIcon className="h-4 w-4" aria-hidden="true" />
               {generateLoading ? "生成中…" : "支払い対象を生成"}
@@ -410,7 +410,7 @@ export default function AdminPayoutsPage() {
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                     <p className="font-semibold text-slate-500">ステータス</p>
-                    <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-blue-600">{selectedEntry.status}</p>
+                    <p className="mt-1 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-600">{selectedEntry.status}</p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                     <p className="font-semibold text-slate-500">支払額</p>
@@ -430,7 +430,7 @@ export default function AdminPayoutsPage() {
                       <select
                         value={statusInput}
                         onChange={(event) => setStatusInput(event.target.value)}
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none"
                       >
                         {STATUS_OPTIONS.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -442,13 +442,13 @@ export default function AdminPayoutsPage() {
                         value={statusNote}
                         onChange={(event) => setStatusNote(event.target.value)}
                         placeholder="メモ (任意)"
-                        className="min-h-[72px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                        className="min-h-[72px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none"
                       />
                       <button
                         type="button"
                         onClick={handleUpdateStatus}
                         disabled={statusUpdateLoading}
-                        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                        className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
                       >
                         {statusUpdateLoading ? "更新中…" : "ステータスを更新"}
                       </button>
@@ -462,13 +462,13 @@ export default function AdminPayoutsPage() {
                         value={txHash}
                         onChange={(event) => setTxHash(event.target.value.trim())}
                         placeholder="トランザクションハッシュ"
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none"
                       />
                       <input
                         value={txMemo}
                         onChange={(event) => setTxMemo(event.target.value)}
                         placeholder="メモ (任意)"
-                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -487,7 +487,7 @@ export default function AdminPayoutsPage() {
                       value={eventBody}
                       onChange={(event) => setEventBody(event.target.value)}
                       placeholder="送金メモや注意事項を残せます"
-                      className="min-h-[72px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
+                      className="min-h-[72px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none"
                     />
                     <button
                       type="button"

@@ -74,7 +74,7 @@ export default function SimpleAnalyticsPage() {
           <pre className="bg-slate-50 p-4 rounded-lg text-red-700 text-sm border border-red-200">{error}</pre>
           <Link 
             href="/dashboard"
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 text-sm font-medium"
           >
             <ArrowLeftIcon className="h-4 w-4" />
             ダッシュボードに戻る
@@ -125,7 +125,7 @@ export default function SimpleAnalyticsPage() {
 
           <Link
             href={`/lp/${lpId}/analytics-simple`}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-white bg-blue-600 transition-colors text-sm font-semibold"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-white bg-sky-600 transition-colors text-sm font-semibold"
           >
             <PresentationChartLineIcon className="h-5 w-5" />
             LP分析
@@ -143,7 +143,7 @@ export default function SimpleAnalyticsPage() {
         {/* User Info */}
         <div className="p-4 border-t border-slate-200">
           <div className="flex items-center gap-2 mb-3">
-            <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+            <div className="h-9 w-9 rounded-full bg-sky-600 flex items-center justify-center text-white text-sm font-semibold">
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="min-w-0 flex-1">
@@ -202,7 +202,7 @@ export default function SimpleAnalyticsPage() {
             </Link>
             <Link
               href={`/lp/${lpId}/analytics-simple`}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 bg-blue-600 text-white text-sm font-semibold"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 bg-sky-600 text-white text-sm font-semibold"
             >
               <PresentationChartLineIcon className="h-5 w-5" />
               LP分析
@@ -223,8 +223,8 @@ export default function SimpleAnalyticsPage() {
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                    <EyeIcon className="h-6 w-6 text-blue-600" />
+                  <div className="h-10 w-10 rounded-lg bg-sky-50 flex items-center justify-center">
+                    <EyeIcon className="h-6 w-6 text-sky-600" />
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-slate-900 mb-1">
@@ -236,8 +236,8 @@ export default function SimpleAnalyticsPage() {
 
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <UsersIcon className="h-6 w-6 text-purple-600" />
+                  <div className="h-10 w-10 rounded-lg bg-sky-50 flex items-center justify-center">
+                    <UsersIcon className="h-6 w-6 text-sky-600" />
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-slate-900 mb-1">
@@ -277,8 +277,8 @@ export default function SimpleAnalyticsPage() {
             {/* Step Funnel */}
             <section className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
-                <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <PresentationChartLineIcon className="h-6 w-6 text-blue-600" />
+                <div className="h-10 w-10 rounded-lg bg-sky-50 flex items-center justify-center">
+                  <PresentationChartLineIcon className="h-6 w-6 text-sky-600" />
                 </div>
                 <h2 className="text-lg font-semibold text-slate-900">ステップファネル分析</h2>
               </div>
@@ -294,20 +294,20 @@ export default function SimpleAnalyticsPage() {
                       <div key={step.step_id || index} className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-3">
-                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold">
+                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white text-xs font-bold">
                               {step.step_order + 1}
                             </span>
                             <span className="font-medium text-slate-900">ステップ {step.step_order + 1}</span>
                           </div>
                           <div className="flex items-center gap-4 text-xs">
-                            <span className="text-slate-500">閲覧: <span className="text-blue-600 font-semibold">{step.step_views}</span></span>
+                            <span className="text-slate-500">閲覧: <span className="text-sky-600 font-semibold">{step.step_views}</span></span>
                             <span className="text-slate-500">離脱: <span className="text-orange-600 font-semibold">{step.step_exits}</span></span>
                             <span className="text-emerald-600 font-semibold">{convRate.toFixed(1)}%</span>
                           </div>
                         </div>
                         <div className="relative h-8 bg-slate-100 border border-slate-200 rounded-lg overflow-hidden">
                           <div
-                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-blue-400 flex items-center justify-end px-3 transition-all duration-500"
+                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-600 to-sky-400 flex items-center justify-end px-3 transition-all duration-500"
                             style={{ width: `${width}%` }}
                           >
                             {width > 15 && (
@@ -366,14 +366,14 @@ export default function SimpleAnalyticsPage() {
             </section>
 
             {/* Public URL */}
-            <section className="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+            <section className="bg-sky-50 border border-sky-200 rounded-xl p-6 shadow-sm">
               <h3 className="text-base font-semibold text-slate-900 mb-4">公開URL</h3>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   readOnly
                   value={publicUrl}
-                  className="flex-1 px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
                 <div className="flex gap-3">
                   <button
@@ -381,7 +381,7 @@ export default function SimpleAnalyticsPage() {
                       navigator.clipboard.writeText(publicUrl);
                       alert('URLをコピーしました');
                     }}
-                    className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
+                    className="flex-1 sm:flex-none px-5 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 text-sm font-medium transition-colors"
                   >
                     コピー
                   </button>

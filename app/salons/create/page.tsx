@@ -348,7 +348,7 @@ export default function SalonCreatePage() {
                         checked={form.allow_point_subscription}
                         onChange={(event) => handleChange("allow_point_subscription", event.target.checked)}
                         disabled={form.introductory_offer_enabled}
-                        className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                       />
                       {t("toggles.enable")}
                     </label>

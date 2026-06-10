@@ -252,15 +252,15 @@ export default function ShareManagementPage() {
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">今日</p>
-                    <p className="mt-2 text-2xl font-bold text-blue-600">{stats?.today_shares.toLocaleString() || 0}</p>
+                    <p className="mt-2 text-2xl font-bold text-sky-600">{stats?.today_shares.toLocaleString() || 0}</p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">今週</p>
-                    <p className="mt-2 text-2xl font-bold text-indigo-600">{stats?.this_week_shares.toLocaleString() || 0}</p>
+                    <p className="mt-2 text-2xl font-bold text-sky-600">{stats?.this_week_shares.toLocaleString() || 0}</p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">今月</p>
-                    <p className="mt-2 text-2xl font-bold text-purple-600">{stats?.this_month_shares.toLocaleString() || 0}</p>
+                    <p className="mt-2 text-2xl font-bold text-cyan-600">{stats?.this_month_shares.toLocaleString() || 0}</p>
                   </div>
                 </div>
 
@@ -290,7 +290,7 @@ export default function ShareManagementPage() {
                             <tr key={creator.user_id} className="hover:bg-slate-50">
                               <td className="py-3 font-semibold text-slate-900">{creator.username}</td>
                               <td className="py-3 text-slate-600">{creator.email}</td>
-                              <td className="py-3 text-right font-semibold text-blue-600">{creator.total_shares.toLocaleString()}</td>
+                              <td className="py-3 text-right font-semibold text-sky-600">{creator.total_shares.toLocaleString()}</td>
                               <td className="py-3 text-right font-semibold text-emerald-600">{creator.total_reward_points.toLocaleString()}P</td>
                             </tr>
                           ))
@@ -326,7 +326,7 @@ export default function ShareManagementPage() {
                             <tr key={note.note_id} className="hover:bg-slate-50">
                               <td className="py-3 font-semibold text-slate-900">{note.title}</td>
                               <td className="py-3 text-slate-600">@{note.author_username}</td>
-                              <td className="py-3 text-right font-semibold text-blue-600">{note.share_count.toLocaleString()}</td>
+                              <td className="py-3 text-right font-semibold text-sky-600">{note.share_count.toLocaleString()}</td>
                               <td className="py-3 text-right font-semibold text-emerald-600">{note.total_reward_points.toLocaleString()}P</td>
                             </tr>
                           ))
@@ -445,7 +445,7 @@ export default function ShareManagementPage() {
                             ? 'border-red-200 bg-red-50'
                             : alert.severity === 'medium'
                             ? 'border-amber-200 bg-amber-50'
-                            : 'border-blue-200 bg-blue-50'
+                            : 'border-sky-200 bg-sky-50'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -457,7 +457,7 @@ export default function ShareManagementPage() {
                                     ? 'bg-red-600 text-white'
                                     : alert.severity === 'medium'
                                     ? 'bg-amber-600 text-white'
-                                    : 'bg-blue-600 text-white'
+                                    : 'bg-sky-600 text-white'
                                 }`}
                               >
                                 {alert.severity.toUpperCase()}
@@ -510,13 +510,13 @@ export default function ShareManagementPage() {
                           max="1000"
                           value={newRate}
                           onChange={(e) => setNewRate(e.target.value)}
-                          className="flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          className="flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                           placeholder="例: 5"
                         />
                         <button
                           onClick={handleUpdateRewardRate}
                           disabled={savingRate}
-                          className="rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                          className="rounded-lg bg-sky-600 px-6 py-2 font-semibold text-white hover:bg-sky-700 disabled:opacity-50"
                         >
                           {savingRate ? '更新中...' : '更新'}
                         </button>

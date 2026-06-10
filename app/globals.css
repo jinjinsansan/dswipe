@@ -1,10 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --color-brand-primary: #6366f1;
-  --color-brand-accent: #ec4899;
-  --color-brand-secondary: #38bdf8;
+  /* Momentum brand: cyan/sky on navy chrome */
+  --color-brand-primary: #0284c7;
+  --color-brand-accent: #06b6d4;
+  --color-brand-secondary: #0ea5e9;
   --color-brand-warm: #f97316;
+  /* Momentum navy chrome tokens */
+  --navy-900: #0b1f3a;
+  --navy-800: #122c4d;
+  --navy-700: #1b3a61;
+  --on-navy: #eaf2fb;
+  --on-navy-muted: #9fb4d0;
+  --brand-cyan: #22d3ee;
+  --brand-cyan-soft: #7fd6f0;
   --color-surface-base: #f8fafc;
   --color-surface-tint: #ffffff;
   --color-surface-alt: #e2e8f0;
@@ -317,7 +326,16 @@ body {
   .bg-red-500,
   .bg-orange-500,
   .bg-amber-500,
-  .bg-fuchsia-500 {
+  .bg-fuchsia-500,
+  /* Momentum: the blue→sky sweep moved buttons off the compensated blue-*
+     classes, so .text-white (remapped to dark above) needs re-whitening on
+     sky/cyan solids and brand gradients too. */
+  .bg-sky-500,
+  .bg-sky-600,
+  .bg-sky-700,
+  .bg-cyan-500,
+  .bg-cyan-600,
+  [class*="bg-gradient-"].text-white {
     color: #ffffff !important;
   }
 

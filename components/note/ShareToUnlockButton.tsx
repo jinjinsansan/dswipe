@@ -207,14 +207,14 @@ export default function ShareToUnlockButton({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 via-blue-50 to-indigo-50 p-5 sm:p-6">
+      <div className="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-50 to-cyan-50 p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 sm:mx-0 sm:h-12 sm:w-12">
-            <ShareIcon className="h-5 w-5 text-blue-600 sm:h-6 sm:w-6" />
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 sm:mx-0 sm:h-12 sm:w-12">
+            <ShareIcon className="h-5 w-5 text-sky-600 sm:h-6 sm:w-6" />
           </div>
-          <div className="flex-1 space-y-3 text-blue-800">
+          <div className="flex-1 space-y-3 text-sky-800">
             <div className="space-y-2">
-              <h4 className="text-base font-semibold text-blue-900 sm:text-lg">{t('shareHeading')}</h4>
+              <h4 className="text-base font-semibold text-sky-900 sm:text-lg">{t('shareHeading')}</h4>
               <p className="text-sm leading-relaxed sm:text-base">
                 {t('shareDescription', {
                   username: officialXUsername ?? t('defaultUsername'),
@@ -222,7 +222,7 @@ export default function ShareToUnlockButton({
                 })}
               </p>
             </div>
-            <div className="flex flex-col gap-2 text-xs text-blue-600 sm:flex-row sm:items-center sm:text-sm">
+            <div className="flex flex-col gap-2 text-xs text-sky-600 sm:flex-row sm:items-center sm:text-sm">
               <div className="flex items-center gap-2">
                 <SparklesIcon className="h-4 w-4" />
                 <span>{t('shareHintPrimary')}</span>
@@ -232,12 +232,12 @@ export default function ShareToUnlockButton({
               )}
             </div>
             {officialUrl ? (
-              <div className="max-w-full overflow-hidden rounded-lg border border-blue-100 bg-white/70 text-xs sm:text-sm">
+              <div className="max-w-full overflow-hidden rounded-lg border border-sky-100 bg-white/70 text-xs sm:text-sm">
                 <a
                   href={officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block truncate px-3 py-2 font-semibold text-blue-600 underline underline-offset-2 hover:text-blue-700"
+                  className="block truncate px-3 py-2 font-semibold text-sky-600 underline underline-offset-2 hover:text-sky-700"
                 >
                   {t('viewOfficialPost', { url: officialUrl })}
                 </a>
@@ -255,7 +255,7 @@ export default function ShareToUnlockButton({
           <button
             onClick={handleShare}
             disabled={loading || !canRetweet}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
+            className="w-full rounded-lg bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -270,7 +270,7 @@ export default function ShareToUnlockButton({
             )}
           </button>
           {!isAuthenticated && (
-            <p className="text-center text-xs text-blue-600 sm:text-sm">
+            <p className="text-center text-xs text-sky-600 sm:text-sm">
               {t('connectHint')}
             </p>
           )}

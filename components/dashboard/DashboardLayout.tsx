@@ -181,47 +181,47 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col sm:flex-row">
       {/* Sidebar - Hidden on Mobile */}
-      <aside className="hidden sm:flex w-52 bg-white/90 backdrop-blur-sm flex-col flex-shrink-0 border-r border-slate-200/80">
-        <div className="px-4 h-20 border-b border-slate-200 flex items-center">
+      <aside className="hidden sm:flex w-52 bg-[var(--navy-900)] flex-col flex-shrink-0 border-r border-[var(--navy-800)]">
+        <div className="px-4 h-20 border-b border-[var(--navy-800)] flex items-center">
           <Link href={isAuthenticated ? "/dashboard" : "/"} className="block">
-            <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
+            <DSwipeLogo size="large" showFullName={true} textColor="text-pure-white" />
           </Link>
         </div>
 
         <nav className="flex-1 p-3 overflow-y-auto">
           {!isAuthenticated ? (
             <div className="flex flex-col gap-3 p-3">
-              <p className="text-xs text-slate-500 mb-2">{layoutT('guest.prompt')}</p>
+              <p className="text-xs text-[var(--on-navy-muted)] mb-2">{layoutT('guest.prompt')}</p>
               <Link
                 href="/login"
-                className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold text-center hover:bg-blue-700 transition-colors"
+                className="w-full px-4 py-2.5 bg-sky-600 text-pure-white rounded-lg text-sm font-semibold text-center hover:bg-sky-700 transition-colors"
               >
                 {layoutT('guest.login')}
               </Link>
               <Link
                 href="/register"
-                className="w-full px-4 py-2.5 bg-white border-2 border-blue-600 text-blue-600 rounded-lg text-sm font-semibold text-center hover:bg-blue-50 transition-colors"
+                className="w-full px-4 py-2.5 bg-transparent border-2 border-cyan-400/70 text-cyan-200 rounded-lg text-sm font-semibold text-center hover:bg-white/5 transition-colors"
               >
                 {layoutT('guest.register')}
               </Link>
-              <div className="mt-4 pt-4 border-t border-slate-200">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400 mb-3 px-2">
+              <div className="mt-4 pt-4 border-t border-[var(--navy-800)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--on-navy-muted)] mb-3 px-2">
                   {layoutT('guest.explore')}
                 </p>
                 <div className="space-y-1">
-                  <Link href="/products" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                  <Link href="/products" className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-white rounded transition-colors">
                     {navT('links.products')}
                   </Link>
-                  <Link href="/notes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                  <Link href="/notes" className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-white rounded transition-colors">
                     {navT('links.notes')}
                   </Link>
-                  <Link href="/terms" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                  <Link href="/terms" className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-white rounded transition-colors">
                     {navT('links.terms')}
                   </Link>
-                  <Link href="/tokusho" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                  <Link href="/tokusho" className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-white rounded transition-colors">
                     {navT('links.tokusho')}
                   </Link>
-                  <Link href="/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded transition-colors">
+                  <Link href="/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-white rounded transition-colors">
                     {navT('links.privacy')}
                   </Link>
                 </div>
@@ -237,13 +237,13 @@ export default function DashboardLayout({
                     <button
                       type="button"
                       onClick={() => toggleGroup(group.key)}
-                      className={`w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass} transition-colors hover:bg-slate-100/60`}
+                      className={`w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] ${meta.headingClass} transition-colors hover:bg-white/[0.06]`}
                     >
                       <span>{meta.label}</span>
                       {isExpanded ? (
-                        <ChevronUpIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                        <ChevronUpIcon className="h-4 w-4 text-[var(--on-navy-muted)]" aria-hidden="true" />
                       ) : (
-                        <ChevronDownIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                        <ChevronDownIcon className="h-4 w-4 text-[var(--on-navy-muted)]" aria-hidden="true" />
                       )}
                     </button>
                     <div className={`${isExpanded ? 'space-y-1' : 'space-y-1 hidden'}`}>
@@ -283,9 +283,9 @@ export default function DashboardLayout({
         </nav>
 
         {isAuthenticated && user && (
-        <div className="p-3 border-t border-slate-200">
+        <div className="p-3 border-t border-[var(--navy-800)]">
           <div className="flex items-center space-x-2 mb-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white text-sm">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] flex items-center justify-center text-white text-sm">
               {user?.profile_image_url ? (
                 <img src={user.profile_image_url} alt="ユーザーアイコン" className="w-full h-full object-cover" />
               ) : (
@@ -293,12 +293,12 @@ export default function DashboardLayout({
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-slate-900 text-sm font-semibold truncate">{user?.username}</div>
+              <div className="text-pure-white text-sm font-semibold truncate">{user?.username}</div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-xs font-semibold"
+            className="w-full px-3 py-1.5 bg-red-500/15 text-red-300 rounded hover:bg-red-500/25 transition-colors text-xs font-semibold"
           >
             {layoutT('logout')}
           </button>

@@ -307,7 +307,7 @@ export default function AllSalonClient() {
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                         {item.is_featured ? (
-                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
+                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
                             {t("card.featured")}
                           </span>
                         ) : null}

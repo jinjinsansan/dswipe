@@ -222,7 +222,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={handleCopyProfileLink}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-semibold hover:bg-sky-700 transition-colors"
                   >
                     {profileLinkCopied ? buttonsT('copied') : buttonsT('copyLink')}
                   </button>
@@ -250,7 +250,7 @@ export default function ProfilePage() {
                   value={newUsername}
                   onChange={(event) => setNewUsername(event.target.value)}
                   placeholder={fieldsT('newUsernamePlaceholder')}
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 />
               </div>
 
@@ -269,7 +269,7 @@ export default function ProfilePage() {
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                className="w-full px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-semibold transition-colors"
               >
                 {buttonsT('updateUsername')}
               </button>
@@ -293,7 +293,7 @@ export default function ProfilePage() {
                     setProfileUpdateError('');
                   }}
                   placeholder={fieldsT('bioPlaceholder')}
-                  className="w-full min-h-[120px] px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full min-h-[120px] px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 />
                 <div className="mt-1 text-xs text-slate-500 text-right">{fieldsT('bioCounter', { current: profileBio.length, max: 600 })}</div>
               </div>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                     setProfileUpdateError('');
                   }}
                   placeholder="https://"
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 />
                 <p className="text-xs text-slate-500 mt-1">{fieldsT('snsHint')}</p>
               </div>
@@ -329,7 +329,7 @@ export default function ProfilePage() {
                     setProfileUpdateError('');
                   }}
                   placeholder="https://"
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 />
                 <p className="text-xs text-slate-500 mt-1">{fieldsT('lineHint')}</p>
               </div>
@@ -352,7 +352,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 text-sm">
-                    <label className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer">
+                    <label className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:border-sky-400 hover:text-sky-600 transition-colors cursor-pointer">
                       {isUploadingProfileImage ? buttonsT('uploadingImage') : buttonsT('uploadImage')}
                       <input
                         ref={profileImageInputRef}
@@ -395,8 +395,8 @@ export default function ProfilePage() {
                 disabled={isSavingProfileInfo}
                 className={`w-full px-6 py-3 rounded-lg font-semibold transition-colors ${
                   isSavingProfileInfo
-                    ? 'bg-blue-300 text-white cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-sky-600 opacity-60 text-pure-white cursor-not-allowed'
+                    : 'bg-sky-600 hover:bg-sky-700 text-white'
                 }`}
               >
                 {isSavingProfileInfo ? buttonsT('savingProfile') : buttonsT('saveProfile')}

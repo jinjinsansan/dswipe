@@ -58,7 +58,7 @@ export default function TokushoPage() {
           const isEmail = value.includes("@");
           if (isEmail) {
             return (
-              <a key={index} href={`mailto:${value}`} className="text-blue-300 hover:text-blue-200">
+              <a key={index} href={`mailto:${value}`} className="text-sky-600 hover:text-sky-500">
                 {value}
               </a>
             );
@@ -74,7 +74,7 @@ export default function TokushoPage() {
   };
 
   const renderInfoSection = (titleKey: string, items: InfoItem[]) => (
-    <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/10">
+    <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-sky-900/10">
       <h2 className="text-xl font-semibold text-white">{t(titleKey)}</h2>
       <dl className="mt-4 space-y-3 text-sm leading-relaxed">
         {items.map((item, index) => (
@@ -90,7 +90,7 @@ export default function TokushoPage() {
   const renderParagraphSection = (titleKey: string, paragraphsKey: string) => {
     const paragraphs = (t.raw(paragraphsKey) as string[]) ?? [];
     return (
-      <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/10">
+      <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-sky-900/10">
         <h2 className="text-xl font-semibold text-white">{t(titleKey)}</h2>
         {paragraphs.map((paragraph, index) => (
           <p key={index} className="mt-4 text-sm leading-relaxed text-slate-200">
@@ -122,7 +122,7 @@ export default function TokushoPage() {
               {renderInfoSection("sections.pricing.title", pricingItems)}
               {renderParagraphSection("sections.delivery.title", "sections.delivery.paragraphs")}
 
-              <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/10">
+              <section className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-xl shadow-sky-900/10">
                 <h2 className="text-xl font-semibold text-white">{t("sections.returns.title")}</h2>
                 <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-200">
                   {returnsItems.map((item, index) => (
@@ -133,7 +133,7 @@ export default function TokushoPage() {
 
               {renderParagraphSection("sections.disclaimer.title", "sections.disclaimer.paragraphs")}
 
-              <section className="rounded-2xl border border-blue-500/50 bg-slate-900/70 p-6 shadow-xl shadow-blue-900/10">
+              <section className="rounded-2xl border border-sky-500/50 bg-slate-900/70 p-6 shadow-xl shadow-sky-900/10">
                 <h2 className="text-xl font-semibold text-white">{t("sections.updates.title")}</h2>
                 {(t.raw("sections.updates.paragraphs") as string[]).map((paragraph, index) => (
                   <p key={index} className="mt-4 text-sm leading-relaxed text-slate-200">

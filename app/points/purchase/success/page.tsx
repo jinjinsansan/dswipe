@@ -26,7 +26,7 @@ export default function PurchaseSuccessPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50">
       <StickySiteHeader showDashboardLink />
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md items-center justify-center px-4 py-10">
         <div className="w-full">
@@ -69,7 +69,7 @@ export default function PurchaseSuccessPage() {
           <div className="space-y-3">
             <Link
               href="/points/purchase"
-              className="block w-full px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+              className="block w-full px-6 py-3 rounded-xl bg-sky-600 text-white font-semibold hover:bg-sky-700 transition-colors"
             >
               ポイント購入ページに戻る
             </Link>

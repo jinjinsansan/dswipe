@@ -93,8 +93,8 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
 ];
 
 const NAV_BUTTON_BASE = 'flex w-full items-center gap-3 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors';
-const NAV_BUTTON_ACTIVE = 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-100';
-const NAV_BUTTON_INACTIVE = 'border-transparent bg-gray-100 text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700';
+const NAV_BUTTON_ACTIVE = 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm shadow-sky-100';
+const NAV_BUTTON_INACTIVE = 'border-transparent bg-gray-100 text-gray-600 hover:border-sky-400 hover:bg-sky-50 hover:text-sky-700';
 
 const mobileNavButtonClass = `${NAV_BUTTON_BASE} justify-start`;
 
@@ -138,7 +138,7 @@ export default function AdminShell({
             <Link href="/dashboard" className="flex items-center gap-3">
               <DSwipeLogo size="medium" showFullName textColor="text-gray-900" />
             </Link>
-            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600">Admin</span>
+            <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-sky-600">Admin</span>
           </div>
           <nav className="flex-1 space-y-3 overflow-y-auto px-4 py-6">
             {resolvedNavItems.map((item) => {
@@ -157,7 +157,7 @@ export default function AdminShell({
                     <span
                       className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-lg',
-                        isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500'
+                        isActive ? 'bg-sky-100 text-sky-700' : 'bg-white text-gray-500'
                       )}
                     >
                       <Icon className="h-4 w-4" aria-hidden="true" />
@@ -166,13 +166,13 @@ export default function AdminShell({
                   <div className="flex-1">
                     <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
                     {item.description && (
-                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-blue-600/80' : 'text-gray-500')}>
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-sky-600/80' : 'text-gray-500')}>
                         {item.description}
                       </p>
                     )}
                   </div>
                   {item.badge && (
-                    <span className="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    <span className="ml-auto rounded-full bg-sky-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                       {item.badge}
                     </span>
                   )}
@@ -200,7 +200,7 @@ export default function AdminShell({
                         )}
                       >
                         {Icon && (
-                          <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                          <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-sky-100 text-sky-700' : 'bg-white text-gray-500')}>
                             <Icon className="h-4 w-4" aria-hidden="true" />
                           </span>
                         )}
@@ -224,7 +224,7 @@ export default function AdminShell({
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-600"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-sky-500 hover:text-sky-600"
               aria-label="管理メニューを開く"
             >
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -258,12 +258,12 @@ export default function AdminShell({
               <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
                 <div className="flex items-center gap-3">
                   <DSwipeLogo size="small" showFullName textColor="text-gray-900" />
-                  <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600">Admin</span>
+                  <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-sky-600">Admin</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-lg border border-gray-200 bg-white p-2 text-gray-500 hover:border-blue-400 hover:text-blue-600"
+                  className="rounded-lg border border-gray-200 bg-white p-2 text-gray-500 hover:border-sky-400 hover:text-sky-600"
                 >
                   <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -283,20 +283,20 @@ export default function AdminShell({
                   )}
                     >
                   {Icon && (
-                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-sky-100 text-sky-700' : 'bg-white text-gray-500')}>
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
                   )}
                   <div className="flex-1">
                     <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
                     {item.description && (
-                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-blue-600/80' : 'text-gray-500')}>
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-sky-600/80' : 'text-gray-500')}>
                         {item.description}
                       </p>
                     )}
                   </div>
                   {item.badge && (
-                    <span className="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    <span className="ml-auto rounded-full bg-sky-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                       {item.badge}
                     </span>
                   )}
@@ -327,7 +327,7 @@ export default function AdminShell({
                             )}
                           >
                             {Icon && (
-                              <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-500')}>
+                              <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-sky-100 text-sky-700' : 'bg-white text-gray-500')}>
                                 <Icon className="h-4 w-4" aria-hidden="true" />
                               </span>
                             )}
@@ -383,7 +383,7 @@ export default function AdminShell({
                       onClick={() => onTabChange?.(tab.id)}
                       className={cn(
                         'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors',
-                        isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-200' : 'bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                        isActive ? 'bg-sky-600 text-white shadow-sm shadow-sky-200' : 'bg-gray-100 text-gray-600 hover:bg-sky-50 hover:text-sky-700'
                       )}
                     >
                       {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}

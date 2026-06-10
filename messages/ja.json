@@ -41,7 +41,11 @@
     "paidBadge": "有料",
     "freeBadge": "FREE",
     "loginRequiredBadge": "ログイン必須",
-    "views": "{count, number} views"
+    "views": "{count, number} views",
+    "popularTitle": "よく読まれている記事",
+    "ctaTitle": "あなたの知見を、記事に。",
+    "ctaBody": "有料記事・サロン連携で、書くことを収益に。AIアシスト付きで初心者でも。",
+    "ctaButton": "記事を書く"
   },
   "noteDetail": {
     "unpublishedLabel": "非公開",

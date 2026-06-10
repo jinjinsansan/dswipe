@@ -39,7 +39,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
               onClick={() => setSelectedCategory(category.id as CTAStyle['category'])}
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all ${
                 selectedCategory === category.id
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
+                  ? 'bg-sky-600 text-white shadow-lg shadow-sky-500/50'
                   : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
               }`}
             >
@@ -58,7 +58,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
                   onSelectStyle(style);
                   onClose();
                 }}
-                className="bg-gray-800 rounded-xl border-2 border-gray-700 hover:border-blue-500 transition-all p-6 text-left group"
+                className="bg-gray-800 rounded-xl border-2 border-gray-700 hover:border-sky-500 transition-all p-6 text-left group"
               >
                 {/* プレビュー */}
                 <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg p-8 mb-4 flex items-center justify-center min-h-[120px]">
@@ -84,7 +84,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
                 </div>
 
                 {/* スタイル情報 */}
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-sky-400 transition-colors">
                   {style.name}
                 </h3>
                 <p className="text-gray-400 text-sm mb-3">{style.description}</p>

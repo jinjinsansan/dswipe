@@ -245,7 +245,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               value={currentFontKey}
               onChange={(event) => handleDataChange(index, { fontKey: event.target.value })}
               disabled={disabled}
-              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 focus:border-blue-500 focus:outline-none"
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 focus:border-sky-500 focus:outline-none"
             >
               {FONT_OPTIONS.map((option) => (
                 <option key={option.key} value={option.key}>
@@ -277,7 +277,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   onClick={() => handleDataChange(index, { color: option.value })}
                   disabled={disabled}
                   className={`h-6 w-6 rounded-full border-2 transition ${
-                    isActive ? 'border-blue-500 ring-2 ring-blue-300/50' : 'border-slate-200 hover:border-slate-400'
+                    isActive ? 'border-sky-500 ring-2 ring-sky-300/50' : 'border-slate-200 hover:border-slate-400'
                   } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
                   style={{ backgroundColor: option.value }}
                   title={t(`textColors.${option.key}`)}
@@ -311,7 +311,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   value={block.type}
                   onChange={(event) => handleTypeChange(index, event.target.value as NoteBlockType)}
                   disabled={disabled}
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 focus:border-blue-500 focus:outline-none"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 focus:border-sky-500 focus:outline-none"
                 >
                   {NOTE_BLOCK_TYPE_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -378,7 +378,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               {block.type === 'paragraph' && (
                 <textarea
                   rows={5}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                   placeholder={t('placeholders.paragraph')}
                   value={typeof block.data?.text === 'string' ? block.data.text : ''}
                   onChange={(event) => handleDataChange(index, { text: event.target.value })}
@@ -390,7 +390,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 <div className="space-y-3">
                   <input
                     type="text"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.heading')}
                     value={typeof block.data?.text === 'string' ? block.data.text : ''}
                     onChange={(event) => handleDataChange(index, { text: event.target.value, level: block.data?.level ?? 'h2' })}
@@ -407,7 +407,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                           disabled={disabled}
                           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                             block.data?.level === level
-                              ? 'bg-blue-600 text-white'
+                              ? 'bg-sky-600 text-white'
                               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
                         >
@@ -423,7 +423,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 <div className="space-y-3">
                   <textarea
                     rows={4}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm italic text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm italic text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.quote')}
                     value={typeof block.data?.text === 'string' ? block.data.text : ''}
                     onChange={(event) => handleDataChange(index, { text: event.target.value, cite: block.data?.cite ?? '' })}
@@ -431,7 +431,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   />
                   <input
                     type="text"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.quoteCite')}
                     value={typeof block.data?.cite === 'string' ? block.data.cite : ''}
                     onChange={(event) => handleDataChange(index, { text: block.data?.text ?? '', cite: event.target.value })}
@@ -447,7 +447,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       type="button"
                       onClick={() => openImageFilePicker(index)}
                       disabled={disabled}
-                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                       {t('buttons.uploadImage')}
@@ -456,7 +456,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       type="button"
                       onClick={() => openMediaLibrary(index, 'image')}
                       disabled={disabled}
-                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {t('buttons.chooseFromMedia')}
                     </button>
@@ -471,11 +471,11 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     />
                   </div>
                   {uploadingBlockId === blockKey ? (
-                    <p className="text-xs font-semibold text-blue-600">{t('status.uploading')}</p>
+                    <p className="text-xs font-semibold text-sky-600">{t('status.uploading')}</p>
                   ) : null}
                   <input
                     type="text"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.imageUrl')}
                     value={typeof block.data?.url === 'string' ? block.data.url : ''}
                     onChange={(event) => handleDataChange(index, { url: event.target.value, caption: block.data?.caption ?? '' })}
@@ -483,7 +483,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   />
                   <input
                     type="text"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.imageCaption')}
                     value={typeof block.data?.caption === 'string' ? block.data.caption : ''}
                     onChange={(event) => handleDataChange(index, { url: block.data?.url ?? '', caption: event.target.value })}
@@ -504,7 +504,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               {block.type === 'list' && (
                 <textarea
                   rows={5}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                   placeholder={t('placeholders.listItems')}
                   value={getListTextareaValue(block)}
                   onChange={(event) => handleDataChange(index, { items: toListItems(event.target.value) })}
@@ -522,7 +522,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                 <div className="space-y-3">
                   <input
                     type="text"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.linkTitle')}
                     value={typeof block.data?.title === 'string' ? block.data.title : ''}
                     onChange={(event) => handleDataChange(index, { title: event.target.value })}
@@ -530,7 +530,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   />
                   <input
                     type="url"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder="https://example.com"
                     value={typeof block.data?.url === 'string' ? block.data.url : ''}
                     onChange={(event) => handleDataChange(index, { url: event.target.value })}
@@ -538,7 +538,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   />
                   <textarea
                     rows={3}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     placeholder={t('placeholders.linkDescription')}
                     value={typeof block.data?.description === 'string' ? block.data.description : ''}
                     onChange={(event) => handleDataChange(index, { description: event.target.value })}
@@ -553,7 +553,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                         type="button"
                         onClick={() => openLinkThumbnailPicker(index)}
                         disabled={disabled}
-                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                         {t('buttons.uploadImage')}
@@ -562,7 +562,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                         type="button"
                         onClick={() => openMediaLibrary(index, 'link-thumbnail')}
                         disabled={disabled}
-                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {t('buttons.chooseFromMedia')}
                       </button>
@@ -587,7 +587,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                       />
                     </div>
                     {isThumbnailUploading ? (
-                      <p className="text-xs font-semibold text-blue-600">{t('status.uploading')}</p>
+                      <p className="text-xs font-semibold text-sky-600">{t('status.uploading')}</p>
                     ) : null}
                     {currentThumbnailUrl ? (
                       <div className="overflow-hidden rounded-xl border border-slate-200">
@@ -608,7 +608,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     {t('fields.spacerHeight')}
                   </label>
                   <select
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
                     value={typeof block.data?.size === 'string' ? block.data.size : 'md'}
                     onChange={(event) => handleDataChange(index, { size: event.target.value })}
                     disabled={disabled}
@@ -639,7 +639,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
               type="button"
               onClick={() => handleAdd(option.value)}
               disabled={disabled}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <SquaresPlusIcon className="h-4 w-4" aria-hidden="true" />
               {t(`blockTypes.${option.value}`)}

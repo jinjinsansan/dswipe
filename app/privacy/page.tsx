@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
                 {renderParagraphs("sections.changes.paragraphs")}
               </section>
 
-              <section className="space-y-3 border-l-2 border-blue-500/40 pl-6 text-sm text-slate-400">
+              <section className="space-y-3 border-l-2 border-sky-500/40 pl-6 text-sm text-slate-400">
                 <p>{t("contact.description")}</p>
                 <address className="not-italic">
                   {t("contact.organization")}

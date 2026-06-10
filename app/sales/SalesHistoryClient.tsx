@@ -204,7 +204,7 @@ export default function SalesHistoryClient() {
       {
         label: "商品売上件数",
         value: (summary?.product_orders ?? 0).toLocaleString(),
-        accent: "bg-purple-50 text-purple-600 border-purple-200",
+        accent: "bg-sky-50 text-sky-600 border-sky-200",
         icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />,
       },
       {
@@ -222,7 +222,7 @@ export default function SalesHistoryClient() {
       {
         label: "ポイント売上合計",
         value: formatPoints(summary?.total_points_revenue ?? 0),
-        accent: "bg-blue-50 text-blue-600 border-blue-200",
+        accent: "bg-sky-50 text-sky-600 border-sky-200",
         icon: <SparklesIcon className="h-5 w-5" aria-hidden="true" />,
       },
       {
@@ -322,7 +322,7 @@ export default function SalesHistoryClient() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-1 flex-col gap-3">
               <div className="flex items-center gap-3">
-                <span className="inline-flex items-center justify-center rounded-full bg-blue-100 p-2 text-blue-600">
+                <span className="inline-flex items-center justify-center rounded-full bg-sky-100 p-2 text-sky-600">
                   <WalletIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
@@ -337,7 +337,7 @@ export default function SalesHistoryClient() {
                     value={addressInput}
                     onChange={(event) => setAddressInput(event.target.value.trim())}
                     placeholder="Txxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-inner focus:border-blue-400 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-inner focus:border-sky-400 focus:outline-none"
                   />
                 </label>
                 <div className="flex items-end">
@@ -345,7 +345,7 @@ export default function SalesHistoryClient() {
                     type="button"
                     onClick={handleSaveAddress}
                     disabled={isSavingAddress}
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+                    className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
                   >
                     {isSavingAddress ? "更新中…" : "アドレスを保存"}
                   </button>
@@ -384,7 +384,7 @@ export default function SalesHistoryClient() {
                     key={record.id}
                     type="button"
                     onClick={() => handleViewPayoutDetail(record.id)}
-                    className="w-full rounded-2xl border border-blue-100 bg-blue-50/50 px-4 py-3 text-left shadow-sm transition hover:border-blue-300 hover:bg-blue-50"
+                    className="w-full rounded-2xl border border-sky-100 bg-sky-50/50 px-4 py-3 text-left shadow-sm transition hover:border-sky-300 hover:bg-sky-50"
                   >
                     <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
                       <span>
@@ -394,7 +394,7 @@ export default function SalesHistoryClient() {
                     </div>
                     <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
                       <span>支払い予定: {formatDateTime(record.settlement_due_at)}</span>
-                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-blue-600">{record.status}</span>
+                      <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-600">{record.status}</span>
                     </div>
                   </button>
                 ))}
@@ -450,7 +450,7 @@ export default function SalesHistoryClient() {
                 <button
                   type="button"
                   onClick={() => setSelectedPayout(null)}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-500"
+                  className="text-xs font-semibold text-sky-600 hover:text-sky-500"
                 >
                   閉じる
                 </button>
@@ -469,7 +469,7 @@ export default function SalesHistoryClient() {
                 </div>
                 <div className="rounded-xl border border-white bg-white px-4 py-3 text-xs text-slate-600">
                   <p className="font-semibold text-slate-500">ステータス</p>
-                  <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-blue-600">
+                  <p className="mt-1 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-600">
                     {selectedPayout.status}
                   </p>
                 </div>
@@ -546,7 +546,7 @@ export default function SalesHistoryClient() {
               <h2 className="text-lg font-semibold text-slate-900">LP・デジタル商品売上</h2>
               <p className="text-sm text-slate-500">ポイント / 日本円決済で販売された商品履歴です</p>
             </div>
-            <span className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-600">
+            <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
               {history?.products.length ?? 0} 件
             </span>
           </div>
@@ -556,7 +556,7 @@ export default function SalesHistoryClient() {
               {history.products.map((sale) => {
                 const isYen = sale.payment_method === "yen";
                 const amountDisplay = isYen ? formatYen(sale.amount_jpy ?? 0) : formatPoints(sale.amount_points);
-                const amountClass = isYen ? "text-emerald-600" : "text-purple-600";
+                const amountClass = isYen ? "text-emerald-600" : "text-sky-600";
                 const methodLabel = isYen ? "日本円決済" : "ポイント決済";
                 const lpLink = getLpLink(sale);
                 return (
@@ -569,7 +569,7 @@ export default function SalesHistoryClient() {
                         <div className="flex items-start gap-3">
                           <span
                             className={`mt-1 inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
-                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-purple-50 text-purple-600"
+                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-sky-50 text-sky-600"
                             }`}
                           >
                             <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
@@ -596,7 +596,7 @@ export default function SalesHistoryClient() {
                       <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-1 font-semibold uppercase tracking-wide ${
-                            isYen ? "bg-emerald-100 text-emerald-600" : "bg-purple-100 text-purple-600"
+                            isYen ? "bg-emerald-100 text-emerald-600" : "bg-sky-100 text-sky-600"
                           }`}
                         >
                           {methodLabel}

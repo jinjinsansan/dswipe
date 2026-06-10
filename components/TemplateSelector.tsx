@@ -192,8 +192,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="relative w-full max-w-6xl h-[90vh] sm:h-auto sm:max-h-[88vh] overflow-hidden rounded-2xl border border-white/10 bg-[#070b16]/95 shadow-[0_36px_120px_-60px_rgba(56,189,248,0.6)] flex flex-col">
-        <div className="pointer-events-none absolute -top-24 -left-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -left-20 h-64 w-64 rounded-full bg-sky-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-28 -right-16 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl" />
 
         {/* Header with integrated search and filters */}
         <div className="relative flex-shrink-0 bg-sky-50 border-b border-sky-200">
@@ -222,7 +222,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="テンプレートを検索 (キーワード/用途/カラー)"
-                  className="w-full rounded-lg border border-sky-300 bg-white pl-9 pr-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400/70"
+                  className="w-full rounded-lg border border-sky-300 bg-white pl-9 pr-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400/70"
                   aria-label="テンプレート検索"
                 />
               </div>
@@ -245,7 +245,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                     onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
                     className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                       isActive
-                        ? 'bg-blue-500 text-white shadow-[0_8px_24px_-12px_rgba(37,99,235,0.9)]'
+                        ? 'bg-sky-500 text-white shadow-[0_8px_24px_-12px_rgba(37,99,235,0.9)]'
                         : 'bg-sky-100 text-slate-700 hover:bg-sky-200'
                     }`}
                   >
@@ -287,7 +287,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                         key={group.templateId}
                         className="group relative overflow-hidden rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4 sm:px-5 sm:py-5 transition-colors hover:border-sky-300 hover:bg-sky-100"
                       >
-                        <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-blue-500/25 via-transparent to-purple-500/25 blur-3xl opacity-0 transition group-hover:opacity-100" />
+                        <div className="absolute inset-x-0 -top-28 h-32 bg-gradient-to-br from-sky-500/25 via-transparent to-cyan-400/25 blur-3xl opacity-0 transition group-hover:opacity-100" />
 
                         <div className="relative flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">

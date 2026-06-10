@@ -213,7 +213,7 @@ export default function CreateLPPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-8">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-4">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-600 mb-4">
             <DocumentIcon className="h-6 w-6" aria-hidden="true" />
           </div>
           <h1 className="text-3xl font-semibold text-slate-900 mb-2">新規LP作成</h1>
@@ -240,7 +240,7 @@ export default function CreateLPPage() {
                 value={formData.title}
                 onChange={handleTitleChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 placeholder="例: 新商品キャンペーン"
               />
               <p className="mt-1 text-sm text-slate-500">ダッシュボードに表示される名前です</p>
@@ -258,11 +258,11 @@ export default function CreateLPPage() {
                 value={formData.slug}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 placeholder="例: new-product-campaign"
               />
               <p className="mt-1 text-sm text-slate-500">
-                公開URL: https://swipelaunch.com/lp/<span className="text-blue-500">{formData.slug || 'your-slug'}</span>
+                公開URL: https://swipelaunch.com/lp/<span className="text-sky-500">{formData.slug || 'your-slug'}</span>
               </p>
             </div>
 
@@ -277,7 +277,7 @@ export default function CreateLPPage() {
                     value="public"
                     checked={formData.visibility === 'public'}
                     onChange={handleChange}
-                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                   />
                   <span className="text-sm text-slate-700">公開（誰でもアクセス可能）</span>
                 </label>
@@ -288,7 +288,7 @@ export default function CreateLPPage() {
                     value="limited"
                     checked={formData.visibility === 'limited'}
                     onChange={handleChange}
-                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                   />
                   <span className="text-sm text-slate-700">
                     限定公開（URLを知っている人だけ閲覧可能）
@@ -301,7 +301,7 @@ export default function CreateLPPage() {
                     value="private"
                     checked={formData.visibility === 'private'}
                     onChange={handleChange}
-                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 h-4 w-4 text-sky-600 focus:ring-sky-500"
                   />
                   <span className="text-sm text-slate-700">非公開（ダッシュボードのみ表示）</span>
                 </label>
@@ -323,7 +323,7 @@ export default function CreateLPPage() {
                     name="show_total_views_public"
                     checked={formData.show_total_views_public}
                     onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                   />
                   <span className="text-sm text-slate-700">閲覧数を表示</span>
                 </label>
@@ -345,7 +345,7 @@ export default function CreateLPPage() {
                 name="product_id"
                 value={formData.product_id}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               >
                 <option value="">選択しない（後で設定可能）</option>
                 {products.map((product) => (
@@ -369,7 +369,7 @@ export default function CreateLPPage() {
                 name="swipe_direction"
                 value={formData.swipe_direction}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               >
                 <option value="vertical">縦スワイプ（↓）</option>
                 <option value="horizontal">横スワイプ（→）</option>
@@ -385,7 +385,7 @@ export default function CreateLPPage() {
                 name="is_fullscreen"
                 checked={formData.is_fullscreen}
                 onChange={handleChange}
-                className="w-4 h-4 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                className="w-4 h-4 bg-white border-slate-300 rounded focus:ring-sky-500 focus:ring-2"
               />
               <label htmlFor="is_fullscreen" className="ml-2 text-sm text-slate-700">
                 フルスクリーン表示
@@ -397,7 +397,7 @@ export default function CreateLPPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold shadow disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? '作成中...' : 'LP作成 →'}
               </button>
@@ -437,13 +437,13 @@ export default function CreateLPPage() {
         )}
 
         {/* ヒント */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-8 bg-sky-50 border border-sky-200 rounded-lg p-4">
           <div className="flex items-start">
-            <div className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+            <div className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-600">
               <LightBulbIcon className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-blue-700 font-semibold mb-1">次のステップ</h3>
+              <h3 className="text-sky-700 font-semibold mb-1">次のステップ</h3>
               <p className="text-slate-600 text-sm">
                 LP作成後、編集ページでAI提案に基づいたテンプレートを追加できます。
               </p>

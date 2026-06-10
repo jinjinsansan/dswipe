@@ -461,7 +461,7 @@ export default function SalonAssetsPage() {
 
                 let assetIcon = <DocumentIcon className="h-10 w-10 text-slate-400" aria-hidden="true" />;
                 if (asset.asset_type === "IMAGE") assetIcon = <PhotoIcon className="h-10 w-10 text-sky-400" aria-hidden="true" />;
-                else if (asset.asset_type === "VIDEO") assetIcon = <VideoCameraIcon className="h-10 w-10 text-purple-400" aria-hidden="true" />;
+                else if (asset.asset_type === "VIDEO") assetIcon = <VideoCameraIcon className="h-10 w-10 text-sky-500" aria-hidden="true" />;
 
                 return (
                   <article key={asset.id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">

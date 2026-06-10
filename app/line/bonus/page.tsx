@@ -178,7 +178,7 @@ export default function LineBonusPage() {
       ) : (
         <div className="mx-auto w-full max-w-4xl space-y-6 px-3 py-6 sm:px-6">
           {error && !error.includes("認証トークン") ? (
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-700">
+            <div className="rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">
               <p className="mb-1 font-semibold">ℹ️ 情報</p>
               <p>接続エラーが発生しましたが、LINE連携は利用できます。詳細: {error}</p>
             </div>
@@ -259,7 +259,7 @@ export default function LineBonusPage() {
                             <code className="flex-1 break-all font-mono text-lg font-bold text-slate-900">{linkToken.token}</code>
                             <button
                               onClick={copyToken}
-                              className="flex-shrink-0 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+                              className="flex-shrink-0 rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-600"
                             >
                               {tokenCopied ? "✓ コピー済み" : "コピー"}
                             </button>

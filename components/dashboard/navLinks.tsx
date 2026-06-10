@@ -62,171 +62,35 @@ type DashboardNavLinkDefinition = {
 type DashboardNavGroupMetaConfig = {
   labelKey: string;
   defaultLabel: string;
-  headingClass: string;
-  desktop: {
-    base: string;
-    active: string;
-    icon: string;
-    iconActive: string;
-    badge: string;
-    badgeActive?: string;
-  };
-  mobile: {
-    base: string;
-    active: string;
-    badge: string;
-    badgeActive?: string;
-  };
+};
+
+type DashboardNavStyleSet = {
+  base: string;
+  active: string;
+  icon: string;
+  iconActive: string;
+  badge: string;
+  badgeActive?: string;
 };
 
 export type DashboardNavGroupMeta = {
   label: string;
   headingClass: string;
-  desktop: DashboardNavGroupMetaConfig['desktop'];
-  mobile: DashboardNavGroupMetaConfig['mobile'];
+  desktop: DashboardNavStyleSet;
+  mobile: DashboardNavStyleSet;
 };
 
-const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
+export const GROUP_ORDER: DashboardNavGroupKey[] = ['core', 'lp', 'note', 'salon', 'points', 'line', 'media', 'info'];
 
 const GROUP_META_CONFIG: Record<DashboardNavGroupKey, DashboardNavGroupMetaConfig> = {
-  core: {
-    labelKey: 'groups.core',
-    defaultLabel: 'ホーム',
-    headingClass: 'text-slate-500',
-    desktop: {
-      base: 'bg-slate-100 text-slate-700 hover:bg-slate-200',
-      active: 'bg-slate-900 text-white shadow-sm',
-      icon: 'text-slate-500',
-      iconActive: 'text-white',
-      badge: 'bg-white/70 text-slate-600 border border-slate-200/70',
-    },
-    mobile: {
-      base: 'bg-slate-200 text-slate-700 hover:bg-slate-300',
-      active: 'bg-slate-900 text-white shadow-sm',
-      badge: 'bg-white/70 text-inherit',
-    },
-  },
-  lp: {
-    labelKey: 'groups.lp',
-    defaultLabel: 'LPメニュー',
-    headingClass: 'text-blue-500',
-    desktop: {
-      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100',
-      active: 'bg-blue-600 text-white border border-blue-600 shadow-sm',
-      icon: 'text-blue-500',
-      iconActive: 'text-white',
-      badge: 'bg-blue-100 text-blue-700 border border-blue-200',
-    },
-    mobile: {
-      base: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
-      active: 'bg-blue-600 text-white shadow-sm',
-      badge: 'bg-white/80 text-blue-600',
-    },
-  },
-  note: {
-    labelKey: 'groups.note',
-    defaultLabel: 'コラム',
-    headingClass: 'text-slate-500',
-    desktop: {
-      base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
-      active: 'bg-slate-500 text-white border border-slate-500 shadow-sm',
-      icon: 'text-slate-500',
-      iconActive: 'text-white',
-      badge: 'bg-white text-slate-600 border border-slate-200',
-    },
-    mobile: {
-      base: 'bg-slate-100 text-slate-600 hover:bg-slate-200',
-      active: 'bg-slate-500 text-white shadow-sm',
-      badge: 'bg-white/80 text-slate-600',
-    },
-  },
-  salon: {
-    labelKey: 'groups.salon',
-    defaultLabel: 'サロン',
-    headingClass: 'text-sky-500',
-    desktop: {
-      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100',
-      active: 'bg-sky-500 text-white border border-sky-500 shadow-sm',
-      icon: 'text-sky-500',
-      iconActive: 'text-white',
-      badge: 'bg-white text-sky-600 border border-sky-200',
-    },
-    mobile: {
-      base: 'bg-sky-50 text-sky-700 hover:bg-sky-100',
-      active: 'bg-sky-500 text-white shadow-sm',
-      badge: 'bg-white/80 text-sky-600',
-    },
-  },
-  points: {
-    labelKey: 'groups.points',
-    defaultLabel: 'ポイント',
-    headingClass: 'text-violet-500',
-    desktop: {
-      base: 'bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-100',
-      active: 'bg-violet-500 text-white border border-violet-500 shadow-sm',
-      icon: 'text-violet-500',
-      iconActive: 'text-white',
-      badge: 'bg-violet-100 text-violet-700 border border-violet-200',
-    },
-    mobile: {
-      base: 'bg-violet-50 text-violet-700 hover:bg-violet-100',
-      active: 'bg-violet-500 text-white shadow-sm',
-      badge: 'bg-white/80 text-violet-600',
-    },
-  },
-  line: {
-    labelKey: 'groups.line',
-    defaultLabel: 'LINE連携',
-    headingClass: 'text-emerald-500',
-    desktop: {
-      base: 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100',
-      active: 'bg-emerald-500 text-white border border-emerald-500 shadow-sm',
-      icon: 'text-emerald-500',
-      iconActive: 'text-white',
-      badge: 'bg-white text-emerald-600 border border-emerald-200',
-      badgeActive: 'bg-white text-emerald-600 border border-emerald-200',
-    },
-    mobile: {
-      base: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200',
-      active: 'bg-emerald-500 text-white shadow-sm border border-emerald-500',
-      badge: 'bg-white text-emerald-600',
-      badgeActive: 'bg-white text-emerald-600',
-    },
-  },
-  media: {
-    labelKey: 'groups.media',
-    defaultLabel: '外部連携',
-    headingClass: 'text-indigo-500',
-    desktop: {
-      base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100',
-      active: 'bg-indigo-500 text-white border border-indigo-500 shadow-sm',
-      icon: 'text-indigo-500',
-      iconActive: 'text-white',
-      badge: 'bg-indigo-100 text-indigo-700 border border-indigo-200',
-    },
-    mobile: {
-      base: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100',
-      active: 'bg-indigo-500 text-white shadow-sm',
-      badge: 'bg-white/80 text-indigo-600',
-    },
-  },
-  info: {
-    labelKey: 'groups.info',
-    defaultLabel: 'サポート',
-    headingClass: 'text-slate-400',
-    desktop: {
-      base: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100',
-      active: 'bg-slate-500 text-white border border-slate-500 shadow-sm',
-      icon: 'text-slate-500',
-      iconActive: 'text-white',
-      badge: 'bg-white/80 text-slate-600 border border-slate-200',
-    },
-    mobile: {
-      base: 'bg-slate-100 text-slate-600 hover:bg-slate-200',
-      active: 'bg-slate-500 text-white shadow-sm',
-      badge: 'bg-white/70 text-slate-600',
-    },
-  },
+  core: { labelKey: 'groups.core', defaultLabel: 'ホーム' },
+  lp: { labelKey: 'groups.lp', defaultLabel: 'LPメニュー' },
+  note: { labelKey: 'groups.note', defaultLabel: 'コラム' },
+  salon: { labelKey: 'groups.salon', defaultLabel: 'サロン' },
+  points: { labelKey: 'groups.points', defaultLabel: 'ポイント' },
+  line: { labelKey: 'groups.line', defaultLabel: 'LINE連携' },
+  media: { labelKey: 'groups.media', defaultLabel: '外部連携' },
+  info: { labelKey: 'groups.info', defaultLabel: 'サポート' },
 };
 
 const SALON_ENABLED = process.env.NEXT_PUBLIC_SALON_FEATURE_ENABLED === 'true';
@@ -401,6 +265,28 @@ export const groupDashboardNavLinks = (
   }).filter((group): group is DashboardNavGroup => Boolean(group));
 };
 
+// Momentum navy sidebar: every group's desktop nav item uses one navy/cyan style.
+const NAVY_DESKTOP_NAV: DashboardNavStyleSet = {
+  base: 'text-[var(--on-navy-muted)] hover:bg-white/[0.06] hover:text-[var(--on-navy)]',
+  active: 'bg-cyan-500/15 text-[var(--brand-cyan-soft)] shadow-[inset_2px_0_0_var(--brand-cyan)]',
+  icon: 'text-[var(--on-navy-muted)]',
+  iconActive: 'text-[var(--brand-cyan)]',
+  badge: 'bg-white/10 text-[#cfe3f5] border border-white/10',
+  badgeActive: 'bg-white/15 text-pure-white',
+};
+
+// Momentum light mobile menu: one unified style for every group
+// (white card + sky accent; active = navy). text-pure-white is required on
+// navy because globals.css remaps .text-white to a dark color.
+const MOMENTUM_MOBILE_NAV: DashboardNavStyleSet = {
+  base: 'bg-white text-slate-700 border border-[#e2ebf6] hover:border-[#bfe6fb] hover:bg-sky-50',
+  active: 'bg-[#0b1f3a] text-pure-white shadow-sm',
+  icon: 'text-sky-600',
+  iconActive: 'text-[var(--brand-cyan)]',
+  badge: 'bg-[#e9f6fe] text-sky-700',
+  badgeActive: 'bg-white/15 text-pure-white',
+};
+
 export const getDashboardNavGroupMeta = (
   group: DashboardNavGroupKey,
   translate?: TranslateFn
@@ -408,9 +294,10 @@ export const getDashboardNavGroupMeta = (
   const config = GROUP_META_CONFIG[group];
   return {
     label: safeTranslate(translate, config.labelKey, config.defaultLabel),
-    headingClass: config.headingClass,
-    desktop: config.desktop,
-    mobile: config.mobile,
+    // Muted heading for the navy sidebar (light surfaces should override).
+    headingClass: 'text-[var(--on-navy-muted)]',
+    desktop: NAVY_DESKTOP_NAV,
+    mobile: MOMENTUM_MOBILE_NAV,
   };
 };
 
@@ -418,19 +305,11 @@ export const getDashboardNavClasses = (
   link: DashboardNavLink,
   options: { variant: 'desktop' | 'mobile'; active: boolean }
 ) => {
-  const meta = GROUP_META_CONFIG[link.group];
-  if (options.variant === 'desktop') {
-    return {
-      container: options.active ? meta.desktop.active : meta.desktop.base,
-      icon: options.active ? meta.desktop.iconActive : meta.desktop.icon,
-      badge: options.active && meta.desktop.badgeActive ? meta.desktop.badgeActive : meta.desktop.badge,
-    };
-  }
-
+  const styles = options.variant === 'desktop' ? NAVY_DESKTOP_NAV : MOMENTUM_MOBILE_NAV;
   return {
-    container: options.active ? meta.mobile.active : meta.mobile.base,
-    icon: options.active ? meta.desktop.iconActive : meta.desktop.icon,
-    badge: options.active && meta.mobile.badgeActive ? meta.mobile.badgeActive : meta.mobile.badge,
+    container: options.active ? styles.active : styles.base,
+    icon: options.active ? styles.iconActive : styles.icon,
+    badge: options.active && styles.badgeActive ? styles.badgeActive : styles.badge,
   };
 };
 

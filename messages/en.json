@@ -41,7 +41,11 @@
     "paidBadge": "PAID",
     "freeBadge": "FREE",
     "loginRequiredBadge": "Login required",
-    "views": "{count, number} views"
+    "views": "{count, number} views",
+    "popularTitle": "Most read articles",
+    "ctaTitle": "Turn your knowledge into articles.",
+    "ctaBody": "Monetize your writing with paid articles and salon integration. AI assistance makes it easy for beginners.",
+    "ctaButton": "Write an article"
   },
   "noteDetail": {
     "unpublishedLabel": "Unpublished",

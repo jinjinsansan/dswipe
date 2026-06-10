@@ -158,7 +158,7 @@ function SubscriptionResultContent(): JSX.Element {
   const membershipLabel = membershipStatus ? statusLabel(membershipStatus) : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-50">
       <StickySiteHeader showDashboardLink />
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-2xl items-center justify-center px-4 py-10">
         <div className="w-full">
@@ -212,7 +212,7 @@ function SubscriptionResultContent(): JSX.Element {
                   <p className="mt-1 text-xs text-slate-500">販売者: {sellerUsername}</p>
                 ) : null}
                 {polling ? (
-                  <p className="mt-2 text-xs text-blue-600">決済状況を確認しています…</p>
+                  <p className="mt-2 text-xs text-sky-600">決済状況を確認しています…</p>
                 ) : null}
                 {notificationSent ? (
                   <p className="mt-2 text-xs text-emerald-600">運営からのお知らせにメッセージを送信しました。</p>

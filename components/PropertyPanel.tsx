@@ -123,7 +123,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   };
 
   const focusRingClass = (active: boolean) =>
-    active ? 'ring-2 ring-blue-400/60 ring-offset-2 ring-offset-white shadow-sm' : '';
+    active ? 'ring-2 ring-sky-400/60 ring-offset-2 ring-offset-white shadow-sm' : '';
 
   const isFocusedField = (field: string) => focusedField === field;
 
@@ -207,7 +207,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             value={value}
             onChange={(e) => onUpdateContent(fieldName, e.target.value)}
             onFocus={(e) => e.target.select()}
-            className="px-3 lg:px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+            className="px-3 lg:px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-sky-500"
             placeholder="#000000"
             spellCheck={false}
           />
@@ -219,7 +219,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               />
               <button
                 onClick={() => setShowColorPicker(null)}
-                className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                className="w-full mt-2 px-3 py-2 bg-sky-600 text-white rounded text-sm hover:bg-sky-700"
               >
                 完了
               </button>
@@ -254,7 +254,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 type="text"
                 value={(content as any).backgroundGradient || ''}
                 onChange={(e) => onUpdateContent('backgroundGradient', e.target.value)}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
                 placeholder="linear-gradient(...)"
               />
               <p className="text-xs text-slate-500">
@@ -393,7 +393,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
     const uploadButtonClasses = isUploading
       ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800'
-      : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm';
+      : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm';
 
     const backgroundOptions: Array<{ value: 'color' | 'image' | 'none'; label: string; icon: IconComponent }> = [
       { value: 'color', label: '単色', icon: PaintBrushIcon },
@@ -425,7 +425,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 key={value}
                 type="button"
                 onClick={() => handleModeChange(value)}
-                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${isActive ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${isActive ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-sky-400 hover:text-sky-600'}`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
                 <span>{label}</span>
@@ -477,7 +477,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <button
                 type="button"
                 onClick={openMediaLibraryForBackground}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
               >
                 <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                 ライブラリ
@@ -505,7 +505,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <select
                   value={backgroundImageMode}
                   onChange={(e) => onUpdateContent('backgroundImageMode', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                 >
                   <option value="cover">カバー (全体を埋める)</option>
                   <option value="contain">全体表示 (トリミングなし)</option>
@@ -519,7 +519,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <select
                   value={backgroundImagePosition}
                   onChange={(e) => onUpdateContent('backgroundImagePosition', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                 >
                   <option value="center">中央</option>
                   <option value="top">上寄せ</option>
@@ -562,7 +562,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={overlayColor}
                     onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
-                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -626,7 +626,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     openHeroMediaLibrary();
                   }
                 }}
-                className={`rounded-lg border px-3 py-3 text-left transition ${isActive ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
+                className={`rounded-lg border px-3 py-3 text-left transition ${isActive ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm' : 'border-slate-200 text-slate-600 hover:border-sky-400 hover:text-sky-600'}`}
               >
                 <p className="text-sm font-semibold">{option.label}</p>
                 <p className="mt-1 text-xs text-slate-500">{option.description}</p>
@@ -669,7 +669,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <div className="flex flex-wrap gap-2">
                 <label
                   htmlFor={`${backgroundImageInputId}-hero-video`}
-                  className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+                  className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
                 >
                   {isUploading ? (
                     <>
@@ -694,7 +694,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <button
                   type="button"
                   onClick={openHeroVideoLibrary}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
                 >
                   <PlayCircleIcon className="h-4 w-4" aria-hidden="true" />
                   ライブラリ
@@ -720,7 +720,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={videoUrl}
                   onChange={(e) => onUpdateContent('backgroundVideoUrl', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                   placeholder="https://example.com/hero.mp4"
                 />
                 <p className="text-xs text-slate-500">mp4 形式の短いループ動画を推奨します。アップロードまたはURLを設定すると自動的に動画背景に切り替わります。</p>
@@ -759,7 +759,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       type="text"
                       value={videoOverlayColor}
                       onChange={(e) => onUpdateContent('backgroundVideoOverlayColor', e.target.value)}
-                      className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                      className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -784,7 +784,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <div className="flex flex-wrap gap-2">
               <label
                 htmlFor={`${backgroundImageInputId}-hero`}
-                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
               >
                 {isUploading ? (
                   <>
@@ -809,7 +809,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <button
                 type="button"
                 onClick={openHeroMediaLibrary}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
               >
                 <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                 ライブラリ
@@ -836,7 +836,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <select
                   value={backgroundImageMode}
                   onChange={(e) => onUpdateContent('backgroundImageMode', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                 >
                   <option value="cover">カバー (全体を埋める)</option>
                   <option value="contain">全体表示 (トリミングなし)</option>
@@ -850,7 +850,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <select
                   value={backgroundImagePosition}
                   onChange={(e) => onUpdateContent('backgroundImagePosition', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                 >
                   <option value="center">中央</option>
                   <option value="top">上寄せ</option>
@@ -892,7 +892,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={overlayColor}
                     onChange={(e) => onUpdateContent('backgroundImageOverlayColor', e.target.value)}
-                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -948,7 +948,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         <div className="flex flex-wrap gap-2">
           <label
             htmlFor={`${backgroundImageInputId}-image-only`}
-            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-blue-500 hover:text-blue-600 shadow-sm'}`}
+            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
           >
             {isUploading ? (
               <>
@@ -977,7 +977,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               setMediaLibraryFilter(['image']);
               setShowMediaLibrary(true);
             }}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
           >
             <PhotoIcon className="h-4 w-4" aria-hidden="true" />
             ライブラリ
@@ -1000,7 +1000,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={widthMode}
               onChange={(e) => onUpdateContent('imageWidthMode', e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
             >
               <option value="full">フル幅（端まで表示）</option>
               <option value="boxed">中央寄せ（最大幅）</option>
@@ -1011,7 +1011,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={fitMode}
               onChange={(e) => onUpdateContent('imageFitMode', e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
             >
               <option value="cover">トリミングして埋める</option>
               <option value="contain">トリミングせず全体表示</option>
@@ -1022,7 +1022,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={heightMode}
               onChange={(e) => onUpdateContent('imageHeightMode', e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
             >
               <option value="viewport">画面高にフィット（推奨）</option>
               <option value="auto">元のサイズに合わせる</option>
@@ -1039,7 +1039,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <select
                 value={focalPoint}
                 onChange={(e) => onUpdateContent('imageFocalPoint', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
               >
                 <option value="center">中央</option>
                 <option value="top">上寄せ</option>
@@ -1083,7 +1083,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 type="text"
                 value={overlayColor}
                 onChange={(e) => onUpdateContent('imageOverlayColor', e.target.value)}
-                className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+                className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
               />
             </div>
           </div>
@@ -1111,8 +1111,8 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       {/* プロパティ */}
       <div className="p-3 lg:p-4 space-y-4 overflow-y-auto flex-1">
         {isPrimaryLinkLocked && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-xs leading-relaxed text-blue-800">
-            <p className="font-semibold text-blue-900">
+          <div className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-3 text-xs leading-relaxed text-sky-800">
+            <p className="font-semibold text-sky-900">
               {isSalonLinked ? 'オンラインサロン導線として設定されています' : '商品と連動しています'}
             </p>
             <p className="mt-1">
@@ -1137,7 +1137,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).tagline || ''}
               onChange={(e) => onUpdateContent('tagline', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('tagline'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タグラインを入力"
             />
           </div>
@@ -1153,7 +1153,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).badgeText || ''}
               onChange={(e) => onUpdateContent('badgeText', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('badgeText'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="バッジテキストを入力"
             />
           </div>
@@ -1169,7 +1169,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).eyebrow || ''}
               onChange={(e) => onUpdateContent('eyebrow', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('eyebrow'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="上部の小見出しを入力"
             />
           </div>
@@ -1185,7 +1185,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).title || ''}
               onChange={(e) => onUpdateContent('title', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('title'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タイトルを入力"
             />
           </div>
@@ -1201,7 +1201,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).subtitle || ''}
               onChange={(e) => onUpdateContent('subtitle', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('subtitle'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="サブタイトルを入力"
             />
           </div>
@@ -1217,7 +1217,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).topHeading ?? ''}
               onChange={(e) => onUpdateContent('topHeading', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('topHeading'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="見出し（空欄で非表示）"
             />
           </div>
@@ -1233,7 +1233,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               onChange={(e) => onUpdateContent('body', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('body'))}
               rows={4}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm resize-none"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm resize-none"
               placeholder="説明文（空欄で非表示）"
             />
           </div>
@@ -1249,7 +1249,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).bottomHeading ?? ''}
               onChange={(e) => onUpdateContent('bottomHeading', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('bottomHeading'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="見出し（空欄で非表示）"
             />
           </div>
@@ -1265,7 +1265,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).totalValue || ''}
               onChange={(e) => onUpdateContent('totalValue', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('totalValue'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="例：合計109,800円相当"
             />
           </div>
@@ -1280,7 +1280,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).text || ''}
               onChange={(e) => onUpdateContent('text', e.target.value)}
               rows={4}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="説明文を入力"
             />
           </div>
@@ -1296,7 +1296,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).highlightText || ''}
               onChange={(e) => onUpdateContent('highlightText', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('highlightText'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ハイライトテキストを入力"
             />
           </div>
@@ -1311,7 +1311,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).description || ''}
               onChange={(e) => onUpdateContent('description', e.target.value)}
               rows={4}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none text-base lg:text-sm"
               placeholder="メルマガの説明文を入力"
             />
           </div>
@@ -1326,7 +1326,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).description || ''}
               onChange={(e) => onUpdateContent('description', e.target.value)}
               rows={3}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none text-base lg:text-sm"
               placeholder="お問い合わせの説明文を入力"
             />
           </div>
@@ -1342,7 +1342,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).buttonText || ''}
               onChange={(e) => onUpdateContent('buttonText', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('buttonText'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
           </div>
@@ -1368,7 +1368,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                           newItems[index] = { ...newItems[index], show: e.target.checked };
                           onUpdateContent('items', newItems);
                         }}
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                       />
                       <span className="text-xs text-slate-600">表示</span>
                     </label>
@@ -1382,7 +1382,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       onUpdateContent('items', newItems);
                     }}
                     placeholder="項目名（例：販売業者名）"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                   />
                   <textarea
                     value={item.value || ''}
@@ -1393,7 +1393,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     }}
                     placeholder="内容（例：株式会社〇〇）"
                     rows={2}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500 resize-none"
                   />
                   <select
                     value={item.icon || 'document'}
@@ -1402,7 +1402,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       newItems[index] = { ...newItems[index], icon: e.target.value };
                       onUpdateContent('items', newItems);
                     }}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-sm text-slate-900 focus:outline-none focus:border-sky-500"
                   >
                     <option value="building">🏢 建物（販売業者名）</option>
                     <option value="user">👤 人物（代表者名）</option>
@@ -1430,7 +1430,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <select
                 value={currentFontKey}
                 onChange={(e) => onUpdateContent('fontFamily', e.target.value)}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               >
                 {FONT_OPTIONS.map((option) => (
                   <option key={option.key} value={option.key}>
@@ -1459,12 +1459,12 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               }}
               readOnly={isPrimaryLinkLocked}
               onFocus={() => handleFocusChange(resolveFieldId('buttonUrl'))}
-              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
+              className={`w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto ${isPrimaryLinkLocked ? 'border-sky-200 bg-sky-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
               placeholder="https://"
               aria-disabled={isPrimaryLinkLocked}
             />
             {isPrimaryLinkLocked && (
-              <p className="mt-2 text-xs text-blue-600">
+              <p className="mt-2 text-xs text-sky-600">
                 {isSalonLinked ? 'サロンに連動しているため、公開時はサロン公開ページへ遷移します。' : '商品に連動しているため、公開時はこのURLではなく購入モーダルが開きます。'}
               </p>
             )}
@@ -1472,7 +1472,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <label className="mt-3 flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
                 <input
                   type="checkbox"
-                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                   checked={useLinkedProduct}
                   onChange={(event) => onUpdateContent('useLinkedProduct', event.target.checked)}
                 />
@@ -1502,7 +1502,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).secondaryButtonText || ''}
               onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
               onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
             <div className="flex gap-2">
@@ -1511,7 +1511,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 value={(content as any).secondaryButtonUrl || ''}
                 onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
                 onFocus={() => handleFocusChange(resolveFieldId('secondaryButtonText'))}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
                 placeholder="https://"
               />
               <button
@@ -1671,7 +1671,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).subText || ''}
               onChange={(e) => onUpdateContent('subText', e.target.value)}
               rows={3}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="CTAの補足説明"
             />
           </div>
@@ -1686,7 +1686,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).caption || ''}
               onChange={(e) => onUpdateContent('caption', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="画像下に表示するテキスト"
             />
           </div>
@@ -1701,7 +1701,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).urgencyText || ''}
               onChange={(e) => onUpdateContent('urgencyText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="緊急性テキストを入力"
             />
           </div>
@@ -1744,7 +1744,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     onUpdateContent('targetDate', isoString);
                   }
                 }}
-                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               />
               <p className="text-xs text-slate-500 mt-1">
                 カウントダウンの締切日時を設定します
@@ -1777,7 +1777,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       type="checkbox"
                       checked={(content as any).showDays !== false}
                       onChange={(e) => onUpdateContent('showDays', e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="text-sm text-slate-700">日数を表示</span>
                   </label>
@@ -1788,7 +1788,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       type="checkbox"
                       checked={(content as any).showHours !== false}
                       onChange={(e) => onUpdateContent('showHours', e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="text-sm text-slate-700">時間を表示</span>
                   </label>
@@ -1799,7 +1799,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       type="checkbox"
                       checked={(content as any).showMinutes !== false}
                       onChange={(e) => onUpdateContent('showMinutes', e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="text-sm text-slate-700">分を表示</span>
                   </label>
@@ -1810,7 +1810,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       type="checkbox"
                       checked={(content as any).showSeconds === true}
                       onChange={(e) => onUpdateContent('showSeconds', e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="text-sm text-slate-700">秒を表示</span>
                   </label>
@@ -1828,7 +1828,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).position || 'bottom'}
               onChange={(e) => onUpdateContent('position', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="top">上部固定</option>
               <option value="bottom">下部固定</option>
@@ -1905,7 +1905,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={currentThemeKey ?? ''}
               onChange={(e) => onUpdateContent('themeKey', e.target.value as ColorThemeKey)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="">デフォルト</option>
               {THEME_ENTRIES.map(([key, value]) => (
@@ -1926,7 +1926,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   stats.push({ value: '', label: '' });
                   onUpdateContent('stats', stats);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + 追加
               </button>
@@ -1951,14 +1951,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={stat.value || ''}
                   onChange={(e) => onUpdateContent(`stats.${index}.value`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="表示値 (例: 87%)"
                 />
                 <input
                   type="text"
                   value={stat.label || ''}
                   onChange={(e) => onUpdateContent(`stats.${index}.label`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="ラベル (例: CVR改善率)"
                 />
               </div>
@@ -1977,7 +1977,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   features.push({ icon: '', title: '', description: '' });
                   onUpdateContent('features', features);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + 追加
               </button>
@@ -2002,20 +2002,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={feature.icon || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.icon`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="アイコン (例: ⚡️)"
                 />
                 <input
                   type="text"
                   value={feature.title || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.title`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="特徴タイトル"
                 />
                 <textarea
                   value={feature.description || ''}
                   onChange={(e) => onUpdateContent(`features.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   rows={3}
                   placeholder="詳細説明"
                 />
@@ -2035,7 +2035,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   plans.push({ name: '', price: '', period: '', description: '', features: [] });
                   onUpdateContent('plans', plans);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + プラン追加
               </button>
@@ -2059,7 +2059,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={plan.name || ''}
                   onChange={(e) => onUpdateContent(`plans.${index}.name`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="プラン名"
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -2067,21 +2067,21 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.price || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.price`, e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                     placeholder="価格"
                   />
                   <input
                     type="text"
                     value={plan.period || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.period`, e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                     placeholder="期間 / バッジ"
                   />
                 </div>
                 <textarea
                   value={plan.description || ''}
                   onChange={(e) => onUpdateContent(`plans.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   rows={2}
                   placeholder="説明"
                 />
@@ -2096,7 +2096,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                         features.push('');
                         onUpdateContent(`plans.${index}.features`, features);
                       }}
-                      className="text-xs text-blue-500 hover:text-blue-400"
+                      className="text-xs text-sky-500 hover:text-sky-400"
                     >
                       + 追加
                     </button>
@@ -2114,7 +2114,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                           features[featureIndex] = e.target.value;
                           onUpdateContent(`plans.${index}.features`, features);
                         }}
-                        className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                        className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                         placeholder={`項目 ${featureIndex + 1}`}
                       />
                       <button
@@ -2140,7 +2140,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     type="text"
                     value={plan.buttonText || ''}
                     onChange={(e) => onUpdateContent(`plans.${index}.buttonText`, e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                     placeholder="ボタン文言"
                   />
                   <input
@@ -2151,13 +2151,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       onUpdateContent(`plans.${index}.buttonUrl`, e.target.value);
                     }}
                     readOnly={isPrimaryLinkLocked}
-                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 placeholder-slate-400 ${isPrimaryLinkLocked ? 'border-blue-200 bg-blue-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
+                    className={`w-full px-3 py-2 bg-white border rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 placeholder-slate-400 ${isPrimaryLinkLocked ? 'border-sky-200 bg-sky-100/70 text-slate-500 cursor-not-allowed' : 'border-slate-300'}`}
                     placeholder="https://"
                     aria-disabled={isPrimaryLinkLocked}
                   />
                 </div>
                 {isPrimaryLinkLocked && (
-                  <p className="text-xs text-blue-600">
+                  <p className="text-xs text-sky-600">
                     {isSalonLinked
                       ? 'サロン連携中は公開ページでサロンページへ遷移するため、プランごとのURL設定は無視されます。'
                       : '商品連携中は公開ページでモーダルが表示され、プランごとのURL設定は無視されます。'}
@@ -2167,7 +2167,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   <span>おすすめ表示（ハイライト）</span>
                   <input
                     type="checkbox"
-                    className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+                    className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
                     checked={Boolean(plan.highlighted)}
                     onChange={(e) => onUpdateContent(`plans.${index}.highlighted`, e.target.checked)}
                   />
@@ -2188,7 +2188,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   faqs.push({ question: '', answer: '' });
                   onUpdateContent('faqs', faqs);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + 追加
               </button>
@@ -2212,13 +2212,13 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={faq.question || ''}
                   onChange={(e) => onUpdateContent(`faqs.${index}.question`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="質問"
                 />
                 <textarea
                   value={faq.answer || ''}
                   onChange={(e) => onUpdateContent(`faqs.${index}.answer`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   rows={3}
                   placeholder="回答"
                 />
@@ -2238,7 +2238,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   testimonials.push({ name: '', quote: '', role: '', rating: 5 });
                   onUpdateContent('testimonials', testimonials);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + 追加
               </button>
@@ -2262,20 +2262,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={testimonial.name || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.name`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="氏名 / 社名等"
                 />
                 <input
                   type="text"
                   value={testimonial.role || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.role`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="肩書き"
                 />
                 <textarea
                   value={testimonial.quote || ''}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.quote`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   rows={3}
                   placeholder="コメント"
                 />
@@ -2285,7 +2285,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   max={5}
                   value={testimonial.rating ?? 5}
                   onChange={(e) => onUpdateContent(`testimonials.${index}.rating`, Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="評価 (1-5)"
                 />
               </div>
@@ -2304,7 +2304,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   bonuses.push({ title: '', description: '', value: '', icon: '' });
                   onUpdateContent('bonuses', bonuses);
                 }}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
               >
                 + 追加
               </button>
@@ -2328,20 +2328,20 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={bonus.title || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.title`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="特典タイトル"
                 />
                 <input
                   type="text"
                   value={bonus.value || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.value`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="金額・価値など"
                 />
                 <textarea
                   value={bonus.description || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.description`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500 resize-none"
                   rows={2}
                   placeholder="詳細説明"
                 />
@@ -2349,7 +2349,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   type="text"
                   value={bonus.icon || ''}
                   onChange={(e) => onUpdateContent(`bonuses.${index}.icon`, e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                   placeholder="アイコン / 絵文字"
                 />
               </div>
@@ -2371,7 +2371,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       next[index] = e.target.value;
                       onUpdateContent('problems', next);
                     }}
-                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded text-slate-900 text-sm focus:outline-none focus:border-sky-500"
                     placeholder={`問題提起 ${index + 1}`}
                   />
                   <button
@@ -2396,7 +2396,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   const next = [...problemItems, '問題を入力'];
                   onUpdateContent('problems', next);
                 }}
-                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+                className="inline-flex items-center gap-1 text-sm text-sky-600 hover:text-sky-700"
               >
                 <span>＋ 問題提起を追加</span>
               </button>
@@ -2415,7 +2415,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={content.padding || ''}
               onChange={(e) => onUpdateContent('padding', e.target.value)}
               placeholder="例: 16px または 1rem"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -2430,7 +2430,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).borderRadius || ''}
               onChange={(e) => onUpdateContent('borderRadius', e.target.value)}
               placeholder="例: 20px"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -2445,7 +2445,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).maxWidth || ''}
               onChange={(e) => onUpdateContent('maxWidth', e.target.value)}
               placeholder="例: 960px"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -2458,7 +2458,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             </div>
             <input
               type="checkbox"
-              className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500"
+              className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
               checked={Boolean((content as any).shadow)}
               onChange={(e) => onUpdateContent('shadow', e.target.checked)}
             />
@@ -2474,7 +2474,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).alignment || 'center'}
               onChange={(e) => onUpdateContent('alignment', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="left">左寄せ</option>
               <option value="center">中央</option>
@@ -2492,7 +2492,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <select
               value={(content as any).columns || 3}
               onChange={(e) => onUpdateContent('columns', parseInt(e.target.value))}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             >
               <option value="2">2カラム</option>
               <option value="3">3カラム</option>
@@ -2552,7 +2552,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     </label>
                     <button
                       onClick={openMediaLibrary}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm font-medium"
                     >
                       <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                       ライブラリ
@@ -2588,7 +2588,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                   </label>
                   <button
                     onClick={openMediaLibrary}
-                    className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm font-medium"
                   >
                     <PhotoIcon className="h-4 w-4" aria-hidden="true" />
                     メディアライブラリから選択
@@ -2614,7 +2614,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                 <select
                   value={layoutValue}
                   onChange={(e) => onUpdateContent('layout', e.target.value)}
-                  className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+                  className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
                 >
                   {block.blockType === 'top-flex-1' && (
                     <>

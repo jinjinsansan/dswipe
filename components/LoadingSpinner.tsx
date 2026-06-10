@@ -8,7 +8,7 @@ export default function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | '
   return (
     <div className="flex items-center justify-center">
       <div
-        className={`${sizeClasses[size]} border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-4 border-sky-200 border-t-sky-600 rounded-full animate-spin`}
       />
     </div>
   );
@@ -45,7 +45,7 @@ export function PageLoader() {
 
         {/* プログレスバー */}
         <div className="w-64 h-2 bg-slate-700 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 animate-progress-slide rounded-full"></div>
+          <div className="h-full bg-gradient-to-r from-sky-500 via-sky-400 to-sky-500 animate-progress-slide rounded-full"></div>
         </div>
 
         {/* ローディングテキスト */}

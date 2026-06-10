@@ -325,7 +325,7 @@ export default function QuickCheckoutPage() {
           <p className="mt-1">{t('profile.missingDescription')}</p>
           <Link
             href="/profile"
-            className="mt-3 inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            className="mt-3 inline-flex items-center justify-center rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
           >
             {t('profile.goToProfile')}
           </Link>
@@ -374,7 +374,7 @@ export default function QuickCheckoutPage() {
     return (
       <div className="space-y-3 text-sm text-slate-700">
         <div className="flex items-center gap-2 text-base font-semibold text-slate-900">
-          <ShieldCheckIcon className="h-5 w-5 text-blue-500" aria-hidden="true" />
+          <ShieldCheckIcon className="h-5 w-5 text-sky-500" aria-hidden="true" />
           <span>{item.title}</span>
         </div>
         {formattedPrice ? (
@@ -484,7 +484,7 @@ export default function QuickCheckoutPage() {
                   type="button"
                   onClick={handlePurchase}
                   disabled={!showPurchaseButton}
-                  className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
                   {processing ? (
                     <span className="flex items-center gap-2">

@@ -282,11 +282,11 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   onClick={() => handleOptionClick('business', option.value)}
                   className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
                     formData.business === option.value
-                      ? 'border-blue-500/50 bg-blue-500/5'
+                      ? 'border-sky-500/50 bg-sky-500/5'
                       : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
@@ -323,11 +323,11 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   onClick={() => handleOptionClick('target', option.value)}
                   className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
                     formData.target === option.value
-                      ? 'border-blue-500/50 bg-blue-500/5'
+                      ? 'border-sky-500/50 bg-sky-500/5'
                       : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
@@ -364,11 +364,11 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   onClick={() => handleOptionClick('goal', option.value)}
                   className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
                     formData.goal === option.value
-                      ? 'border-blue-500/50 bg-blue-500/5'
+                      ? 'border-sky-500/50 bg-sky-500/5'
                       : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
@@ -397,7 +397,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.productName}
                 onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：売上を3倍にするLP構築マスター講座"
               />
             </div>
@@ -407,7 +407,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
+                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
                 placeholder="例：初心者でも90日で成果が出る実践型カリキュラム。動画講義、個別サポート、テンプレート付き。"
               />
             </div>
@@ -418,7 +418,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <input
                   value={formData.format}
                   onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                   placeholder="例：オンライン動画講座"
                 />
               </div>
@@ -428,7 +428,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <input
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                   placeholder="例：90日間+個別サポート"
                 />
               </div>
@@ -439,7 +439,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.transformation}
                 onChange={(e) => setFormData({ ...formData, transformation: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：売上を3倍にし、時間も半分に"
               />
             </div>
@@ -466,7 +466,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <input
                   value={formData.originalPrice}
                   onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                   placeholder="298000"
                 />
               </div>
@@ -476,7 +476,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <input
                   value={formData.specialPrice}
                   onChange={(e) => setFormData({ ...formData, specialPrice: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                   placeholder="98000"
                 />
               </div>
@@ -487,7 +487,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：12月31日23:59まで"
               />
             </div>
@@ -497,7 +497,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.callToAction}
                 onChange={(e) => setFormData({ ...formData, callToAction: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="今すぐ申し込む"
               />
             </div>
@@ -507,7 +507,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.scarcity}
                 onChange={(e) => setFormData({ ...formData, scarcity: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：残り5名様限定"
               />
             </div>
@@ -534,7 +534,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   type="button"
                   onClick={handleAddBonus}
-                  className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+                  className="text-sky-400 hover:text-sky-300 text-xs flex items-center gap-1"
                 >
                   <PlusIcon className="h-4 w-4" />
                   特典を追加
@@ -548,7 +548,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                       <input
                         value={bonus.title}
                         onChange={(e) => handleUpdateBonus(index, 'title', e.target.value)}
-                        className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                        className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                         placeholder="特典タイトル"
                       />
                       <button
@@ -562,13 +562,13 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     <input
                       value={bonus.description}
                       onChange={(e) => handleUpdateBonus(index, 'description', e.target.value)}
-                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                       placeholder="説明"
                     />
                     <input
                       value={bonus.value}
                       onChange={(e) => handleUpdateBonus(index, 'value', e.target.value)}
-                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                       placeholder="価値（例：29800円相当）"
                     />
                   </div>
@@ -585,7 +585,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.guaranteeHeadline}
                 onChange={(e) => setFormData({ ...formData, guaranteeHeadline: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：30日間 全額返金保証"
               />
             </div>
@@ -595,7 +595,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <textarea
                 value={formData.guaranteeDescription}
                 onChange={(e) => setFormData({ ...formData, guaranteeDescription: e.target.value })}
-                className="w-full h-16 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
+                className="w-full h-16 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
                 placeholder="例：30日以内にご満足いただけなければ、理由を問わず全額返金いたします。"
               />
             </div>
@@ -621,7 +621,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.authorName}
                 onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：山田太郎"
               />
             </div>
@@ -631,7 +631,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <input
                 value={formData.authorTitle}
                 onChange={(e) => setFormData({ ...formData, authorTitle: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                 placeholder="例：マーケティングコンサルタント"
               />
             </div>
@@ -641,7 +641,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <textarea
                 value={formData.authorBio}
                 onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
-                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-blue-500/50 resize-none"
+                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
                 placeholder="例：15年以上のLP制作実績。累計3,200社のマーケティング支援を担当。"
               />
             </div>
@@ -652,7 +652,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   type="button"
                   onClick={handleAddAchievement}
-                  className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+                  className="text-sky-400 hover:text-sky-300 text-xs flex items-center gap-1"
                 >
                   <PlusIcon className="h-4 w-4" />
                   実績を追加
@@ -665,7 +665,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     <input
                       value={achievement}
                       onChange={(e) => handleUpdateAchievement(index, e.target.value)}
-                      className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-blue-500/50"
+                      className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
                       placeholder="例：累計3,200社のマーケティング支援"
                     />
                     <button
@@ -720,7 +720,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <div
                 key={s}
                 className={`h-1 flex-1 rounded-full transition-all ${
-                  s <= step ? 'bg-blue-500/80' : 'bg-gray-800'
+                  s <= step ? 'bg-sky-500/80' : 'bg-gray-800'
                 }`}
               />
             ))}
@@ -747,7 +747,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   onClick={() => setStep(step + 1)}
                   disabled={!canProceed()}
-                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-sky-600/90 text-white text-sm font-light rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   次へ →
                 </button>
@@ -755,7 +755,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   onClick={handleGenerateLP}
                   disabled={isLoading || !canProceed()}
-                  className="w-full px-4 py-2 bg-blue-600/90 text-white text-sm font-light rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-sky-600/90 text-white text-sm font-light rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
@@ -779,7 +779,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                   </div>
                   <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-500/80 transition-all duration-1000 ease-linear"
+                      className="h-full bg-sky-500/80 transition-all duration-1000 ease-linear"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
