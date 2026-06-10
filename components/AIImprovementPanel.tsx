@@ -97,7 +97,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
         <button
           onClick={handleAnalyze}
           disabled={isAnalyzing}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold shadow-lg shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold shadow-lg shadow-sky-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isAnalyzing ? (
             <span className="flex items-center">
@@ -120,7 +120,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
       )}
 
       {overallScore !== null && (
-        <div className="mb-6 bg-gradient-to-r from-purple-500/10 to-sky-500/10 border border-purple-500/30 rounded-lg p-4">
+        <div className="mb-6 bg-gradient-to-r from-sky-500/10 to-sky-500/10 border border-sky-500/30 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 text-white">

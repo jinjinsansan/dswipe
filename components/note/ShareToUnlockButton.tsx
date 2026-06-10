@@ -207,7 +207,7 @@ export default function ShareToUnlockButton({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-50 to-indigo-50 p-5 sm:p-6">
+      <div className="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-50 to-cyan-50 p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
           <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 sm:mx-0 sm:h-12 sm:w-12">
             <ShareIcon className="h-5 w-5 text-sky-600 sm:h-6 sm:w-6" />

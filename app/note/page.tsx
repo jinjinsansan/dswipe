@@ -301,7 +301,7 @@ export default function NoteDashboardPage() {
                               note.visibility === 'public'
                                 ? 'bg-sky-100 text-sky-700'
                                 : note.visibility === 'limited'
-                                  ? 'bg-purple-100 text-purple-700'
+                                  ? 'bg-sky-100 text-sky-700'
                                   : 'bg-slate-100 text-slate-600'
                             }`}
                           >
@@ -312,7 +312,7 @@ export default function NoteDashboardPage() {
                                 : '非公開'}
                           </span>
                           {note.requires_login ? (
-                            <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
+                            <span className="inline-flex items-center rounded-full bg-cyan-100 px-2.5 py-1 text-[11px] font-semibold text-cyan-700">
                               ログイン必須
                             </span>
                           ) : null}

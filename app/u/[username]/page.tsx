@@ -160,7 +160,7 @@ export default function UserProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-sky-500 to-purple-600">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-sky-500 to-cyan-500">
               {profile?.profile_image_url ? (
                 <img
                   src={profile.profile_image_url}
@@ -260,7 +260,7 @@ export default function UserProfilePage() {
                   href={targetHref}
                   className="bg-white rounded-xl border border-slate-200 hover:border-sky-200 transition-all overflow-hidden group shadow-sm"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-sky-100 to-purple-100 overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-sky-100 to-cyan-100 overflow-hidden">
                     {thumbnailUrl ? (
                       isVideoUrl(thumbnailUrl) ? (
                         <video

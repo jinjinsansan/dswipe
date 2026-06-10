@@ -222,7 +222,7 @@ export default function RealtimeHints({ blocks, selectedBlockId, lpData, onApply
       case 'success':
         return 'bg-green-500/10 border-green-500/50 text-green-400';
       case 'ai':
-        return 'bg-purple-500/10 border-purple-500/50 text-purple-400';
+        return 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400';
       default:
         return 'bg-sky-500/10 border-sky-500/50 text-sky-400';
     }

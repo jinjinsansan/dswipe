@@ -1616,12 +1616,12 @@ export default function NoteCreatePage() {
             <button
               type="button"
               onClick={() => setSelection('note')}
-              className="flex h-full flex-col gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-5 text-left transition hover:border-indigo-400 hover:bg-indigo-100"
+              className="flex h-full flex-col gap-3 rounded-2xl border border-sky-200 bg-sky-50 p-5 text-left transition hover:border-sky-400 hover:bg-sky-100"
             >
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-500">NOTE STYLE</span>
-              <h3 className="text-lg font-semibold text-indigo-900">リッチテキストエディタ</h3>
-              <p className="text-sm text-indigo-800">NOTE風の執筆体験。段落単位で装飾や有料設定を切り替えながら滑らかに文章を構成できます。</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-indigo-700">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-500">NOTE STYLE</span>
+              <h3 className="text-lg font-semibold text-sky-900">リッチテキストエディタ</h3>
+              <p className="text-sm text-sky-800">NOTE風の執筆体験。段落単位で装飾や有料設定を切り替えながら滑らかに文章を構成できます。</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-sky-700">
                 <li>ドラフト感覚で書きやすいリッチテキスト</li>
                 <li>段落ごとの有料切り替えをサポート</li>
                 <li>直感的な装飾と画像挿入</li>

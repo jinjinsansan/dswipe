@@ -236,8 +236,8 @@ export default function SimpleAnalyticsPage() {
 
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <UsersIcon className="h-6 w-6 text-purple-600" />
+                  <div className="h-10 w-10 rounded-lg bg-sky-50 flex items-center justify-center">
+                    <UsersIcon className="h-6 w-6 text-sky-600" />
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-slate-900 mb-1">

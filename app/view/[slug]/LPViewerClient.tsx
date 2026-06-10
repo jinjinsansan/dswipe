@@ -1198,7 +1198,7 @@ export default function LPViewerClient({
         <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm px-4 py-6 sm:py-10 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 sm:max-h-[90vh] flex flex-col">
             {/* Header with gradient */}
-            <div className="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 relative overflow-hidden">
+            <div className="bg-gradient-to-r from-sky-600 to-cyan-600 p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))]" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-2">
@@ -1238,7 +1238,7 @@ export default function LPViewerClient({
             <div className="p-6 sm:flex-1 sm:overflow-y-auto">
               <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
@@ -1373,7 +1373,7 @@ export default function LPViewerClient({
                 <div
                   className={`rounded-lg p-4 border-2 ${
                     selectedIsPoints
-                      ? 'bg-gradient-to-r from-sky-50 to-indigo-50 border-sky-200'
+                      ? 'bg-gradient-to-r from-sky-50 to-cyan-50 border-sky-200'
                       : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200'
                   }`}
                 >
@@ -1477,7 +1477,7 @@ export default function LPViewerClient({
                   }
                   className={`flex-1 px-6 py-4 text-white rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 ${
                     selectedIsPoints
-                      ? 'bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40'
+                      ? 'bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40'
                       : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40'
                   }`}
                 >

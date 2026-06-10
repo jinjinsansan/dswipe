@@ -37,7 +37,7 @@ const getTransactionIcon = (type: string) => {
     case 'purchase':
       return <BanknotesIcon className="h-5 w-5 text-sky-500" />;
     case 'product_purchase':
-      return <ShoppingBagIcon className="h-5 w-5 text-purple-500" />;
+      return <ShoppingBagIcon className="h-5 w-5 text-sky-500" />;
     case 'bonus':
       return <GiftIcon className="h-5 w-5 text-green-500" />;
     case 'refund':
@@ -52,7 +52,7 @@ const getTransactionBadgeClass = (type: string) => {
     case 'purchase':
       return 'text-sky-600 bg-sky-50 border-sky-200';
     case 'product_purchase':
-      return 'text-purple-600 bg-purple-50 border-purple-200';
+      return 'text-sky-600 bg-sky-50 border-sky-200';
     case 'bonus':
       return 'text-green-600 bg-green-50 border-green-200';
     case 'refund':

@@ -1065,7 +1065,7 @@ export default function NoteEditPage() {
 
         {/* シェア統計セクション */}
         {shareStats && shareStats.total_shares > 0 ? (
-          <div className="bg-gradient-to-br from-sky-50 to-indigo-50 p-4 md:rounded-3xl md:border md:border-sky-200 md:p-6 md:shadow-sm">
+          <div className="bg-gradient-to-br from-sky-50 to-cyan-50 p-4 md:rounded-3xl md:border md:border-sky-200 md:p-6 md:shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <ChartBarIcon className="h-6 w-6 text-sky-600" aria-hidden="true" />
               <h3 className="text-base font-semibold text-sky-900">シェア統計</h3>
@@ -1499,7 +1499,7 @@ export default function NoteEditPage() {
             </div>
 
             {effectivePaid && (
-              <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-50 to-indigo-50 px-4 py-4">
+              <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-50 to-cyan-50 px-4 py-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold text-sky-900">Xシェアで無料解放を許可</p>

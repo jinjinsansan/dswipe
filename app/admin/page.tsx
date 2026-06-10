@@ -2745,9 +2745,9 @@ export default function AdminPanelPage() {
                       <p className="text-xs font-semibold text-emerald-600">累計付与ポイント</p>
                       <p className="mt-2 text-2xl font-semibold text-emerald-700">{formatPoints(shareOverview.total_reward_points)}</p>
                     </div>
-                    <div className="rounded-2xl border border-purple-100 bg-purple-50 p-4">
-                      <p className="text-xs font-semibold text-purple-600">今日のシェア</p>
-                      <p className="mt-2 text-2xl font-semibold text-purple-700">{formatNumber(shareOverview.today_shares)}</p>
+                    <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
+                      <p className="text-xs font-semibold text-sky-600">今日のシェア</p>
+                      <p className="mt-2 text-2xl font-semibold text-sky-700">{formatNumber(shareOverview.today_shares)}</p>
                     </div>
                     <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
                       <p className="text-xs font-semibold text-amber-600">直近7日間</p>

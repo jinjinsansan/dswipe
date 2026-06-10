@@ -256,11 +256,11 @@ export default function ShareManagementPage() {
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">今週</p>
-                    <p className="mt-2 text-2xl font-bold text-indigo-600">{stats?.this_week_shares.toLocaleString() || 0}</p>
+                    <p className="mt-2 text-2xl font-bold text-sky-600">{stats?.this_week_shares.toLocaleString() || 0}</p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">今月</p>
-                    <p className="mt-2 text-2xl font-bold text-purple-600">{stats?.this_month_shares.toLocaleString() || 0}</p>
+                    <p className="mt-2 text-2xl font-bold text-cyan-600">{stats?.this_month_shares.toLocaleString() || 0}</p>
                   </div>
                 </div>
 

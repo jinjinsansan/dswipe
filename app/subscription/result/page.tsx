@@ -158,7 +158,7 @@ function SubscriptionResultContent(): JSX.Element {
   const membershipLabel = membershipStatus ? statusLabel(membershipStatus) : undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-50">
       <StickySiteHeader showDashboardLink />
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-2xl items-center justify-center px-4 py-10">
         <div className="w-full">

@@ -55,7 +55,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
         {/* Header */}
         <div className="relative flex items-center justify-between px-3 sm:px-5 sm:px-6 py-3 sm:py-4 sm:py-5 border-b border-slate-200 flex-shrink-0">
           <div className="min-w-0 flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -110,7 +110,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
         <div className="relative flex-1 overflow-y-auto min-h-0 px-3 sm:px-5 sm:px-6 py-4 sm:py-5 sm:py-6">
           {suggestions.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-sky-500/20 to-purple-500/20 mb-4 sm:mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-sky-500/20 to-cyan-500/20 mb-4 sm:mb-6">
                 <svg className="w-12 h-12 sm:w-14 sm:h-14 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>

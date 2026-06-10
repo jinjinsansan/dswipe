@@ -88,7 +88,7 @@ export default function PurchaseHistoryClient() {
         label: "LP・デジタル商品",
         value: summary?.product_purchases ?? 0,
         icon: <ShoppingBagIcon className="h-6 w-6" aria-hidden="true" />,
-        accent: "bg-purple-50 text-purple-600 border-purple-200",
+        accent: "bg-sky-50 text-sky-600 border-sky-200",
       },
       {
         label: "有料Swipeコラム",
@@ -162,7 +162,7 @@ export default function PurchaseHistoryClient() {
                 ポイント / 日本円決済で購入したLP連動商品やテンプレートの履歴です
               </p>
             </div>
-            <span className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-600">
+            <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
               {history?.products.length ?? 0} 件
             </span>
           </div>
@@ -175,7 +175,7 @@ export default function PurchaseHistoryClient() {
                 const amountDisplay = isYenPayment
                   ? formatYen(item.amount_jpy)
                   : formatPoints(item.amount_points);
-                const amountClass = isYenPayment ? "text-emerald-600" : "text-purple-600";
+                const amountClass = isYenPayment ? "text-emerald-600" : "text-sky-600";
                 const methodLabel = isYenPayment ? "日本円決済" : "ポイント決済";
                 return (
                   <li
@@ -195,7 +195,7 @@ export default function PurchaseHistoryClient() {
                       <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide ${
-                            isYenPayment ? "bg-emerald-100 text-emerald-600" : "bg-purple-100 text-purple-600"
+                            isYenPayment ? "bg-emerald-100 text-emerald-600" : "bg-sky-100 text-sky-600"
                           }`}
                         >
                           {methodLabel}
@@ -210,7 +210,7 @@ export default function PurchaseHistoryClient() {
                       {link ? (
                         <Link
                           href={link}
-                          className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-white px-3 py-1.5 text-xs font-semibold text-purple-600 transition hover:bg-purple-50"
+                          className="inline-flex items-center gap-1 rounded-full border border-sky-200 bg-white px-3 py-1.5 text-xs font-semibold text-sky-600 transition hover:bg-sky-50"
                         >
                           公開LPを見る
                           <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" aria-hidden="true" />

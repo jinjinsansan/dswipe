@@ -1840,7 +1840,7 @@ export default function EditLPNewPage() {
                       href={`/view/${lp.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors min-h-[48px] flex items-center justify-center"
+                      className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors min-h-[48px] flex items-center justify-center"
                     >
                       プレビュー
                     </a>
@@ -2090,7 +2090,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={() => setShowColorGenerator(true)}
-                className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors flex items-center justify-center gap-2"
+                className="w-full px-3 py-2.5 lg:py-2 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white rounded font-semibold text-sm min-h-[44px] lg:min-h-auto transition-colors flex items-center justify-center gap-2"
               >
                 <SwatchIcon className="h-4 w-4" aria-hidden="true" />
                 テーマカラー生成

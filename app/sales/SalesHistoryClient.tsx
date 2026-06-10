@@ -204,7 +204,7 @@ export default function SalesHistoryClient() {
       {
         label: "商品売上件数",
         value: (summary?.product_orders ?? 0).toLocaleString(),
-        accent: "bg-purple-50 text-purple-600 border-purple-200",
+        accent: "bg-sky-50 text-sky-600 border-sky-200",
         icon: <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />,
       },
       {
@@ -546,7 +546,7 @@ export default function SalesHistoryClient() {
               <h2 className="text-lg font-semibold text-slate-900">LP・デジタル商品売上</h2>
               <p className="text-sm text-slate-500">ポイント / 日本円決済で販売された商品履歴です</p>
             </div>
-            <span className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-600">
+            <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
               {history?.products.length ?? 0} 件
             </span>
           </div>
@@ -556,7 +556,7 @@ export default function SalesHistoryClient() {
               {history.products.map((sale) => {
                 const isYen = sale.payment_method === "yen";
                 const amountDisplay = isYen ? formatYen(sale.amount_jpy ?? 0) : formatPoints(sale.amount_points);
-                const amountClass = isYen ? "text-emerald-600" : "text-purple-600";
+                const amountClass = isYen ? "text-emerald-600" : "text-sky-600";
                 const methodLabel = isYen ? "日本円決済" : "ポイント決済";
                 const lpLink = getLpLink(sale);
                 return (
@@ -569,7 +569,7 @@ export default function SalesHistoryClient() {
                         <div className="flex items-start gap-3">
                           <span
                             className={`mt-1 inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
-                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-purple-50 text-purple-600"
+                              isYen ? "bg-emerald-50 text-emerald-600" : "bg-sky-50 text-sky-600"
                             }`}
                           >
                             <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
@@ -596,7 +596,7 @@ export default function SalesHistoryClient() {
                       <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-1 font-semibold uppercase tracking-wide ${
-                            isYen ? "bg-emerald-100 text-emerald-600" : "bg-purple-100 text-purple-600"
+                            isYen ? "bg-emerald-100 text-emerald-600" : "bg-sky-100 text-sky-600"
                           }`}
                         >
                           {methodLabel}

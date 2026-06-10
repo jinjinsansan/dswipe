@@ -586,7 +586,7 @@ export default function AdminMessagesPage() {
                               <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-700">アーカイブ</span>
                             ) : null}
                             {message.automated ? (
-                              <span className="rounded-full bg-purple-100 px-2 py-0.5 font-semibold text-purple-700">自動通知</span>
+                              <span className="rounded-full bg-sky-100 px-2 py-0.5 font-semibold text-sky-700">自動通知</span>
                             ) : null}
                           </div>
                         </button>
