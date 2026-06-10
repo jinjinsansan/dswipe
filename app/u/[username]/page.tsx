@@ -134,10 +134,10 @@ export default function UserProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f4f8fd] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 text-lg mb-4">エラーが発生しました</p>
-          <p className="text-gray-400 text-sm mb-4">{error}</p>
+          <p className="text-red-600 text-lg font-semibold mb-4">エラーが発生しました</p>
+          <p className="text-slate-500 text-sm mb-4">{error}</p>
           <button
             onClick={() => fetchUserData()}
             className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"

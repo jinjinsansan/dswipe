@@ -178,12 +178,12 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950/95 px-4 py-16">
+      <div className="flex min-h-screen items-center justify-center bg-[#f4f8fd] px-4 py-16">
         <div className="max-w-md rounded-3xl border border-rose-200/40 bg-white/95 px-6 py-8 text-center shadow-lg">
           <h1 className="text-lg font-semibold text-rose-600">サロンが見つかりません</h1>
           <p className="mt-2 text-sm text-slate-600">{error}</p>
           <Link
-            href="/" className="mt-6 inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+            href="/" className="mt-6 inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-semibold text-pure-white transition hover:bg-[#122c4d]"
           >
             トップに戻る
           </Link>
