@@ -102,7 +102,12 @@ npm run dev   # http://localhost:3000
    - ~~コラム一覧 /notes~~ **済（`4aab48a`）**: Note List.html準拠（ヒーロー＋横型カード＋サイドバー）。i18nキー4つ追加。
    - ~~LP分析 /lp/[id]/analytics~~ **済（`73f5882`）**: 独自ダークシェル廃止→DashboardLayoutに統合。
    - ~~紫/藍アクセント一掃~~ **済（`c735981`）**: 全16ファイルでpurple/indigo/pink→sky/cyan。
-   - 残り（任意・モック完全準拠まで）: points/purchase・salon各ページ・adminの**レイアウト深掘り**（現状でもライト+sky+ネイビーシェルで一貫済み）。note/create のスタイル選択カードなど細部。
+   - ~~points/purchase~~ **済（`5d09ae0`）**: 残高カードをネイビーグラデ化、購入CTAをグラデ化。
+4. **仕上げ済（`5d09ae0`・`95160a6`）**:
+   - **重大修正**: `.text-white` remapの白文字補償が `bg-blue-*` のみ対象で、#2のblue→sky置換以降 **bg-sky-600等の全ボタン(63ファイル)がダーク文字**になっていた → globals.cssの補償ルールに sky/cyan/グラデ要素を追加し一括修復。
+   - ネイビーサイドバーのDSwipeロゴ「Swipe」が不可視（remap）だった件、ロゴDスクエア #3B82F6→#0284c7、StickySiteHeaderメニューボタン、注目バッジ統一、admin/tokushoの低コントラスト修正。
+   - 公開6ページ（top/login/products/notes/terms/tokusho）で自動コントラスト監査済み（実描画の問題ゼロ）。
+   - 残り（完全任意）: salon/adminのモックレイアウト深掘り。現状で全画面一貫済み。
 4. **DashboardHeader** トップバー（現状は白＝Momentumでも可）。アバター等の細部。
 5. アクセシビリティ/コントラスト最終チェック（過去セッションで redesign-momentum 側はサブエージェント診断で詰めた。手法は流用可）。
 
