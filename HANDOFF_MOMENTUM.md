@@ -92,7 +92,7 @@ npm run dev   # http://localhost:3000
 
 `main` はページ本体が独自実装。色swap＋chromeだけでは「モックの完成形」には届かない。各ページをモックに寄せる必要がある。優先度順:
 
-1. **トップ `app/HomeSwiper.tsx`**: ユーザーが最初に見る。モック `D-Swipe Top (Swipe).html` に寄せる（シアン化は済。レイアウト/トーンは要調整）。※機能（動画ヒーロー等）を壊さないこと。
+1. ~~トップ `app/HomeSwiper.tsx`~~ **済（commit `1ef8490`）**: モック準拠の9枚構成＋固定ネイビーナビ＋下部登録バンドに刷新。ヒーロー動画は薄く保持。Swiper機能（縦スワイプ/キーボード/触覚）維持。※globals.css に `.text-white{color:#0f172a!important}` の旧remapが残存するため、ネイビー上の白文字は `text-pure-white` を使うこと（他ページ移植時も同様の罠に注意）。
 2. **ナビの多色 → 単色化（任意）**: `navLinks.tsx` の `GROUP_META_CONFIG`（points=violet, line=emerald, media=indigo, note=slate 等）と `DashboardHeader.tsx` の `MOBILE_GROUP_*_CLASSES`（rose/amber/orange等）が**まだ多色**。デスクトップ・サイドバーは#1で単色化済みだが、**モバイルメニューと一部は多色のまま**。Momentum単色にするならここを統一。
 3. **マーケット `/products`、商品詳細、ダッシュボード本体、note、salon、points、admin** 等のページ本体をモックの体裁に。
 4. **DashboardHeader** トップバー（現状は白＝Momentumでも可）。アバター等の細部。
