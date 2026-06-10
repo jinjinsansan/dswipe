@@ -38,17 +38,17 @@ export default function ColorThemeGenerator({
   };
 
   return (
-    <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-6 max-w-2xl">
+    <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-6 max-w-2xl">
       <div>
-        <h3 className="text-white font-bold mb-4">🎨 テーマカラージェネレーター</h3>
-        <p className="text-gray-400 text-sm mb-6">
+        <h3 className="text-slate-900 font-bold mb-4">🎨 テーマカラージェネレーター</h3>
+        <p className="text-slate-500 text-sm mb-6">
           ベースカラーを選択すると、Tailwind CSS互換の11段階シェードが自動生成されます
         </p>
       </div>
 
       {/* Color Picker */}
       <div className="space-y-3">
-        <label className="block text-sm font-semibold text-gray-300">
+        <label className="block text-sm font-semibold text-slate-700">
           ベースカラーを選択
         </label>
         <div className="flex items-start gap-6">
@@ -57,9 +57,9 @@ export default function ColorThemeGenerator({
           </div>
           <div className="flex-1 space-y-3">
             {/* RGB 入力 */}
-            <div className="bg-gray-800/50 rounded-lg p-3 space-y-2">
+            <div className="bg-slate-50 rounded-lg p-3 space-y-2">
               <div>
-                <label className="text-xs text-gray-400">R</label>
+                <label className="text-xs text-slate-500">R</label>
                 <input
                   type="number"
                   min="0"
@@ -69,11 +69,11 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, r: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-slate-100 text-slate-900 rounded text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400">G</label>
+                <label className="text-xs text-slate-500">G</label>
                 <input
                   type="number"
                   min="0"
@@ -83,11 +83,11 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, g: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-slate-100 text-slate-900 rounded text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400">B</label>
+                <label className="text-xs text-slate-500">B</label>
                 <input
                   type="number"
                   min="0"
@@ -97,19 +97,19 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, b: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-slate-100 text-slate-900 rounded text-sm"
                 />
               </div>
             </div>
 
             {/* HEX 表示 */}
-            <div className="bg-gray-800/50 rounded-lg p-3">
-              <label className="text-xs text-gray-400">HEX</label>
+            <div className="bg-slate-50 rounded-lg p-3">
+              <label className="text-xs text-slate-500">HEX</label>
               <input
                 type="text"
                 value={hex}
                 onChange={(e) => setHex(e.target.value)}
-                className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm font-mono"
+                className="w-full px-2 py-1 bg-slate-100 text-slate-900 rounded text-sm font-mono"
               />
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function ColorThemeGenerator({
 
       {/* Color Shades Preview */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-300 mb-3">
+        <h4 className="text-sm font-semibold text-slate-700 mb-3">
           生成されたシェード（クリックでコピー）
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
@@ -126,13 +126,13 @@ export default function ColorThemeGenerator({
             <button
               key={shade}
               onClick={() => handleCopyColor(shade)}
-              className="group flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
+              className="group flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-slate-50 transition-colors"
             >
               <div
-                className="w-12 h-12 rounded border border-gray-600 group-hover:border-white transition-colors"
+                className="w-12 h-12 rounded border border-slate-300 group-hover:border-white transition-colors"
                 style={{ backgroundColor: shades[shade] }}
               />
-              <span className="text-xs font-semibold text-gray-300">{shade}</span>
+              <span className="text-xs font-semibold text-slate-700">{shade}</span>
               <span className="text-[10px] text-gray-500 font-mono">
                 {copiedShade === shade ? '✓ コピー' : shades[shade]}
               </span>
@@ -143,9 +143,9 @@ export default function ColorThemeGenerator({
 
       {/* CSS Output */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-300 mb-2">CSS Variables</h4>
-        <div className="bg-gray-800/50 rounded-lg p-3 max-h-40 overflow-y-auto">
-          <pre className="text-[10px] sm:text-xs text-gray-400 font-mono">
+        <h4 className="text-sm font-semibold text-slate-700 mb-2">CSS Variables</h4>
+        <div className="bg-slate-50 rounded-lg p-3 max-h-40 overflow-y-auto">
+          <pre className="text-[10px] sm:text-xs text-slate-500 font-mono">
             {`:root {
 ${SHADE_KEYS
   .map((shade) => `  --primary-${shade}: ${shades[shade as keyof ColorShades]};`)
@@ -156,7 +156,7 @@ ${SHADE_KEYS
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-4 border-t border-gray-700">
+      <div className="flex gap-2 pt-4 border-t border-slate-200">
         <button
           onClick={handleApply}
           className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
@@ -165,7 +165,7 @@ ${SHADE_KEYS
         </button>
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 bg-slate-100 text-slate-900 rounded-lg font-semibold hover:bg-slate-200 transition-colors"
         >
           キャンセル
         </button>

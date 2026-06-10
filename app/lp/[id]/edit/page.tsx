@@ -478,26 +478,26 @@ export default function EditLPNewPage() {
 
   if (!lp) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">LPが見つかりません</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-900 text-xl">LPが見つかりません</div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
+    <div className="h-screen bg-slate-100 flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 h-14 flex-shrink-0">
+      <header className="bg-white backdrop-blur-sm border-b border-slate-200 h-14 flex-shrink-0">
         <div className="h-full px-2 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-3">
           {/* Left: Back & Title */}
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <Link 
               href="/dashboard"
-              className="text-gray-300 hover:text-white transition-colors text-xs sm:text-sm font-medium"
+              className="text-slate-700 hover:text-slate-900 transition-colors text-xs sm:text-sm font-medium"
             >
               ← 戻る
             </Link>
-            <div className="text-xs sm:text-sm font-semibold text-white truncate">{lp.title}</div>
+            <div className="text-xs sm:text-sm font-semibold text-slate-900 truncate">{lp.title}</div>
           </div>
 
           {/* Right: Actions */}
@@ -505,8 +505,8 @@ export default function EditLPNewPage() {
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             <span className={`px-2 py-1 text-xs rounded font-semibold ${
               lp.status === 'published'
-                ? 'bg-green-500/10 text-green-400'
-                : 'bg-gray-700/50 text-gray-400'
+                ? 'bg-green-50 text-green-400'
+                : 'bg-slate-100 text-slate-500'
             }`}>
               {lp.status === 'published' ? '公開中' : '下書き'}
             </span>
@@ -517,7 +517,7 @@ export default function EditLPNewPage() {
                   href={`/view/${lp.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200 border border-gray-800 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-blue-300 hover:text-blue-700 border border-slate-200 rounded transition-colors"
                 >
                   プレビュー
                 </a>
@@ -527,7 +527,7 @@ export default function EditLPNewPage() {
                     navigator.clipboard.writeText(url);
                     alert('URLをコピーしました！');
                   }}
-                  className="px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white border border-gray-800 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 rounded transition-colors"
                   title="公開URLをコピー"
                 >
                   URLコピー
@@ -583,7 +583,7 @@ export default function EditLPNewPage() {
             {/* Menu Button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="p-2 text-gray-300 hover:text-white transition-colors"
+              className="p-2 text-slate-700 hover:text-slate-900 transition-colors"
               title="メニュー"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -597,13 +597,13 @@ export default function EditLPNewPage() {
       {/* Mobile Menu - Full Screen Modal */}
       {showMobileMenu && (
         <div className="lg:hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl max-w-sm w-full overflow-y-auto max-h-[80vh]">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-sm w-full overflow-y-auto max-h-[80vh]">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700 bg-gray-900/50">
-              <h3 className="text-white font-semibold">メニュー</h3>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
+              <h3 className="text-slate-900 font-semibold">メニュー</h3>
               <button
                 onClick={() => setShowMobileMenu(false)}
-                className="text-gray-400 hover:text-white transition-colors text-2xl leading-none"
+                className="text-slate-500 hover:text-slate-900 transition-colors text-2xl leading-none"
               >
                 ✕
               </button>
@@ -612,12 +612,12 @@ export default function EditLPNewPage() {
             {/* Content */}
             <div className="p-6 space-y-4">
               {/* Status Display */}
-              <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                <span className="text-gray-300 text-sm">ステータス</span>
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <span className="text-slate-700 text-sm">ステータス</span>
                 <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
                   lp.status === 'published'
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-yellow-500/20 text-yellow-400'
+                    ? 'bg-green-50 text-green-400'
+                    : 'bg-yellow-50 text-yellow-400'
                 }`}>
                   {lp.status === 'published' ? '公開中' : '下書き'}
                 </span>
@@ -673,7 +673,7 @@ export default function EditLPNewPage() {
 
               {/* Secondary Actions */}
               {lp.status === 'published' && (
-                <div className="pt-4 border-t border-gray-700 space-y-2">
+                <div className="pt-4 border-t border-slate-200 space-y-2">
                   <button
                     onClick={() => {
                       const url = `${window.location.origin}/view/${lp.slug}`;
@@ -681,7 +681,7 @@ export default function EditLPNewPage() {
                       alert('URLをコピーしました！');
                       setShowMobileMenu(false);
                     }}
-                    className="w-full px-4 py-2.5 bg-gray-700 text-gray-200 rounded-lg font-semibold hover:bg-gray-600 transition-colors min-h-[44px] flex items-center justify-center gap-2 text-sm"
+                    className="w-full px-4 py-2.5 bg-slate-100 text-slate-800 rounded-lg font-semibold hover:bg-slate-200 transition-colors min-h-[44px] flex items-center justify-center gap-2 text-sm"
                   >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M12.586 4.586a2 2 0 112.828 2.828l-.793.793-2.828-2.829.793-.793zM12.539 12.539L9.404 9.404m9.146-5.404a2 2 0 010 2.828l-.793.793m2.828 2.828a4 4 0 01-5.656 0l-4-4a4 4 0 015.656-5.656l1.102 1.101m-.758 4.899a2 2 0 001.768-3.468A2 2 0 0014 6l1.586 1.586" />
@@ -698,20 +698,20 @@ export default function EditLPNewPage() {
       {/* Main Content - 3 Column Layout (Desktop) / Tab-based Layout (Mobile) */}
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {error && (
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
         {/* モバイル用タブ */}
-        <div className="lg:hidden flex-shrink-0 border-b border-gray-800 bg-gray-900/50">
+        <div className="lg:hidden flex-shrink-0 border-b border-slate-200 bg-white">
           <div className="flex gap-1 px-2 py-2 overflow-x-auto">
             <button
               onClick={() => setMobileTab('blocks')}
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'blocks'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  : 'bg-slate-50 text-slate-500 hover:text-slate-900'
               }`}
             >
               📋 ブロック
@@ -721,7 +721,7 @@ export default function EditLPNewPage() {
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'preview'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  : 'bg-slate-50 text-slate-500 hover:text-slate-900'
               }`}
             >
               👁️ プレビュー
@@ -731,7 +731,7 @@ export default function EditLPNewPage() {
               className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
                 mobileTab === 'properties'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  : 'bg-slate-50 text-slate-500 hover:text-slate-900'
               }`}
             >
               ⚙️ 設定
@@ -740,10 +740,10 @@ export default function EditLPNewPage() {
         </div>
 
         {/* Left: Block List */}
-        <div className={`flex-col min-h-0 bg-gray-800/30 border-gray-800 overflow-hidden flex ${
+        <div className={`flex-col min-h-0 bg-slate-50 border-slate-200 overflow-hidden flex ${
           mobileTab === 'blocks' ? 'flex' : 'hidden lg:flex'
         } flex-shrink-0 w-full lg:w-64 lg:border-r border-b lg:border-b-0`}>
-          <div className="py-3 lg:py-3 border-b border-gray-800">
+          <div className="py-3 lg:py-3 border-b border-slate-200">
             <button
               onClick={() => setShowTemplateSelector(true)}
               className="w-full px-3 py-2.5 lg:py-2 bg-blue-600/90 text-white text-sm font-semibold hover:bg-blue-600 transition-colors min-h-[44px] lg:min-h-auto"
@@ -754,8 +754,8 @@ export default function EditLPNewPage() {
 
           <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
             {/* モバイルではLP設定とSNSメタ情報を非表示 */}
-            <div className="hidden lg:block py-3 border-b border-gray-800 space-y-3 bg-gray-900/20 flex-shrink-0">
-              <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
+            <div className="hidden lg:block py-3 border-b border-slate-200 space-y-3 bg-white flex-shrink-0">
+              <h4 className="text-xs font-bold text-slate-700 tracking-wide">LP設定</h4>
 
               <button
                 onClick={() => setShowColorGenerator(true)}
@@ -767,36 +767,36 @@ export default function EditLPNewPage() {
               <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-500 focus:ring-blue-500 flex-shrink-0"
                   checked={lpSettings.showSwipeHint}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
                   }
                 />
                 <div>
-                  <p className="text-sm lg:text-xs text-white font-semibold">スワイプアニメーション</p>
-                  <p className="text-xs lg:text-[11px] text-gray-400">1枚目に指アイコンでスワイプを促します</p>
+                  <p className="text-sm lg:text-xs text-slate-900 font-semibold">スワイプアニメーション</p>
+                  <p className="text-xs lg:text-[11px] text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
 
               <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-blue-500 focus:ring-blue-500 flex-shrink-0"
                   checked={lpSettings.fullscreenMedia}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
                   }
                 />
                 <div>
-                  <p className="text-sm lg:text-xs text-white font-semibold">メディアの全画面表示</p>
-                  <p className="text-xs lg:text-[11px] text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
+                  <p className="text-sm lg:text-xs text-slate-900 font-semibold">メディアの全画面表示</p>
+                  <p className="text-xs lg:text-[11px] text-slate-500">画像やHTMLをブラウザ全体に広げます</p>
                 </div>
               </label>
 
-              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
-                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
+                  <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">SNSメタ情報</h5>
                   <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
                 </div>
                 <div className="space-y-2">
@@ -805,28 +805,28 @@ export default function EditLPNewPage() {
                     value={metaSettings.title}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                   />
                   <textarea
                     value={metaSettings.description}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="OGPディスクリプション（120文字程度の紹介文）"
                     rows={3}
-                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   />
                   <input
                     type="text"
                     value={metaSettings.imageUrl}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="OGP画像URL（1200x630推奨）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                   />
                   <input
                     type="text"
                     value={metaSettings.siteName}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                     placeholder="サイト名（例：ABC情報局）"
-                    className="w-full px-3 py-2.5 lg:py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
+                    className="w-full px-3 py-2.5 lg:py-2 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px] lg:min-h-auto"
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 leading-relaxed">
@@ -838,7 +838,7 @@ export default function EditLPNewPage() {
             {/* Block List - モバイルではブロック一覧のみ */}
             <div className={`py-3 lg:py-4 flex-1 min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
               {blocks.length === 0 ? (
-                <div className="text-center py-8 text-gray-400 text-sm font-medium">
+                <div className="text-center py-8 text-slate-500 text-sm font-medium">
                   ブロックを追加してください
                 </div>
               ) : (
@@ -881,8 +881,8 @@ export default function EditLPNewPage() {
                       }}
                       className={`w-full p-3 lg:p-3.5 cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center ${
                         selectedBlockId === block.id
-                          ? 'bg-blue-600/20 border-l-2 border-blue-600'
-                          : 'bg-gray-800/50 border-l border-gray-800 hover:bg-gray-700'
+                          ? 'bg-blue-50 border-l-2 border-blue-600'
+                          : 'bg-slate-50 border-l border-slate-200 hover:bg-slate-100'
                       }`}
                     >
                       <div className="flex-1 min-w-0">
@@ -898,7 +898,7 @@ export default function EditLPNewPage() {
                             削除
                           </button>
                         </div>
-                        <div className="text-base font-semibold text-white truncate">{block.blockType}</div>
+                        <div className="text-base font-semibold text-slate-900 truncate">{block.blockType}</div>
                       </div>
                     </div>
                   ))}
@@ -926,7 +926,7 @@ export default function EditLPNewPage() {
 
         {/* Right: Properties Panel (Desktop) / Bottom Drawer (Mobile) */}
         {/* デスクトップ表示 */}
-        <div className={`hidden lg:flex w-96 bg-gray-800/30 border-l border-gray-800 overflow-hidden flex-shrink-0 flex-col`}>
+        <div className={`hidden lg:flex w-96 bg-slate-50 border-l border-slate-200 overflow-hidden flex-shrink-0 flex-col`}>
           {selectedBlockId ? (
             <PropertyPanel
               block={blocks.find(b => b.id === selectedBlockId) || null}
@@ -935,54 +935,54 @@ export default function EditLPNewPage() {
               onGenerateAI={handleGenerateAI}
             />
           ) : (
-            <div className="p-6 text-center text-gray-400 font-medium text-sm">
+            <div className="p-6 text-center text-slate-500 font-medium text-sm">
               ブロックを選択して編集
             </div>
           )}
         </div>
 
         {/* モバイル表示: Settings タブ (LP設定 + SNSメタ情報 + ブロック編集) */}
-        <div className={`flex-col min-h-0 bg-gray-800/30 border-t border-gray-800 lg:hidden overflow-hidden flex ${
+        <div className={`flex-col min-h-0 bg-slate-50 border-t border-slate-200 lg:hidden overflow-hidden flex ${
           mobileTab === 'properties' ? 'flex' : 'hidden'
         }`}>
           <div className="overflow-y-auto flex-1 min-h-0">
             {/* LP設定 + SNSメタ情報 */}
-            <div className="px-3 py-3 border-b border-gray-800 space-y-3 bg-gray-900/20">
-              <h4 className="text-xs font-bold text-gray-300 tracking-wide">LP設定</h4>
+            <div className="px-3 py-3 border-b border-slate-200 space-y-3 bg-white">
+              <h4 className="text-xs font-bold text-slate-700 tracking-wide">LP設定</h4>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-500 focus:ring-blue-500 flex-shrink-0"
                   checked={lpSettings.showSwipeHint}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, showSwipeHint: e.target.checked }))
                   }
                 />
                 <div>
-                  <p className="text-sm text-white font-semibold">スワイプアニメーション</p>
-                  <p className="text-xs text-gray-400">1枚目に指アイコンでスワイプを促します</p>
+                  <p className="text-sm text-slate-900 font-semibold">スワイプアニメーション</p>
+                  <p className="text-xs text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 h-5 w-5 rounded border-gray-600 bg-gray-900 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                  className="mt-1 h-5 w-5 rounded border-slate-300 bg-white text-blue-500 focus:ring-blue-500 flex-shrink-0"
                   checked={lpSettings.fullscreenMedia}
                   onChange={(e) =>
                     setLpSettings((prev) => ({ ...prev, fullscreenMedia: e.target.checked }))
                   }
                 />
                 <div>
-                  <p className="text-sm text-white font-semibold">メディアの全画面表示</p>
-                  <p className="text-xs text-gray-400">画像やHTMLをブラウザ全体に広げます</p>
+                  <p className="text-sm text-slate-900 font-semibold">メディアの全画面表示</p>
+                  <p className="text-xs text-slate-500">画像やHTMLをブラウザ全体に広げます</p>
                 </div>
               </label>
 
-              <div className="pt-4 mt-4 border-t border-gray-800 space-y-3">
+              <div className="pt-4 mt-4 border-t border-slate-200 space-y-3">
                 <div>
-                  <h5 className="text-xs font-bold text-gray-300 tracking-wide uppercase">SNSメタ情報</h5>
+                  <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">SNSメタ情報</h5>
                   <p className="text-[11px] text-gray-500 mt-1">LINEやSNSで共有した際のタイトル・説明・画像を指定できます。</p>
                 </div>
                 <div className="space-y-2">
@@ -991,28 +991,28 @@ export default function EditLPNewPage() {
                     value={metaSettings.title}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="OGPタイトル（例：〇〇講座 特設LP）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                   <textarea
                     value={metaSettings.description}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="OGPディスクリプション（120文字程度の紹介文）"
                     rows={3}
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 resize-none"
                   />
                   <input
                     type="text"
                     value={metaSettings.imageUrl}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="OGP画像URL（1200x630推奨）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                   <input
                     type="text"
                     value={metaSettings.siteName}
                     onChange={(e) => setMetaSettings((prev) => ({ ...prev, siteName: e.target.value }))}
                     placeholder="サイト名（例：ABC情報局）"
-                    className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded text-slate-900 text-sm focus:outline-none focus:border-blue-500 min-h-[44px]"
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 leading-relaxed">
@@ -1023,7 +1023,7 @@ export default function EditLPNewPage() {
 
             {/* ブロック編集パネル */}
             {selectedBlockId && (
-              <div className="border-t border-gray-800">
+              <div className="border-t border-slate-200">
                 <PropertyPanel
                   block={blocks.find(b => b.id === selectedBlockId) || null}
                   onUpdateContent={handleUpdateSelectedBlock}
@@ -1062,7 +1062,7 @@ export default function EditLPNewPage() {
       {/* カラーテーマジェネレーターモーダル */}
       {showColorGenerator && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gray-900 rounded-xl border border-gray-700 w-full max-w-2xl my-8">
+          <div className="bg-white rounded-xl border border-slate-200 w-full max-w-2xl my-8">
             <ColorThemeGenerator
               onApply={handleApplyTheme}
               onClose={() => setShowColorGenerator(false)}

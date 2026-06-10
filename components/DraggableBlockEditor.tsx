@@ -87,7 +87,7 @@ function SortableBlock({
           <button
             {...attributes}
             {...listeners}
-            className="w-12 h-12 bg-gray-800 text-white rounded-lg hover:bg-gray-700 shadow-lg flex items-center justify-center cursor-grab active:cursor-grabbing"
+            className="w-12 h-12 bg-slate-50 text-slate-900 rounded-lg hover:bg-slate-100 shadow-lg flex items-center justify-center cursor-grab active:cursor-grabbing"
             title="ドラッグして並び替え"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,13 +121,13 @@ function SortableBlock({
             ? `border-2 rounded-lg overflow-hidden ${
                 isSelected
                   ? 'border-blue-500 ring-4 ring-blue-500/20'
-                  : 'border-dashed border-gray-600 hover:border-blue-400'
+                  : 'border-dashed border-slate-300 hover:border-blue-400'
               }`
             : ''
         }`}
       >
         {isEditing && (
-          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
+          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-slate-900 px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
             {block.blockType}
           </div>
         )}
@@ -188,10 +188,10 @@ export default function DraggableBlockEditor({
 
   if (sortedBlocks.length === 0) {
     return (
-      <div className="text-center py-8 lg:py-16 px-4 lg:px-8 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-700">
+      <div className="text-center py-8 lg:py-16 px-4 lg:px-8 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200">
         <div className="text-4xl lg:text-6xl mb-2 lg:mb-4">📦</div>
-        <h3 className="text-white font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
-        <p className="text-gray-400 text-sm lg:text-base">
+        <h3 className="text-slate-900 font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
+        <p className="text-slate-500 text-sm lg:text-base">
           「+ ブロック追加」ボタンからテンプレートを追加してください
         </p>
       </div>
