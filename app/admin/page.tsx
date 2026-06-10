@@ -1310,7 +1310,7 @@ export default function AdminPanelPage() {
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-semibold text-slate-900">{item.title}</span>
                       {item.is_featured ? (
-                        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+                        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 px-2 py-0.5 text-[10px] font-semibold text-white">
                           人気
                         </span>
                       ) : null}

@@ -333,7 +333,8 @@ export default function PointPurchasePage() {
                 <button
                   onClick={handlePurchase}
                   disabled={isPurchasing || selectedPaymentMethod.status === 'coming_soon'}
-                  className="w-full rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
+                  className="w-full rounded-xl px-5 py-3 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:px-6 sm:py-4 sm:text-base"
+                  style={{ background: 'linear-gradient(135deg,#0ea5e9,#06b6d4)' }}
                 >
                   {isPurchasing ? summaryT('processing') : summaryT('proceedButton')}
                 </button>
@@ -356,13 +357,20 @@ export default function PointPurchasePage() {
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-[0.25em] text-sky-500/70 sm:text-sm">{t('balance.sectionLabel')}</p>
-                <p className="mt-3 text-2xl font-semibold text-slate-900 sm:text-4xl">
+              <div
+                className="relative overflow-hidden rounded-2xl p-5 sm:p-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                style={{ background: 'linear-gradient(160deg,#0b1f3a,#0f2c52)' }}
+              >
+                <div
+                  className="absolute -right-16 -top-16 h-44 w-44 rounded-full"
+                  style={{ background: 'radial-gradient(circle, rgba(34,211,238,.22), transparent 65%)' }}
+                />
+                <p className="relative text-xs font-bold uppercase tracking-[0.25em] text-cyan-300 sm:text-sm">{t('balance.sectionLabel')}</p>
+                <p className="relative mt-3 text-2xl font-extrabold tracking-tight text-pure-white sm:text-4xl tabular-nums">
                   {formatter.number(currentBalance)}{' '}
-                  <span className="text-base font-normal text-sky-500/80 sm:text-xl">{t('balance.pointsSuffix')}</span>
+                  <span className="text-base font-semibold text-[#9fb4d0] sm:text-xl">{t('balance.pointsSuffix')}</span>
                 </p>
-                <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+                <p className="relative mt-2 text-xs text-[#bcd3ee] sm:text-sm">
                   {t('balance.projected', {
                     balance: formatter.number(projectedBalance),
                     suffix: t('balance.pointsSuffix'),
