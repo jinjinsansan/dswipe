@@ -204,7 +204,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).tagline || ''}
               onChange={(e) => onUpdateContent('tagline', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タグラインを入力"
             />
           </div>
@@ -219,7 +219,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).title || ''}
               onChange={(e) => onUpdateContent('title', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="タイトルを入力"
             />
           </div>
@@ -234,7 +234,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).subtitle || ''}
               onChange={(e) => onUpdateContent('subtitle', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="サブタイトルを入力"
             />
           </div>
@@ -249,7 +249,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).text || ''}
               onChange={(e) => onUpdateContent('text', e.target.value)}
               rows={4}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="説明文を入力"
             />
           </div>
@@ -264,7 +264,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).highlightText || ''}
               onChange={(e) => onUpdateContent('highlightText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ハイライトテキストを入力"
             />
           </div>
@@ -279,7 +279,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).buttonText || ''}
               onChange={(e) => onUpdateContent('buttonText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="ボタンテキストを入力"
             />
           </div>
@@ -316,7 +316,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).buttonUrl || ''}
               onChange={(e) => onUpdateContent('buttonUrl', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="https://..."
             />
           </div>
@@ -331,14 +331,14 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).secondaryButtonText || ''}
               onChange={(e) => onUpdateContent('secondaryButtonText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 mb-2 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンの文言"
             />
             <input
               type="text"
               value={(content as any).secondaryButtonUrl || ''}
               onChange={(e) => onUpdateContent('secondaryButtonUrl', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="セカンダリーボタンのURL"
             />
           </div>
@@ -353,7 +353,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).subText || ''}
               onChange={(e) => onUpdateContent('subText', e.target.value)}
               rows={3}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="CTAの補足説明"
             />
           </div>
@@ -368,7 +368,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).caption || ''}
               onChange={(e) => onUpdateContent('caption', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="画像下に表示するテキスト"
             />
           </div>
@@ -383,7 +383,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               type="text"
               value={(content as any).urgencyText || ''}
               onChange={(e) => onUpdateContent('urgencyText', e.target.value)}
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
               placeholder="緊急性テキストを入力"
             />
           </div>
@@ -915,7 +915,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={content.padding || ''}
               onChange={(e) => onUpdateContent('padding', e.target.value)}
               placeholder="例: 16px または 1rem"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -930,7 +930,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).borderRadius || ''}
               onChange={(e) => onUpdateContent('borderRadius', e.target.value)}
               placeholder="例: 20px"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
@@ -945,7 +945,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               value={(content as any).maxWidth || ''}
               onChange={(e) => onUpdateContent('maxWidth', e.target.value)}
               placeholder="例: 960px"
-              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 lg:px-4 py-2.5 lg:py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base lg:text-sm min-h-[44px] lg:min-h-auto"
             />
           </div>
         )}
