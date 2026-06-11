@@ -160,15 +160,16 @@ export default function LPViewerClient({
   }, [lp?.footer_cta_config]);
 
   const footerCtaColors = useMemo(() => {
-    const background = footerCtaConfig?.backgroundColor || '#0F172A';
-    const buttonBackground = footerCtaConfig?.buttonBackgroundColor || '#2563EB';
+    const background = footerCtaConfig?.backgroundColor || '#0B1F3A';
+    const buttonBackground = footerCtaConfig?.buttonBackgroundColor || '#0284C7';
     return {
       background,
       text: footerCtaConfig?.textColor || '#FFFFFF',
       buttonBackground,
       buttonText: footerCtaConfig?.buttonTextColor || '#FFFFFF',
-      ghostBackground: toRgbaColor(background, 0.65, '#0F172A'),
-      ghostButtonBackground: toRgbaColor(buttonBackground, 0.9, '#2563EB'),
+      hasCustomButtonColor: Boolean(footerCtaConfig?.buttonBackgroundColor),
+      ghostBackground: toRgbaColor(background, 0.65, '#0B1F3A'),
+      ghostButtonBackground: toRgbaColor(buttonBackground, 0.9, '#0284C7'),
     };
   }, [
     footerCtaConfig?.backgroundColor,
@@ -230,25 +231,34 @@ export default function LPViewerClient({
         className={`pointer-events-none fixed inset-x-0 bottom-0 ${containerZIndex} transition-transform duration-300 ease-out`}
         style={{ transform: isVisible ? 'translateY(0%)' : 'translateY(105%)' }}
       >
+        {/* TOPページの登録バンドと同品質: シアン上罫線＋浮き影＋グロウボタン */}
         <div
           className="pointer-events-auto w-full"
           style={{
             backgroundColor,
+            backgroundImage:
+              variant === 'solid'
+                ? `linear-gradient(160deg, transparent 40%, ${toRgbaColor(buttonBackground, 0.16, 'rgba(34,211,238,0.12)')})`
+                : undefined,
             color: footerCtaColors.text,
             paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
             backdropFilter: variant === 'ghost' ? 'blur(14px)' : undefined,
-            borderTop: variant === 'ghost' ? '1px solid rgba(255,255,255,0.24)' : undefined,
+            borderTop:
+              variant === 'ghost'
+                ? '1px solid rgba(255,255,255,0.24)'
+                : `1px solid ${toRgbaColor(footerCtaColors.buttonBackground, 0.45, 'rgba(34,211,238,0.3)')}`,
+            boxShadow: variant === 'solid' ? '0 -12px 34px -14px rgba(0,0,0,.55)' : undefined,
           }}
         >
-          <div className="mx-auto flex w-full max-w-screen-xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8">
-            <div className="flex-1 space-y-1">
+          <div className="mx-auto flex w-full max-w-screen-xl flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8">
+            <div className="flex-1 space-y-0.5">
               {footerCtaConfig.title ? (
-                <h3 className="text-base font-semibold leading-tight sm:text-lg">
+                <h3 className="text-[14.5px] font-bold leading-tight tracking-tight sm:text-base">
                   {footerCtaConfig.title}
                 </h3>
               ) : null}
               {footerCtaConfig.subtitle ? (
-                <p className="text-sm leading-snug" style={{ opacity: subtitleOpacity }}>
+                <p className="text-xs leading-snug sm:text-[13px]" style={{ opacity: subtitleOpacity }}>
                   {footerCtaConfig.subtitle}
                 </p>
               ) : null}
@@ -256,11 +266,15 @@ export default function LPViewerClient({
             {footerCtaConfig.buttonLabel && footerCtaConfig.buttonUrl ? (
               <a
                 href={footerCtaConfig.buttonUrl}
-                className="inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-semibold transition-transform hover:scale-[1.015] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-xl px-6 py-3 text-sm font-bold transition-transform hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto"
                 style={{
-                  backgroundColor: buttonBackground,
+                  background: footerCtaColors.hasCustomButtonColor
+                    ? buttonBackground
+                    : 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
                   color: footerCtaColors.buttonText,
-                  boxShadow: buttonShadow,
+                  boxShadow: footerCtaColors.hasCustomButtonColor
+                    ? buttonShadow
+                    : '0 10px 26px -8px rgba(6,182,212,.55)',
                   opacity: variant === 'ghost' ? 0.94 : 1,
                 }}
                 onClick={() => triggerHapticFeedback('medium')}
