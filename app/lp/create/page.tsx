@@ -10,8 +10,9 @@ import { useAuthStore } from '@/store/authStore';
 import { getErrorMessage } from '@/lib/errorHandler';
 import AIWizard from '@/components/AIWizard';
 import type { AIGenerationResponse } from '@/types/api';
-import { ArrowLeftIcon, DocumentIcon, SparklesIcon, LightBulbIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, CheckCircleIcon, DocumentIcon, SparklesIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import { GRAD_BRAND, HEAD_BG } from '@/lib/momentum';
+import { LP_PRESETS, getLpPreset } from '@/lib/lpPresets';
 
 export default function CreateLPPage() {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function CreateLPPage() {
     });
   }, [aiSuggestion, templateMetaSource]);
   const [products, setProducts] = useState<any[]>([]);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -167,9 +169,14 @@ export default function CreateLPPage() {
       
       const response = await lpApi.create(payload);
       const lpId = response.data.id;
-      
-      // AI提案がある場合は、sessionStorageで渡す（URLエンコーディングエラー回避）
-      if (aiSuggestion) {
+
+      const preset = selectedPreset ? getLpPreset(selectedPreset) : undefined;
+      if (preset) {
+        // LP一式テンプレート: ブロック一式をsessionStorageで渡す
+        sessionStorage.setItem('lpPresetBlocks', JSON.stringify(preset.blocks));
+        router.push(`/lp/${lpId}/edit?preset=true`);
+      } else if (aiSuggestion) {
+        // AI提案がある場合は、sessionStorageで渡す（URLエンコーディングエラー回避）
         sessionStorage.setItem('aiSuggestion', JSON.stringify(aiSuggestion));
         router.push(`/lp/${lpId}/edit?ai=true`);
       } else {
@@ -223,6 +230,75 @@ export default function CreateLPPage() {
           </div>
           <h1 className="text-[26px] font-extrabold tracking-tight text-pure-white mb-2">新規LP作成</h1>
           <p className="text-sm text-[#bcd3ee]">基本情報を入力してLPを作成します</p>
+        </div>
+
+        {/* 完成テンプレートから作る — mock: D-Swipe Templates.html */}
+        <div className="mb-8">
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-sky-600">Templates</p>
+              <h2 className="text-lg font-extrabold tracking-tight text-[#0b1f3a]">完成テンプレートから作る</h2>
+              <p className="mt-1 text-xs text-slate-500">選んで作成すると、完成形のスワイプLP一式（5〜6枚）が入った状態でエディタが開きます。</p>
+            </div>
+            {selectedPreset ? (
+              <button
+                type="button"
+                onClick={() => setSelectedPreset(null)}
+                className="shrink-0 text-xs font-semibold text-slate-500 hover:text-[#0b1f3a]"
+              >
+                選択を解除
+              </button>
+            ) : null}
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {LP_PRESETS.map((preset) => {
+              const isSelected = selectedPreset === preset.key;
+              return (
+                <button
+                  key={preset.key}
+                  type="button"
+                  onClick={() => setSelectedPreset(isSelected ? null : preset.key)}
+                  className={`group relative flex flex-col overflow-hidden rounded-2xl border text-left shadow-sm transition hover:-translate-y-[2px] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] ${
+                    isSelected ? 'border-sky-600 ring-2 ring-sky-600/25' : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
+                  }`}
+                >
+                  {isSelected ? (
+                    <span className="absolute right-2 top-2 z-10 text-sky-600">
+                      <CheckCircleIcon className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                  ) : null}
+                  {/* ミニプレビュー: スライドの背景色を縦に積む */}
+                  <div className="flex justify-center bg-[#f4f8fd] px-4 pt-4">
+                    <div className="h-[104px] w-[56px] overflow-hidden rounded-[10px] bg-[#0b1220] p-[3px] shadow-[0_14px_30px_-16px_rgba(11,31,58,.6)]">
+                      <div className="flex h-full w-full flex-col overflow-hidden rounded-[8px]">
+                        {preset.blocks.map((block, blockIndex) => (
+                          <div
+                            key={blockIndex}
+                            className="flex-1"
+                            style={{ background: (block.content as { backgroundColor?: string }).backgroundColor ?? '#0B1F3A' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <span className="absolute right-3 top-3 rounded-full bg-[rgba(11,31,58,.6)] px-2 py-0.5 text-[10px] font-bold text-pure-white backdrop-blur-sm">
+                      {preset.blocks.length}枚
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-0.5 px-3 pb-3 pt-2.5">
+                    <span className="text-[10.5px] font-bold tracking-[0.04em] text-sky-600">{preset.category}</span>
+                    <span className="text-[13.5px] font-bold text-[#0b1f3a]">{preset.name}</span>
+                    <span className="flex-1 text-[11px] leading-relaxed text-slate-500">{preset.description}</span>
+                    <span className="mt-1 text-[10.5px] font-semibold text-slate-400">{preset.priceLabel}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {selectedPreset ? (
+            <p className="mt-2 text-xs font-semibold text-sky-600">
+              「{getLpPreset(selectedPreset)?.name}」を選択中 — 下のフォームでタイトルを入力して作成してください。
+            </p>
+          ) : null}
         </div>
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
