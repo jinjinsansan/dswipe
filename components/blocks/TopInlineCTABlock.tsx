@@ -28,8 +28,8 @@ export default function TopInlineCTABlock({ content, isEditing, onEdit, productI
   const buttonText = content?.buttonText ?? '無料で始める';
   const buttonUrl = content?.buttonUrl ?? '';
   const resolvedButtonUrl = withinEditor ? (buttonUrl || '#') : resolveButtonUrl(buttonUrl);
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
+  const accentColor = content?.accentColor ?? '#0284C7';
   const buttonColor = content?.buttonColor ?? accentColor;
   const primaryCtaId = ctaIds?.[0];
   const rawUseLinkedProduct = content?.useLinkedProduct;

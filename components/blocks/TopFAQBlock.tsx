@@ -24,9 +24,9 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
           answer: 'Stripe・メール配信・会員サイトへのWebhook連携を標準装備。APIキーを登録するだけで即日稼働できます。',
         },
       ];
-  const backgroundColor = content?.backgroundColor ?? '#0F172A';
+  const backgroundColor = content?.backgroundColor ?? '#0B1F3A';
   const textColor = content?.textColor ?? '#F8FAFC';
-  const accentColor = content?.accentColor ?? '#38BDF8';
+  const accentColor = content?.accentColor ?? '#22D3EE';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -79,38 +79,43 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-faq — Qマーク=シアン、各Q&Aは独立カード */}
         <div className="responsive-stack items-center text-center">
           <h2
-            className="typo-headline text-pretty font-bold"
-            style={{ color: textColor }}
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
             onClick={focusField<HTMLHeadingElement>('faq.title')}
           >
             {title}
           </h2>
           <p
             className="typo-body text-pretty"
-            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+            style={{ color: withAlpha(textColor, 0.72, textColor), lineHeight: 1.7 }}
             onClick={focusField<HTMLParagraphElement>('faq.subtitle')}
           >
             {subtitle}
           </p>
         </div>
 
-        <div
-          className="flex flex-col overflow-hidden rounded-card border backdrop-blur"
-          style={{
-            borderColor: withAlpha(textColor, 0.16, textColor),
-            backgroundColor: withAlpha(textColor, 0.05, textColor),
-          }}
-        >
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
           {items.map((item, index) => (
-            <div key={index} className="group">
+            <div
+              key={index}
+              className="group rounded-[11px] px-5 py-4"
+              style={{
+                border: `1px solid ${withAlpha(textColor, 0.12, textColor)}`,
+                backgroundColor: withAlpha(textColor, 0.08, textColor),
+              }}
+            >
               <button
-                className="flex w-full items-start justify-between gap-4 px-5 py-6 text-left font-medium typo-body-lg"
+                className="flex w-full items-start gap-2 text-left font-bold typo-body-lg"
                 style={{ color: textColor }}
                 type="button"
                 onClick={focusField<HTMLButtonElement>(`faq.items.${index}.question`)}
               >
+                <span className="font-extrabold" style={{ color: accentColor }} aria-hidden="true">
+                  Q
+                </span>
                 <span
                   className="flex-1"
                   contentEditable={isEditing}
@@ -120,16 +125,10 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
                 >
                   {item.question}
                 </span>
-                <span
-                  className="text-lg"
-                  style={{ color: accentColor }}
-                >
-                  ＋
-                </span>
               </button>
               <div
-                className="px-5 pb-6 typo-body"
-                style={{ color: withAlpha(textColor, 0.78, textColor) }}
+                className="mt-2 pl-6 typo-body"
+                style={{ color: withAlpha(textColor, 0.82, textColor), lineHeight: 1.6 }}
               >
                 <div
                   contentEditable={isEditing}

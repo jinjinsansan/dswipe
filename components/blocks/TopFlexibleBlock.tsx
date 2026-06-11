@@ -16,8 +16,8 @@ export default function TopFlexibleBlock({ content, isEditing, onEdit }: TopFlex
   const layout = content?.layout === 'left' ? 'left' : 'center';
 
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
+  const accentColor = content?.accentColor ?? '#0284C7';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;

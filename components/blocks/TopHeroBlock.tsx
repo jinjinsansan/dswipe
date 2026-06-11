@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { HeroBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { resolveButtonUrl } from '@/lib/url';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
@@ -36,10 +37,11 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
   const videoUrl = content?.backgroundVideoUrl ?? FALLBACK_VIDEO;
   const heroImageUrl = content?.backgroundImageUrl ?? '';
   const textColor = content?.textColor ?? '#FFFFFF';
-  const accentColor = content?.accentColor ?? '#38BDF8';
-  const buttonColor = content?.buttonColor ?? '#38BDF8';
+  const accentColor = content?.accentColor ?? '#22D3EE';
+  const hasCustomButtonColor = Boolean(content?.buttonColor);
+  const buttonColor = content?.buttonColor ?? '#0284C7';
   const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
-  const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+  const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1F3A';
   const videoOverlayRaw = typeof content?.backgroundVideoOverlayOpacity === 'number'
     ? content.backgroundVideoOverlayOpacity
     : 0.85;
@@ -71,13 +73,27 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
     opacity: videoOverlayOpacity,
   };
 
-  const primaryButtonStyle: CSSProperties = {
-    backgroundColor: isLocked ? withAlpha('#64748b', 0.2, '#64748b') : buttonColor,
-    color: isLocked ? '#475569' : getContrastColor(buttonColor),
-    border: `1px solid ${isLocked ? withAlpha('#64748b', 0.4, '#64748b') : buttonColor}`,
-    cursor: isLocked ? 'not-allowed' : undefined,
-    boxShadow: isLocked ? undefined : `0 20px 45px -18px ${withAlpha(buttonColor, 0.4, buttonColor)}`,
-  };
+  /* mock: editor.css .sc-hero — 色未指定時はブランドグラデ＋グロウ(800ウェイト/角丸13px) */
+  const primaryButtonStyle: CSSProperties = isLocked
+    ? {
+        backgroundColor: withAlpha('#64748b', 0.2, '#64748b'),
+        color: '#475569',
+        border: `1px solid ${withAlpha('#64748b', 0.4, '#64748b')}`,
+        cursor: 'not-allowed',
+      }
+    : hasCustomButtonColor
+      ? {
+          backgroundColor: buttonColor,
+          color: getContrastColor(buttonColor),
+          border: `1px solid ${buttonColor}`,
+          boxShadow: `0 20px 45px -18px ${withAlpha(buttonColor, 0.4, buttonColor)}`,
+        }
+      : {
+          background: GRAD_BRAND,
+          color: '#FFFFFF',
+          border: '1px solid transparent',
+          boxShadow: '0 10px 26px -8px rgba(6, 182, 212, 0.55)',
+        };
   const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
   const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
@@ -195,13 +211,15 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-hero — アイブロー＋800見出し＋サブコピー */}
         <div className="responsive-stack items-center">
           <div
-            className="inline-flex items-center justify-center rounded-full border px-4 py-1 font-semibold typo-eyebrow"
+            className="inline-flex items-center justify-center rounded-full border px-4 py-1 font-bold uppercase typo-eyebrow"
             style={{
               color: accentColor,
               borderColor: withAlpha(accentColor, 0.4, accentColor),
               backgroundColor: withAlpha(accentColor, 0.12, accentColor),
+              letterSpacing: '0.14em',
             }}
             onClick={createFieldFocusHandler<HTMLDivElement>('hero.tagline')}
           >
@@ -209,15 +227,15 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
           </div>
 
           <h1
-            className="typo-display text-balance font-bold"
-            style={{ color: textColor }}
+            className="typo-display text-balance font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.03em', lineHeight: 1.16 }}
             onClick={createFieldFocusHandler<HTMLHeadingElement>('hero.title')}
           >
             {title}
           </h1>
 
           <div
-            className="typo-highlight font-medium text-pretty"
+            className="typo-highlight font-bold text-pretty"
             style={{ color: accentColor }}
             onClick={createFieldFocusHandler<HTMLDivElement>('hero.highlightText')}
           >
@@ -226,7 +244,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
 
           <p
             className="mx-auto max-w-3xl typo-body-lg text-pretty"
-            style={{ color: withAlpha(textColor, 0.85, textColor) }}
+            style={{ color: withAlpha(textColor, 0.92, textColor), lineHeight: 1.7 }}
             onClick={createFieldFocusHandler<HTMLParagraphElement>('hero.subtitle')}
           >
             {subtitle}
@@ -237,7 +255,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
               isLocked ? (
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition"
+                  className="inline-flex items-center justify-center rounded-[13px] px-8 py-3 text-base font-extrabold transition"
                   style={primaryButtonStyle}
                   disabled
                 >
@@ -250,7 +268,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
                     onCtaClick?.(primaryCtaId, 'primary');
                     onProductClick?.(productId);
                   })}
-                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-[13px] px-8 py-3 text-base font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
                   {primaryText}
@@ -261,7 +279,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
                   onClick={createFieldFocusHandler<HTMLAnchorElement>('hero.buttonText', () => {
                     onCtaClick?.(primaryCtaId, 'primary');
                   })}
-                  className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-[13px] px-8 py-3 text-base font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2"
                   style={primaryButtonStyle}
                 >
                   {primaryText}
@@ -275,7 +293,7 @@ export default function TopHeroBlock({ content, isEditing, onEdit, productId, on
                 onClick={createFieldFocusHandler<HTMLAnchorElement>('hero.secondaryButtonText', () => {
                   onCtaClick?.(secondaryCtaId, 'secondary');
                 })}
-                className="inline-flex items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-[13px] px-8 py-3 text-base font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2"
                 style={secondaryButtonStyle}
               >
                 {secondaryText}

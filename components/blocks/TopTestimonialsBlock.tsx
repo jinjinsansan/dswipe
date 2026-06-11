@@ -1,7 +1,10 @@
 import { TestimonialsBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
+import { StarIcon } from '@heroicons/react/24/solid';
 import { useMemo } from 'react';
+
+const AVATAR_GRADIENT = 'linear-gradient(135deg, #f59e0b, #ef4444)';
 
 interface TopTestimonialsBlockProps {
   content: TestimonialsBlockContent;
@@ -44,8 +47,7 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
   }, [testimonials.length]);
 
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -86,13 +88,17 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-testi — 装飾引用符＋星＋セミボールド引用＋アバター著者行 */}
         <div className="responsive-stack items-center text-center">
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
+          >
             {title}
           </h2>
           <p
             className="typo-body text-pretty"
-            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+            style={{ color: withAlpha(textColor, 0.72, textColor), lineHeight: 1.7 }}
           >
             {subtitle}
           </p>
@@ -102,15 +108,28 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
           {testimonials.map((item, index) => (
             <div
               key={index}
-              className="flex h-full flex-row gap-4 rounded-card border p-5 shadow-sm sm:flex-col sm:p-6"
+              className="flex h-full flex-col gap-3 rounded-[16px] p-5 sm:p-6"
               style={{
-                borderColor: withAlpha(accentColor, 0.2, accentColor),
-                backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
+                border: `1px solid ${withAlpha(textColor, 0.12, textColor)}`,
+                backgroundColor: withAlpha(textColor, 0.06, '#FFFFFF'),
               }}
             >
               <div
-                className="flex-1 typo-body text-pretty"
-                style={{ color: withAlpha(textColor, 0.82, textColor) }}
+                aria-hidden="true"
+                className="font-extrabold"
+                style={{ fontSize: 44, lineHeight: 0.6, color: 'rgba(125, 211, 252, 0.45)' }}
+              >
+                &ldquo;
+              </div>
+              <div className="flex gap-0.5" style={{ color: '#FBBF24' }} aria-hidden="true">
+                {Array.from({ length: 5 }).map((_, starIndex) => (
+                  <StarIcon key={starIndex} className="h-4 w-4" />
+                ))}
+              </div>
+              <div
+                role="blockquote"
+                className="flex-1 typo-body-lg text-pretty font-semibold"
+                style={{ color: withAlpha(textColor, 0.92, textColor), lineHeight: 1.6, letterSpacing: '-0.01em' }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateTestimonial(index, 'quote')}
@@ -118,25 +137,34 @@ export default function TopTestimonialsBlock({ content, isEditing, onEdit }: Top
                 {item.quote}
               </div>
 
-              <div className="flex w-36 flex-col gap-1 border-l border-white/40 pl-4 sm:w-full sm:border-l-0 sm:border-t sm:pl-0 sm:pt-4">
+              <div className="mt-1 flex items-center gap-3">
                 <span
-                  className="font-semibold typo-body-lg text-pretty"
-                  style={{ color: accentColor }}
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning
-                  onBlur={updateTestimonial(index, 'name')}
+                  aria-hidden="true"
+                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[13px] font-extrabold"
+                  style={{ background: AVATAR_GRADIENT, color: '#FFFFFF' }}
                 >
-                  {item.name}
+                  {(item.name || '・').slice(0, 1)}
                 </span>
-                <span
-                  className="typo-caption uppercase tracking-[0.35em]"
-                  style={{ color: withAlpha(textColor, 0.6, textColor) }}
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning
-                  onBlur={updateTestimonial(index, 'role')}
-                >
-                  {item.role ?? ''}
-                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span
+                    className="typo-body text-pretty font-bold"
+                    style={{ color: textColor }}
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning
+                    onBlur={updateTestimonial(index, 'name')}
+                  >
+                    {item.name}
+                  </span>
+                  <span
+                    className="typo-caption"
+                    style={{ color: withAlpha(textColor, 0.7, textColor) }}
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning
+                    onBlur={updateTestimonial(index, 'role')}
+                  >
+                    {item.role ?? ''}
+                  </span>
+                </div>
               </div>
             </div>
           ))}

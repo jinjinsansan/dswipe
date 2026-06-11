@@ -48,13 +48,14 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
       clearInterval(intervalId);
     };
   }, [targetDate]);
-  const backgroundColor = content?.backgroundColor ?? '#B91C1C';
+  const backgroundColor = content?.backgroundColor ?? '#0B1F3A';
   const textColor = content?.textColor ?? '#FFFFFF';
-  const accentColor = content?.accentColor ?? '#F97316';
+  const accentColor = content?.accentColor ?? '#F59E0B';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
-  const gradientLayer = `linear-gradient(120deg, ${withAlpha(accentColor, 0.35, accentColor)}, transparent)`;
+  // mock: Block Library .sc-count — アンバーは控えめなグロウに留める
+  const gradientLayer = `radial-gradient(420px 260px at 80% -10%, ${withAlpha(accentColor, 0.22, accentColor)}, transparent)`;
 
   return (
     <section
@@ -92,9 +93,14 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
           </div>
         ) : null}
 
-        <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>{title}</h2>
+        <h2
+          className="typo-headline text-pretty font-extrabold"
+          style={{ color: textColor, letterSpacing: '-0.02em' }}
+        >
+          {title}
+        </h2>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mx-auto grid w-full max-w-xl grid-cols-4 gap-2 sm:gap-3">
           {([
             { label: '日', value: timeLeft.days },
             { label: '時間', value: timeLeft.hours },
@@ -103,15 +109,20 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
           ] as const).map((segment) => (
             <div
               key={segment.label}
-              className="rounded-card px-4 py-6"
+              className="rounded-[11px] px-2 py-4 sm:px-4 sm:py-5"
               style={{
-                backgroundColor: withAlpha(textColor, 0.15, textColor),
+                backgroundColor: withAlpha(textColor, 0.1, textColor),
                 color: textColor,
               }}
             >
-              <div className="typo-headline font-bold tracking-wide text-pretty">{segment.value}</div>
               <div
-                className="mt-2 font-semibold typo-eyebrow"
+                className="typo-headline font-extrabold text-pretty"
+                style={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}
+              >
+                {segment.value}
+              </div>
+              <div
+                className="mt-2 font-bold typo-eyebrow"
                 style={{ color: withAlpha(textColor, 0.7, textColor) }}
               >
                 {segment.label}

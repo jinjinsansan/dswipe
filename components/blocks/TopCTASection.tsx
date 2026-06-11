@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { CTABlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { resolveButtonUrl } from '@/lib/url';
 
@@ -22,10 +23,11 @@ interface TopCTASectionProps {
 
 export default function TopCTASection({ content, isEditing, onEdit, productId, onProductClick, ctaIds, onCtaClick, withinEditor, primaryLinkLock }: TopCTASectionProps) {
   const textColor = content?.textColor ?? '#ECFEFF';
-  const accentColor = content?.accentColor ?? '#38BDF8';
-  const buttonColor = content?.buttonColor ?? accentColor;
+  const accentColor = content?.accentColor ?? '#22D3EE';
+  const hasCustomButtonColor = Boolean(content?.buttonColor);
+  const buttonColor = content?.buttonColor ?? '#0284C7';
   const secondaryColor = content?.secondaryButtonColor ?? accentColor;
-  const surfaceColor = content?.surfaceColor ?? '#10233F';
+  const surfaceColor = content?.surfaceColor ?? '#0F2C52';
   const eyebrow = content?.eyebrow ?? 'Launch Ready';
   const title = content?.title ?? '今すぐ始めよう';
   const subtitle = content?.subtitle ?? '情報には鮮度がある。５分でLPを公開して、今すぐ販売を開始。';
@@ -42,7 +44,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const resolvedSecondaryUrl = withinEditor ? content?.secondaryButtonUrl ?? '#' : resolveButtonUrl(content?.secondaryButtonUrl);
   const shouldUseProductCTA = useLinkedProduct && onProductClick && productId;
 
-  const fallbackBackgroundColor = content?.backgroundColor ?? '#07182F';
+  const fallbackBackgroundColor = content?.backgroundColor ?? '#0B1F3A';
   const blockBackgroundStyle = getBlockBackgroundStyle(content, fallbackBackgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -59,11 +61,25 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
   const primaryTextColor = getContrastColor(buttonColor, '#F8FAFC', '#0F172A');
   const secondaryTextColor = secondaryColor;
 
+  /* mock: editor.css .sc-cta — 800ウェイト/角丸13px。色未指定時はブランドグラデ＋グロウ */
+  const primaryStyle: CSSProperties = hasCustomButtonColor
+    ? {
+        backgroundColor: buttonColor,
+        color: primaryTextColor,
+        border: `1px solid ${buttonColor}`,
+      }
+    : {
+        background: GRAD_BRAND,
+        color: '#FFFFFF',
+        border: '1px solid transparent',
+        boxShadow: '0 10px 26px -8px rgba(6, 182, 212, 0.55)',
+      };
+
   const PrimaryAction = () => {
     if (!primaryText) return null;
 
     const commonClasses =
-      'inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold typo-body-lg transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent shadow-sm';
+      'inline-flex items-center justify-center rounded-[13px] px-8 py-3 font-extrabold typo-body-lg transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
 
     if (isLocked) {
       return (
@@ -92,11 +108,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
             onProductClick?.(productId);
           }}
           className={commonClasses}
-          style={{
-            backgroundColor: buttonColor,
-            color: primaryTextColor,
-            border: `1px solid ${buttonColor}`,
-          }}
+          style={primaryStyle}
         >
           {primaryText}
         </button>
@@ -108,11 +120,7 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
         href={resolvedPrimaryUrl}
         onClick={() => onCtaClick?.(primaryCtaId, 'primary')}
         className={commonClasses}
-        style={{
-          backgroundColor: buttonColor,
-          color: primaryTextColor,
-          border: `1px solid ${buttonColor}`,
-        }}
+        style={primaryStyle}
       >
         {primaryText}
       </Link>
@@ -225,19 +233,22 @@ export default function TopCTASection({ content, isEditing, onEdit, productId, o
           <div className="relative responsive-stack items-center sm:gap-8">
             {eyebrow ? (
               <span
-                className="font-semibold typo-eyebrow"
-                style={{ color: accentColor }}
+                className="font-bold uppercase typo-eyebrow"
+                style={{ color: accentColor, letterSpacing: '0.14em' }}
               >
                 {eyebrow}
               </span>
             ) : null}
 
-            <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
+            <h2
+              className="typo-headline text-pretty font-extrabold"
+              style={{ color: textColor, letterSpacing: '-0.025em', lineHeight: 1.2 }}
+            >
               {title}
             </h2>
             <p
               className="max-w-2xl typo-body-lg text-pretty"
-              style={{ color: textColor, opacity: 0.82 }}
+              style={{ color: textColor, opacity: 0.9, lineHeight: 1.7 }}
             >
               {subtitle}
             </p>

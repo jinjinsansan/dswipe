@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { GiftIcon } from '@heroicons/react/24/outline';
 import { BonusListBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 
 interface TopBonusBlockProps {
@@ -54,9 +56,9 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
       onEdit?.('bonuses', next);
     };
 
-  const backgroundColor = content?.backgroundColor ?? '#EEF2FF';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const backgroundColor = content?.backgroundColor ?? '#E9F6FE';
+  const textColor = content?.textColor ?? '#0B1F3A';
+  const accentColor = content?.accentColor ?? '#0284C7';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -96,11 +98,17 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           </div>
         ) : null}
 
+        {/* mock: .sc-benefit の言語 — グラデGiftタイル＋カード、価値強調はシアン */}
         <div className="responsive-stack items-center text-center">
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>{title}</h2>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
+          >
+            {title}
+          </h2>
           <p
             className="typo-body text-pretty"
-            style={{ color: withAlpha(textColor, 0.72, textColor) }}
+            style={{ color: withAlpha(textColor, 0.72, textColor), lineHeight: 1.7 }}
           >
             {subtitle}
           </p>
@@ -110,16 +118,23 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
           {bonuses.map((bonus, index) => (
             <div
               key={index}
-              className="flex h-full flex-row items-start gap-4 rounded-card border p-4 shadow-sm sm:flex-col sm:p-5"
+              className="flex h-full flex-row items-start gap-4 rounded-[12px] p-4 sm:flex-col sm:p-5"
               style={{
-                borderColor: withAlpha(accentColor, 0.2, accentColor),
-                backgroundColor: withAlpha(accentColor, 0.08, '#FFFFFF'),
+                border: `1px solid ${withAlpha(textColor, 0.12, textColor)}`,
+                backgroundColor: withAlpha(textColor, 0.06, '#FFFFFF'),
               }}
             >
+              <span
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] shadow-[0_10px_26px_-8px_rgba(6,182,212,.45)]"
+                style={{ background: GRAD_BRAND, color: '#FFFFFF' }}
+                aria-hidden="true"
+              >
+                <GiftIcon className="h-5 w-5" />
+              </span>
               <div className="flex-1">
                 <div
-                  className="font-semibold typo-body-lg text-pretty"
-                  style={{ color: accentColor }}
+                  className="font-bold typo-body-lg text-pretty"
+                  style={{ color: textColor }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateBonusField(index, 'title')}
@@ -128,7 +143,7 @@ export default function TopBonusBlock({ content, isEditing, onEdit }: TopBonusBl
                 </div>
                 <div
                   className="mt-2 typo-body text-pretty"
-                  style={{ color: withAlpha(textColor, 0.8, textColor) }}
+                  style={{ color: withAlpha(textColor, 0.82, textColor), lineHeight: 1.6 }}
                   contentEditable={isEditing}
                   suppressContentEditableWarning
                   onBlur={updateBonusField(index, 'description')}

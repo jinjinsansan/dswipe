@@ -26,7 +26,7 @@ const focalPointMap: Record<string, string> = {
 
 export default function ImageOnlyBlock({ content, isEditing, onEdit }: ImageOnlyBlockProps) {
   const imageUrl = typeof content?.imageUrl === 'string' ? content.imageUrl.trim() : '';
-  const overlayColor = content?.imageOverlayColor ?? '#0F172A';
+  const overlayColor = content?.imageOverlayColor ?? '#0B1F3A';
   const overlayOpacity = Math.min(Math.max(content?.imageOverlayOpacity ?? 0, 0), 1);
   const showOverlay = overlayOpacity > 0;
 
