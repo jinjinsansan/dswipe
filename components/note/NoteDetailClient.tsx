@@ -8,6 +8,7 @@ import {
   ArrowPathIcon,
   ShieldCheckIcon,
   CurrencyYenIcon,
+  LockClosedIcon,
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
@@ -21,6 +22,7 @@ import { getCategoryLabel } from '@/lib/noteCategories';
 import { redirectToLogin } from '@/lib/navigation';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CreatorFollowButton from '@/components/creator/CreatorFollowButton';
+import { GRAD_BRAND } from '@/lib/momentum';
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://d-swipe.com';
 
@@ -427,7 +429,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{note.title}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#0b1f3a] sm:text-4xl">{note.title}</h1>
         {note.excerpt ? (
           <p className="text-base text-slate-600 sm:text-lg">{note.excerpt}</p>
         ) : null}
@@ -484,9 +486,16 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                 }}
               />
             )}
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6 text-center text-sm text-amber-700">
-              <p className="font-semibold">{t('paidContentTitle')}</p>
-              <p className="mt-2 text-xs text-amber-700/80">
+            {/* Paywall — mock: D-Swipe Note Article.html .paywall */}
+            <div className="rounded-3xl border border-[#bfe6fb] bg-[#e9f6fe] px-6 py-7 text-center text-sm text-slate-700 shadow-sm">
+              <span
+                className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
+                style={{ background: GRAD_BRAND }}
+              >
+                <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <p className="text-lg font-extrabold text-[#0b1f3a]">{t('paidContentTitle')}</p>
+              <p className="mt-2 text-xs text-slate-600">
                 {t('paidContentDescription')}
               </p>
               <div className="mt-4 flex flex-col gap-4">
@@ -508,8 +517,8 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                         onClick={() => handleMethodSelect('points')}
                         className={`rounded-xl border px-4 py-3 text-left transition ${
                           isPointsSelected
-                            ? 'border-sky-400 bg-white'
-                            : 'border-amber-100 bg-white/60 hover:border-sky-300'
+                            ? 'border-sky-400 bg-white shadow-sm'
+                            : 'border-[#d5e7f5] bg-white/70 hover:border-sky-300'
                         }`}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -527,8 +536,8 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                         onClick={() => handleMethodSelect('yen')}
                         className={`rounded-xl border px-4 py-3 text-left transition ${
                           !isPointsSelected
-                            ? 'border-emerald-400 bg-white'
-                            : 'border-amber-100 bg-white/60 hover:border-emerald-300'
+                            ? 'border-emerald-400 bg-white shadow-sm'
+                            : 'border-[#d5e7f5] bg-white/70 hover:border-emerald-300'
                         }`}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -542,15 +551,16 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-amber-700/80">{t('noPaymentMethods')}</p>
+                  <p className="text-xs text-slate-500">{t('noPaymentMethods')}</p>
                 )}
                 <button
                   type="button"
                   onClick={handlePurchase}
                   disabled={purchaseState === 'processing' || !methodAvailable || !canPurchase}
-                  className={`inline-flex items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-70 ${
+                  className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] disabled:cursor-not-allowed disabled:opacity-70 ${
                     purchaseState === 'processing' ? 'opacity-70' : ''
                   }`}
+                  style={{ background: GRAD_BRAND }}
                 >
                   {isPointsSelected ? (
                     <SparklesIcon

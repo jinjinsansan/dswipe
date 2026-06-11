@@ -25,7 +25,7 @@ export default function ProductOrderErrorPage(): JSX.Element {
             <div className="space-y-3">
               <Link
                 href="/products"
-                className="block w-full rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                className="block w-full rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-pure-white transition hover:bg-emerald-700"
               >
                 商品一覧に戻る
               </Link>

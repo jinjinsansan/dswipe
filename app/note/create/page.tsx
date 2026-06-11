@@ -839,12 +839,12 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                         disabled={saving}
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                           isActive
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-emerald-600 text-pure-white shadow-sm'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                       >
                         {salon.title ?? t('labels.untitledSalon')}
-                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-pure-white">
                           {t('labels.salonMemberCount', {
                             count: formatter.number(salon.member_count ?? 0),
                           })}
@@ -1533,12 +1533,12 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                         disabled={saving}
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                           isActive
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-emerald-600 text-pure-white shadow-sm'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         } ${saving ? 'opacity-60 cursor-not-allowed' : ''}`}
                       >
                         {salon.title ?? t('labels.untitledSalon')}
-                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-pure-white">
                           {t('labels.salonMemberCount', {
                             count: formatter.number(salon.member_count ?? 0),
                           })}

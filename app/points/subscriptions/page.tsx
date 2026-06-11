@@ -7,6 +7,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { SalonFeatureGate } from '@/components/SalonFeatureGate';
 import { paymentApi, platformSettingsApi, subscriptionApi } from '@/lib/api';
+import { HEAD_BG } from '@/lib/momentum';
 import type {
   QuickCheckoutResponse,
   SubscriptionPlan,
@@ -333,6 +334,16 @@ function SubscriptionPageContent() {
       requireAuth
     >
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+        {/* Navy hero — Momentum chrome */}
+        <div
+          className="mb-6 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Membership</p>
+          <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t('pageTitle')}</h1>
+          <p className="mt-1 text-sm text-[#bcd3ee]">{t('pageSubtitle')}</p>
+        </div>
+
         {errorMessage && (
           <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
             {errorMessage}

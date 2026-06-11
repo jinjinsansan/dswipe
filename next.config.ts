@@ -4,6 +4,11 @@ import type { NextConfig } from 'next';
 const withNextIntl = createIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  // E:\dev 直下の無関係な package-lock.json を workspace root と誤検出し
+  // devでGoogleフォント解決が壊れるため、root をこのリポジトリに固定
+  turbopack: {
+    root: __dirname,
+  },
   typescript: {
     // ビルド時の型チェックを継続
     ignoreBuildErrors: false,

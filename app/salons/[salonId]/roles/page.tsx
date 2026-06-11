@@ -294,25 +294,25 @@ export default function SalonRolesPage() {
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <Link
             href={`/salons/${salonId}/feed`}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300"
+            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
           >
             フィード管理
           </Link>
           <Link
             href={`/salons/${salonId}/events`}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300"
+            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
           >
             イベント管理
           </Link>
           <Link
             href={`/salons/${salonId}/announcements`}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300"
+            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
           >
             お知らせ管理
           </Link>
           <Link
             href={`/salons/${salonId}/assets`}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-600 hover:border-slate-300"
+            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
           >
             アセットライブラリ
           </Link>

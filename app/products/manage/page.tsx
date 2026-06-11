@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { lpApi, productApi } from "@/lib/api";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
+import { GRAD_BRAND, HEAD_BG } from "@/lib/momentum";
 
 import type { LandingPage, Product } from "@/types";
 import type { ProductCreatePayload } from "@/types/api";
@@ -383,16 +384,22 @@ export default function ProductManagementPage() {
     >
       <div className="px-3 py-6 sm:px-6">
         <div className="mx-auto w-full max-w-5xl space-y-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Navy hero — mock: D-Swipe Products Manage.html */}
+            <div
+              className="flex flex-col gap-4 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:flex-row sm:items-center sm:justify-between sm:px-8"
+              style={{ background: HEAD_BG }}
+            >
               <div>
-                <h1 className="text-2xl font-semibold text-slate-900">商品管理</h1>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Products</p>
+                <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">商品管理</h1>
+                <p className="mt-1 text-sm text-[#bcd3ee]">
                   CTAで紐づける商品の作成・編集・公開設定をこちらで行えます。
                 </p>
               </div>
               <button
                 onClick={openCreateModal}
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-sky-700"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)]"
+                style={{ background: GRAD_BRAND }}
               >
                 + 新しい商品を追加
               </button>

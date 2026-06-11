@@ -17,6 +17,7 @@ import { noteApi } from '@/lib/api';
 import { loadCache, saveCache } from '@/lib/cache';
 import type { NoteSummary } from '@/types';
 import { getCategoryLabel } from '@/lib/noteCategories';
+import { GRAD_BRAND, HEAD_BG } from '@/lib/momentum';
 
 type FilterValue = 'all' | 'draft' | 'published';
 
@@ -191,13 +192,21 @@ export default function NoteDashboardPage() {
       pageSubtitle="作成したSwipeコラムを管理・公開できます"
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-3 py-4 sm:px-6 sm:py-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-slate-500">最終更新: {lastUpdatedAt}</p>
+        {/* Navy hero — Momentum chrome */}
+        <div
+          className="flex flex-col gap-3 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:flex-row sm:items-center sm:justify-between sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Notes</p>
+            <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">コラム編集</h1>
+            <p className="mt-1 text-xs text-[#bcd3ee]">最終更新: {lastUpdatedAt}</p>
+          </div>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleRefresh}
-              className={`inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 ${
+              className={`inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-pure-white transition hover:bg-white/15 ${
                 isRefreshing ? 'pointer-events-none opacity-60' : ''
               }`}
             >
@@ -206,7 +215,8 @@ export default function NoteDashboardPage() {
             </button>
             <Link
               href="/note/create"
-              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)]"
+              style={{ background: GRAD_BRAND }}
             >
               <DocumentPlusIcon className="h-4 w-4" aria-hidden="true" />
               新規コラム作成
@@ -215,25 +225,25 @@ export default function NoteDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-          <div className="border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">全記事</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">{stats.total}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">全記事</p>
+            <p className="mt-2 text-2xl font-extrabold text-[#0b1f3a]">{stats.total}</p>
           </div>
-          <div className="border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">公開中</p>
-            <p className="mt-2 text-2xl font-bold text-emerald-600">{stats.published}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">公開中</p>
+            <p className="mt-2 text-2xl font-extrabold text-emerald-600">{stats.published}</p>
           </div>
-          <div className="border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">下書き</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">{stats.draft}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">下書き</p>
+            <p className="mt-2 text-2xl font-extrabold text-[#0b1f3a]">{stats.draft}</p>
           </div>
-          <div className="border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">有料記事</p>
-            <p className="mt-2 text-2xl font-bold text-amber-600">{stats.paid}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">有料記事</p>
+            <p className="mt-2 text-2xl font-extrabold text-amber-600">{stats.paid}</p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               {(['all', 'draft', 'published'] as FilterValue[]).map((value) => (
@@ -284,7 +294,7 @@ export default function NoteDashboardPage() {
                 return (
                   <div
                     key={note.id}
-                    className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-sky-200"
+                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-sky-200 hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-2">

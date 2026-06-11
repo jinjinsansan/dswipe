@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GRAD_BRAND, HEAD_BG, NAVY_CARD_BG, pickThumbFallback } from "@/lib/momentum";
 import { paymentApi, platformSettingsApi, salonPublicApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { SalonPublicDetail } from "@/types/api";
@@ -197,33 +198,27 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
   }
 
   return (
-    <div className="min-h-screen bg-slate-900/5">
-      <header className="bg-white/70 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Online Salon</p>
-              <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">{salon.title}</h1>
-              {salon.category ? (
-                <span className="mt-2 inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {salon.category}
-                </span>
-              ) : null}
-              <p className="mt-3 max-w-2xl text-sm text-slate-600 whitespace-pre-wrap">{salon.description || "サロンの説明が登録されていません。"}</p>
-            </div>
-            <div className="flex flex-col items-start gap-2 sm:items-end">
-              <Link
-                href={`/u/${salon.owner.username}`}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-sky-300 hover:text-sky-600"
-              >
-                オーナープロフィールを見る
-              </Link>
-              <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-500">
-                {salon.member_count_visible && typeof salon.member_count === "number"
-                  ? `メンバー ${salon.member_count.toLocaleString("ja-JP")} 名`
-                  : "会員数は非公開です"}
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#f4f8fd]">
+      {/* Navy cover — mock: D-Swipe Salon.html .cover */}
+      <header style={{ background: HEAD_BG }}>
+        <div className="mx-auto flex max-w-5xl flex-col justify-center gap-2 px-4 py-12 sm:px-6 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-cyan-300">MEMBERSHIP · オンラインサロン</p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-pure-white sm:text-4xl">{salon.title}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <Link
+              href={`/u/${salon.owner.username}`}
+              className="inline-flex items-center gap-2 text-[13px] text-[#cfe3f5] transition hover:text-pure-white"
+            >
+              主宰：{salon.owner.username}
+              {salon.member_count_visible && typeof salon.member_count === "number"
+                ? ` · ${salon.member_count.toLocaleString("ja-JP")}名が参加中`
+                : ""}
+            </Link>
+            {salon.category ? (
+              <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#cfe3f5]">
+                {salon.category}
+              </span>
+            ) : null}
           </div>
         </div>
       </header>
@@ -234,43 +229,50 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
             {salon.thumbnail_url ? (
               <img src={salon.thumbnail_url} alt={`${salon.title}のサムネイル`} className="h-64 w-full object-cover" />
             ) : (
-              <div className="flex h-64 w-full items-center justify-center bg-slate-100 text-sm text-slate-400">
+              <div
+                className="flex h-64 w-full items-center justify-center text-sm font-bold text-pure-white/80"
+                style={{ background: pickThumbFallback(salon.id) }}
+              >
                 サムネイルが設定されていません
               </div>
             )}
             <div className="space-y-4 px-6 py-6">
-              <h2 className="text-lg font-semibold text-slate-900">サロンについて</h2>
+              <h2 className="text-lg font-bold text-[#0b1f3a]">サロンについて</h2>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
                 {salon.description || "サロンの詳細情報は現在準備中です。"}
               </p>
             </div>
           </div>
 
-          <aside className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          {/* Dark membership card — mock: .side-card.dark */}
+          <aside
+            className="flex h-fit flex-col gap-4 rounded-3xl p-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+            style={{ background: NAVY_CARD_BG }}
+          >
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">PLAN</p>
-              <p className="text-3xl font-bold text-slate-900">{priceLabelPoints}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">MEMBERSHIP</p>
+              <p className="text-3xl font-extrabold tracking-tight text-pure-white">{priceLabelPoints}</p>
               {priceLabelYen ? (
-                <p className="text-sm text-slate-500">{priceLabelYen}（クレジットカード決済）</p>
+                <p className="text-sm text-[#9fb4d0]">{priceLabelYen}（クレジットカード決済）</p>
               ) : null}
               {isIntroOffer ? (
-                <p className="text-xs font-semibold text-emerald-600">初月無料（カード登録のみで完了します）</p>
+                <p className="text-xs font-bold text-emerald-300">初月無料（カード登録のみで完了します）</p>
               ) : null}
-              <p className="text-xs text-slate-500">※ 決済はサロン運営のメンバーシップとして行われます</p>
+              <p className="text-xs text-[#9fb4d0]">※ 決済はサロン運営のメンバーシップとして行われます</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-[#bcd3ee]">
               サロン加入中の方はコミュニティに直接アクセスできます。
             </div>
 
             {salon.membership_status && salon.is_member ? (
-              <div className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-medium text-emerald-600">
+              <div className="rounded-full border border-emerald-300/30 bg-emerald-400/15 px-4 py-2 text-xs font-semibold text-emerald-200">
                 現在のステータス: {salon.membership_status}
               </div>
             ) : null}
 
             {joinError ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-600">
+              <div className="rounded-2xl border border-rose-300/30 bg-rose-400/15 px-4 py-3 text-xs text-rose-200">
                 {joinError}
               </div>
             ) : null}
@@ -280,7 +282,8 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                 <button
                   type="button"
                   onClick={() => router.push(`/salons/${salon.id}/feed`)}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)]"
+                  style={{ background: GRAD_BRAND }}
                 >
                   コミュニティフィードへ
                 </button>
@@ -290,7 +293,8 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                     <button
                       type="button"
                       onClick={handleJoinWithPoints}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)]"
+                      style={{ background: GRAD_BRAND }}
                     >
                       ポイント自動チャージで参加する
                     </button>
@@ -301,7 +305,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                       type="button"
                       onClick={handleJoinWithYen}
                       disabled={isJoiningYen}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-pure-white shadow transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {isJoiningYen
                         ? "決済ページへ移動中..."
@@ -312,12 +316,12 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                   ) : null}
 
                   {!salon.allow_point_subscription && !salon.allow_jpy_subscription ? (
-                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500">
+                    <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-[#bcd3ee]">
                       現在申し込み可能な決済方法が設定されていません。
                     </div>
                   ) : null}
 
-                  <div className="space-y-1 text-[11px] leading-relaxed text-slate-500 text-center">
+                  <div className="space-y-1 text-[11px] leading-relaxed text-[#9fb4d0] text-center">
                     {isIntroOffer ? (
                       <p>初月は無料です。解約しない限り、翌月以降は通常料金が自動で請求されます。</p>
                     ) : null}
@@ -330,7 +334,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-pure-white transition hover:bg-white/15"
             >
               公開ページのリンクをコピー
             </button>

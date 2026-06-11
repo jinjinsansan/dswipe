@@ -11,6 +11,7 @@ import { DocumentIcon, ChatBubbleLeftRightIcon, LinkIcon, UserGroupIcon } from '
 import type { PublicNoteSummary, PublicUserProfile, SalonPublicListItem } from '@/types';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import CreatorFollowButton from '@/components/creator/CreatorFollowButton';
+import { HEAD_BG } from '@/lib/momentum';
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -155,8 +156,8 @@ export default function UserProfilePage() {
       pageSubtitle={`${stats.totalProducts}商品 • ${stats.totalSales}販売 • ${stats.totalNotes}Swipeコラム • ${stats.totalSalons}サロン`}
       requireAuth={false}
     >
-      {/* Profile Header */}
-      <div className="bg-white border-b border-slate-200">
+      {/* Profile Header — mock: D-Swipe Creator Profile.html (navy band) */}
+      <div style={{ background: HEAD_BG }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
@@ -168,7 +169,7 @@ export default function UserProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-white font-bold text-3xl sm:text-4xl">
+                <span className="text-pure-white font-bold text-3xl sm:text-4xl">
                   {username.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -176,28 +177,28 @@ export default function UserProfilePage() {
 
             {/* User Info */}
             <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">{username}</h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-pure-white mb-2">{username}</h1>
               {profile?.bio && (
-                <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto sm:mx-0 mb-4 whitespace-pre-line">
+                <p className="text-[#bcd3ee] text-sm sm:text-base max-w-2xl mx-auto sm:mx-0 mb-4 whitespace-pre-line">
                   {profile.bio}
                 </p>
               )}
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 text-sm sm:text-base">
-                <div className="text-slate-600">
-                  <span className="font-semibold text-slate-900">{stats.totalProducts}</span>
-                  <span className="text-slate-500 ml-1">販売中商品</span>
+                <div>
+                  <span className="font-extrabold text-pure-white">{stats.totalProducts}</span>
+                  <span className="text-[#9fb4d0] ml-1">販売中商品</span>
                 </div>
-                <div className="text-slate-600">
-                  <span className="font-semibold text-green-600">{stats.totalSales.toLocaleString()}</span>
-                  <span className="text-slate-500 ml-1">総販売数</span>
+                <div>
+                  <span className="font-extrabold text-cyan-300">{stats.totalSales.toLocaleString()}</span>
+                  <span className="text-[#9fb4d0] ml-1">総販売数</span>
                 </div>
-                <div className="text-slate-600">
-                  <span className="font-semibold text-amber-600">{stats.totalNotes}</span>
-                  <span className="text-slate-500 ml-1">公開Swipeコラム</span>
+                <div>
+                  <span className="font-extrabold text-cyan-300">{stats.totalNotes}</span>
+                  <span className="text-[#9fb4d0] ml-1">公開Swipeコラム</span>
                 </div>
-                <div className="text-slate-600">
-                  <span className="font-semibold text-sky-600">{stats.totalSalons}</span>
-                  <span className="text-slate-500 ml-1">公開サロン</span>
+                <div>
+                  <span className="font-extrabold text-cyan-300">{stats.totalSalons}</span>
+                  <span className="text-[#9fb4d0] ml-1">公開サロン</span>
                 </div>
               </div>
 
@@ -214,7 +215,7 @@ export default function UserProfilePage() {
                       href={profile.sns_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:border-sky-300 hover:text-sky-700 text-sm font-semibold transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/25 bg-white/10 text-pure-white hover:bg-white/15 text-sm font-semibold transition-colors"
                     >
                       <LinkIcon className="h-4 w-4" aria-hidden="true" />
                       SNSを見る
@@ -225,7 +226,7 @@ export default function UserProfilePage() {
                       href={profile.line_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#06C755] text-white text-sm font-semibold hover:bg-[#05B34A] transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#06C755] text-pure-white text-sm font-semibold hover:bg-[#05B34A] transition-colors"
                     >
                       <ChatBubbleLeftRightIcon className="h-4 w-4" aria-hidden="true" />
                       LINEで友だち追加

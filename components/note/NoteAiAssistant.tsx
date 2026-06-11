@@ -994,7 +994,7 @@ export default function NoteAiAssistant({
                     <button
                       type="button"
                       onClick={() => handleApplyCorrection(correction)}
-                      className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                      className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-pure-white shadow-sm transition hover:bg-emerald-700"
                     >
                       ブロックに適用
                     </button>
@@ -1777,7 +1777,7 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalM
               disabled={!canApply}
               className={`rounded-full px-5 py-2 text-sm font-semibold shadow-sm transition ${
                 canApply
-                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  ? 'bg-emerald-600 text-pure-white hover:bg-emerald-700'
                   : 'bg-slate-200 text-slate-500'
               }`}
             >

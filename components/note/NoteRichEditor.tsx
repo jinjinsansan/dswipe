@@ -1061,7 +1061,7 @@ export default function NoteRichEditor({
       </div>
 
       {uploadNotice ? (
-        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-2 text-center text-xs font-semibold text-white shadow-lg md:bottom-10">
+        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-[#0b1f3a]/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
           {uploadNotice}
         </div>
       ) : null}
@@ -1286,7 +1286,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="太字"
         icon={<BoldIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1298,7 +1298,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="斜体"
         icon={<ItalicIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1310,7 +1310,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="大見出し"
         icon={<HeadingIcon className="h-5 w-5" label="H2" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1322,7 +1322,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="小見出し"
         icon={<HeadingIcon className="h-5 w-5" label="H3" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1334,7 +1334,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="箇条書き"
         icon={<ListBulletIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1346,7 +1346,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="番号付き"
         icon={<span className="text-sm font-semibold">1.</span>}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1358,7 +1358,7 @@ function ToolbarButtons({
         disabled={disabled}
         label="引用"
         icon={<Bars3BottomLeftIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-white"
+        activeClass="bg-slate-700 text-pure-white"
       />
       <ToolbarButton
         onClick={() => {
@@ -1385,7 +1385,7 @@ function ToolbarButtons({
           onClick={() => onAccessChange('public')}
           active={activeAccess === 'public'}
           disabled={disabled}
-          activeClass="bg-emerald-600 text-white"
+          activeClass="bg-emerald-600 text-pure-white"
           label="無料"
         />
         <ToolbarButton
@@ -1423,7 +1423,7 @@ interface ToolbarButtonProps {
 }
 
 function ToolbarButton({ onClick, active = false, disabled = false, activeClass, icon, label, className }: ToolbarButtonProps) {
-  const baseColor = active ? (activeClass ?? 'bg-slate-700 text-white') : 'bg-white text-slate-700 border border-slate-200';
+  const baseColor = active ? (activeClass ?? 'bg-slate-700 text-pure-white') : 'bg-white text-slate-700 border border-slate-200';
   
   // If there's an icon, show icon only (note.com style)
   // If no icon, show label text

@@ -107,7 +107,7 @@ function SortableBlock({
           <button
             {...attributes}
             {...listeners}
-            className="w-12 h-12 bg-gray-800 text-white rounded-lg hover:bg-gray-700 shadow-lg flex items-center justify-center cursor-grab active:cursor-grabbing"
+            className="w-12 h-12 bg-gray-800 text-pure-white rounded-lg hover:bg-gray-700 shadow-lg flex items-center justify-center cursor-grab active:cursor-grabbing"
             title="ドラッグして並び替え"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ function SortableBlock({
                 onDeleteBlock();
               }
             }}
-            className="w-12 h-12 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-lg flex items-center justify-center"
+            className="w-12 h-12 bg-red-600 text-pure-white rounded-lg hover:bg-red-700 shadow-lg flex items-center justify-center"
             title="削除"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

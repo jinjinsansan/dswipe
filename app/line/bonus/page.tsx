@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useAuthStore } from "@/store/authStore";
 import { GiftIcon, CheckCircleIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { HEAD_BG } from "@/lib/momentum";
 
 interface LineBonusSettings {
   id: string;
@@ -177,16 +178,26 @@ export default function LineBonusPage() {
         </div>
       ) : (
         <div className="mx-auto w-full max-w-4xl space-y-6 px-3 py-6 sm:px-6">
+          {/* Navy hero — mock: D-Swipe LINE Bonus.html */}
+          <div
+            className="rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+            style={{ background: HEAD_BG }}
+          >
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Campaign</p>
+            <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">LINE連携ボーナス</h1>
+            <p className="mt-1 text-sm text-[#bcd3ee]">D-swipe公式LINEを追加して{bonusPoints}ポイントをゲットしよう！</p>
+          </div>
+
           {error && !error.includes("認証トークン") ? (
             <div className="rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">
-              <p className="mb-1 font-semibold">ℹ️ 情報</p>
+              <p className="mb-1 font-semibold">情報</p>
               <p>接続エラーが発生しましたが、LINE連携は利用できます。詳細: {error}</p>
             </div>
           ) : null}
 
           {error && error.includes("認証トークン") ? (
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-              <p className="mb-1 font-semibold">❌ 認証エラー</p>
+              <p className="mb-1 font-semibold">認証エラー</p>
               <p>{error}</p>
             </div>
           ) : null}

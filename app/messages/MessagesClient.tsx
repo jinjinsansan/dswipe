@@ -11,6 +11,7 @@ import {
 
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
+import { GRAD_BRAND, HEAD_BG } from "@/lib/momentum";
 import { operatorMessageApi } from "@/lib/api";
 import { useOperatorMessageStore } from "@/store/operatorMessageStore";
 import type {
@@ -191,21 +192,26 @@ export default function MessagesClient() {
       pageSubtitle="運営チームからのお知らせや施策情報をまとめて確認できます"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Navy hero — Momentum chrome */}
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl text-pure-white" style={{ background: GRAD_BRAND }}>
               <MegaphoneIcon className="h-5 w-5" aria-hidden="true" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-slate-900">最新のお知らせ</p>
-              <p className="text-xs text-slate-500">未読 {unreadCount.toLocaleString()} 件</p>
+              <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Messages</p>
+              <p className="text-sm font-bold text-pure-white">最新のお知らせ</p>
+              <p className="text-xs text-[#bcd3ee]">未読 {unreadCount.toLocaleString()} 件</p>
             </div>
           </div>
           <button
             type="button"
             onClick={handleRefresh}
             disabled={isLoading}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-pure-white transition hover:bg-white/15"
           >
             <ArrowPathIcon className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} aria-hidden="true" />
             {isLoading ? "更新中…" : "再読込"}
@@ -223,9 +229,10 @@ export default function MessagesClient() {
                   setFilter(option.value);
                   setCurrentPage(0);
                 }}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  isActive ? "bg-sky-600 text-white shadow-sm shadow-sky-200" : "bg-slate-100 text-slate-600 hover:bg-sky-50 hover:text-sky-700"
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-colors ${
+                  isActive ? "text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]" : "bg-white border border-[#bfe6fb] text-slate-600 hover:bg-[#e9f6fe] hover:text-sky-700"
                 }`}
+                style={isActive ? { background: GRAD_BRAND } : undefined}
               >
                 {option.value === "unread" ? (
                   <EnvelopeIcon className="h-4 w-4" aria-hidden="true" />
@@ -267,7 +274,7 @@ export default function MessagesClient() {
                             type="button"
                             onClick={() => setSelectedMessage(message)}
                             className={`flex w-full flex-col items-start gap-1 px-4 py-4 text-left transition-colors ${
-                              isActive ? "bg-sky-50/70" : "hover:bg-slate-50"
+                              isActive ? "bg-[#e9f6fe] shadow-[inset_3px_0_0_#0284c7]" : "hover:bg-slate-50"
                             }`}
                           >
                             <div className="flex w-full items-center justify-between gap-3">

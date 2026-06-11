@@ -73,7 +73,7 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, r: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-gray-700 text-pure-white rounded text-sm"
                 />
               </div>
               <div>
@@ -87,7 +87,7 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, g: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-gray-700 text-pure-white rounded text-sm"
                 />
               </div>
               <div>
@@ -101,7 +101,7 @@ export default function ColorThemeGenerator({
                     const newRgb = { ...rgb, b: parseInt(e.target.value) || 0 };
                     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
                   }}
-                  className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm"
+                  className="w-full px-2 py-1 bg-gray-700 text-pure-white rounded text-sm"
                 />
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function ColorThemeGenerator({
                 type="text"
                 value={hex}
                 onChange={(e) => setHex(e.target.value)}
-                className="w-full px-2 py-1 bg-gray-700 text-white rounded text-sm font-mono"
+                className="w-full px-2 py-1 bg-gray-700 text-pure-white rounded text-sm font-mono"
               />
             </div>
           </div>
@@ -169,7 +169,7 @@ ${SHADE_KEYS
         </button>
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 bg-gray-700 text-pure-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
         >
           キャンセル
         </button>
