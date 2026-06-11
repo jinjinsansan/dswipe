@@ -289,7 +289,12 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
             window.history.replaceState(null, '', `/note/${createdId}/edit`);
           }
         } else {
-          const response = await noteApi.update(noteIdRef.current, payload as never);
+          // note型の更新では content_blocks を送らない
+          // (バックエンドが「NOTE風エディタの記事は rich_content を更新してください」と拒否するため。
+          //  旧edit実装も note型では rich_content のみ送信していた)
+          const { content_blocks: _omitted, ...updatePayload } = payload;
+          void _omitted;
+          const response = await noteApi.update(noteIdRef.current, updatePayload as never);
           setStatus(response.data?.status ?? status);
           setSlug(response.data?.slug ?? slug);
           setShareUrl(response.data?.share_url ?? shareUrl);
