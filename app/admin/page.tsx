@@ -1810,14 +1810,14 @@ export default function AdminPanelPage() {
                           <button
                             onClick={handleBlockUser}
                             disabled={userActionLoading}
-                            className="flex-1 rounded-xl bg-red-600 text-white text-sm font-semibold px-4 py-2 hover:bg-red-700 disabled:opacity-60"
+                            className="flex-1 rounded-xl bg-red-600 text-pure-white text-sm font-semibold px-4 py-2 hover:bg-red-700 disabled:opacity-60"
                           >
                             ユーザーをブロック
                           </button>
                           <button
                             onClick={handleUnblockUser}
                             disabled={userActionLoading}
-                            className="flex-1 rounded-xl bg-emerald-600 text-white text-sm font-semibold px-4 py-2 hover:bg-emerald-700 disabled:opacity-60"
+                            className="flex-1 rounded-xl bg-emerald-600 text-pure-white text-sm font-semibold px-4 py-2 hover:bg-emerald-700 disabled:opacity-60"
                           >
                             ブロック解除
                           </button>
@@ -2119,14 +2119,14 @@ export default function AdminPanelPage() {
                         <button
                           onClick={handleBlockUser}
                           disabled={userActionLoading}
-                          className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-60"
+                          className="px-4 py-2 rounded-xl bg-red-600 text-pure-white text-sm font-semibold hover:bg-red-700 disabled:opacity-60"
                         >
                           ユーザーをブロック
                         </button>
                         <button
                           onClick={handleUnblockUser}
                           disabled={userActionLoading}
-                          className="px-4 py-2 rounded-xl bg-emerald-600/80 text-white text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60"
+                          className="px-4 py-2 rounded-xl bg-emerald-600/80 text-pure-white text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60"
                         >
                           ブロック解除
                         </button>
@@ -2491,13 +2491,13 @@ export default function AdminPanelPage() {
                             <div className="flex flex-wrap gap-2">
                               <button
                                 onClick={() => handleUpdateLPStatus(item.id, 'archived')}
-                                className="px-3 py-1.5 rounded-lg bg-red-600/80 text-white hover:bg-red-700"
+                                className="px-3 py-1.5 rounded-lg bg-red-600/80 text-pure-white hover:bg-red-700"
                               >
                                 非公開
                               </button>
                               <button
                                 onClick={() => handleUpdateLPStatus(item.id, 'published')}
-                                className="px-3 py-1.5 rounded-lg bg-emerald-600/80 text-white hover:bg-emerald-600"
+                                className="px-3 py-1.5 rounded-lg bg-emerald-600/80 text-pure-white hover:bg-emerald-600"
                               >
                                 公開
                               </button>
@@ -2545,13 +2545,13 @@ export default function AdminPanelPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleUpdateLPStatus(item.id, 'archived')}
-                            className="rounded-lg bg-red-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                            className="rounded-lg bg-red-600/80 px-3 py-1.5 text-xs font-semibold text-pure-white"
                           >
                             非公開
                           </button>
                           <button
                             onClick={() => handleUpdateLPStatus(item.id, 'published')}
-                            className="rounded-lg bg-emerald-600/80 px-3 py-1.5 text-xs font-semibold text-white"
+                            className="rounded-lg bg-emerald-600/80 px-3 py-1.5 text-xs font-semibold text-pure-white"
                           >
                             公開
                           </button>
@@ -2862,7 +2862,7 @@ export default function AdminPanelPage() {
                         type="button"
                         onClick={() => setShareFilters({ suspiciousOnly: true })}
                         className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
-                          shareFilters.suspiciousOnly ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          shareFilters.suspiciousOnly ? 'bg-red-600 text-pure-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         要調査のみ
@@ -2968,7 +2968,7 @@ export default function AdminPanelPage() {
                       <button
                         type="submit"
                         disabled={shareRewardSaving}
-                        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-pure-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         更新する
                       </button>
@@ -3020,7 +3020,7 @@ export default function AdminPanelPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleResolveAlert(alert.id)}
-                                  className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                                  className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-pure-white hover:bg-emerald-700"
                                 >
                                   解決済みにする
                                 </button>
@@ -3241,7 +3241,7 @@ export default function AdminPanelPage() {
                                     type="button"
                                     onClick={() => handleMaintenanceStatusChange(mode, 'completed')}
                                     disabled={maintenanceStatusUpdating === mode.id}
-                                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-pure-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                                   >
                                     終了
                                   </button>
@@ -3301,7 +3301,7 @@ export default function AdminPanelPage() {
                               type="button"
                               onClick={() => handleMaintenanceStatusChange(mode, 'completed')}
                               disabled={maintenanceStatusUpdating === mode.id}
-                              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-pure-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               終了
                             </button>
@@ -3518,7 +3518,7 @@ export default function AdminPanelPage() {
                       <button
                         type="submit"
                         disabled={statusCheckLoading}
-                        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-pure-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         ステータスを登録
                       </button>

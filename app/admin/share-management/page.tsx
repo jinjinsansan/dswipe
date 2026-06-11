@@ -454,9 +454,9 @@ export default function ShareManagementPage() {
                               <span
                                 className={`rounded-full px-2 py-1 text-xs font-semibold ${
                                   alert.severity === 'high'
-                                    ? 'bg-red-600 text-white'
+                                    ? 'bg-red-600 text-pure-white'
                                     : alert.severity === 'medium'
-                                    ? 'bg-amber-600 text-white'
+                                    ? 'bg-amber-600 text-pure-white'
                                     : 'bg-sky-600 text-white'
                                 }`}
                               >

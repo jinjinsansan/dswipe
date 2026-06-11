@@ -11,6 +11,7 @@ import { getErrorMessage } from '@/lib/errorHandler';
 import AIWizard from '@/components/AIWizard';
 import type { AIGenerationResponse } from '@/types/api';
 import { ArrowLeftIcon, DocumentIcon, SparklesIcon, LightBulbIcon } from '@heroicons/react/24/outline';
+import { GRAD_BRAND, HEAD_BG } from '@/lib/momentum';
 
 export default function CreateLPPage() {
   const router = useRouter();
@@ -212,12 +213,16 @@ export default function CreateLPPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <div className="mb-8">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-600 mb-4">
+        {/* Navy hero — mock: D-Swipe AI Create.html */}
+        <div
+          className="mb-8 rounded-3xl px-6 py-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-pure-white mb-4" style={{ background: GRAD_BRAND }}>
             <DocumentIcon className="h-6 w-6" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-semibold text-slate-900 mb-2">新規LP作成</h1>
-          <p className="text-slate-600">基本情報を入力してLPを作成します</p>
+          <h1 className="text-[26px] font-extrabold tracking-tight text-pure-white mb-2">新規LP作成</h1>
+          <p className="text-sm text-[#bcd3ee]">基本情報を入力してLPを作成します</p>
         </div>
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
@@ -397,7 +402,8 @@ export default function CreateLPPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 rounded-lg text-pure-white font-bold shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: GRAD_BRAND }}
               >
                 {isLoading ? '作成中...' : 'LP作成 →'}
               </button>

@@ -1539,7 +1539,7 @@ export default function EditLPNewPage() {
         </div>
       )}
       {error && (
-        <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
+        <div className="fixed top-4 right-4 z-50 bg-red-600 text-pure-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
           </svg>
@@ -1660,7 +1660,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={handlePublish}
-                className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-pure-white rounded hover:bg-green-700 transition-colors"
               >
                 公開
               </button>
@@ -1828,7 +1828,7 @@ export default function EditLPNewPage() {
                       handlePublish();
                       setShowMobileMenu(false);
                     }}
-                    className="w-full px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 bg-green-600 text-pure-white rounded-lg font-semibold hover:bg-green-700 transition-colors min-h-[48px] flex items-center justify-center gap-2"
                   >
                     <RocketLaunchIcon className="h-5 w-5" aria-hidden="true" />
                     公開
@@ -2589,7 +2589,7 @@ export default function EditLPNewPage() {
           {/* 折りたたみボタン */}
           <button
             onClick={() => setIsLeftSidebarVisible(false)}
-            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
+            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
             title="左サイドバーを閉じる"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2603,7 +2603,7 @@ export default function EditLPNewPage() {
         {!isLeftSidebarVisible && (
           <button
             onClick={() => setIsLeftSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
             title="左サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2651,7 +2651,7 @@ export default function EditLPNewPage() {
         {!isRightSidebarVisible && (
           <button
             onClick={() => setIsRightSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
             title="右サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2693,7 +2693,7 @@ export default function EditLPNewPage() {
             {/* 折りたたみボタン */}
             <button
               onClick={() => setIsRightSidebarVisible(false)}
-              className="absolute bottom-4 left-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors z-10"
+              className="absolute bottom-4 left-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-full flex items-center justify-center shadow-lg transition-colors z-10"
               title="右サイドバーを閉じる"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -474,7 +474,7 @@ export default function AdminPayoutsPage() {
                         type="button"
                         onClick={handleRecordTransaction}
                         disabled={txRecording}
-                        className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-emerald-300"
+                        className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-pure-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-emerald-300"
                       >
                         {txRecording ? "記録中…" : "送金済みに更新"}
                       </button>
@@ -493,7 +493,7 @@ export default function AdminPayoutsPage() {
                       type="button"
                       onClick={handleAddEvent}
                       disabled={eventSubmitting}
-                      className="mt-2 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-500"
+                      className="mt-2 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-pure-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-500"
                     >
                       <ChatBubbleBottomCenterTextIcon className="h-4 w-4" aria-hidden="true" />
                       {eventSubmitting ? "追加中…" : "メモを追加"}
