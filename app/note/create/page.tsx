@@ -549,7 +549,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.title')}</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.title')}</label>
               <input
                 type="text"
                 value={title}
@@ -562,7 +562,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.excerpt')}</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.excerpt')}</label>
                 <textarea
                   rows={3}
                   value={excerpt}
@@ -573,7 +573,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.coverImage')}</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.coverImage')}</label>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
@@ -788,7 +788,7 @@ function ClassicNoteCreateForm({ onBack }: { onBack: () => void }) {
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.taxRate')}</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.taxRate')}</label>
                   <input
                     type="text"
                     inputMode="decimal"
@@ -1243,7 +1243,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.title')}</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.title')}</label>
               <input
                 type="text"
                 value={title}
@@ -1256,7 +1256,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.excerpt')}</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.excerpt')}</label>
                 <textarea
                   rows={3}
                   value={excerpt}
@@ -1267,7 +1267,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.coverImage')}</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.coverImage')}</label>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
@@ -1482,7 +1482,7 @@ function NoteRichCreateForm({ onBack }: { onBack: () => void }) {
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{t('labels.taxRate')}</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">{t('labels.taxRate')}</label>
                   <input
                     type="text"
                     inputMode="decimal"

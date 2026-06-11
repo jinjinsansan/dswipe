@@ -127,7 +127,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
             <div>
               <div className="text-xs font-bold tracking-[.16em] uppercase text-cyan-300">Notes</div>
               <h1 className="text-[26px] sm:text-[30px] font-extrabold tracking-tight text-pure-white mt-2">{t('pageTitle')}</h1>
-              <p className="text-sm text-[#bcd3ee] mt-2">{t('pageSubtitle')}</p>
+              <p className="text-sm text-on-navy mt-2">{t('pageSubtitle')}</p>
             </div>
             <span className="rounded-full bg-white/95 px-3 py-1.5 shadow-sm">
               <LanguageSwitcher />
@@ -154,7 +154,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                 onClick={() => setFilter(option.value)}
                 className={`text-[13px] font-semibold rounded-full px-3.5 py-[7px] border transition-colors whitespace-nowrap ${
                   filter === option.value
-                    ? 'bg-white text-[#0b1f3a] border-white'
+                    ? 'bg-white text-navy-900 border-white'
                     : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                 }`}
               >
@@ -169,7 +169,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                 onClick={() => setCategoryFilter('all')}
                 className={`shrink-0 whitespace-nowrap text-[12px] font-semibold rounded-full px-3 py-1.5 border transition-colors ${
                   categoryFilter === 'all'
-                    ? 'bg-white text-[#0b1f3a] border-white'
+                    ? 'bg-white text-navy-900 border-white'
                     : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                 }`}
               >
@@ -182,7 +182,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                   onClick={() => setCategoryFilter(option.value)}
                   className={`shrink-0 whitespace-nowrap text-[12px] font-semibold rounded-full px-3 py-1.5 border transition-colors ${
                     categoryFilter === option.value
-                      ? 'bg-white text-[#0b1f3a] border-white'
+                      ? 'bg-white text-navy-900 border-white'
                       : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                   }`}
                 >
@@ -196,7 +196,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
         <div className="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-8 items-start">
           <main>
             {loading === 'loading' ? (
-              <div className="flex h-60 items-center justify-center gap-2 text-sm text-slate-500 bg-white border border-[#e2ebf6] rounded-2xl shadow-sm">
+              <div className="flex h-60 items-center justify-center gap-2 text-sm text-slate-500 bg-white border border-line-soft rounded-2xl shadow-sm">
                 <SpinIndicator /> {t('loading')}
               </div>
             ) : loading === 'error' ? (
@@ -204,8 +204,8 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                 {error ?? t('loadError')}
               </div>
             ) : filteredNotes.length === 0 ? (
-              <section className="rounded-2xl border border-dashed border-[#bfe6fb] bg-white p-8 text-center shadow-sm">
-                <h2 className="text-xl font-bold text-[#0b1f3a]">{t('emptyTitle')}</h2>
+              <section className="rounded-2xl border border-dashed border-tint-border bg-white p-8 text-center shadow-sm">
+                <h2 className="text-xl font-bold text-navy-900">{t('emptyTitle')}</h2>
                 <p className="mt-3 text-sm text-slate-600">{t('emptyDescription')}</p>
                 <div
                   className="mt-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
@@ -231,7 +231,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                     <Link
                       key={note.id}
                       href={withBasePath(basePath, `/notes/${note.slug}`)}
-                      className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#e2ebf6] bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#bfe6fb] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                      className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-line-soft bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-tint-border hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
                     >
                       <div className="relative h-[150px] sm:h-auto sm:w-[168px] flex-shrink-0 overflow-hidden" style={{ background: fallbackBg }}>
                         {note.cover_image_url ? (
@@ -246,7 +246,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                       <div className="flex min-w-0 flex-1 flex-col px-4 py-4 sm:px-[18px]">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
                           {categoryLabel ? (
-                            <span className="text-[11px] font-bold text-sky-600 bg-[#e9f6fe] border border-[#bfe6fb] rounded-full px-2.5 py-[3px]">
+                            <span className="text-[11px] font-bold text-sky-600 bg-brand-tint border border-tint-border rounded-full px-2.5 py-[3px]">
                               {categoryLabel}
                             </span>
                           ) : null}
@@ -260,9 +260,9 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                               {t('loginRequiredBadge')}
                             </span>
                           ) : null}
-                          <span className="text-[11px] text-slate-400">{dateLabel}</span>
+                          <span className="text-[11px] text-slate-600">{dateLabel}</span>
                         </div>
-                        <h3 className="text-[15px] sm:text-[17px] font-extrabold tracking-tight text-[#0b1f3a] leading-snug line-clamp-2 group-hover:text-sky-600 transition-colors">
+                        <h3 className="text-[15px] sm:text-[17px] font-extrabold tracking-tight text-navy-900 leading-snug line-clamp-2 group-hover:text-sky-600 transition-colors">
                           {note.title}
                         </h3>
                         {note.excerpt ? (
@@ -290,8 +290,8 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
           {/* Sidebar */}
           <aside className="hidden lg:block">
             {popularNotes.length > 0 && (
-              <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-4">
-                <h4 className="text-[13px] font-bold text-[#0b1f3a] mb-3">{t('popularTitle')}</h4>
+              <div className="bg-white border border-line-soft rounded-2xl p-[18px] shadow-sm mb-4">
+                <h4 className="text-[13px] font-bold text-navy-900 mb-3">{t('popularTitle')}</h4>
                 {popularNotes.map((note, i) => (
                   <Link
                     key={note.id}
@@ -300,7 +300,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                   >
                     <span className="w-[18px] flex-shrink-0 text-[15px] font-extrabold text-sky-600 tabular-nums">{i + 1}</span>
                     <span className="min-w-0">
-                      <span className="block text-[12.5px] font-semibold text-[#0b1f3a] leading-normal line-clamp-2 group-hover:text-sky-600 transition-colors">
+                      <span className="block text-[12.5px] font-semibold text-navy-900 leading-normal line-clamp-2 group-hover:text-sky-600 transition-colors">
                         {note.title}
                       </span>
                       <span className="block text-[11px] text-slate-500 mt-0.5">
@@ -314,7 +314,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
 
             <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: NAVY_CARD_BG }}>
               <b className="block text-[15px] font-extrabold text-pure-white">{t('ctaTitle')}</b>
-              <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">{t('ctaBody')}</p>
+              <p className="text-[12.5px] text-on-navy mt-2 mb-4 leading-relaxed">{t('ctaBody')}</p>
               <Link
                 href="/note/create"
                 className="inline-flex items-center justify-center gap-2 w-full text-[13px] font-bold text-pure-white rounded-xl px-4 py-2.5 shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow"
@@ -333,7 +333,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
 
 function SpinIndicator() {
   return (
-    <svg className="h-5 w-5 animate-spin text-slate-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg className="h-5 w-5 animate-spin text-slate-600" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-60"

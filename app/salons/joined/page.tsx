@@ -74,7 +74,7 @@ export default function JoinedSalonsPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-cyan-300">{t("pageTitle")}</p>
             <p className="mt-2 text-3xl font-extrabold tracking-tight text-pure-white">{activeCount.toLocaleString()} 件</p>
-            <p className="mt-1 text-sm text-[#bcd3ee]">{t("pageSubtitle")}</p>
+            <p className="mt-1 text-sm text-on-navy">{t("pageSubtitle")}</p>
           </div>
           <button
             type="button"
@@ -92,9 +92,9 @@ export default function JoinedSalonsPage() {
         ) : null}
 
         {memberships.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#bfe6fb] bg-white px-8 py-16 text-center shadow-sm">
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-tint-border bg-white px-8 py-16 text-center shadow-sm">
             <UserGroupIcon className="h-12 w-12 text-sky-300" aria-hidden="true" />
-            <h2 className="mt-4 text-lg font-bold text-[#0b1f3a]">{t("empty.title")}</h2>
+            <h2 className="mt-4 text-lg font-bold text-navy-900">{t("empty.title")}</h2>
             <p className="mt-2 text-sm text-slate-500">{t("empty.description")}</p>
             <Link
               href="/salons/all"
@@ -132,19 +132,19 @@ export default function JoinedSalonsPage() {
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-[#bfe6fb] bg-[#e9f6fe] px-4 py-3">
+                    <div className="rounded-2xl border border-tint-border bg-brand-tint px-4 py-3">
                       <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">加入日</p>
-                      <p className="mt-1 text-sm font-semibold text-[#0b1f3a]">{formatDateTime(membership.joined_at)}</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-900">{formatDateTime(membership.joined_at)}</p>
                     </div>
-                    <div className="rounded-2xl border border-[#bfe6fb] bg-[#e9f6fe] px-4 py-3">
+                    <div className="rounded-2xl border border-tint-border bg-brand-tint px-4 py-3">
                       <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">次回課金予定</p>
-                      <p className="mt-1 text-sm font-semibold text-[#0b1f3a]">
+                      <p className="mt-1 text-sm font-semibold text-navy-900">
                         {membership.next_charge_at ? formatDateTime(membership.next_charge_at) : "未定"}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-[#bfe6fb] bg-[#e9f6fe] px-4 py-3">
+                    <div className="rounded-2xl border border-tint-border bg-brand-tint px-4 py-3">
                       <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">プラン</p>
-                      <p className="mt-1 text-sm font-semibold text-[#0b1f3a]">{membership.plan_label ?? "プラン情報未設定"}</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-900">{membership.plan_label ?? "プラン情報未設定"}</p>
                     </div>
                   </div>
 

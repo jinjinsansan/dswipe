@@ -423,7 +423,7 @@ const planPointLabel = useMemo(() => {
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:col-span-2">
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                   {t("form.fields.title")}
                 </label>
                 <input
@@ -435,7 +435,7 @@ const planPointLabel = useMemo(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                   {t("form.fields.description")}
                 </label>
                 <textarea
@@ -447,7 +447,7 @@ const planPointLabel = useMemo(() => {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                   {t("form.fields.thumbnail")}
                 </label>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -475,13 +475,13 @@ const planPointLabel = useMemo(() => {
                       className="h-48 w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-48 items-center justify-center text-xs text-slate-400">{t("form.thumbnailFallback")}</div>
+                    <div className="flex h-48 items-center justify-center text-xs text-slate-600">{t("form.thumbnailFallback")}</div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                   {t("form.fields.lp")}
                 </label>
                 <select
@@ -554,19 +554,19 @@ const planPointLabel = useMemo(() => {
               <h3 className="text-sm font-semibold text-slate-900">{t("infoPanel.title")}</h3>
               <dl className="mt-3 space-y-3 text-sm text-slate-600">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t("infoPanel.fields.memberCount")}</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">{t("infoPanel.fields.memberCount")}</dt>
                   <dd className="mt-1 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">
                     <UsersIcon className="h-4 w-4" aria-hidden="true" />
                     {t("infoPanel.memberCountValue", { count: formatter.number(salon.member_count ?? 0) })}
                   </dd>
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1 text-[11px] text-slate-600">
                     {salon.show_member_count_public
                       ? t("infoPanel.memberCountVisible")
                       : t("infoPanel.memberCountHidden")}
                   </p>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t("infoPanel.fields.plan")}</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">{t("infoPanel.fields.plan")}</dt>
                   <dd className="mt-1 text-sm font-semibold text-slate-900">
                     {planDetail?.label ?? salon.subscription_plan_id ?? t("infoPanel.planUnassigned")}
                   </dd>
@@ -594,7 +594,7 @@ const planPointLabel = useMemo(() => {
               </button>
             </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t("infoPanel.fields.salonId")}</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">{t("infoPanel.fields.salonId")}</dt>
                   <dd className="mt-1 text-xs font-mono text-slate-500">{salon.id}</dd>
                 </div>
               </dl>
@@ -666,7 +666,7 @@ const planPointLabel = useMemo(() => {
       </div>
 
       {thumbnailPickerOpen ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 px-4 py-8">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/60 px-4 py-8">
           <div className="relative w-full max-w-3xl rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,23,42,0.15)]">
             <button
               type="button"
@@ -766,11 +766,11 @@ const planPointLabel = useMemo(() => {
                             className="h-32 w-full object-cover transition group-hover:scale-[1.02]"
                           />
                         ) : (
-                          <div className="flex h-32 items-center justify-center bg-slate-100 text-xs text-slate-400">{t("thumbnailPicker.library.noPreview")}</div>
+                          <div className="flex h-32 items-center justify-center bg-slate-100 text-xs text-slate-600">{t("thumbnailPicker.library.noPreview")}</div>
                         )}
                         <div className="px-3 py-2 text-xs text-slate-600">
                           <p className="line-clamp-2 font-medium text-slate-900">{asset.title ?? t("thumbnailPicker.library.nameFallback")}</p>
-                          <p className="mt-1 text-[11px] text-slate-400">{asset.visibility ?? t("thumbnailPicker.library.visibilityFallback")}</p>
+                          <p className="mt-1 text-[11px] text-slate-600">{asset.visibility ?? t("thumbnailPicker.library.visibilityFallback")}</p>
                         </div>
                       </button>
                     ))}

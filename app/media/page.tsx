@@ -259,7 +259,7 @@ export default function MediaPage() {
         >
           <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Media</p>
           <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t("title")}</h1>
-          <p className="mt-1 text-sm text-[#bcd3ee]">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-on-navy">{t("subtitle")}</p>
         </div>
 
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">
@@ -309,7 +309,7 @@ export default function MediaPage() {
           </div>
         ) : media.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
-            <PhotoIcon className="h-10 w-10 text-slate-400" aria-hidden="true" />
+            <PhotoIcon className="h-10 w-10 text-slate-600" aria-hidden="true" />
             <div className="space-y-2">
               <p className="text-base font-semibold text-slate-900">{t("empty.title")}</p>
               <p className="text-sm text-slate-500">{t("empty.description")}</p>
@@ -339,12 +339,12 @@ export default function MediaPage() {
                         {isVideo ? (
                           <PlayCircleIcon className="h-14 w-14 text-sky-500" aria-hidden="true" />
                         ) : (
-                          <PhotoIcon className="h-12 w-12 text-slate-400" aria-hidden="true" />
+                          <PhotoIcon className="h-12 w-12 text-slate-600" aria-hidden="true" />
                         )}
                         <span className="max-w-[80%] truncate text-sm font-semibold" title={filename}>{filename}</span>
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                    <div className="absolute top-3 left-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-900">
                       {badgeLabel}
                     </div>
                     <div className="absolute inset-0 bg-slate-900/0 transition group-hover:bg-slate-900/10" />

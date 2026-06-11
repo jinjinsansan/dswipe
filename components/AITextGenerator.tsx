@@ -49,7 +49,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="relative w-full max-w-2xl h-[90vh] sm:h-auto sm:max-h-[88vh] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl flex flex-col">
 
         {/* Header */}
@@ -162,7 +162,7 @@ export default function AITextGenerator({ type, context, onSelect, onClose }: AI
                         {suggestion}
                       </div>
                     </div>
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-sky-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 group-hover:text-sky-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </div>

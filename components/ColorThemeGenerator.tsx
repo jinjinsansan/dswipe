@@ -41,7 +41,7 @@ export default function ColorThemeGenerator({
   return (
     <div className="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-6 max-w-2xl">
       <div>
-        <h3 className="flex items-center gap-2 text-white font-bold mb-4">
+        <h3 className="flex items-center gap-2 text-slate-900 font-bold mb-4">
           <PaintBrushIcon className="h-5 w-5" aria-hidden="true" />
           テーマカラージェネレーター
         </h3>

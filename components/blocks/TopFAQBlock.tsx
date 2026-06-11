@@ -63,7 +63,7 @@ export default function TopFAQBlock({ content, isEditing, onEdit, onFieldFocus }
       ) : null}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 px-6">
         {isEditing ? (
-          <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-slate-200">
+          <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-gray-800">
             <input
               className="w-full rounded-md border border-white/20 bg-white/10 px-3 py-2"
               value={title}

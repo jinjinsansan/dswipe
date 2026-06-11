@@ -231,7 +231,7 @@ export default function AccountShareManager() {
                           {t('buttons.revokeShare')}
                         </button>
                       ) : (
-                        <span className="text-xs text-slate-400">{t('status.revoked')}</span>
+                        <span className="text-xs text-slate-600">{t('status.revoked')}</span>
                       )}
                     </td>
                   </tr>

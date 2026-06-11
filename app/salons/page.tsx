@@ -111,7 +111,7 @@ export default function SalonListPage() {
               <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white sm:text-[28px]">
                 {t("pageTitle")}
               </h1>
-              <p className="mt-2 text-sm text-[#bcd3ee]">
+              <p className="mt-2 text-sm text-on-navy">
                 {salons.length === 0
                   ? t("summary.empty")
                   : t("summary.count", { count: formatter.number(salons.length) })}
@@ -146,9 +146,9 @@ export default function SalonListPage() {
         ) : null}
 
         {salons.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#bfe6fb] bg-white px-8 py-16 text-center shadow-sm">
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-tint-border bg-white px-8 py-16 text-center shadow-sm">
             <UsersIcon className="h-12 w-12 text-sky-300" aria-hidden="true" />
-            <h2 className="mt-4 text-lg font-bold text-[#0b1f3a]">{t("empty.title")}</h2>
+            <h2 className="mt-4 text-lg font-bold text-navy-900">{t("empty.title")}</h2>
             <p className="mt-2 max-w-lg text-sm text-slate-500">{t("empty.description")}</p>
             <Link
               href="/salons/create"
@@ -171,7 +171,7 @@ export default function SalonListPage() {
                 <div key={salon.id} className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-lg font-bold text-[#0b1f3a]">{salon.title || commonT("untitledSalon")}</h3>
+                      <h3 className="text-lg font-bold text-navy-900">{salon.title || commonT("untitledSalon")}</h3>
                       {salon.description ? (
                         <p className="mt-1 text-sm text-slate-500 line-clamp-2">{salon.description}</p>
                       ) : null}
@@ -183,13 +183,13 @@ export default function SalonListPage() {
                   </div>
 
                   <dl className="grid grid-cols-2 gap-3 text-sm text-slate-600">
-                    <div className="rounded-2xl border border-[#bfe6fb] bg-[#e9f6fe] px-4 py-3">
+                    <div className="rounded-2xl border border-tint-border bg-brand-tint px-4 py-3">
                       <dt className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">{commonT("fields.memberCount")}</dt>
-                      <dd className="mt-1 text-base font-extrabold text-[#0b1f3a]">{commonT("fields.memberCountValue", { count: formatter.number(memberCount) })}</dd>
+                      <dd className="mt-1 text-base font-extrabold text-navy-900">{commonT("fields.memberCountValue", { count: formatter.number(memberCount) })}</dd>
                     </div>
-                    <div className="rounded-2xl border border-[#bfe6fb] bg-[#e9f6fe] px-4 py-3">
+                    <div className="rounded-2xl border border-tint-border bg-brand-tint px-4 py-3">
                       <dt className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">{commonT("fields.plan")}</dt>
-                      <dd className="mt-1 text-sm font-extrabold text-[#0b1f3a]">
+                      <dd className="mt-1 text-sm font-extrabold text-navy-900">
                         {plan?.label ?? salon.subscription_plan_id ?? commonT("fields.planUnassigned")}
                       </dd>
                       {plan ? (
@@ -212,7 +212,7 @@ export default function SalonListPage() {
                     </Link>
                     <Link
                       href={`/salons/${salon.id}/members`}
-                      className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] px-4 py-2 text-sm font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+                      className="inline-flex items-center gap-2 rounded-full border border-tint-border px-4 py-2 text-sm font-semibold text-sky-700 hover:bg-brand-tint"
                     >
                       {t("card.actions.members")}
                     </Link>

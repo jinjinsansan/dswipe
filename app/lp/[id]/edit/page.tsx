@@ -1637,7 +1637,7 @@ export default function EditLPNewPage() {
                       href={`/view/${lp.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-[#e9f6fe] border border-[#bfe6fb] rounded-[9px] transition-colors"
+                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-brand-tint border border-tint-border rounded-[9px] transition-colors"
                     >
                       プレビュー
                     </a>
@@ -1648,7 +1648,7 @@ export default function EditLPNewPage() {
                       href={shareLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-[#e9f6fe] border border-[#bfe6fb] rounded-[9px] transition-colors"
+                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-brand-tint border border-tint-border rounded-[9px] transition-colors"
                     >
                       限定URLを開く
                     </a>
@@ -1661,7 +1661,7 @@ export default function EditLPNewPage() {
                         navigator.clipboard.writeText(slugUrl);
                         alert('URLをコピーしました！');
                       }}
-                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b1f3a] hover:border-[#bfe6fb] border border-slate-200 rounded-[9px] transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-navy-900 hover:border-tint-border border border-slate-200 rounded-[9px] transition-colors"
                       title="公開URLをコピー"
                     >
                       URLコピー
@@ -1673,7 +1673,7 @@ export default function EditLPNewPage() {
                       type="button"
                       onClick={handleCopyShareUrl}
                       disabled={limitedShareDisabled}
-                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b1f3a] hover:border-[#bfe6fb] border border-slate-200 rounded-[9px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-navy-900 hover:border-tint-border border border-slate-200 rounded-[9px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                       title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                     >
                       {shareCopyStatus === 'copied' ? 'コピー済み' : '限定URLコピー'}
@@ -1699,7 +1699,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={handlePublish}
-                className="px-3 py-1.5 text-xs font-bold bg-[#0b1f3a] text-pure-white rounded-[9px] hover:bg-[#122c4d] transition-colors"
+                className="px-3 py-1.5 text-xs font-bold bg-navy-900 text-pure-white rounded-[9px] hover:bg-navy-800 transition-colors"
               >
                 公開
               </button>
@@ -1801,7 +1801,7 @@ export default function EditLPNewPage() {
 
       {/* Mobile Menu - Full Screen Modal */}
       {showMobileMenu && (
-        <div className="lg:hidden fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
+        <div className="lg:hidden fixed inset-0 bg-white/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-sm w-full overflow-y-auto max-h-[80vh]">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
@@ -1809,7 +1809,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={() => setShowMobileMenu(false)}
-                className="text-slate-400 hover:text-slate-900 transition-colors text-2xl leading-none"
+                className="text-slate-600 hover:text-slate-900 transition-colors text-2xl leading-none"
               >
                 ✕
               </button>
@@ -2511,7 +2511,7 @@ export default function EditLPNewPage() {
                     </div>
                   ) : null}
                   {!linkedProduct?.id || !lp?.slug ? (
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       商品を連携し、LPが公開可能な状態で利用してください。
                     </p>
                   ) : null}
@@ -2612,7 +2612,7 @@ export default function EditLPNewPage() {
                       }}
                       className={`group relative w-full p-2 cursor-pointer lg:cursor-move transition-all flex items-stretch gap-2.5 rounded-[12px] border ${
                         selectedBlockId === block.id
-                          ? 'bg-[#e9f6fe] border-[#bfe6fb] shadow-[inset_3px_0_0_#0284c7]'
+                          ? 'bg-brand-tint border-tint-border shadow-[inset_3px_0_0_#0284c7]'
                           : 'bg-white border-transparent hover:bg-slate-50'
                       }`}
                     >
@@ -2641,7 +2641,7 @@ export default function EditLPNewPage() {
                         <div className="mx-auto mt-1 h-1 w-4 rounded-full bg-white/35" />
                       </div>
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-                        <div className="truncate text-[12.5px] font-bold text-[#0b1f3a]">{getBlockDisplayName(templateMetaSource, block)}</div>
+                        <div className="truncate text-[12.5px] font-bold text-navy-900">{getBlockDisplayName(templateMetaSource, block)}</div>
                         <div className="text-[11px] text-slate-500">スライド {index + 1}</div>
                       </div>
                       <button
@@ -2669,7 +2669,7 @@ export default function EditLPNewPage() {
           {/* 折りたたみボタン */}
           <button
             onClick={() => setIsLeftSidebarVisible(false)}
-            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
+            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-navy-900 hover:bg-navy-800 text-pure-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
             title="左サイドバーを閉じる"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2683,7 +2683,7 @@ export default function EditLPNewPage() {
         {!isLeftSidebarVisible && (
           <button
             onClick={() => setIsLeftSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-navy-900 hover:bg-navy-800 text-pure-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
             title="左サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2710,7 +2710,7 @@ export default function EditLPNewPage() {
                 type="button"
                 onClick={() => setStagePreviewMode('mobile')}
                 className={`rounded-[7px] px-3 py-1 text-[12px] font-semibold transition ${
-                  stagePreviewMode === 'mobile' ? 'bg-white/15 text-pure-white' : 'text-[#9fb4d0] hover:text-pure-white'
+                  stagePreviewMode === 'mobile' ? 'bg-white/15 text-pure-white' : 'text-on-navy-muted hover:text-pure-white'
                 }`}
               >
                 モバイル
@@ -2719,13 +2719,13 @@ export default function EditLPNewPage() {
                 type="button"
                 onClick={() => setStagePreviewMode('desktop')}
                 className={`rounded-[7px] px-3 py-1 text-[12px] font-semibold transition ${
-                  stagePreviewMode === 'desktop' ? 'bg-white/15 text-pure-white' : 'text-[#9fb4d0] hover:text-pure-white'
+                  stagePreviewMode === 'desktop' ? 'bg-white/15 text-pure-white' : 'text-on-navy-muted hover:text-pure-white'
                 }`}
               >
                 PC
               </button>
             </div>
-            <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#bcd3ee] sm:inline">
+            <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-on-navy sm:inline">
               エディタビュー — 正確なデザインは公開ページで確認
             </span>
             <span className="text-[12.5px] font-bold text-pure-white/90" style={{ fontVariantNumeric: 'tabular-nums' }}>
@@ -2812,7 +2812,7 @@ export default function EditLPNewPage() {
         {!isRightSidebarVisible && (
           <button
             onClick={() => setIsRightSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-navy-900 hover:bg-navy-800 text-pure-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
             title="右サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3336,7 +3336,7 @@ export default function EditLPNewPage() {
                     </div>
                   ) : null}
                   {!linkedProduct?.id || !lp?.slug ? (
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       商品を連携し、LPが公開可能な状態で利用してください。
                     </p>
                   ) : null}
@@ -3450,7 +3450,7 @@ export default function EditLPNewPage() {
 
       {/* カラーテーマジェネレーターモーダル */}
       {showColorGenerator && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-white/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-xl border border-slate-200 w-full max-w-2xl my-8">
             <ColorThemeGenerator
               onApply={handleApplyTheme}

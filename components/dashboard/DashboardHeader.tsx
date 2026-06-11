@@ -76,13 +76,13 @@ const getCompactLabel = (fallback: string) => {
 const uniformGroupClasses = (value: string): Record<DashboardNavGroupKey, string> =>
   Object.fromEntries(GROUP_ORDER.map((key) => [key, value])) as Record<DashboardNavGroupKey, string>;
 
-const MOBILE_GROUP_PILL_CLASSES = uniformGroupClasses('bg-[#e9f6fe] text-sky-700 border border-transparent');
+const MOBILE_GROUP_PILL_CLASSES = uniformGroupClasses('bg-brand-tint text-sky-700 border border-transparent');
 
 const MOBILE_GROUP_PILL_ACTIVE_CLASS = 'bg-white/20 text-pure-white border border-white/30';
 
-const MOBILE_GROUP_CARD_CLASSES = uniformGroupClasses('border-[#e2ebf6] bg-white text-slate-700 hover:border-[#bfe6fb]');
+const MOBILE_GROUP_CARD_CLASSES = uniformGroupClasses('border-line-soft bg-white text-slate-700 hover:border-tint-border');
 
-const MOBILE_GROUP_ICON_CLASSES = uniformGroupClasses('bg-[#e9f6fe] text-sky-600');
+const MOBILE_GROUP_ICON_CLASSES = uniformGroupClasses('bg-brand-tint text-sky-600');
 
 const ADMIN_EMAILS = new Set([
   'goldbenchan@gmail.com',
@@ -556,7 +556,7 @@ export default function DashboardHeader({
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
                                   isActive
-                                    ? 'border-[#0b1f3a] bg-[#0b1f3a] text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
+                                    ? 'border-navy-900 bg-navy-900 text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
                                     : cardClass
                                 }`}
                               >
@@ -597,7 +597,7 @@ export default function DashboardHeader({
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex aspect-square flex-col items-center justify-between rounded-3xl px-3 py-3 text-xs font-semibold transition-all ${
                                   isActive
-                                    ? 'border-[#0b1f3a] bg-[#0b1f3a] text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
+                                    ? 'border-navy-900 bg-navy-900 text-pure-white shadow-xl shadow-[rgba(11,31,58,0.25)]'
                                     : cardClass
                                 }`}
                               >

@@ -220,7 +220,7 @@ function ProductsContent() {
         {/* Navy hero head */}
         <div className="rounded-3xl px-6 py-7 sm:px-9 sm:py-9 mb-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: HEAD_BG }}>
           <h1 className="text-[26px] sm:text-[32px] font-extrabold tracking-tight text-pure-white">マーケット</h1>
-          <p className="text-[14.5px] text-[#bcd3ee] mt-2.5">
+          <p className="text-[14.5px] text-on-navy mt-2.5">
             クリエイターのノウハウ・テンプレート・講座を、ポイントで購入。気になる商品を探そう。
           </p>
           <div className="relative max-w-[560px] mt-5">
@@ -243,7 +243,7 @@ function ProductsContent() {
                   onClick={() => setPriceRange(range.key)}
                   className={`text-[13px] font-semibold rounded-full px-3.5 py-[7px] border transition-colors whitespace-nowrap ${
                     active
-                      ? 'bg-white text-[#0b1f3a] border-white'
+                      ? 'bg-white text-navy-900 border-white'
                       : 'text-[#cfe3f5] bg-white/[0.08] border-white/[0.16] hover:bg-white/[0.16]'
                   }`}
                 >
@@ -276,7 +276,7 @@ function ProductsContent() {
                     type="button"
                     onClick={() => setSortBy(sort.key)}
                     className={`inline-flex items-center gap-1.5 text-[13.5px] font-bold rounded-[10px] px-3.5 py-2 transition-colors ${
-                      active ? 'text-sky-600 bg-[#e9f6fe]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                      active ? 'text-sky-600 bg-brand-tint' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
                     }`}
                   >
                     <sort.icon className="w-[15px] h-[15px]" aria-hidden="true" />
@@ -285,14 +285,14 @@ function ProductsContent() {
                 );
               })}
               <span className="ml-auto text-[12.5px] text-slate-500">
-                <b className="text-[#0b1f3a]">{filteredProducts.length}</b> 件
+                <b className="text-navy-900">{filteredProducts.length}</b> 件
               </span>
             </div>
 
             {/* Products Grid */}
             {currentProducts.length === 0 ? (
-              <div className="text-center py-16 bg-white border border-[#e2ebf6] rounded-2xl shadow-sm">
-                <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#e9f6fe] text-sky-600">
+              <div className="text-center py-16 bg-white border border-line-soft rounded-2xl shadow-sm">
+                <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-tint text-sky-600">
                   <DocumentIcon className="h-8 w-8" aria-hidden="true" />
                 </div>
                 <p className="text-slate-600 text-lg">該当するLPが見つかりませんでした</p>
@@ -329,7 +329,7 @@ function ProductsContent() {
                     return (
                       <article
                         key={product.id}
-                        className="group flex flex-col overflow-hidden rounded-2xl border border-[#e2ebf6] bg-white shadow-sm transition-all hover:-translate-y-[3px] hover:border-[#bfe6fb] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                        className="group flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-white shadow-sm transition-all hover:-translate-y-[3px] hover:border-tint-border hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
                       >
                         <Link href={targetHref} className="block relative h-[130px] overflow-hidden" style={{ background: fallbackBg }}>
                           {thumbnailUrl ? (
@@ -369,7 +369,7 @@ function ProductsContent() {
                         </Link>
 
                         <div className="flex flex-1 flex-col gap-2 px-[15px] pt-3.5 pb-[15px]">
-                          <Link href={targetHref} className="text-[14.5px] font-bold text-[#0b1f3a] leading-snug line-clamp-2 hover:text-sky-600 transition-colors">
+                          <Link href={targetHref} className="text-[14.5px] font-bold text-navy-900 leading-snug line-clamp-2 hover:text-sky-600 transition-colors">
                             {product.title}
                           </Link>
 
@@ -384,7 +384,7 @@ function ProductsContent() {
                               <span className="text-xs text-slate-600 font-semibold group-hover/seller:text-sky-600 transition-colors">@{sellerUsername}</span>
                             </Link>
                           ) : (
-                            <span className="text-xs text-slate-400 font-semibold">@unknown</span>
+                            <span className="text-xs text-slate-600 font-semibold">@unknown</span>
                           )}
 
                           <div className="flex items-center justify-between mt-auto pt-1.5">
@@ -394,7 +394,7 @@ function ProductsContent() {
                                 <small className="text-xs">{priceUnit}</small>
                               </span>
                             ) : (
-                              <span className="text-xs font-semibold text-slate-400">価格未設定</span>
+                              <span className="text-xs font-semibold text-slate-600">価格未設定</span>
                             )}
                             <span className="inline-flex items-center gap-1 text-[11.5px] text-slate-500">
                               <ShoppingBagIcon className="w-[13px] h-[13px] text-amber-500" aria-hidden="true" />
@@ -413,7 +413,7 @@ function ProductsContent() {
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-3 py-2 bg-white border border-[#e2ebf6] text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                      className="px-3 py-2 bg-white border border-line-soft text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                     >
                       ← 前へ
                     </button>
@@ -438,7 +438,7 @@ function ProductsContent() {
                             className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
                               currentPage === pageNum
                                 ? 'text-pure-white shadow-sm'
-                                : 'bg-white text-slate-600 border border-[#e2ebf6] hover:border-[#bfe6fb] hover:text-sky-600'
+                                : 'bg-white text-slate-600 border border-line-soft hover:border-tint-border hover:text-sky-600'
                             }`}
                             style={currentPage === pageNum ? { background: GRAD_BRAND } : undefined}
                           >
@@ -451,7 +451,7 @@ function ProductsContent() {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-2 bg-white border border-[#e2ebf6] text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                      className="px-3 py-2 bg-white border border-line-soft text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                     >
                       次へ →
                     </button>
@@ -468,8 +468,8 @@ function ProductsContent() {
 
           {/* Sidebar */}
           <aside className="hidden lg:block">
-            <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-[18px]">
-              <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-[#0b1f3a] mb-3.5">
+            <div className="bg-white border border-line-soft rounded-2xl p-[18px] shadow-sm mb-[18px]">
+              <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-navy-900 mb-3.5">
                 <TagIcon className="w-4 h-4 text-sky-600" aria-hidden="true" />
                 価格帯で探す
               </h3>
@@ -492,8 +492,8 @@ function ProductsContent() {
             </div>
 
             {topSellers.length > 0 && (
-              <div className="bg-white border border-[#e2ebf6] rounded-2xl p-[18px] shadow-sm mb-[18px]">
-                <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-[#0b1f3a] mb-3.5">
+              <div className="bg-white border border-line-soft rounded-2xl p-[18px] shadow-sm mb-[18px]">
+                <h3 className="flex items-center gap-[7px] text-[13px] font-bold text-navy-900 mb-3.5">
                   <UsersIcon className="w-4 h-4 text-sky-600" aria-hidden="true" />
                   売れ筋クリエイター
                 </h3>
@@ -510,7 +510,7 @@ function ProductsContent() {
                       {seller.name.charAt(0).toUpperCase()}
                     </span>
                     <span>
-                      <span className="block text-[13px] font-bold text-[#0b1f3a] group-hover:text-sky-600 transition-colors">@{seller.name}</span>
+                      <span className="block text-[13px] font-bold text-navy-900 group-hover:text-sky-600 transition-colors">@{seller.name}</span>
                       <span className="block text-[11.5px] text-slate-500">{seller.sales.toLocaleString()}件販売</span>
                     </span>
                   </Link>
@@ -520,7 +520,7 @@ function ProductsContent() {
 
             <div className="rounded-2xl p-5 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: NAVY_CARD_BG }}>
               <b className="block text-base font-extrabold text-pure-white">あなたも販売する</b>
-              <p className="text-[12.5px] text-[#bcd3ee] mt-2 mb-4 leading-relaxed">
+              <p className="text-[12.5px] text-on-navy mt-2 mb-4 leading-relaxed">
                 作ったLPやノウハウを商品化。ポイント決済で受け取れます。
               </p>
               <Link

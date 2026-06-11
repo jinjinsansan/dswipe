@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
 
   return (
     <DashboardLayout pageTitle={t("pageTitle")} pageSubtitle={t("pageSubtitle")} requireAuth={false}>
-      <div className="relative min-h-screen bg-slate-950 text-slate-200">
+      <div className="relative min-h-screen bg-slate-50 text-gray-800">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(147,197,253,0.22),transparent_60%)]" />
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(148,163,184,0.12)_1px,transparent_1px)]"
@@ -34,14 +34,14 @@ export default function PrivacyPolicyPage() {
         <main className="relative z-10 pt-6 pb-20">
           <div className="container mx-auto max-w-4xl px-4">
             <div className="mb-12 space-y-4">
-              <p className="text-base leading-relaxed text-slate-300">{t("intro")}</p>
+              <p className="text-base leading-relaxed text-slate-700">{t("intro")}</p>
             </div>
 
             <div className="space-y-12 text-base leading-relaxed">
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.information.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.information.title")}</h2>
                 <p>{t("sections.information.description")}</p>
-                <ul className="list-disc space-y-2 pl-6 text-slate-300">
+                <ul className="list-disc space-y-2 pl-6 text-slate-700">
                   {informationItems.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
@@ -49,9 +49,9 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.purpose.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.purpose.title")}</h2>
                 <p>{t("sections.purpose.description")}</p>
-                <ul className="list-disc space-y-2 pl-6 text-slate-300">
+                <ul className="list-disc space-y-2 pl-6 text-slate-700">
                   {purposeItems.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
@@ -59,31 +59,31 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.thirdParty.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.thirdParty.title")}</h2>
                 {renderParagraphs("sections.thirdParty.paragraphs")}
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.security.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.security.title")}</h2>
                 {renderParagraphs("sections.security.paragraphs")}
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.rights.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.rights.title")}</h2>
                 {renderParagraphs("sections.rights.paragraphs")}
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.cookies.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.cookies.title")}</h2>
                 {renderParagraphs("sections.cookies.paragraphs")}
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.changes.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.changes.title")}</h2>
                 {renderParagraphs("sections.changes.paragraphs")}
               </section>
 
-              <section className="space-y-3 border-l-2 border-sky-500/40 pl-6 text-sm text-slate-400">
+              <section className="space-y-3 border-l-2 border-sky-500/40 pl-6 text-sm text-slate-600">
                 <p>{t("contact.description")}</p>
                 <address className="not-italic">
                   {t("contact.organization")}

@@ -268,25 +268,25 @@ export default function SalonFeedPage() {
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <Link
             href={`/salons/${salonId}/events`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             イベント管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/announcements`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             お知らせ管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/roles`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             ロール管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/assets`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             アセットライブラリへ
           </Link>
@@ -409,7 +409,7 @@ export default function SalonFeedPage() {
                       <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
                         <div className="space-y-3">
                           {isCommentLoading ? (
-                            <p className="text-xs text-slate-400">コメントを読み込み中です...</p>
+                            <p className="text-xs text-slate-600">コメントを読み込み中です...</p>
                           ) : commentList.length === 0 ? (
                             <p className="text-xs text-slate-500">まだコメントはありません。</p>
                           ) : (
@@ -422,7 +422,7 @@ export default function SalonFeedPage() {
                                     <div className="flex items-start justify-between gap-3">
                                       <div>
                                         <p className="text-xs font-semibold text-slate-700">{comment.author_username ?? "---"}</p>
-                                        <p className="mt-0.5 text-[10px] text-slate-400">{commentDate}</p>
+                                        <p className="mt-0.5 text-[10px] text-slate-600">{commentDate}</p>
                                       </div>
                                       {canDelete ? (
                                         <button

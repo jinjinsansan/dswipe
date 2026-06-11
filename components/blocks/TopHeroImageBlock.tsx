@@ -165,7 +165,7 @@ export default function TopHeroImageBlock({
               placeholder="一次ボタンテキスト"
             />
             <input
-              className={`w-full rounded-md border px-3 py-2 ${isLocked ? 'border-white/40 bg-white/30 text-slate-200 cursor-not-allowed' : 'border-white/30 bg-white/50'}`}
+              className={`w-full rounded-md border px-3 py-2 ${isLocked ? 'border-white/40 bg-white/30 text-gray-800 cursor-not-allowed' : 'border-white/30 bg-white/50'}`}
               value={content?.buttonUrl ?? ''}
               onChange={isLocked ? undefined : handleEdit('buttonUrl')}
               placeholder="https://"
@@ -285,7 +285,7 @@ export default function TopHeroImageBlock({
             ) : null}
           </div>
           {isLocked && (
-            <p className="mt-2 text-xs text-slate-200">
+            <p className="mt-2 text-xs text-gray-800">
               {lockMessage}
               {primaryLinkLock?.label ? `（${primaryLinkLock.label}）` : ''}
             </p>

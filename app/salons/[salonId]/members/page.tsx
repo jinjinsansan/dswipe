@@ -423,7 +423,7 @@ export default function SalonMembersPage() {
               <button
                 type="submit"
                 disabled={isSubmittingManual}
-                className="inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-[#122c4d] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full bg-navy-900 px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmittingManual ? t("manualInvite.submitting") : t("manualInvite.submit")}
               </button>
@@ -447,7 +447,7 @@ export default function SalonMembersPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="relative inline-flex items-center gap-2">
-                <AdjustmentsHorizontalIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                <AdjustmentsHorizontalIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                 <select
                   value={statusFilter}
                   onChange={(event) => handleStatusChange(event.target.value)}
@@ -466,7 +466,7 @@ export default function SalonMembersPage() {
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-100">
             <table className="min-w-full divide-y divide-slate-100">
               <thead className="bg-slate-50">
-                <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                   <th scope="col" className="px-4 py-3">{t("columns.member")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.status")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.joinedAt")}</th>
@@ -509,7 +509,7 @@ export default function SalonMembersPage() {
                               ) : null}
                             </div>
                             <p className="text-xs text-slate-500">{contactValue}</p>
-                            <p className="font-mono text-[11px] text-slate-400">{member.user_id}</p>
+                            <p className="font-mono text-[11px] text-slate-600">{member.user_id}</p>
                             {manualMemoValue ? (
                               <p className="mt-1 text-xs text-slate-500">{manualMemoValue}</p>
                             ) : null}
@@ -638,7 +638,7 @@ export default function SalonMembersPage() {
                   <button
                     type="submit"
                     disabled={isSavingManualEdit}
-                    className="inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-[#122c4d] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center rounded-full bg-navy-900 px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSavingManualEdit ? t("manualEditor.saving") : t("manualEditor.save")}
                   </button>

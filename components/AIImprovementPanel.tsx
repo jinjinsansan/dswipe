@@ -88,7 +88,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
     <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <div className="flex items-center gap-2 text-white">
+          <div className="flex items-center gap-2 text-slate-900">
             <ChartBarSquareIcon className="h-5 w-5" aria-hidden="true" />
             <h3 className="font-semibold text-lg">AI改善提案</h3>
           </div>
@@ -123,13 +123,13 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
         <div className="mb-6 bg-gradient-to-r from-sky-500/10 to-sky-500/10 border border-sky-500/30 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2 text-white">
+              <div className="flex items-center gap-2 text-slate-900">
                 <SparklesIcon className="h-5 w-5" aria-hidden="true" />
                 <h4 className="font-semibold">総合スコア</h4>
               </div>
               <p className="text-gray-400 text-sm">{reasoning}</p>
             </div>
-            <div className="text-5xl font-bold text-white">
+            <div className="text-5xl font-bold text-slate-900">
               {overallScore}
               <span className="text-2xl text-gray-400">/100</span>
             </div>
@@ -139,7 +139,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
 
       {suggestions.length > 0 ? (
         <div className="space-y-4">
-          <h4 className="text-white font-semibold">改善提案</h4>
+          <h4 className="text-slate-900 font-semibold">改善提案</h4>
           {suggestions.map((suggestion, index) => (
             <div
               key={index}
@@ -153,7 +153,7 @@ export default function AIImprovementPanel({ lpId, analyticsData, onApplySuggest
                 <span className="text-xs text-gray-500">{suggestion.type}</span>
               </div>
 
-              <h5 className="text-white font-semibold mb-2">{suggestion.issue}</h5>
+              <h5 className="text-slate-900 font-semibold mb-2">{suggestion.issue}</h5>
               <p className="text-gray-400 text-sm mb-3">{suggestion.suggestion}</p>
 
               {suggestion.expected_impact && (

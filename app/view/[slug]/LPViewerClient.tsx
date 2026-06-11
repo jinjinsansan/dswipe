@@ -1043,7 +1043,7 @@ export default function LPViewerClient({
   if (error || !lp) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">{error || 'LPが見つかりませんでした'}</div>
+        <div className="text-slate-900 text-xl">{error || 'LPが見つかりませんでした'}</div>
       </div>
     );
   }
@@ -1053,7 +1053,7 @@ export default function LPViewerClient({
       {showEmailGate && (
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4">
           <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-4">続きを見るには</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">続きを見るには</h2>
             <p className="text-gray-400 mb-6">メールアドレスを登録してください</p>
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <input
@@ -1227,16 +1227,16 @@ export default function LPViewerClient({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
                     </div>
-                    <h2 className="text-2xl font-bold text-white">商品購入</h2>
+                    <h2 className="text-2xl font-bold text-slate-900">商品購入</h2>
                   </div>
                   <button
                     onClick={() => setShowPurchaseModal(false)}
                     disabled={isPurchasing}
-                    className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors flex items-center justify-center text-white disabled:opacity-50"
+                    className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors flex items-center justify-center text-slate-900 disabled:opacity-50"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

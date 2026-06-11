@@ -429,7 +429,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           </div>
         </div>
 
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#0b1f3a] sm:text-4xl">{note.title}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{note.title}</h1>
         {note.excerpt ? (
           <p className="text-base text-slate-600 sm:text-lg">{note.excerpt}</p>
         ) : null}
@@ -487,14 +487,14 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
               />
             )}
             {/* Paywall — mock: D-Swipe Note Article.html .paywall */}
-            <div className="rounded-3xl border border-[#bfe6fb] bg-[#e9f6fe] px-6 py-7 text-center text-sm text-slate-700 shadow-sm">
+            <div className="rounded-3xl border border-tint-border bg-brand-tint px-6 py-7 text-center text-sm text-slate-700 shadow-sm">
               <span
                 className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
                 style={{ background: GRAD_BRAND }}
               >
                 <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
               </span>
-              <p className="text-lg font-extrabold text-[#0b1f3a]">{t('paidContentTitle')}</p>
+              <p className="text-lg font-extrabold text-navy-900">{t('paidContentTitle')}</p>
               <p className="mt-2 text-xs text-slate-600">
                 {t('paidContentDescription')}
               </p>
@@ -592,7 +592,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         ) : null}
 
         <div className="mt-10 border-t border-slate-200 pt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{t('shareHeading')}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{t('shareHeading')}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <a
               href={shareLinks.x}
@@ -643,7 +643,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
             {t('editNote')}
           </Link>
         </div>
-        <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>
+        <span className="text-[10px] text-slate-600">@{note.author_username ?? 'unknown'}</span>
       </footer>
     </article>
   );

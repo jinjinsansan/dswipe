@@ -204,7 +204,7 @@ export default function MessagesClient() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Messages</p>
               <p className="text-sm font-bold text-pure-white">最新のお知らせ</p>
-              <p className="text-xs text-[#bcd3ee]">未読 {unreadCount.toLocaleString()} 件</p>
+              <p className="text-xs text-on-navy">未読 {unreadCount.toLocaleString()} 件</p>
             </div>
           </div>
           <button
@@ -230,7 +230,7 @@ export default function MessagesClient() {
                   setCurrentPage(0);
                 }}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-colors ${
-                  isActive ? "text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]" : "bg-white border border-[#bfe6fb] text-slate-600 hover:bg-[#e9f6fe] hover:text-sky-700"
+                  isActive ? "text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]" : "bg-white border border-tint-border text-slate-600 hover:bg-brand-tint hover:text-sky-700"
                 }`}
                 style={isActive ? { background: GRAD_BRAND } : undefined}
               >
@@ -259,7 +259,7 @@ export default function MessagesClient() {
               <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
                 {isLoading && hasLoadedOnce ? (
                   <div className="flex min-h-[240px] items-center justify-center">
-                    <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-400" aria-hidden="true" />
+                    <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-600" aria-hidden="true" />
                   </div>
                 ) : messages.length === 0 ? (
                   <p className="px-4 py-6 text-center text-sm text-slate-500">対象のメッセージはありません。</p>
@@ -274,7 +274,7 @@ export default function MessagesClient() {
                             type="button"
                             onClick={() => setSelectedMessage(message)}
                             className={`flex w-full flex-col items-start gap-1 px-4 py-4 text-left transition-colors ${
-                              isActive ? "bg-[#e9f6fe] shadow-[inset_3px_0_0_#0284c7]" : "hover:bg-slate-50"
+                              isActive ? "bg-brand-tint shadow-[inset_3px_0_0_#0284c7]" : "hover:bg-slate-50"
                             }`}
                           >
                             <div className="flex w-full items-center justify-between gap-3">
@@ -359,7 +359,7 @@ export default function MessagesClient() {
                           </span>
                         ) : null}
                         {selectedMessage.read_at ? (
-                          <span className="text-slate-400">
+                          <span className="text-slate-600">
                             既読: {formatDateTime(selectedMessage.read_at)}
                           </span>
                         ) : (

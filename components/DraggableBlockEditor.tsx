@@ -149,7 +149,7 @@ function SortableBlock({
         }`}
       >
         {isEditing && (
-          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-white px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
+          <div className="absolute top-1 lg:top-2 right-1 lg:right-2 bg-black/70 text-slate-900 px-2 lg:px-3 py-0.5 lg:py-1 rounded text-xs lg:text-sm z-10 pointer-events-none">
             {block.blockType}
           </div>
         )}
@@ -281,7 +281,7 @@ export default function DraggableBlockEditor({
         <div className="mx-auto mb-2 lg:mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-700/50">
           <InboxStackIcon className="h-8 w-8 text-gray-200" aria-hidden="true" />
         </div>
-        <h3 className="text-white font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
+        <h3 className="text-slate-900 font-semibold text-lg lg:text-xl mb-1 lg:mb-2">ブロックがありません</h3>
         <p className="text-gray-400 text-sm lg:text-base">
           「+ ブロック追加」ボタンからテンプレートを追加してください
         </p>

@@ -21,18 +21,18 @@ export default function SettingsPage() {
           >
             <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Settings</p>
             <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white">{t('title')}</h1>
-            <p className="mt-2 text-sm text-[#bcd3ee]">{t('subtitle')}</p>
+            <p className="mt-2 text-sm text-on-navy">{t('subtitle')}</p>
           </section>
 
           <section>
-            <h2 className="mb-4 text-xl font-bold text-[#0b1f3a]">{t('sections.integrations.heading')}</h2>
+            <h2 className="mb-4 text-xl font-bold text-navy-900">{t('sections.integrations.heading')}</h2>
             <XConnectionCard />
           </section>
 
           <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-bold text-[#0b1f3a]">{t('sections.accountSharing.heading')}</h2>
+                <h2 className="text-lg font-bold text-navy-900">{t('sections.accountSharing.heading')}</h2>
                 <p className="mt-1 text-sm text-slate-500">
                   {t('sections.accountSharing.description')}
                 </p>

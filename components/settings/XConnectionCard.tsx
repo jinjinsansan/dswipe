@@ -114,7 +114,7 @@ export default function XConnectionCard() {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-center py-8">
-          <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-400" />
+          <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-600" />
         </div>
       </div>
     );
@@ -147,7 +147,7 @@ export default function XConnectionCard() {
           {status?.is_connected ? (
             <CheckCircleIcon className="h-6 w-6 text-emerald-500" />
           ) : (
-            <XMarkIcon className="h-6 w-6 text-slate-300" />
+            <XMarkIcon className="h-6 w-6 text-slate-700" />
           )}
         </div>
       </div>

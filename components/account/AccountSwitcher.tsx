@@ -61,7 +61,7 @@ export function AccountSwitcher({ className = '', buttonClassName = '' }: Accoun
             </option>
           ))}
         </select>
-        <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-slate-400">
+        <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-slate-600">
           ▼
         </span>
       </div>

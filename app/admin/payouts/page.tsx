@@ -245,7 +245,7 @@ export default function AdminPayoutsPage() {
                   <span>期間: {formatDateTime(item.period_start)} ～ {formatDateTime(item.period_end)}</span>
                   <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{item.status}</span>
                 </div>
-                <div className="text-xs text-slate-400">支払い予定: {formatDateTime(item.settlement_due_at)}</div>
+                <div className="text-xs text-slate-600">支払い予定: {formatDateTime(item.settlement_due_at)}</div>
               </button>
             </li>
           );
@@ -333,7 +333,7 @@ export default function AdminPayoutsPage() {
           </span>
           <div className="flex flex-wrap gap-2">
             <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600">
-              <FunnelIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+              <FunnelIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
               <select
                 value={filters.status ?? ""}
                 onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value || undefined }))}
@@ -493,7 +493,7 @@ export default function AdminPayoutsPage() {
                       type="button"
                       onClick={handleAddEvent}
                       disabled={eventSubmitting}
-                      className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#0b1f3a] px-3 py-2 text-sm font-bold text-pure-white transition hover:bg-[#122c4d] disabled:cursor-not-allowed disabled:opacity-50"
+                      className="mt-2 inline-flex items-center gap-2 rounded-xl bg-navy-900 px-3 py-2 text-sm font-bold text-pure-white transition hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <ChatBubbleBottomCenterTextIcon className="h-4 w-4" aria-hidden="true" />
                       {eventSubmitting ? "追加中…" : "メモを追加"}

@@ -135,7 +135,7 @@ export default function UserProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f4f8fd] flex items-center justify-center">
+      <div className="min-h-screen bg-canvas flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 text-lg font-semibold mb-4">エラーが発生しました</p>
           <p className="text-slate-500 text-sm mb-4">{error}</p>
@@ -179,26 +179,26 @@ export default function UserProfilePage() {
             <div className="flex-1 text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-pure-white mb-2">{username}</h1>
               {profile?.bio && (
-                <p className="text-[#bcd3ee] text-sm sm:text-base max-w-2xl mx-auto sm:mx-0 mb-4 whitespace-pre-line">
+                <p className="text-on-navy text-sm sm:text-base max-w-2xl mx-auto sm:mx-0 mb-4 whitespace-pre-line">
                   {profile.bio}
                 </p>
               )}
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 text-sm sm:text-base">
                 <div>
                   <span className="font-extrabold text-pure-white">{stats.totalProducts}</span>
-                  <span className="text-[#9fb4d0] ml-1">販売中商品</span>
+                  <span className="text-on-navy-muted ml-1">販売中商品</span>
                 </div>
                 <div>
                   <span className="font-extrabold text-cyan-300">{stats.totalSales.toLocaleString()}</span>
-                  <span className="text-[#9fb4d0] ml-1">総販売数</span>
+                  <span className="text-on-navy-muted ml-1">総販売数</span>
                 </div>
                 <div>
                   <span className="font-extrabold text-cyan-300">{stats.totalNotes}</span>
-                  <span className="text-[#9fb4d0] ml-1">公開Swipeコラム</span>
+                  <span className="text-on-navy-muted ml-1">公開Swipeコラム</span>
                 </div>
                 <div>
                   <span className="font-extrabold text-cyan-300">{stats.totalSalons}</span>
-                  <span className="text-[#9fb4d0] ml-1">公開サロン</span>
+                  <span className="text-on-navy-muted ml-1">公開サロン</span>
                 </div>
               </div>
 
@@ -280,7 +280,7 @@ export default function UserProfilePage() {
                         />
                       )
                     ) : (
-                      <div className="flex items-center justify-center h-full text-slate-400">
+                      <div className="flex items-center justify-center h-full text-slate-600">
                         <DocumentIcon className="h-10 w-10" aria-hidden="true" />
                       </div>
                     )}
@@ -349,7 +349,7 @@ export default function UserProfilePage() {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center text-slate-600">
                       <UserGroupIcon className="h-8 w-8" aria-hidden="true" />
                     </div>
                   )}
@@ -405,7 +405,7 @@ export default function UserProfilePage() {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center text-slate-600">
                       <DocumentIcon className="h-8 w-8" aria-hidden="true" />
                     </div>
                   )}
@@ -424,7 +424,7 @@ export default function UserProfilePage() {
                         ログイン必須
                       </span>
                     ) : null}
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-600">
                       {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
                     </span>
                   </div>

@@ -726,11 +726,11 @@ export default function DashboardPage() {
                 sub: totalNoteSalesLabel,
               },
             ].map((kpi) => (
-              <div key={kpi.caption} className="bg-white rounded-2xl border border-[#e2ebf6] shadow-sm p-3.5 sm:p-4">
+              <div key={kpi.caption} className="bg-white rounded-2xl border border-line-soft shadow-sm p-3.5 sm:p-4">
                 <div className="flex items-center gap-2.5">
                   <span
                     className={`flex h-9 w-9 items-center justify-center rounded-[10px] flex-shrink-0 ${
-                      kpi.soft ? 'bg-[#e9f6fe] text-sky-600' : 'text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]'
+                      kpi.soft ? 'bg-brand-tint text-sky-600' : 'text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]'
                     }`}
                     style={kpi.soft ? undefined : { background: 'linear-gradient(135deg,#0ea5e9,#06b6d4)' }}
                   >
@@ -738,7 +738,7 @@ export default function DashboardPage() {
                   </span>
                   <span className="text-[11px] sm:text-xs font-semibold text-slate-500">{kpi.caption}</span>
                 </div>
-                <div className="mt-2.5 text-xl sm:text-2xl font-extrabold tracking-tight text-[#0b1f3a] tabular-nums truncate">{kpi.value}</div>
+                <div className="mt-2.5 text-xl sm:text-2xl font-extrabold tracking-tight text-navy-900 tabular-nums truncate">{kpi.value}</div>
                 <div className="mt-1 text-[11px] sm:text-[11.5px] text-slate-500 truncate">{kpi.sub}</div>
               </div>
             ))}
@@ -747,7 +747,7 @@ export default function DashboardPage() {
               {/* Recently Edited LPs */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
-              <h2 className="text-lg font-bold text-[#0b1f3a]">最近編集したLP</h2>
+              <h2 className="text-lg font-bold text-navy-900">最近編集したLP</h2>
               <Link
                 href="/lp/create"
                 className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-semibold self-start sm:self-auto"
@@ -788,7 +788,7 @@ export default function DashboardPage() {
                     className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-sky-200 transition-all flex flex-col shadow-sm"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-[#0b1f3a] to-[#0e7490] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-navy-900 to-[#0e7490] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {heroMedia?.type === 'image' ? (
                         <Image
                           src={heroMedia.url}
@@ -836,20 +836,20 @@ export default function DashboardPage() {
                       <div className="grid grid-cols-4 gap-1 mb-2">
                         <Link
                           href={`/lp/${lp.id}/edit`}
-                          className="px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-brand-tint text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           編集
                         </Link>
                         <Link
                           href={`/lp/${lp.id}/analytics-simple`}
-                          className="px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-brand-tint text-sky-700 rounded hover:bg-[#d3f0fd] transition-colors text-center text-[10px] sm:text-xs font-semibold"
                         >
                           分析
                         </Link>
                         <button
                           onClick={() => handleDuplicateLP(lp.id)}
                           disabled={duplicatingId === lp.id}
-                          className={`px-1 sm:px-2 py-1 bg-[#e9f6fe] text-sky-700 rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#d3f0fd]'}`}
+                          className={`px-1 sm:px-2 py-1 bg-brand-tint text-sky-700 rounded transition-colors text-[10px] sm:text-xs font-semibold ${duplicatingId === lp.id ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#d3f0fd]'}`}
                         >
                           {duplicatingId === lp.id ? '複製中…' : '複製'}
                         </button>
@@ -1125,7 +1125,7 @@ export default function DashboardPage() {
         </div>
 
       {activeAnnouncement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-4">
           <div className="max-w-2xl w-full rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>

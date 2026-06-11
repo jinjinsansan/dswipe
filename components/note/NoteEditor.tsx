@@ -343,7 +343,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   type="button"
                   onClick={() => handleMove(index, 'up')}
                   disabled={disabled || index === 0}
-                  className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-full p-1 text-slate-600 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <ArrowUpIcon className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -351,7 +351,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   type="button"
                   onClick={() => handleMove(index, 'down')}
                   disabled={disabled || index === blocks.length - 1}
-                  className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-full p-1 text-slate-600 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <ArrowDownIcon className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -359,7 +359,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                   type="button"
                   onClick={() => handleDuplicate(index)}
                   disabled={disabled}
-                  className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-full p-1 text-slate-600 hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -545,7 +545,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
                     disabled={disabled}
                   />
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                       {t('fields.linkThumbnail')}
                     </label>
                     <div className="flex flex-wrap items-center gap-2">
@@ -604,7 +604,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
 
               {block.type === 'spacer' && (
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                     {t('fields.spacerHeight')}
                   </label>
                   <select
@@ -631,7 +631,7 @@ export function NoteEditor({ value, onChange, disabled }: NoteEditorProps) {
       })}
 
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 px-4 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{t('actions.addBlock')}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{t('actions.addBlock')}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {NOTE_BLOCK_TYPE_OPTIONS.map((option) => (
             <button

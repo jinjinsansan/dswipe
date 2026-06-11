@@ -281,19 +281,19 @@ export default function SalonAnnouncementsPage() {
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <Link
             href={`/salons/${salonId}/feed`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             コミュニティフィード
           </Link>
           <Link
             href={`/salons/${salonId}/events`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             イベント管理
           </Link>
           <Link
             href={`/salons/${salonId}/assets`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             アセットライブラリ
           </Link>
@@ -320,12 +320,12 @@ export default function SalonAnnouncementsPage() {
                 <h2 className="text-lg font-semibold text-slate-900">新しいお知らせ</h2>
                 <p className="mt-1 text-xs text-slate-500">会員への告知や重要情報を共有しましょう。</p>
               </div>
-              <BellAlertIcon className="h-6 w-6 text-slate-400" aria-hidden="true" />
+              <BellAlertIcon className="h-6 w-6 text-slate-600" aria-hidden="true" />
             </header>
 
             <div className="mt-4 grid gap-4">
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">タイトル</label>
                 <input
                   type="text"
                   value={form.title}
@@ -336,7 +336,7 @@ export default function SalonAnnouncementsPage() {
               </div>
 
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">本文</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">本文</label>
                 <textarea
                   rows={5}
                   value={form.body}
@@ -381,7 +381,7 @@ export default function SalonAnnouncementsPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">開始日時 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">開始日時 (任意)</label>
                   <input
                     type="datetime-local"
                     value={form.startAt}
@@ -390,7 +390,7 @@ export default function SalonAnnouncementsPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">終了日時 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">終了日時 (任意)</label>
                   <input
                     type="datetime-local"
                     value={form.endAt}
@@ -483,7 +483,7 @@ export default function SalonAnnouncementsPage() {
                     ) : (
                       <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">タイトル</label>
                           <input
                             type="text"
                             value={editingState.title}
@@ -492,7 +492,7 @@ export default function SalonAnnouncementsPage() {
                           />
                         </div>
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">本文</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">本文</label>
                           <textarea
                             rows={4}
                             value={editingState.body}
@@ -522,7 +522,7 @@ export default function SalonAnnouncementsPage() {
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">開始日時</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">開始日時</label>
                             <input
                               type="datetime-local"
                               value={editingState.startAt}
@@ -531,7 +531,7 @@ export default function SalonAnnouncementsPage() {
                             />
                           </div>
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">終了日時</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">終了日時</label>
                             <input
                               type="datetime-local"
                               value={editingState.endAt}

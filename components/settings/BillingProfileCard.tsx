@@ -178,7 +178,7 @@ export default function BillingProfileCard() {
           <p className="mt-1 text-sm text-slate-500">{t('description')}</p>
         </div>
         {updatedAt ? (
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600">
             {t('updatedAtLabel', {
               value: new Date(updatedAt).toLocaleString(),
             })}

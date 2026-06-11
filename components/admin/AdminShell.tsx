@@ -95,7 +95,7 @@ const DEFAULT_NAV_ITEMS: AdminNavItem[] = [
 /* Momentum navy sidebar — same chrome family as DashboardLayout */
 const NAV_BUTTON_BASE = 'flex w-full items-center gap-3 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors';
 const NAV_BUTTON_ACTIVE = 'border-cyan-400/40 bg-white/10 text-pure-white';
-const NAV_BUTTON_INACTIVE = 'border-transparent text-[#bcd3ee] hover:bg-white/5 hover:text-pure-white';
+const NAV_BUTTON_INACTIVE = 'border-transparent text-on-navy hover:bg-white/5 hover:text-pure-white';
 
 const mobileNavButtonClass = `${NAV_BUTTON_BASE} justify-start`;
 
@@ -134,7 +134,7 @@ export default function AdminShell({
     <div className={cn('min-h-screen bg-gray-50 text-gray-900', className)}>
       <div className="flex min-h-screen flex-col lg:flex-row">
         {/* Desktop sidebar */}
-        <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-white/10 lg:bg-[#0b1f3a]">
+        <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-white/10 lg:bg-navy-900">
           <div className="flex h-20 items-center gap-3 border-b border-white/10 px-6">
             <Link href="/dashboard" className="flex items-center gap-3">
               <DSwipeLogo size="medium" showFullName textColor="text-pure-white" />
@@ -158,7 +158,7 @@ export default function AdminShell({
                     <span
                       className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-lg',
-                        isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-[#9fb4d0]'
+                        isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-on-navy-muted'
                       )}
                     >
                       <Icon className="h-4 w-4" aria-hidden="true" />
@@ -167,7 +167,7 @@ export default function AdminShell({
                   <div className="flex-1">
                     <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
                     {item.description && (
-                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-[#bcd3ee]' : 'text-[#9fb4d0]')}>
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-on-navy' : 'text-on-navy-muted')}>
                         {item.description}
                       </p>
                     )}
@@ -183,7 +183,7 @@ export default function AdminShell({
 
             {sideNavItems && sideNavItems.length > 0 && (
               <div className="mt-8 space-y-3">
-                <p className="px-2 text-xs font-bold uppercase tracking-wide text-[#9fb4d0]">
+                <p className="px-2 text-xs font-bold uppercase tracking-wide text-on-navy-muted">
                   {sideNavTitle ?? '管理メニュー'}
                 </p>
                 <div className="space-y-2">
@@ -201,7 +201,7 @@ export default function AdminShell({
                         )}
                       >
                         {Icon && (
-                          <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-[#9fb4d0]')}>
+                          <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-on-navy-muted')}>
                             <Icon className="h-4 w-4" aria-hidden="true" />
                           </span>
                         )}
@@ -213,7 +213,7 @@ export default function AdminShell({
               </div>
             )}
           </nav>
-          <div className="border-t border-white/10 px-6 py-5 text-sm text-[#9fb4d0]">
+          <div className="border-t border-white/10 px-6 py-5 text-sm text-on-navy-muted">
             <p className="font-bold text-pure-white">運営チームの皆さまへ</p>
             <p className="mt-1 text-xs">この管理画面からSwipeコラム・サロンの審査／通報対応・メンテナンス運用を統合的に行えます。</p>
           </div>
@@ -255,7 +255,7 @@ export default function AdminShell({
         {isMobileNavOpen && (
           <div className="lg:hidden">
             <div className="fixed inset-0 z-40 bg-gray-900/50" onClick={() => setMobileNavOpen(false)} />
-            <div className="fixed inset-y-0 left-0 z-50 flex w-80 max-w-full flex-col border-r border-white/10 bg-[#0b1f3a] shadow-xl">
+            <div className="fixed inset-y-0 left-0 z-50 flex w-80 max-w-full flex-col border-r border-white/10 bg-navy-900 shadow-xl">
               <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
                 <div className="flex items-center gap-3">
                   <DSwipeLogo size="small" showFullName textColor="text-pure-white" />
@@ -264,7 +264,7 @@ export default function AdminShell({
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-lg border border-white/20 bg-white/10 p-2 text-[#bcd3ee] hover:text-pure-white"
+                  className="rounded-lg border border-white/20 bg-white/10 p-2 text-on-navy hover:text-pure-white"
                 >
                   <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -284,14 +284,14 @@ export default function AdminShell({
                   )}
                     >
                   {Icon && (
-                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-[#9fb4d0]')}>
+                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-on-navy-muted')}>
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
                   )}
                   <div className="flex-1">
                     <p className="text-sm font-semibold leading-5 text-current">{item.label}</p>
                     {item.description && (
-                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-[#bcd3ee]' : 'text-[#9fb4d0]')}>
+                      <p className={cn('text-xs font-normal leading-4', isActive ? 'text-on-navy' : 'text-on-navy-muted')}>
                         {item.description}
                       </p>
                     )}
@@ -307,7 +307,7 @@ export default function AdminShell({
 
                 {sideNavItems && sideNavItems.length > 0 && (
                   <div className="mt-6 space-y-3">
-                    <p className="px-1 text-xs font-bold uppercase tracking-wide text-[#9fb4d0]">
+                    <p className="px-1 text-xs font-bold uppercase tracking-wide text-on-navy-muted">
                       {sideNavTitle ?? '管理メニュー'}
                     </p>
                     <div className="space-y-2">
@@ -328,7 +328,7 @@ export default function AdminShell({
                             )}
                           >
                             {Icon && (
-                              <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-[#9fb4d0]')}>
+                              <span className={cn('flex h-8 w-8 items-center justify-center rounded-lg', isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10 text-on-navy-muted')}>
                                 <Icon className="h-4 w-4" aria-hidden="true" />
                               </span>
                             )}
@@ -341,7 +341,7 @@ export default function AdminShell({
                 )}
               </nav>
               {user && (
-                <div className="border-t border-white/10 px-4 py-4 text-sm text-[#9fb4d0]">
+                <div className="border-t border-white/10 px-4 py-4 text-sm text-on-navy-muted">
                   <p className="font-bold text-pure-white">{user.username}</p>
                   <p className="text-xs">{user.email}</p>
                 </div>

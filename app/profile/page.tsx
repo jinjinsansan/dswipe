@@ -191,7 +191,7 @@ export default function ProfilePage() {
         >
           <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Account</p>
           <h2 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white">{t('sections.account.heading')}</h2>
-          <p className="mt-2 text-sm text-[#bcd3ee]">
+          <p className="mt-2 text-sm text-on-navy">
             {t('sections.account.description')}
           </p>
         </section>
@@ -343,7 +343,7 @@ export default function ProfilePage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">{fieldsT('imageLabel')}</label>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center text-white text-xl">
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center text-slate-900 text-xl">
                     {profileImageUrl ? (
                       <Image
                         src={profileImageUrl}

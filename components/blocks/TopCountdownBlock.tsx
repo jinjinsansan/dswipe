@@ -71,7 +71,7 @@ export default function TopCountdownBlock({ content, isEditing, onEdit }: TopCou
       <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: gradientLayer }} />
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 text-center">
         {isEditing ? (
-          <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-white">
+          <div className="grid gap-3 rounded-xl bg-white/10 p-4 text-sm text-slate-900">
             <input
               className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2"
               value={title}

@@ -287,25 +287,25 @@ export default function SalonAssetsPage() {
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <Link
             href={`/salons/${salonId}/feed`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             コミュニティフィード
           </Link>
           <Link
             href={`/salons/${salonId}/announcements`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             お知らせ管理
           </Link>
           <Link
             href={`/salons/${salonId}/events`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             イベント管理
           </Link>
           <Link
             href={`/salons/${salonId}/roles`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             ロール管理
           </Link>
@@ -328,12 +328,12 @@ export default function SalonAssetsPage() {
                 <h2 className="text-lg font-semibold text-slate-900">ファイルをアップロード</h2>
                 <p className="mt-1 text-xs text-slate-500">会員と共有したい資料や動画を追加できます。</p>
               </div>
-              <ArrowUpTrayIcon className="h-6 w-6 text-slate-400" aria-hidden="true" />
+              <ArrowUpTrayIcon className="h-6 w-6 text-slate-600" aria-hidden="true" />
             </header>
 
             <div className="mt-4 grid gap-4">
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">ファイル</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">ファイル</label>
                 <input
                   type="file"
                   onChange={(event) => handleUploadField("file", event.target.files?.[0] ?? null)}
@@ -343,7 +343,7 @@ export default function SalonAssetsPage() {
 
               <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">タイトル (任意)</label>
                   <input
                     type="text"
                     value={uploadForm.title}
@@ -353,7 +353,7 @@ export default function SalonAssetsPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">種類 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">種類 (任意)</label>
                   <select
                     value={uploadForm.assetType}
                     onChange={(event) => handleUploadField("assetType", event.target.value)}
@@ -369,7 +369,7 @@ export default function SalonAssetsPage() {
               </div>
 
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明 (任意)</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明 (任意)</label>
                 <textarea
                   rows={3}
                   value={uploadForm.description}
@@ -381,7 +381,7 @@ export default function SalonAssetsPage() {
 
               <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">公開設定</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">公開設定</label>
                   <select
                     value={uploadForm.visibility}
                     onChange={(event) => handleUploadField("visibility", event.target.value === "PUBLIC" ? "PUBLIC" : "MEMBERS")}
@@ -392,7 +392,7 @@ export default function SalonAssetsPage() {
                   </select>
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">サムネイル (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">サムネイル (任意)</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -459,7 +459,7 @@ export default function SalonAssetsPage() {
                 const createdAt = asset.created_at ? new Date(asset.created_at).toLocaleString("ja-JP") : "";
                 const canManage = isOwner || asset.uploader_id === user?.id;
 
-                let assetIcon = <DocumentIcon className="h-10 w-10 text-slate-400" aria-hidden="true" />;
+                let assetIcon = <DocumentIcon className="h-10 w-10 text-slate-600" aria-hidden="true" />;
                 if (asset.asset_type === "IMAGE") assetIcon = <PhotoIcon className="h-10 w-10 text-sky-400" aria-hidden="true" />;
                 else if (asset.asset_type === "VIDEO") assetIcon = <VideoCameraIcon className="h-10 w-10 text-sky-500" aria-hidden="true" />;
 
@@ -530,7 +530,7 @@ export default function SalonAssetsPage() {
                     {editingState ? (
                       <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">タイトル</label>
                           <input
                             type="text"
                             value={editingState.title}
@@ -540,7 +540,7 @@ export default function SalonAssetsPage() {
                         </div>
 
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明</label>
                           <textarea
                             rows={3}
                             value={editingState.description}
@@ -550,7 +550,7 @@ export default function SalonAssetsPage() {
                         </div>
 
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">公開設定</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">公開設定</label>
                           <select
                             value={editingState.visibility}
                             onChange={(event) => handleEditingField(asset.id, "visibility", event.target.value)}

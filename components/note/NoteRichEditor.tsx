@@ -1061,13 +1061,13 @@ export default function NoteRichEditor({
       </div>
 
       {uploadNotice ? (
-        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-[#0b1f3a]/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
+        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-navy-900/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
           {uploadNotice}
         </div>
       ) : null}
 
       {isInsertMenuOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-4 py-8">
           <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -1438,7 +1438,7 @@ function ToolbarButton({ onClick, active = false, disabled = false, activeClass,
       {icon ? (
         <span className="leading-none">{icon}</span>
       ) : (
-        <span className={`text-xs font-semibold ${active ? 'text-white' : 'text-slate-700'}`}>{label}</span>
+        <span className={`text-xs font-semibold ${active ? 'text-slate-900' : 'text-slate-700'}`}>{label}</span>
       )}
     </button>
   );

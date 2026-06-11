@@ -124,7 +124,7 @@ export default function PurchaseHistoryClient() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Purchases</p>
             <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">購入履歴</h1>
-            <p className="mt-1 text-sm text-[#bcd3ee]">
+            <p className="mt-1 text-sm text-on-navy">
               最新の購入データは即時に反映されます。必要に応じて再取得してください。
             </p>
           </div>
@@ -210,7 +210,7 @@ export default function PurchaseHistoryClient() {
                           {methodLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
+                      <p className="text-xs text-slate-600">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>
@@ -277,7 +277,7 @@ export default function PurchaseHistoryClient() {
                           {methodLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
+                      <p className="text-xs text-slate-600">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>

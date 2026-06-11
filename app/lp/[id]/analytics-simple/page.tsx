@@ -231,7 +231,7 @@ export default function SimpleAnalyticsPage() {
                   {Number(data.total_views || 0).toLocaleString()}
                 </div>
                 <div className="text-sm font-medium text-slate-600">総閲覧数</div>
-                <div className="text-xs text-slate-400 mt-1">Total Views</div>
+                <div className="text-xs text-slate-600 mt-1">Total Views</div>
               </div>
 
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
@@ -244,7 +244,7 @@ export default function SimpleAnalyticsPage() {
                   {Number(data.total_sessions || 0).toLocaleString()}
                 </div>
                 <div className="text-sm font-medium text-slate-600">セッション数</div>
-                <div className="text-xs text-slate-400 mt-1">Unique Sessions</div>
+                <div className="text-xs text-slate-600 mt-1">Unique Sessions</div>
               </div>
 
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
@@ -257,7 +257,7 @@ export default function SimpleAnalyticsPage() {
                   {Number(data.total_cta_clicks || 0).toLocaleString()}
                 </div>
                 <div className="text-sm font-medium text-slate-600">CTAクリック</div>
-                <div className="text-xs text-slate-400 mt-1">CTA Clicks</div>
+                <div className="text-xs text-slate-600 mt-1">CTA Clicks</div>
               </div>
 
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
@@ -270,7 +270,7 @@ export default function SimpleAnalyticsPage() {
                   {typeof data.cta_conversion_rate === 'number' ? data.cta_conversion_rate.toFixed(1) : '0.0'}%
                 </div>
                 <div className="text-sm font-medium text-slate-600">転換率</div>
-                <div className="text-xs text-slate-400 mt-1">Conversion Rate</div>
+                <div className="text-xs text-slate-600 mt-1">Conversion Rate</div>
               </div>
             </section>
 
@@ -311,7 +311,7 @@ export default function SimpleAnalyticsPage() {
                             style={{ width: `${width}%` }}
                           >
                             {width > 15 && (
-                              <span className="text-white text-xs font-semibold">{Math.round(width)}%</span>
+                              <span className="text-slate-900 text-xs font-semibold">{Math.round(width)}%</span>
                             )}
                           </div>
                         </div>

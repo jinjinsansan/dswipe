@@ -440,21 +440,21 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
     <div className="fixed inset-0 bg-[rgba(7,15,30,.6)] backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="bg-white rounded-2xl max-w-5xl w-full h-[min(88vh,660px)] overflow-hidden flex flex-col shadow-[0_50px_120px_-40px_rgba(0,0,0,.7)]">
         {/* Header */}
-        <div className="flex flex-shrink-0 items-center gap-3 border-b border-[#e2ebf6] px-4 py-3 sm:px-5">
-          <h2 className="text-[17px] font-extrabold tracking-tight text-[#0b1f3a]">素材を選ぶ</h2>
+        <div className="flex flex-shrink-0 items-center gap-3 border-b border-line-soft px-4 py-3 sm:px-5">
+          <h2 className="text-[17px] font-extrabold tracking-tight text-navy-900">素材を選ぶ</h2>
           <div className="relative ml-auto w-[280px] max-w-[40vw]">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" aria-hidden="true" />
             <input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="キーワードで検索"
-              className="w-full rounded-[10px] border border-[#e2ebf6] py-2 pl-9 pr-3 text-[13px] text-[#0b1f3a] placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-[3px] focus:ring-sky-500/15"
+              className="w-full rounded-[10px] border border-line-soft py-2 pl-9 pr-3 text-[13px] text-navy-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-[3px] focus:ring-sky-500/15"
               aria-label="素材を検索"
             />
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#f4f8fd] text-slate-500 transition hover:text-[#0b1f3a]"
+            className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-canvas text-slate-500 transition hover:text-navy-900"
             aria-label="閉じる"
           >
             ×
@@ -464,17 +464,17 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
         {/* Body: rail / grid / preview */}
         <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[176px_1fr_252px]">
           {/* カテゴリレール */}
-          <div className="flex flex-row gap-1 overflow-x-auto border-b border-[#e2ebf6] p-2 lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-3">
+          <div className="flex flex-row gap-1 overflow-x-auto border-b border-line-soft p-2 lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-3">
             <button
               type="button"
               onClick={() => setCategory('upload')}
               className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13px] font-semibold transition ${
-                category === 'upload' ? 'bg-[#e9f6fe] text-sky-600' : 'text-slate-600 hover:bg-[#f4f8fd] hover:text-[#0b1f3a]'
+                category === 'upload' ? 'bg-brand-tint text-sky-600' : 'text-slate-600 hover:bg-canvas hover:text-navy-900'
               }`}
             >
               <ArrowUpTrayIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
               アップロード
-              <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <span className="ml-auto hidden text-[11px] text-slate-600 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
                 {media.length}
               </span>
             </button>
@@ -483,12 +483,12 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                 type="button"
                 onClick={() => setCategory('gradient')}
                 className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13px] font-semibold transition ${
-                  category === 'gradient' ? 'bg-[#e9f6fe] text-sky-600' : 'text-slate-600 hover:bg-[#f4f8fd] hover:text-[#0b1f3a]'
+                  category === 'gradient' ? 'bg-brand-tint text-sky-600' : 'text-slate-600 hover:bg-canvas hover:text-navy-900'
                 }`}
               >
                 <SwatchIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
                 グラデ背景
-                <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                <span className="ml-auto hidden text-[11px] text-slate-600 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {STOCK_GRADIENTS.length}
                 </span>
               </button>
@@ -503,7 +503,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
             onDrop={handleDrop}
           >
             {isDragOver ? (
-              <div className="pointer-events-none absolute inset-2 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-[#e9f6fe]/90 text-center text-sm font-bold text-sky-700">
+              <div className="pointer-events-none absolute inset-2 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-brand-tint/90 text-center text-sm font-bold text-sky-700">
                 <p>ここにファイルをドロップして追加</p>
               </div>
             ) : null}
@@ -534,7 +534,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                     <button
                       type="button"
                       onClick={() => window.open('/media', '_blank', 'noopener')}
-                      className="inline-flex items-center rounded-full border border-[#e2ebf6] px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-[#bfe6fb] hover:text-[#0b1f3a]"
+                      className="inline-flex items-center rounded-full border border-line-soft px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-tint-border hover:text-navy-900"
                     >
                       メディアページ
                     </button>
@@ -548,11 +548,11 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
                 {media.length === 0 && !isUploading ? (
                   <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-slate-500">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#e9f6fe] text-sky-600">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-tint text-sky-600">
                       <PhotoIcon className="h-6 w-6" aria-hidden="true" />
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-[#0b1f3a]">まだアップロードされたファイルがありません</p>
+                      <p className="text-sm font-bold text-navy-900">まだアップロードされたファイルがありません</p>
                       <p className="mt-1 text-xs text-slate-500">上のボタンから追加するか、この画面に直接ドロップしてください。</p>
                     </div>
                   </div>
@@ -560,7 +560,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
                 {isFilteredEmpty && filteredEmptyMessage ? (
                   <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-slate-500">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#f4f8fd] text-slate-400">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-canvas text-slate-600">
                       <FilteredEmptyIcon className="h-6 w-6" aria-hidden="true" />
                     </span>
                     <p className="text-sm">{filteredEmptyMessage}</p>
@@ -580,7 +580,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                         <div
                           key={item.url}
                           className={`group relative overflow-hidden rounded-[12px] border-2 shadow-sm transition-all ${
-                            isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-[#bfe6fb]'
+                            isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-tint-border'
                           }`}
                         >
                           <button
@@ -588,7 +588,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                             className="relative block w-full"
                             onClick={() => setSelectedItem(item)}
                           >
-                            <div className="aspect-square bg-[#f4f8fd]">
+                            <div className="aspect-square bg-canvas">
                               {isImage ? (
                                 <img src={item.url} alt={filename} className="h-full w-full object-cover" />
                               ) : (
@@ -596,7 +596,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                                   {isVideo ? (
                                     <PlayCircleIcon className="h-9 w-9 text-sky-500" aria-hidden="true" />
                                   ) : (
-                                    <PhotoIcon className="h-7 w-7 text-slate-400" aria-hidden="true" />
+                                    <PhotoIcon className="h-7 w-7 text-slate-600" aria-hidden="true" />
                                   )}
                                   <span className="max-w-full truncate px-2 text-[10px] font-semibold" title={filename}>{filename}</span>
                                 </div>
@@ -616,7 +616,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                               className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 transition ${
                                 copiedUrl === item.url
                                   ? 'bg-sky-600 text-pure-white'
-                                  : 'bg-[#f4f8fd] text-slate-500 hover:text-[#0b1f3a]'
+                                  : 'bg-canvas text-slate-500 hover:text-navy-900'
                               }`}
                               title="URLをコピー"
                             >
@@ -631,7 +631,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
                 {isUploading ? (
                   <div className="absolute inset-x-0 bottom-3 flex justify-center">
-                    <div className="rounded-full bg-[#e9f6fe] px-4 py-1 text-xs font-bold text-sky-600">アップロード中...</div>
+                    <div className="rounded-full bg-brand-tint px-4 py-1 text-xs font-bold text-sky-600">アップロード中...</div>
                   </div>
                 ) : null}
               </>
@@ -656,7 +656,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                           })
                         }
                         className={`relative aspect-square overflow-hidden rounded-[12px] border-2 shadow-sm transition-all ${
-                          isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-[#bfe6fb]'
+                          isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-tint-border'
                         }`}
                         style={{ background: `linear-gradient(150deg, ${gradient.from}, ${gradient.to})` }}
                         title={gradient.name}
@@ -678,11 +678,11 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
           </div>
 
           {/* フィットプレビュー — mock: .prev / .fit-phone / .safe */}
-          <div className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e2ebf6] p-4 lg:flex">
+          <div className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-line-soft p-4 lg:flex">
             {selectedItem && isPreviewImage ? (
               <>
-                <div className="text-xs font-bold text-[#0b1f3a]">スライドへの自動フィット</div>
-                <div className="flex justify-center rounded-[12px] border border-[#e2ebf6] bg-[#f4f8fd] p-4">
+                <div className="text-xs font-bold text-navy-900">スライドへの自動フィット</div>
+                <div className="flex justify-center rounded-[12px] border border-line-soft bg-canvas p-4">
                   <div
                     className="relative overflow-hidden rounded-[14px] shadow-md"
                     style={{ width: previewDims.width, height: previewDims.height }}
@@ -708,8 +708,8 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                       onClick={() => setPreviewRatio(ratio)}
                       className={`flex-1 rounded-[8px] border px-2 py-1.5 text-[11.5px] font-bold transition ${
                         previewRatio === ratio
-                          ? 'border-sky-600 bg-[#e9f6fe] text-sky-600'
-                          : 'border-[#e2ebf6] bg-white text-slate-600 hover:border-[#bfe6fb]'
+                          ? 'border-sky-600 bg-brand-tint text-sky-600'
+                          : 'border-line-soft bg-white text-slate-600 hover:border-tint-border'
                       }`}
                     >
                       {ratio === '9:16' ? '9:16 縦' : ratio}
@@ -730,7 +730,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
               </>
             ) : selectedItem ? (
               <>
-                <div className="text-xs font-bold text-[#0b1f3a]">選択中のファイル</div>
+                <div className="text-xs font-bold text-navy-900">選択中のファイル</div>
                 <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-slate-500">
                   <PlayCircleIcon className="h-9 w-9 text-sky-500" aria-hidden="true" />
                   <p className="max-w-full truncate px-2 text-xs font-semibold" title={selectedItem.filename ?? selectedItem.url}>
@@ -747,7 +747,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                 </button>
               </>
             ) : (
-              <div className="flex flex-1 flex-col items-center justify-center gap-2.5 text-center text-slate-400">
+              <div className="flex flex-1 flex-col items-center justify-center gap-2.5 text-center text-slate-600">
                 <PhotoIcon className="h-9 w-9 opacity-50" aria-hidden="true" />
                 <p className="text-[12.5px] leading-relaxed">
                   素材を選ぶと、スライド比率への
@@ -760,10 +760,10 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
         </div>
 
         {/* Footer */}
-        <div className="flex flex-shrink-0 justify-end gap-3 border-t border-[#e2ebf6] p-3 sm:px-5">
+        <div className="flex flex-shrink-0 justify-end gap-3 border-t border-line-soft p-3 sm:px-5">
           <button
             onClick={onClose}
-            className="rounded-[10px] border border-[#e2ebf6] bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-[#bfe6fb] hover:text-[#0b1f3a]"
+            className="rounded-[10px] border border-line-soft bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-tint-border hover:text-navy-900"
           >
             キャンセル
           </button>
