@@ -13,6 +13,7 @@ import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
 import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 import { loadTemplateBundle, type TemplateDataBundle } from '@/lib/templates';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
@@ -1569,11 +1570,12 @@ export default function EditLPNewPage() {
               const savedVisibility = lp.visibility ?? 'private';
               const plannedVisibility = lpSettings.visibility;
               const hasPendingVisibilityChange = savedVisibility !== plannedVisibility;
+              /* mock: editor-ui.jsx badge-live / badge-draft */
               const badgeClass = isPublished
                 ? savedVisibility === 'limited'
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'bg-green-50 text-green-700'
-                : 'bg-slate-100 text-slate-600';
+                  ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : 'bg-slate-100 text-slate-600 border border-slate-200';
               let badgeLabel = '下書き';
               if (isPublished) {
                 if (savedVisibility === 'limited') {
@@ -1591,14 +1593,19 @@ export default function EditLPNewPage() {
 
               return (
                 <>
-                  <span className={`px-2 py-1 text-xs rounded font-semibold ${badgeClass}`}>{badgeLabel}</span>
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full font-bold ${badgeClass}`}>
+                    {isPublished && savedVisibility !== 'limited' ? (
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                    ) : null}
+                    {badgeLabel}
+                  </span>
 
                   {canPreviewPublic && (
                     <a
                       href={`/view/${lp.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700 border border-slate-200 rounded transition-colors"
+                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-[#e9f6fe] border border-[#bfe6fb] rounded-[9px] transition-colors"
                     >
                       プレビュー
                     </a>
@@ -1609,7 +1616,7 @@ export default function EditLPNewPage() {
                       href={shareLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700 border border-slate-200 rounded transition-colors"
+                      className="px-3 py-1.5 text-xs font-bold text-sky-600 hover:bg-[#e9f6fe] border border-[#bfe6fb] rounded-[9px] transition-colors"
                     >
                       限定URLを開く
                     </a>
@@ -1622,7 +1629,7 @@ export default function EditLPNewPage() {
                         navigator.clipboard.writeText(slugUrl);
                         alert('URLをコピーしました！');
                       }}
-                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b1f3a] hover:border-[#bfe6fb] border border-slate-200 rounded-[9px] transition-colors"
                       title="公開URLをコピー"
                     >
                       URLコピー
@@ -1634,7 +1641,7 @@ export default function EditLPNewPage() {
                       type="button"
                       onClick={handleCopyShareUrl}
                       disabled={limitedShareDisabled}
-                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b1f3a] hover:border-[#bfe6fb] border border-slate-200 rounded-[9px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                       title={limitedShareDisabled ? limitedShareUnavailableMessage : undefined}
                     >
                       {shareCopyStatus === 'copied' ? 'コピー済み' : '限定URLコピー'}
@@ -1660,7 +1667,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={handlePublish}
-                className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-pure-white rounded hover:bg-green-700 transition-colors"
+                className="px-3 py-1.5 text-xs font-bold bg-[#0b1f3a] text-pure-white rounded-[9px] hover:bg-[#122c4d] transition-colors"
               >
                 公開
               </button>
@@ -1670,7 +1677,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={handleUnpublish}
-                className="px-3 py-1.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 rounded-[9px] hover:bg-slate-200 transition-colors"
               >
                 非公開に戻す
               </button>
@@ -1962,7 +1969,8 @@ export default function EditLPNewPage() {
             <button
               type="button"
               onClick={() => setShowTemplateSelector(true)}
-              className="w-full px-3 py-2.5 lg:py-2 bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 transition-colors min-h-[44px] lg:min-h-auto"
+              className="w-full px-3 py-2.5 lg:py-2 rounded-[11px] text-pure-white text-sm font-bold shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition min-h-[44px] lg:min-h-auto"
+              style={{ background: GRAD_BRAND }}
             >
               + ブロック追加
             </button>
@@ -2552,27 +2560,49 @@ export default function EditLPNewPage() {
                           handleReorderBlocks(newBlocks);
                         }
                       }}
-                      className={`w-full p-3 lg:p-3.5 cursor-pointer lg:cursor-move transition-colors min-h-[56px] lg:min-h-[64px] flex items-center rounded-lg border ${
+                      className={`group relative w-full p-2 cursor-pointer lg:cursor-move transition-all flex items-stretch gap-2.5 rounded-[12px] border ${
                         selectedBlockId === block.id
-                          ? 'bg-sky-50 border-sky-400 shadow-sm'
-                          : 'bg-white border-slate-200 hover:bg-slate-50'
+                          ? 'bg-[#e9f6fe] border-[#bfe6fb] shadow-[inset_3px_0_0_#0284c7]'
+                          : 'bg-white border-transparent hover:bg-slate-50'
                       }`}
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1.5 gap-2">
-                          <span className="text-base font-bold text-sky-600 flex-shrink-0">#{index + 1}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteBlock(block.id);
-                            }}
-                            className="text-xs text-slate-500 hover:text-red-600 transition-colors flex-shrink-0"
-                          >
-                            削除
-                          </button>
-                        </div>
-                        <div className="text-base font-semibold text-slate-900 truncate">{getBlockDisplayName(templateMetaSource, block)}</div>
+                      {/* mock: editor.css .slide-item — 番号チップ＋カラーサムネ */}
+                      <span
+                        className={`absolute left-1 top-1 z-10 flex h-5 w-5 items-center justify-center rounded-[6px] text-[10px] font-extrabold text-pure-white ${
+                          selectedBlockId === block.id ? 'bg-sky-600' : 'bg-[rgba(11,31,58,.78)]'
+                        }`}
+                        style={{ fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {index + 1}
+                      </span>
+                      <div
+                        className={`h-[72px] w-[38px] flex-shrink-0 overflow-hidden rounded-[7px] border ${
+                          selectedBlockId === block.id ? 'border-sky-600 ring-1 ring-sky-600' : 'border-slate-200'
+                        }`}
+                        style={{
+                          background:
+                            (block.content as { backgroundGradient?: string })?.backgroundGradient
+                            ?? (block.content as { backgroundColor?: string })?.backgroundColor
+                            ?? '#0B1F3A',
+                        }}
+                        aria-hidden="true"
+                      >
+                        <div className="mx-auto mt-3 h-1 w-6 rounded-full bg-white/60" />
+                        <div className="mx-auto mt-1 h-1 w-4 rounded-full bg-white/35" />
                       </div>
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+                        <div className="truncate text-[12.5px] font-bold text-[#0b1f3a]">{getBlockDisplayName(templateMetaSource, block)}</div>
+                        <div className="text-[11px] text-slate-500">スライド {index + 1}</div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteBlock(block.id);
+                        }}
+                        className="absolute right-1.5 top-1.5 rounded-[6px] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 opacity-0 shadow-sm transition-opacity hover:text-red-600 group-hover:opacity-100"
+                      >
+                        削除
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -2589,7 +2619,7 @@ export default function EditLPNewPage() {
           {/* 折りたたみボタン */}
           <button
             onClick={() => setIsLeftSidebarVisible(false)}
-            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
+            className="hidden lg:flex absolute bottom-4 right-4 w-8 h-8 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-full items-center justify-center shadow-lg transition-colors z-10"
             title="左サイドバーを閉じる"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2603,7 +2633,7 @@ export default function EditLPNewPage() {
         {!isLeftSidebarVisible && (
           <button
             onClick={() => setIsLeftSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-r-lg items-center justify-center shadow-lg transition-colors self-center"
             title="左サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2612,37 +2642,93 @@ export default function EditLPNewPage() {
           </button>
         )}
 
-        {/* Center: Preview */}
-        <div className={`flex-1 min-w-0 bg-white overflow-hidden flex flex-col ${
-          mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
-        }`}>
-          {/* エディタツールバー */}
-          <div className="flex flex-col gap-1 px-4 py-2 bg-slate-50 border-b border-slate-200 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-semibold text-slate-700">エディタビュー</span>
-              <span className="text-xs text-slate-500">正確なデザインは公開ページでご確認ください</span>
-            </div>
-            <div className="text-xs text-slate-500 sm:text-right">
-              {blocks.length} ブロック
-            </div>
+        {/* Center: Device Stage — mock: editor.css .ed-stage */}
+        <div
+          className={`flex-1 min-w-0 overflow-hidden flex flex-col ${
+            mobileTab === 'preview' ? 'lg:flex' : 'hidden lg:flex'
+          }`}
+          style={{
+            background:
+              'radial-gradient(700px 480px at 50% -8%, #11315a 0%, transparent 60%), linear-gradient(160deg, #0a1830, #0b1f3a 55%, #081328)',
+          }}
+        >
+          {/* ステージバー */}
+          <div className="flex h-12 flex-shrink-0 items-center justify-center gap-4 px-4">
+            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#bcd3ee]">
+              エディタビュー — 正確なデザインは公開ページで確認
+            </span>
+            <span className="text-[12.5px] font-bold text-pure-white/90" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {(() => {
+                const currentIndex = blocks.findIndex((b) => b.id === selectedBlockId);
+                return (
+                  <>
+                    <b className="text-cyan-400">{currentIndex >= 0 ? currentIndex + 1 : '–'}</b>
+                    {' / '}
+                    {blocks.length}
+                  </>
+                );
+              })()}
+            </span>
           </div>
 
-          {/* プレビューエリア */}
-          <div className="flex-1 overflow-hidden">
-            <div ref={previewScrollRef} className="h-full overflow-y-auto">
-              <DraggableBlockEditor
-                blocks={blocks}
-                onUpdateBlock={() => {}}
-                onDeleteBlock={() => {}}
-                onReorderBlocks={handleReorderBlocks}
-                isEditing={false}
-                onSelectBlock={handleSelectBlock}
-                selectedBlockId={selectedBlockId || undefined}
-                withinEditor
-                onMountBlock={registerBlockElement}
-                onRequestFieldFocus={handleFieldFocusRequest}
-                primaryLinkLock={primaryLinkLock ?? undefined}
-              />
+          {/* ステージ本体: 実機フレーム＋前後ナビ */}
+          <div className="relative flex flex-1 items-center justify-center overflow-hidden px-12 pb-5 pt-1">
+            {blocks.length > 0 ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIndex = blocks.findIndex((b) => b.id === selectedBlockId);
+                    const nextIndex = currentIndex <= 0 ? 0 : currentIndex - 1;
+                    handleSelectBlock(blocks[nextIndex].id);
+                  }}
+                  disabled={blocks.findIndex((b) => b.id === selectedBlockId) <= 0}
+                  className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-pure-white transition hover:bg-white/15 disabled:cursor-default disabled:opacity-35"
+                  title="前のスライド"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIndex = blocks.findIndex((b) => b.id === selectedBlockId);
+                    const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, blocks.length - 1);
+                    handleSelectBlock(blocks[nextIndex].id);
+                  }}
+                  disabled={blocks.findIndex((b) => b.id === selectedBlockId) >= blocks.length - 1}
+                  className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-pure-white transition hover:bg-white/15 disabled:cursor-default disabled:opacity-35"
+                  title="次のスライド"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </>
+            ) : null}
+
+            {/* device — mock: .device / .device-screen */}
+            <div
+              className="w-[336px] max-w-full flex-shrink-0 rounded-[38px] bg-[#0b1220] p-[9px]"
+              style={{
+                height: 'min(680px, 100%)',
+                boxShadow: '0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)',
+              }}
+            >
+              <div className="relative h-full w-full overflow-hidden rounded-[30px] bg-white">
+                <div ref={previewScrollRef} className="h-full overflow-y-auto">
+                  <DraggableBlockEditor
+                    blocks={blocks}
+                    onUpdateBlock={() => {}}
+                    onDeleteBlock={() => {}}
+                    onReorderBlocks={handleReorderBlocks}
+                    isEditing={false}
+                    onSelectBlock={handleSelectBlock}
+                    selectedBlockId={selectedBlockId || undefined}
+                    withinEditor
+                    onMountBlock={registerBlockElement}
+                    onRequestFieldFocus={handleFieldFocusRequest}
+                    primaryLinkLock={primaryLinkLock ?? undefined}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2651,7 +2737,7 @@ export default function EditLPNewPage() {
         {!isRightSidebarVisible && (
           <button
             onClick={() => setIsRightSidebarVisible(true)}
-            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-slate-700 hover:bg-slate-600 text-pure-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
+            className="hidden lg:flex flex-shrink-0 w-10 h-20 bg-[#0b1f3a] hover:bg-[#122c4d] text-pure-white rounded-l-lg items-center justify-center shadow-lg transition-colors self-center"
             title="右サイドバーを開く"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
