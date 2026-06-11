@@ -173,8 +173,6 @@ const LIBRARY_EXTRA_VISIBLE_IDS = new Set<string>([
 ]);
 
 export function isLibraryVisibleTemplate(template: TemplateBlock): boolean {
-  /* 手書き風シリーズは旧デザインではなく独立した作風のため表示を維持 */
-  if (template.category === 'handwritten') return true;
   return template.id.startsWith('momentum-') || LIBRARY_EXTRA_VISIBLE_IDS.has(template.id);
 }
 

@@ -182,13 +182,13 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
     };
   };
 
-  const categoryOptions = useMemo(
-    () => [
+  const categoryOptions = useMemo(() => {
+    const present = new Set(templates.map((template) => template.category));
+    return [
       { id: 'all', name: 'すべて' },
-      ...TEMPLATE_CATEGORIES,
-    ],
-    []
-  );
+      ...TEMPLATE_CATEGORIES.filter((category) => present.has(category.id)),
+    ];
+  }, [templates]);
 
   return (
     <div className="fixed inset-0 bg-[rgba(7,15,30,.7)] backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
