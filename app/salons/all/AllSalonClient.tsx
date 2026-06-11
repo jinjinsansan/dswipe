@@ -193,7 +193,7 @@ export default function AllSalonClient() {
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <form className="grid gap-4 md:grid-cols-5" onSubmit={handleFilterSubmit}>
             <div className="md:col-span-2">
-              <label htmlFor="category" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <label htmlFor="category" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                 {t("filters.labels.category")}
               </label>
               <input
@@ -213,7 +213,7 @@ export default function AllSalonClient() {
             </div>
 
             <div>
-              <label htmlFor="price_range" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <label htmlFor="price_range" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                 {t("filters.labels.price")}
               </label>
               <select
@@ -231,7 +231,7 @@ export default function AllSalonClient() {
             </div>
 
             <div>
-              <label htmlFor="seller" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <label htmlFor="seller" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                 {t("filters.labels.owner")}
               </label>
               <input
@@ -245,7 +245,7 @@ export default function AllSalonClient() {
             </div>
 
             <div>
-              <label htmlFor="sort" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <label htmlFor="sort" className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                 {t("filters.labels.sort")}
               </label>
               <select
@@ -334,10 +334,10 @@ export default function AllSalonClient() {
                           {item.category}
                         </span>
                       ) : null}
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 md:text-[11px]">
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-slate-600 md:text-[11px]">
                         {formatDate(item.created_at)}
                       </span>
-                      <span className="text-[10px] text-slate-400 md:text-[11px]">
+                      <span className="text-[10px] text-slate-600 md:text-[11px]">
                         {priceLabel(item)}
                       </span>
                     </div>
@@ -348,7 +348,7 @@ export default function AllSalonClient() {
                       <p className="text-xs text-slate-500 md:text-sm">{t("card.descriptionFallback")}</p>
                     )}
                   </div>
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 md:text-xs">
+                  <div className="flex items-center justify-between text-[10px] text-slate-600 md:text-xs">
                     <span className="font-medium text-slate-500">@{item.owner_username ?? commonT("ownerUnknown")}</span>
                     <span className="font-semibold text-sky-600">{priceLabel(item)}</span>
                   </div>

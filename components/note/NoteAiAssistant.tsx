@@ -710,7 +710,7 @@ export default function NoteAiAssistant({
       <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">AI操作履歴</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">AI操作履歴</p>
             <p className="text-[11px] text-slate-500">直近の提案適用を確認・取り消しできます。</p>
           </div>
           {onUndoAction ? (
@@ -728,7 +728,7 @@ export default function NoteAiAssistant({
             <li key={entry.id} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 shadow-sm">
               <div className="flex min-w-0 flex-col">
                 <span className="truncate font-semibold text-slate-700">{entry.label}</span>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-600">
                   {new Date(entry.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
@@ -757,7 +757,7 @@ export default function NoteAiAssistant({
       ) : (
         <div className="space-y-3">
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">対象ブロック</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">対象ブロック</label>
             <select
               value={rewriteTargetId ?? ''}
               onChange={(event) => setRewriteTargetId(event.target.value)}
@@ -773,7 +773,7 @@ export default function NoteAiAssistant({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">追加指示</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">追加指示</label>
             <textarea
               value={rewriteInstructions}
               onChange={(event) => setRewriteInstructions(event.target.value)}
@@ -784,7 +784,7 @@ export default function NoteAiAssistant({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">トーンの希望（任意）</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">トーンの希望（任意）</label>
             <input
               type="text"
               value={styleHint}
@@ -805,7 +805,7 @@ export default function NoteAiAssistant({
               {rewriteLoading ? '生成中…' : 'AIでリライト'}
             </button>
           </div>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-600">
             生成後はコンプライアンス表示を確認し、必要に応じて修正してから適用してください。
           </p>
 
@@ -833,7 +833,7 @@ export default function NoteAiAssistant({
                         {rewriteResult.quality.ready_for_release ? 'リリース推奨' : '要確認'}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400">評価バージョン: {rewriteResult.quality.scoring_version}</span>
+                    <span className="text-[11px] text-slate-600">評価バージョン: {rewriteResult.quality.scoring_version}</span>
                   </div>
                   {rewriteResult.quality.summary ? (
                     <p className="mt-1 whitespace-pre-wrap text-slate-600">{rewriteResult.quality.summary}</p>
@@ -870,7 +870,7 @@ export default function NoteAiAssistant({
                     </div>
                   ) : null}
                   {rewriteResult.experiment ? (
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       実験バリアント: {rewriteResult.experiment.variant_id}（{rewriteResult.experiment.experiment_id}）
                     </p>
                   ) : null}
@@ -914,7 +914,7 @@ export default function NoteAiAssistant({
   const renderProofreadTab = () => (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
-        <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">チェックの重点</label>
+        <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">チェックの重点</label>
         <div className="flex gap-2">
           {(
             [
@@ -1013,7 +1013,7 @@ export default function NoteAiAssistant({
     return (
       <div className="space-y-5">
         <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">目標（任意）</label>
+          <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">目標（任意）</label>
           <input
             type="text"
             value={structureGoal}
@@ -1185,7 +1185,7 @@ export default function NoteAiAssistant({
       {CONTEXT_FIELD_VISIBLE_TABS.includes(activeTab) ? (
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">想定読者（任意）</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">想定読者（任意）</label>
             <input
               type="text"
               value={audience}
@@ -1196,7 +1196,7 @@ export default function NoteAiAssistant({
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">希望するトーン（任意）</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">希望するトーン（任意）</label>
             <input
               type="text"
               value={tone}
@@ -1237,7 +1237,7 @@ export default function NoteAiAssistant({
 
           <div className="mt-3 space-y-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">全体評価</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-600">全体評価</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {FEEDBACK_RATING_OPTIONS.map((option) => (
                   <button
@@ -1263,7 +1263,7 @@ export default function NoteAiAssistant({
             </div>
 
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">気になった点（任意）</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-600">気になった点（任意）</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {ISSUE_OPTIONS.map((issue) => (
                   <button
@@ -1284,7 +1284,7 @@ export default function NoteAiAssistant({
             </div>
 
             <div>
-              <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400" htmlFor="rewrite-feedback-comment">
+              <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-600" htmlFor="rewrite-feedback-comment">
                 任意のコメント
               </label>
               <textarea
@@ -1507,7 +1507,7 @@ function RewriteCandidateCard({
           className={`rounded-xl px-3 py-2 text-xs font-semibold ${
             canApply
               ? 'border border-sky-200 bg-sky-50 text-sky-600 hover:bg-sky-100'
-              : 'border border-slate-200 bg-slate-100 text-slate-400'
+              : 'border border-slate-200 bg-slate-100 text-slate-600'
           }`}
         >
           {canApply ? 'この候補を選択' : '適用不可'}
@@ -1702,7 +1702,7 @@ function RewritePreviewModal({ isOpen, onClose, onApply, diffSegments, originalM
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">元の文章</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">元の文章</p>
               <div className="mt-2 space-y-1">
                 {originalLines.length > 0 ? originalLines.map((line, index) => renderLine(line, index, 'original')) : (
                   <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">内容がありません。</div>

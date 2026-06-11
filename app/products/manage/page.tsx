@@ -583,11 +583,11 @@ export default function ProductManagementPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/40 px-4 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-white/40 px-4 py-4">
           <div className="my-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-900">{editingProduct ? '商品を編集' : '新しい商品を作成'}</h2>
-              <button onClick={closeModal} className="text-slate-400 transition-colors hover:text-slate-600">
+              <button onClick={closeModal} className="text-slate-600 transition-colors hover:text-slate-600">
                 ✕
               </button>
             </div>

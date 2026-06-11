@@ -20,7 +20,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <div>
-            <h2 className="text-2xl font-bold text-white">CTAボタンスタイル</h2>
+            <h2 className="text-2xl font-bold text-slate-900">CTAボタンスタイル</h2>
             <p className="text-gray-400 text-sm mt-1">15種類のスタイルから選択</p>
           </div>
           <button
@@ -84,7 +84,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
                 </div>
 
                 {/* スタイル情報 */}
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-sky-400 transition-colors">
+                <h3 className="text-slate-900 font-semibold text-lg mb-2 group-hover:text-sky-400 transition-colors">
                   {style.name}
                 </h3>
                 <p className="text-gray-400 text-sm mb-3">{style.description}</p>

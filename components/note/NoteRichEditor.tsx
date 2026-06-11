@@ -1067,7 +1067,7 @@ export default function NoteRichEditor({
       ) : null}
 
       {isInsertMenuOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-4 py-8">
           <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -1438,7 +1438,7 @@ function ToolbarButton({ onClick, active = false, disabled = false, activeClass,
       {icon ? (
         <span className="leading-none">{icon}</span>
       ) : (
-        <span className={`text-xs font-semibold ${active ? 'text-white' : 'text-slate-700'}`}>{label}</span>
+        <span className={`text-xs font-semibold ${active ? 'text-slate-900' : 'text-slate-700'}`}>{label}</span>
       )}
     </button>
   );

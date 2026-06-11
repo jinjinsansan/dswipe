@@ -110,7 +110,7 @@ export default function ImageOnlyBlock({ content, isEditing, onEdit }: ImageOnly
               )}
             </>
           ) : (
-            <div className="flex h-64 w-full items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white/40 text-slate-400">
+            <div className="flex h-64 w-full items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white/40 text-slate-600">
               画像をアップロードしてください
             </div>
           )}

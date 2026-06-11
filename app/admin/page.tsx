@@ -1262,7 +1262,7 @@ export default function AdminPanelPage() {
             <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
             <p className="text-[11px] text-slate-500">{subtitle}</p>
           </div>
-          {loading ? <span className="text-[11px] text-slate-400">読み込み中...</span> : null}
+          {loading ? <span className="text-[11px] text-slate-600">読み込み中...</span> : null}
         </div>
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
           <input
@@ -1315,7 +1315,7 @@ export default function AdminPanelPage() {
                         </span>
                       ) : null}
                       {created ? (
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400">{created}</span>
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate-600">{created}</span>
                       ) : null}
                     </div>
                     <div className="truncate text-[11px] text-slate-500">{detailLine(item)}</div>

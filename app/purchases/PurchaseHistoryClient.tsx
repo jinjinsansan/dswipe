@@ -210,7 +210,7 @@ export default function PurchaseHistoryClient() {
                           {methodLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
+                      <p className="text-xs text-slate-600">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>
@@ -277,7 +277,7 @@ export default function PurchaseHistoryClient() {
                           {methodLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">{formatDateTime(item.purchased_at)}</p>
+                      <p className="text-xs text-slate-600">{formatDateTime(item.purchased_at)}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-semibold ${amountClass}`}>

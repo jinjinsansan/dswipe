@@ -260,7 +260,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
                               {t('loginRequiredBadge')}
                             </span>
                           ) : null}
-                          <span className="text-[11px] text-slate-400">{dateLabel}</span>
+                          <span className="text-[11px] text-slate-600">{dateLabel}</span>
                         </div>
                         <h3 className="text-[15px] sm:text-[17px] font-extrabold tracking-tight text-[#0b1f3a] leading-snug line-clamp-2 group-hover:text-sky-600 transition-colors">
                           {note.title}
@@ -333,7 +333,7 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
 
 function SpinIndicator() {
   return (
-    <svg className="h-5 w-5 animate-spin text-slate-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg className="h-5 w-5 animate-spin text-slate-600" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-60"

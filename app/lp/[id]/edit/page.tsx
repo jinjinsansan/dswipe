@@ -1801,7 +1801,7 @@ export default function EditLPNewPage() {
 
       {/* Mobile Menu - Full Screen Modal */}
       {showMobileMenu && (
-        <div className="lg:hidden fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
+        <div className="lg:hidden fixed inset-0 bg-white/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-sm w-full overflow-y-auto max-h-[80vh]">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
@@ -1809,7 +1809,7 @@ export default function EditLPNewPage() {
               <button
                 type="button"
                 onClick={() => setShowMobileMenu(false)}
-                className="text-slate-400 hover:text-slate-900 transition-colors text-2xl leading-none"
+                className="text-slate-600 hover:text-slate-900 transition-colors text-2xl leading-none"
               >
                 ✕
               </button>
@@ -2511,7 +2511,7 @@ export default function EditLPNewPage() {
                     </div>
                   ) : null}
                   {!linkedProduct?.id || !lp?.slug ? (
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       商品を連携し、LPが公開可能な状態で利用してください。
                     </p>
                   ) : null}
@@ -3336,7 +3336,7 @@ export default function EditLPNewPage() {
                     </div>
                   ) : null}
                   {!linkedProduct?.id || !lp?.slug ? (
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       商品を連携し、LPが公開可能な状態で利用してください。
                     </p>
                   ) : null}
@@ -3450,7 +3450,7 @@ export default function EditLPNewPage() {
 
       {/* カラーテーマジェネレーターモーダル */}
       {showColorGenerator && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-white/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-xl border border-slate-200 w-full max-w-2xl my-8">
             <ColorThemeGenerator
               onApply={handleApplyTheme}

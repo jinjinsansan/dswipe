@@ -592,7 +592,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
         ) : null}
 
         <div className="mt-10 border-t border-slate-200 pt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{t('shareHeading')}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{t('shareHeading')}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <a
               href={shareLinks.x}
@@ -643,7 +643,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
             {t('editNote')}
           </Link>
         </div>
-        <span className="text-[10px] text-slate-400">@{note.author_username ?? 'unknown'}</span>
+        <span className="text-[10px] text-slate-600">@{note.author_username ?? 'unknown'}</span>
       </footer>
     </article>
   );

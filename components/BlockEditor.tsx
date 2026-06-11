@@ -78,7 +78,7 @@ export default function BlockEditor({
           {/* ブロック本体 */}
           <div className={`relative ${isEditing ? 'border-2 border-dashed border-sky-500/50 rounded-lg overflow-hidden' : ''}`}>
             {isEditing && (
-              <div className="absolute top-2 right-2 bg-black/70 text-white px-3 py-1 rounded text-sm z-10">
+              <div className="absolute top-2 right-2 bg-black/70 text-slate-900 px-3 py-1 rounded text-sm z-10">
                 {block.blockType}
               </div>
             )}
@@ -98,7 +98,7 @@ export default function BlockEditor({
           <div className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-700/60">
             <InboxStackIcon className="h-8 w-8 text-gray-200" aria-hidden="true" />
           </div>
-          <h3 className="text-white font-semibold text-xl mb-2">ブロックがありません</h3>
+          <h3 className="text-slate-900 font-semibold text-xl mb-2">ブロックがありません</h3>
           <p className="text-gray-400">
             「+ ブロック追加」ボタンからテンプレートを追加してください
           </p>

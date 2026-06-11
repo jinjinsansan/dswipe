@@ -443,7 +443,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
         <div className="flex flex-shrink-0 items-center gap-3 border-b border-[#e2ebf6] px-4 py-3 sm:px-5">
           <h2 className="text-[17px] font-extrabold tracking-tight text-[#0b1f3a]">素材を選ぶ</h2>
           <div className="relative ml-auto w-[280px] max-w-[40vw]">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" aria-hidden="true" />
             <input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
@@ -474,7 +474,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
             >
               <ArrowUpTrayIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
               アップロード
-              <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <span className="ml-auto hidden text-[11px] text-slate-600 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
                 {media.length}
               </span>
             </button>
@@ -488,7 +488,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
               >
                 <SwatchIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
                 グラデ背景
-                <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                <span className="ml-auto hidden text-[11px] text-slate-600 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {STOCK_GRADIENTS.length}
                 </span>
               </button>
@@ -560,7 +560,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
                 {isFilteredEmpty && filteredEmptyMessage ? (
                   <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-slate-500">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#f4f8fd] text-slate-400">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#f4f8fd] text-slate-600">
                       <FilteredEmptyIcon className="h-6 w-6" aria-hidden="true" />
                     </span>
                     <p className="text-sm">{filteredEmptyMessage}</p>
@@ -596,7 +596,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                                   {isVideo ? (
                                     <PlayCircleIcon className="h-9 w-9 text-sky-500" aria-hidden="true" />
                                   ) : (
-                                    <PhotoIcon className="h-7 w-7 text-slate-400" aria-hidden="true" />
+                                    <PhotoIcon className="h-7 w-7 text-slate-600" aria-hidden="true" />
                                   )}
                                   <span className="max-w-full truncate px-2 text-[10px] font-semibold" title={filename}>{filename}</span>
                                 </div>
@@ -747,7 +747,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
                 </button>
               </>
             ) : (
-              <div className="flex flex-1 flex-col items-center justify-center gap-2.5 text-center text-slate-400">
+              <div className="flex flex-1 flex-col items-center justify-center gap-2.5 text-center text-slate-600">
                 <PhotoIcon className="h-9 w-9 opacity-50" aria-hidden="true" />
                 <p className="text-[12.5px] leading-relaxed">
                   素材を選ぶと、スライド比率への

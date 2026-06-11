@@ -280,7 +280,7 @@ export default function UserProfilePage() {
                         />
                       )
                     ) : (
-                      <div className="flex items-center justify-center h-full text-slate-400">
+                      <div className="flex items-center justify-center h-full text-slate-600">
                         <DocumentIcon className="h-10 w-10" aria-hidden="true" />
                       </div>
                     )}
@@ -349,7 +349,7 @@ export default function UserProfilePage() {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center text-slate-600">
                       <UserGroupIcon className="h-8 w-8" aria-hidden="true" />
                     </div>
                   )}
@@ -405,7 +405,7 @@ export default function UserProfilePage() {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center text-slate-600">
                       <DocumentIcon className="h-8 w-8" aria-hidden="true" />
                     </div>
                   )}
@@ -424,7 +424,7 @@ export default function UserProfilePage() {
                         ログイン必須
                       </span>
                     ) : null}
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-600">
                       {note.published_at ? new Date(note.published_at).toLocaleDateString('ja-JP') : '未公開'}
                     </span>
                   </div>

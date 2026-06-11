@@ -41,7 +41,7 @@ export default function TermsPage() {
 
   return (
     <DashboardLayout pageTitle={t("pageTitle")} pageSubtitle={t("pageSubtitle")} requireAuth={false}>
-      <div className="relative min-h-screen bg-slate-950 text-slate-200">
+      <div className="relative min-h-screen bg-slate-50 text-gray-800">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_60%)]" />
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgba(148,163,184,0.12)_1px,transparent_1px)]"
@@ -51,13 +51,13 @@ export default function TermsPage() {
         <main className="relative z-10 pt-6 pb-20">
           <div className="container mx-auto max-w-4xl px-4">
             <div className="mb-12 space-y-4">
-              <p className="text-base leading-relaxed text-slate-300">{t("intro")}</p>
+              <p className="text-base leading-relaxed text-slate-700">{t("intro")}</p>
             </div>
 
             <div className="space-y-12 text-base leading-relaxed">
               {standardSectionKeys.slice(0, 2).map((sectionKey) => (
                 <section key={sectionKey} className="space-y-4">
-                  <h2 className="text-2xl font-semibold text-white">{t(`sections.${sectionKey}.title`)}</h2>
+                  <h2 className="text-2xl font-semibold text-slate-900">{t(`sections.${sectionKey}.title`)}</h2>
                   {getParagraphs(sectionKey).map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
@@ -65,9 +65,9 @@ export default function TermsPage() {
               ))}
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.prohibited.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.prohibited.title")}</h2>
                 <p>{t("sections.prohibited.description")}</p>
-                <ul className="list-disc space-y-2 pl-6 text-slate-300">
+                <ul className="list-disc space-y-2 pl-6 text-slate-700">
                   {prohibitedItems.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
@@ -75,9 +75,9 @@ export default function TermsPage() {
               </section>
 
               <section className="space-y-4">
-                <h2 className="text-2xl font-semibold text-white">{t("sections.serviceSuspension.title")}</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{t("sections.serviceSuspension.title")}</h2>
                 <p>{t("sections.serviceSuspension.description")}</p>
-                <ul className="list-disc space-y-2 pl-6 text-slate-300">
+                <ul className="list-disc space-y-2 pl-6 text-slate-700">
                   {suspensionItems.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
@@ -86,14 +86,14 @@ export default function TermsPage() {
 
               {standardSectionKeys.slice(2).map((sectionKey) => (
                 <section key={sectionKey} className="space-y-4">
-                  <h2 className="text-2xl font-semibold text-white">{t(`sections.${sectionKey}.title`)}</h2>
+                  <h2 className="text-2xl font-semibold text-slate-900">{t(`sections.${sectionKey}.title`)}</h2>
                   {getParagraphs(sectionKey).map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </section>
               ))}
 
-              <section className="space-y-3 border-l-2 border-sky-500/40 pl-6 text-sm text-slate-400">
+              <section className="space-y-3 border-l-2 border-sky-500/40 pl-6 text-sm text-slate-600">
                 <p>{t("contact.description")}</p>
                 <address className="not-italic">
                   {t("contact.organization")}

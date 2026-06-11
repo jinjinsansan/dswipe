@@ -82,7 +82,7 @@ const guaranteeContent: GuaranteeBlockContent = {
 
 export default function PreviewClient() {
   return (
-    <main className="flex flex-col gap-16 bg-slate-900 pb-24">
+    <main className="flex flex-col gap-16 bg-white pb-24">
       <TopHeroBlock content={heroContent} />
       <TopInlineCTABlock content={inlineCTAContent} />
       <TopFAQBlock content={faqContent} />

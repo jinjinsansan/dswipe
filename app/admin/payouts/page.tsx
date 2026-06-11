@@ -245,7 +245,7 @@ export default function AdminPayoutsPage() {
                   <span>期間: {formatDateTime(item.period_start)} ～ {formatDateTime(item.period_end)}</span>
                   <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{item.status}</span>
                 </div>
-                <div className="text-xs text-slate-400">支払い予定: {formatDateTime(item.settlement_due_at)}</div>
+                <div className="text-xs text-slate-600">支払い予定: {formatDateTime(item.settlement_due_at)}</div>
               </button>
             </li>
           );
@@ -333,7 +333,7 @@ export default function AdminPayoutsPage() {
           </span>
           <div className="flex flex-wrap gap-2">
             <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600">
-              <FunnelIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+              <FunnelIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
               <select
                 value={filters.status ?? ""}
                 onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value || undefined }))}

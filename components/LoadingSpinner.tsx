@@ -49,7 +49,7 @@ export function PageLoader() {
         </div>
 
         {/* ローディングテキスト */}
-        <p className="mt-2 text-slate-300 text-sm font-medium tracking-wider animate-pulse">
+        <p className="mt-2 text-slate-700 text-sm font-medium tracking-wider animate-pulse">
           読み込み中...
         </p>
       </div>

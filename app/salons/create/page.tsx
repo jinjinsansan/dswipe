@@ -238,7 +238,7 @@ export default function SalonCreatePage() {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                 {t("labels.title")}
               </label>
               <input
@@ -251,7 +251,7 @@ export default function SalonCreatePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                 {t("labels.description")}
               </label>
               <textarea
@@ -264,7 +264,7 @@ export default function SalonCreatePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                 {t("labels.thumbnail")}
               </label>
               <input
@@ -274,11 +274,11 @@ export default function SalonCreatePage() {
                 placeholder={t("placeholders.thumbnail")}
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
-              <p className="text-xs text-slate-400">{t("helpers.thumbnail")}</p>
+              <p className="text-xs text-slate-600">{t("helpers.thumbnail")}</p>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+              <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
                 {t("labels.plan")}
               </label>
               <div className="grid gap-3">

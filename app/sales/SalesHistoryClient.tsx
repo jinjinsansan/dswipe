@@ -365,7 +365,7 @@ export default function SalesHistoryClient() {
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
                   次回支払い予定
-                  <CalendarIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <CalendarIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                 </div>
                 <p className="mt-2 text-base font-semibold text-slate-900">
                   {payoutDashboard?.next_settlement_at ? formatDateTime(payoutDashboard.next_settlement_at) : "未定"}
@@ -374,7 +374,7 @@ export default function SalesHistoryClient() {
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
                   支払い待機中合計
-                  <BanknotesIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <BanknotesIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                 </div>
                 <p className="mt-2 text-base font-semibold text-emerald-600">{formatUsd(payoutDashboard?.pending_net_amount_usdt)}</p>
               </div>

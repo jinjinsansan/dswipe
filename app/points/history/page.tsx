@@ -303,21 +303,21 @@ export default function PointHistoryPage() {
 
             <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('income.title')}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{summaryT('income.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-emerald-600">
                   {formatSignedPoints(summary.income)}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">{summaryT('income.description')}</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('spending.title')}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{summaryT('spending.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-rose-600">
                   {formatSignedPoints(summary.spending)}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">{summaryT('spending.description')}</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{summaryT('bonuses.title')}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{summaryT('bonuses.title')}</p>
                 <p className="mt-3 text-2xl font-semibold text-sky-600">
                   {formatSignedPoints(summary.bonuses, { showPlusForZero: true })}
                 </p>
@@ -383,15 +383,15 @@ export default function PointHistoryPage() {
                         </div>
                         <div className="flex flex-wrap gap-4 text-xs text-slate-500">
                           <span>{formatDate(tx.created_at)}</span>
-                          <span className="text-slate-400">{transactionsT('idLabel', { value: `${tx.id.slice(0, 8)}...` })}</span>
+                          <span className="text-slate-600">{transactionsT('idLabel', { value: `${tx.id.slice(0, 8)}...` })}</span>
                           {tx.related_product_id ? (
-                            <span className="text-slate-400">
+                            <span className="text-slate-600">
                               {transactionsT('productIdLabel', { value: `${tx.related_product_id.slice(0, 8)}...` })}
                             </span>
                           ) : null}
                           {expirationInfo ? (
                             <span className="flex flex-wrap items-center gap-2">
-                              <span className="text-slate-400">
+                              <span className="text-slate-600">
                                 {transactionsT('expiresOn', { date: formatExpiryDate(expirationInfo.expiryDate) })}
                               </span>
                               <span className={`font-semibold ${expirationAccentClass}`}>{expirationInfo.label}</span>

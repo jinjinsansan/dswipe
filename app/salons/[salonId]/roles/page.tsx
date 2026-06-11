@@ -338,13 +338,13 @@ export default function SalonRolesPage() {
               <h2 className="text-lg font-semibold text-slate-900">新しいロールを作成</h2>
               <p className="mt-1 text-xs text-slate-500">運営メンバーに柔軟な権限を割り当てましょう。</p>
             </div>
-            <ShieldCheckIcon className="h-6 w-6 text-slate-400" aria-hidden="true" />
+            <ShieldCheckIcon className="h-6 w-6 text-slate-600" aria-hidden="true" />
           </header>
 
           <div className="mt-4 grid gap-4">
             <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">ロール名</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">ロール名</label>
                 <input
                   type="text"
                   value={form.name}
@@ -354,7 +354,7 @@ export default function SalonRolesPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">デフォルト付与</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">デフォルト付与</label>
                 <label className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
                   <input
                     type="checkbox"
@@ -368,7 +368,7 @@ export default function SalonRolesPage() {
             </div>
 
             <div className="grid gap-2">
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明 (任意)</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明 (任意)</label>
               <textarea
                 rows={3}
                 value={form.description ?? ""}
@@ -468,7 +468,7 @@ export default function SalonRolesPage() {
                       <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">ロール名</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">ロール名</label>
                             <input
                               type="text"
                               value={editingState.name ?? ""}
@@ -487,7 +487,7 @@ export default function SalonRolesPage() {
                           </label>
                         </div>
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明</label>
                           <textarea
                             rows={3}
                             value={editingState.description ?? ""}
@@ -547,12 +547,12 @@ export default function SalonRolesPage() {
               <h2 className="text-base font-semibold text-slate-900">メンバーへのロール割り当て</h2>
               <p className="text-xs text-slate-500">{ownerName}が付与したメンバー権限を管理できます。</p>
             </div>
-            <UserPlusIcon className="h-6 w-6 text-slate-400" aria-hidden="true" />
+            <UserPlusIcon className="h-6 w-6 text-slate-600" aria-hidden="true" />
           </header>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">メンバー</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">メンバー</label>
               <select
                 value={assignMemberId}
                 onChange={(event) => setAssignMemberId(event.target.value)}
@@ -567,7 +567,7 @@ export default function SalonRolesPage() {
               </select>
             </div>
             <div className="grid gap-2">
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">ロール</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">ロール</label>
               <select
                 value={assignRoleId}
                 onChange={(event) => setAssignRoleId(event.target.value)}

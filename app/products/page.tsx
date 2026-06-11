@@ -384,7 +384,7 @@ function ProductsContent() {
                               <span className="text-xs text-slate-600 font-semibold group-hover/seller:text-sky-600 transition-colors">@{sellerUsername}</span>
                             </Link>
                           ) : (
-                            <span className="text-xs text-slate-400 font-semibold">@unknown</span>
+                            <span className="text-xs text-slate-600 font-semibold">@unknown</span>
                           )}
 
                           <div className="flex items-center justify-between mt-auto pt-1.5">
@@ -394,7 +394,7 @@ function ProductsContent() {
                                 <small className="text-xs">{priceUnit}</small>
                               </span>
                             ) : (
-                              <span className="text-xs font-semibold text-slate-400">価格未設定</span>
+                              <span className="text-xs font-semibold text-slate-600">価格未設定</span>
                             )}
                             <span className="inline-flex items-center gap-1 text-[11.5px] text-slate-500">
                               <ShoppingBagIcon className="w-[13px] h-[13px] text-amber-500" aria-hidden="true" />

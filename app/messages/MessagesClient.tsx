@@ -259,7 +259,7 @@ export default function MessagesClient() {
               <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
                 {isLoading && hasLoadedOnce ? (
                   <div className="flex min-h-[240px] items-center justify-center">
-                    <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-400" aria-hidden="true" />
+                    <ArrowPathIcon className="h-6 w-6 animate-spin text-slate-600" aria-hidden="true" />
                   </div>
                 ) : messages.length === 0 ? (
                   <p className="px-4 py-6 text-center text-sm text-slate-500">対象のメッセージはありません。</p>
@@ -359,7 +359,7 @@ export default function MessagesClient() {
                           </span>
                         ) : null}
                         {selectedMessage.read_at ? (
-                          <span className="text-slate-400">
+                          <span className="text-slate-600">
                             既読: {formatDateTime(selectedMessage.read_at)}
                           </span>
                         ) : (

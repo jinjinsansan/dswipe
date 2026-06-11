@@ -232,7 +232,7 @@ export default function PointPurchasePage() {
                     <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">{packagesT('heading')}</h2>
                     <p className="mt-1 text-sm text-slate-500">{packagesT('description')}</p>
                   </div>
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{packagesT('secureLabel')}</span>
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-slate-600">{packagesT('secureLabel')}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                   {POINT_PACKAGES.map((pkg) => {

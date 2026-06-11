@@ -392,7 +392,7 @@ function SubscriptionPageContent() {
                       })}
                     </p>
                     <p className={`mt-2 font-medium text-slate-700 ${orderedPlans.length === 1 ? 'text-lg' : 'text-sm'}`}>{yenLabel(plan.usd_amount)}</p>
-                    <p className={`mt-1 text-slate-400 ${orderedPlans.length === 1 ? 'text-sm' : 'text-xs'}`}>
+                    <p className={`mt-1 text-slate-600 ${orderedPlans.length === 1 ? 'text-sm' : 'text-xs'}`}>
                       {selectionT('usdNote')}
                     </p>
                   </div>
@@ -461,19 +461,19 @@ function SubscriptionPageContent() {
 
                     <dl className="mt-4 grid grid-cols-1 gap-4 text-sm text-slate-600 sm:grid-cols-2">
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.nextCharge')}</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-600">{subscriptionsT('fields.nextCharge')}</dt>
                         <dd className="mt-1 font-medium text-slate-800">{formatDateTime(subscription.next_charge_at)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.lastCharge')}</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-600">{subscriptionsT('fields.lastCharge')}</dt>
                         <dd className="mt-1 font-medium text-slate-800">{formatDateTime(subscription.last_charge_at)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.lastEvent')}</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-600">{subscriptionsT('fields.lastEvent')}</dt>
                         <dd className="mt-1 font-medium text-slate-800">{subscription.last_event_type ?? placeholdersT('none')}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs uppercase tracking-wide text-slate-400">{subscriptionsT('fields.contractId')}</dt>
+                        <dt className="text-xs uppercase tracking-wide text-slate-600">{subscriptionsT('fields.contractId')}</dt>
                         <dd className="mt-1 font-medium text-slate-800 break-all">{subscription.recurrent_payment_id ?? placeholdersT('none')}</dd>
                       </div>
                     </dl>
@@ -491,7 +491,7 @@ function SubscriptionPageContent() {
                             : subscriptionsT('cancelButton')}
                         </button>
                       ) : (
-                        <p className="text-xs text-slate-400">{subscriptionsT('cancelUnavailable')}</p>
+                        <p className="text-xs text-slate-600">{subscriptionsT('cancelUnavailable')}</p>
                       )}
                     </div>
                   </div>

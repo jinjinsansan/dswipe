@@ -75,7 +75,7 @@ export default function StickySiteHeader({
     .join(' ');
   const dashboardLinkClassName = [
     'hidden text-xs font-semibold uppercase tracking-[0.3em] transition hover:opacity-80 sm:inline-flex',
-    dark ? 'text-slate-300' : 'text-slate-500',
+    dark ? 'text-slate-700' : 'text-slate-500',
   ].join(' ');
 
   useEffect(() => {
@@ -216,7 +216,7 @@ export default function StickySiteHeader({
             type="button"
             aria-hidden="true"
             onClick={closeMenu}
-            className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-white/30 backdrop-blur-sm"
           />
           <div
             className="fixed inset-x-0 z-50 px-3 pb-6 sm:px-4"
@@ -226,14 +226,14 @@ export default function StickySiteHeader({
               id="global-menu"
               className={`mx-auto flex h-full max-w-md flex-col gap-4 overflow-y-auto rounded-3xl border backdrop-blur-2xl shadow-2xl ${
                 dark
-                  ? 'border-white/20 bg-slate-900/80 text-slate-100'
+                  ? 'border-white/20 bg-white/80 text-slate-100'
                   : 'border-white/60 bg-white/90 text-slate-900'
               }`}
               style={{ padding: '1.25rem', paddingBottom: menuPaddingBottom }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{headerT('navigationLabel')}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{headerT('navigationLabel')}</p>
                   <p className="mt-1 text-sm font-semibold">
                     {isAuthenticated
                       ? headerT('greeting', {
@@ -245,7 +245,7 @@ export default function StickySiteHeader({
                 <button
                   type="button"
                   onClick={closeMenu}
-                  className={`rounded-full p-2 transition-colors ${dark ? 'text-slate-200 hover:bg-white/10' : 'text-slate-500 hover:bg-slate-100'}`}
+                  className={`rounded-full p-2 transition-colors ${dark ? 'text-gray-800 hover:bg-white/10' : 'text-slate-500 hover:bg-slate-100'}`}
                   aria-label={headerT('closeMenuAria')}
                 >
                   <XMarkIcon className="h-5 w-5" aria-hidden="true" />
@@ -253,10 +253,10 @@ export default function StickySiteHeader({
               </div>
 
               {isAuthenticated ? (
-                <div className={`flex items-center justify-between rounded-2xl border px-3 py-2 text-sm ${dark ? 'border-white/15 bg-white/5 text-slate-200' : 'border-slate-200 bg-white text-slate-700'}`}>
+                <div className={`flex items-center justify-between rounded-2xl border px-3 py-2 text-sm ${dark ? 'border-white/15 bg-white/5 text-gray-800' : 'border-slate-200 bg-white text-slate-700'}`}>
                   <div className="min-w-0">
                     <p className="font-semibold truncate">{user?.email ?? headerT('loggedInFallback')}</p>
-                    <p className="text-xs text-slate-400">{user?.user_type === 'seller' ? headerT('userType.seller') : headerT('userType.default')}</p>
+                    <p className="text-xs text-slate-600">{user?.user_type === 'seller' ? headerT('userType.seller') : headerT('userType.default')}</p>
                   </div>
                   <button
                     type="button"
@@ -272,7 +272,7 @@ export default function StickySiteHeader({
                   href="/login"
                   onClick={closeMenu}
                   className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                    dark ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20' : 'border border-slate-900 bg-slate-900 text-white hover:bg-slate-800'
+                    dark ? 'border border-white/30 bg-white/10 text-slate-900 hover:bg-white/20' : 'border border-[#cbd5f5] bg-white text-slate-900 hover:bg-slate-800'
                   }`}
                 >
                   {layoutT('guest.login')}
@@ -341,7 +341,7 @@ export default function StickySiteHeader({
                 })}
               </div>
 
-              <div className={`${dark ? 'text-slate-400' : 'text-slate-500'} text-[10px]`}>© D-swipe</div>
+              <div className={`${dark ? 'text-slate-600' : 'text-slate-500'} text-[10px]`}>© D-swipe</div>
             </nav>
           </div>
         </>

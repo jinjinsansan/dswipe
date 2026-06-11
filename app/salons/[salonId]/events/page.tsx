@@ -392,7 +392,7 @@ export default function SalonEventsPage() {
             </header>
             <div className="mt-4 grid gap-4">
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">イベント名</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">イベント名</label>
                 <input
                   type="text"
                   value={createForm.title}
@@ -404,7 +404,7 @@ export default function SalonEventsPage() {
               </div>
 
               <div className="grid gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明</label>
                 <textarea
                   rows={4}
                   value={createForm.description}
@@ -417,7 +417,7 @@ export default function SalonEventsPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">開始日時</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">開始日時</label>
                   <input
                     type="datetime-local"
                     value={createForm.startAt}
@@ -427,7 +427,7 @@ export default function SalonEventsPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">終了日時 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">終了日時 (任意)</label>
                   <input
                     type="datetime-local"
                     value={createForm.endAt}
@@ -440,7 +440,7 @@ export default function SalonEventsPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">場所 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">場所 (任意)</label>
                   <input
                     type="text"
                     value={createForm.location}
@@ -451,7 +451,7 @@ export default function SalonEventsPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">オンラインURL (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">オンラインURL (任意)</label>
                   <input
                     type="url"
                     value={createForm.meetingUrl}
@@ -465,7 +465,7 @@ export default function SalonEventsPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">定員 (任意)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">定員 (任意)</label>
                   <input
                     type="number"
                     min={1}
@@ -642,7 +642,7 @@ export default function SalonEventsPage() {
                     ) : (
                       <div className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">イベント名</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">イベント名</label>
                           <input
                             type="text"
                             value={editForm.title}
@@ -653,7 +653,7 @@ export default function SalonEventsPage() {
                         </div>
 
                         <div className="grid gap-2">
-                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">説明</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">説明</label>
                           <textarea
                             rows={3}
                             value={editForm.description}
@@ -665,7 +665,7 @@ export default function SalonEventsPage() {
 
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">開始日時</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">開始日時</label>
                             <input
                               type="datetime-local"
                               value={editForm.startAt}
@@ -675,7 +675,7 @@ export default function SalonEventsPage() {
                             />
                           </div>
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">終了日時</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">終了日時</label>
                             <input
                               type="datetime-local"
                               value={editForm.endAt}
@@ -688,7 +688,7 @@ export default function SalonEventsPage() {
 
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">場所</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">場所</label>
                             <input
                               type="text"
                               value={editForm.location}
@@ -698,7 +698,7 @@ export default function SalonEventsPage() {
                             />
                           </div>
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">オンラインURL</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">オンラインURL</label>
                             <input
                               type="url"
                               value={editForm.meetingUrl}
@@ -711,7 +711,7 @@ export default function SalonEventsPage() {
 
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
-                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">定員</label>
+                            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">定員</label>
                             <input
                               type="number"
                               min={1}

@@ -1073,28 +1073,28 @@ export default function NoteEditPage() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div className="rounded-xl bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <ShareIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <ShareIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">総シェア数</p>
                 </div>
                 <p className="mt-2 text-2xl font-bold text-sky-600">{shareStats.total_shares}回</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <CurrencyYenIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <CurrencyYenIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">獲得ポイント</p>
                 </div>
                 <p className="mt-2 text-2xl font-bold text-emerald-600">{shareStats.total_reward_points}P</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <CheckCircleIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">検証済み</p>
                 </div>
                 <p className="mt-2 text-2xl font-bold text-slate-900">{shareStats.verified_shares}件</p>
               </div>
               <div className="rounded-xl bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <ExclamationTriangleIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <ExclamationTriangleIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">不正疑い</p>
                 </div>
                 <p className="mt-2 text-2xl font-bold text-amber-600">{shareStats.suspicious_shares}件</p>
@@ -1106,7 +1106,7 @@ export default function NoteEditPage() {
         <div className="bg-white p-4 sm:p-6 md:rounded-3xl md:border md:border-slate-200 md:shadow-sm md:p-8">
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">タイトル</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">タイトル</label>
               <input
                 type="text"
                 value={title}
@@ -1119,7 +1119,7 @@ export default function NoteEditPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">概要</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">概要</label>
                 <textarea
                   rows={3}
                   value={excerpt}
@@ -1130,7 +1130,7 @@ export default function NoteEditPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">カバー画像</label>
+                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">カバー画像</label>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
@@ -1416,7 +1416,7 @@ export default function NoteEditPage() {
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">消費税率 (%)</label>
+                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">消費税率 (%)</label>
                   <input
                     type="text"
                     inputMode="decimal"

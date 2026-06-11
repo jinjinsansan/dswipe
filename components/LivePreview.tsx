@@ -75,7 +75,7 @@ export default function LivePreview({
           maxHeight: '100%',
         }}
       >
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-50 bg-black/70 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-50 bg-black/70 text-slate-900 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
           {deviceSize === 'mobile' && '📱 Mobile (375px)'}
           {deviceSize === 'tablet' && '📱 Tablet (768px)'}
           {deviceSize === 'desktop' && '💻 Desktop'}

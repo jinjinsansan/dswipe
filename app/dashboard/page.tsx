@@ -1125,7 +1125,7 @@ export default function DashboardPage() {
         </div>
 
       {activeAnnouncement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-4">
           <div className="max-w-2xl w-full rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>

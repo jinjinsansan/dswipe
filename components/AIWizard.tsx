@@ -556,7 +556,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                       <button
                         type="button"
                         onClick={() => handleRemoveBonus(index)}
-                        className="text-slate-400 hover:text-red-500"
+                        className="text-slate-600 hover:text-red-500"
                       >
                         <XMarkIcon className="h-4 w-4" />
                       </button>
@@ -577,7 +577,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 ))}
                 
                 {formData.bonuses.length === 0 && (
-                  <p className="text-xs text-slate-400 text-center py-2">特典を追加してください</p>
+                  <p className="text-xs text-slate-600 text-center py-2">特典を追加してください</p>
                 )}
               </div>
             </div>
@@ -673,7 +673,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     <button
                       type="button"
                       onClick={() => handleRemoveAchievement(index)}
-                      className="text-slate-400 hover:text-red-500"
+                      className="text-slate-600 hover:text-red-500"
                     >
                       <XMarkIcon className="h-4 w-4" />
                     </button>
@@ -681,7 +681,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 ))}
                 
                 {formData.achievements.length === 0 && (
-                  <p className="text-xs text-slate-400 text-center py-2">実績を追加してください</p>
+                  <p className="text-xs text-slate-600 text-center py-2">実績を追加してください</p>
                 )}
               </div>
             </div>

@@ -447,7 +447,7 @@ export default function SalonMembersPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="relative inline-flex items-center gap-2">
-                <AdjustmentsHorizontalIcon className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                <AdjustmentsHorizontalIcon className="h-4 w-4 text-slate-600" aria-hidden="true" />
                 <select
                   value={statusFilter}
                   onChange={(event) => handleStatusChange(event.target.value)}
@@ -466,7 +466,7 @@ export default function SalonMembersPage() {
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-100">
             <table className="min-w-full divide-y divide-slate-100">
               <thead className="bg-slate-50">
-                <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                   <th scope="col" className="px-4 py-3">{t("columns.member")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.status")}</th>
                   <th scope="col" className="px-4 py-3">{t("columns.joinedAt")}</th>
@@ -509,7 +509,7 @@ export default function SalonMembersPage() {
                               ) : null}
                             </div>
                             <p className="text-xs text-slate-500">{contactValue}</p>
-                            <p className="font-mono text-[11px] text-slate-400">{member.user_id}</p>
+                            <p className="font-mono text-[11px] text-slate-600">{member.user_id}</p>
                             {manualMemoValue ? (
                               <p className="mt-1 text-xs text-slate-500">{manualMemoValue}</p>
                             ) : null}

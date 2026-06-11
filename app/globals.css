@@ -278,66 +278,9 @@ body {
 }
 
 @layer base {
-  .bg-slate-950 { background-color: #f8fafc !important; }
-  .bg-slate-900 { background-color: #ffffff !important; }
-  .bg-slate-950\/80 { background-color: rgba(248, 250, 252, 0.8) !important; }
-  .bg-slate-950\/70 { background-color: rgba(248, 250, 252, 0.7) !important; }
-  .bg-slate-950\/60 { background-color: rgba(248, 250, 252, 0.6) !important; }
-  .bg-slate-950\/40 { background-color: rgba(248, 250, 252, 0.4) !important; }
-  .bg-slate-900\/95 { background-color: rgba(255, 255, 255, 0.95) !important; }
-  .bg-slate-900\/80 { background-color: rgba(255, 255, 255, 0.8) !important; }
-  .bg-slate-900\/75 { background-color: rgba(255, 255, 255, 0.75) !important; }
-  .bg-slate-900\/70 { background-color: rgba(255, 255, 255, 0.7) !important; }
-  .bg-slate-900\/60 { background-color: rgba(255, 255, 255, 0.6) !important; }
-  .bg-slate-900\/50 { background-color: rgba(255, 255, 255, 0.5) !important; }
-  .bg-slate-900\/40 { background-color: rgba(255, 255, 255, 0.4) !important; }
-  .bg-slate-900\/30 { background-color: rgba(255, 255, 255, 0.3) !important; }
-
-  .border-slate-900 { border-color: #cbd5f5 !important; }
-  .border-slate-800 { border-color: #cbd5f5 !important; }
-  .border-slate-800\/80 { border-color: rgba(148, 163, 184, 0.45) !important; }
-  .border-slate-800\/70 { border-color: rgba(148, 163, 184, 0.35) !important; }
-  .border-slate-800\/20 { border-color: rgba(148, 163, 184, 0.2) !important; }
-  .border-slate-700 { border-color: #cbd5f5 !important; }
-  .border-slate-700\/60 { border-color: rgba(148, 163, 184, 0.3) !important; }
-
-  .text-white { color: #0f172a !important; }
-  .text-slate-200 { color: #1f2937 !important; }
-  .text-slate-300 { color: #334155 !important; }
-  .text-slate-400 { color: #475569 !important; }
-  .text-slate-500 { color: #64748b !important; }
-  .text-slate-600 { color: #475569 !important; }
-
-  .bg-blue-600\/90 { background-color: rgba(37, 99, 235, 0.95) !important; }
-  .bg-red-600\/20 { background-color: rgba(248, 113, 113, 0.18) !important; }
-  .bg-red-600\/30 { background-color: rgba(248, 113, 113, 0.24) !important; }
-  .bg-blue-600\/20 { background-color: rgba(59, 130, 246, 0.2) !important; }
-  .bg-blue-600\/40 { background-color: rgba(59, 130, 246, 0.35) !important; }
-  .bg-blue-600\/80 { background-color: rgba(37, 99, 235, 0.85) !important; }
-  .bg-blue-600\/90 { background-color: rgba(37, 99, 235, 0.92) !important; }
-  .bg-blue-500\/40 { background-color: rgba(59, 130, 246, 0.4) !important; }
-
-  .bg-blue-600,
-  .bg-blue-500,
-  .bg-blue-700,
-  .bg-emerald-500,
-  .bg-green-500,
-  .bg-rose-500,
-  .bg-red-500,
-  .bg-orange-500,
-  .bg-amber-500,
-  .bg-fuchsia-500,
-  /* Momentum: the blue→sky sweep moved buttons off the compensated blue-*
-     classes, so .text-white (remapped to dark above) needs re-whitening on
-     sky/cyan solids and brand gradients too. */
-  .bg-sky-500,
-  .bg-sky-600,
-  .bg-sky-700,
-  .bg-cyan-500,
-  .bg-cyan-600,
-  [class*="bg-gradient-"].text-white {
-    color: #ffffff !important;
-  }
+  /* 旧ダークテーマ→ライト変換の remap 群は Phase10 で根治済み。
+     全使用箇所を描画等価のクラスへ移行したため、text-white 等は
+     Tailwind 標準どおりの意味で使える。 */
 
   :root {
     --viewer-bg: linear-gradient(145deg, #050814 0%, #0b1120 35%, #111827 100%);

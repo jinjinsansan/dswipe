@@ -228,7 +228,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         {/* Category filter chips — mock: .fchip */}
         <div className="flex-shrink-0 border-b border-[#e2ebf6] bg-[#f4f8fd] px-4 sm:px-6 py-3">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <FunnelIcon className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
+            <FunnelIcon className="h-4 w-4 shrink-0 text-slate-600" aria-hidden="true" />
             {categoryOptions.map((category) => {
               const isActive = selectedCategory === category.id;
               return (
@@ -254,7 +254,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
 
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-slate-600">
-              <FolderOpenIcon className="h-12 w-12 text-slate-400" aria-hidden="true" />
+              <FolderOpenIcon className="h-12 w-12 text-slate-600" aria-hidden="true" />
               <p className="text-sm">利用可能なテンプレートがありません。管理者にお問い合わせください。</p>
             </div>
           ) : (

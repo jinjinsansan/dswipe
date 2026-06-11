@@ -288,7 +288,7 @@ export default function CreateLPPage() {
                     <span className="text-[10.5px] font-bold tracking-[0.04em] text-sky-600">{preset.category}</span>
                     <span className="text-[13.5px] font-bold text-[#0b1f3a]">{preset.name}</span>
                     <span className="flex-1 text-[11px] leading-relaxed text-slate-500">{preset.description}</span>
-                    <span className="mt-1 text-[10.5px] font-semibold text-slate-400">{preset.priceLabel}</span>
+                    <span className="mt-1 text-[10.5px] font-semibold text-slate-600">{preset.priceLabel}</span>
                   </div>
                 </button>
               );

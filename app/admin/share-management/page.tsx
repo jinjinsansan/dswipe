@@ -233,7 +233,7 @@ export default function ShareManagementPage() {
       <div className="mx-auto w-full max-w-6xl space-y-6">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <ArrowPathIcon className="h-8 w-8 animate-spin text-slate-400" />
+            <ArrowPathIcon className="h-8 w-8 animate-spin text-slate-600" />
           </div>
         ) : (
           <>
@@ -387,7 +387,7 @@ export default function ShareManagementPage() {
                               {log.verified ? (
                                 <CheckCircleIcon className="mx-auto h-5 w-5 text-emerald-500" />
                               ) : (
-                                <span className="text-xs text-slate-400">未検証</span>
+                                <span className="text-xs text-slate-600">未検証</span>
                               )}
                             </td>
                             <td className="px-4 py-3 text-right font-semibold text-emerald-600">

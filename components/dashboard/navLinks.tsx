@@ -277,7 +277,7 @@ const NAVY_DESKTOP_NAV: DashboardNavStyleSet = {
 
 // Momentum light mobile menu: one unified style for every group
 // (white card + sky accent; active = navy). text-pure-white is required on
-// navy because globals.css remaps .text-white to a dark color.
+// navy because globals.css remaps .text-slate-900 to a dark color.
 const MOMENTUM_MOBILE_NAV: DashboardNavStyleSet = {
   base: 'bg-white text-slate-700 border border-[#e2ebf6] hover:border-[#bfe6fb] hover:bg-sky-50',
   active: 'bg-[#0b1f3a] text-pure-white shadow-sm',
