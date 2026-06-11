@@ -19,6 +19,7 @@ export type AppLocale = (typeof locales)[number];
 
 export const {Link, redirect, usePathname, useRouter} = createNavigation({
   locales,
+  defaultLocale: 'ja',
   localePrefix,
   pathnames,
 });
