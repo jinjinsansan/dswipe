@@ -17,6 +17,7 @@ import {useFormatter, useTranslations} from "next-intl";
 import { PageLoader } from "@/components/LoadingSpinner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { mediaApi } from "@/lib/api";
+import { HEAD_BG } from "@/lib/momentum";
 import { useAuthStore } from "@/store/authStore";
 
 type MediaType = "image" | "video" | "file";
@@ -251,6 +252,16 @@ export default function MediaPage() {
       pageSubtitle={t("subtitle")}
     >
       <div className="mx-auto w-full max-w-5xl space-y-6 px-3 py-6 sm:px-6">
+        {/* Navy hero — mock: D-Swipe Media.html */}
+        <div
+          className="rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Media</p>
+          <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t("title")}</h1>
+          <p className="mt-1 text-sm text-[#bcd3ee]">{t("subtitle")}</p>
+        </div>
+
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">

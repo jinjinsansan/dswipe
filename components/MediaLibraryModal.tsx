@@ -550,7 +550,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
         <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors text-sm font-light"
+            className="px-4 py-2 bg-gray-700 text-pure-white rounded hover:bg-gray-600 transition-colors text-sm font-light"
           >
             キャンセル
           </button>

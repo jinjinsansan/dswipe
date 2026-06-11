@@ -40,7 +40,7 @@ export default function CTAStyleSelector({ onSelectStyle, onClose }: CTAStyleSel
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all ${
                 selectedCategory === category.id
                   ? 'bg-sky-600 text-white shadow-lg shadow-sky-500/50'
-                  : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                  : 'bg-gray-800 text-gray-400 hover:text-pure-white hover:bg-gray-700'
               }`}
             >
               {category.icon} {category.name}

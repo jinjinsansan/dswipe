@@ -779,8 +779,8 @@ export default function DashboardPage() {
                       ? 'bg-amber-500 text-white'
                       : 'bg-green-500 text-white'
                     : lp.statusVariant === 'archived'
-                    ? 'bg-slate-500 text-white'
-                    : 'bg-slate-400 text-white';
+                    ? 'bg-slate-500 text-pure-white'
+                    : 'bg-slate-400 text-pure-white';
 
                   return (
                   <div
@@ -855,7 +855,7 @@ export default function DashboardPage() {
                         </button>
                         <button
                           onClick={() => handleDeleteLP(lp.id)}
-                          className="px-1 sm:px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-semibold"
+                          className="px-1 sm:px-2 py-1 bg-red-600 text-pure-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-semibold"
                         >
                           削除
                         </button>

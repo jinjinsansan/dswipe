@@ -392,7 +392,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
     const overlayPercent = Math.round(overlayOpacity * 100);
     const overlayColor = (content as any).backgroundImageOverlayColor ?? '#0F172A';
     const uploadButtonClasses = isUploading
-      ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800'
+      ? 'bg-slate-800 text-pure-white hover:bg-slate-900 border border-slate-800'
       : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm';
 
     const backgroundOptions: Array<{ value: 'color' | 'image' | 'none'; label: string; icon: IconComponent }> = [
@@ -489,7 +489,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     onUpdateContent('backgroundImageUrl', null);
                     onUpdateContent('backgroundStyle', 'color');
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-pure-white hover:bg-red-700"
                 >
                   <TrashIcon className="h-4 w-4" aria-hidden="true" />
                   画像を削除
@@ -669,7 +669,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
               <div className="flex flex-wrap gap-2">
                 <label
                   htmlFor={`${backgroundImageInputId}-hero-video`}
-                  className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
+                  className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-pure-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
                 >
                   {isUploading ? (
                     <>
@@ -706,7 +706,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                       onUpdateContent('backgroundVideoUrl', null);
                       onUpdateContent('backgroundMediaType', 'auto');
                     }}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-pure-white hover:bg-red-700"
                   >
                     <TrashIcon className="h-4 w-4" aria-hidden="true" />
                     動画を削除
@@ -784,7 +784,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <div className="flex flex-wrap gap-2">
               <label
                 htmlFor={`${backgroundImageInputId}-hero`}
-                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-pure-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
               >
                 {isUploading ? (
                   <>
@@ -821,7 +821,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     onUpdateContent('backgroundImageUrl', null);
                     onUpdateContent('backgroundMediaType', 'auto');
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-pure-white hover:bg-red-700"
                 >
                   <TrashIcon className="h-4 w-4" aria-hidden="true" />
                   画像を削除
@@ -948,7 +948,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         <div className="flex flex-wrap gap-2">
           <label
             htmlFor={`${backgroundImageInputId}-image-only`}
-            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
+            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isUploading ? 'bg-slate-800 text-pure-white hover:bg-slate-900 border border-slate-800' : 'bg-white text-slate-900 border border-slate-300 hover:border-sky-500 hover:text-sky-600 shadow-sm'}`}
           >
             {isUploading ? (
               <>
@@ -986,7 +986,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <button
               type="button"
               onClick={() => onUpdateContent('imageUrl', '')}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-pure-white hover:bg-red-700"
             >
               <TrashIcon className="h-4 w-4" aria-hidden="true" />
               画像を削除
@@ -1840,7 +1840,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
         {onGenerateAI && (
           <div className="rounded-xl border border-slate-200 bg-white/80 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-sm">
+              <div className="h-10 w-10 rounded-lg bg-[#0b1f3a] text-pure-white flex items-center justify-center shadow-sm">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
@@ -2528,7 +2528,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <label className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium text-center cursor-pointer">
+                    <label className="px-4 py-2 bg-slate-600 text-pure-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium text-center cursor-pointer">
                       <span className="inline-flex items-center justify-center gap-2">
                         {isUploading ? (
                           <>
@@ -2559,7 +2559,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
                     </button>
                     <button
                       onClick={() => onUpdateContent(imageField, '')}
-                      className="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                      className="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-pure-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
                     >
                       <TrashIcon className="h-4 w-4" aria-hidden="true" />
                       削除

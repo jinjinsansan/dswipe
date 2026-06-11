@@ -7,6 +7,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
 import { loadCache, saveCache } from '@/lib/cache';
+import { HEAD_BG } from '@/lib/momentum';
 import {
   ArrowPathIcon,
   ArrowTrendingUpIcon,
@@ -263,6 +264,16 @@ export default function PointHistoryPage() {
     >
       <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-6 sm:py-6">
         <>
+            {/* Navy hero — Momentum chrome */}
+            <div
+              className="mb-6 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+              style={{ background: HEAD_BG }}
+            >
+              <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Points</p>
+              <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t('pageTitle')}</h1>
+              <p className="mt-1 text-sm text-[#bcd3ee]">{pageSubtitle}</p>
+            </div>
+
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-2">
                 {FILTERS.map((filter) => (

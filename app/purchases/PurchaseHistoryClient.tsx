@@ -13,6 +13,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { purchasesApi } from "@/lib/api";
+import { HEAD_BG } from "@/lib/momentum";
 import type {
   PurchaseHistoryResponse,
   PurchaseHistoryProduct,
@@ -115,25 +116,33 @@ export default function PurchaseHistoryClient() {
       pageSubtitle="LP商品・有料Swipeコラム・オンラインサロンの購入状況を確認できます"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {error ? (
-            <div className="rounded-3xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm text-rose-600">
-              {error}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">
+        {/* Navy hero — Momentum chrome */}
+        <div
+          className="flex flex-col gap-4 rounded-3xl px-6 py-6 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:flex-row sm:items-center sm:justify-between sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Purchases</p>
+            <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">購入履歴</h1>
+            <p className="mt-1 text-sm text-[#bcd3ee]">
               最新の購入データは即時に反映されます。必要に応じて再取得してください。
             </p>
-          )}
+          </div>
           <button
             type="button"
             onClick={refresh}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 self-start rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-pure-white transition hover:bg-white/15"
           >
             <ArrowPathIcon className="h-4 w-4" aria-hidden="true" />
             再取得
           </button>
         </div>
+
+        {error ? (
+          <div className="rounded-3xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm text-rose-600">
+            {error}
+          </div>
+        ) : null}
 
         <section className="grid gap-3 sm:grid-cols-3">
           {summaryCards.map((card) => (

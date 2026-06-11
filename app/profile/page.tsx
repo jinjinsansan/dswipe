@@ -9,6 +9,7 @@ import { authApi, mediaApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { PageLoader } from '@/components/LoadingSpinner';
 import BillingProfileCard from '@/components/settings/BillingProfileCard';
+import { HEAD_BG } from '@/lib/momentum';
 
 const extractErrorDetail = (error: unknown, fallback: string): string => {
   if (typeof error === 'object' && error !== null) {
@@ -183,9 +184,14 @@ export default function ProfilePage() {
   return (
     <DashboardLayout pageTitle={t('title')} pageSubtitle={t('subtitle')}>
       <div className="mx-auto w-full max-w-4xl space-y-8 px-3 py-6 sm:px-6">
-        <section>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">{t('sections.account.heading')}</h2>
-          <p className="text-sm text-slate-600">
+        {/* Navy hero — Momentum chrome */}
+        <section
+          className="rounded-3xl px-6 py-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] sm:px-8"
+          style={{ background: HEAD_BG }}
+        >
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Account</p>
+          <h2 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white">{t('sections.account.heading')}</h2>
+          <p className="mt-2 text-sm text-[#bcd3ee]">
             {t('sections.account.description')}
           </p>
         </section>
