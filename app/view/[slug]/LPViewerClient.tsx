@@ -324,6 +324,11 @@ export default function LPViewerClient({
       setShowFooterCta(false);
       return;
     }
+    // 常駐モード: スライド位置に関係なく常に表示
+    if (footerCtaConfig.alwaysVisible) {
+      setShowFooterCta(true);
+      return;
+    }
     const swiper = swiperRef.current;
     if (!swiper) {
       return;
@@ -853,6 +858,10 @@ export default function LPViewerClient({
     if (!footerCtaConfig) {
       if (showFooterCta) {
         setShowFooterCta(false);
+      }
+    } else if (footerCtaConfig.alwaysVisible) {
+      if (!showFooterCta) {
+        setShowFooterCta(true);
       }
     } else if (finalSlideIndex >= 0) {
       setShowFooterCta(swiper.activeIndex === finalSlideIndex);

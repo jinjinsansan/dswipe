@@ -194,6 +194,8 @@ export interface FooterCTAConfig {
   buttonBackgroundColor?: string;
   buttonTextColor?: string;
   showOnHero?: boolean;
+  /** trueで全スライドに常駐表示（falseは最終スライド到達時のみ） */
+  alwaysVisible?: boolean;
 }
 
 export type LP = LandingPage;
