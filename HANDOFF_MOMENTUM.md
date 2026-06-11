@@ -2,6 +2,13 @@
 
 最終更新: 2026-06-11 / 作業ブランチ: `momentum-phase3`（phase1=`ea22844`・phase2=`11a7f21` は main へマージ済・本番反映済）
 
+## 0-d. Phase4（2026-06-11〜）— ブロック素材そのものの新デザイン化
+
+- **復旧ポイント**: git tag **`pre-phase4-blocks`**（= main `3c66d9d`、originにpush済み）。戻し方はPhase3と同様（revert -m 1 推奨）。
+- **背景**: Phase3はモーダルのガワと素材の「色」のみ。素材の見た目本体は `components/blocks/Top*Block.tsx`（約15レンダラー、エディタプレビューと公開LP表示で共有）が旧デザインのまま。
+- **スコープ**: ①レンダラーを ZIP `editor/editor.css` の sc-* デザインへ忠実移植（既存公開LPの描画も変わる — **ユーザー不在のため承認済み**） ②`editor-blocks.jsx` の7素材＋Block Library.html の変種を Momentum素材セットとして templates.data.ts に追加。手書き風(Handwritten*)シリーズは別アエステティックのため対象外。
+- **対応表**: hero→sc-hero / problem→sc-problem / features(highlights)→sc-benefit / testimonials→sc-testi / pricing→sc-price・sc-offer / cta→sc-cta / faq→sc-faq / before_after→sc-compare / countdown→sc-count / guarantee→sc-guarantee。
+
 ## 0-c. Phase3（2026-06-11〜）— LP素材/ブロックライブラリのMomentum化
 
 - **復旧ポイント**: git tag **`pre-phase3-materials`**（= main `11a7f21`、originにpush済み）。
