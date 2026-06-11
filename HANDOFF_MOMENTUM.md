@@ -1,6 +1,15 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-11 / 作業ブランチ: `momentum-phase2`（phase1=momentum-main は main へマージ済 `ea22844`）
+最終更新: 2026-06-11 / 作業ブランチ: `momentum-phase3`（phase1=`ea22844`・phase2=`11a7f21` は main へマージ済・本番反映済）
+
+## 0-c. Phase3（2026-06-11〜）— LP素材/ブロックライブラリのMomentum化
+
+- **復旧ポイント**: git tag **`pre-phase3-materials`**（= main `11a7f21`、originにpush済み）。
+  - 戻し方(安全・推奨): phase3のマージコミットを `git revert -m 1 <merge-sha>` してpush（履歴を保ったまま打ち消し）
+  - 戻し方(完全巻き戻し): `git checkout main && git reset --hard pre-phase3-materials && git push --force-with-lease origin main`
+- **スコープ**: ①`lib/templates.data.ts` のブロック素材色をMomentumパレットへ刷新＋`lib/templates.ts` COLOR_THEMES にMomentumテーマ追加・既定化（高彩度は強調用に残置） ②`components/TemplateSelector.tsx` を Block Library.html 準拠に。エディタ本体の3ペイン化は別フェーズ。
+- **参照**: ZIP同梱 `design_handoff_dswipe/editor/editor-blocks.jsx`（BG_PRESETS 6種/ブロック定義）・`editor.css`・モック `D-Swipe Block Library.html`・`D-Swipe Templates.html`。
+- **注意**: 保存済みLPはコンテンツ側に色を保持しているため既存LPへの影響なし。新規挿入ブロック/新規テーマ適用時のみ新配色。
 
 ## 0-b. Phase2（2026-06-11〜）— 残り画面のモック準拠化
 
