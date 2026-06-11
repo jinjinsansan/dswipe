@@ -768,6 +768,33 @@ export default function EditLPNewPage() {
         await fetchLinkedProduct(lpId);
       }
       
+      // LP一式プリセット（テンプレートから作成）がsessionStorageにある場合は、そのままブロックとして保存
+      const presetParam = searchParams.get('preset');
+      if (presetParam === 'true' && response.data.steps.length === 0) {
+        try {
+          const presetDataStr = sessionStorage.getItem('lpPresetBlocks');
+          if (presetDataStr) {
+            sessionStorage.removeItem('lpPresetBlocks');
+            const presetBlocks = JSON.parse(presetDataStr) as Array<{ blockType: string; content: Record<string, unknown> }>;
+            for (let presetIndex = 0; presetIndex < presetBlocks.length; presetIndex += 1) {
+              const presetBlock = presetBlocks[presetIndex];
+              await lpApi.addStep(lpId, {
+                step_order: presetIndex + 1,
+                image_url: '/placeholder.jpg',
+                block_type: presetBlock.blockType,
+                content_data: presetBlock.content,
+              });
+            }
+            router.replace(`/lp/${lpId}/edit`);
+            setTimeout(() => fetchLP(), 100);
+            return;
+          }
+        } catch (presetError: any) {
+          console.error('プリセットの適用エラー:', presetError);
+          setError(presetError?.response?.data?.detail || 'テンプレートの適用に失敗しました');
+        }
+      }
+
       // AI提案がsessionStorageにある場合は、それをブロックに変換
       const aiParam = searchParams.get('ai');
       if (aiParam === 'true' && response.data.steps.length === 0) {
