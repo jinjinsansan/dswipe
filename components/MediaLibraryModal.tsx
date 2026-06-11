@@ -2,10 +2,46 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
-import { PhotoIcon, ArrowUpTrayIcon, DocumentDuplicateIcon, PlayCircleIcon } from '@heroicons/react/24/outline';
+import {
+  PhotoIcon,
+  ArrowUpTrayIcon,
+  DocumentDuplicateIcon,
+  PlayCircleIcon,
+  MagnifyingGlassIcon,
+  SwatchIcon,
+  CheckIcon,
+} from '@heroicons/react/24/outline';
 import { mediaApi } from '@/lib/api';
+import { GRAD_BRAND } from '@/lib/momentum';
 
 type MediaType = 'image' | 'video' | 'file';
+
+/* ストックグラデ背景 — mock: D-Swipe Asset Picker.html の photo/grad セット。
+   SVG data URI として返すため、通常の画像URLと同様に背景画像等で機能する。 */
+const gradientDataUri = (from: string, to: string) =>
+  `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#g)"/></svg>`,
+  )}`;
+
+const STOCK_GRADIENTS: Array<{ name: string; from: string; to: string }> = [
+  { name: 'ネイビー×ティール', from: '#0b1f3a', to: '#0e7490' },
+  { name: 'ブランドシアン', from: '#0284c7', to: '#06b6d4' },
+  { name: 'ティール×シアン', from: '#0e7490', to: '#22d3ee' },
+  { name: 'ディープブルー', from: '#1b3a61', to: '#0284c7' },
+  { name: 'ミッドナイト', from: '#0f2c52', to: '#0e7490' },
+  { name: 'ディープシー', from: '#07142a', to: '#0e5d80' },
+  { name: 'ナイト', from: '#0b1220', to: '#1b3a61' },
+  { name: 'オーシャングリーン', from: '#0e7490', to: '#16a34a' },
+  { name: 'スカイ×ネイビー', from: '#0284c7', to: '#0b1f3a' },
+  { name: 'フレッシュ', from: '#16a34a', to: '#22d3ee' },
+  { name: 'スカイライト', from: '#0ea5e9', to: '#06b6d4' },
+  { name: 'サンセット', from: '#f59e0b', to: '#ef4444' },
+  { name: 'クリムゾン', from: '#e11d48', to: '#f59e0b' },
+  { name: 'ヴァイオレット×スカイ', from: '#7c3aed', to: '#0284c7' },
+];
+
+type AssetCategory = 'upload' | 'gradient';
+type PreviewRatio = '9:16' | '1:1' | '16:9';
 
 interface MediaItem {
   url: string;
@@ -98,6 +134,9 @@ interface MediaLibraryModalProps {
 export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMediaTypes }: MediaLibraryModalProps) {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
+  const [category, setCategory] = useState<AssetCategory>('upload');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [previewRatio, setPreviewRatio] = useState<PreviewRatio>('9:16');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -157,11 +196,26 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
   }, [allowedMediaTypes]);
 
   const displayedMedia = useMemo(() => {
-    if (!allowedTypesSet) {
-      return media;
+    let items = media;
+    if (allowedTypesSet) {
+      items = items.filter((item) => allowedTypesSet.has(item.mediaType));
     }
-    return media.filter((item) => allowedTypesSet.has(item.mediaType));
-  }, [allowedTypesSet, media]);
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      items = items.filter((item) =>
+        `${item.filename ?? ''} ${item.url}`.toLowerCase().includes(query),
+      );
+    }
+    return items;
+  }, [allowedTypesSet, media, searchQuery]);
+
+  const displayedGradients = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return STOCK_GRADIENTS;
+    return STOCK_GRADIENTS.filter((gradient) => gradient.name.toLowerCase().includes(query));
+  }, [searchQuery]);
+
+  const gradientAllowed = !allowedTypesSet || allowedTypesSet.has('image');
 
   const inputAccept = useMemo(() => {
     if (!allowedTypesSet) {
@@ -338,7 +392,9 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
     if (!selectedItem) {
       return;
     }
-    const exists = media.some((item) => item.url === selectedItem.url);
+    // ストックグラデ（data URI）はアップロード一覧に存在しないため存在チェックを免除
+    const isStockAsset = selectedItem.url.startsWith('data:');
+    const exists = isStockAsset || media.some((item) => item.url === selectedItem.url);
     if (!exists) {
       setSelectedItem(null);
       return;
@@ -371,193 +427,351 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
 
   if (!isOpen) return null;
 
+  const isPreviewImage = selectedItem?.mediaType === 'image';
+  const previewDims =
+    previewRatio === '9:16'
+      ? { width: 122, height: 217 }
+      : previewRatio === '1:1'
+        ? { width: 156, height: 156 }
+        : { width: 204, height: 115 };
+
+  /* mock: D-Swipe Asset Picker.html — ライト3カラム(カテゴリ/グリッド/フィットプレビュー) */
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl border border-gray-700 max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-[rgba(7,15,30,.6)] backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white rounded-2xl max-w-5xl w-full h-[min(88vh,660px)] overflow-hidden flex flex-col shadow-[0_50px_120px_-40px_rgba(0,0,0,.7)]">
         {/* Header */}
-        <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-          <h2 className="text-xl font-light text-white">メディアライブラリ</h2>
+        <div className="flex flex-shrink-0 items-center gap-3 border-b border-[#e2ebf6] px-4 py-3 sm:px-5">
+          <h2 className="text-[17px] font-extrabold tracking-tight text-[#0b1f3a]">素材を選ぶ</h2>
+          <div className="relative ml-auto w-[280px] max-w-[40vw]">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="キーワードで検索"
+              className="w-full rounded-[10px] border border-[#e2ebf6] py-2 pl-9 pr-3 text-[13px] text-[#0b1f3a] placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-[3px] focus:ring-sky-500/15"
+              aria-label="素材を検索"
+            />
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl leading-none"
+            className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#f4f8fd] text-slate-500 transition hover:text-[#0b1f3a]"
+            aria-label="閉じる"
           >
             ×
           </button>
         </div>
 
-        {/* Content */}
-        <div className="border-b border-gray-700 bg-gray-800/70">
-          <div className="flex flex-col gap-3 p-4">
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-sm font-semibold text-white">アップロード</p>
-                <p className="text-xs text-gray-400">画像や動画などのファイルを追加して、コンテンツに利用できます。</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={inputAccept}
-                  multiple
-                  className="hidden"
-                  onChange={handleFileSelect}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
-                  {isUploading ? 'アップロード中…' : 'ファイルを選択'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.open('/media', '_blank', 'noopener')}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-600 px-4 py-2 text-xs font-semibold text-gray-200 transition hover:border-gray-400 hover:text-white"
-                >
-                  メディアページを開く
-                </button>
-              </div>
-            </div>
-            <div className="rounded-lg border border-dashed border-gray-600 bg-gray-900/50 px-3 py-2 text-xs text-gray-400">
-              このモーダルにファイルをドラッグ＆ドロップしてもアップロードできます。
-            </div>
-            {error ? (
-              <div className="rounded-lg border border-red-400 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-200">
-                {error}
+        {/* Body: rail / grid / preview */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[176px_1fr_252px]">
+          {/* カテゴリレール */}
+          <div className="flex flex-row gap-1 overflow-x-auto border-b border-[#e2ebf6] p-2 lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-3">
+            <button
+              type="button"
+              onClick={() => setCategory('upload')}
+              className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13px] font-semibold transition ${
+                category === 'upload' ? 'bg-[#e9f6fe] text-sky-600' : 'text-slate-600 hover:bg-[#f4f8fd] hover:text-[#0b1f3a]'
+              }`}
+            >
+              <ArrowUpTrayIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              アップロード
+              <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {media.length}
+              </span>
+            </button>
+            {gradientAllowed ? (
+              <button
+                type="button"
+                onClick={() => setCategory('gradient')}
+                className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13px] font-semibold transition ${
+                  category === 'gradient' ? 'bg-[#e9f6fe] text-sky-600' : 'text-slate-600 hover:bg-[#f4f8fd] hover:text-[#0b1f3a]'
+                }`}
+              >
+                <SwatchIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                グラデ背景
+                <span className="ml-auto hidden text-[11px] text-slate-400 lg:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {STOCK_GRADIENTS.length}
+                </span>
+              </button>
+            ) : null}
+          </div>
+
+          {/* グリッド */}
+          <div
+            className="relative min-h-0 overflow-y-auto p-4"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {isDragOver ? (
+              <div className="pointer-events-none absolute inset-2 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-[#e9f6fe]/90 text-center text-sm font-bold text-sky-700">
+                <p>ここにファイルをドロップして追加</p>
               </div>
             ) : null}
+
+            {category === 'upload' ? (
+              <>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">アップロード済み</div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept={inputAccept}
+                      multiple
+                      className="hidden"
+                      onChange={handleFileSelect}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ background: GRAD_BRAND }}
+                    >
+                      <ArrowUpTrayIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                      {isUploading ? 'アップロード中…' : 'ファイルを選択'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.open('/media', '_blank', 'noopener')}
+                      className="inline-flex items-center rounded-full border border-[#e2ebf6] px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-[#bfe6fb] hover:text-[#0b1f3a]"
+                    >
+                      メディアページ
+                    </button>
+                  </div>
+                </div>
+                {error ? (
+                  <div className="mb-3 rounded-[10px] border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600">
+                    {error}
+                  </div>
+                ) : null}
+
+                {media.length === 0 && !isUploading ? (
+                  <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-slate-500">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#e9f6fe] text-sky-600">
+                      <PhotoIcon className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-[#0b1f3a]">まだアップロードされたファイルがありません</p>
+                      <p className="mt-1 text-xs text-slate-500">上のボタンから追加するか、この画面に直接ドロップしてください。</p>
+                    </div>
+                  </div>
+                ) : null}
+
+                {isFilteredEmpty && filteredEmptyMessage ? (
+                  <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-slate-500">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#f4f8fd] text-slate-400">
+                      <FilteredEmptyIcon className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                    <p className="text-sm">{filteredEmptyMessage}</p>
+                  </div>
+                ) : null}
+
+                {displayedMedia.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+                    {displayedMedia.map((item) => {
+                      const sanitizedUrl = item.url.split('?')[0] ?? item.url;
+                      const filename = item.filename ?? sanitizedUrl.split('/').pop() ?? 'ファイル';
+                      const isImage = item.mediaType === 'image';
+                      const isVideo = item.mediaType === 'video';
+                      const isSelected = selectedItem?.url === item.url;
+
+                      return (
+                        <div
+                          key={item.url}
+                          className={`group relative overflow-hidden rounded-[12px] border-2 shadow-sm transition-all ${
+                            isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-[#bfe6fb]'
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            className="relative block w-full"
+                            onClick={() => setSelectedItem(item)}
+                          >
+                            <div className="aspect-square bg-[#f4f8fd]">
+                              {isImage ? (
+                                <img src={item.url} alt={filename} className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-slate-500">
+                                  {isVideo ? (
+                                    <PlayCircleIcon className="h-9 w-9 text-sky-500" aria-hidden="true" />
+                                  ) : (
+                                    <PhotoIcon className="h-7 w-7 text-slate-400" aria-hidden="true" />
+                                  )}
+                                  <span className="max-w-full truncate px-2 text-[10px] font-semibold" title={filename}>{filename}</span>
+                                </div>
+                              )}
+                            </div>
+                            {isSelected ? (
+                              <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-pure-white">
+                                <CheckIcon className="h-3 w-3" strokeWidth={2.6} aria-hidden="true" />
+                              </span>
+                            ) : null}
+                          </button>
+                          <div className="flex items-center justify-between gap-1 bg-white px-2 py-1 text-[10px] text-slate-500">
+                            <span className="truncate font-semibold" title={filename}>{filename}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyUrl(item)}
+                              className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 transition ${
+                                copiedUrl === item.url
+                                  ? 'bg-sky-600 text-pure-white'
+                                  : 'bg-[#f4f8fd] text-slate-500 hover:text-[#0b1f3a]'
+                              }`}
+                              title="URLをコピー"
+                            >
+                              <DocumentDuplicateIcon className="h-3 w-3" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+
+                {isUploading ? (
+                  <div className="absolute inset-x-0 bottom-3 flex justify-center">
+                    <div className="rounded-full bg-[#e9f6fe] px-4 py-1 text-xs font-bold text-sky-600">アップロード中...</div>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">グラデーション背景</div>
+                <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+                  {displayedGradients.map((gradient) => {
+                    const url = gradientDataUri(gradient.from, gradient.to);
+                    const isSelected = selectedItem?.url === url;
+                    return (
+                      <button
+                        key={gradient.name}
+                        type="button"
+                        onClick={() =>
+                          setSelectedItem({
+                            url,
+                            uploaded_at: '',
+                            mediaType: 'image',
+                            contentType: 'image/svg+xml',
+                            filename: `gradient-${gradient.name}.svg`,
+                          })
+                        }
+                        className={`relative aspect-square overflow-hidden rounded-[12px] border-2 shadow-sm transition-all ${
+                          isSelected ? 'border-sky-600 ring-2 ring-sky-600/20' : 'border-transparent hover:border-[#bfe6fb]'
+                        }`}
+                        style={{ background: `linear-gradient(150deg, ${gradient.from}, ${gradient.to})` }}
+                        title={gradient.name}
+                      >
+                        {isSelected ? (
+                          <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-pure-white">
+                            <CheckIcon className="h-3 w-3" strokeWidth={2.6} aria-hidden="true" />
+                          </span>
+                        ) : null}
+                        <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgba(7,15,30,.55)] to-transparent px-2 pb-1.5 pt-4 text-left text-[10px] font-bold text-pure-white">
+                          {gradient.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* フィットプレビュー — mock: .prev / .fit-phone / .safe */}
+          <div className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e2ebf6] p-4 lg:flex">
+            {selectedItem && isPreviewImage ? (
+              <>
+                <div className="text-xs font-bold text-[#0b1f3a]">スライドへの自動フィット</div>
+                <div className="flex justify-center rounded-[12px] border border-[#e2ebf6] bg-[#f4f8fd] p-4">
+                  <div
+                    className="relative overflow-hidden rounded-[14px] shadow-md"
+                    style={{ width: previewDims.width, height: previewDims.height }}
+                  >
+                    <div
+                      className="absolute inset-0"
+                      style={{ backgroundImage: `url(${selectedItem.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-[14px]"
+                      style={{ outline: '2px dashed rgba(255,255,255,.65)', outlineOffset: '-9px' }}
+                    />
+                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/40 px-2 py-0.5 text-[8px] font-bold text-pure-white">
+                      セーフエリア
+                    </span>
+                  </div>
+                </div>
+                <div className="flex gap-1.5">
+                  {(['9:16', '1:1', '16:9'] as PreviewRatio[]).map((ratio) => (
+                    <button
+                      key={ratio}
+                      type="button"
+                      onClick={() => setPreviewRatio(ratio)}
+                      className={`flex-1 rounded-[8px] border px-2 py-1.5 text-[11.5px] font-bold transition ${
+                        previewRatio === ratio
+                          ? 'border-sky-600 bg-[#e9f6fe] text-sky-600'
+                          : 'border-[#e2ebf6] bg-white text-slate-600 hover:border-[#bfe6fb]'
+                      }`}
+                    >
+                      {ratio === '9:16' ? '9:16 縦' : ratio}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-500">
+                  破線の内側がセーフエリアです。重要な被写体や文字は内側に収まるよう調整してください。
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSelect}
+                  className="mt-auto w-full rounded-[11px] px-4 py-2.5 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition"
+                  style={{ background: GRAD_BRAND }}
+                >
+                  この素材を使う
+                </button>
+              </>
+            ) : selectedItem ? (
+              <>
+                <div className="text-xs font-bold text-[#0b1f3a]">選択中のファイル</div>
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-slate-500">
+                  <PlayCircleIcon className="h-9 w-9 text-sky-500" aria-hidden="true" />
+                  <p className="max-w-full truncate px-2 text-xs font-semibold" title={selectedItem.filename ?? selectedItem.url}>
+                    {selectedItem.filename ?? '選択中のメディア'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSelect}
+                  className="mt-auto w-full rounded-[11px] px-4 py-2.5 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition"
+                  style={{ background: GRAD_BRAND }}
+                >
+                  この素材を使う
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-2.5 text-center text-slate-400">
+                <PhotoIcon className="h-9 w-9 opacity-50" aria-hidden="true" />
+                <p className="text-[12.5px] leading-relaxed">
+                  素材を選ぶと、スライド比率への
+                  <br />
+                  自動フィットを確認できます
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        <div
-          className="relative flex-1 overflow-y-auto p-4"
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {isDragOver ? (
-            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-sky-500/10 text-center text-sm font-semibold text-sky-200">
-              <p>ここにファイルをドロップして追加</p>
-              <p className="mt-1 text-xs text-sky-100">アップロード後にすぐノートへ挿入できます</p>
-            </div>
-          ) : null}
-
-          {media.length === 0 && !isUploading ? (
-            <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-gray-400">
-              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-gray-200">
-                <PhotoIcon className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="text-base font-light text-white">まだアップロードされたファイルがありません</p>
-                <p className="mt-1 text-sm text-gray-400">上のボタンからアップロードするか、この画面に直接ドロップしてください。</p>
-              </div>
-            </div>
-          ) : null}
-
-          {isFilteredEmpty && filteredEmptyMessage ? (
-            <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-gray-400">
-              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-gray-200">
-                <FilteredEmptyIcon className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <p className="text-sm font-light text-gray-200">{filteredEmptyMessage}</p>
-            </div>
-          ) : null}
-
-          {displayedMedia.length > 0 ? (
-            <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-5">
-              {displayedMedia.map((item) => {
-                const sanitizedUrl = item.url.split('?')[0] ?? item.url;
-                const filename = item.filename ?? sanitizedUrl.split('/').pop() ?? 'ファイル';
-                const isImage = item.mediaType === 'image';
-                const isVideo = item.mediaType === 'video';
-                const isSelected = selectedItem?.url === item.url;
-
-                return (
-                  <div
-                    key={item.url}
-                    className={`group overflow-hidden rounded-lg border-2 transition-all ${
-                      isSelected ? 'border-sky-500 ring-2 ring-sky-400/40' : 'border-gray-700 hover:border-gray-500'
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      className="relative block w-full"
-                      onClick={() => setSelectedItem(item)}
-                    >
-                      <div className="aspect-square bg-gray-900">
-                        {isImage ? (
-                          <img src={item.url} alt={filename} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
-                            {isVideo ? (
-                              <PlayCircleIcon className="h-10 w-10 text-sky-300" aria-hidden="true" />
-                            ) : (
-                              <PhotoIcon className="h-8 w-8 text-gray-500" aria-hidden="true" />
-                            )}
-                            <span className="px-3 text-[11px] font-semibold truncate" title={filename}>{filename}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between bg-gray-900/60 px-2 py-1 text-[10px] text-gray-300">
-                        <span className="truncate" title={new Date(item.uploaded_at).toLocaleString()}>
-                          {new Date(item.uploaded_at).toLocaleString()}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          {isVideo ? (
-                            <span className="rounded-full bg-sky-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-sky-200">VIDEO</span>
-                          ) : isImage ? (
-                            <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-200">IMAGE</span>
-                          ) : (
-                            <span className="rounded-full bg-slate-500/30 px-1.5 py-0.5 text-[9px] font-semibold text-slate-200">FILE</span>
-                          )}
-                          {isSelected ? (
-                            <span className="rounded-full bg-sky-500 px-1.5 py-0.5 text-[9px] font-semibold text-white">選択中</span>
-                          ) : null}
-                        </span>
-                      </div>
-                    </button>
-                    <div className="flex items-center justify-between gap-2 bg-gray-900/70 px-2 py-1.5 text-[11px] text-gray-300">
-                      <span className="truncate" title={filename}>{filename}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopyUrl(item)}
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 transition ${
-                          copiedUrl === item.url
-                            ? 'bg-sky-500 text-white'
-                            : 'bg-gray-700/80 text-gray-200 hover:bg-gray-600/80'
-                        }`}
-                      >
-                        <DocumentDuplicateIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>{copiedUrl === item.url ? 'コピーしました' : 'URLコピー'}</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
-
-          {isUploading ? (
-            <div className="absolute inset-x-0 bottom-4 flex justify-center">
-              <div className="rounded-full bg-sky-500/20 px-4 py-1 text-xs font-semibold text-sky-200">アップロード中...</div>
-            </div>
-          ) : null}
-        </div>
-
         {/* Footer */}
-        <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
+        <div className="flex flex-shrink-0 justify-end gap-3 border-t border-[#e2ebf6] p-3 sm:px-5">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-pure-white rounded hover:bg-gray-600 transition-colors text-sm font-light"
+            className="rounded-[10px] border border-[#e2ebf6] bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-[#bfe6fb] hover:text-[#0b1f3a]"
           >
             キャンセル
           </button>
           <button
             onClick={handleSelect}
             disabled={!selectedItem}
-            className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-[10px] px-5 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ background: GRAD_BRAND }}
           >
             選択
           </button>
