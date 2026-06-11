@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { GRAD_BRAND, HEAD_BG, pickThumbFallback } from "@/lib/momentum";
 import { salonPublicApi } from "@/lib/api";
 import type { SalonPublicListItem, SalonPublicListResult } from "@/types/api";
 
@@ -178,7 +179,17 @@ export default function AllSalonClient() {
 
   return (
     <DashboardLayout requireAuth={false} pageTitle={t("pageTitle")} pageSubtitle={t("pageSubtitle")}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 pb-16 pt-6 sm:px-6 lg:px-8">
+        {/* Navy hero — mock: D-Swipe Salon.html cover */}
+        <section
+          className="rounded-3xl px-6 py-7 sm:px-9 sm:py-8 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+          style={{ background: HEAD_BG }}
+        >
+          <div className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Membership</div>
+          <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white sm:text-[28px]">{t("pageTitle")}</h1>
+          <p className="mt-2 text-sm text-[#bcd3ee]">{t("pageSubtitle")}</p>
+        </section>
+
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <form className="grid gap-4 md:grid-cols-5" onSubmit={handleFilterSubmit}>
             <div className="md:col-span-2">
@@ -256,7 +267,8 @@ export default function AllSalonClient() {
             <div className="flex flex-col justify-end gap-2">
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-500"
+                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition-shadow hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)]"
+                style={{ background: GRAD_BRAND }}
               >
                 {t("filters.actions.apply")}
               </button>
@@ -298,7 +310,10 @@ export default function AllSalonClient() {
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-[10px] text-slate-400">
+                    <div
+                      className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-pure-white/80"
+                      style={{ background: pickThumbFallback(String(item.id)) }}
+                    >
                       {t("card.thumbnailFallback")}
                     </div>
                   )}
@@ -307,7 +322,10 @@ export default function AllSalonClient() {
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 md:text-xs">
                         {item.is_featured ? (
-                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 px-2 py-0.5 text-[10px] font-semibold text-white md:text-[11px]">
+                          <span
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold text-pure-white md:text-[11px]"
+                            style={{ background: GRAD_BRAND }}
+                          >
                             {t("card.featured")}
                           </span>
                         ) : null}
@@ -323,7 +341,7 @@ export default function AllSalonClient() {
                         {priceLabel(item)}
                       </span>
                     </div>
-                    <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 md:text-base">{item.title}</h3>
+                    <h3 className="line-clamp-2 text-sm font-bold text-[#0b1f3a] md:text-base">{item.title}</h3>
                     {item.description ? (
                       <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">{item.description}</p>
                     ) : (
