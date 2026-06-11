@@ -1,8 +1,9 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode, ChangeEvent, DragEvent } from 'react';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react';
+import Placeholder from '@tiptap/extension-placeholder';
 import type { ChainedCommands } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -23,7 +24,6 @@ import {
   MinusSmallIcon,
   PhotoIcon,
   PlusIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { BoldIcon, HeadingIcon, ItalicIcon, ListBulletIcon } from './icons/RichEditorIcons';
 import dynamic from 'next/dynamic';
@@ -141,11 +141,6 @@ interface NoteRichEditorProps {
   value: NoteRichContent | null;
   onChange: (next: NoteRichContent) => void;
   disabled?: boolean;
-  onSaveDraft?: () => void;
-  isSavingDraft?: boolean;
-  draftSaveDisabled?: boolean;
-  draftSaveLabel?: string;
-  draftSavingLabel?: string;
 }
 
 const DEFAULT_CONTENT: NoteRichContent = {
@@ -174,11 +169,6 @@ export default function NoteRichEditor({
   value,
   onChange,
   disabled = false,
-  onSaveDraft,
-  isSavingDraft = false,
-  draftSaveDisabled = false,
-  draftSaveLabel = '下書きを保存',
-  draftSavingLabel = '保存中…',
 }: NoteRichEditorProps) {
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
@@ -247,6 +237,11 @@ export default function NoteRichEditor({
         autolink: true,
         openOnClick: false,
         linkOnPaste: true,
+      }),
+      Placeholder.configure({
+        placeholder: '本文を書きましょう。空の行で「＋」からブロックを追加できます',
+        showOnlyWhenEditable: true,
+        showOnlyCurrent: true,
       }),
     ],
     content: value && value.type === 'doc' ? value : DEFAULT_CONTENT,
@@ -780,13 +775,6 @@ export default function NoteRichEditor({
     closeInsertMenu();
   };
 
-  const handleToolbarImage = useCallback(() => {
-    if (lastSelectionRef.current) {
-      storedSelectionRef.current = { ...lastSelectionRef.current };
-    }
-    setIsMediaOpen(true);
-  }, []);
-
   const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
     if (disabled) {
       return;
@@ -865,36 +853,64 @@ export default function NoteRichEditor({
     return null;
   }
 
+  const insertCodeBlock = () => {
+    if (!editor) return;
+    restoreSelection();
+    const chain = createChainWithSelection();
+    if (!chain) {
+      closeInsertMenu();
+      return;
+    }
+    chain.toggleCodeBlock().run();
+    const { from, to } = editor.state.selection;
+    editor.commands.setTextSelection({ from, to });
+    editor.commands.focus();
+    closeInsertMenu();
+  };
+
+  /* note.com の挿入メニュー構成に準拠 */
   const insertActions: InsertAction[] = [
     {
-      id: 'paragraph',
-      label: 'テキスト',
-      description: '通常の段落テキストを追加します',
-      icon: <span className="text-base font-semibold">T</span>,
-      handler: insertParagraph,
+      id: 'image',
+      label: '画像',
+      icon: <PhotoIcon className="h-5 w-5" />,
+      handler: () => {
+        setIsMediaOpen(true);
+        closeInsertMenu();
+      },
+    },
+    {
+      id: 'file',
+      label: isFileUploading ? 'アップロード中…' : 'ファイル',
+      icon: <DocumentArrowDownIcon className="h-5 w-5" />,
+      handler: () => {
+        if (!isFileUploading) {
+          handleInsertFile();
+        }
+      },
     },
     {
       id: 'heading2',
-      label: '大見出し (H2)',
-      icon: <HeadingIcon className="h-5 w-5" label="H2" />,
+      label: '大見出し',
+      icon: <span className="text-[12px] font-bold">h2</span>,
       handler: () => insertHeading(2),
     },
     {
       id: 'heading3',
-      label: '小見出し (H3)',
-      icon: <HeadingIcon className="h-5 w-5" label="H3" />,
+      label: '小見出し',
+      icon: <span className="text-[12px] font-bold">h3</span>,
       handler: () => insertHeading(3),
     },
     {
       id: 'bullet',
-      label: '箇条書き',
+      label: '箇条書きリスト',
       icon: <ListBulletIcon className="h-5 w-5" />,
       handler: insertBulletList,
     },
     {
       id: 'ordered',
       label: '番号付きリスト',
-      icon: <span className="text-base font-semibold">1.</span>,
+      icon: <span className="text-[12px] font-bold">1.</span>,
       handler: insertOrderedList,
     },
     {
@@ -902,6 +918,12 @@ export default function NoteRichEditor({
       label: '引用',
       icon: <Bars3BottomLeftIcon className="h-5 w-5" />,
       handler: insertQuote,
+    },
+    {
+      id: 'code',
+      label: 'コード',
+      icon: <span className="text-[12px] font-bold">{'<>'}</span>,
+      handler: insertCodeBlock,
     },
     {
       id: 'divider',
@@ -916,95 +938,193 @@ export default function NoteRichEditor({
       handler: handleInsertLink,
     },
     {
-      id: 'file',
-      label: isFileUploading ? 'アップロード中…' : 'ファイルをアップロード',
-      description: 'ローカルファイルをアップロードしてリンクを挿入します',
-      icon: <DocumentArrowDownIcon className="h-5 w-5" />,
-      handler: () => {
-        if (!isFileUploading) {
-          handleInsertFile();
-        }
-      },
-    },
-    {
-      id: 'image',
-      label: '画像',
-      icon: <PhotoIcon className="h-5 w-5" />,
-      handler: () => {
-        setIsMediaOpen(true);
-        closeInsertMenu();
-      },
-    },
-    {
       id: 'paid',
-      label: activeAccess === 'paid' ? '無料に戻す' : '有料エリアにする',
-      icon: <span className="text-sm font-semibold">￥</span>,
+      label: activeAccess === 'paid' ? '有料エリアを解除' : '有料エリア指定',
+      icon: <span className="text-sm font-bold">￥</span>,
       handler: togglePaidBlock,
+    },
+    {
+      id: 'paragraph',
+      label: 'テキストに戻す',
+      icon: <span className="text-base font-bold">T</span>,
+      handler: insertParagraph,
     },
   ];
 
+  /* BubbleMenu用: 選択範囲の有料/無料をその場で切替 */
+  const bubbleToggleAccess = () => {
+    if (!editor) return;
+    const next = extractAccessFromSelection(editor) === 'paid' ? 'public' : 'paid';
+    SUPPORTED_ACCESS_NODES.forEach((type) => {
+      if (editor.isActive(type)) {
+        editor.commands.updateAttributes(type, { access: next });
+      }
+    });
+    setActiveAccess(next);
+    updatePaidMarkers();
+  };
+
+  const bubbleButtonClass = (active: boolean) =>
+    `flex h-8 min-w-8 items-center justify-center rounded-[7px] px-1.5 text-[13px] font-bold transition ${
+      active ? 'bg-white/20 text-pure-white' : 'text-white/75 hover:bg-white/10 hover:text-pure-white'
+    }`;
+
   return (
-    <div className="relative mx-auto flex w-full max-w-full flex-col items-center gap-6 pb-4">
+    <div className="relative mx-auto flex w-full max-w-full flex-col items-center pb-4">
+      {/* note.com流: 枠のない白いキャンバスに直接書く */}
       <div className="w-full max-w-full px-0">
         <div
           ref={containerRef}
-          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] bg-white px-3 py-10 transition-shadow md:rounded-xl md:bg-white/90 md:px-6 md:shadow-sm md:ring-1 md:ring-slate-200 ${isDragOver ? 'ring-4 ring-sky-300 shadow-xl md:rounded-xl' : ''}`}
+          className={`relative mx-auto w-full max-w-[var(--note-rich-width)] bg-white px-1 pb-24 pt-1 transition-shadow ${isDragOver ? 'rounded-xl ring-2 ring-sky-300' : ''}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          aria-label="NOTEエディタ本文"
+          aria-label="記事本文"
           style={{
-            // note.com は約 720px 程度の本文幅
-            // tailwind でカスタム値を渡すため CSS 変数を使用
             ['--note-rich-width' as string]: `${CANVAS_MAX_WIDTH}px`,
           }}
         >
           {isDragOver ? (
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center border-2 border-dashed border-sky-400 bg-sky-50/90 text-center text-sm font-semibold text-sky-600 md:rounded-xl">
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-400 bg-sky-50/90 text-center text-sm font-semibold text-sky-600">
               <p>ここにファイルをドロップして追加</p>
               <p className="mt-1 text-xs font-medium text-sky-500">画像はそのまま挿入、その他のファイルはリンクとして追加されます</p>
             </div>
           ) : null}
+
+          {/* 空行の「＋」 — note.com流の控えめな白丸 */}
           {showInsertButton && !disabled ? (
+            <button
+              type="button"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (editor) {
+                  const { from, to } = editor.state.selection;
+                  storedSelectionRef.current = { from, to };
+                  editor.commands.focus();
+                }
+                openInsertMenu();
+              }}
+              className="absolute left-[-40px] z-20 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-400 shadow-sm transition hover:border-slate-400 hover:text-slate-600 max-md:left-[-6px] max-md:h-7 max-md:w-7"
+              style={{ top: insertButtonTop }}
+              aria-label="ブロックを挿入"
+            >
+              <PlusIcon className="h-5 w-5 max-md:h-4 max-md:w-4" />
+            </button>
+          ) : null}
+
+          {/* 挿入ポップオーバー(＋の横に出る) */}
+          {isInsertMenuOpen ? (
             <>
+              <div className="fixed inset-0 z-30" onMouseDown={closeInsertMenu} aria-hidden="true" />
               <div
-                className="absolute left-[-10px] flex h-8 w-1 items-center justify-center md:hidden"
-                style={{ top: insertButtonTop }}
-                aria-hidden="true"
+                className="absolute left-[4px] z-40 w-64 overflow-hidden rounded-xl border border-line-soft bg-white py-1.5 shadow-[0_24px_60px_-24px_rgba(11,31,58,.35)] md:left-[-6px]"
+                style={{ top: insertButtonTop + 44 }}
+                role="menu"
+                aria-label="挿入"
               >
-                <span className="block h-full w-full rounded-full bg-slate-300" />
+                <p className="px-3 pb-1 pt-1 text-[11px] font-bold text-slate-400">挿入</p>
+                <div className="max-h-[320px] overflow-y-auto">
+                  {insertActions.map((action) => (
+                    <button
+                      key={action.id}
+                      type="button"
+                      onClick={action.handler}
+                      className="flex w-full items-center gap-3 px-3 py-2 text-left text-[13.5px] font-semibold text-navy-900 transition hover:bg-canvas"
+                      role="menuitem"
+                    >
+                      <span className="flex h-6 w-6 items-center justify-center text-slate-500">{action.icon}</span>
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <button
-                type="button"
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  if (editor) {
-                    const { from, to } = editor.state.selection;
-                    storedSelectionRef.current = { from, to };
-                    editor.commands.focus();
-                  }
-                  openInsertMenu();
-                }}
-                className="absolute left-[-32px] hidden h-8 w-8 items-center justify-center rounded-full bg-sky-600 text-white shadow-md transition hover:bg-sky-500 md:flex md:left-[-48px] md:h-9 md:w-9"
-                style={{ top: insertButtonTop }}
-              >
-                <PlusIcon className="h-5 w-5" />
-              </button>
             </>
           ) : null}
 
+          {/* 有料境界 — note.com流の控えめなライン */}
           {hasPaidArea && paidMarkerTop !== null ? (
             <div
               ref={paidMarkerRef}
-              className="pointer-events-none absolute left-0 right-0 z-20 flex justify-center"
+              className="pointer-events-none absolute left-0 right-0 z-20 flex items-center gap-3 px-1"
               style={{ top: Math.max(paidMarkerTop, 8) }}
             >
-              <div className="flex items-center gap-2 rounded-full bg-amber-500 px-4 py-1 text-xs font-semibold text-white shadow-lg">
-                <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
-                <span>ここから有料エリア</span>
-              </div>
+              <span className="h-px flex-1 bg-amber-300/80" />
+              <span className="flex items-center gap-1.5 text-[11px] font-bold text-amber-600">
+                <LockClosedIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                ここから有料
+              </span>
+              <span className="h-px flex-1 bg-amber-300/80" />
             </div>
+          ) : null}
+
+          {/* 選択時だけ浮かぶツールバー(note.com流) */}
+          {editor && !disabled ? (
+            <BubbleMenu
+              editor={editor}
+              tippyOptions={{ duration: 120, placement: 'top' }}
+              className="flex items-center gap-0.5 rounded-[10px] bg-[#1f2c3d] p-1 shadow-[0_14px_40px_-14px_rgba(11,31,58,.6)]"
+            >
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                className={bubbleButtonClass(editor.isActive('bold'))}
+                title="太字"
+              >
+                <BoldIcon className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+                className={bubbleButtonClass(editor.isActive('italic'))}
+                title="斜体"
+              >
+                <ItalicIcon className="h-4 w-4" />
+              </button>
+              <span className="mx-0.5 h-5 w-px bg-white/15" aria-hidden="true" />
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                className={bubbleButtonClass(editor.isActive('heading', { level: 2 }))}
+                title="大見出し"
+              >
+                <span className="text-[12px]">大見出し</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                className={bubbleButtonClass(editor.isActive('heading', { level: 3 }))}
+                title="小見出し"
+              >
+                <span className="text-[12px]">小見出し</span>
+              </button>
+              <span className="mx-0.5 h-5 w-px bg-white/15" aria-hidden="true" />
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                className={bubbleButtonClass(editor.isActive('blockquote'))}
+                title="引用"
+              >
+                <Bars3BottomLeftIcon className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleInsertLink}
+                className={bubbleButtonClass(editor.isActive('link'))}
+                title="リンク"
+              >
+                <LinkIcon className="h-4 w-4" />
+              </button>
+              <span className="mx-0.5 h-5 w-px bg-white/15" aria-hidden="true" />
+              <button
+                type="button"
+                onClick={bubbleToggleAccess}
+                className={bubbleButtonClass(activeAccess === 'paid')}
+                title={activeAccess === 'paid' ? '無料に戻す' : '有料エリアにする'}
+              >
+                <span className="text-[12px]">{activeAccess === 'paid' ? '無料に戻す' : '有料'}</span>
+              </button>
+            </BubbleMenu>
           ) : null}
 
           <EditorContent
@@ -1014,94 +1134,9 @@ export default function NoteRichEditor({
         </div>
       </div>
 
-      {/* モバイル用フッターメニュー */}
-      <div className="w-full border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] pt-2 md:hidden">
-        <div className="mx-auto w-full max-w-[620px] overflow-x-auto px-3">
-          <div className="flex w-max items-center gap-2 pb-2 pr-4">
-            <ToolbarButtons
-              editor={editor}
-              disabled={disabled}
-              activeAccess={activeAccess}
-              onAccessChange={applyAccess}
-              onImage={handleToolbarImage}
-              onInsertMenu={openInsertMenu}
-              isUploading={isFileUploading}
-              createChain={createChainWithSelection}
-              onSaveDraft={onSaveDraft}
-              isSavingDraft={isSavingDraft}
-              draftSaveDisabled={draftSaveDisabled}
-              draftSaveLabel={draftSaveLabel}
-              draftSavingLabel={draftSavingLabel}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* デスクトップ用フッターメニュー */}
-      <div className="hidden w-full justify-center md:flex">
-        <div className="sticky bottom-6 z-30 w-full max-w-[780px] overflow-x-auto rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-md backdrop-blur">
-          <div className="flex w-max items-center gap-2 pr-4">
-            <ToolbarButtons
-              editor={editor}
-              disabled={disabled}
-              activeAccess={activeAccess}
-              onAccessChange={applyAccess}
-              onImage={handleToolbarImage}
-              onInsertMenu={openInsertMenu}
-              isUploading={isFileUploading}
-              createChain={createChainWithSelection}
-              onSaveDraft={onSaveDraft}
-              isSavingDraft={isSavingDraft}
-              draftSaveDisabled={draftSaveDisabled}
-              draftSaveLabel={draftSaveLabel}
-              draftSavingLabel={draftSavingLabel}
-            />
-          </div>
-        </div>
-      </div>
-
       {uploadNotice ? (
         <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-navy-900/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
           {uploadNotice}
-        </div>
-      ) : null}
-
-      {isInsertMenuOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-4 py-8">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-slate-900">ブロックを追加</p>
-                <p className="text-xs text-slate-500">追加したいコンテンツを選択してください</p>
-              </div>
-              <button
-                type="button"
-                onClick={closeInsertMenu}
-                className="rounded-full p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="flex max-h-[360px] flex-col gap-2 overflow-y-auto">
-              {insertActions.map((action) => (
-                <button
-                  key={action.id}
-                  type="button"
-                  onClick={action.handler}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left text-sm transition hover:border-sky-200 hover:bg-sky-50"
-                >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600">{action.icon}</span>
-                  <span className="flex-1 text-slate-700">
-                    <span className="block font-semibold">{action.label}</span>
-                    {action.description ? (
-                      <span className="block text-xs text-slate-500">{action.description}</span>
-                    ) : null}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       ) : null}
 
@@ -1123,8 +1158,34 @@ export default function NoteRichEditor({
 
       <style jsx global>{`
         .note-rich-editor .ProseMirror {
-          min-height: 420px;
+          min-height: 50vh;
           outline: none;
+        }
+
+        /* Placeholder(空行ガイド) — note.com流 */
+        .note-rich-editor .ProseMirror p.is-editor-empty:first-child::before,
+        .note-rich-editor .ProseMirror p.is-empty::before {
+          content: attr(data-placeholder);
+          float: left;
+          height: 0;
+          pointer-events: none;
+          color: #b6c2d1;
+        }
+
+        .note-rich-editor .ProseMirror pre {
+          background: #0f1b2d;
+          color: #e2e8f0;
+          border-radius: 10px;
+          padding: 1rem 1.25rem;
+          font-size: 0.875rem;
+          overflow-x: auto;
+          margin-bottom: 1.5rem;
+        }
+
+        .note-rich-editor .ProseMirror pre code {
+          background: none;
+          color: inherit;
+          padding: 0;
         }
 
         .note-rich-editor .ProseMirror:focus {
@@ -1226,220 +1287,5 @@ export default function NoteRichEditor({
         }
       `}</style>
     </div>
-  );
-}
-
-interface ToolbarButtonsProps {
-  editor: ReturnType<typeof useEditor> | null;
-  disabled: boolean;
-  activeAccess: AccessLevel;
-  onAccessChange: (level: AccessLevel) => void;
-  onImage: () => void;
-  onInsertMenu: () => void;
-  isUploading: boolean;
-  createChain: () => ChainedCommands | null;
-  onSaveDraft?: () => void;
-  isSavingDraft?: boolean;
-  draftSaveDisabled?: boolean;
-  draftSaveLabel?: string;
-  draftSavingLabel?: string;
-}
-
-function ToolbarButtons({
-  editor,
-  disabled,
-  activeAccess,
-  onAccessChange,
-  onImage,
-  onInsertMenu,
-  isUploading,
-  createChain,
-  onSaveDraft,
-  isSavingDraft = false,
-  draftSaveDisabled = false,
-  draftSaveLabel = '下書きを保存',
-  draftSavingLabel = '保存中…',
-}: ToolbarButtonsProps) {
-  if (!editor) {
-    return null;
-  }
-
-  return (
-    <Fragment>
-      {onSaveDraft ? (
-        <button
-          type="button"
-          onClick={onSaveDraft}
-          disabled={disabled || draftSaveDisabled || isSavingDraft}
-          className="inline-flex h-9 min-w-[100px] flex-shrink-0 items-center justify-center rounded-lg bg-sky-600 px-3 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isSavingDraft ? draftSavingLabel : draftSaveLabel}
-        </button>
-      ) : null}
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleBold().run();
-        }}
-        active={editor.isActive('bold')}
-        disabled={disabled}
-        label="太字"
-        icon={<BoldIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleItalic().run();
-        }}
-        active={editor.isActive('italic')}
-        disabled={disabled}
-        label="斜体"
-        icon={<ItalicIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleHeading({ level: 2 }).run();
-        }}
-        active={editor.isActive('heading', { level: 2 })}
-        disabled={disabled}
-        label="大見出し"
-        icon={<HeadingIcon className="h-5 w-5" label="H2" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleHeading({ level: 3 }).run();
-        }}
-        active={editor.isActive('heading', { level: 3 })}
-        disabled={disabled}
-        label="小見出し"
-        icon={<HeadingIcon className="h-5 w-5" label="H3" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleBulletList().run();
-        }}
-        active={editor.isActive('bulletList')}
-        disabled={disabled}
-        label="箇条書き"
-        icon={<ListBulletIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleOrderedList().run();
-        }}
-        active={editor.isActive('orderedList')}
-        disabled={disabled}
-        label="番号付き"
-        icon={<span className="text-sm font-semibold">1.</span>}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.toggleBlockquote().run();
-        }}
-        active={editor.isActive('blockquote')}
-        disabled={disabled}
-        label="引用"
-        icon={<Bars3BottomLeftIcon className="h-5 w-5" />}
-        activeClass="bg-slate-700 text-pure-white"
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.undo().run();
-        }}
-        disabled={disabled}
-        label="元に戻す"
-        icon={<span className="text-base font-semibold">↺</span>}
-      />
-      <ToolbarButton
-        onClick={() => {
-          const chain = createChain();
-          if (!chain) return;
-          chain.redo().run();
-        }}
-        disabled={disabled}
-        label="やり直す"
-        icon={<span className="text-base font-semibold">↻</span>}
-      />
-      <div className="ml-auto flex items-center gap-1">
-        <ToolbarButton
-          onClick={() => onAccessChange('public')}
-          active={activeAccess === 'public'}
-          disabled={disabled}
-          activeClass="bg-emerald-600 text-pure-white"
-          label="無料"
-        />
-        <ToolbarButton
-          onClick={() => onAccessChange('paid')}
-          active={activeAccess === 'paid'}
-          disabled={disabled}
-          activeClass="bg-amber-500 text-white"
-          label="有料"
-        />
-        <ToolbarButton
-          onClick={onImage}
-          disabled={disabled}
-          label="画像"
-          icon={<PhotoIcon className="h-5 w-5" />}
-        />
-        <ToolbarButton
-          onClick={onInsertMenu}
-          disabled={disabled || isUploading}
-          label={isUploading ? 'アップ中' : '追加'}
-          icon={<PlusIcon className="h-5 w-5" />}
-        />
-      </div>
-    </Fragment>
-  );
-}
-
-interface ToolbarButtonProps {
-  onClick: () => void;
-  active?: boolean;
-  disabled?: boolean;
-  activeClass?: string;
-  icon?: ReactNode;
-  label: string;
-  className?: string;
-}
-
-function ToolbarButton({ onClick, active = false, disabled = false, activeClass, icon, label, className }: ToolbarButtonProps) {
-  const baseColor = active ? (activeClass ?? 'bg-slate-700 text-pure-white') : 'bg-white text-slate-700 border border-slate-200';
-  
-  // If there's an icon, show icon only (note.com style)
-  // If no icon, show label text
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={label}
-      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-medium transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 ${baseColor} ${className ?? ''}`}
-    >
-      {icon ? (
-        <span className="leading-none">{icon}</span>
-      ) : (
-        <span className={`text-xs font-semibold ${active ? 'text-slate-900' : 'text-slate-700'}`}>{label}</span>
-      )}
-    </button>
   );
 }
