@@ -1,6 +1,24 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-10 / 作業ブランチ: `momentum-main`
+最終更新: 2026-06-11 / 作業ブランチ: `momentum-phase2`（phase1=momentum-main は main へマージ済 `ea22844`）
+
+## 0-b. Phase2（2026-06-11〜）— 残り画面のモック準拠化
+
+phase1マージ後、本番確認で「TOP以外ほぼ旧デザイン」との指摘 → 調査の結果デプロイは正常で、
+**深掘りリデザイン済みは8画面のみ**（残りは色置換+ネイビーサイドバーだけ）だったことが原因。
+`momentum-phase2` ブランチ（origin/main から分岐）で以下を実施・push済み:
+
+| コミット | 内容 |
+|---|---|
+| `0e1399d` | サロン全11ファイル: /salons・joined・all ヒーロー化、[id]/public をモック準拠(ダークメンバーシップカード)、管理サブナビsky化、bg-slate-900/bg-rose-600+text-white不可視バグ修正 |
+| `6f1247c` | messages/settings/note一覧/note記事ペイウォール/products manage/checkout quick ヒーロー+グラデCTA化。emerald-600+text-whiteバグ一掃(note/orders/subscription) |
+| `1c690d2` | lp/create ヒーロー化、LPエディタの green/red/slate-700+text-white 修正、AdminShell をネイビーサイドバー化(admin全7ページ波及)+admin系18箇所のtext-whiteバグ修正 |
+| `1b44f43` | dev環境修正: next.config.ts に turbopack.root 固定、i18n/routing.ts の createNavigation に defaultLocale 追加(devで全ページ500だった潜在バグ) |
+
+**教訓**: `.text-white` remapの補償リスト(globals.css ~L320-340)は blue/sky/cyan/特定500系/グラデのみ。
+**emerald-600・red-600・amber-600・green-600・slate-700/900 等は対象外**なので、これらの上の白文字は必ず `text-pure-white`。
+
+残り（任意）: /profile・/media・/u/[username]・points系のヒーロー化、Discover(未実装機能)、@themeトークン化等の負債(§7参照)。
 
 ---
 
