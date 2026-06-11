@@ -146,7 +146,7 @@ function FeatBullet({ icon: Icon, title, desc }: { icon: typeof BoltIcon; title:
         <Icon className="w-[17px] h-[17px]" />
       </span>
       <div>
-        <b className="text-[15px] text-[#0b1f3a]">{title}</b>
+        <b className="text-[15px] text-navy-900">{title}</b>
         <p className="text-[13px] text-slate-600 mt-0.5 leading-relaxed">{desc}</p>
       </div>
     </div>
@@ -155,7 +155,7 @@ function FeatBullet({ icon: Icon, title, desc }: { icon: typeof BoltIcon; title:
 
 function FeedTag({ icon: Icon, children }: { icon: typeof BoltIcon; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-[#e2ebf6] rounded-full px-3.5 py-1.5">
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-line-soft rounded-full px-3.5 py-1.5">
       <Icon className="w-3.5 h-3.5 text-sky-600" />
       {children}
     </span>
@@ -211,7 +211,7 @@ const PhoneDemo = memo(function PhoneDemo() {
                     <s className="text-sm font-semibold opacity-60 mr-2">¥29,800</s>¥9,800
                   </div>
                 )}
-                {p.cta && <div className="mt-3.5 text-center bg-white text-[#0b1f3a] font-extrabold text-[13px] py-[11px] rounded-xl">申し込む →</div>}
+                {p.cta && <div className="mt-3.5 text-center bg-white text-navy-900 font-extrabold text-[13px] py-[11px] rounded-xl">申し込む →</div>}
               </div>
             ))}
           </div>
@@ -272,7 +272,7 @@ export default function HomeSwiper() {
                 type="button"
                 onClick={() => goTo(l.slide)}
                 className={`text-[13.5px] font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
-                  activeIndex === l.slide ? 'text-pure-white bg-white/10' : 'text-[#9fb4d0] hover:text-pure-white hover:bg-white/10'
+                  activeIndex === l.slide ? 'text-pure-white bg-white/10' : 'text-on-navy-muted hover:text-pure-white hover:bg-white/10'
                 }`}
               >
                 {l.label}
@@ -338,7 +338,7 @@ export default function HomeSwiper() {
                     <span className="bg-gradient-to-r from-cyan-300 to-sky-400 bg-clip-text text-transparent">伝わる</span>。
                     <span className="bg-gradient-to-r from-cyan-300 to-sky-400 bg-clip-text text-transparent">つながる</span>。
                   </h1>
-                  <p className="text-[15.5px] leading-relaxed text-[#bcd3ee] mt-4 max-w-[48ch] mx-auto lg:mx-0">
+                  <p className="text-[15.5px] leading-relaxed text-on-navy mt-4 max-w-[48ch] mx-auto lg:mx-0">
                     誰でも気軽にスワイプ型LPを作って集客。さらに公開・発見・サロンまで。情報発信のすべてが、D-Swipe ひとつで完結します。
                   </p>
                   <div className="flex gap-3 flex-wrap justify-center lg:justify-start mt-7">
@@ -368,7 +368,7 @@ export default function HomeSwiper() {
               <div className="w-full max-w-[1120px] text-center">
                 <p className="text-[12.5px] font-bold tracking-[.14em] uppercase text-cyan-300">What is D-Swipe</p>
                 <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5">LPを作って終わり、じゃない。</h2>
-                <p className="text-[15.5px] leading-relaxed text-[#bcd3ee] mt-3.5 max-w-[54ch] mx-auto">
+                <p className="text-[15.5px] leading-relaxed text-on-navy mt-3.5 max-w-[54ch] mx-auto">
                   D-Swipe は「作る → 集める → 届ける → つながる → 稼ぐ」をひとつにした、スワイプ型のコンテンツ・プラットフォーム。LP作成ツールでありながら、note のような公開メディアでもあり、サロンの母艦にもなります。
                 </p>
                 <div className="flex gap-2 sm:gap-3 mt-8 justify-center flex-wrap items-stretch">
@@ -379,7 +379,7 @@ export default function HomeSwiper() {
                       </span>
                       <div className="text-[11px] font-extrabold tracking-[.12em] text-cyan-300 mt-3.5">{p.step}</div>
                       <b className="block text-[15px] text-pure-white mt-1.5">{p.title}</b>
-                      <p className="hidden sm:block text-[11.5px] text-[#9fb4d0] mt-1.5 leading-relaxed">{p.desc}</p>
+                      <p className="hidden sm:block text-[11.5px] text-on-navy-muted mt-1.5 leading-relaxed">{p.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -395,7 +395,7 @@ export default function HomeSwiper() {
               <div className="w-full max-w-[1120px] grid lg:grid-cols-2 gap-7 lg:gap-12 items-center">
                 <div>
                   <Kover icon={PencilSquareIcon}>作る · CREATE</Kover>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">
                     スワイプLPを、
                     <br />
                     ドラッグとAIで。
@@ -419,7 +419,7 @@ export default function HomeSwiper() {
                     ].map((t, i) => (
                       <div
                         key={i}
-                        className={`w-[46px] h-[92px] rounded-lg border border-[#e2ebf6] shadow-sm ${t.on ? 'outline outline-2 outline-sky-600' : ''}`}
+                        className={`w-[46px] h-[92px] rounded-lg border border-line-soft shadow-sm ${t.on ? 'outline outline-2 outline-sky-600' : ''}`}
                         style={{ background: t.bg }}
                       />
                     ))}
@@ -446,12 +446,12 @@ export default function HomeSwiper() {
 
         {/* 3 集める */}
         <SwiperSlide>
-          <div className="h-full w-full bg-[#f4f8fd] text-[#1f2c3d]">
+          <div className="h-full w-full bg-canvas text-[#1f2c3d]">
             <div className={SLIDE_INNER}>
               <div className="w-full max-w-[1120px] grid lg:grid-cols-2 gap-7 lg:gap-12 items-center">
                 <div>
                   <Kover icon={ChartBarIcon}>集める · GROW</Kover>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">
                     “なんとなく”を、
                     <br />
                     数字で終わらせる。
@@ -464,20 +464,20 @@ export default function HomeSwiper() {
                     <FeatBullet icon={ViewfinderCircleIcon} title="CTAクリック率" desc="最も効くオファー位置を発見できる。" />
                   </div>
                 </div>
-                <div className="hidden lg:block bg-white border border-[#e2ebf6] rounded-[28px] shadow-[0_2px_5px_rgba(11,31,58,.05),0_22px_44px_-24px_rgba(2,132,199,.34)] p-[22px]">
+                <div className="hidden lg:block bg-white border border-line-soft rounded-[28px] shadow-[0_2px_5px_rgba(11,31,58,.05),0_22px_44px_-24px_rgba(2,132,199,.34)] p-[22px]">
                   <div className="grid grid-cols-3 gap-2.5 mb-3.5">
                     {[
                       { l: '閲覧数', v: '24,180' },
                       { l: 'CTA率', v: '7.4%' },
                       { l: '売上', v: '182K P' },
                     ].map((k) => (
-                      <div key={k.l} className="bg-[#f4f8fd] border border-[#e2ebf6] rounded-xl p-3">
+                      <div key={k.l} className="bg-canvas border border-line-soft rounded-xl p-3">
                         <div className="text-[10.5px] font-semibold text-slate-500">{k.l}</div>
-                        <div className="text-xl font-extrabold text-[#0b1f3a] tracking-tight mt-0.5 tabular-nums">{k.v}</div>
+                        <div className="text-xl font-extrabold text-navy-900 tracking-tight mt-0.5 tabular-nums">{k.v}</div>
                       </div>
                     ))}
                   </div>
-                  <div className="h-[124px] flex items-end gap-2 p-2.5 bg-[#f4f8fd] border border-[#e2ebf6] rounded-xl">
+                  <div className="h-[124px] flex items-end gap-2 p-2.5 bg-canvas border border-line-soft rounded-xl">
                     {[46, 62, 54, 78, 70, 92, 84].map((h, i) => (
                       <div key={i} className="flex-1 rounded-t-[5px]" style={{ height: `${h}%`, background: GRAD_BRAND }} />
                     ))}
@@ -489,7 +489,7 @@ export default function HomeSwiper() {
                       公開中
                     </span>
                   </div>
-                  <div className="mt-2.5 h-2 rounded-full bg-[#e9f6fe] overflow-hidden">
+                  <div className="mt-2.5 h-2 rounded-full bg-brand-tint overflow-hidden">
                     <span className="block h-full rounded-full" style={{ width: '74%', background: GRAD_BRAND }} />
                   </div>
                 </div>
@@ -505,19 +505,19 @@ export default function HomeSwiper() {
               <div className="w-full max-w-[1120px]">
                 <div className="text-center">
                   <Kover icon={MapIcon}>届ける · PUBLISH</Kover>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">作ったLPが、見つかる場所。</h2>
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">作ったLPが、見つかる場所。</h2>
                   <p className="text-[15.5px] leading-relaxed text-slate-600 mt-3.5 max-w-[54ch] mx-auto">
                     D-Swipe は note のような公開メディア。あなたのLPは発見フィードに並び、フォロー・スキで広がります。クリエイターページ <b className="text-sky-600">/u/yourname</b> がそのまま“作品集”に。
                   </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3.5 mt-6">
                   {FEED_CARDS.map((c, i) => (
-                    <div key={c.title} className={`bg-white border border-[#e2ebf6] rounded-2xl overflow-hidden shadow-sm text-left ${i === 2 ? 'hidden sm:block' : ''}`}>
+                    <div key={c.title} className={`bg-white border border-line-soft rounded-2xl overflow-hidden shadow-sm text-left ${i === 2 ? 'hidden sm:block' : ''}`}>
                       <div className="h-[88px] relative" style={{ background: c.thumb }}>
                         <span className="absolute top-2 left-2 text-[10px] font-bold text-pure-white bg-[rgba(11,31,58,.5)] backdrop-blur-[4px] px-2 py-[3px] rounded-full">{c.tag}</span>
                       </div>
                       <div className="p-3">
-                        <div className="text-[13px] font-bold text-[#0b1f3a] leading-snug">{c.title}</div>
+                        <div className="text-[13px] font-bold text-navy-900 leading-snug">{c.title}</div>
                         <div className="flex items-center gap-[7px] mt-2.5">
                           <span className="w-[22px] h-[22px] rounded-full flex-shrink-0" style={{ background: c.avatar }} />
                           <span className="text-[11px] text-slate-500">{c.name}</span>
@@ -543,12 +543,12 @@ export default function HomeSwiper() {
 
         {/* 5 つながる */}
         <SwiperSlide>
-          <div className="h-full w-full bg-[#f4f8fd] text-[#1f2c3d]">
+          <div className="h-full w-full bg-canvas text-[#1f2c3d]">
             <div className={SLIDE_INNER}>
               <div className="w-full max-w-[1120px] grid lg:grid-cols-2 gap-7 lg:gap-12 items-center">
                 <div>
                   <Kover icon={UsersIcon}>つながる · COMMUNITY</Kover>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">
                     ファンと、
                     <br />
                     続く関係を。
@@ -570,7 +570,7 @@ export default function HomeSwiper() {
                     </div>
                     <div className="text-right">
                       <div className="text-3xl font-extrabold tracking-tight">
-                        ¥2,980<small className="text-[13px] text-[#9fb4d0] font-semibold">/月</small>
+                        ¥2,980<small className="text-[13px] text-on-navy-muted font-semibold">/月</small>
                       </div>
                     </div>
                   </div>
@@ -583,13 +583,13 @@ export default function HomeSwiper() {
                     ].map((m, i) => (
                       <span
                         key={m.t}
-                        className={`w-[34px] h-[34px] rounded-full border-2 border-[#0b1f3a] flex items-center justify-center text-xs font-bold text-[#042032] ${i > 0 ? '-ml-2' : ''}`}
+                        className={`w-[34px] h-[34px] rounded-full border-2 border-navy-900 flex items-center justify-center text-xs font-bold text-[#042032] ${i > 0 ? '-ml-2' : ''}`}
                         style={{ background: m.c }}
                       >
                         {m.t}
                       </span>
                     ))}
-                    <span className="ml-3 text-[12.5px] text-[#9fb4d0]">+ 248名が参加中</span>
+                    <span className="ml-3 text-[12.5px] text-on-navy-muted">+ 248名が参加中</span>
                   </div>
                   <ul className="relative z-[1] mt-4 mb-5 flex flex-col gap-2.5">
                     {['メンバー限定LP・テンプレ配布', '月2回のオンライン勉強会', '質問し放題のメンバーフィード'].map((perk) => (
@@ -615,17 +615,17 @@ export default function HomeSwiper() {
               <div className="w-full max-w-[1120px]">
                 <div className="text-center">
                   <Kover icon={ShoppingBagIcon}>稼ぐ · MONETIZE</Kover>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">売る。受け取る。ぜんぶ内側で。</h2>
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">売る。受け取る。ぜんぶ内側で。</h2>
                   <p className="text-[15.5px] leading-relaxed text-slate-600 mt-3.5 max-w-[54ch] mx-auto">
                     作ったLPから商品を販売し、マーケットにも掲載。決済はポイントベースでシンプル。販売・購入・売上集計までプラットフォーム内で完結します。
                   </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3.5 mt-6">
                   {MARKET_CARDS.map((c, i) => (
-                    <div key={c.name} className={`bg-white border border-[#e2ebf6] rounded-2xl shadow-sm overflow-hidden text-left ${i === 2 ? 'hidden sm:block' : ''}`}>
+                    <div key={c.name} className={`bg-white border border-line-soft rounded-2xl shadow-sm overflow-hidden text-left ${i === 2 ? 'hidden sm:block' : ''}`}>
                       <div className="h-[78px]" style={{ background: c.thumb }} />
                       <div className="p-[13px]">
-                        <div className="text-[13px] font-bold text-[#0b1f3a] leading-snug">{c.name}</div>
+                        <div className="text-[13px] font-bold text-navy-900 leading-snug">{c.name}</div>
                         <div className="flex items-center justify-between mt-2.5">
                           <span className="text-sm font-extrabold text-sky-600 tabular-nums">{c.price}</span>
                           <span className="text-[11px] font-bold text-pure-white rounded-lg px-2.5 py-[5px]" style={{ background: GRAD_BRAND }}>
@@ -648,12 +648,12 @@ export default function HomeSwiper() {
 
         {/* 7 PRICING */}
         <SwiperSlide>
-          <div className="h-full w-full bg-[#f4f8fd] text-[#1f2c3d]">
+          <div className="h-full w-full bg-canvas text-[#1f2c3d]">
             <div className={SLIDE_INNER}>
               <div className="w-full max-w-[1120px]">
                 <div className="text-center">
                   <p className="text-[12.5px] font-bold tracking-[.14em] uppercase text-sky-600">Pricing</p>
-                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-[#0b1f3a]">まずは無料。伸びたら、ポイントで。</h2>
+                  <h2 className="text-[27px] sm:text-4xl font-extrabold tracking-tight leading-tight mt-3.5 text-navy-900">まずは無料。伸びたら、ポイントで。</h2>
                 </div>
                 <div className="grid sm:grid-cols-3 gap-4 mt-7">
                   {[
@@ -693,7 +693,7 @@ export default function HomeSwiper() {
                       className={`relative bg-white rounded-2xl p-6 flex-col ${
                         p.feature
                           ? 'flex border-[1.5px] border-sky-600 shadow-[0_2px_5px_rgba(11,31,58,.05),0_22px_44px_-24px_rgba(2,132,199,.34)]'
-                          : 'hidden sm:flex border border-[#e2ebf6] shadow-sm'
+                          : 'hidden sm:flex border border-line-soft shadow-sm'
                       }`}
                     >
                       {p.feature && (
@@ -701,8 +701,8 @@ export default function HomeSwiper() {
                           人気
                         </span>
                       )}
-                      <div className="text-[15px] font-bold text-[#0b1f3a]">{p.name}</div>
-                      <div className="mt-3 text-[32px] font-extrabold text-[#0b1f3a] tracking-tight">
+                      <div className="text-[15px] font-bold text-navy-900">{p.name}</div>
+                      <div className="mt-3 text-[32px] font-extrabold text-navy-900 tracking-tight">
                         {p.price}
                         {p.unit && <small className="text-sm font-semibold text-slate-500">{p.unit}</small>}
                       </div>
@@ -722,7 +722,7 @@ export default function HomeSwiper() {
                       ) : (
                         <Link
                           href={p.href}
-                          className="inline-flex items-center justify-center w-full rounded-xl font-bold text-sm px-5 py-3 bg-white text-[#0b1f3a] border border-[#e2ebf6] hover:bg-slate-50 transition-colors"
+                          className="inline-flex items-center justify-center w-full rounded-xl font-bold text-sm px-5 py-3 bg-white text-navy-900 border border-line-soft hover:bg-slate-50 transition-colors"
                         >
                           {p.cta}
                         </Link>
@@ -746,7 +746,7 @@ export default function HomeSwiper() {
                   <br />
                   ひとつの場所に。
                 </h2>
-                <p className="text-[15.5px] leading-relaxed text-[#bcd3ee] mt-3.5 max-w-[54ch] mx-auto">
+                <p className="text-[15.5px] leading-relaxed text-on-navy mt-3.5 max-w-[54ch] mx-auto">
                   作って、集めて、届けて、つながって、稼ぐ。D-Swipe で、今すぐ無料で始めましょう。
                 </p>
                 <div className="mt-7 flex gap-3 justify-center flex-wrap">
@@ -778,7 +778,7 @@ export default function HomeSwiper() {
         <div className="max-w-[1120px] mx-auto flex items-center justify-between gap-4 px-5 sm:px-6 py-[11px]">
           <div>
             <strong className="block text-pure-white text-[14.5px] font-bold tracking-tight">作る・届ける・つながる。ぜんぶ無料で始められる</strong>
-            <span className="hidden sm:inline-block text-[#9fb4d0] text-xs mt-0.5">
+            <span className="hidden sm:inline-block text-on-navy-muted text-xs mt-0.5">
               <b className="text-cyan-300">3分</b>で公開 · クレジットカード不要 · LP作成は無制限
             </span>
           </div>

@@ -279,11 +279,11 @@ const NAVY_DESKTOP_NAV: DashboardNavStyleSet = {
 // (white card + sky accent; active = navy). text-pure-white is required on
 // navy because globals.css remaps .text-slate-900 to a dark color.
 const MOMENTUM_MOBILE_NAV: DashboardNavStyleSet = {
-  base: 'bg-white text-slate-700 border border-[#e2ebf6] hover:border-[#bfe6fb] hover:bg-sky-50',
-  active: 'bg-[#0b1f3a] text-pure-white shadow-sm',
+  base: 'bg-white text-slate-700 border border-line-soft hover:border-tint-border hover:bg-sky-50',
+  active: 'bg-navy-900 text-pure-white shadow-sm',
   icon: 'text-sky-600',
   iconActive: 'text-[var(--brand-cyan)]',
-  badge: 'bg-[#e9f6fe] text-sky-700',
+  badge: 'bg-brand-tint text-sky-700',
   badgeActive: 'bg-white/15 text-pure-white',
 };
 

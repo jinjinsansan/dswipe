@@ -1061,7 +1061,7 @@ export default function NoteRichEditor({
       </div>
 
       {uploadNotice ? (
-        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-[#0b1f3a]/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
+        <div className="pointer-events-none fixed bottom-24 left-1/2 z-40 w-[min(90vw,320px)] -translate-x-1/2 rounded-full bg-navy-900/90 px-4 py-2 text-center text-xs font-semibold text-pure-white shadow-lg md:bottom-10">
           {uploadNotice}
         </div>
       ) : null}

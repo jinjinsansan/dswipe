@@ -199,7 +199,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
             <div className="min-w-0">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-300">Block Library</p>
               <h2 className="mt-1 text-lg sm:text-xl font-extrabold tracking-tight text-pure-white truncate">ブロックを選んで、自由に組む。</h2>
-              <p className="text-xs text-[#bcd3ee] mt-1 hidden sm:block">種類×レイアウト変種で、どんな目的のスワイプLPも。タップで追加してエディタへ。</p>
+              <p className="text-xs text-on-navy mt-1 hidden sm:block">種類×レイアウト変種で、どんな目的のスワイプLPも。タップで追加してエディタへ。</p>
             </div>
             <button
               onClick={onClose}
@@ -213,12 +213,12 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           {/* Search bar */}
           <div className="px-4 sm:px-6 py-3">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-[#9fb4d0]" aria-hidden="true" />
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-on-navy-muted" aria-hidden="true" />
               <input
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="ブロックを検索 (キーワード/用途)"
-                className="w-full rounded-xl border border-white/20 bg-white/10 pl-9 pr-3 py-2 text-sm text-pure-white placeholder:text-[#9fb4d0] focus:border-cyan-300/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
+                className="w-full rounded-xl border border-white/20 bg-white/10 pl-9 pr-3 py-2 text-sm text-pure-white placeholder:text-on-navy-muted focus:border-cyan-300/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
                 aria-label="ブロック検索"
               />
             </div>
@@ -226,7 +226,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         </div>
 
         {/* Category filter chips — mock: .fchip */}
-        <div className="flex-shrink-0 border-b border-[#e2ebf6] bg-[#f4f8fd] px-4 sm:px-6 py-3">
+        <div className="flex-shrink-0 border-b border-line-soft bg-canvas px-4 sm:px-6 py-3">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <FunnelIcon className="h-4 w-4 shrink-0 text-slate-600" aria-hidden="true" />
             {categoryOptions.map((category) => {
@@ -238,8 +238,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                   onClick={() => setSelectedCategory(category.id as typeof selectedCategory)}
                   className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
                     isActive
-                      ? 'border-[#bfe6fb] bg-[#e9f6fe] text-sky-600'
-                      : 'border-[#e2ebf6] bg-white text-slate-600 hover:border-[#bfe6fb] hover:text-[#0b1f3a]'
+                      ? 'border-tint-border bg-brand-tint text-sky-600'
+                      : 'border-line-soft bg-white text-slate-600 hover:border-tint-border hover:text-navy-900'
                   }`}
                 >
                   {category.name}
@@ -250,7 +250,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         </div>
 
         {/* Content - Scrollable */}
-        <div className="relative flex-1 overflow-y-auto min-h-0 bg-[#f4f8fd] px-3 sm:px-6 py-4 sm:py-5">
+        <div className="relative flex-1 overflow-y-auto min-h-0 bg-canvas px-3 sm:px-6 py-4 sm:py-5">
 
           {templates.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center gap-3 text-center text-slate-600">
@@ -260,7 +260,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
           ) : (
             <>
               {filteredGroups.length === 0 ? (
-                <div className="mt-6 rounded-2xl border border-dashed border-[#bfe6fb] bg-white p-10 text-center text-sm text-slate-600">
+                <div className="mt-6 rounded-2xl border border-dashed border-tint-border bg-white p-10 text-center text-sm text-slate-600">
                   条件に一致するブロックが見つかりませんでした。検索ワードやカテゴリを変更してみてください。
                 </div>
               ) : (
@@ -277,7 +277,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                     return (
                       <div
                         key={group.templateId}
-                        className="group relative overflow-hidden rounded-2xl border border-[#e2ebf6] bg-white shadow-sm transition hover:-translate-y-[2px] hover:border-[#bfe6fb] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
+                        className="group relative overflow-hidden rounded-2xl border border-line-soft bg-white shadow-sm transition hover:-translate-y-[2px] hover:border-tint-border hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]"
                       >
                         {/* Color preview — mock: .btile .pp */}
                         <div
@@ -297,13 +297,13 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                         <div className="px-4 py-3 sm:px-5 sm:py-4">
                           <div className="relative flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3">
-                              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#bfe6fb] bg-[#e9f6fe] text-sky-600">
+                              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-tint-border bg-brand-tint text-sky-600">
                                 {categoryMeta.icon}
                               </span>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-sm font-bold text-[#0b1f3a]">{group.displayName}</span>
-                                  <span className="rounded-full bg-[#e9f6fe] px-2.5 py-0.5 text-[11px] font-semibold text-sky-600">
+                                  <span className="text-sm font-bold text-navy-900">{group.displayName}</span>
+                                  <span className="rounded-full bg-brand-tint px-2.5 py-0.5 text-[11px] font-semibold text-sky-600">
                                     {categoryMeta.name}
                                   </span>
                                 </div>
@@ -324,7 +324,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                                     className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition ${
                                       isActive
                                         ? 'border-sky-600 bg-sky-600 text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]'
-                                        : 'border-[#e2ebf6] bg-white text-slate-600 hover:border-[#bfe6fb] hover:text-[#0b1f3a]'
+                                        : 'border-line-soft bg-white text-slate-600 hover:border-tint-border hover:text-navy-900'
                                     }`}
                                   >
                                     {variant.name.replace(group.displayName, '').replace(/[（）]/g, '').trim() || '基本'}
@@ -342,7 +342,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
                             {/* Add — mock: .btile .badd */}
                             <button
                               onClick={() => handleAddTemplate(group)}
-                              className="mt-1 w-full rounded-[9px] border border-[#bfe6fb] bg-[#e9f6fe] py-1.5 text-xs font-bold text-sky-600 transition hover:bg-[#dbf0fd]"
+                              className="mt-1 w-full rounded-[9px] border border-tint-border bg-brand-tint py-1.5 text-xs font-bold text-sky-600 transition hover:bg-[#dbf0fd]"
                             >
                               このブロックを追加
                             </button>
@@ -358,8 +358,8 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
         </div>
 
         {/* Footer */}
-        <div className="relative border-t border-[#e2ebf6] bg-white px-3 sm:px-6 py-2 sm:py-3 text-center text-[10px] sm:text-xs text-slate-500 flex-shrink-0">
-          <span className="font-bold text-[#0b1f3a]">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
+        <div className="relative border-t border-line-soft bg-white px-3 sm:px-6 py-2 sm:py-3 text-center text-[10px] sm:text-xs text-slate-500 flex-shrink-0">
+          <span className="font-bold text-navy-900">ヒント:</span> <span className="hidden sm:inline">追加後はプロパティパネルで色やコンテンツを自由に編集できます。</span><span className="sm:hidden">追加後に編集できます</span>
         </div>
       </div>
     </div>

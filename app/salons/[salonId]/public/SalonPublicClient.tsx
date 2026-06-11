@@ -179,12 +179,12 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f4f8fd] px-4 py-16">
+      <div className="flex min-h-screen items-center justify-center bg-canvas px-4 py-16">
         <div className="max-w-md rounded-3xl border border-rose-200/40 bg-white/95 px-6 py-8 text-center shadow-lg">
           <h1 className="text-lg font-semibold text-rose-600">サロンが見つかりません</h1>
           <p className="mt-2 text-sm text-slate-600">{error}</p>
           <Link
-            href="/" className="mt-6 inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-semibold text-pure-white transition hover:bg-[#122c4d]"
+            href="/" className="mt-6 inline-flex items-center justify-center rounded-full bg-navy-900 px-6 py-2 text-sm font-semibold text-pure-white transition hover:bg-navy-800"
           >
             トップに戻る
           </Link>
@@ -198,7 +198,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f8fd]">
+    <div className="min-h-screen bg-canvas">
       {/* Navy cover — mock: D-Swipe Salon.html .cover */}
       <header style={{ background: HEAD_BG }}>
         <div className="mx-auto flex max-w-5xl flex-col justify-center gap-2 px-4 py-12 sm:px-6 lg:px-8">
@@ -237,7 +237,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
               </div>
             )}
             <div className="space-y-4 px-6 py-6">
-              <h2 className="text-lg font-bold text-[#0b1f3a]">サロンについて</h2>
+              <h2 className="text-lg font-bold text-navy-900">サロンについて</h2>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
                 {salon.description || "サロンの詳細情報は現在準備中です。"}
               </p>
@@ -253,15 +253,15 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">MEMBERSHIP</p>
               <p className="text-3xl font-extrabold tracking-tight text-pure-white">{priceLabelPoints}</p>
               {priceLabelYen ? (
-                <p className="text-sm text-[#9fb4d0]">{priceLabelYen}（クレジットカード決済）</p>
+                <p className="text-sm text-on-navy-muted">{priceLabelYen}（クレジットカード決済）</p>
               ) : null}
               {isIntroOffer ? (
                 <p className="text-xs font-bold text-emerald-300">初月無料（カード登録のみで完了します）</p>
               ) : null}
-              <p className="text-xs text-[#9fb4d0]">※ 決済はサロン運営のメンバーシップとして行われます</p>
+              <p className="text-xs text-on-navy-muted">※ 決済はサロン運営のメンバーシップとして行われます</p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-[#bcd3ee]">
+            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-on-navy">
               サロン加入中の方はコミュニティに直接アクセスできます。
             </div>
 
@@ -316,12 +316,12 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
                   ) : null}
 
                   {!salon.allow_point_subscription && !salon.allow_jpy_subscription ? (
-                    <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-[#bcd3ee]">
+                    <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-xs text-on-navy">
                       現在申し込み可能な決済方法が設定されていません。
                     </div>
                   ) : null}
 
-                  <div className="space-y-1 text-[11px] leading-relaxed text-[#9fb4d0] text-center">
+                  <div className="space-y-1 text-[11px] leading-relaxed text-on-navy-muted text-center">
                     {isIntroOffer ? (
                       <p>初月は無料です。解約しない限り、翌月以降は通常料金が自動で請求されます。</p>
                     ) : null}

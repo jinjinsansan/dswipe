@@ -200,7 +200,7 @@ export default function NoteDashboardPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Notes</p>
             <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">コラム編集</h1>
-            <p className="mt-1 text-xs text-[#bcd3ee]">最終更新: {lastUpdatedAt}</p>
+            <p className="mt-1 text-xs text-on-navy">最終更新: {lastUpdatedAt}</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -227,7 +227,7 @@ export default function NoteDashboardPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">全記事</p>
-            <p className="mt-2 text-2xl font-extrabold text-[#0b1f3a]">{stats.total}</p>
+            <p className="mt-2 text-2xl font-extrabold text-navy-900">{stats.total}</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">公開中</p>
@@ -235,7 +235,7 @@ export default function NoteDashboardPage() {
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">下書き</p>
-            <p className="mt-2 text-2xl font-extrabold text-[#0b1f3a]">{stats.draft}</p>
+            <p className="mt-2 text-2xl font-extrabold text-navy-900">{stats.draft}</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600">有料記事</p>

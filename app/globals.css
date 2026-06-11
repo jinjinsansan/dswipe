@@ -55,6 +55,18 @@
   --color-background: var(--color-surface-base);
   --color-foreground: #0f172a;
   --font-sans: var(--font-body);
+
+  /* Momentum トークン（Phase10）— hexリテラル直書きの置き換え先。
+     例: text-navy-900 / bg-surface-tint / border-line-soft */
+  --color-navy-900: #0b1f3a;   /* ネイビーchrome・見出しインク */
+  --color-navy-800: #122c4d;
+  --color-ink-soft: #33465e;   /* ソフトな本文インク */
+  --color-canvas: #f4f8fd;     /* アプリ背景 */
+  --color-line-soft: #e2ebf6;  /* 罫線 */
+  --color-tint-border: #bfe6fb;/* ブランドティントの枠線 */
+  --color-brand-tint: #e9f6fe; /* ブランドの薄塗り面（既存 --color-surface-tint=白 と区別） */
+  --color-on-navy: #bcd3ee;    /* ネイビー上のサブテキスト */
+  --color-on-navy-muted: #9fb4d0;
 }
 
 body {

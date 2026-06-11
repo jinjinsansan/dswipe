@@ -271,7 +271,7 @@ export default function PointHistoryPage() {
             >
               <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Points</p>
               <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t('pageTitle')}</h1>
-              <p className="mt-1 text-sm text-[#bcd3ee]">{pageSubtitle}</p>
+              <p className="mt-1 text-sm text-on-navy">{pageSubtitle}</p>
             </div>
 
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

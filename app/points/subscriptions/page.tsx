@@ -341,7 +341,7 @@ function SubscriptionPageContent() {
         >
           <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Membership</p>
           <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t('pageTitle')}</h1>
-          <p className="mt-1 text-sm text-[#bcd3ee]">{t('pageSubtitle')}</p>
+          <p className="mt-1 text-sm text-on-navy">{t('pageSubtitle')}</p>
         </div>
 
         {errorMessage && (

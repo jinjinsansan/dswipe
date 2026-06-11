@@ -268,25 +268,25 @@ export default function SalonFeedPage() {
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <Link
             href={`/salons/${salonId}/events`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             イベント管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/announcements`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             お知らせ管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/roles`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             ロール管理へ
           </Link>
           <Link
             href={`/salons/${salonId}/assets`}
-            className="inline-flex items-center gap-2 rounded-full border border-[#bfe6fb] bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-[#e9f6fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-tint-border bg-white px-3 py-1.5 font-semibold text-sky-700 hover:bg-brand-tint"
           >
             アセットライブラリへ
           </Link>

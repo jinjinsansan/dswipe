@@ -259,7 +259,7 @@ export default function MediaPage() {
         >
           <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Media</p>
           <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">{t("title")}</h1>
-          <p className="mt-1 text-sm text-[#bcd3ee]">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-on-navy">{t("subtitle")}</p>
         </div>
 
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">

@@ -191,7 +191,7 @@ export default function ProfilePage() {
         >
           <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Account</p>
           <h2 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white">{t('sections.account.heading')}</h2>
-          <p className="mt-2 text-sm text-[#bcd3ee]">
+          <p className="mt-2 text-sm text-on-navy">
             {t('sections.account.description')}
           </p>
         </section>

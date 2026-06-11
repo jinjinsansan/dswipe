@@ -229,7 +229,7 @@ export default function CreateLPPage() {
             <DocumentIcon className="h-6 w-6" aria-hidden="true" />
           </div>
           <h1 className="text-[26px] font-extrabold tracking-tight text-pure-white mb-2">新規LP作成</h1>
-          <p className="text-sm text-[#bcd3ee]">基本情報を入力してLPを作成します</p>
+          <p className="text-sm text-on-navy">基本情報を入力してLPを作成します</p>
         </div>
 
         {/* 完成テンプレートから作る — mock: D-Swipe Templates.html */}
@@ -237,14 +237,14 @@ export default function CreateLPPage() {
           <div className="mb-3 flex items-end justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-sky-600">Templates</p>
-              <h2 className="text-lg font-extrabold tracking-tight text-[#0b1f3a]">完成テンプレートから作る</h2>
+              <h2 className="text-lg font-extrabold tracking-tight text-navy-900">完成テンプレートから作る</h2>
               <p className="mt-1 text-xs text-slate-500">選んで作成すると、完成形のスワイプLP一式（5〜6枚）が入った状態でエディタが開きます。</p>
             </div>
             {selectedPreset ? (
               <button
                 type="button"
                 onClick={() => setSelectedPreset(null)}
-                className="shrink-0 text-xs font-semibold text-slate-500 hover:text-[#0b1f3a]"
+                className="shrink-0 text-xs font-semibold text-slate-500 hover:text-navy-900"
               >
                 選択を解除
               </button>
@@ -259,7 +259,7 @@ export default function CreateLPPage() {
                   type="button"
                   onClick={() => setSelectedPreset(isSelected ? null : preset.key)}
                   className={`group relative flex flex-col overflow-hidden rounded-2xl border text-left shadow-sm transition hover:-translate-y-[2px] hover:shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)] ${
-                    isSelected ? 'border-sky-600 ring-2 ring-sky-600/25' : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
+                    isSelected ? 'border-sky-600 ring-2 ring-sky-600/25' : 'border-line-soft bg-white hover:border-tint-border'
                   }`}
                 >
                   {isSelected ? (
@@ -268,7 +268,7 @@ export default function CreateLPPage() {
                     </span>
                   ) : null}
                   {/* ミニプレビュー: スライドの背景色を縦に積む */}
-                  <div className="flex justify-center bg-[#f4f8fd] px-4 pt-4">
+                  <div className="flex justify-center bg-canvas px-4 pt-4">
                     <div className="h-[104px] w-[56px] overflow-hidden rounded-[10px] bg-[#0b1220] p-[3px] shadow-[0_14px_30px_-16px_rgba(11,31,58,.6)]">
                       <div className="flex h-full w-full flex-col overflow-hidden rounded-[8px]">
                         {preset.blocks.map((block, blockIndex) => (
@@ -286,7 +286,7 @@ export default function CreateLPPage() {
                   </div>
                   <div className="flex flex-1 flex-col gap-0.5 px-3 pb-3 pt-2.5">
                     <span className="text-[10.5px] font-bold tracking-[0.04em] text-sky-600">{preset.category}</span>
-                    <span className="text-[13.5px] font-bold text-[#0b1f3a]">{preset.name}</span>
+                    <span className="text-[13.5px] font-bold text-navy-900">{preset.name}</span>
                     <span className="flex-1 text-[11px] leading-relaxed text-slate-500">{preset.description}</span>
                     <span className="mt-1 text-[10.5px] font-semibold text-slate-600">{preset.priceLabel}</span>
                   </div>

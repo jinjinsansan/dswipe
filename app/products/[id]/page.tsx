@@ -176,14 +176,14 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-[#f4f8fd] text-slate-700">
+      <div className="min-h-screen bg-canvas text-slate-700">
         <StickySiteHeader showDashboardLink />
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-16">
-          <div className="text-center bg-white border border-[#e2ebf6] rounded-2xl shadow-sm px-10 py-12">
+          <div className="text-center bg-white border border-line-soft rounded-2xl shadow-sm px-10 py-12">
             <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">
               <ArchiveBoxIcon className="h-8 w-8" aria-hidden="true" />
             </div>
-            <p className="mb-4 text-lg font-semibold text-[#0b1f3a]">商品が見つかりませんでした</p>
+            <p className="mb-4 text-lg font-semibold text-navy-900">商品が見つかりませんでした</p>
             <Link href="/products" className="text-sky-600 font-semibold transition-colors hover:text-sky-500">
               マーケットに戻る
             </Link>
@@ -205,7 +205,7 @@ export default function ProductDetailPage() {
   const lpSlug = typeof product.lp_slug === 'string' && product.lp_slug ? product.lp_slug : null;
 
   return (
-    <div className="min-h-screen bg-[#f4f8fd] text-slate-700">
+    <div className="min-h-screen bg-canvas text-slate-700">
       <StickySiteHeader showDashboardLink />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -252,7 +252,7 @@ export default function ProductDetailPage() {
             {product.seller_username ? (
               <Link
                 href={`/u/${product.seller_username}`}
-                className="inline-flex items-center gap-[9px] py-1.5 pl-1.5 pr-3 border border-[#e2ebf6] rounded-full bg-white hover:border-[#bfe6fb] transition-colors"
+                className="inline-flex items-center gap-[9px] py-1.5 pl-1.5 pr-3 border border-line-soft rounded-full bg-white hover:border-tint-border transition-colors"
               >
                 <span
                   className="w-[30px] h-[30px] rounded-full flex items-center justify-center font-extrabold text-[13px] text-[#042032]"
@@ -260,14 +260,14 @@ export default function ProductDetailPage() {
                 >
                   {sellerInitial}
                 </span>
-                <span className="text-[13px] font-bold text-[#0b1f3a] leading-tight">
+                <span className="text-[13px] font-bold text-navy-900 leading-tight">
                   @{product.seller_username}
                   <small className="block font-medium text-slate-500 text-[11px]">クリエイター</small>
                 </span>
               </Link>
             ) : null}
 
-            <h1 className="text-2xl sm:text-[30px] font-extrabold tracking-tight text-[#0b1f3a] leading-tight mt-4">
+            <h1 className="text-2xl sm:text-[30px] font-extrabold tracking-tight text-navy-900 leading-tight mt-4">
               {product.title}
             </h1>
 
@@ -281,16 +281,16 @@ export default function ProductDetailPage() {
             <div className="flex items-center gap-[22px] mt-5 text-[13.5px] text-slate-600">
               <span className="inline-flex items-center gap-2">
                 <FireIcon className="w-[18px] h-[18px] text-amber-500" aria-hidden="true" />
-                <span><b className="text-[#0b1f3a] tabular-nums">{product.total_sales || 0}</b> 件販売</span>
+                <span><b className="text-navy-900 tabular-nums">{product.total_sales || 0}</b> 件販売</span>
               </span>
               <span className="inline-flex items-center gap-2">
                 <CubeTransparentIcon className="w-[18px] h-[18px]" aria-hidden="true" />
-                <span>在庫: <b className="text-[#0b1f3a] tabular-nums">{stockQuantity ?? '無制限'}</b></span>
+                <span>在庫: <b className="text-navy-900 tabular-nums">{stockQuantity ?? '無制限'}</b></span>
               </span>
             </div>
 
             {/* Buy box */}
-            <div className="bg-white border border-[#e2ebf6] rounded-[20px] shadow-[0_2px_5px_rgba(11,31,58,.05),0_12px_24px_-14px_rgba(11,31,58,.22)] p-[22px] mt-[22px]">
+            <div className="bg-white border border-line-soft rounded-[20px] shadow-[0_2px_5px_rgba(11,31,58,.05),0_12px_24px_-14px_rgba(11,31,58,.22)] p-[22px] mt-[22px]">
               <div className="text-[12.5px] font-semibold text-slate-500 mb-3">決済方法</div>
 
               {canPurchase ? (
@@ -301,8 +301,8 @@ export default function ProductDetailPage() {
                       onClick={() => setSelectedMethod('points')}
                       className={`rounded-xl border px-4 py-3 text-left transition-colors ${
                         isPointsSelected
-                          ? 'border-sky-600 bg-[#e9f6fe]'
-                          : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
+                          ? 'border-sky-600 bg-brand-tint'
+                          : 'border-line-soft bg-white hover:border-tint-border'
                       }`}
                     >
                       <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">ポイント決済</div>
@@ -320,7 +320,7 @@ export default function ProductDetailPage() {
                       className={`rounded-xl border px-4 py-3 text-left transition-colors ${
                         !isPointsSelected
                           ? 'border-emerald-500 bg-emerald-50'
-                          : 'border-[#e2ebf6] bg-white hover:border-emerald-200'
+                          : 'border-line-soft bg-white hover:border-emerald-200'
                       }`}
                     >
                       <div className="text-xs uppercase tracking-wide text-slate-500 font-semibold">日本円決済</div>
@@ -343,11 +343,11 @@ export default function ProductDetailPage() {
                 <>
                   <div className="flex items-center justify-between">
                     <span className="text-[13.5px] text-slate-600">数量</span>
-                    <div className="inline-flex items-center border border-[#e2ebf6] rounded-[11px] overflow-hidden">
+                    <div className="inline-flex items-center border border-line-soft rounded-[11px] overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-[38px] h-[38px] bg-[#f8fafc] text-[#0b1f3a] text-lg hover:bg-[#e9f6fe] hover:text-sky-600 transition-colors"
+                        className="w-[38px] h-[38px] bg-[#f8fafc] text-navy-900 text-lg hover:bg-brand-tint hover:text-sky-600 transition-colors"
                       >
                         −
                       </button>
@@ -366,7 +366,7 @@ export default function ProductDetailPage() {
                             setQuantity(nextValue);
                           }
                         }}
-                        className="w-12 text-center border-0 text-[15px] font-bold text-[#0b1f3a] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-12 text-center border-0 text-[15px] font-bold text-navy-900 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         min={1}
                         max={stockQuantity !== null && stockQuantity > 0 ? stockQuantity : undefined}
                       />
@@ -382,16 +382,16 @@ export default function ProductDetailPage() {
                             setQuantity(quantity + 1);
                           }
                         }}
-                        className="w-[38px] h-[38px] bg-[#f8fafc] text-[#0b1f3a] text-lg hover:bg-[#e9f6fe] hover:text-sky-600 transition-colors"
+                        className="w-[38px] h-[38px] bg-[#f8fafc] text-navy-900 text-lg hover:bg-brand-tint hover:text-sky-600 transition-colors"
                       >
                         ＋
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-[#e2ebf6] mt-4 pt-4">
-                    <span className="text-sm font-semibold text-[#0b1f3a]">合計</span>
-                    <span className="text-2xl font-extrabold text-[#0b1f3a] tabular-nums">
+                  <div className="flex items-center justify-between border-t border-line-soft mt-4 pt-4">
+                    <span className="text-sm font-semibold text-navy-900">合計</span>
+                    <span className="text-2xl font-extrabold text-navy-900 tabular-nums">
                       {isPointsSelected
                         ? `${pointsTotal.toLocaleString()} P`
                         : `${yenTotal.toLocaleString()} 円`}
@@ -428,8 +428,8 @@ export default function ProductDetailPage() {
             {/* Additional Info */}
             {product.additional_info && (
               <div className="mt-6">
-                <h3 className="text-lg font-bold text-[#0b1f3a] mb-3">商品詳細</h3>
-                <div className="bg-white border border-[#e2ebf6] rounded-2xl p-5 shadow-sm">
+                <h3 className="text-lg font-bold text-navy-900 mb-3">商品詳細</h3>
+                <div className="bg-white border border-line-soft rounded-2xl p-5 shadow-sm">
                   <p className="text-sm leading-[1.85] text-slate-700 whitespace-pre-wrap">
                     {product.additional_info}
                   </p>
@@ -449,7 +449,7 @@ export default function ProductDetailPage() {
                 </span>
                 <span>
                   <b className="block text-[14.5px]">この商品のLPを見る</b>
-                  <span className="block text-[12.5px] text-[#bcd3ee] mt-0.5">スワイプLPで商品の詳細を確認できます</span>
+                  <span className="block text-[12.5px] text-on-navy mt-0.5">スワイプLPで商品の詳細を確認できます</span>
                 </span>
                 <ArrowRightIcon className="w-5 h-5 ml-auto flex-shrink-0" aria-hidden="true" />
               </Link>

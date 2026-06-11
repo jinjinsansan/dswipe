@@ -34,7 +34,7 @@ export function SalonFeatureGate({ children, pageTitle = 'サロン', pageSubtit
             </p>
             <button
               onClick={() => router.push('/dashboard')}
-              className="mt-6 rounded-xl bg-[#0b1f3a] px-6 py-3 text-sm font-semibold text-pure-white hover:bg-[#122c4d]"
+              className="mt-6 rounded-xl bg-navy-900 px-6 py-3 text-sm font-semibold text-pure-white hover:bg-navy-800"
             >
               ダッシュボードに戻る
             </button>

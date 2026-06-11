@@ -423,7 +423,7 @@ export default function SalonMembersPage() {
               <button
                 type="submit"
                 disabled={isSubmittingManual}
-                className="inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-[#122c4d] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full bg-navy-900 px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmittingManual ? t("manualInvite.submitting") : t("manualInvite.submit")}
               </button>
@@ -638,7 +638,7 @@ export default function SalonMembersPage() {
                   <button
                     type="submit"
                     disabled={isSavingManualEdit}
-                    className="inline-flex items-center justify-center rounded-full bg-[#0b1f3a] px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-[#122c4d] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center rounded-full bg-navy-900 px-6 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSavingManualEdit ? t("manualEditor.saving") : t("manualEditor.save")}
                   </button>

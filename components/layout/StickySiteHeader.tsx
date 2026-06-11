@@ -163,7 +163,7 @@ export default function StickySiteHeader({
     'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors',
     dark
       ? 'border border-white/30 bg-white/10 text-pure-white hover:bg-white/20'
-      : 'border border-[#0b1f3a] bg-[#0b1f3a] text-pure-white hover:bg-[#122c4d]',
+      : 'border border-navy-900 bg-navy-900 text-pure-white hover:bg-navy-800',
   ].join(' ');
 
   const defaultRightSlot = (

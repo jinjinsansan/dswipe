@@ -187,7 +187,7 @@ export default function AllSalonClient() {
         >
           <div className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Membership</div>
           <h1 className="mt-2 text-[24px] font-extrabold tracking-tight text-pure-white sm:text-[28px]">{t("pageTitle")}</h1>
-          <p className="mt-2 text-sm text-[#bcd3ee]">{t("pageSubtitle")}</p>
+          <p className="mt-2 text-sm text-on-navy">{t("pageSubtitle")}</p>
         </section>
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -341,7 +341,7 @@ export default function AllSalonClient() {
                         {priceLabel(item)}
                       </span>
                     </div>
-                    <h3 className="line-clamp-2 text-sm font-bold text-[#0b1f3a] md:text-base">{item.title}</h3>
+                    <h3 className="line-clamp-2 text-sm font-bold text-navy-900 md:text-base">{item.title}</h3>
                     {item.description ? (
                       <p className="line-clamp-2 text-xs text-slate-600 md:text-sm">{item.description}</p>
                     ) : (

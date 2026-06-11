@@ -296,7 +296,7 @@ export default function SalesHistoryClient() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Sales</p>
             <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">販売履歴</h1>
-            <p className="mt-1 text-sm text-[#bcd3ee]">売上データは最新状態を反映します。必要に応じて再取得してください。</p>
+            <p className="mt-1 text-sm text-on-navy">売上データは最新状態を反映します。必要に応じて再取得してください。</p>
           </div>
           <button
             type="button"

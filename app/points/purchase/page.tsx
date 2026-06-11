@@ -369,9 +369,9 @@ export default function PointPurchasePage() {
                 <p className="relative text-xs font-bold uppercase tracking-[0.25em] text-cyan-300 sm:text-sm">{t('balance.sectionLabel')}</p>
                 <p className="relative mt-3 text-2xl font-extrabold tracking-tight text-pure-white sm:text-4xl tabular-nums">
                   {formatter.number(currentBalance)}{' '}
-                  <span className="text-base font-semibold text-[#9fb4d0] sm:text-xl">{t('balance.pointsSuffix')}</span>
+                  <span className="text-base font-semibold text-on-navy-muted sm:text-xl">{t('balance.pointsSuffix')}</span>
                 </p>
-                <p className="relative mt-2 text-xs text-[#bcd3ee] sm:text-sm">
+                <p className="relative mt-2 text-xs text-on-navy sm:text-sm">
                   {t('balance.projected', {
                     balance: formatter.number(projectedBalance),
                     suffix: t('balance.pointsSuffix'),

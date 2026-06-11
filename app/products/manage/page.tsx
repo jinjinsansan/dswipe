@@ -392,7 +392,7 @@ export default function ProductManagementPage() {
               <div>
                 <p className="text-xs font-bold uppercase tracking-[.16em] text-cyan-300">Products</p>
                 <h1 className="mt-1 text-[22px] font-extrabold tracking-tight text-pure-white">商品管理</h1>
-                <p className="mt-1 text-sm text-[#bcd3ee]">
+                <p className="mt-1 text-sm text-on-navy">
                   CTAで紐づける商品の作成・編集・公開設定をこちらで行えます。
                 </p>
               </div>
