@@ -29,6 +29,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { AIWizardRequest, AIGenerationResponse } from '@/types/api';
 import { aiApi } from '@/lib/api';
+import { GRAD_BRAND } from '@/lib/momentum';
 
 type ThemeKey =
   | 'momentum'
@@ -271,7 +272,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-5">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-5">
             どんな情報商材を販売しますか？
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -281,16 +282,16 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   key={option.value}
                   onClick={() => handleOptionClick('business', option.value)}
-                  className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
+                  className={`p-4 rounded-[12px] border-[1.5px] transition-all text-left flex items-start gap-3 ${
                     formData.business === option.value
-                      ? 'border-sky-500/50 bg-sky-500/5'
-                      : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
+                      ? 'border-sky-600 bg-[#e9f6fe]'
+                      : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-[#e9f6fe] text-sky-600">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
-                  <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
+                  <span className="text-[#0b1f3a] text-sm font-semibold leading-tight">{option.label}</span>
                 </button>
               );
             })}
@@ -312,7 +313,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-5">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-5">
             メインターゲットは誰ですか？
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -322,16 +323,16 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   key={option.value}
                   onClick={() => handleOptionClick('target', option.value)}
-                  className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
+                  className={`p-4 rounded-[12px] border-[1.5px] transition-all text-left flex items-start gap-3 ${
                     formData.target === option.value
-                      ? 'border-sky-500/50 bg-sky-500/5'
-                      : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
+                      ? 'border-sky-600 bg-[#e9f6fe]'
+                      : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-[#e9f6fe] text-sky-600">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
-                  <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
+                  <span className="text-[#0b1f3a] text-sm font-semibold leading-tight">{option.label}</span>
                 </button>
               );
             })}
@@ -353,7 +354,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
 
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-5">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-5">
             どんなアクションが欲しいですか？
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -363,16 +364,16 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   key={option.value}
                   onClick={() => handleOptionClick('goal', option.value)}
-                  className={`p-4 rounded-lg border transition-all text-left flex items-start gap-3 ${
+                  className={`p-4 rounded-[12px] border-[1.5px] transition-all text-left flex items-start gap-3 ${
                     formData.goal === option.value
-                      ? 'border-sky-500/50 bg-sky-500/5'
-                      : 'border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/30'
+                      ? 'border-sky-600 bg-[#e9f6fe]'
+                      : 'border-[#e2ebf6] bg-white hover:border-[#bfe6fb]'
                   }`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 text-sky-300">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-[#e9f6fe] text-sky-600">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
-                  <span className="text-white/90 text-sm font-light leading-tight">{option.label}</span>
+                  <span className="text-[#0b1f3a] text-sm font-semibold leading-tight">{option.label}</span>
                 </button>
               );
             })}
@@ -385,62 +386,62 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
     if (step === 4) {
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-2">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-2">
             商品・サービスについて教えてください
           </h3>
-          <p className="text-gray-500 text-xs font-light mb-4">
+          <p className="text-slate-500 text-xs mb-4">
             商品名、内容、提供形式、期間、得られる変化などを記入してください。
           </p>
           
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">商品・サービス名 *</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">商品・サービス名 *</label>
               <input
                 value={formData.productName}
                 onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：売上を3倍にするLP構築マスター講座"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">商品説明</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">商品説明</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
+                className="w-full h-20 px-3 py-2 bg-white border border-[#e2ebf6] rounded-[10px] text-[#0b1f3a] text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15 resize-none"
                 placeholder="例：初心者でも90日で成果が出る実践型カリキュラム。動画講義、個別サポート、テンプレート付き。"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-400 mb-1">提供形式</label>
+                <label className="block text-xs font-semibold text-[#33465e] mb-1">提供形式</label>
                 <input
                   value={formData.format}
                   onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                  className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                   placeholder="例：オンライン動画講座"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">期間・サポート</label>
+                <label className="block text-xs font-semibold text-[#33465e] mb-1">期間・サポート</label>
                 <input
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                  className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                   placeholder="例：90日間+個別サポート"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">得られる変化・約束</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">得られる変化・約束</label>
               <input
                 value={formData.transformation}
                 onChange={(e) => setFormData({ ...formData, transformation: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：売上を3倍にし、時間も半分に"
               />
             </div>
@@ -453,62 +454,62 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
     if (step === 5) {
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-2">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-2">
             価格とオファー内容を教えてください
           </h3>
-          <p className="text-gray-500 text-xs font-light mb-4">
+          <p className="text-slate-500 text-xs mb-4">
             通常価格、特別価格、締切、CTAボタンのテキストを設定してください。
           </p>
           
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-400 mb-1">通常価格（円）</label>
+                <label className="block text-xs font-semibold text-[#33465e] mb-1">通常価格（円）</label>
                 <input
                   value={formData.originalPrice}
                   onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                  className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                   placeholder="298000"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">特別価格（円）*</label>
+                <label className="block text-xs font-semibold text-[#33465e] mb-1">特別価格（円）*</label>
                 <input
                   value={formData.specialPrice}
                   onChange={(e) => setFormData({ ...formData, specialPrice: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                  className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                   placeholder="98000"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">申込締切</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">申込締切</label>
               <input
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：12月31日23:59まで"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">CTAボタンのテキスト</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">CTAボタンのテキスト</label>
               <input
                 value={formData.callToAction}
                 onChange={(e) => setFormData({ ...formData, callToAction: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="今すぐ申し込む"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">限定性・緊急性の訴求</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">限定性・緊急性の訴求</label>
               <input
                 value={formData.scarcity}
                 onChange={(e) => setFormData({ ...formData, scarcity: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：残り5名様限定"
               />
             </div>
@@ -521,21 +522,21 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
     if (step === 6) {
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-2">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-2">
             特典と保証を設定してください
           </h3>
-          <p className="text-gray-500 text-xs font-light mb-4">
+          <p className="text-slate-500 text-xs mb-4">
             申込特典のボーナスと、返金保証の内容を設定してください。
           </p>
           
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-400 mb-2 flex items-center justify-between">
+              <label className="block text-xs font-semibold text-[#33465e] mb-2 flex items-center justify-between">
                 <span>申込特典（ボーナス）</span>
                 <button
                   type="button"
                   onClick={handleAddBonus}
-                  className="text-sky-400 hover:text-sky-300 text-xs flex items-center gap-1"
+                  className="text-sky-600 hover:text-sky-500 text-xs font-bold flex items-center gap-1"
                 >
                   <PlusIcon className="h-4 w-4" />
                   特典を追加
@@ -544,18 +545,18 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               
               <div className="space-y-2">
                 {formData.bonuses.map((bonus, index) => (
-                  <div key={index} className="bg-gray-800/30 rounded-lg p-3 space-y-2">
+                  <div key={index} className="bg-[#f4f8fd] border border-[#e2ebf6] rounded-[10px] p-3 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <input
                         value={bonus.title}
                         onChange={(e) => handleUpdateBonus(index, 'title', e.target.value)}
-                        className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                        className="flex-1 rounded-[8px] border border-[#e2ebf6] bg-white px-2 py-1 text-xs text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500"
                         placeholder="特典タイトル"
                       />
                       <button
                         type="button"
                         onClick={() => handleRemoveBonus(index)}
-                        className="text-gray-500 hover:text-red-400"
+                        className="text-slate-400 hover:text-red-500"
                       >
                         <XMarkIcon className="h-4 w-4" />
                       </button>
@@ -563,40 +564,40 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     <input
                       value={bonus.description}
                       onChange={(e) => handleUpdateBonus(index, 'description', e.target.value)}
-                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                      className="w-full rounded-[8px] border border-[#e2ebf6] bg-white px-2 py-1 text-xs text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500"
                       placeholder="説明"
                     />
                     <input
                       value={bonus.value}
                       onChange={(e) => handleUpdateBonus(index, 'value', e.target.value)}
-                      className="w-full rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                      className="w-full rounded-[8px] border border-[#e2ebf6] bg-white px-2 py-1 text-xs text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500"
                       placeholder="価値（例：29800円相当）"
                     />
                   </div>
                 ))}
                 
                 {formData.bonuses.length === 0 && (
-                  <p className="text-xs text-gray-600 text-center py-2">特典を追加してください</p>
+                  <p className="text-xs text-slate-400 text-center py-2">特典を追加してください</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">返金保証の見出し</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">返金保証の見出し</label>
               <input
                 value={formData.guaranteeHeadline}
                 onChange={(e) => setFormData({ ...formData, guaranteeHeadline: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：30日間 全額返金保証"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">保証内容の説明</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">保証内容の説明</label>
               <textarea
                 value={formData.guaranteeDescription}
                 onChange={(e) => setFormData({ ...formData, guaranteeDescription: e.target.value })}
-                className="w-full h-16 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
+                className="w-full h-16 px-3 py-2 bg-white border border-[#e2ebf6] rounded-[10px] text-[#0b1f3a] text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15 resize-none"
                 placeholder="例：30日以内にご満足いただけなければ、理由を問わず全額返金いたします。"
               />
             </div>
@@ -609,51 +610,51 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
     if (step === 7) {
       return (
         <div>
-          <h3 className="text-base font-light text-white/95 mb-2">
+          <h3 className="text-base font-bold text-[#0b1f3a] mb-2">
             講師・監修者の情報を教えてください
           </h3>
-          <p className="text-gray-500 text-xs font-light mb-4">
+          <p className="text-slate-500 text-xs mb-4">
             権威性と信頼性を高めるための情報を記入してください。（任意）
           </p>
           
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">講師・監修者名</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">講師・監修者名</label>
               <input
                 value={formData.authorName}
                 onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：山田太郎"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">肩書き・実績</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">肩書き・実績</label>
               <input
                 value={formData.authorTitle}
                 onChange={(e) => setFormData({ ...formData, authorTitle: e.target.value })}
-                className="w-full rounded-lg border border-gray-700/60 bg-gray-800/50 px-3 py-2 text-sm text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-3 py-2 text-sm text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15"
                 placeholder="例：マーケティングコンサルタント"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">プロフィール・経歴</label>
+              <label className="block text-xs font-semibold text-[#33465e] mb-1">プロフィール・経歴</label>
               <textarea
                 value={formData.authorBio}
                 onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
-                className="w-full h-20 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white/90 text-sm font-light placeholder-gray-600 focus:outline-none focus:border-sky-500/50 resize-none"
+                className="w-full h-20 px-3 py-2 bg-white border border-[#e2ebf6] rounded-[10px] text-[#0b1f3a] text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-[3px] focus:ring-sky-500/15 resize-none"
                 placeholder="例：15年以上のLP制作実績。累計3,200社のマーケティング支援を担当。"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-2 flex items-center justify-between">
+              <label className="block text-xs font-semibold text-[#33465e] mb-2 flex items-center justify-between">
                 <span>主な実績</span>
                 <button
                   type="button"
                   onClick={handleAddAchievement}
-                  className="text-sky-400 hover:text-sky-300 text-xs flex items-center gap-1"
+                  className="text-sky-600 hover:text-sky-500 text-xs font-bold flex items-center gap-1"
                 >
                   <PlusIcon className="h-4 w-4" />
                   実績を追加
@@ -666,13 +667,13 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                     <input
                       value={achievement}
                       onChange={(e) => handleUpdateAchievement(index, e.target.value)}
-                      className="flex-1 rounded border border-gray-700/60 bg-gray-800/50 px-2 py-1 text-xs text-white/90 placeholder-gray-600 focus:outline-none focus:border-sky-500/50"
+                      className="flex-1 rounded-[8px] border border-[#e2ebf6] bg-white px-2 py-1 text-xs text-[#0b1f3a] placeholder-slate-400 focus:outline-none focus:border-sky-500"
                       placeholder="例：累計3,200社のマーケティング支援"
                     />
                     <button
                       type="button"
                       onClick={() => handleRemoveAchievement(index)}
-                      className="text-gray-500 hover:text-red-400"
+                      className="text-slate-400 hover:text-red-500"
                     >
                       <XMarkIcon className="h-4 w-4" />
                     </button>
@@ -680,7 +681,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 ))}
                 
                 {formData.achievements.length === 0 && (
-                  <p className="text-xs text-gray-600 text-center py-2">実績を追加してください</p>
+                  <p className="text-xs text-slate-400 text-center py-2">実績を追加してください</p>
                 )}
               </div>
             </div>
@@ -703,15 +704,30 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4">
-      <div className="bg-gray-900/95 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700/50 shadow-2xl">
+    <div className="fixed inset-0 bg-[rgba(7,15,30,.6)] backdrop-blur-md z-50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[0_40px_100px_-30px_rgba(0,0,0,.6)]">
         {/* ヘッダー */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-light text-white/90">AIアシスタント</h2>
+          {/* mock: D-Swipe AI Create.html .fc-head */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-[13px] text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
+                aria-hidden="true"
+                style={{ background: GRAD_BRAND }}
+              >
+                <SparklesIcon className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="text-lg font-extrabold tracking-tight text-[#0b1f3a]">AIでLPを作る</h2>
+                <p className="text-xs text-slate-500">
+                  ステップ <b className="text-sky-600">{step}</b> / 7
+                </p>
+              </div>
+            </div>
             <button
               onClick={onSkip}
-              className="text-gray-500 hover:text-gray-400 transition-colors text-sm font-light"
+              className="text-slate-500 hover:text-[#0b1f3a] transition-colors text-sm font-semibold"
             >
               スキップ →
             </button>
@@ -721,7 +737,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               <div
                 key={s}
                 className={`h-1 flex-1 rounded-full transition-all ${
-                  s <= step ? 'bg-sky-500/80' : 'bg-gray-800'
+                  s <= step ? 'bg-sky-500' : 'bg-[#e2ebf6]'
                 }`}
               />
             ))}
@@ -737,7 +753,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
             {step > 1 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-4 py-2 bg-gray-800/50 text-white/90 text-sm font-light rounded-lg hover:bg-gray-800 transition-colors"
+                className="px-4 py-2 bg-white border border-[#e2ebf6] text-[#0b1f3a] text-sm font-semibold rounded-[10px] hover:border-[#bfe6fb] transition-colors"
               >
                 ← 戻る
               </button>
@@ -748,7 +764,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   onClick={() => setStep(step + 1)}
                   disabled={!canProceed()}
-                  className="w-full px-4 py-2 bg-sky-600/90 text-white text-sm font-light rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 text-pure-white text-sm font-bold rounded-[11px] shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition disabled:opacity-50 disabled:cursor-not-allowed" style={{ background: GRAD_BRAND }}
                 >
                   次へ →
                 </button>
@@ -756,7 +772,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
                 <button
                   onClick={handleGenerateLP}
                   disabled={isLoading || !canProceed()}
-                  className="w-full px-4 py-2 bg-sky-600/90 text-white text-sm font-light rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 text-pure-white text-sm font-bold rounded-[11px] shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] transition disabled:opacity-50 disabled:cursor-not-allowed" style={{ background: GRAD_BRAND }}
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
@@ -775,12 +791,12 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
               {isLoading && (
                 <div className="mt-2">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-light text-gray-500">進行状況</span>
-                    <span className="text-xs font-light text-gray-500">{Math.round(progress)}%</span>
+                    <span className="text-xs text-slate-500">進行状況</span>
+                    <span className="text-xs text-slate-500">{Math.round(progress)}%</span>
                   </div>
-                  <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[#e2ebf6] rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-sky-500/80 transition-all duration-1000 ease-linear"
+                      className="h-full bg-sky-500 transition-all duration-1000 ease-linear"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -792,7 +808,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
           <button
             type="button"
             onClick={onSkip}
-            className="w-full rounded-lg border border-gray-700/60 bg-gray-900/60 px-4 py-2 text-sm font-light text-gray-300 transition-colors hover:bg-gray-800 hover:text-pure-white sm:w-40"
+            className="w-full rounded-[10px] border border-[#e2ebf6] bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-[#bfe6fb] hover:text-[#0b1f3a] sm:w-40"
           >
             後で回答する
           </button>
