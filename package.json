@@ -28,6 +28,7 @@
     "@tiptap/extension-link": "^2.6.6",
     "@tiptap/extension-list-item": "^2.6.6",
     "@tiptap/extension-paragraph": "^2.6.6",
+    "@tiptap/extension-placeholder": "^2.27.2",
     "@tiptap/react": "^2.6.6",
     "@tiptap/starter-kit": "^2.6.6",
     "axios": "^1.12.2",

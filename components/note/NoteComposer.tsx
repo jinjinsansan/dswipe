@@ -20,7 +20,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { noteApi, salonApi, mediaApi } from '@/lib/api';
+import { noteApi, salonApi } from '@/lib/api';
 import { GRAD_BRAND } from '@/lib/momentum';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { noteBlocksToRichContent } from '@/lib/noteBlocksToRich';
@@ -413,25 +413,6 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
     markDirty();
   };
 
-  const handleCoverFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setIsCoverUploading(true);
-    try {
-      const response = await mediaApi.upload(file, { mediaType: 'image', optimize: true });
-      const url = response.data?.url;
-      if (url) {
-        setCoverImageUrl(url);
-        markDirty();
-      }
-    } catch {
-      setErrorMessage('画像のアップロードに失敗しました');
-    } finally {
-      setIsCoverUploading(false);
-      event.target.value = '';
-    }
-  };
-
   /* ----- 限定公開URL ----- */
   const handleCopyShareUrl = async () => {
     if (!shareUrl) return;
@@ -464,6 +445,21 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
     setSelectedSalonIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
     markDirty();
   };
+
+  /* ----- 文字数(本文テキストノード合計) ----- */
+  const charCount = useMemo(() => {
+    let count = 0;
+    const visit = (nodes: unknown[]): void => {
+      for (const node of nodes as Array<Record<string, any>>) {
+        if (!node) continue;
+        if (node.type === 'text' && typeof node.text === 'string') count += node.text.length;
+        if (Array.isArray(node.content)) visit(node.content);
+      }
+    };
+    const doc = richContent as { content?: unknown[] };
+    if (Array.isArray(doc?.content)) visit(doc.content);
+    return count;
+  }, [richContent]);
 
   /* ----- 保存状態表示 ----- */
   const saveStatusLabel = useMemo(() => {
@@ -521,7 +517,10 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
             ) : null}
             <span className={saveState === 'error' ? 'font-semibold text-red-500' : ''}>{saveStatusLabel}</span>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-3">
+            <span className="hidden text-xs text-slate-400 sm:inline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {charCount.toLocaleString()} 文字
+            </span>
             {status === 'published' && slug ? (
               <a
                 href={`/notes/${slug}`}
@@ -578,30 +577,31 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
             </button>
           </div>
         ) : (
-          <div className="mb-4 flex items-center gap-3 text-xs text-slate-400">
+          <div className="mb-5 flex justify-center">
+            {/* note.com流: タイトル上の丸い画像追加ボタン */}
             <button
               type="button"
               onClick={() => setIsCoverMediaOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-semibold transition hover:bg-slate-50 hover:text-slate-600"
+              title="ヘッダー画像を追加"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-canvas text-slate-400 transition hover:bg-brand-tint hover:text-sky-600"
             >
-              <PhotoIcon className="h-4 w-4" aria-hidden="true" />
-              ヘッダー画像を追加
+              {isCoverUploading ? (
+                <span className="text-[10px] font-bold">…</span>
+              ) : (
+                <PhotoIcon className="h-5 w-5" aria-hidden="true" />
+              )}
             </button>
-            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-2 py-1 font-semibold transition hover:bg-slate-50 hover:text-slate-600">
-              <input type="file" accept="image/*" className="hidden" onChange={handleCoverFile} />
-              {isCoverUploading ? 'アップロード中…' : 'ファイルから選択'}
-            </label>
           </div>
         )}
 
-        {/* タイトル */}
+        {/* タイトル — note.com流に中央寄せの大きな置き場 */}
         <textarea
           ref={titleRef}
           value={title}
           onChange={(event) => handleTitleChange(event.target.value)}
           placeholder="記事タイトル"
           rows={1}
-          className="w-full resize-none border-0 bg-transparent text-[28px] font-extrabold leading-snug tracking-tight text-navy-900 placeholder-slate-300 focus:outline-none focus:ring-0 sm:text-[34px]"
+          className="w-full resize-none border-0 bg-transparent text-center text-[28px] font-extrabold leading-snug tracking-tight text-navy-900 placeholder-slate-300 focus:outline-none focus:ring-0 sm:text-[32px]"
         />
 
         {/* 本文(Tiptap) */}
