@@ -2787,7 +2787,7 @@ export default function EditLPNewPage() {
                 boxShadow: '0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)',
               }}
             >
-              <div className={`relative h-full w-full overflow-hidden bg-white ${stagePreviewMode === 'mobile' ? 'rounded-[30px]' : 'rounded-[12px]'}`}>
+              <div className={`relative h-full w-full overflow-hidden bg-white ${stagePreviewMode === 'mobile' ? 'rounded-[30px] editor-mobile-frame' : 'rounded-[12px]'}`}>
                 <div ref={previewScrollRef} className="h-full overflow-y-auto">
                   <DraggableBlockEditor
                     blocks={blocks}

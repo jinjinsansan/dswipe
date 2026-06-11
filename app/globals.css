@@ -79,6 +79,25 @@ body {
   font-family: var(--font-display);
 }
 
+/* LPエディタの実機フレーム(モバイルモード)用。
+   typo-* の clamp はビューポート幅基準のため、デスクトップ画面内の336px枠では
+   最大文字サイズで描画されてしまう。フレーム内だけ実機375px相当の値に固定する。
+   公開ページには影響しない(エディタ専用クラス)。 */
+.editor-mobile-frame {
+  --type-display: 2.75rem;
+  --type-headline: 1.9rem;
+  --type-subheadline: 1.25rem;
+  --type-highlight: 1.05rem;
+  --type-body-lg: 1.02rem;
+  --type-body: 0.94rem;
+  --type-caption: 0.78rem;
+  --space-section: 3rem;
+  --space-section-sm: 2.5rem;
+  --space-section-lg: 3.5rem;
+  --space-card-padding: 1.5rem;
+  --space-card-gap: 1rem;
+}
+
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
