@@ -92,6 +92,7 @@ type FooterCtaState = {
   buttonBackgroundColor: string;
   buttonTextColor: string;
   showOnHero: boolean;
+  alwaysVisible: boolean;
 };
 
 type LpSettingsState = {
@@ -110,11 +111,12 @@ const DEFAULT_FOOTER_CTA_STATE: FooterCtaState = {
   subtitle: 'フォームから60秒で完了します',
   buttonLabel: '無料で相談する',
   buttonUrl: '',
-  backgroundColor: '#0F172A',
+  backgroundColor: '#0B1F3A',
   textColor: '#FFFFFF',
-  buttonBackgroundColor: '#2563EB',
+  buttonBackgroundColor: '#0284C7',
   buttonTextColor: '#FFFFFF',
   showOnHero: false,
+  alwaysVisible: false,
 };
 
 const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState => {
@@ -142,6 +144,7 @@ const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState =>
         ? config.buttonTextColor
         : DEFAULT_FOOTER_CTA_STATE.buttonTextColor,
     showOnHero: Boolean(config.showOnHero),
+    alwaysVisible: Boolean(config.alwaysVisible),
   };
 };
 
@@ -169,6 +172,7 @@ const buildFooterCtaPayload = (state: FooterCtaState): FooterCTAConfig | null =>
   if (buttonTextColor) payload.buttonTextColor = buttonTextColor;
 
   payload.showOnHero = Boolean(state.showOnHero);
+  payload.alwaysVisible = Boolean(state.alwaysVisible);
 
   return Object.keys(payload).length > 0 ? payload : null;
 };
@@ -451,6 +455,7 @@ export default function EditLPNewPage() {
     }
   }, []);
   const [mobileTab, setMobileTab] = useState<TabType>('preview');
+  const [stagePreviewMode, setStagePreviewMode] = useState<'mobile' | 'desktop'>('mobile');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showColorGenerator, setShowColorGenerator] = useState(false);
   const [customThemeShades, setCustomThemeShades] = useState<ColorShades | null>(null);
@@ -2207,6 +2212,24 @@ export default function EditLPNewPage() {
                       <input
                         type="checkbox"
                         className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
+                        checked={lpSettings.footerCta.alwaysVisible}
+                        onChange={(e) =>
+                          setLpSettings((prev) => ({
+                            ...prev,
+                            footerCta: { ...prev.footerCta, alwaysVisible: e.target.checked },
+                          }))
+                        }
+                        disabled={!lpSettings.floatingCta}
+                      />
+                      <div>
+                        <p className="text-sm lg:text-xs text-slate-900 font-semibold">常に表示（常駐の帯）</p>
+                        <p className="text-xs lg:text-[11px] text-slate-500">全スライドで下部にCTA帯を固定表示します。オフの場合は最終スライド到達時のみ表示。</p>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-3 cursor-pointer lg:gap-2">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500 flex-shrink-0"
                         checked={lpSettings.footerCta.showOnHero}
                         onChange={(e) =>
                           setLpSettings((prev) => ({
@@ -2681,7 +2704,28 @@ export default function EditLPNewPage() {
         >
           {/* ステージバー */}
           <div className="flex h-12 flex-shrink-0 items-center justify-center gap-4 px-4">
-            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#bcd3ee]">
+            {/* mock: editor.css .stage-seg — 表示幅切替 */}
+            <div className="inline-flex gap-0.5 rounded-[10px] border border-white/15 bg-white/10 p-[3px]">
+              <button
+                type="button"
+                onClick={() => setStagePreviewMode('mobile')}
+                className={`rounded-[7px] px-3 py-1 text-[12px] font-semibold transition ${
+                  stagePreviewMode === 'mobile' ? 'bg-white/15 text-pure-white' : 'text-[#9fb4d0] hover:text-pure-white'
+                }`}
+              >
+                モバイル
+              </button>
+              <button
+                type="button"
+                onClick={() => setStagePreviewMode('desktop')}
+                className={`rounded-[7px] px-3 py-1 text-[12px] font-semibold transition ${
+                  stagePreviewMode === 'desktop' ? 'bg-white/15 text-pure-white' : 'text-[#9fb4d0] hover:text-pure-white'
+                }`}
+              >
+                PC
+              </button>
+            </div>
+            <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-[#bcd3ee] sm:inline">
               エディタビュー — 正確なデザインは公開ページで確認
             </span>
             <span className="text-[12.5px] font-bold text-pure-white/90" style={{ fontVariantNumeric: 'tabular-nums' }}>
@@ -2731,15 +2775,19 @@ export default function EditLPNewPage() {
               </>
             ) : null}
 
-            {/* device — mock: .device / .device-screen */}
+            {/* device — mock: .device / .device-screen（PCモードはワイドパネル） */}
             <div
-              className="w-[336px] max-w-full flex-shrink-0 rounded-[38px] bg-[#0b1220] p-[9px]"
+              className={
+                stagePreviewMode === 'mobile'
+                  ? 'w-[336px] max-w-full flex-shrink-0 rounded-[38px] bg-[#0b1220] p-[9px]'
+                  : 'w-full max-w-5xl flex-shrink-0 rounded-[18px] bg-[#0b1220] p-[7px]'
+              }
               style={{
-                height: 'min(680px, 100%)',
+                height: stagePreviewMode === 'mobile' ? 'min(680px, 100%)' : '100%',
                 boxShadow: '0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)',
               }}
             >
-              <div className="relative h-full w-full overflow-hidden rounded-[30px] bg-white">
+              <div className={`relative h-full w-full overflow-hidden bg-white ${stagePreviewMode === 'mobile' ? 'rounded-[30px]' : 'rounded-[12px]'}`}>
                 <div ref={previewScrollRef} className="h-full overflow-y-auto">
                   <DraggableBlockEditor
                     blocks={blocks}
