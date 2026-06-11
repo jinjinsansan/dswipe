@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { DocumentTextIcon, FolderOpenIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { getAllTemplates, TEMPLATE_CATEGORIES } from '@/lib/templates';
+import { getLibraryTemplates, TEMPLATE_CATEGORIES } from '@/lib/templates';
 import { HEAD_BG } from '@/lib/momentum';
 import { resolveViewerPalette } from '@/components/viewer/theme';
 import type { BlockType, TemplateBlock } from '@/types/templates';
@@ -96,7 +96,7 @@ export default function TemplateSelector({ onSelectTemplate, onClose }: Template
 
   useEffect(() => {
     let mounted = true;
-    getAllTemplates().then((data) => {
+    getLibraryTemplates().then((data) => {
       if (!mounted) {
         return;
       }

@@ -158,3 +158,28 @@ export async function getAllTemplates(): Promise<TemplateBlock[]> {
   const bundle = await ensureBundle();
   return getAllFromBundle(bundle);
 }
+
+/* ブロックライブラリの表示制御（Phase4b）
+   旧素材はデータとして温存しつつ（既存LPのID参照・各種フローを壊さない）、
+   ライブラリには Momentum 素材＋Momentum版が無い機能系ブロックのみを表示する。
+   旧素材を復活させたい場合はこのリストに id を足すだけでよい。 */
+const LIBRARY_EXTRA_VISIBLE_IDS = new Set<string>([
+  'top-media-spotlight-default', // メディア(画像+解説)
+  'top-image-plain-minimal',     // 画像のみ
+  'top-flex-neutral',            // 自由ブロック
+  'top-contact-line',            // お問い合わせ
+  'top-tokusho-modern',          // 特定商取引法
+  'top-newsletter-blue',         // ニュースレター登録
+]);
+
+export function isLibraryVisibleTemplate(template: TemplateBlock): boolean {
+  /* 手書き風シリーズは旧デザインではなく独立した作風のため表示を維持 */
+  if (template.category === 'handwritten') return true;
+  return template.id.startsWith('momentum-') || LIBRARY_EXTRA_VISIBLE_IDS.has(template.id);
+}
+
+/** ブロック選択モーダル用: 表示対象の素材のみ返す */
+export async function getLibraryTemplates(): Promise<TemplateBlock[]> {
+  const all = await getAllTemplates();
+  return all.filter(isLibraryVisibleTemplate);
+}
