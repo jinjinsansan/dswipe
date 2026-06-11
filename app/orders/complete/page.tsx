@@ -223,7 +223,7 @@ function ProductOrderCompleteContent(): JSX.Element {
                   {thanksSlug ? (
                     <Link
                       href={`/view/${thanksSlug}`}
-                      className="block w-full rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                      className="block w-full rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-pure-white transition hover:bg-emerald-700"
                     >
                       サンクスLPに移動する
                     </Link>

@@ -1050,7 +1050,7 @@ export default function NoteEditPage() {
                   type="button"
                   onClick={() => handlePublishToggle('publish')}
                   disabled={actionLoading}
-                  className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-1.5 text-xs font-semibold text-pure-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {actionLoading ? '処理中...' : '公開する'}
                 </button>
@@ -1483,12 +1483,12 @@ export default function NoteEditPage() {
                         disabled={saving || actionLoading}
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                           isActive
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-emerald-600 text-pure-white shadow-sm'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         } ${(saving || actionLoading) ? 'opacity-60 cursor-not-allowed' : ''}`}
                       >
                         {salon.title ?? '無題のサロン'}
-                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-white">
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] text-pure-white">
                           {salon.member_count?.toLocaleString() ?? 0}名
                         </span>
                       </button>
