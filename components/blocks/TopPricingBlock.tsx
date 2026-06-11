@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import { PricingBlockContent } from '@/types/templates';
 import { getContrastColor, withAlpha } from '@/lib/color';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import { resolveButtonUrl } from '@/lib/url';
 
@@ -65,8 +67,9 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
   const singlePlan = plans.length === 1;
 
   const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
+  const accentColor = content?.accentColor ?? '#0284C7';
+  const hasCustomButtonColor = Boolean(content?.buttonColor);
   const buttonColor = content?.buttonColor ?? accentColor;
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
@@ -118,13 +121,17 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-offer / Block Library .sc-price */}
         <div className="responsive-stack items-center text-center">
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
+          >
             {title}
           </h2>
           <p
             className="typo-body text-pretty"
-            style={{ color: withAlpha(textColor, 0.7, textColor) }}
+            style={{ color: withAlpha(textColor, 0.7, textColor), lineHeight: 1.7 }}
           >
             {subtitle}
           </p>
@@ -143,11 +150,18 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
             };
 
             const buttonStyle: CSSProperties = isHighlighted
-              ? {
-                  backgroundColor: buttonColor,
-                  color: getContrastColor(buttonColor),
-                  border: `1px solid ${buttonColor}`,
-                }
+              ? hasCustomButtonColor
+                ? {
+                    backgroundColor: buttonColor,
+                    color: getContrastColor(buttonColor),
+                    border: `1px solid ${buttonColor}`,
+                  }
+                : {
+                    background: GRAD_BRAND,
+                    color: '#FFFFFF',
+                    border: '1px solid transparent',
+                    boxShadow: '0 10px 26px -8px rgba(6, 182, 212, 0.55)',
+                  }
               : {
                   backgroundColor: withAlpha(buttonColor, 0.12, buttonColor),
                   color: buttonColor,
@@ -190,8 +204,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
 
                 <div className="flex items-baseline gap-2">
                   <span
-                    className={`${isSingle ? 'typo-display' : 'typo-headline'} font-bold`}
-                    style={{ color: textColor }}
+                    className={`${isSingle ? 'typo-display' : 'typo-headline'} font-extrabold`}
+                    style={{ color: textColor, letterSpacing: '-0.03em', lineHeight: 1 }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={updatePlanField(index, 'price')}
@@ -199,8 +213,8 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                     {plan.price}
                   </span>
                   <span
-                    className="typo-body"
-                    style={{ color: withAlpha(textColor, 0.6, textColor) }}
+                    className="typo-body font-semibold"
+                    style={{ color: accentColor }}
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={updatePlanField(index, 'period')}
@@ -222,9 +236,11 @@ export default function TopPricingBlock({ content, isEditing, onEdit, productId,
                 <ul className={`flex flex-1 flex-col ${isSingle ? 'gap-3 typo-body-lg' : 'gap-2 typo-body'}`} style={{ color: withAlpha(textColor, 0.75, textColor) }}>
                   {(plan.features ?? []).map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-2">
-                      <span
-                        className={`${isSingle ? 'mt-1.5 h-2 w-2' : 'mt-1 h-1.5 w-1.5'} inline-block flex-shrink-0 rounded-full`}
-                        style={{ backgroundColor: accentColor }}
+                      <CheckIcon
+                        className={`${isSingle ? 'mt-1 h-4 w-4' : 'mt-0.5 h-3.5 w-3.5'} flex-shrink-0`}
+                        style={{ color: accentColor }}
+                        strokeWidth={2.6}
+                        aria-hidden="true"
                       />
                       <div
                         className="flex-1"

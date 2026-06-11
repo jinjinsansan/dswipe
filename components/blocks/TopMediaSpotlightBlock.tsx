@@ -41,8 +41,8 @@ export default function TopMediaSpotlightBlock({
   const resolvedPrimaryUrl = withinEditor ? content?.buttonUrl ?? '#' : resolveButtonUrl(content?.buttonUrl);
 
   const backgroundColor = content?.backgroundColor ?? '#F8FAFC';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
+  const accentColor = content?.accentColor ?? '#0284C7';
   const buttonColor = content?.buttonColor ?? accentColor;
   const buttonTextColor = getContrastColor(buttonColor, '#F8FAFC', '#0F172A');
   const rawUseLinkedProduct = content?.useLinkedProduct;

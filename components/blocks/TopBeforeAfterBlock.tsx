@@ -19,9 +19,9 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
     description: 'AIが構成とコピーを自動生成。チーム3名で週1本のローンチを回せる体制に。',
   };
 
-  const backgroundColor = content?.backgroundColor ?? '#0F172A';
+  const backgroundColor = content?.backgroundColor ?? '#0B1F3A';
   const textColor = content?.textColor ?? '#F8FAFC';
-  const accentColor = content?.accentColor ?? '#38BDF8';
+  const accentColor = content?.accentColor ?? '#22D3EE';
   const beforeAccent = mixWith(accentColor, '#F87171', 0.35);
   const afterAccent = accentColor;
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
@@ -53,29 +53,28 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
           </div>
         ) : null}
 
+        {/* mock: Block Library .sc-compare — Before=ニュートラル面 / After=シアンティント面 */}
         <div className="responsive-stack items-center text-center">
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
+          >
             {title}
           </h2>
         </div>
 
-        <div
-          className="grid grid-cols-1 gap-6 rounded-card border p-6 sm:grid-cols-2 sm:p-10"
-          style={{
-            borderColor: withAlpha(textColor, 0.14, textColor),
-            backgroundColor: withAlpha(textColor, 0.06, textColor),
-          }}
-        >
+        <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <div
-            className="responsive-stack rounded-card p-5"
+            className="responsive-stack rounded-[12px] p-5 sm:p-6"
             style={{
-              backgroundColor: withAlpha(textColor, 0.08, textColor),
+              backgroundColor: withAlpha(textColor, 0.06, textColor),
+              border: `1px solid ${withAlpha(textColor, 0.1, textColor)}`,
               color: textColor,
             }}
           >
             <span
-              className="font-semibold typo-eyebrow"
-              style={{ color: beforeAccent }}
+              className="font-extrabold typo-eyebrow"
+              style={{ color: withAlpha(beforeAccent, 0.85, beforeAccent) }}
               contentEditable={isEditing}
               suppressContentEditableWarning
               onBlur={(event) => onEdit?.('before', { ...before, label: event.currentTarget.textContent ?? '' })}
@@ -84,7 +83,7 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
             </span>
             <p
               className="typo-body text-pretty"
-              style={{ color: withAlpha(textColor, 0.85, textColor) }}
+              style={{ color: withAlpha(textColor, 0.78, textColor), lineHeight: 1.6 }}
               contentEditable={isEditing}
               suppressContentEditableWarning
               onBlur={(event) => onEdit?.('before', { ...before, description: event.currentTarget.textContent ?? '' })}
@@ -94,14 +93,15 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
           </div>
 
           <div
-            className="responsive-stack rounded-card p-5"
+            className="responsive-stack rounded-[12px] p-5 sm:p-6"
             style={{
-              backgroundColor: '#FFFFFF',
-              color: '#0F172A',
+              backgroundColor: withAlpha(afterAccent, 0.14, afterAccent),
+              border: `1px solid ${withAlpha(afterAccent, 0.3, afterAccent)}`,
+              color: textColor,
             }}
           >
             <span
-              className="font-semibold typo-eyebrow"
+              className="font-extrabold typo-eyebrow"
               style={{ color: afterAccent }}
               contentEditable={isEditing}
               suppressContentEditableWarning
@@ -111,6 +111,7 @@ export default function TopBeforeAfterBlock({ content, isEditing, onEdit }: TopB
             </span>
             <p
               className="typo-body text-pretty"
+              style={{ color: withAlpha(textColor, 0.92, textColor), lineHeight: 1.6 }}
               contentEditable={isEditing}
               suppressContentEditableWarning
               onBlur={(event) => onEdit?.('after', { ...after, description: event.currentTarget.textContent ?? '' })}

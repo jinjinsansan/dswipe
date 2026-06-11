@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ProblemBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
@@ -25,8 +26,7 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
   };
 
   const backgroundColor = content?.backgroundColor ?? '#FFFFFF';
-  const textColor = content?.textColor ?? '#0F172A';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const textColor = content?.textColor ?? '#0B1F3A';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -60,40 +60,37 @@ export default function TopProblemBlock({ content, isEditing, onEdit }: TopProbl
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-problem — リード見出し＋×チップの行リスト */}
         <div className="responsive-stack items-center text-center">
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: textColor }}>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em', lineHeight: 1.4 }}
+          >
             {title}
           </h2>
           <p
             className="typo-body text-pretty"
-            style={{ color: withAlpha(textColor, 0.7, textColor) }}
+            style={{ color: withAlpha(textColor, 0.7, textColor), lineHeight: 1.7 }}
           >
             {subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 sm:gap-4">
           {problems.map((problem, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-3 rounded-card border p-4 shadow-sm"
-              style={{
-                borderColor: withAlpha(textColor, 0.12, textColor),
-                backgroundColor: withAlpha(accentColor, 0.05, '#FFFFFF'),
-              }}
-            >
+            <div key={index} className="flex items-start gap-3">
               <span
-                className="mt-1 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full font-semibold typo-body"
+                className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[8px]"
                 style={{
-                  backgroundColor: accentColor,
-                  color: '#FFFFFF',
+                  backgroundColor: 'rgba(248, 113, 113, 0.18)',
+                  color: '#F87171',
                 }}
               >
-                {index + 1}
+                <XMarkIcon className="h-3.5 w-3.5" strokeWidth={2.4} aria-hidden="true" />
               </span>
               <div
-                className="typo-body text-pretty"
-                style={{ color: withAlpha(textColor, 0.85, textColor) }}
+                className="typo-body flex-1 text-left text-pretty"
+                style={{ color: withAlpha(textColor, 0.88, textColor), lineHeight: 1.6 }}
                 contentEditable={isEditing}
                 suppressContentEditableWarning
                 onBlur={updateProblem(index)}

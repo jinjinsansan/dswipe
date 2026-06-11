@@ -49,10 +49,10 @@ export default function TopHeroImageBlock({
     : '';
   const videoUrl = content?.backgroundVideoUrl ?? '';
   const textColor = content?.textColor ?? '#FFFFFF';
-  const accentColor = content?.accentColor ?? '#38BDF8';
+  const accentColor = content?.accentColor ?? '#22D3EE';
   const buttonColor = content?.buttonColor ?? accentColor;
   const secondaryButtonColor = content?.secondaryButtonColor ?? withAlpha(textColor, 0.35, textColor);
-  const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1120';
+  const overlayBase = content?.overlayColor ?? content?.backgroundColor ?? '#0B1F3A';
   const videoOverlayRaw = typeof content?.backgroundVideoOverlayOpacity === 'number'
     ? content.backgroundVideoOverlayOpacity
     : 0.85;

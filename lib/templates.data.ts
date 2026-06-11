@@ -21,6 +21,175 @@ import {
 } from '@/types/templates';
 
 export const TEMPLATE_LIBRARY: TemplateBlock[] = [
+  /* ============================================================
+     Momentum 素材セット — design_handoff_dswipe/editor/editor-blocks.jsx
+     BLOCK_DEFS(7種)の構成・文言を移植。背景はBG_PRESETSの近似単色。
+     ============================================================ */
+  {
+    id: 'momentum-hero',
+    templateId: 'top-hero-1',
+    name: 'ヒーロー（Momentum）',
+    category: 'header',
+    description: '1枚目の主役。アイブロー＋大見出し＋サブコピー。Momentum標準のネイビー。',
+    defaultContent: {
+      tagline: '7-DAY CHALLENGE',
+      title: '7日間で、集客が変わる。',
+      subtitle: 'SNSだけで月100リスト。再現性のある集客導線を、スワイプ1本で。',
+      buttonText: '今すぐ参加する',
+      buttonUrl: '/register',
+      backgroundColor: '#0B1F3A',
+      textColor: '#FFFFFF',
+      accentColor: '#22D3EE',
+      buttonColor: '#0284C7',
+      themeKey: 'momentum',
+    } as HeroBlockContent,
+  },
+  {
+    id: 'momentum-problem',
+    templateId: 'top-problem-1',
+    name: '課題提起（Momentum）',
+    category: 'content',
+    description: '共感を生む悩みリスト。ディープネイビーで没入感を演出。',
+    defaultContent: {
+      title: 'こんな悩み、ありませんか？',
+      subtitle: 'ひとつでも当てはまるなら、このまま読み進めてください。',
+      problems: [
+        '毎日投稿しても反応が薄い',
+        'LPの作り方が分からない',
+        'どこを直せば売れるのか不明',
+      ],
+      backgroundColor: '#07142A',
+      textColor: '#F8FAFC',
+      accentColor: '#22D3EE',
+      themeKey: 'momentum',
+    } as ProblemBlockContent,
+  },
+  {
+    id: 'momentum-benefit',
+    templateId: 'top-highlights-1',
+    name: 'ベネフィット（Momentum）',
+    category: 'content',
+    description: '得られる価値を3点で。シアングラデの主役ブロック。',
+    defaultContent: {
+      tagline: 'WHAT YOU GET',
+      title: 'このチャレンジで手に入るもの',
+      features: [
+        {
+          icon: 'rocket',
+          title: '最短3分のLP量産術',
+          description: 'テンプレに沿って入力するだけ',
+        },
+        {
+          icon: 'chart',
+          title: '数字で改善する型',
+          description: '離脱とCTA到達で勝ち筋を発見',
+        },
+        {
+          icon: 'shield',
+          title: '7日間の伴走サポート',
+          description: 'つまずいてもすぐ質問できる',
+        },
+      ],
+      backgroundColor: '#0891B2',
+      textColor: '#FFFFFF',
+      accentColor: '#22D3EE',
+      themeKey: 'momentum',
+    } as FeaturesBlockContent,
+  },
+  {
+    id: 'momentum-testimonial',
+    templateId: 'top-testimonials-1',
+    name: 'お客様の声（Momentum）',
+    category: 'trust',
+    description: '実績・信頼の引用。ティール×ネイビーの落ち着いたトーン。',
+    defaultContent: {
+      title: '受講者の声',
+      subtitle: '半信半疑から始めた人が、成果を出しています。',
+      testimonials: [
+        {
+          quote: '3日目で初めてのリストが30件。半信半疑だった自分が、いまは毎週LPを出しています。',
+          name: '佐藤 あや',
+          role: '受講3週間 / 副業コーチ',
+        },
+      ],
+      backgroundColor: '#0E7490',
+      textColor: '#FFFFFF',
+      accentColor: '#22D3EE',
+      themeKey: 'momentum',
+    } as TestimonialsBlockContent,
+  },
+  {
+    id: 'momentum-offer',
+    templateId: 'top-pricing-1',
+    name: 'オファー（Momentum）',
+    category: 'conversion',
+    description: '価格・限定・保証を1枚で。ネイビー×アンバーの限定感。',
+    defaultContent: {
+      title: 'いまだけ、特別価格',
+      subtitle: '先着50名 — 残り 12 名',
+      plans: [
+        {
+          name: '7日間チャレンジ',
+          price: '9,800 P',
+          period: '',
+          description: '通常 29,800 P → 限定価格。14日間の返金保証つき。',
+          features: ['全7日のカリキュラム', '高CV LPテンプレ3種', '質問し放題のサポート', '14日間返金保証'],
+          buttonText: '今すぐ申し込む',
+          highlighted: true,
+        },
+      ],
+      backgroundColor: '#0B1F3A',
+      textColor: '#FFFFFF',
+      accentColor: '#F59E0B',
+      buttonColor: '#0284C7',
+      themeKey: 'momentum',
+    } as PricingBlockContent,
+  },
+  {
+    id: 'momentum-cta',
+    templateId: 'top-cta-1',
+    name: 'CTA（Momentum）',
+    category: 'conversion',
+    description: '行動を促すクロージング。シアングラデで前向きに締める。',
+    defaultContent: {
+      eyebrow: 'GET STARTED',
+      title: '未来を、前に進めよう',
+      subtitle: 'ボタンひとつで決済完了。すぐにスタート。',
+      buttonText: '今すぐ申し込む',
+      buttonUrl: '/register',
+      backgroundColor: '#0891B2',
+      backgroundGradient: 'linear-gradient(150deg, rgba(2,132,199,0.85), rgba(6,182,212,0.85))',
+      textColor: '#FFFFFF',
+      accentColor: '#22D3EE',
+      buttonColor: '#0B1F3A',
+      themeKey: 'momentum',
+    } as CTABlockContent,
+  },
+  {
+    id: 'momentum-faq',
+    templateId: 'top-faq-1',
+    name: 'よくある質問（Momentum）',
+    category: 'content',
+    description: '不安を解消するQ&A。ネイビー基調の標準FAQ。',
+    defaultContent: {
+      title: 'よくある質問',
+      subtitle: '申し込み前の不安にお答えします。',
+      items: [
+        {
+          question: '初心者でも大丈夫？',
+          answer: 'はい。テンプレートとAIで迷わず作れます。',
+        },
+        {
+          question: '返金はできますか？',
+          answer: '14日間の返金保証があるので安心です。',
+        },
+      ],
+      backgroundColor: '#0B1F3A',
+      textColor: '#F8FAFC',
+      accentColor: '#22D3EE',
+      themeKey: 'momentum',
+    } as FAQBlockContent,
+  },
   {
     id: 'top-hero-landing',
     templateId: 'top-hero-1',

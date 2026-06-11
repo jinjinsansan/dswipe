@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { FeaturesBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
+import { GRAD_BRAND } from '@/lib/momentum';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
 import {
   AcademicCapIcon,
@@ -111,9 +112,9 @@ const getFallbackLabel = (value?: string) => {
 export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHighlightsBlockProps) {
   const title = content?.title ?? 'こんな課題、ありませんか？';
   const tagline = content?.tagline ?? 'Pain Points';
-  const accentColor = content?.accentColor ?? '#2563EB';
+  const accentColor = content?.accentColor ?? '#0284C7';
   const backgroundColor = content?.backgroundColor ?? '#F1F5F9';
-  const textColor = content?.textColor ?? '#0F172A';
+  const textColor = content?.textColor ?? '#0B1F3A';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -197,14 +198,18 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
           </div>
         ) : null}
 
+        {/* mock: editor.css .sc-benefit — アイブロー＋800見出し＋グラデアイコンタイルのカード */}
         <div className="responsive-stack items-center text-center">
           <p
-            className="font-semibold typo-eyebrow"
-            style={{ color: accentColor }}
+            className="font-bold uppercase typo-eyebrow"
+            style={{ color: accentColor, letterSpacing: '0.14em' }}
           >
             {tagline}
           </p>
-          <h2 className="typo-headline text-pretty font-bold" style={{ color: content?.textColor ?? '#0F172A' }}>
+          <h2
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em', lineHeight: 1.3 }}
+          >
             {title}
           </h2>
         </div>
@@ -214,19 +219,19 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
             return (
               <div
                 key={index}
-                className="flex h-full flex-row flex-wrap items-start gap-4 rounded-card border p-4 shadow-sm sm:flex-col sm:flex-nowrap sm:items-center sm:text-center sm:p-5 sm:gap-3 md:p-6 md:gap-4"
+                className="flex h-full flex-row flex-wrap items-start gap-4 rounded-[12px] p-4 sm:flex-col sm:flex-nowrap sm:items-center sm:text-center sm:p-5 sm:gap-3 md:p-6 md:gap-4"
                 style={{
-                  borderColor: withAlpha(accentColor, 0.2, accentColor),
-                  backgroundColor: withAlpha(accentColor, 0.06, '#FFFFFF'),
-                  color: content?.textColor ?? '#0F172A',
+                  border: `1px solid ${withAlpha(textColor, 0.12, textColor)}`,
+                  backgroundColor: withAlpha(textColor, 0.08, '#FFFFFF'),
+                  color: textColor,
                 }}
               >
                 <div
-                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-white/40 bg-white/80 shadow-sm sm:h-14 sm:w-14"
-                  style={{ color: accentColor }}
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[10px] shadow-[0_10px_26px_-8px_rgba(6,182,212,.45)] sm:h-12 sm:w-12"
+                  style={{ background: GRAD_BRAND, color: '#FFFFFF' }}
                 >
                   {IconComponent ? (
-                    <IconComponent className="h-6 w-6 sm:h-7 sm:w-7" />
+                    <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
                   ) : (
                     <span className="font-semibold typo-body text-pretty sm:text-base">
                       {getFallbackLabel(feature.icon)}
@@ -236,7 +241,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
 
                 <div className="flex-1 sm:flex-none sm:w-full">
                   <h3
-                    className="font-semibold typo-subheadline text-pretty"
+                    className="font-bold typo-subheadline text-pretty"
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={handleFeatureBlur(index, 'title')}
@@ -248,7 +253,7 @@ export default function TopHighlightsBlock({ content, isEditing, onEdit }: TopHi
                     contentEditable={isEditing}
                     suppressContentEditableWarning
                     onBlur={handleFeatureBlur(index, 'description')}
-                    style={{ color: content?.textColor ? `${content.textColor}B3` : withAlpha('#0F172A', 0.75, '#0F172A') }}
+                    style={{ color: withAlpha(textColor, 0.82, textColor), lineHeight: 1.6 }}
                   >
                     {feature.description}
                   </p>

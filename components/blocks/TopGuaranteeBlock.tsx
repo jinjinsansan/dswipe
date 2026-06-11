@@ -1,3 +1,4 @@
+import { CheckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { GuaranteeBlockContent } from '@/types/templates';
 import { withAlpha } from '@/lib/color';
 import { getBackgroundOverlayStyle, getBlockBackgroundStyle, shouldRenderBackgroundOverlay } from '@/lib/blockBackground';
@@ -28,9 +29,9 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
     onEdit?.('bulletPoints', next);
   };
 
-  const backgroundColor = content?.backgroundColor ?? '#020617';
+  const backgroundColor = content?.backgroundColor ?? '#0B1F3A';
   const textColor = content?.textColor ?? '#F8FAFC';
-  const accentColor = content?.accentColor ?? '#34D399';
+  const accentColor = content?.accentColor ?? '#6EE7B7';
   const backgroundStyle = getBlockBackgroundStyle(content, backgroundColor);
   const showOverlay = shouldRenderBackgroundOverlay(content);
   const overlayStyle = showOverlay ? getBackgroundOverlayStyle(content) : undefined;
@@ -83,21 +84,30 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
           </div>
         ) : null}
 
+        {/* mock: Block Library .sc-guarantee — dashed円形バッジ＋ShieldCheckIcon */}
         <div className="responsive-stack items-center text-center">
           <span
-            className="rounded-full border px-3 py-1 font-semibold typo-eyebrow"
+            className="flex h-20 w-20 items-center justify-center rounded-full"
+            style={{ border: `2px dashed ${withAlpha(accentColor, 0.6, accentColor)}` }}
+            aria-hidden="true"
+          >
+            <ShieldCheckIcon className="h-10 w-10" style={{ color: accentColor }} strokeWidth={1.6} />
+          </span>
+          <span
+            className="rounded-full border px-3 py-1 font-bold uppercase typo-eyebrow"
             style={{
-              borderColor: withAlpha(accentColor, 0.6, accentColor),
+              borderColor: withAlpha(accentColor, 0.5, accentColor),
               backgroundColor: withAlpha(accentColor, 0.12, accentColor),
-              color: withAlpha(accentColor, 0.9, accentColor),
+              color: accentColor,
+              letterSpacing: '0.12em',
             }}
             onClick={focusField<HTMLSpanElement>('guarantee.badgeText')}
           >
             {badgeText}
           </span>
           <h2
-            className="typo-headline text-pretty font-bold"
-            style={{ color: textColor }}
+            className="typo-headline text-pretty font-extrabold"
+            style={{ color: textColor, letterSpacing: '-0.02em' }}
             onClick={focusField<HTMLHeadingElement>('guarantee.title')}
           >
             {title}
@@ -133,13 +143,13 @@ export default function TopGuaranteeBlock({ content, isEditing, onEdit, onFieldF
             {bulletPoints.map((point, index) => (
               <li key={index} className="flex items-start gap-2">
                 <span
-                  className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                  className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full"
                   style={{
-                    backgroundColor: accentColor,
-                    color: '#0F172A',
+                    backgroundColor: withAlpha(accentColor, 0.18, accentColor),
+                    color: accentColor,
                   }}
                 >
-                  ✓
+                  <CheckIcon className="h-3 w-3" strokeWidth={2.6} aria-hidden="true" />
                 </span>
                 <div
                   className="flex-1"
