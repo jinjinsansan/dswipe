@@ -19,6 +19,24 @@ type ViewerPalette = {
 };
 
 const viewerPalettes: Record<string, ViewerPalette> = {
+  /* Momentum — D-Swipe標準(ネイビー×シアン)。mock: editor-blocks.jsx BG_PRESETS.navy */
+  momentum: {
+    name: 'Momentum',
+    background: 'radial-gradient(360px 220px at 70% 12%, rgba(34, 211, 238, 0.3), transparent 60%), linear-gradient(165deg, #0b1f3a 0%, #0e5d80 130%)',
+    backgroundGlow: 'radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.24), rgba(11, 31, 58, 0))',
+    surface: 'rgba(255, 255, 255, 0.08)',
+    surfaceStrong: 'rgba(255, 255, 255, 0.14)',
+    surfaceSoft: 'rgba(255, 255, 255, 0.05)',
+    overlay: 'rgba(34, 211, 238, 0.2)',
+    overlaySoft: 'rgba(34, 211, 238, 0.12)',
+    accent: '#22D3EE',
+    accentAlt: '#0EA5E9',
+    accentSoft: 'rgba(6, 182, 212, 0.35)',
+    text: '#F8FAFC',
+    muted: 'rgba(207, 227, 245, 0.8)',
+    divider: 'rgba(148, 184, 220, 0.26)',
+    border: 'rgba(34, 211, 238, 0.36)',
+  },
   default: {
     name: 'Nebula Indigo',
     background: 'linear-gradient(145deg, #050814 0%, #0b1120 35%, #111827 100%)',

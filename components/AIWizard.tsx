@@ -31,6 +31,7 @@ import type { AIWizardRequest, AIGenerationResponse } from '@/types/api';
 import { aiApi } from '@/lib/api';
 
 type ThemeKey =
+  | 'momentum'
   | 'urgent_red'
   | 'energy_orange'
   | 'gold_premium'
@@ -130,7 +131,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
       case '自己啓発・コーチング':
         return 'gold_premium';
       default:
-        return 'urgent_red';
+        return 'momentum';
     }
   }, [formData.business]);
 
