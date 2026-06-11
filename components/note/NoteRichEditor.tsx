@@ -1058,8 +1058,11 @@ export default function NoteRichEditor({
             </div>
           ) : null}
 
-          {/* 選択時だけ浮かぶツールバー(note.com流) */}
-          {editor && !disabled ? (
+          {/* 選択時だけ浮かぶツールバー(note.com流)
+             BubbleMenuプラグインはメニューDOMを移動させるため、Reactの兄弟挿入
+             アンカーが壊れないよう常設のホストdivでラップする(insertBefore例外対策) */}
+          <div data-bubble-menu-host>
+            {editor && !disabled ? (
             <BubbleMenu
               editor={editor}
               tippyOptions={{ duration: 120, placement: 'top' }}
@@ -1125,7 +1128,8 @@ export default function NoteRichEditor({
                 <span className="text-[12px]">{activeAccess === 'paid' ? '無料に戻す' : '有料'}</span>
               </button>
             </BubbleMenu>
-          ) : null}
+            ) : null}
+          </div>
 
           <EditorContent
             editor={editor}
