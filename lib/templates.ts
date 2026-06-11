@@ -13,6 +13,16 @@ interface ThemeDefinition {
 }
 
 export const COLOR_THEMES: Record<ColorThemeKey, ThemeDefinition> = {
+  /* D-Swipe標準テーマ。新規LP/ブロックの既定。高彩度テーマは強調用に残置 */
+  momentum: {
+    primary: '#0284C7',
+    secondary: '#0EA5E9',
+    accent: '#22D3EE',
+    background: '#0B1F3A',
+    text: '#FFFFFF',
+    name: 'Momentum',
+    description: 'D-Swipe標準。ネイビー×シアンの信頼感',
+  },
   power_blue: {
     primary: '#1E40AF',
     secondary: '#3B82F6',

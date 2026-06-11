@@ -44,6 +44,7 @@ export type BlockCategory =
   | 'handwritten';  // 手書き風シリーズ
 
 export type TemplateThemeKey =
+  | 'momentum'
   | 'urgent_red'
   | 'energy_orange'
   | 'gold_premium'
