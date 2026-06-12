@@ -7,6 +7,7 @@ import { HexColorPicker } from 'react-colorful';
 import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
+import { BACKGROUND_PRESETS, BACKGROUND_PRESET_ORDER } from '@/lib/backgroundPresets';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 
@@ -205,7 +206,11 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
           <input
             type="text"
             value={value}
-            onChange={(e) => onUpdateContent(fieldName, e.target.value)}
+            onChange={(e) => {
+              // カスタム単色を選んだら背景プリセット(グラデ)は解除する
+              if (fieldName === 'backgroundColor') onUpdateContent('backgroundPreset', null);
+              onUpdateContent(fieldName, e.target.value);
+            }}
             onFocus={(e) => e.target.select()}
             className="px-3 lg:px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-sky-500"
             placeholder="#000000"
@@ -215,7 +220,10 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             <div className="absolute top-full left-0 mt-2 z-50 bg-white p-3 rounded-lg shadow-2xl border border-slate-200">
               <HexColorPicker
                 color={value}
-                onChange={(color) => onUpdateContent(fieldName, color)}
+                onChange={(color) => {
+                  if (fieldName === 'backgroundColor') onUpdateContent('backgroundPreset', null);
+                  onUpdateContent(fieldName, color);
+                }}
               />
               <button
                 onClick={() => setShowColorPicker(null)}
@@ -433,6 +441,47 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
             );
           })}
         </div>
+
+        {mode === 'color' ? (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-slate-600">ブランド背景プリセット</p>
+            <div className="flex flex-wrap items-center gap-2">
+              {BACKGROUND_PRESET_ORDER.map((key) => {
+                const preset = BACKGROUND_PRESETS[key];
+                const isActive = (content as any).backgroundPreset === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    title={preset.label}
+                    aria-label={preset.label}
+                    onClick={() => {
+                      onUpdateContent('backgroundPreset', key);
+                      onUpdateContent('textColor', preset.textColor);
+                      onUpdateContent('accentColor', preset.accentColor);
+                    }}
+                    className={`h-9 w-9 rounded-full border-2 shadow-sm transition ${
+                      isActive ? 'border-sky-500 ring-2 ring-sky-200' : 'border-slate-200 hover:border-sky-400'
+                    }`}
+                    style={{ background: preset.css }}
+                  />
+                );
+              })}
+              {(content as any).backgroundPreset ? (
+                <button
+                  type="button"
+                  onClick={() => onUpdateContent('backgroundPreset', null)}
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:border-sky-400 hover:text-sky-600"
+                >
+                  解除
+                </button>
+              ) : null}
+            </div>
+            <p className="text-xs text-slate-500">
+              TOPページと同じグラデーション背景です。選ぶと文字色・アクセント色も推奨色に切り替わります。下の「背景色」でカスタム単色を指定すると解除されます。
+            </p>
+          </div>
+        ) : null}
 
         {mode === 'image' ? (
           <div className="space-y-4">

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { BaseBlockContent } from '@/types/templates';
+import { getBackgroundPreset } from '@/lib/backgroundPresets';
 
 type BackgroundStyleMode = 'auto' | 'none' | 'color' | 'image';
 
@@ -42,6 +43,16 @@ export const getBlockBackgroundStyle = (
     }
     style.backgroundPosition = content.backgroundImagePosition ?? 'center';
     style.backgroundColor = backgroundColor ?? '#FFFFFF';
+    return style;
+  }
+
+  // 背景プリセット(グラデ): 単色/auto時のみ。画像背景・「なし」は尊重する
+  const preset = getBackgroundPreset(content?.backgroundPreset);
+  if (preset) {
+    style.backgroundColor = preset.base;
+    if (preset.css.includes('gradient')) {
+      style.backgroundImage = preset.css;
+    }
     return style;
   }
 

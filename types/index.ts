@@ -184,6 +184,18 @@ export interface LPDetail extends LandingPage {
   linked_salon?: LinkedSalonSummary | null;
 }
 
+/** TOPページの固定ナビと同等のヘッダー帯（footer_cta_config JSON内に格納、BE互換） */
+export interface LpHeaderBarConfig {
+  enabled?: boolean;
+  title?: string;
+  buttonLabel?: string;
+  buttonUrl?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  buttonBackgroundColor?: string;
+  buttonTextColor?: string;
+}
+
 export interface FooterCTAConfig {
   title?: string;
   subtitle?: string;
@@ -196,6 +208,10 @@ export interface FooterCTAConfig {
   showOnHero?: boolean;
   /** trueで全スライドに常駐表示（falseは最終スライド到達時のみ） */
   alwaysVisible?: boolean;
+  /** フッター帯自体の有効フラグ。未定義は従来互換でtrue扱い(ヘッダー帯のみ使う場合にfalse) */
+  footerEnabled?: boolean;
+  /** ヘッダー帯設定。footer_cta_config JSONに同居させることでBEスキーマ変更不要 */
+  headerBar?: LpHeaderBarConfig | null;
 }
 
 export type LP = LandingPage;

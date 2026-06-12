@@ -21,7 +21,7 @@ import {
   recordStepView,
   submitEmailCapture,
 } from '@/lib/publicClient';
-import { LPDetail, RequiredActionsStatus, CTA, Product, type FooterCTAConfig } from '@/types';
+import { LPDetail, RequiredActionsStatus, CTA, Product, type FooterCTAConfig, type LpHeaderBarConfig } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 import { redirectToLogin } from '@/lib/navigation';
@@ -152,22 +152,47 @@ export default function LPViewerClient({
     return undefined;
   }, [lp?.linked_salon?.id, lp?.product_id, products]);
 
-  const footerCtaConfig = useMemo<FooterCTAConfig | null>(() => {
+  const rawFooterCtaConfig = useMemo<FooterCTAConfig | null>(() => {
     if (!lp?.footer_cta_config) {
       return null;
     }
     return lp.footer_cta_config as FooterCTAConfig;
   }, [lp?.footer_cta_config]);
 
+  // footerEnabled === false はヘッダー帯のみ利用するケース(未定義は従来互換で表示)
+  const footerCtaConfig = useMemo<FooterCTAConfig | null>(() => {
+    if (!rawFooterCtaConfig || rawFooterCtaConfig.footerEnabled === false) {
+      return null;
+    }
+    return rawFooterCtaConfig;
+  }, [rawFooterCtaConfig]);
+
+  const headerBarConfig = useMemo<LpHeaderBarConfig | null>(() => {
+    const header = rawFooterCtaConfig?.headerBar;
+    if (!header || header.enabled !== true) {
+      return null;
+    }
+    if (!header.title && !header.buttonLabel) {
+      return null;
+    }
+    return header;
+  }, [rawFooterCtaConfig]);
+
   const footerCtaColors = useMemo(() => {
     const background = footerCtaConfig?.backgroundColor || '#0B1F3A';
     const buttonBackground = footerCtaConfig?.buttonBackgroundColor || '#0284C7';
+    // 既定値のままならTOPページの登録バンドと同じグラデ/ブランドボタンに自動アップグレード
+    const hasCustomBackground =
+      Boolean(footerCtaConfig?.backgroundColor) && background.toUpperCase() !== '#0B1F3A';
+    const hasCustomButtonColor =
+      Boolean(footerCtaConfig?.buttonBackgroundColor) && buttonBackground.toUpperCase() !== '#0284C7';
     return {
       background,
       text: footerCtaConfig?.textColor || '#FFFFFF',
       buttonBackground,
       buttonText: footerCtaConfig?.buttonTextColor || '#FFFFFF',
-      hasCustomButtonColor: Boolean(footerCtaConfig?.buttonBackgroundColor),
+      hasCustomBackground,
+      hasCustomButtonColor,
       ghostBackground: toRgbaColor(background, 0.65, '#0B1F3A'),
       ghostButtonBackground: toRgbaColor(buttonBackground, 0.9, '#0284C7'),
     };
@@ -238,7 +263,9 @@ export default function LPViewerClient({
             backgroundColor,
             backgroundImage:
               variant === 'solid'
-                ? `linear-gradient(160deg, transparent 40%, ${toRgbaColor(buttonBackground, 0.16, 'rgba(34,211,238,0.12)')})`
+                ? footerCtaColors.hasCustomBackground
+                  ? `linear-gradient(160deg, transparent 40%, ${toRgbaColor(buttonBackground, 0.16, 'rgba(34,211,238,0.12)')})`
+                  : 'linear-gradient(160deg, #0b1f3a, #0f2c52)'
                 : undefined,
             color: footerCtaColors.text,
             paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
@@ -283,6 +310,60 @@ export default function LPViewerClient({
               </a>
             ) : null}
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  // TOPページの固定ナビと同等のヘッダー帯（半透明ネイビー＋ブラー＋ブランドグラデCTA）
+  const renderHeaderBar = () => {
+    if (!headerBarConfig) {
+      return null;
+    }
+    const customBg = headerBarConfig.backgroundColor;
+    const textColor = headerBarConfig.textColor || '#FFFFFF';
+    const buttonBackground = headerBarConfig.buttonBackgroundColor || '#0284C7';
+    const hasCustomButton =
+      Boolean(headerBarConfig.buttonBackgroundColor) && buttonBackground.toUpperCase() !== '#0284C7';
+    const buttonTextColor = headerBarConfig.buttonTextColor || '#FFFFFF';
+
+    return (
+      <div
+        className="fixed inset-x-0 top-0 z-40 border-b border-white/10"
+        style={{
+          background: customBg ? toRgbaColor(customBg, 0.82, 'rgba(11,31,58,0.82)') : 'rgba(11,31,58,0.82)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+        }}
+      >
+        <div className="mx-auto flex h-[52px] w-full max-w-screen-xl items-center justify-between gap-3 px-4 sm:px-6">
+          {headerBarConfig.title ? (
+            <span
+              className="min-w-0 truncate text-[14.5px] font-extrabold tracking-tight"
+              style={{ color: textColor }}
+            >
+              {headerBarConfig.title}
+            </span>
+          ) : (
+            <span aria-hidden="true" />
+          )}
+          {headerBarConfig.buttonLabel && headerBarConfig.buttonUrl ? (
+            <a
+              href={headerBarConfig.buttonUrl}
+              className="inline-flex flex-shrink-0 items-center justify-center rounded-[10px] px-4 py-2 text-[13px] font-bold transition-transform hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              style={{
+                background: hasCustomButton
+                  ? buttonBackground
+                  : 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                color: buttonTextColor,
+                boxShadow: '0 10px 26px -8px rgba(6,182,212,.55)',
+              }}
+              onClick={() => triggerHapticFeedback('medium')}
+            >
+              {headerBarConfig.buttonLabel}
+            </a>
+          ) : null}
         </div>
       </div>
     );
@@ -1215,6 +1296,7 @@ export default function LPViewerClient({
           })}
         </Swiper>
       </div>
+      {renderHeaderBar()}
       {footerCtaConfig?.showOnHero ? renderFooterCta('ghost') : null}
       {footerCtaConfig ? renderFooterCta('solid') : null}
       {showPurchaseModal && selectedProduct && (
