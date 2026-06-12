@@ -10,6 +10,7 @@
 - **フッター帯の自動アップグレード**: 背景/ボタン色が既定値（#0B1F3A / #0284C7）のままの場合のみ、TOP登録バンドと同じ `linear-gradient(160deg,#0b1f3a,#0f2c52)`＋ブランドグラデボタンで描画。カスタム色は従来どおり。
 - **LP一式プリセット**: 4種すべて近似単色→backgroundPresetグラデに差し替え（heroは従来どおり動画+オーバーレイでTOP同等）。
 - **検証**: 一時ページ+Playwrightでnavy/auroraのradial-gradient適用・light単色・pageerrorなしを確認。ビルド時は`.next`の生成型に削除済みテストページが残ると失敗する→`.next`削除で解消。
+- **本番障害と修正（2026-06-12）**: ユーザー作成LPでヘッダー帯/常駐表示が消える問題が発生。原因は**バックエンド（swipelaunchリポジトリ backend/app/routes/lp.py の `_normalize_footer_cta_config`）が footer_cta_config をホワイトリスト濾過**しており、`alwaysVisible`（Phase9!）/`footerEnabled`/`headerBar` を黙って破棄していたため。BE側ホワイトリストに3キー追加（headerBarはネスト専用リスト）し、VPS（220.158.22.14 の /opt/dswipe-backend、systemd `dswipe-backend`）へ scp+restart で反映（swipelaunch `0155b33`）。**教訓: footer_cta_config に新キーを足す時はBEホワイトリストも必ず更新**（背景プリセット等の content_data は濾過なし）。BE再起動は約30秒502になる。
 
 ## 0-f. Phase15（2026-06-12）— LPエディタプレビューのiframe実機ビューポート化
 
