@@ -1,6 +1,15 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-12 / Phase1〜15すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+最終更新: 2026-06-12 / Phase1〜16すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+
+## 0-g. Phase16（2026-06-12）— TOPページ品質のユーザーLP（背景プリセット/ヘッダー帯/フッター帯強化）
+
+- **マージ**: main `a327a95`（ブランチ `momentum-phase16`）。**復旧タグ `pre-phase16-lpquality`**（= main `366a905`、origin push済）。戻し方は revert -m 1 推奨。
+- **背景プリセット6種**: `lib/backgroundPresets.ts`（mock editor-blocks.jsx BG_PRESETS移植: navy/cyan/teal/deep/aurora/light）。`BaseBlockContent.backgroundPreset` で指定、`lib/blockBackground.ts` が単色より優先して解決（画像背景・「なし」は尊重）。PropertyPanelの背景設定にスウォッチUI（選択で textColor/accentColor も推奨色に上書き、カスタム単色指定でプリセット解除）。
+- **ヘッダー帯**: TOPページ固定ナビと同等（rgba(11,31,58,.82)+blur(16px)+ブランドグラデCTA）。**設定は `footer_cta_config` JSON内の `headerBar` に格納**（BE additionalProperties:true 確認済→スキーマ変更不要）。`footerEnabled` フラグ新設: false=ヘッダーのみ利用（既存LPは未定義=従来互換でフッター表示）。`headerBar.enabled === true` の場合のみ描画。エディタ設定タブ（desktop/mobile両方）に `HeaderBarSettingsSection` フォーム。
+- **フッター帯の自動アップグレード**: 背景/ボタン色が既定値（#0B1F3A / #0284C7）のままの場合のみ、TOP登録バンドと同じ `linear-gradient(160deg,#0b1f3a,#0f2c52)`＋ブランドグラデボタンで描画。カスタム色は従来どおり。
+- **LP一式プリセット**: 4種すべて近似単色→backgroundPresetグラデに差し替え（heroは従来どおり動画+オーバーレイでTOP同等）。
+- **検証**: 一時ページ+Playwrightでnavy/auroraのradial-gradient適用・light単色・pageerrorなしを確認。ビルド時は`.next`の生成型に削除済みテストページが残ると失敗する→`.next`削除で解消。
 
 ## 0-f. Phase15（2026-06-12）— LPエディタプレビューのiframe実機ビューポート化
 
