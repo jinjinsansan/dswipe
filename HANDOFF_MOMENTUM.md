@@ -1,6 +1,14 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-12 / Phase1〜14すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+最終更新: 2026-06-12 / Phase1〜15すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+
+## 0-f. Phase15（2026-06-12）— LPエディタプレビューのiframe実機ビューポート化
+
+- **マージ**: main `5412b75`（ブランチ `momentum-phase15`、直前のmainは `3818978`。revert -m 1 で戻せる）
+- **内容**: `components/editor/PreviewFrame.tsx` 新設。プレビューをiframe（独立ビューポート）で描画し、親headのCSSを複製（MutationObserverでHMR/遅延注入にも追従）、transformでステージに収める。モバイル=375px実機原寸（デバイス枠336→393px化）、PC=1280pxを等比縮小。vw基準clamp()も`sm:`ブレークポイントも実機と完全一致。
+- **重要な実装知識**: ReactのイベントはルートコンテナへのDOM委譲のため**iframe境界を越えられない**。createPortalではなくiframe内に`createRoot`で独立ルートを生成する（DraggableBlockEditorは親Contextに依存しないため安全）。スクロール同期は iframe内の高さ100vhのdivをscrollContainerとして親の`previewScrollRef`に渡し既存ロジック互換。
+- **後始末**: Phase13の暫定対応（globals.cssの`.editor-mobile-frame`変数固定）は削除済み。
+- **検証**: 認証不要の一時ページ＋Playwrightで実描画確認（375px時44px/sm:非アクティブ、1280px時73.6px/sm:アクティブ、iframe内クリック正常）。
 
 ## 0-e. Phase14（2026-06-12）— ファビコン/ローディング/ロゴ/OGPの新デザイン化
 
