@@ -14,6 +14,7 @@ import { applyThemeShadesToBlock } from '@/lib/themeApplier';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 import { loadTemplateBundle, type TemplateDataBundle } from '@/lib/templates';
 import { GRAD_BRAND } from '@/lib/momentum';
+import PreviewFrame from '@/components/editor/PreviewFrame';
 import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
@@ -557,6 +558,10 @@ export default function EditLPNewPage() {
 
   const previewScrollRef = useRef<HTMLDivElement | null>(null);
   const blockElementMap = useRef<Map<string, HTMLElement>>(new Map());
+
+  const handlePreviewScrollContainer = useCallback((el: HTMLDivElement | null) => {
+    previewScrollRef.current = el;
+  }, []);
 
   const registerBlockElement = useCallback((blockId: string, element: HTMLElement | null) => {
     const registry = blockElementMap.current;
@@ -2726,7 +2731,7 @@ export default function EditLPNewPage() {
               </button>
             </div>
             <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-on-navy sm:inline">
-              エディタビュー — 正確なデザインは公開ページで確認
+              {stagePreviewMode === 'mobile' ? '実機表示 — 375px 原寸' : '実機表示 — PC 1280px 相当'}
             </span>
             <span className="text-[12.5px] font-bold text-pure-white/90" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
@@ -2775,20 +2780,24 @@ export default function EditLPNewPage() {
               </>
             ) : null}
 
-            {/* device — mock: .device / .device-screen（PCモードはワイドパネル） */}
+            {/* device — mock: .device / .device-screen（PCモードはワイドパネル）
+                中身はiframe実機ビューポート(モバイル=375px原寸/PC=1280px縮小)で描画 */}
             <div
               className={
                 stagePreviewMode === 'mobile'
-                  ? 'w-[336px] max-w-full flex-shrink-0 rounded-[38px] bg-[#0b1220] p-[9px]'
+                  ? 'w-[393px] max-w-full flex-shrink-0 rounded-[38px] bg-[#0b1220] p-[9px]'
                   : 'w-full max-w-5xl flex-shrink-0 rounded-[18px] bg-[#0b1220] p-[7px]'
               }
               style={{
-                height: stagePreviewMode === 'mobile' ? 'min(680px, 100%)' : '100%',
+                height: stagePreviewMode === 'mobile' ? 'min(740px, 100%)' : '100%',
                 boxShadow: '0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07)',
               }}
             >
-              <div className={`relative h-full w-full overflow-hidden bg-white ${stagePreviewMode === 'mobile' ? 'rounded-[30px] editor-mobile-frame' : 'rounded-[12px]'}`}>
-                <div ref={previewScrollRef} className="h-full overflow-y-auto">
+              <div className={`relative h-full w-full overflow-hidden bg-white ${stagePreviewMode === 'mobile' ? 'rounded-[30px]' : 'rounded-[12px]'}`}>
+                <PreviewFrame
+                  viewportWidth={stagePreviewMode === 'mobile' ? 375 : 1280}
+                  onScrollContainerChange={handlePreviewScrollContainer}
+                >
                   <DraggableBlockEditor
                     blocks={blocks}
                     onUpdateBlock={() => {}}
@@ -2802,7 +2811,7 @@ export default function EditLPNewPage() {
                     onRequestFieldFocus={handleFieldFocusRequest}
                     primaryLinkLock={primaryLinkLock ?? undefined}
                   />
-                </div>
+                </PreviewFrame>
               </div>
             </div>
           </div>
