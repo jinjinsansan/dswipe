@@ -7,7 +7,6 @@ import { ArrowRightIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/re
 import { useFormatter, useTranslations, useLocale } from 'next-intl';
 
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { fetchPublicNotes } from '@/lib/publicClient';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import type { PublicNoteSummary } from '@/types';
@@ -123,15 +122,11 @@ export default function NotesMarketplacePage({ basePath = '' }: NotesMarketplace
       <div className="mx-auto w-full max-w-6xl px-4 pb-20 pt-6 sm:px-6">
         {/* Navy hero */}
         <div className="rounded-3xl px-6 py-7 sm:px-9 sm:py-9 mb-7 shadow-[0_22px_44px_-24px_rgba(2,132,199,.34)]" style={{ background: HEAD_BG }}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-xs font-bold tracking-[.16em] uppercase text-cyan-300">Notes</div>
-              <h1 className="text-[26px] sm:text-[30px] font-extrabold tracking-tight text-pure-white mt-2">{t('pageTitle')}</h1>
-              <p className="text-sm text-on-navy mt-2">{t('pageSubtitle')}</p>
-            </div>
-            <span className="rounded-full bg-white/95 px-3 py-1.5 shadow-sm">
-              <LanguageSwitcher />
-            </span>
+          {/* 言語切替はヘッダー側にあるためヒーロー内の重複は置かない */}
+          <div>
+            <div className="text-xs font-bold tracking-[.16em] uppercase text-cyan-300">Notes</div>
+            <h1 className="text-[26px] sm:text-[30px] font-extrabold tracking-tight text-pure-white mt-2">{t('pageTitle')}</h1>
+            <p className="text-sm text-on-navy mt-2">{t('pageSubtitle')}</p>
           </div>
           <div className="relative max-w-[560px] mt-5">
             <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-[19px] h-[19px] text-slate-500" aria-hidden="true" />

@@ -203,7 +203,10 @@ function ProductOrderCompleteContent(): JSX.Element {
                 <div className="truncate text-xs text-slate-500">トランザクションID: {externalId}</div>
               ) : null}
               {checking ? (
-                <p className="mt-2 text-xs text-sky-600">決済状況を確認しています…</p>
+                <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-sky-600">
+                  <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-sky-300 border-t-sky-600" aria-hidden="true" />
+                  決済状況を確認しています（5秒ごとに自動で再確認します）
+                </p>
               ) : null}
               {notificationSent ? (
                 <p className="mt-2 text-xs text-emerald-600">運営からのお知らせにメッセージを送信しました。</p>
@@ -211,7 +214,7 @@ function ProductOrderCompleteContent(): JSX.Element {
                 <p className="mt-2 text-xs text-slate-500">運営からのお知らせへの反映には数秒かかる場合があります。</p>
               )}
               {statusError ? (
-                <p className="mt-2 text-xs text-rose-500">{statusError}</p>
+                <p className="mt-2 text-xs text-rose-500">{statusError}（自動で再確認を続けています）</p>
               ) : null}
             </div>
 

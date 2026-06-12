@@ -17,10 +17,18 @@ import {
 
 type ToastType = 'success' | 'error' | 'info';
 
+interface ToastOptions {
+  /** トースト内に表示するアクションボタン(「元に戻す」等) */
+  actionLabel?: string;
+  onAction?: () => void;
+}
+
 interface ToastItem {
   id: number;
   type: ToastType;
   message: string;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 interface ConfirmOptions {
@@ -39,7 +47,7 @@ interface ConfirmRequest extends ConfirmOptions {
 interface FeedbackState {
   toasts: ToastItem[];
   confirmRequest: ConfirmRequest | null;
-  pushToast: (type: ToastType, message: string) => void;
+  pushToast: (type: ToastType, message: string, options?: ToastOptions) => void;
   dismissToast: (id: number) => void;
   openConfirm: (request: ConfirmRequest) => void;
   settleConfirm: (confirmed: boolean) => void;
@@ -50,10 +58,17 @@ let toastSeq = 0;
 const useFeedbackStore = create<FeedbackState>((set, get) => ({
   toasts: [],
   confirmRequest: null,
-  pushToast: (type, message) => {
+  pushToast: (type, message, options) => {
     const id = ++toastSeq;
-    set((state) => ({ toasts: [...state.toasts.slice(-2), { id, type, message }] }));
-    setTimeout(() => get().dismissToast(id), type === 'error' ? 6000 : 4000);
+    set((state) => ({
+      toasts: [
+        ...state.toasts.slice(-2),
+        { id, type, message, actionLabel: options?.actionLabel, onAction: options?.onAction },
+      ],
+    }));
+    // アクション付き(undo等)は猶予を長めに取る
+    const ttl = options?.actionLabel ? 7000 : type === 'error' ? 6000 : 4000;
+    setTimeout(() => get().dismissToast(id), ttl);
   },
   dismissToast: (id) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
   openConfirm: (request) => {
@@ -70,9 +85,12 @@ const useFeedbackStore = create<FeedbackState>((set, get) => ({
 }));
 
 export const toast = {
-  success: (message: string) => useFeedbackStore.getState().pushToast('success', message),
-  error: (message: string) => useFeedbackStore.getState().pushToast('error', message),
-  info: (message: string) => useFeedbackStore.getState().pushToast('info', message),
+  success: (message: string, options?: ToastOptions) =>
+    useFeedbackStore.getState().pushToast('success', message, options),
+  error: (message: string, options?: ToastOptions) =>
+    useFeedbackStore.getState().pushToast('error', message, options),
+  info: (message: string, options?: ToastOptions) =>
+    useFeedbackStore.getState().pushToast('info', message, options),
 };
 
 export const appConfirm = (options: ConfirmOptions): Promise<boolean> =>
@@ -116,6 +134,18 @@ export function FeedbackHost() {
             >
               <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${style.iconColor}`} aria-hidden="true" />
               <p className="flex-1 text-sm font-medium leading-snug text-slate-800 whitespace-pre-line">{item.message}</p>
+              {item.actionLabel && item.onAction ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    item.onAction?.();
+                    dismissToast(item.id);
+                  }}
+                  className="flex-shrink-0 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 transition hover:bg-sky-100"
+                >
+                  {item.actionLabel}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() => dismissToast(item.id)}

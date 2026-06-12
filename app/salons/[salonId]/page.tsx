@@ -586,19 +586,6 @@ const planPointLabel = useMemo(() => {
                     </p>
                   ) : null}
                 </div>
-            <div className="rounded-3xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
-              <h3 className="text-sm font-semibold text-rose-700">{t("delete.title")}</h3>
-              <p className="mt-2 text-xs text-rose-600">{t("delete.description")}</p>
-              <button
-                type="button"
-                onClick={handleDeleteSalon}
-                disabled={isDeleting}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-600 px-4 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:bg-rose-300"
-              >
-                <TrashIcon className="h-4 w-4" aria-hidden="true" />
-                {isDeleting ? t("delete.deleting") : t("delete.button")}
-              </button>
-            </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">{t("infoPanel.fields.salonId")}</dt>
                   <dd className="mt-1 text-xs font-mono text-slate-500">{salon.id}</dd>
@@ -666,6 +653,21 @@ const planPointLabel = useMemo(() => {
                   {t("shortcuts.openPublic")}
                 </Link>
               </div>
+            </div>
+
+            {/* 危険操作はインフォパネルの外に独立カードとして置く */}
+            <div className="rounded-3xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
+              <h3 className="text-sm font-semibold text-rose-700">{t("delete.title")}</h3>
+              <p className="mt-2 text-xs text-rose-600">{t("delete.description")}</p>
+              <button
+                type="button"
+                onClick={handleDeleteSalon}
+                disabled={isDeleting}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-rose-600 px-4 py-2 text-sm font-bold text-pure-white shadow-sm transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:bg-rose-300"
+              >
+                <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                {isDeleting ? t("delete.deleting") : t("delete.button")}
+              </button>
             </div>
           </aside>
         </section>
