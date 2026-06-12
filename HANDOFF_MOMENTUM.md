@@ -1,6 +1,17 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-12 / Phase1〜16すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+最終更新: 2026-06-12 / Phase1〜18すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+
+## 0-h. Phase18（2026-06-12）— リリース前UX総点検
+
+- **マージ**: main `ee1367d`（ブランチ `momentum-phase18-ux`）。**復旧タグ `pre-phase18-ux`**（= `bbabe45`、origin push済）。
+- **共通基盤**: `components/ui/Feedback.tsx` 新設（zustandベースの `toast.success/error/info` + Promise型確認モーダル `appConfirm()`、`FeedbackHost` を app/layout.tsx にマウント）。**今後 alert()/confirm() は使わずこれを使うこと**。
+- **購入フロー**: ポイント不足→`/points/purchase` 導線、決済遷移時に `sessionStorage['dswipe:checkoutReturn']` へ戻り先退避→ /orders/complete に「購入したページに戻る」、ログイン誘導はappConfirm（ログイン後は元ページ復帰=redirect機構は元から機能）、購入エラーはモーダル内表示。
+- **バグ修正**: DSwipeLogoのグラデIDをuseIdで一意化（**SVGのIDを共有すると display:none インスタンスの定義を参照して描画されない**=モバイルで黒四角）。DashboardHeaderモバイル崩れ。LP not-found画面のライト化+導線。
+- **エディタ**: dirtyトラッキング（suppressカウンタ方式: 初期ロード/保存後の状態同期コミット1回につき1消費）+ beforeunload + 「戻る」確認。
+- **alert/confirm**: ユーザー向け全画面（37ファイル・約60箇所）置換済。**残置: app/admin/*（約30箇所、運営専用）**。
+- **BE修正（VPS反映済）**: 存在しないslugで500→404（swipelaunch `da6fae9`。**supabaseの .single() は0件で例外**→ .limit(1) パターンを使う）。
+- **残課題（任意）**: admin系alert、エディタ空状態ガイド、ブロック削除undo、モバイルエディタのタブ見切れヒント、サロン詳細の`<dl>`マークアップ、notes一覧の旧ロゴサムネは公式note記事のアイキャッチ画像（コンテンツ側）。
 
 ## 0-g. Phase16（2026-06-12）— TOPページ品質のユーザーLP（背景プリセット/ヘッダー帯/フッター帯強化）
 
