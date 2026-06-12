@@ -133,10 +133,10 @@ export default async function RootLayout({
       <body className={`${fontConfig[ACTIVE_FONT].className} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NextTopLoader
-            color="#3b82f6"
+            color="linear-gradient(90deg, #0ea5e9 0%, #06b6d4 100%)"
             height={3}
             showSpinner={false}
-            shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
+            shadow="0 0 10px #0ea5e9,0 0 5px #06b6d4"
           />
           {shouldUseGoogleProvider ? (
             <GoogleOAuthProvider clientId={googleClientId!}>
