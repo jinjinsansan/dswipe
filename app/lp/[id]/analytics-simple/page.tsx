@@ -16,6 +16,7 @@ import {
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 import { analyticsApi } from '@/lib/api';
+import { toast } from '@/components/ui/Feedback';
 import { useAuthStore } from '@/store/authStore';
 import DSwipeLogo from '@/components/DSwipeLogo';
 import { redirectToLogin } from '@/lib/navigation';
@@ -379,7 +380,7 @@ export default function SimpleAnalyticsPage() {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(publicUrl);
-                      alert('URLをコピーしました');
+                      toast.success('URLをコピーしました');
                     }}
                     className="flex-1 sm:flex-none px-5 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 text-sm font-medium transition-colors"
                   >

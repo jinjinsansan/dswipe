@@ -16,6 +16,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salonApi, salonEventApi } from "@/lib/api";
+import { appConfirm } from "@/components/ui/Feedback";
 import type { Salon, SalonEvent, SalonEventListResult } from "@/types/api";
 import { useAuthStore } from "@/store/authStore";
 
@@ -282,7 +283,7 @@ export default function SalonEventsPage() {
 
   const handleDeleteEvent = async (eventId: string) => {
     if (!salonId) return;
-    const confirmed = confirm("このイベントを削除しますか？");
+    const confirmed = await appConfirm({ title: "このイベントを削除しますか？", confirmLabel: "削除する", danger: true });
     if (!confirmed) return;
     setActionLoading((prev) => ({ ...prev, [eventId]: true }));
     setError(null);

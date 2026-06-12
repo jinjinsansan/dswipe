@@ -93,7 +93,8 @@ export default function LanguageSwitcher() {
 
   return (
     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
-      <span>{t('label')}</span>
+      {/* モバイルではラベルを省略してヘッダーの圧迫を避ける */}
+      <span className="hidden md:inline">{t('label')}</span>
       <select
         value={locale}
         onChange={handleChange}

@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import { Pagination, Mousewheel, Keyboard, FreeMode, EffectCreative } from 'swiper/modules';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
+import { toast } from '@/components/ui/Feedback';
 import { BlockType, BlockContent } from '@/types/templates';
 
 import 'swiper/css';
@@ -58,7 +59,7 @@ export default function LivePreview({
     if (onProductPreviewClick) {
       onProductPreviewClick();
     } else {
-      alert('公開ページでは商品購入モーダルが開きます。プレビューではリンクのみ確認できます。');
+      toast.info('公開ページでは商品購入モーダルが開きます。プレビューではリンクのみ確認できます。');
     }
   };
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GRAD_BRAND, HEAD_BG, NAVY_CARD_BG, pickThumbFallback } from "@/lib/momentum";
 import { paymentApi, platformSettingsApi, salonPublicApi } from "@/lib/api";
+import { toast } from "@/components/ui/Feedback";
 import { useAuthStore } from "@/store/authStore";
 import type { SalonPublicDetail } from "@/types/api";
 
@@ -159,7 +160,7 @@ export default function SalonPublicClient({ salonId, initialSalon }: SalonPublic
       console.error("Failed to start yen subscription", joinErr);
       const detail = joinErr?.response?.data?.detail;
       if (detail === "請求先情報を設定してください") {
-        alert("先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。");
+        toast.info("先に請求先情報（氏名・メール・電話番号）の登録が必要です。プロフィール設定画面に移動します。");
         const redirectPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "";
         const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : "";
         router.push(`/profile${search}`);

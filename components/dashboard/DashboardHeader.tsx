@@ -386,9 +386,9 @@ export default function DashboardHeader({
     <header ref={headerRef} className="sticky top-0 z-50">
       <div className="bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 border-b border-slate-200/80 shadow-[0_6px_24px_-12px_rgba(15,23,42,0.25)]">
         <div className="px-3 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <Link href="/dashboard" className="sm:hidden">
-              <DSwipeLogo size="large" showFullName={true} textColor="text-slate-900" />
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Link href="/dashboard" className="sm:hidden flex-shrink-0">
+              <DSwipeLogo size="small" showFullName={false} />
             </Link>
             <div className="hidden sm:block min-w-0">
               <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mb-0 truncate">{resolvedPageTitle}</h1>
@@ -436,7 +436,7 @@ export default function DashboardHeader({
             )}
           </div>
 
-          <div className="sm:hidden flex items-center space-x-3">
+          <div className="sm:hidden flex flex-shrink-0 items-center gap-2">
             <LanguageSwitcher />
             {user ? (
               <>
@@ -461,7 +461,7 @@ export default function DashboardHeader({
             ) : (
               <Link
                 href="/login"
-                className="px-3 py-1.5 bg-sky-600 text-white rounded-lg text-xs font-semibold hover:bg-sky-700 transition-colors"
+                className="whitespace-nowrap flex-shrink-0 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-xs font-semibold hover:bg-sky-700 transition-colors"
               >
                 {layoutT('guest.login')}
               </Link>

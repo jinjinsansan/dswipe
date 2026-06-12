@@ -7,6 +7,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { SalonFeatureGate } from '@/components/SalonFeatureGate';
 import { paymentApi, platformSettingsApi, subscriptionApi } from '@/lib/api';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 import { HEAD_BG } from '@/lib/momentum';
 import type {
   QuickCheckoutResponse,
@@ -233,7 +234,7 @@ function SubscriptionPageContent() {
       ) {
         const detail = (error as { response?: { data?: { detail?: string } } }).response?.data?.detail as string;
         if (detail === '請求先情報を設定してください') {
-          alert(t('billingProfileRequired'));
+          toast.info(t('billingProfileRequired'));
           const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
           const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
           router.push(`/profile${search}`);
@@ -302,7 +303,12 @@ function SubscriptionPageContent() {
   }, [formatPoints, primaryPlan, restrictedPlanId, restrictedPlanKey, restrictedPlanPoints, selectionT]);
 
   const handleCancel = async (subscriptionId: string) => {
-    const confirmCancel = window.confirm(confirmT('cancel'));
+    const confirmCancel = await appConfirm({
+      title: confirmT('cancel'),
+      confirmLabel: '解約する',
+      cancelLabel: '戻る',
+      danger: true,
+    });
     if (!confirmCancel) return;
 
     try {

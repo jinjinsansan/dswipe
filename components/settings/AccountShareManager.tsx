@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {useFormatter, useTranslations} from 'next-intl';
 
 import { getErrorMessage } from '@/lib/errorHandler';
+import { appConfirm } from '@/components/ui/Feedback';
 import { useAccountShareStore } from '@/store/accountShareStore';
 
 const STATUS_CLASS: Record<'pending' | 'active' | 'revoked', string> = {
@@ -90,7 +91,11 @@ export default function AccountShareManager() {
   };
 
   const handleRevoke = async (shareId: string) => {
-    const shouldRevoke = window.confirm(t('confirm.revoke'));
+    const shouldRevoke = await appConfirm({
+      title: t('confirm.revoke'),
+      confirmLabel: '解除する',
+      danger: true,
+    });
     if (!shouldRevoke) return;
     try {
       await revokeShare(shareId);

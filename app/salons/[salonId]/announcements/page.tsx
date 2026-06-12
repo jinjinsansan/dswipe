@@ -15,6 +15,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salonApi, salonAnnouncementApi } from "@/lib/api";
+import { appConfirm } from "@/components/ui/Feedback";
 import type {
   Salon,
   SalonAnnouncement,
@@ -239,7 +240,8 @@ export default function SalonAnnouncementsPage() {
 
   const handleDelete = async (announcementId: string) => {
     if (!salonId) return;
-    if (!confirm("このお知らせを削除しますか？")) return;
+    const confirmed = await appConfirm({ title: "このお知らせを削除しますか？", confirmLabel: "削除する", danger: true });
+    if (!confirmed) return;
     setActionLoading((prev) => ({ ...prev, [announcementId]: true }));
     setError(null);
     setSuccessMessage(null);

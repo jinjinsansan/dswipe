@@ -21,6 +21,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salesApi, payoutApi } from "@/lib/api";
+import { toast } from "@/components/ui/Feedback";
 import { HEAD_BG } from "@/lib/momentum";
 import type {
   SalesHistoryResponse,
@@ -165,7 +166,7 @@ export default function SalesHistoryClient() {
 
   const handleSaveAddress = useCallback(async () => {
     if (!addressInput || !addressInput.startsWith("T")) {
-      alert("TRC20形式のUSDTウォレットアドレスを入力してください (先頭がT)。");
+      toast.error("TRC20形式のUSDTウォレットアドレスを入力してください（先頭がT）。");
       return;
     }
     try {
@@ -173,10 +174,10 @@ export default function SalesHistoryClient() {
       await payoutApi.updateSettings({ usdt_address: addressInput });
       const dashboard = await payoutApi.getDashboard();
       setPayoutDashboard(dashboard.data as PayoutDashboardResponse);
-      alert("受取アドレスを更新しました");
+      toast.success("受取アドレスを更新しました");
     } catch (err) {
       console.error("Failed to update payout address", err);
-      alert("受取アドレスの更新に失敗しました");
+      toast.error("受取アドレスの更新に失敗しました");
     } finally {
       setIsSavingAddress(false);
     }
@@ -189,7 +190,7 @@ export default function SalesHistoryClient() {
       setSelectedPayout(response.data as PayoutLedgerEntry);
     } catch (err) {
       console.error("Failed to load payout detail", err);
-      alert("支払い詳細の取得に失敗しました");
+      toast.error("支払い詳細の取得に失敗しました");
     } finally {
       setDetailLoading(false);
     }

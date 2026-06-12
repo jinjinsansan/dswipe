@@ -20,6 +20,7 @@ import NoteRenderer from './NoteRenderer';
 import ShareToUnlockButton from './ShareToUnlockButton';
 import { getCategoryLabel } from '@/lib/noteCategories';
 import { redirectToLogin } from '@/lib/navigation';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import CreatorFollowButton from '@/components/creator/CreatorFollowButton';
 import { GRAD_BRAND } from '@/lib/momentum';
@@ -237,7 +238,12 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
           priceYen: note.price_jpy ?? 0,
         });
 
-    if (!window.confirm(confirmMessage)) {
+    const confirmedPurchase = await appConfirm({
+      title: isPointsPurchase ? 'コラムを購入しますか？' : 'コラムの決済を開始しますか？',
+      message: confirmMessage,
+      confirmLabel: isPointsPurchase ? '購入する' : '決済へ進む',
+    });
+    if (!confirmedPurchase) {
       setPurchaseState('idle');
       return;
     }
@@ -277,7 +283,7 @@ export default function NoteDetailClient({ slug, shareToken, basePath = '' }: No
       setPurchaseState('error');
       const detailMessage = typeof detail === 'string' ? detail : null;
       if (status === 400 && detailMessage === '請求先情報を設定してください') {
-        alert(t('billingProfileRequired'));
+        toast.info(t('billingProfileRequired'));
         const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
         const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
         router.push(`/profile${search}`);

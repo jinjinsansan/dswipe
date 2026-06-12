@@ -11,6 +11,7 @@ import { lpApi, productApi, authApi, announcementApi, noteApi } from '@/lib/api'
 import { getCategoryLabel } from '@/lib/noteCategories';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { redirectToLogin } from '@/lib/navigation';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 import type { DashboardAnnouncement, NoteMetrics, NoteSummary } from '@/types';
 import { loadCache, saveCache } from '@/lib/cache';
 import {
@@ -649,18 +650,24 @@ export default function DashboardPage() {
     void fetchData();
   }, [fetchData, hydrateFromCache, isAuthenticated, isInitialized, router]);
 
-  const handleDeleteLP = async (lpId: string) => {
-    if (!confirm('本当にこのLPを削除しますか？この操作は取り消せません。')) {
+  const handleDeleteLP = async (lpId: string, lpTitle?: string) => {
+    const confirmed = await appConfirm({
+      title: 'LPを削除しますか？',
+      message: `${lpTitle ? `「${lpTitle}」` : 'このLP'}を削除します。この操作は取り消せません。`,
+      confirmLabel: '削除する',
+      danger: true,
+    });
+    if (!confirmed) {
       return;
     }
 
     try {
       await lpApi.delete(lpId);
       await fetchData();
-      alert('LPを削除しました');
+      toast.success('LPを削除しました');
     } catch (error: unknown) {
       console.error('Failed to delete LP:', error);
-      alert(extractErrorDetail(error, 'LPの削除に失敗しました'));
+      toast.error(extractErrorDetail(error, 'LPの削除に失敗しました'));
     }
   };
 
@@ -670,13 +677,13 @@ export default function DashboardPage() {
       const response = await lpApi.duplicate(lpId);
       const duplicated = response.data;
       await fetchData();
-      alert('LPを複製しました。新しいドラフトを開きます。');
+      toast.success('LPを複製しました。新しいドラフトを開きます。');
       if (duplicated?.id) {
         router.push(`/lp/${duplicated.id}/edit`);
       }
     } catch (error: unknown) {
       console.error('Failed to duplicate LP:', error);
-      alert(extractErrorDetail(error, 'LPの複製に失敗しました'));
+      toast.error(extractErrorDetail(error, 'LPの複製に失敗しました'));
     } finally {
       setDuplicatingId(null);
     }
@@ -854,7 +861,7 @@ export default function DashboardPage() {
                           {duplicatingId === lp.id ? '複製中…' : '複製'}
                         </button>
                         <button
-                          onClick={() => handleDeleteLP(lp.id)}
+                          onClick={() => handleDeleteLP(lp.id, lp.title)}
                           className="px-1 sm:px-2 py-1 bg-red-600 text-pure-white rounded hover:bg-red-700 transition-colors text-[10px] sm:text-xs font-semibold"
                         >
                           削除
@@ -876,7 +883,7 @@ export default function DashboardPage() {
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(lp.share_url || '');
-                                    alert('限定URLをコピーしました');
+                                    toast.success('限定URLをコピーしました');
                                   }}
                                   className="px-1.5 py-0.5 bg-amber-500 text-white rounded text-[8px] sm:text-[10px] hover:bg-amber-600 transition-colors whitespace-nowrap font-semibold"
                                 >
@@ -898,7 +905,7 @@ export default function DashboardPage() {
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(`${window.location.origin}/view/${lp.slug}`);
-                                    alert('URLをコピーしました');
+                                    toast.success('URLをコピーしました');
                                   }}
                                   className="px-1.5 py-0.5 bg-sky-600 text-white rounded text-[8px] sm:text-[10px] hover:bg-sky-700 transition-colors whitespace-nowrap font-semibold"
                                 >

@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { AccountShareProvider } from "@/components/account/AccountShareProvider";
 import NextTopLoader from 'nextjs-toploader';
+import { FeedbackHost } from '@/components/ui/Feedback';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
@@ -149,6 +150,7 @@ export default async function RootLayout({
               <AccountShareProvider>{children}</AccountShareProvider>
             </AuthProvider>
           )}
+          <FeedbackHost />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -15,6 +15,7 @@ import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 import { loadTemplateBundle, type TemplateDataBundle } from '@/lib/templates';
 import { GRAD_BRAND } from '@/lib/momentum';
 import PreviewFrame from '@/components/editor/PreviewFrame';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 import { redirectToLogin } from '@/lib/navigation';
 import {
   AdjustmentsHorizontalIcon,
@@ -745,6 +746,29 @@ export default function EditLPNewPage() {
     previewScrollRef.current = el;
   }, []);
 
+  // 未保存変更のトラッキング(離脱警告用)。初期ロードと保存直後の状態同期は変更扱いしない
+  // (suppressはカウンタ: ロード/保存による状態同期1コミットにつき1つ消費)
+  const dirtyRef = useRef(false);
+  const suppressDirtyRef = useRef(1);
+
+  useEffect(() => {
+    if (suppressDirtyRef.current > 0) {
+      suppressDirtyRef.current -= 1;
+      return;
+    }
+    dirtyRef.current = true;
+  }, [blocks, lpSettings, lpTitle, metaSettings]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!dirtyRef.current) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   const registerBlockElement = useCallback((blockId: string, element: HTMLElement | null) => {
     const registry = blockElementMap.current;
     if (element) {
@@ -919,6 +943,9 @@ export default function EditLPNewPage() {
 
     try {
       const response = await lpApi.get(lpId);
+      // サーバー状態の同期は未保存変更として扱わない
+      suppressDirtyRef.current += 1;
+      dirtyRef.current = false;
       setLp(response.data);
       setLinkedSalon(response.data.linked_salon ?? null);
       setLpTitle(response.data.title || '');
@@ -1048,7 +1075,7 @@ export default function EditLPNewPage() {
           console.error('エラー詳細:', e.message, e.stack);
           const errorMsg = e.response?.data?.detail || e.message || 'AI提案の適用に失敗しました';
           setError(errorMsg);
-          alert(`エラー: ${errorMsg}\n\n一部のブロックがスキップされた可能性があります。続行しますか？`);
+          toast.error(`${errorMsg}\n一部のブロックがスキップされた可能性があります。`);
         }
       }
       
@@ -1485,6 +1512,8 @@ export default function EditLPNewPage() {
           custom_theme_shades: customThemeShades as unknown as Record<string, string> | null,
           show_total_views_public: lpSettings.showViewCountPublic,
         });
+        // 保存後の状態同期は未保存変更として扱わない
+        suppressDirtyRef.current += 1;
         setLp((prev) =>
           prev
             ? {
@@ -1566,6 +1595,8 @@ export default function EditLPNewPage() {
           };
         });
 
+        suppressDirtyRef.current += 1;
+        dirtyRef.current = false;
         setBlocks(normalizedBlocks);
         if (showFeedback) {
           const nextStatus = lpUpdateResponse.data?.status ?? lp?.status ?? 'draft';
@@ -1607,25 +1638,36 @@ export default function EditLPNewPage() {
   };
 
   const handlePublish = async () => {
-    if (!confirm('このLPを公開しますか？')) return;
+    const confirmed = await appConfirm({
+      title: 'このLPを公開しますか？',
+      message: '公開すると、URLを知っている人が閲覧できるようになります。',
+      confirmLabel: '公開する',
+    });
+    if (!confirmed) return;
 
     const result = await executeSave({ showFeedback: false });
     if (!result.ok) {
-      alert(`公開前の保存に失敗しました: ${result.errorMessage}`);
+      toast.error(`公開前の保存に失敗しました: ${result.errorMessage}`);
       return;
     }
 
     try {
       await lpApi.publish(lpId);
       await fetchLP();
-      alert('LPを公開しました！');
+      toast.success('LPを公開しました！');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'LPの公開に失敗しました');
+      toast.error(err.response?.data?.detail || 'LPの公開に失敗しました');
     }
   };
 
   const handleUnpublish = async () => {
-    if (!confirm('このLPを非公開に戻しますか？')) return;
+    const confirmed = await appConfirm({
+      title: 'このLPを非公開に戻しますか？',
+      message: '閲覧中のユーザーはアクセスできなくなります。',
+      confirmLabel: '非公開にする',
+      danger: true,
+    });
+    if (!confirmed) return;
 
     try {
       console.log('[LP Editor] Unpublish request start', {
@@ -1645,7 +1687,7 @@ export default function EditLPNewPage() {
       });
 
       await fetchLP();
-      alert('LPを非公開に戻しました。');
+      toast.success('LPを非公開に戻しました。');
     } catch (err: any) {
       const detailPayload = err?.response?.data;
       console.error('[LP Editor] Unpublish request failed', {
@@ -1660,7 +1702,7 @@ export default function EditLPNewPage() {
         (typeof detailPayload === 'string' && detailPayload.trim().length > 0)
           ? detailPayload
           : detailPayload?.detail || detailPayload?.message || err?.message || 'LPの非公開化に失敗しました';
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -1669,14 +1711,20 @@ export default function EditLPNewPage() {
       return;
     }
     if (lp.status !== 'published') {
-      alert('限定公開URLを再発行するには先にLPを公開してください。');
+      toast.info('限定公開URLを再発行するには先にLPを公開してください。');
       return;
     }
     if (lp.visibility !== 'limited') {
-      alert('公開範囲を限定公開に変更し保存した後に再発行できます。');
+      toast.info('公開範囲を限定公開に変更し保存した後に再発行できます。');
       return;
     }
-    if (!confirm('限定公開URLを再発行しますか？既存のURLは使えなくなります。')) {
+    const confirmed = await appConfirm({
+      title: '限定公開URLを再発行しますか？',
+      message: '既存のURLは使えなくなります。共有済みのリンクは無効になります。',
+      confirmLabel: '再発行する',
+      danger: true,
+    });
+    if (!confirmed) {
       return;
     }
 
@@ -1687,11 +1735,11 @@ export default function EditLPNewPage() {
       setShareUrl(response.data?.share_url ?? null);
       setShareTokenRotatedAt(response.data?.share_token_rotated_at ?? null);
       setShareCopyStatus('idle');
-      alert('限定公開URLを再発行しました');
+      toast.success('限定公開URLを再発行しました');
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
       const message = typeof detail === 'string' ? detail : err?.message || '限定公開URLの再発行に失敗しました';
-      alert(message);
+      toast.error(message);
     } finally {
       setIsRotatingShareToken(false);
     }
@@ -1707,7 +1755,7 @@ export default function EditLPNewPage() {
       setTimeout(() => setShareCopyStatus('idle'), 2000);
     } catch (error) {
       console.error('Failed to copy share URL:', error);
-      alert('URLのコピーに失敗しました');
+      toast.error('URLのコピーに失敗しました');
     }
   };
 
@@ -1801,8 +1849,23 @@ export default function EditLPNewPage() {
         <div className="h-full px-2 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-3">
           {/* Left: Back & Title */}
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <Link 
+            <Link
               href="/dashboard"
+              onClick={async (event) => {
+                if (!dirtyRef.current) return;
+                event.preventDefault();
+                const leave = await appConfirm({
+                  title: '保存されていない変更があります',
+                  message: 'このまま戻ると、未保存の変更は失われます。',
+                  confirmLabel: '保存せずに戻る',
+                  cancelLabel: '編集を続ける',
+                  danger: true,
+                });
+                if (leave) {
+                  dirtyRef.current = false;
+                  router.push('/dashboard');
+                }
+              }}
               className="text-slate-600 hover:text-slate-900 transition-colors text-xs sm:text-sm font-medium"
             >
               ← 戻る
@@ -1875,7 +1938,7 @@ export default function EditLPNewPage() {
                       type="button"
                       onClick={() => {
                         navigator.clipboard.writeText(slugUrl);
-                        alert('URLをコピーしました！');
+                        toast.success('URLをコピーしました');
                       }}
                       className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-navy-900 hover:border-tint-border border border-slate-200 rounded-[9px] transition-colors"
                       title="公開URLをコピー"
@@ -2121,7 +2184,7 @@ export default function EditLPNewPage() {
                     onClick={() => {
                       const url = `${window.location.origin}/view/${lp.slug}`;
                       navigator.clipboard.writeText(url);
-                      alert('URLをコピーしました！');
+                      toast.success('URLをコピーしました');
                       setShowMobileMenu(false);
                     }}
                     className="w-full px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 transition-colors min-h-[44px] flex items-center justify-center gap-2 text-sm"

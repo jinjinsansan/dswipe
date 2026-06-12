@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { XMarkIcon, CheckCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import {useFormatter, useTranslations} from 'next-intl';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 
 import { useAuthStore } from '@/store/authStore';
 
@@ -54,7 +55,7 @@ export default function XConnectionCard() {
 
   const handleConnect = async () => {
     if (!token) {
-      window.alert(t('alerts.loginRequired'));
+      toast.error(t('alerts.loginRequired'));
       return;
     }
 
@@ -76,12 +77,17 @@ export default function XConnectionCard() {
       }
     } catch (error) {
       console.error('Failed to initiate X connection:', error);
-      window.alert(t('alerts.startFailed'));
+      toast.error(t('alerts.startFailed'));
     }
   };
 
   const handleDisconnect = async () => {
-    if (!window.confirm(t('confirmDisconnect'))) {
+    const confirmed = await appConfirm({
+      title: t('confirmDisconnect'),
+      confirmLabel: '連携を解除',
+      danger: true,
+    });
+    if (!confirmed) {
       return;
     }
 
@@ -98,13 +104,13 @@ export default function XConnectionCard() {
 
       if (response.ok) {
         setStatus({ is_connected: false });
-        window.alert(t('alerts.disconnectSuccess'));
+        toast.success(t('alerts.disconnectSuccess'));
       } else {
         throw new Error(t('errors.disconnectFailed'));
       }
     } catch (error) {
       console.error('Failed to disconnect X:', error);
-      window.alert(t('alerts.disconnectFailed'));
+      toast.error(t('alerts.disconnectFailed'));
     } finally {
       setDisconnecting(false);
     }

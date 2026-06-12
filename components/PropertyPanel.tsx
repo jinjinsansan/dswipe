@@ -8,6 +8,7 @@ import { BlockContent, BlockType } from '@/types/templates';
 import { mediaApi } from '@/lib/api';
 import { COLOR_THEMES, ColorThemeKey } from '@/lib/templates';
 import { BACKGROUND_PRESETS, BACKGROUND_PRESET_ORDER } from '@/lib/backgroundPresets';
+import { toast } from '@/components/ui/Feedback';
 import { DEFAULT_FONT_KEY, FONT_OPTIONS } from '@/lib/fonts';
 import { isProductCtaBlock } from '@/lib/productCtaBlocks';
 
@@ -67,7 +68,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
   const handleCopyColor = async (fieldName: string, colorValue: string) => {
     try {
       if (!navigator?.clipboard) {
-        alert('お使いのブラウザではクリップボードコピーがサポートされていません');
+        toast.error('お使いのブラウザではクリップボードコピーがサポートされていません');
         return;
       }
       await navigator.clipboard.writeText(colorValue);
@@ -80,7 +81,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       }, 1500);
     } catch (error) {
       console.error('カラーコードのコピーに失敗しました:', error);
-      alert('カラーコードのコピーに失敗しました');
+      toast.error('カラーコードのコピーに失敗しました');
     }
   };
 
@@ -304,7 +305,7 @@ export default function PropertyPanel({ block, onUpdateContent, onClose, onGener
       }
     } catch (error) {
       console.error('メディアアップロードエラー:', error);
-      alert(mediaType === 'video' ? '動画のアップロードに失敗しました' : '画像のアップロードに失敗しました');
+      toast.error(mediaType === 'video' ? '動画のアップロードに失敗しました' : '画像のアップロードに失敗しました');
     } finally {
       setIsUploading(false);
       if (e.target) {

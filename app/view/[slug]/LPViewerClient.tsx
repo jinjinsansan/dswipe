@@ -24,8 +24,10 @@ import {
 import { LPDetail, RequiredActionsStatus, CTA, Product, type FooterCTAConfig, type LpHeaderBarConfig } from '@/types';
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
+import Link from 'next/link';
 import { redirectToLogin } from '@/lib/navigation';
 import { getBackgroundPreset } from '@/lib/backgroundPresets';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 
 import type { Swiper as SwiperType } from 'swiper';
 import type { SwiperModule } from 'swiper/types';
@@ -101,6 +103,7 @@ export default function LPViewerClient({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [purchaseMethod, setPurchaseMethod] = useState<'points' | 'yen'>('points');
   const swiperRef = useRef<SwiperType | null>(null);
   const [swiperModules, setSwiperModules] = useState<SwiperModule[] | null>(null);
@@ -626,16 +629,21 @@ export default function LPViewerClient({
     }
   };
 
-  const handleOpenPurchaseModal = useCallback((product: Product) => {
+  const handleOpenPurchaseModal = useCallback(async (product: Product) => {
     if (!isAuthenticated) {
-      if (confirm('商品を購入するにはログインが必要です。ログインページに移動しますか？')) {
+      const goLogin = await appConfirm({
+        title: 'ログインが必要です',
+        message: '商品を購入するにはログインしてください。ログイン後、このページに戻ります。',
+        confirmLabel: 'ログインする',
+      });
+      if (goLogin) {
         redirectToLogin(router);
       }
       return;
     }
-    
+
     if (!product.allow_point_purchase && !product.allow_jpy_purchase) {
-      alert('現在この商品は購入できません。販売者にお問い合わせください。');
+      toast.error('現在この商品は購入できません。販売者にお問い合わせください。');
       return;
     }
 
@@ -644,12 +652,13 @@ export default function LPViewerClient({
       product.stock_quantity !== undefined &&
       product.stock_quantity <= 0
     ) {
-      alert('申し訳ありませんが、この商品は在庫切れです。');
+      toast.error('申し訳ありませんが、この商品は在庫切れです。');
       return;
     }
 
     setSelectedProduct(product);
     setPurchaseQuantity(1);
+    setPurchaseError(null);
     if (product.allow_point_purchase) {
       setPurchaseMethod('points');
     } else {
@@ -758,20 +767,21 @@ export default function LPViewerClient({
 
     if (isPointsPurchase) {
       if (!selectedProduct.allow_point_purchase) {
-        alert('この商品はポイント決済に対応していません。');
+        setPurchaseError('この商品はポイント決済に対応していません。');
         return;
       }
       if (pointBalance < totalPointsCost) {
-        alert('ポイントが不足しています。ポイントを購入してから再度お試しください。');
+        setPurchaseError('ポイントが不足しています。「ポイントを購入する」から残高を追加してください。');
         return;
       }
     } else {
       if (!selectedProduct.allow_jpy_purchase || totalYenCost <= 0) {
-        alert('この商品は日本円決済に対応していません。');
+        setPurchaseError('この商品は日本円決済に対応していません。');
         return;
       }
     }
 
+    setPurchaseError(null);
     setIsPurchasing(true);
     try {
       const response = await purchaseProduct(selectedProduct.id, {
@@ -808,13 +818,13 @@ export default function LPViewerClient({
           nested.thanksLpId;
 
         if (redirectTarget) {
-          alert('購入が完了しました！\nサンクスページに移動します。');
+          toast.success('購入が完了しました。サンクスページに移動します。');
           window.location.href = redirectTarget;
         } else if (thanksSlug) {
-          alert('購入が完了しました！\nサンクスページに移動します。');
+          toast.success('購入が完了しました。サンクスページに移動します。');
           router.push(`/view/${thanksSlug}`);
         } else {
-          alert('購入が完了しました！\nありがとうございます。');
+          toast.success('購入が完了しました。ありがとうございます！');
         }
 
         await fetchPointBalance();
@@ -824,10 +834,18 @@ export default function LPViewerClient({
       } else {
         const checkoutUrl = (response as Record<string, any>)?.checkout_url;
         if (checkoutUrl) {
-          alert('決済ページに移動します。完了後にブラウザに戻ってください。');
+          // 決済完了ページから元のLPへ戻れるよう退避しておく
+          try {
+            sessionStorage.setItem(
+              'dswipe:checkoutReturn',
+              JSON.stringify({ url: window.location.href, title: lp?.title ?? '' })
+            );
+          } catch {
+            // sessionStorage不可の環境では戻るリンクなしで続行
+          }
           window.location.href = checkoutUrl;
         } else {
-          alert('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
+          setPurchaseError('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
         }
       }
     } catch (error: any) {
@@ -837,7 +855,9 @@ export default function LPViewerClient({
         (error?.payload && typeof error.payload === 'object'
           ? (error.payload as Record<string, any>).detail
           : undefined) ?? error?.message ?? '購入に失敗しました。もう一度お試しください。';
-      alert(errorDetail);
+      setPurchaseError(
+        typeof errorDetail === 'string' ? errorDetail : '購入に失敗しました。もう一度お試しください。'
+      );
     } finally {
       setIsPurchasing(false);
     }
@@ -1043,13 +1063,13 @@ export default function LPViewerClient({
       
       setShowEmailGate(false);
       await checkRequiredActions();
-      alert('メールアドレスが登録されました！');
+      toast.success('メールアドレスが登録されました！');
     } catch (err: any) {
       const detail =
         (err?.payload && typeof err.payload === 'object'
           ? (err.payload as Record<string, any>).detail
           : undefined) ?? err?.message ?? 'メールアドレスの登録に失敗しました';
-      alert(detail);
+      toast.error(typeof detail === 'string' ? detail : 'メールアドレスの登録に失敗しました');
     }
   };
 
@@ -1129,8 +1149,31 @@ export default function LPViewerClient({
 
   if (error || !lp) {
     return (
-      <div className="h-screen bg-black flex items-center justify-center">
-        <div className="text-slate-900 text-xl">{error || 'LPが見つかりませんでした'}</div>
+      <div className="flex h-screen flex-col items-center justify-center gap-6 bg-canvas px-6 text-center">
+        <svg width="64" height="64" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="lp-notfound-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#0ea5e9" />
+              <stop offset="1" stopColor="#06b6d4" />
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="38" height="38" rx="11" fill="#0b1f3a" />
+          <path d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z" fill="none" stroke="url(#lp-notfound-grad)" strokeWidth="2.6" strokeLinejoin="round" />
+          <path d="M25 20l6-5m-6 5l6 5" stroke="url(#lp-notfound-grad)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <div>
+          <h1 className="text-xl font-bold text-navy-900">{error || 'LPが見つかりませんでした'}</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">
+            URLが間違っているか、ページが削除または非公開になった可能性があります。
+          </p>
+        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-px"
+          style={{ backgroundImage: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)' }}
+        >
+          D-Swipe トップページへ
+        </Link>
       </div>
     );
   }
@@ -1424,8 +1467,8 @@ export default function LPViewerClient({
                           <span className="text-sm text-emerald-500">価格未設定</span>
                         )}
                       </div>
-                      <div className="mt-1 text-xs text-gray-500">
-                        {isTaxInclusive ? '税込価格で表示されています' : '税抜価格で表示されています'}
+                      <div className={`mt-1 text-[12.5px] font-semibold ${isTaxInclusive ? 'text-emerald-700' : 'text-amber-700'}`}>
+                        {isTaxInclusive ? '税込価格' : '税抜価格（別途消費税がかかります）'}
                       </div>
                     </button>
                   )}
@@ -1579,13 +1622,30 @@ export default function LPViewerClient({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-red-900 font-semibold">ポイントが不足しています</p>
                       <p className="text-red-700 text-sm mt-1">
                         不足: {(totalPointsCost - pointBalance).toLocaleString()} P
                       </p>
                     </div>
                   </div>
+                  <a
+                    href="/points/purchase"
+                    className="mt-3 flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold text-white transition hover:-translate-y-px"
+                    style={{ backgroundImage: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)' }}
+                  >
+                    ポイントを購入する
+                  </a>
+                  <p className="mt-2 text-center text-[11px] text-red-700/80">
+                    購入後、このページに戻って再度お試しください
+                  </p>
+                </div>
+              )}
+
+              {/* 購入処理のエラー */}
+              {purchaseError && !(selectedIsPoints && insufficientPoints) && (
+                <div className="mb-6 rounded-xl border-2 border-red-200 bg-red-50 p-4">
+                  <p className="text-sm font-semibold leading-relaxed text-red-800 whitespace-pre-line">{purchaseError}</p>
                 </div>
               )}
 
@@ -1629,7 +1689,10 @@ export default function LPViewerClient({
                   )}
                 </button>
                 <button
-                  onClick={() => setShowPurchaseModal(false)}
+                  onClick={() => {
+                    setShowPurchaseModal(false);
+                    setPurchaseError(null);
+                  }}
                   disabled={isPurchasing}
                   className="px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >

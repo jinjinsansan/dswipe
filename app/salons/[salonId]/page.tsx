@@ -18,6 +18,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { lpApi, salonAnnouncementApi, salonApi, salonAssetApi, subscriptionApi } from "@/lib/api";
+import { toast, appConfirm } from "@/components/ui/Feedback";
 import type {
   Salon,
   SalonAnnouncement,
@@ -291,7 +292,12 @@ const planPointLabel = useMemo(() => {
 
   const handleDeleteSalon = useCallback(async () => {
     if (!salonId || isDeleting) return;
-    if (!window.confirm(t("delete.confirm"))) {
+    const confirmed = await appConfirm({
+      title: t("delete.confirm"),
+      confirmLabel: "削除する",
+      danger: true,
+    });
+    if (!confirmed) {
       return;
     }
     setError(null);
@@ -299,7 +305,7 @@ const planPointLabel = useMemo(() => {
     try {
       setIsDeleting(true);
       await salonApi.delete(salonId);
-      alert(t("delete.success"));
+      toast.success(t("delete.success"));
       router.push("/salons");
     } catch (deleteError: any) {
       console.error("Failed to delete salon", deleteError);

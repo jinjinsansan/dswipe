@@ -20,6 +20,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import BlockRenderer from './blocks/BlockRenderer';
+import { appConfirm } from '@/components/ui/Feedback';
 import { BlockType, BlockContent } from '@/types/templates';
 
 interface Block {
@@ -117,9 +118,15 @@ function SortableBlock({
 
           {/* 削除 */}
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              if (confirm('このブロックを削除しますか？')) {
+              const confirmed = await appConfirm({
+                title: 'このブロックを削除しますか？',
+                message: '削除したブロックは元に戻せません。',
+                confirmLabel: '削除する',
+                danger: true,
+              });
+              if (confirmed) {
                 onDeleteBlock();
               }
             }}
