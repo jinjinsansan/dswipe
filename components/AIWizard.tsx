@@ -30,6 +30,7 @@ import {
 import type { AIWizardRequest, AIGenerationResponse } from '@/types/api';
 import { aiApi } from '@/lib/api';
 import { GRAD_BRAND } from '@/lib/momentum';
+import { toast } from '@/components/ui/Feedback';
 
 type ThemeKey =
   | 'momentum'
@@ -248,7 +249,7 @@ export default function AIWizard({ onComplete, onSkip }: AIWizardProps) {
     } catch (error: any) {
       console.error('❌ AI生成エラー:', error);
       const message = error?.message || error?.response?.data?.detail || 'Unknown error';
-      alert(`AI生成に失敗しました: ${message}\n\nスキップして手動で作成してください。`);
+      toast.error(`AI生成に失敗しました: ${message}\nスキップして手動で作成してください。`);
     } finally {
       setIsLoading(false);
     }

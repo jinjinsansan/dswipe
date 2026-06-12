@@ -12,6 +12,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salonApi, salonFeedApi } from "@/lib/api";
+import { toast, appConfirm } from "@/components/ui/Feedback";
 import type {
   Salon,
   SalonComment,
@@ -149,7 +150,7 @@ export default function SalonFeedPage() {
 
   const handleDeletePost = async (postId: string) => {
     if (!salonId) return;
-    const confirmed = confirm("この投稿を削除しますか？");
+    const confirmed = await appConfirm({ title: "この投稿を削除しますか？", confirmLabel: "削除する", danger: true });
     if (!confirmed) return;
     try {
       await salonFeedApi.deletePost(salonId, postId);
@@ -178,7 +179,7 @@ export default function SalonFeedPage() {
     } catch (err: any) {
       console.error("Failed to delete post", err);
       const detail = err?.response?.data?.detail;
-      alert(typeof detail === "string" ? detail : "投稿の削除に失敗しました");
+      toast.error(typeof detail === "string" ? detail : "投稿の削除に失敗しました");
     }
   };
 
@@ -192,7 +193,7 @@ export default function SalonFeedPage() {
         setComments((prev) => ({ ...prev, [postId]: payload.data ?? [] }));
       } catch (err) {
         console.error("Failed to load comments", err);
-        alert("コメントの読み込みに失敗しました");
+        toast.error("コメントの読み込みに失敗しました");
       } finally {
         setCommentsLoading((prev) => ({ ...prev, [postId]: false }));
       }
@@ -222,13 +223,13 @@ export default function SalonFeedPage() {
       await refreshPost(postId);
     } catch (err) {
       console.error("Failed to create comment", err);
-      alert("コメントの投稿に失敗しました");
+      toast.error("コメントの投稿に失敗しました");
     }
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
     if (!salonId) return;
-    const confirmed = confirm("このコメントを削除しますか？");
+    const confirmed = await appConfirm({ title: "このコメントを削除しますか？", confirmLabel: "削除する", danger: true });
     if (!confirmed) return;
     try {
       await salonFeedApi.deleteComment(salonId, postId, commentId);
@@ -236,7 +237,7 @@ export default function SalonFeedPage() {
       await refreshPost(postId);
     } catch (err) {
       console.error("Failed to delete comment", err);
-      alert("コメントの削除に失敗しました");
+      toast.error("コメントの削除に失敗しました");
     }
   };
 

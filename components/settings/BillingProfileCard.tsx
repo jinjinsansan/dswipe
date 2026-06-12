@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { appConfirm } from '@/components/ui/Feedback';
 
 import { paymentApi } from '@/lib/api';
 import type { BillingProfilePayload, BillingProfileResponse } from '@/types/api';
@@ -145,7 +146,11 @@ export default function BillingProfileCard() {
     if (!hasSavedProfile) {
       return;
     }
-    const confirmed = window.confirm(t('messages.deleteConfirm'));
+    const confirmed = await appConfirm({
+      title: t('messages.deleteConfirm'),
+      confirmLabel: '削除する',
+      danger: true,
+    });
     if (!confirmed) {
       return;
     }

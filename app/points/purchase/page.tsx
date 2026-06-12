@@ -6,6 +6,7 @@ import { PageLoader } from '@/components/LoadingSpinner';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
 import { pointsApi } from '@/lib/api';
+import { toast } from '@/components/ui/Feedback';
 import { GRAD_BRAND, NAVY_CARD_BG } from '@/lib/momentum';
 import {
   CreditCardIcon,
@@ -141,17 +142,17 @@ export default function PointPurchasePage() {
 
   const handlePurchase = async () => {
     if (!isAuthenticated) {
-      alert(alertsT('loginRequired'));
+      toast.error(alertsT('loginRequired'));
       return;
     }
 
     if (selectedPaymentMethod.id === 'jpyc') {
-      alert(alertsT('jpycComingSoon'));
+      toast.info(alertsT('jpycComingSoon'));
       return;
     }
 
     if (selectedPaymentMethod.status === 'coming_soon') {
-      alert(alertsT('comingSoon'));
+      toast.info(alertsT('comingSoon'));
       return;
     }
 
@@ -199,7 +200,7 @@ export default function PointPurchasePage() {
           });
         }
         const message = error instanceof Error ? error.message : String(error);
-        alert(alertsT('purchaseError', { message }));
+        toast.error(alertsT('purchaseError', { message }));
       } finally {
         setIsPurchasing(false);
       }

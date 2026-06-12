@@ -20,6 +20,7 @@ import { useAuthStore } from '@/store/authStore';
 import StickySiteHeader from '@/components/layout/StickySiteHeader';
 import type { Product } from '@/types';
 import { redirectToLogin } from '@/lib/navigation';
+import { toast, appConfirm } from '@/components/ui/Feedback';
 
 /* Momentum product detail — mock: design_handoff_dswipe/D-Swipe Product Detail.html */
 
@@ -74,8 +75,14 @@ export default function ProductDetailPage() {
 
   const handlePurchase = async () => {
     if (!user) {
-      alert('ログインが必要です');
-      redirectToLogin(router);
+      const goLogin = await appConfirm({
+        title: 'ログインが必要です',
+        message: '商品を購入するにはログインしてください。ログイン後、このページに戻ります。',
+        confirmLabel: 'ログインする',
+      });
+      if (goLogin) {
+        redirectToLogin(router);
+      }
       return;
     }
 
@@ -85,56 +92,44 @@ export default function ProductDetailPage() {
 
     const stockLimit = typeof product.stock_quantity === 'number' ? product.stock_quantity : undefined;
     if (stockLimit !== undefined && quantity > stockLimit) {
-      alert('在庫数を超える購入はできません');
+      toast.error('在庫数を超える購入はできません');
       return;
     }
 
     const isPointsPurchase = selectedMethod === 'points';
 
     if (isPointsPurchase && !product.allow_point_purchase) {
-      alert('この商品はポイント決済に対応していません');
+      toast.error('この商品はポイント決済に対応していません');
       return;
     }
 
     if (!isPointsPurchase && !product.allow_jpy_purchase) {
-      alert('この商品は日本円決済に対応していません');
+      toast.error('この商品は日本円決済に対応していません');
       return;
     }
 
     const totalPoints = product.price_in_points * quantity;
     const totalYen = (product.price_jpy ?? 0) * quantity;
 
-    const confirmMessage = isPointsPurchase
-      ? `以下の商品を購入しますか？\n\n` +
-        `商品名: ${product.title}\n` +
-        `単価: ${product.price_in_points.toLocaleString()} P\n` +
-        `数量: ${quantity}個\n` +
-        `合計: ${totalPoints.toLocaleString()} P\n\n` +
-        `ポイントが消費されます。よろしいですか？`
-      : `保存済みの請求先情報でクイック決済を開始します。\n\n` +
-        `商品名: ${product.title}\n` +
-        `単価: ${(product.price_jpy ?? 0).toLocaleString()} 円\n` +
-        `数量: ${quantity}個\n` +
-        `合計: ${totalYen.toLocaleString()} 円\n\n` +
-        `決済プロバイダー(one.lat)の画面に移動します。よろしいですか？`;
-
-    if (!confirm(confirmMessage)) {
-      return; // キャンセルされた
+    const confirmed = await appConfirm({
+      title: isPointsPurchase ? 'この商品を購入しますか？' : 'クイック決済を開始しますか？',
+      message: isPointsPurchase
+        ? `商品名: ${product.title}\n単価: ${product.price_in_points.toLocaleString()} P × ${quantity}個\n合計: ${totalPoints.toLocaleString()} P\n\nポイントが消費されます。`
+        : `商品名: ${product.title}\n単価: ${(product.price_jpy ?? 0).toLocaleString()} 円 × ${quantity}個\n合計: ${totalYen.toLocaleString()} 円\n\n決済プロバイダー(one.lat)の画面に移動します。`,
+      confirmLabel: isPointsPurchase ? '購入する' : '決済ページへ進む',
+    });
+    if (!confirmed) {
+      return;
     }
 
     try {
       setIsPurchasing(true);
       if (isPointsPurchase) {
-        const result = await purchaseProduct(productId, {
+        await purchaseProduct(productId, {
           quantity,
           payment_method: selectedMethod,
         });
-        const successMessage = `購入完了！\n\n` +
-          `商品名: ${product.title}\n` +
-          `数量: ${quantity}個\n` +
-          `使用ポイント: ${totalPoints.toLocaleString()} P\n\n` +
-          `ダッシュボードに移動します。`;
-        alert(successMessage);
+        toast.success(`購入が完了しました（${product.title} × ${quantity}）。ダッシュボードに移動します。`);
         router.push('/dashboard');
         return;
       }
@@ -146,10 +141,17 @@ export default function ProductDetailPage() {
       });
       const { checkout_url: checkoutUrl } = quickResponse.data;
       if (!checkoutUrl) {
-        alert('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
+        toast.error('決済ページの生成に失敗しました。時間をおいて再度お試しください。');
         return;
       }
-      alert('決済ページに移動します。完了後に購入履歴をご確認ください。');
+      try {
+        sessionStorage.setItem(
+          'dswipe:checkoutReturn',
+          JSON.stringify({ url: window.location.href, title: product.title })
+        );
+      } catch {
+        // 退避できない環境では戻るリンクなしで続行
+      }
       window.location.href = checkoutUrl;
       return;
     } catch (error: any) {
@@ -158,13 +160,13 @@ export default function ProductDetailPage() {
           ? (error.payload as Record<string, any>).detail
           : undefined) ?? error?.response?.data?.detail;
       if (detail === '請求先情報を設定してください') {
-        alert('先に請求先情報（氏名・メール・電話番号）を登録してください。プロフィール設定画面に移動します。');
+        toast.info('先に請求先情報（氏名・メール・電話番号）の登録が必要です。プロフィール設定画面に移動します。');
         const redirectPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
         const search = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
         router.push(`/profile${search}`);
         return;
       }
-      alert(detail || '購入に失敗しました');
+      toast.error(typeof detail === 'string' ? detail : '購入に失敗しました');
     } finally {
       setIsPurchasing(false);
     }

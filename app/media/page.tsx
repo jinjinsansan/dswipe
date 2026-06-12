@@ -17,6 +17,7 @@ import {useFormatter, useTranslations} from "next-intl";
 import { PageLoader } from "@/components/LoadingSpinner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { mediaApi } from "@/lib/api";
+import { toast, appConfirm } from "@/components/ui/Feedback";
 import { HEAD_BG } from "@/lib/momentum";
 import { useAuthStore } from "@/store/authStore";
 
@@ -219,14 +220,19 @@ export default function MediaPage() {
   const handleCopyUrl = async (url: string) => {
     try {
       await navigator.clipboard.writeText(url);
+      toast.success("URLをコピーしました");
     } catch (err) {
       console.error("Failed to copy:", err);
-      window.alert(errorsT("copy"));
+      toast.error(errorsT("copy"));
     }
   };
 
   const handleDelete = async (url: string) => {
-    const confirmed = window.confirm(confirmT("delete"));
+    const confirmed = await appConfirm({
+      title: confirmT("delete"),
+      confirmLabel: "削除する",
+      danger: true,
+    });
     if (!confirmed) {
       return;
     }
@@ -239,6 +245,7 @@ export default function MediaPage() {
       const nextMedia = media.filter((item) => item.url !== url);
       persistMedia(nextMedia);
       setMedia(nextMedia);
+      toast.success("メディアを削除しました");
     }
   };
 

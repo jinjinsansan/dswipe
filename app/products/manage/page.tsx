@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/store/authStore";
 import { lpApi, productApi } from "@/lib/api";
+import { toast, appConfirm } from "@/components/ui/Feedback";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { GRAD_BRAND, HEAD_BG } from "@/lib/momentum";
@@ -332,34 +333,39 @@ export default function ProductManagementPage() {
 
       if (editingProduct) {
         await productApi.update(editingProduct.id, payload);
-        alert("商品情報を更新しました");
+        toast.success("商品情報を更新しました");
       } else {
         await productApi.create(payload);
-        alert("商品を作成しました");
+        toast.success("商品を作成しました");
       }
 
       closeModal();
       fetchData(false);
     } catch (err) {
       console.error("Failed to save product:", err);
-      alert("商品情報の保存に失敗しました");
+      toast.error("商品情報の保存に失敗しました");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (productId: string) => {
-    if (!confirm("選択した商品を削除しますか？")) {
+    const confirmed = await appConfirm({
+      title: "選択した商品を削除しますか？",
+      confirmLabel: "削除する",
+      danger: true,
+    });
+    if (!confirmed) {
       return;
     }
 
     try {
       await productApi.delete(productId);
-      alert("商品を削除しました");
+      toast.success("商品を削除しました");
       fetchData(false);
     } catch (err) {
       console.error("Failed to delete product:", err);
-      alert("商品の削除に失敗しました");
+      toast.error("商品の削除に失敗しました");
     }
   };
 
@@ -369,7 +375,7 @@ export default function ProductManagementPage() {
       fetchData(false);
     } catch (err) {
       console.error("Failed to toggle availability:", err);
-      alert("公開設定の更新に失敗しました");
+      toast.error("公開設定の更新に失敗しました");
     }
   };
 

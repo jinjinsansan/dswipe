@@ -2,7 +2,11 @@
 
 /* Momentum 正規ロゴ — mock §9:
    「D」のネイビー角丸＋右向き二重シェブロン(スワイプの暗喩)＋ワードマーク。
-   薄い白リングはネイビー背景(サイドバー等)でも輪郭が出るようにするため。 */
+   薄い白リングはネイビー背景(サイドバー等)でも輪郭が出るようにするため。
+   グラデIDはuseIdでインスタンスごとに一意にする(IDを共有すると display:none の
+   インスタンス内の定義が参照され「D」が描画されず黒い四角になる)。 */
+
+import { useId } from 'react';
 
 interface DSwipeLogoProps {
   size?: 'small' | 'medium' | 'large' | 'xlarge';
@@ -23,6 +27,7 @@ export default function DSwipeLogo({
   };
 
   const dim = dimensions[size];
+  const gradientId = useId();
 
   return (
     <div className={`flex items-center ${dim.spacing}`}>
@@ -36,7 +41,7 @@ export default function DSwipeLogo({
         className="shrink-0 drop-shadow-sm"
       >
         <defs>
-          <linearGradient id="dswipe-logo-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
             <stop stopColor="#0ea5e9" />
             <stop offset="1" stopColor="#06b6d4" />
           </linearGradient>
@@ -45,13 +50,13 @@ export default function DSwipeLogo({
         <path
           d="M11 13h6c4 0 7 2.8 7 7s-3 7-7 7h-6z"
           fill="none"
-          stroke="url(#dswipe-logo-grad)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="2.6"
           strokeLinejoin="round"
         />
         <path
           d="M25 20l6-5m-6 5l6 5"
-          stroke="url(#dswipe-logo-grad)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="2.6"
           strokeLinecap="round"
           strokeLinejoin="round"

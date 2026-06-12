@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useAuthStore } from "@/store/authStore";
 import { GiftIcon, CheckCircleIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { HEAD_BG } from "@/lib/momentum";
+import { toast } from "@/components/ui/Feedback";
 
 interface LineBonusSettings {
   id: string;
@@ -147,7 +148,7 @@ export default function LineBonusPage() {
       setTimeout(() => setTokenCopied(false), 3000);
     } catch (err) {
       console.error("Failed to copy:", err);
-      alert("コピーに失敗しました");
+      toast.error("コピーに失敗しました");
     }
   };
 

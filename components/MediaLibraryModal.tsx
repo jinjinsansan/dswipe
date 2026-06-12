@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { mediaApi } from '@/lib/api';
 import { GRAD_BRAND } from '@/lib/momentum';
+import { toast } from '@/components/ui/Feedback';
 
 type MediaType = 'image' | 'video' | 'file';
 
@@ -369,7 +370,7 @@ export default function MediaLibraryModal({ isOpen, onClose, onSelect, allowedMe
       }, 1600);
     } catch (err) {
       console.error('URLのコピーに失敗しました', err);
-      alert('URLのコピーに失敗しました');
+      toast.error('URLのコピーに失敗しました');
     }
   }, []);
 

@@ -17,6 +17,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salonApi, salonAssetApi } from "@/lib/api";
+import { appConfirm } from "@/components/ui/Feedback";
 import type {
   Salon,
   SalonAsset,
@@ -181,7 +182,7 @@ export default function SalonAssetsPage() {
 
   const handleDelete = async (assetId: string) => {
     if (!salonId) return;
-    const confirmed = confirm("このアセットを削除しますか？");
+    const confirmed = await appConfirm({ title: "このアセットを削除しますか？", confirmLabel: "削除する", danger: true });
     if (!confirmed) return;
     setActionLoading((prev) => ({ ...prev, [assetId]: true }));
     setError(null);

@@ -29,6 +29,7 @@ import { BoldIcon, HeadingIcon, ItalicIcon, ListBulletIcon } from './icons/RichE
 import dynamic from 'next/dynamic';
 import type { NoteRichContent } from '@/types';
 import { mediaApi } from '@/lib/api';
+import { toast } from '@/components/ui/Feedback';
 
 const MediaLibraryModal = dynamic(() => import('@/components/MediaLibraryModal'), {
   loading: () => null,
@@ -742,7 +743,7 @@ export default function NoteRichEditor({
         showUploadNotice('ファイルをアップロードして挿入しました');
       } catch (error) {
         console.error('ファイルのアップロードに失敗しました', error);
-        window.alert('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
+        toast.error('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
         closeInsertMenu();
       } finally {
         setIsFileUploading(false);
@@ -842,7 +843,7 @@ export default function NoteRichEditor({
       showUploadNotice('ドラッグ＆ドロップでファイルを追加しました');
     } catch (error) {
       console.error('ドラッグ＆ドロップのアップロードに失敗しました', error);
-      window.alert('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
+      toast.error('ファイルのアップロードに失敗しました。時間をおいて再度お試しください。');
     } finally {
       setIsFileUploading(false);
       event.dataTransfer?.clearData();

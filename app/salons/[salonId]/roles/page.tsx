@@ -14,6 +14,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { salonApi, salonRoleApi } from "@/lib/api";
+import { appConfirm } from "@/components/ui/Feedback";
 import type {
   Salon,
   SalonMember,
@@ -222,7 +223,8 @@ export default function SalonRolesPage() {
 
   const deleteRole = async (roleId: string) => {
     if (!salonId) return;
-    if (!confirm("このロールを削除しますか？")) return;
+    const confirmed = await appConfirm({ title: "このロールを削除しますか？", confirmLabel: "削除する", danger: true });
+    if (!confirmed) return;
     setActionLoading((prev) => ({ ...prev, [roleId]: true }));
     setError(null);
     setSuccessMessage(null);

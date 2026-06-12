@@ -39,6 +39,21 @@ function ProductOrderCompleteContent(): JSX.Element {
   const [thanksSlug, setThanksSlug] = useState<string | null>(null);
   const [hasRedirected, setHasRedirected] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [checkoutReturn, setCheckoutReturn] = useState<{ url: string; title: string } | null>(null);
+
+  // 購入元のLPに戻れるよう、決済開始時にLPViewerClientが退避したURLを拾う
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('dswipe:checkoutReturn');
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { url?: string; title?: string };
+      if (parsed?.url && /^https?:\/\//i.test(parsed.url)) {
+        setCheckoutReturn({ url: parsed.url, title: parsed.title ?? '' });
+      }
+    } catch {
+      // 退避情報がなければ戻るリンクを出さないだけ
+    }
+  }, []);
 
   useEffect(() => {
     if (!externalId) return;
@@ -229,6 +244,14 @@ function ProductOrderCompleteContent(): JSX.Element {
                     </Link>
                   ) : null}
                 </>
+              ) : null}
+              {checkoutReturn ? (
+                <a
+                  href={checkoutReturn.url}
+                  className="block w-full rounded-full border border-sky-300 bg-sky-50 px-6 py-3 text-sm font-semibold text-sky-700 transition hover:bg-sky-100"
+                >
+                  購入したページに戻る{checkoutReturn.title ? `（${checkoutReturn.title}）` : ''}
+                </a>
               ) : null}
               <Link
                 href="/dashboard"

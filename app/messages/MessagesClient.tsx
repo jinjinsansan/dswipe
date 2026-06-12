@@ -13,6 +13,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { PageLoader } from "@/components/LoadingSpinner";
 import { GRAD_BRAND, HEAD_BG } from "@/lib/momentum";
 import { operatorMessageApi } from "@/lib/api";
+import { toast } from "@/components/ui/Feedback";
 import { useOperatorMessageStore } from "@/store/operatorMessageStore";
 import type {
   OperatorMessageFeedResponse,
@@ -165,7 +166,7 @@ export default function MessagesClient() {
         await fetchMessages();
       } catch (err) {
         console.error("Failed to update message state", err);
-        alert("メッセージ状態の更新に失敗しました");
+        toast.error("メッセージ状態の更新に失敗しました");
       } finally {
         setActionLoading(false);
       }

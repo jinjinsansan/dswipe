@@ -21,6 +21,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { noteApi, salonApi } from '@/lib/api';
+import { appConfirm } from '@/components/ui/Feedback';
 import { GRAD_BRAND } from '@/lib/momentum';
 import { NOTE_CATEGORY_OPTIONS } from '@/lib/noteCategories';
 import { noteBlocksToRichContent } from '@/lib/noteBlocksToRich';
@@ -393,7 +394,12 @@ export default function NoteComposer({ mode, noteId: initialNoteId }: NoteCompos
 
   const handleDelete = async () => {
     if (actionLoading || !noteIdRef.current) return;
-    const confirmed = confirm('この記事を削除してもよろしいですか？この操作は取り消せません。');
+    const confirmed = await appConfirm({
+      title: 'この記事を削除しますか？',
+      message: '削除した記事は元に戻せません。',
+      confirmLabel: '削除する',
+      danger: true,
+    });
     if (!confirmed) return;
     setActionLoading(true);
     try {

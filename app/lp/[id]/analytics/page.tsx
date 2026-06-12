@@ -19,6 +19,7 @@ import { redirectToLogin } from '@/lib/navigation';
 /* Momentum LP analytics — mock: design_handoff_dswipe/D-Swipe Analytics.html */
 
 import { GRAD_BRAND } from '@/lib/momentum';
+import { toast } from '@/components/ui/Feedback';
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {
@@ -316,7 +317,7 @@ export default function LPAnalyticsPage() {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(publicUrl);
-                      alert('URLをコピーしました');
+                      toast.success('URLをコピーしました');
                     }}
                     className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)] hover:shadow-[0_18px_48px_-12px_rgba(6,182,212,.5)] transition-shadow"
                     style={{ background: GRAD_BRAND }}
