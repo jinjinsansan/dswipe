@@ -1,6 +1,12 @@
 # 引き継ぎ書 — Momentum リデザイン（D-Swipe）
 
-最終更新: 2026-06-11 / 作業ブランチ: `momentum-phase3`（phase1=`ea22844`・phase2=`11a7f21` は main へマージ済・本番反映済）
+最終更新: 2026-06-12 / Phase1〜14すべて main へマージ済・本番反映済（Phase5以降の詳細はメモリ `redesign-momentum.md` とgitタグ `pre-phaseN-*` 参照）
+
+## 0-e. Phase14（2026-06-12）— ファビコン/ローディング/ロゴ/OGPの新デザイン化
+
+- **マージ**: main `43306c4`（ブランチ `momentum-phase14`、直前のmainは `53cfd2f`。小規模のためタグなし、revert -m 1 で戻せる）
+- **内容**: ①`app/icon.svg`（ファビコン）を旧ブルー四角D→Momentumロゴマーク（ネイビー角丸+グラデD+二重シェブロン、モック§9準拠） ②`components/DSwipeLogo.tsx` を同じ正規SVGマークに統一（ネイビーサイドバー上でも輪郭が出るよう白リング付き） ③`components/LoadingSpinner.tsx` の PageLoader（33ページで使用）を旧ダーク背景→ライトキャンバス+ロゴ+ブランドグラデのバーに刷新、Skeleton類もライト化 ④`app/layout.tsx` の NextTopLoader（ページ遷移バー）を #3b82f6→ブランドグラデ ⑤`public/og-default.svg`（OGP）を旧青紫→ネイビー+ロゴマーク
+- **注意**: ファビコンはブラウザキャッシュが強い。確認はスーパーリロードで。
 
 ## 0-d. Phase4（2026-06-11〜）— ブロック素材そのものの新デザイン化
 
