@@ -6,7 +6,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { lpApi, productApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { LPDetail, type FooterCTAConfig } from '@/types';
+import { LPDetail, type FooterCTAConfig, type LpHeaderBarConfig } from '@/types';
 import { BlockType, BlockContent, TemplateBlock } from '@/types/templates';
 import { PageLoader } from '@/components/LoadingSpinner';
 import { convertAIResultToBlocks } from '@/lib/aiToBlocks';
@@ -96,12 +96,24 @@ type FooterCtaState = {
   alwaysVisible: boolean;
 };
 
+type HeaderBarState = {
+  enabled: boolean;
+  title: string;
+  buttonLabel: string;
+  buttonUrl: string;
+  backgroundColor: string;
+  textColor: string;
+  buttonBackgroundColor: string;
+  buttonTextColor: string;
+};
+
 type LpSettingsState = {
   showSwipeHint: boolean;
   floatingCta: boolean;
   swipeDirection: 'vertical' | 'horizontal';
   visibility: 'public' | 'limited' | 'private';
   footerCta: FooterCtaState;
+  headerBar: HeaderBarState;
   showViewCountPublic: boolean;
 };
 
@@ -118,6 +130,69 @@ const DEFAULT_FOOTER_CTA_STATE: FooterCtaState = {
   buttonTextColor: '#FFFFFF',
   showOnHero: false,
   alwaysVisible: false,
+};
+
+const DEFAULT_HEADER_BAR_STATE: HeaderBarState = {
+  enabled: false,
+  title: '',
+  buttonLabel: '無料で始める',
+  buttonUrl: '',
+  backgroundColor: '#0B1F3A',
+  textColor: '#FFFFFF',
+  buttonBackgroundColor: '#0284C7',
+  buttonTextColor: '#FFFFFF',
+};
+
+const buildHeaderBarState = (config?: FooterCTAConfig | null): HeaderBarState => {
+  const header = config?.headerBar;
+  if (!header) {
+    return { ...DEFAULT_HEADER_BAR_STATE };
+  }
+  return {
+    enabled: header.enabled === true,
+    title: typeof header.title === 'string' ? header.title : DEFAULT_HEADER_BAR_STATE.title,
+    buttonLabel:
+      typeof header.buttonLabel === 'string' ? header.buttonLabel : DEFAULT_HEADER_BAR_STATE.buttonLabel,
+    buttonUrl: typeof header.buttonUrl === 'string' ? header.buttonUrl : DEFAULT_HEADER_BAR_STATE.buttonUrl,
+    backgroundColor:
+      typeof header.backgroundColor === 'string'
+        ? header.backgroundColor
+        : DEFAULT_HEADER_BAR_STATE.backgroundColor,
+    textColor: typeof header.textColor === 'string' ? header.textColor : DEFAULT_HEADER_BAR_STATE.textColor,
+    buttonBackgroundColor:
+      typeof header.buttonBackgroundColor === 'string'
+        ? header.buttonBackgroundColor
+        : DEFAULT_HEADER_BAR_STATE.buttonBackgroundColor,
+    buttonTextColor:
+      typeof header.buttonTextColor === 'string'
+        ? header.buttonTextColor
+        : DEFAULT_HEADER_BAR_STATE.buttonTextColor,
+  };
+};
+
+const buildHeaderBarPayload = (state: HeaderBarState): LpHeaderBarConfig | null => {
+  if (!state.enabled) {
+    return null;
+  }
+  const title = state.title.trim();
+  const buttonLabel = state.buttonLabel.trim();
+  const buttonUrl = state.buttonUrl.trim();
+  if (!title && !buttonLabel) {
+    return null;
+  }
+  const payload: LpHeaderBarConfig = { enabled: true };
+  if (title) payload.title = title;
+  if (buttonLabel) payload.buttonLabel = buttonLabel;
+  if (buttonUrl) payload.buttonUrl = buttonUrl;
+  const backgroundColor = state.backgroundColor.trim();
+  const textColor = state.textColor.trim();
+  const buttonBackgroundColor = state.buttonBackgroundColor.trim();
+  const buttonTextColor = state.buttonTextColor.trim();
+  if (backgroundColor) payload.backgroundColor = backgroundColor;
+  if (textColor) payload.textColor = textColor;
+  if (buttonBackgroundColor) payload.buttonBackgroundColor = buttonBackgroundColor;
+  if (buttonTextColor) payload.buttonTextColor = buttonTextColor;
+  return payload;
 };
 
 const buildFooterCtaState = (config?: FooterCTAConfig | null): FooterCtaState => {
@@ -177,6 +252,111 @@ const buildFooterCtaPayload = (state: FooterCtaState): FooterCTAConfig | null =>
 
   return Object.keys(payload).length > 0 ? payload : null;
 };
+
+/* ヘッダー帯の設定フォーム(設定タブのdesktop/mobile両方から使用) */
+function HeaderBarSettingsSection({
+  value,
+  urlError,
+  onChange,
+  onToggle,
+}: {
+  value: HeaderBarState;
+  urlError: string | null;
+  onChange: (patch: Partial<HeaderBarState>) => void;
+  onToggle: (enabled: boolean) => void;
+}) {
+  const colorField = (
+    label: string,
+    field: 'backgroundColor' | 'textColor' | 'buttonBackgroundColor' | 'buttonTextColor'
+  ) => (
+    <div>
+      <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={value[field]}
+          onChange={(e) => onChange({ [field]: e.target.value })}
+          className="h-10 w-14 cursor-pointer rounded border border-slate-300 bg-white"
+        />
+        <input
+          type="text"
+          value={value[field]}
+          onChange={(e) => onChange({ [field]: e.target.value })}
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
+          spellCheck={false}
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="pt-4 mt-4 border-t border-slate-200 space-y-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h5 className="text-xs font-bold text-slate-700 tracking-wide uppercase">ヘッダー帯</h5>
+          <p className="text-[11px] text-slate-500 mt-1">
+            TOPページの固定ナビと同じ、画面上部の半透明帯です。タイトルとCTAボタンを常時表示します。
+          </p>
+        </div>
+        <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            className="h-5 w-5 lg:h-4 lg:w-4 rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-500"
+            checked={value.enabled}
+            onChange={(e) => onToggle(e.target.checked)}
+          />
+          <span className="text-sm lg:text-xs text-slate-700 font-semibold">表示する</span>
+        </label>
+      </div>
+      {value.enabled ? (
+        <div className="space-y-4">
+          <div className="grid gap-3 lg:grid-cols-2">
+            <div>
+              <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">タイトル</label>
+              <input
+                type="text"
+                value={value.title}
+                onChange={(e) => onChange({ title: e.target.value })}
+                placeholder="例：7日間スワイプ集客チャレンジ"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタン文言</label>
+              <input
+                type="text"
+                value={value.buttonLabel}
+                onChange={(e) => onChange({ buttonLabel: e.target.value })}
+                placeholder="例：無料で始める"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm lg:text-xs font-semibold text-slate-700 mb-1">ボタンのリンク先URL</label>
+            <input
+              type="url"
+              value={value.buttonUrl}
+              onChange={(e) => onChange({ buttonUrl: e.target.value })}
+              placeholder="https://..."
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:outline-none"
+            />
+            {urlError ? <p className="mt-1 text-xs text-red-600">{urlError}</p> : null}
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {colorField('帯の背景色', 'backgroundColor')}
+            {colorField('文字色', 'textColor')}
+            {colorField('ボタン色', 'buttonBackgroundColor')}
+            {colorField('ボタン文字色', 'buttonTextColor')}
+          </div>
+          <p className="text-[11px] text-slate-500">
+            帯は半透明＋ぼかしで表示されます。ボタン色が既定（#0284C7）のままの場合、TOPページと同じブランドグラデーションになります。
+          </p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 const validateFooterCtaUrl = (value: string): string | null => {
   const trimmed = value.trim();
@@ -401,6 +581,7 @@ export default function EditLPNewPage() {
     swipeDirection: 'vertical',
     visibility: 'private',
     footerCta: { ...DEFAULT_FOOTER_CTA_STATE },
+    headerBar: { ...DEFAULT_HEADER_BAR_STATE },
     showViewCountPublic: true,
   });
   const [metaSettings, setMetaSettings] = useState({
@@ -415,6 +596,7 @@ export default function EditLPNewPage() {
   const [shareCopyStatus, setShareCopyStatus] = useState<'idle' | 'copied'>('idle');
   const [limitedDraftNotice, setLimitedDraftNotice] = useState(false);
   const [footerCtaUrlError, setFooterCtaUrlError] = useState<string | null>(null);
+  const [headerBarUrlError, setHeaderBarUrlError] = useState<string | null>(null);
   const shareTokenRotatedLabel = useMemo(() => {
     if (!shareTokenRotatedAt) return null;
     try {
@@ -751,9 +933,11 @@ export default function EditLPNewPage() {
         swipeDirection: (response.data.swipe_direction as 'vertical' | 'horizontal') || 'vertical',
         visibility: (response.data.visibility as 'public' | 'limited' | 'private') || 'private',
         footerCta: buildFooterCtaState(footerConfig),
+        headerBar: buildHeaderBarState(footerConfig),
         showViewCountPublic: response.data.show_total_views_public !== false,
       });
       setFooterCtaUrlError(null);
+      setHeaderBarUrlError(null);
       setMetaSettings({
         title: response.data.meta_title ?? '',
         description: response.data.meta_description ?? '',
@@ -1262,11 +1446,35 @@ export default function EditLPNewPage() {
           setFooterCtaUrlError(null);
         }
 
+        // ヘッダー帯(headerBar)は footer_cta_config JSON に同居(BEスキーマ変更不要)
+        let headerBarPayload: LpHeaderBarConfig | null = null;
+        if (lpSettings.headerBar.enabled) {
+          const headerUrlError = validateFooterCtaUrl(lpSettings.headerBar.buttonUrl);
+          setHeaderBarUrlError(headerUrlError);
+          if (headerUrlError) {
+            setError('ヘッダー帯のURLを修正してください');
+            setIsSaving(false);
+            return { ok: false as const, errorMessage: 'ヘッダー帯のURLを修正してください' };
+          }
+          headerBarPayload = buildHeaderBarPayload(lpSettings.headerBar);
+        } else {
+          setHeaderBarUrlError(null);
+        }
+
+        const combinedFooterConfig: FooterCTAConfig | null =
+          footerCtaEnabled || headerBarPayload
+            ? {
+                ...(footerCtaPayload ?? {}),
+                footerEnabled: footerCtaEnabled,
+                headerBar: headerBarPayload,
+              }
+            : null;
+
         const lpUpdateResponse = await lpApi.update(lpId, {
           title: lpTitle.trim() || undefined,
           show_swipe_hint: lpSettings.showSwipeHint,
           floating_cta: footerCtaEnabled,
-          footer_cta_config: footerCtaEnabled ? footerCtaPayload : null,
+          footer_cta_config: combinedFooterConfig,
           swipe_direction: lpSettings.swipeDirection,
           visibility: lpSettings.visibility,
           meta_title: normalizeMetaValue(metaSettings.title),
@@ -1293,6 +1501,9 @@ export default function EditLPNewPage() {
               : lpUpdateResponse.data?.footer_cta_config
           ),
           footerCta: buildFooterCtaState(
+            (lpUpdateResponse.data?.footer_cta_config ?? null) as FooterCTAConfig | null
+          ),
+          headerBar: buildHeaderBarState(
             (lpUpdateResponse.data?.footer_cta_config ?? null) as FooterCTAConfig | null
           ),
           showViewCountPublic:
@@ -2183,6 +2394,17 @@ export default function EditLPNewPage() {
                   <p className="text-xs lg:text-[11px] text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
+              <HeaderBarSettingsSection
+                value={lpSettings.headerBar}
+                urlError={headerBarUrlError}
+                onChange={(patch) =>
+                  setLpSettings((prev) => ({ ...prev, headerBar: { ...prev.headerBar, ...patch } }))
+                }
+                onToggle={(enabled) => {
+                  setLpSettings((prev) => ({ ...prev, headerBar: { ...prev.headerBar, enabled } }));
+                  if (!enabled) setHeaderBarUrlError(null);
+                }}
+              />
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -3032,6 +3254,17 @@ export default function EditLPNewPage() {
                   <p className="text-xs text-slate-500">1枚目に指アイコンでスワイプを促します</p>
                 </div>
               </label>
+              <HeaderBarSettingsSection
+                value={lpSettings.headerBar}
+                urlError={headerBarUrlError}
+                onChange={(patch) =>
+                  setLpSettings((prev) => ({ ...prev, headerBar: { ...prev.headerBar, ...patch } }))
+                }
+                onToggle={(enabled) => {
+                  setLpSettings((prev) => ({ ...prev, headerBar: { ...prev.headerBar, enabled } }));
+                  if (!enabled) setHeaderBarUrlError(null);
+                }}
+              />
               <div className="pt-4 mt-4 border-t border-slate-200 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>

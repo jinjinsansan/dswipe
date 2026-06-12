@@ -1,23 +1,27 @@
 /* LP一式プリセット（Momentum）
    mock: design_handoff_dswipe/D-Swipe Templates.html の TEMPLATES を移植。
    1クリックで完成形のスワイプLP(5〜6枚)を生成する。
-   背景は editor-blocks.jsx BG_PRESETS の近似単色（blockBackground が単色のみ対応のため）。 */
+   背景は backgroundPreset(lib/backgroundPresets.ts = mock BG_PRESETS のグラデ)を適用。
+   backgroundColor は近似単色フォールバック。heroブロックは既定で動画背景＋
+   backgroundColor をオーバーレイ基調に使うため、TOPページ同様の見た目になる。 */
 
 import type { BlockContent } from '@/types/templates';
+import type { BackgroundPresetKey } from '@/lib/backgroundPresets';
 
 type PresetPalette = {
+  backgroundPreset: BackgroundPresetKey;
   backgroundColor: string;
   textColor: string;
   accentColor: string;
 };
 
 const BG: Record<string, PresetPalette> = {
-  navy: { backgroundColor: '#0B1F3A', textColor: '#FFFFFF', accentColor: '#22D3EE' },
-  deep: { backgroundColor: '#07142A', textColor: '#F8FAFC', accentColor: '#22D3EE' },
-  cyan: { backgroundColor: '#0891B2', textColor: '#FFFFFF', accentColor: '#22D3EE' },
-  teal: { backgroundColor: '#0E7490', textColor: '#FFFFFF', accentColor: '#22D3EE' },
-  aurora: { backgroundColor: '#0B1F3A', textColor: '#FFFFFF', accentColor: '#F59E0B' },
-  light: { backgroundColor: '#F4F8FD', textColor: '#0B1F3A', accentColor: '#0284C7' },
+  navy: { backgroundPreset: 'navy', backgroundColor: '#0B1F3A', textColor: '#FFFFFF', accentColor: '#22D3EE' },
+  deep: { backgroundPreset: 'deep', backgroundColor: '#0B1220', textColor: '#F8FAFC', accentColor: '#22D3EE' },
+  cyan: { backgroundPreset: 'cyan', backgroundColor: '#0284C7', textColor: '#FFFFFF', accentColor: '#E0F2FE' },
+  teal: { backgroundPreset: 'teal', backgroundColor: '#0E7490', textColor: '#FFFFFF', accentColor: '#22D3EE' },
+  aurora: { backgroundPreset: 'aurora', backgroundColor: '#0B1F3A', textColor: '#FFFFFF', accentColor: '#F59E0B' },
+  light: { backgroundPreset: 'light', backgroundColor: '#F4F8FD', textColor: '#0B1F3A', accentColor: '#0284C7' },
 };
 
 export interface LpPresetBlock {

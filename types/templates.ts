@@ -60,6 +60,8 @@ export interface BaseBlockContent {
   accentColor?: string;
   themeKey?: TemplateThemeKey;
   backgroundStyle?: 'auto' | 'none' | 'color' | 'image';
+  /** lib/backgroundPresets.ts のキー。設定時は backgroundColor より優先(画像背景時は無効) */
+  backgroundPreset?: string | null;
   backgroundImageUrl?: string | null;
   backgroundImageMode?: 'cover' | 'contain' | 'repeat';
   backgroundImagePosition?: 'center' | 'top' | 'bottom';
