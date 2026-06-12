@@ -824,8 +824,11 @@ export default function DashboardPage() {
                           {lp.statusLabel}
                         </span>
                         {!lp.hasPrimaryLink && (
-                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold">
-                            CTA未設定
+                          <span
+                            className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] sm:text-[10px] rounded-full font-semibold"
+                            title="ボタンの飛び先（商品・サロン・URL）が未設定です。エディタでボタンのリンク先を設定すると消えます。"
+                          >
+                            ボタン未設定
                           </span>
                         )}
                       </div>

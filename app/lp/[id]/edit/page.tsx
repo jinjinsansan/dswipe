@@ -23,6 +23,7 @@ import {
   CheckCircleIcon,
   Cog6ToothIcon,
   ExclamationTriangleIcon,
+  EyeIcon,
   LinkIcon,
   RocketLaunchIcon,
   Squares2X2Icon,
@@ -1203,10 +1204,29 @@ export default function EditLPNewPage() {
   };
 
   const handleDeleteBlock = (blockId: string) => {
+    const removedIndex = blocks.findIndex((block) => block.id === blockId);
+    const removedBlock = removedIndex >= 0 ? blocks[removedIndex] : null;
+
     setBlocks(blocks.filter(block => block.id !== blockId));
     if (selectedBlockId === blockId) {
       setSelectedBlockId(null);
       setFocusedField(null);
+    }
+
+    if (removedBlock) {
+      toast.success('ブロックを削除しました', {
+        actionLabel: '元に戻す',
+        onAction: () => {
+          setBlocks((prev) => {
+            if (prev.some((block) => block.id === removedBlock.id)) {
+              return prev;
+            }
+            const next = [...prev];
+            next.splice(Math.min(removedIndex, next.length), 0, removedBlock);
+            return next.map((block, index) => ({ ...block, order: index }));
+          });
+        },
+      });
     }
   };
 
@@ -2207,62 +2227,31 @@ export default function EditLPNewPage() {
           </div>
         )}
 
-        {/* モバイル用タブ */}
+        {/* モバイル用タブ — 4等分グリッドで全タブを常時表示(横スクロールだと「設定」に気づけない) */}
         <div className="lg:hidden flex-shrink-0 border-b border-slate-200 bg-white/50">
-          <div className="flex gap-1 px-2 py-2 overflow-x-auto">
-            <button
-              type="button"
-              onClick={() => setMobileTab('blocks')}
-              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
-                mobileTab === 'blocks'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Squares2X2Icon className="h-4 w-4" aria-hidden="true" />
-                ブロック
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileTab('edit')}
-              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
-                mobileTab === 'edit'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
-                編集
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileTab('preview')}
-              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
-                mobileTab === 'preview'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="inline-flex items-center">プレビュー</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileTab('settings')}
-              className={`px-4 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap ${
-                mobileTab === 'settings'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Cog6ToothIcon className="h-4 w-4" aria-hidden="true" />
-                設定
-              </span>
-            </button>
+          <div className="grid grid-cols-4 gap-1 px-2 py-2">
+            {(
+              [
+                { key: 'blocks' as const, label: 'ブロック', icon: Squares2X2Icon },
+                { key: 'edit' as const, label: '編集', icon: AdjustmentsHorizontalIcon },
+                { key: 'preview' as const, label: 'プレビュー', icon: EyeIcon },
+                { key: 'settings' as const, label: '設定', icon: Cog6ToothIcon },
+              ]
+            ).map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setMobileTab(key)}
+                className={`flex flex-col items-center justify-center gap-0.5 rounded px-1 py-1.5 text-[11px] font-semibold transition-colors ${
+                  mobileTab === key
+                    ? 'bg-sky-600 text-white'
+                    : 'bg-slate-100 text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -2865,8 +2854,34 @@ export default function EditLPNewPage() {
             {/* Block List - モバイルではブロック一覧のみ */}
             <div className={`py-3 px-3 lg:py-4 flex-1 min-h-0 ${mobileTab === 'blocks' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
               {blocks.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 text-sm font-medium">
-                  ブロックを追加してください
+                <div className="flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-white/70 px-4 py-10 text-center">
+                  <span
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl text-pure-white shadow-[0_10px_26px_-8px_rgba(6,182,212,.55)]"
+                    style={{ background: GRAD_BRAND }}
+                  >
+                    <Squares2X2Icon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-navy-900">最初のブロックを追加しましょう</p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                      ヒーロー・お悩み・料金表などの素材を選ぶだけで、
+                      <br />
+                      1枚のスライドが完成します。
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowTemplateSelector(true)}
+                    className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold text-pure-white transition hover:-translate-y-px"
+                    style={{ background: GRAD_BRAND }}
+                  >
+                    ブロックライブラリを開く
+                  </button>
+                  <p className="text-[11px] leading-relaxed text-slate-400">
+                    迷ったら「ヒーロー」から。完成形から始めたい場合は
+                    <br />
+                    LP作成画面のテンプレート一式も使えます。
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2 lg:space-y-2">
