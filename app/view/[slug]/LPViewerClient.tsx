@@ -25,6 +25,7 @@ import { LPDetail, RequiredActionsStatus, CTA, Product, type FooterCTAConfig, ty
 import ViewerBlockRenderer from '@/components/viewer/ViewerBlockRenderer';
 import { useAuthStore } from '@/store/authStore';
 import { redirectToLogin } from '@/lib/navigation';
+import { getBackgroundPreset } from '@/lib/backgroundPresets';
 
 import type { Swiper as SwiperType } from 'swiper';
 import type { SwiperModule } from 'swiper/types';
@@ -1095,6 +1096,11 @@ export default function LPViewerClient({
     if (backgroundStyle === 'none') {
       return undefined;
     }
+    // 背景プリセット(グラデ)はブロック本体と同じCSSをスライド背面にも使い、余白部分の色を揃える
+    const preset = getBackgroundPreset(content.backgroundPreset);
+    if (preset) {
+      return preset.css;
+    }
     const candidates = [
       content.background,
       content.backgroundColor,
@@ -1238,9 +1244,21 @@ export default function LPViewerClient({
               const blockType = typeof step.block_type === 'string' ? step.block_type : '';
               const isFullBleedBlock = blockType === 'top-hero-1' || blockType === 'top-hero-image-1';
               const isLastSlide = index === finalSlideIndex;
+              // 帯に隠れないようスライド内側へ余白を確保する。
+              // 全画面ヒーローはコンテンツが中央寄せのためTOPページ同様オーバーレイのまま。
+              const needsFooterPad =
+                Boolean(footerCtaConfig) && !isFullBleedBlock && (Boolean(footerCtaConfig?.alwaysVisible) || isLastSlide);
+              const needsHeaderPad = Boolean(headerBarConfig) && !isFullBleedBlock;
               const slideInnerStyle =
-                isLastSlide && footerCtaConfig
-                  ? { paddingBottom: 'calc(112px + env(safe-area-inset-bottom, 24px))' }
+                needsFooterPad || needsHeaderPad
+                  ? {
+                      ...(needsFooterPad
+                        ? { paddingBottom: 'calc(128px + env(safe-area-inset-bottom, 16px))' }
+                        : {}),
+                      ...(needsHeaderPad
+                        ? { paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))' }
+                        : {}),
+                    }
                   : undefined;
 
               const slideClassName = `lp-slide-clean${isFullBleedBlock ? ' lp-slide-clean--full' : ''}`;
